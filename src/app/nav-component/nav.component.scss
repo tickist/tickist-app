@@ -1,0 +1,14 @@
+:host {
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  span {
+    margin-left: 5px;
+  }
+}
+
+img.user-avatar {
+  cursor: pointer;
+  border-radius: 20px;
+}

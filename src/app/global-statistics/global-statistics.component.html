@@ -1,0 +1,50 @@
+<mat-card>
+    <h2><span>Statistics</span></h2>
+
+
+    <div *ngIf="global">
+        <div class="summary_above"
+             tooltip="ER=1 - estimation is 100% correct <br> ER<1 - underestimating task time <br> ER>1 - overestimating task time"
+             tooltip-placement="bottom">
+            <span>
+                You finished {{ global.last7thDays }} tasks in the last 7 days and your
+                estimation rate stands at {{ global.correntEstimation }}.
+            </span>
+        </div>
+    </div>
+    <div class="chart" *ngIf="dataTasksCounter && dataTasksCounter.datasets.length > 0" >
+        <canvas baseChart style=""
+            [datasets]="dataTasksCounter.datasets"
+            [labels]="dataTasksCounter.labels"
+            [options]="dataTasksCounter.options"
+            [legend]="dataTimeChart.legend"
+            [chartType]="dataTasksCounter.chartType"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"></canvas>
+
+
+    </div>
+
+
+    <div class="chart" *ngIf="dataTimeChart && dataTimeChart.datasets.length > 0">
+        <canvas baseChart
+            [datasets]="dataTimeChart.datasets"
+            [labels]="dataTimeChart.labels"
+            [options]="dataTimeChart.options"
+            [legend]="dataTimeChart.legend"
+            [chartType]="dataTimeChart.chartType"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"></canvas>
+
+
+    </div>
+
+
+    <div *ngIf="global">
+        <span>Summary</span>
+        So far you <b>have done {{ global.undone }} tasks.</b> <br>
+        <b>{{ global.done }} undone tasks</b> are ahead of you. <br>
+        You have <b>{{ global.suspend }} tasks on hold.</b>
+
+    </div>
+</mat-card>

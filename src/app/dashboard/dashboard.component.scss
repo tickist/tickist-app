@@ -1,0 +1,8 @@
+@import "../shared/variables";
+
+
+
+:host {
+  min-height: $min-height;
+  height: $min-height;
+}

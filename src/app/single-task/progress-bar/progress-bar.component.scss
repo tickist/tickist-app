@@ -1,0 +1,12 @@
+@import "../../shared/variables";
+
+:host {
+  margin-right:5px;
+  margin-left: 5px;
+  mat-progress-bar {
+    height: 16px;
+    margin-left: 4px;
+    border: 1px white solid;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,24 @@
+<h1 mat-dialog-title><span>Tags filter</span></h1>
+<mat-dialog-content>
+    <div *ngIf="tags.length > 0">
+
+        <mat-chip-list class="mat-chip-list-stacked" [selectable]="true">
+            <mat-chip (click)="changeSelectedTags('allTags')" [selected]="isActive('allTasks')">
+                <i class="fa fa-tags"></i><span> All tags</span>
+            </mat-chip>
+            <mat-chip (click)="changeSelectedTags('allTasks')" [selected]="isActive('allTasks')">
+                <i class="fa fa-tags"></i><span>All tasks</span>
+            </mat-chip>
+            <mat-chip (click)="changeSelectedTags('withoutTags')" [selected]="isActive('allTasks')">
+                <i class="fa fa-tags"></i><span> Without tags</span>
+            </mat-chip>
+
+            <mat-chip *ngFor="let tag of tags"
+                     color="primary"
+                     (click)="changeSelectedTags(tag.id)"
+                     [selected]="isActive(tag.id)">
+                <i class="fa fa-tag"></i><span>{{ tag.name }}</span>
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+</mat-dialog-content>

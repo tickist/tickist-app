@@ -1,0 +1,169 @@
+<app-nav-bar-landing-page></app-nav-bar-landing-page>
+
+<section class="top" fxLayout="column" fxLayoutAlign="space-around center">
+    <div fxFlex></div>
+    <div class="text" fxFlex="20">
+        <div class="top-text"><span>Enjoy the ticking</span></div>
+        <div class="middle-text">
+            <span>Careful planning facilitates any kind of work and gives you more leisure time! </span></div>
+
+    </div>
+    <div fxFlex class="button-wrapper">
+        <button fxFlex class="button" mat-button type="button">Get started</button>
+    </div>
+    <div fxFlex></div>
+
+    <div fxFlex></div>
+    <div fxFlex="50" class="images-box">
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <img src="/assets/images/landing_page/home1.png">
+            <img class="img_main" src="/assets/images/landing_page/home2.png">
+            <img src="/assets/images/landing_page/home3.png">
+        </div>
+    </div>
+
+
+</section>
+
+<section id="about">
+    <div fxLayout="column">
+        <h1> A LITTLE ABOUT TICKIST APPLICATION</h1>
+        <hr>
+        <div fxLayout.sm="column" fxLayout="row" fxLayoutAlign="space-around start" layout-padding>
+            <div fxFlex="50%">
+                <p> How to manage the time more efficiently, quickly overcome laziness and
+                    effectively accomplish our daily goals? These questions have accompanied us ever since. We have
+                    been testing different time management tools for several years and still haven’t discovered the
+                    right one.
+                    So what to do if you can’t find any to-do list that meets all your expectations? You have to
+                    design and create a new one that will offer you everything you need :)</p>
+            </div>
+
+            <div fxFlex="50%">
+                <p> Tickist is not only a place, where you may gather your daily tasks. It was also
+                    designed as a tool for the continuous improvement of effectiveness and efficiency of time
+                    management. The functionalities offered by Tickist ― such as nested lists, tags, flexible due
+                    dates (on that date and by a date) and estimated time ― should help us all to manage our time
+                    more effectively. A to-do list doesn’t have to cause negative associations. We want to enjoy the
+                    ticking and our well-deserved free time!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="efficient-time-management" fxLayout="row" fxLayoutAlign="start start">
+    <div  fxFlex="50" fxLayout="column" fxLayoutAlign="center center">
+        <h1>EFFICIENT TIME MANAGEMENT</h1>
+
+        <p>Careful planning and monitoring how you spend the hours in your day will help you to
+            effectively complete your tasks. Work on setting goals, prioritizing tasks and controlling where
+            your time actually goes.</p>
+    </div>
+
+</section>
+
+<section id="team">
+
+    <div fxLayout="column">
+        <h1>MEET TICKIST TEAM</h1>
+
+        <div fxLayout="row" fxLayout.sm="column" fxLayoutAlign="center center">
+
+            <div  fxFlex="33%" layout-padding class="team-member">
+                <img class="img img-circle" src="/assets/images/landing_page/Justyna.png" height="120px"
+                     width="120px" alt="Tickist Team Justyna">
+                <br>
+                <h4><b>Justyna</b></h4>
+
+                <p>To-do lists have always accompanied Justyna. Few years ago she exchanged paper
+                    calendars and sheets hanging on the wall for web applications and since then she has enjoyed
+                    putting ticks next to completed activities. In Tickist team she is involved in everything except
+                    for programming: design and usability, conception of new functionalities, copywriting and
+                    testing.</p>
+            </div>
+
+
+            <div fxFlex="33%" layout-padding class="team-member">
+                <img class="img img-circle" src="/assets/images/landing_page/Bartek.png" height="120px" width="120px"
+                     alt="Tickist Team Bartek">
+                <br>
+                <h4><b>Bartłomiej</b></h4>
+
+                <p>Bartek is the brains of Tickist and the only programmer so far. Since ever
+                    interested in personal development and effective time management strategies. He takes advantage
+                    of his several years‘ experience in programming in Python and Javascript to create a practical
+                    and efficient to-do list that will meet all his expectations and help him to get more
+                    done.</p>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+
+ <section id="quota" fxLayout="column" fxLayoutAlign="center center">
+
+            <h1>"{{ dayQuota }}"</h1>
+            <div><span>{{ dayAuthor }}</span></div>
+
+
+    </section>
+
+
+<section  id="contact" >
+        <div fxLayout="column">
+
+
+            <h1>THANKS FOR VISITING US</h1>
+            <div fxLayout="row" fxLayout.sm="column" layout-padding fxLayoutAlign="space-around start">
+                <div  fxFlex="33%" fxLayout="column" fxLayoutAlign="center center">
+                    <h3>Contact information</h3>
+
+                    <p>
+                        <i class="fa fa-envelope"></i> <a href="#"> tickist(at)tickist.com</a> <br/>
+                        <i class="fa fa-twitter"></i> <a href="{{ twitter }}"> @tickist </a> <br/>
+                        <i class="fa fa-facebook"></i> <a href="{{ facebookFanpage }}"> Facebook Fanpage</a>
+                        <br/>
+                        <i class="fa fa-google-plus"></i> <a href="{{ googlePlus }}"> Google + page </a> <br/>
+                    </p>
+                </div>
+                <!-- col -->
+
+                <div  fxFlex="33" fxLayout="column" fxLayoutAlign="center center">
+                    <a class="twitter-timeline" href="https://twitter.com/tickist" data-widget-id="489480848165457920">Tweety
+                        na temat @tickist</a>
+                    <script>!function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                        if (!d.getElementById(id)) {
+                            js = d.createElement(s);
+                            js.id = id;
+                            js.src = p + "://platform.twitter.com/widgets.js";
+                            fjs.parentNode.insertBefore(js, fjs);
+                        }
+                    }(document, "script", "twitter-wjs");</script>
+
+
+                </div>
+
+                <div  fxFlex="33%" fxLayout="column" fxLayoutAlign="center center">
+                    <h3>SUPPORT US WITH YOUR FEEDBACK</h3>
+
+                    <p>It is our pleasure to invite you to Tickist application, we strive to provide
+                        the best to-do list that will serve all of us. Please encourage us and send us your
+                        feedback.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+    </section>
+
+    <footer fxLayout="row"  fxLayoutAlign="center center">
+
+            <h4>Created by <a href="http://tickist.com">Tickist.com</a> - Copyright
+                {{ getFullYear() }}</h4>
+
+    </footer>

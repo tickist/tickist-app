@@ -1,0 +1,28 @@
+mat-list-item {
+  cursor: pointer;
+  p {
+    margin: 0 5px 0 5px;
+  }
+  &:hover {
+    background: gray;
+    margin-right: 10px;
+  }
+}
+
+.fa {
+  cursor: pointer;
+}
+
+.close {
+  float: right;
+}
+
+.active {
+  background: gray;
+  margin-right: 10px;
+}
+
+.label {
+  color: grey;
+  font-size: 12px;
+}

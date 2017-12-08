@@ -1,0 +1,26 @@
+<app-nav></app-nav>
+<mat-sidenav-container>
+    <mat-sidenav [mode]="leftSidenavVisibility.mode"
+                [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisiblity()" >
+
+       <router-outlet name="leftSideNav"></router-outlet>
+
+    </mat-sidenav>
+
+
+    <mat-sidenav [align]="rightSidenavVisibility.position" [opened]="rightSidenavVisibility.open" [mode]="rightSidenavVisibility.mode"
+                (close)="closeRightSidenavVisiblity()" >
+        <app-global-statistics></app-global-statistics>
+    </mat-sidenav>
+    <div [ngClass.gt-sm]="'right-sidenav left-sidenav'" class="content">
+
+        <router-outlet></router-outlet>
+    </div>
+
+
+</mat-sidenav-container>
+<app-add-task></app-add-task>
+
+
+
+

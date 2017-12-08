@@ -1,0 +1,167 @@
+<div fxLayoutAlign="start start" fxLayout="row">
+    <div fxFlex fxFlex.xs="0" fxFlex.sm="0">
+
+    </div>
+
+    <mat-card fxFlex="600px" fxFlex.xs="100" fxFlex.sm="100">
+        <form *ngIf="projectForm" [formGroup]="projectForm" novalidate (ngSubmit)="onSubmit(projectForm.value)"
+              fxLayoutAlign="center none" class="flex-container" fxLayout="column">
+            <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
+                                                                 aria-hidden="true"></i></span></div>
+            <div fxLayout="row">
+                <div fxFlex="20%">
+                    <mat-list>
+                        <mat-list-item (click)="changeActiveItemInMenu('main')"
+                                      [ngClass]="{'active': checkActiveItemInMenu('main')}">
+
+                            <i class="fa fa-pencil-square-o menu_icon"></i>
+
+                            <p [fxHide.xs]="1"><span>Main</span></p>
+
+
+                        </mat-list-item>
+
+                        <mat-list-item (click)="changeActiveItemInMenu('extra')"
+                                      [ngClass]="{'active': checkActiveItemInMenu('date_and_time')}">
+                            <i class="fa fa-wrench menu_iconn"></i>
+
+                            <p [fxHide.xs]="1"><span>Extra</span></p>
+
+                        </mat-list-item>
+
+                        <mat-list-item (click)="changeActiveItemInMenu('sharing')"
+                                      [ngClass]="{'active': checkActiveItemInMenu('repeat')}">
+                            <i class="fa fa-tags menu_icon"></i>
+
+
+                            <p [fxHide.xs]="1"><span>Sharing</span></p>
+
+                        </mat-list-item>
+
+
+                    </mat-list>
+                </div>
+                <div fxFlex>
+                    <div [hidden]="!menu.main" formGroupName="main">
+
+                        <div fxLayout="column">
+                            <mat-form-field>
+                                <input matInput placeholder="Project name" maxlength="100" formControlName="name">
+
+                            </mat-form-field>
+                            <color-picker [colors]="colors" customColorPicker="true"
+                                          formControlName="color"></color-picker>
+                            <mat-form-field>
+                                <textarea matInput placeholder="Project description"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div [hidden]="!menu.extra" formGroupName="extra">
+                        <div fxLayout="column">
+                            <span class="label">Default priority on project</span>
+                            <mat-button-toggle-group formControlName="defaultPriority"
+                                                    [ngStyle]="{'width': '126px'}">
+                                <mat-button-toggle value="A">A</mat-button-toggle>
+                                <mat-button-toggle value="B">B</mat-button-toggle>
+                                <mat-button-toggle value="C">C</mat-button-toggle>
+                            </mat-button-toggle-group>
+                            <mat-form-field>
+                                <mat-select placeholder="Default due date for all tasks"
+                                           formControlName="defaultTypeFinishDate"
+                                           name="defaultTypeFinishDate">
+                                    <mat-option *ngFor="let option of typeFinishDateOptions" [value]="option.id">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select placeholder="Default finish date for all tasks"
+                                           formControlName="defaultFinishDate"
+                                           name="defaultFinishDate">
+                                    <mat-option *ngFor="let option of defaultFinishDateOptions" [value]="option.id">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-checkbox formControlName="dialogTimeWhenTaskFinished">Adding estimated time and real
+                                time
+                                after finished task
+                            </mat-checkbox>
+                            <mat-form-field>
+                                <mat-select placegolder="Default task view" formControlName="defaultTaskView"
+                                           name="defaultTaskView">
+                                    <mat-option *ngFor="let option of defaultTaskView" [value]="option.name">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <button mat-button type="button" *ngIf="!project.isInbox" (click)="deleteOrLeaveProject()">
+                                {{ deleteOrLeaveProjectLabel }}
+                            </button>
+
+
+                        </div>
+                    </div>
+
+                    <div [hidden]="!menu.sharing">
+                        <div fxLayout="column">
+
+                            <mat-form-field>
+                                <input matInput placeholder="Write an email to invite new user to this list"
+                                       [matAutocomplete]="auto" [formControl]="addUserToShareWithListCtrl">
+                            </mat-form-field>
+                            <button (click)="inviteUser()" type="button"> Invite</button>
+
+                            <mat-autocomplete #auto="matAutocomplete">
+                                <mat-option *ngFor="let u of filteredUsers | async" [value]="u.email">
+                                    <img [src]="staticUrl + u.avatarUrl | avatarsize: '32x32'"><span>{{ u.email }}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+
+                            <mat-list>
+                                <mat-list-item class="mat-3-line" *ngFor="let u of project.shareWith; let i=index">
+                                    <img [src]="staticUrl + u.avatarUrl | avatarsize: '32x32'" class="mat-avatar"
+                                         alt="{{ u.username }}"/>
+
+
+                                    <h4 mat-line *ngIf="user.hasOwnProperty('id')">
+                                        <span>{{ u.username }}</span>
+                                        <span flex></span>
+                                        <span [hidden]="user.email==u.email"
+                                              (click)="deleteUserFromShareWithList(user, i)">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </span>
+                                    </h4>
+                                    <p *ngIf="user.hasOwnProperty('id')">{{ u.email }}</p>
+
+                                    <h4 mat-line *ngIf="!user.hasOwnProperty('id')">
+                                        <span>{{ u.email }}</span>
+                                        <span flex></span>
+                                        <span [hidden]="user.email==u.email"
+                                              (click)="deleteUserFromShareWithList(user, i)">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </span>
+                                    </h4>
+                                    <p *ngIf="!user.hasOwnProperty('id')">Without account on tickst.com. The email with
+                                        invitation was send.</p>
+
+                                </mat-list-item>
+
+                            </mat-list>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <button type="submit" mat-button>Send</button>
+
+        </form>
+    </mat-card>
+    <div fxFlex fxFlex.xs="0" fxFlex.sm="0">
+
+    </div>
+
+</div>

@@ -1,0 +1,45 @@
+<mat-toolbar>
+    <button mat-mini-fab color="primary"  [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
+        <i class="fa fa-bars"></i>
+    </button>
+
+     <a (click)='navigateTo("/")' layout="row" class="logo" [fxHide.xs]="1" [fxHide.sm]="1">
+                <div class="docs-logotype"><img [src]="'/assets/images/logo_32.png'"></div>
+     </a>
+
+    <button mat-button (click)='navigateTo("/", "", "", "")'  [fxHide.xs]="1" [fxHide.sm]="1" >
+        <i class="fa fa-home menu_icon"></i>
+        <span>Dashboard</span>
+    </button>
+    <button mat-button (click)='navigateTo("/", "", "", "")'  [fxHide.gt-sm]="1" >
+        <i class="fa fa-home menu_icon"></i>
+    </button>
+    <button  mat-button (click)='navigateTo("home", "projects", user?.inboxPk, "projects")' [fxHide.xs]="1" [fxHide.sm]="1">
+        <i class="fa fa-list menu_icon"></i>
+        <span >Project</span>
+    </button>
+    <button  mat-button (click)='navigateTo("home", "projects", user?.inboxPk, "projects")' [fxHide.gt-sm]="1">
+        <i class="fa fa-list menu_icon"></i>
+    </button>
+    <button mat-button (click)='navigateTo("home", "tags", "", "tags")'  [fxHide.xs]="1" [fxHide.sm]="1">
+        <i class="fa fa-tags menu_icon"></i>
+        <span>Tags</span>
+    </button>
+    <button mat-button (click)='navigateTo("home", "tags", "", "tags")' [fxHide.gt-sm]="1" >
+        <i class="fa fa-tags menu_icon"></i>
+    </button>
+    <span fxFlex></span>
+
+
+    <img class="user-avatar"  [mat-menu-trigger-for]="menu" *ngIf="user" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'">
+
+ <mat-menu #menu="matMenu">
+      <button [routerLink]="['/home/team']" mat-menu-item>Team</button>
+      <button (click)="toggleRightSideNavVisibility()" mat-menu-item>Statistics</button>
+      <button [routerLink]="['/home/user']" mat-menu-item>Settings</button>
+      <button (click)="logout()" mat-menu-item>Logout</button>
+    </mat-menu>
+
+</mat-toolbar>
+<div style="height: 5px;width:100%;background-color: #394264" *ngIf="!progressBar"></div>
+<mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>

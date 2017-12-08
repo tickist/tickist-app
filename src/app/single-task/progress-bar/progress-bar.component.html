@@ -1,0 +1,7 @@
+<span *ngIf="showProgressBar">
+        <mat-progress-bar mode="determinate" [value]="percent" #progressBar></mat-progress-bar>
+</span>
+
+
+<tickist-menu-button *ngIf="showIcon" [icon]="'fa-tasks'"></tickist-menu-button>
+

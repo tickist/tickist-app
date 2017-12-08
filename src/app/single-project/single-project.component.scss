@@ -1,0 +1,18 @@
+#project {
+  cursor: pointer;
+  height: 40px;
+  &:hover {
+    background-color: grey;
+  }
+  .tasks-counter {
+    margin-right: 10px
+  }
+  i {
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+}
+
+.isActive {
+  background-color: grey;
+}

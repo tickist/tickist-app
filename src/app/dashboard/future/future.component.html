@@ -1,0 +1,9 @@
+<div class="header" fxLayout="row" fxLayoutAlign="start none">
+    <div fxFlex fxLayoutAlign="start center" ><span >Future tasks</span></div>
+
+    <span fxFlex></span>
+    <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+
+</div>
+
+<app-tasks-list [tasks]="tasks" [taskView]="taskView"></app-tasks-list>

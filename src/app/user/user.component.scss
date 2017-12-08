@@ -1,0 +1,26 @@
+mat-list-item {
+  cursor: pointer;
+  p {
+    margin: 0 5px 0 5px;
+  }
+  &:hover {
+    background: gray;
+    margin-right:10px;
+  }
+}
+
+input[type=file] {
+  display: none;
+}
+
+.close {
+  float: right;
+}
+
+
+.active {
+  background: gray;
+  margin-right:10px;
+}
+
+

@@ -1,0 +1,20 @@
+<mat-card>
+    <div id="all-projects" fxLayout="row" fxLayoutAlign="center center">
+        <span fxFlex (click)="navigateTo('/home/projects')">All tasks</span>
+        <span fxFlex (click)="navigateTo('/home/projects')"></span>
+        <tickist-menu-button [matMenuTriggerFor]="projectsMenu" [icon]="'fa-ellipsis-v'">
+        </tickist-menu-button>
+        <mat-menu #projectsMenu="matMenu">
+            <button mat-menu-item [routerLink]="['/home/project']">Create new project</button>
+            <button mat-menu-item (click)="toggleProjectView()" *ngIf="!showOnlyProjectsWithTasks">Only projects
+                with tasks
+            </button>
+            <button mat-menu-item (click)="toggleProjectView()" *ngIf="showOnlyProjectsWithTasks">All projects
+            </button>
+        </mat-menu>
+    </div>
+
+    <single-project [project]="project" [isSmallScreen]="isSmallScreen" [selectedProject]="selectedProject"
+                    [selectedProjectsIds]="selectedProjectsIds"
+                    *ngFor="let project of projects;trackBy: trackByFn"></single-project>
+</mat-card>

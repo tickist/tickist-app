@@ -1,0 +1,27 @@
+<div [ngClass.gt-sm]="'right-sidenav left-sidenav'">
+    <mat-card>
+        <div *ngIf="user">
+            <div *ngIf="user.orderTasksDashboard == 'Today->Overdue->You can do this too'">
+                <app-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></app-today>
+                <app-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
+                             [defaultTaskView]="user.defaultTaskViewOverdueView"></app-overdue>
+                <app-future *ngIf="futureTasks?.length > 0" [tasks]="futureTasks"
+                            [defaultTaskView]="user.defaultTaskViewFutureView"></app-future>
+            </div>
+            <div *ngIf="user.orderTasksDashboard == 'Overdue->Today->You can do this too'">
+                <app-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
+                             [defaultTaskView]="user.defaultTaskViewOverdueView"></app-overdue>
+                <app-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></app-today>
+                <app-future *ngIf="futureTasks?.length > 0" [tasks]="futureTasks"
+                            [defaultTaskView]="user.defaultTaskViewFutureView"></app-future>
+            </div>
+
+
+        </div>
+    </mat-card>
+</div>
+
+
+
+
+

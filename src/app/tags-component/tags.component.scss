@@ -1,0 +1,9 @@
+@import "../shared/variables";
+
+:host {
+  min-height: $min-height;
+}
+
+.tags-header {
+  margin-bottom: 25px;
+}

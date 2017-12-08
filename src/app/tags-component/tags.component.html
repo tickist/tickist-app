@@ -1,0 +1,21 @@
+<div [ngClass.gt-sm]="'right-sidenav left-sidenav'">
+    <mat-card>
+        <div class="header" fxLayout="row" fxLayoutAlign="center center">
+            <span>Tags</span>
+            <span fxFlex></span>
+
+            <change-task-view [defaultTaskView]="user?.defaultTaskViewTagsView"
+                              (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+
+            <app-filter-tasks [showTags]="false"></app-filter-tasks>
+
+
+        </div>
+
+
+        <app-tasks-list [tasks]="tasks" [taskView]="taskView"></app-tasks-list>
+
+
+    </mat-card>
+</div>
+

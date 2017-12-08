@@ -1,0 +1,42 @@
+@import "../shared/variables";
+
+mat-list-item {
+  cursor: pointer;
+  p {
+    margin: 0 5px 0 5px;
+  }
+  &:hover {
+    background: gray;
+    margin-right:10px;
+  }
+}
+
+.fa {
+  cursor: pointer;
+}
+
+.close {
+  float: right;
+}
+
+#steps {
+   // position:fixed;
+  padding-left: 0;
+  list-style:none;
+}
+.step {
+ .hover-visible {
+   visibility: hidden;
+   margin-right: 5px;
+ }
+  &:hover {
+    .hover-visible {
+      visibility: visible;
+    }
+  }
+}
+
+.active {
+  background: gray;
+  margin-right:10px;
+}

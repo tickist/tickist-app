@@ -1,0 +1,8 @@
+@import "../../shared/variables";
+
+:host {
+  div {
+    background-color: $background_card_color;
+    margin-left: 20px;
+  }
+}

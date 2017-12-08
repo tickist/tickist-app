@@ -1,0 +1,10 @@
+@import "../commons";
+
+
+:host {
+  button {
+    @extend .tickist-icon-button;
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+}

@@ -1,0 +1,9 @@
+@import "../../shared/commons";
+
+:host {
+  cursor: pointer;
+  margin-right:10px;
+  .fa {
+    font-size: 42px;
+  }
+}

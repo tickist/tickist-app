@@ -1,0 +1,86 @@
+{
+  "id": 1,
+  "name": "New task www.example.com",
+  "owner": {
+    "username": "bill",
+    "avatar": "http://localhost:8000/media/site_media/images/default_images/default_avatar_user.png",
+    "id": 1,
+    "email": "bill@example.com",
+    "avatar_url": "/site_media/images/default_images/default_avatar_user.png"
+  },
+  "author": {
+    "username": "bill",
+    "avatar": "http://localhost:8000/media/site_media/images/default_images/default_avatar_user.png",
+    "id": 1,
+    "email": "bill@example.com",
+    "avatar_url": "/site_media/images/default_images/default_avatar_user.png"
+  },
+  "priority": "B",
+  "description": "",
+  "task_list": 1,
+  "task_project": {
+    "id": 1,
+    "name": "Inbox",
+    "color": "#2c86ff",
+    "share_with": [
+      {
+        "username": "bill",
+        "avatar": "http://localhost:8000/media/site_media/images/default_images/default_avatar_user.png",
+        "id": 1,
+        "email": "bill@example.com",
+        "avatar_url": "/site_media/images/default_images/default_avatar_user.png"
+      }], "task_finish_date": "22-05-2017"
+  },
+  "task_list_pk": 1,
+  "estimate_time": 0,
+  "time": 0,
+  "ancestor": null,
+  "creation_date": "2016-06-26T21:54:34.422000Z",
+  "modification_date": "2017-05-22T20:52:32.688758Z",
+  "finish_date": "25-07-2016",
+  "finish_time": null,
+  "type_finish_date": 1,
+  "percent": 0,
+  "repeat": 1,
+  "repeat_delta": 1,
+  "from_repeating": 0,
+  "status": 0,
+  "when_complete": "2016-07-28T22:48:19.145000Z",
+  "owner_pk": 1,
+  "is_active": true,
+  "suspend_date": null,
+  "tags": [],
+  "pinned": false,
+  "finish_date_dateformat": "2016-07-25",
+  "steps": [{
+    "id": 1,
+    "name": "step 1",
+    "task": 2031,
+    "author": 1,
+    "owner": 1,
+    "creation_date": "2016-06-26T21:54:34.463000Z",
+    "modification_date": "2017-05-22T20:52:32.597706Z",
+    "status": 0,
+    "order": 0
+  }, {
+    "id": 2,
+    "name": "step 2",
+    "task": 2031,
+    "author": 1,
+    "owner": 1,
+    "creation_date": "2016-06-26T21:54:34.461000Z",
+    "modification_date": "2017-05-22T20:52:32.626915Z",
+    "status": 0,
+    "order": 1
+  }, {
+    "id": 3,
+    "name": "step 3",
+    "task": 2031,
+    "author": 1,
+    "owner": 1,
+    "creation_date": "2016-06-26T21:54:34.456000Z",
+    "modification_date": "2017-05-22T20:52:32.655893Z",
+    "status": 0,
+    "order": 2
+  }]
+}

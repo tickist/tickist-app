@@ -1,0 +1,24 @@
+<mat-card>
+    <div>
+        <app-tag label="All tasks" id="allTasks" (singleClick)="selectTagSingleClick($event)"
+                 (doubleClick)="selectTagDoubleClick($event)"></app-tag>
+        <app-tag label="All tags" id="allTags" (singleClick)="selectTagSingleClick($event)"
+                 (doubleClick)="selectTagDoubleClick($event)"></app-tag>
+        <app-tag *ngFor="let tag of tags; trackBy: trackByFn" [label]="tag.name" [id]="tag.id" [tasksCounter]="tag.tasksCounter"
+                 (singleClick)="selectTagSingleClick($event)"
+                 (doubleClick)="selectTagDoubleClick($event)" [tag]="tag"></app-tag>
+        <app-tag label="Without tags" id="withoutTags" (singleClick)="selectTagSingleClick($event)"
+                 (doubleClick)="selectTagDoubleClick($event)"></app-tag>
+    </div>
+
+</mat-card>
+<mat-card>
+    <form [formGroup]="createTagForm" (ngSubmit)="createTag(createTagForm.value)">
+        <mat-form-field [ngStyle]="{'margin-left':'20px'}">
+            <input matInput name="tag-name" formControlName="name" placeholder="Tag name">
+            <mat-error *ngIf="createTagForm.controls['name'].hasError('required')">Name is required</mat-error>
+        </mat-form-field>
+
+        <button mat-button>Create tag</button>
+    </form>
+</mat-card>

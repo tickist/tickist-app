@@ -1,0 +1,59 @@
+<tickist-pin-button [pinned]="task.pinned" *ngIf="isRightMenuVisible || task.pinned" (click)="emitTogglePinClickEvent()">
+
+</tickist-pin-button>
+<tickist-menu-button [icon]="'fa-edit'"
+                     [routerLink]="['/home/task', task.id]"
+                     [matTooltip]="'edit task'"
+                     *ngIf="isRightMenuVisible">
+</tickist-menu-button>
+
+<tickist-menu-button [icon]="'fa-ellipsis-v'"
+                     [matMenuTriggerFor]="menu"
+                     (onMenuClose)="emitOnMenuClose($event)"
+                     (onMenuOpen)="emitOnMenuOpen($event)"
+                     *ngIf="isRightMenuVisible">
+</tickist-menu-button>
+
+<mat-menu #menu="matMenu" >
+
+    <div>
+        <span>Priority</span>
+        <div>
+            <mat-button-toggle-group [value]="task.priority" (change)="emitChangePriorityClickEvent($event)">
+                <mat-button-toggle [value]="'A'">A</mat-button-toggle>
+                <mat-button-toggle [value]="'B'">B</mat-button-toggle>
+                <mat-button-toggle [value]="'C'">C</mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+    </div>
+    <div>
+        <span>Change date</span>
+        <div style="margin-top:10px">
+            <tickist-menu-button [icon]="'fa-desktop'"
+                                 [matTooltip]="'today'"
+                                 (click)="emitChangeDataClickEvent('today')">
+            </tickist-menu-button>
+            <tickist-menu-button [icon]="'fa-sun-o'"
+                                 [matTooltip]="'next day'"
+                                 (click)="emitChangeDataClickEvent('next_day')">
+            </tickist-menu-button>
+            <tickist-menu-button [icon]="'fa-reply'"
+                                 [matTooltip]="'next week'"
+                                 [transform]="'rotate(-180deg)'"
+                                 (click)="emitChangeDataClickEvent('next_week')">
+            </tickist-menu-button>
+            <tickist-menu-button [icon]="'fa-reply-all'"
+                                 [matTooltip]="'next month'"
+                                 [transform]="'rotate(-180deg)'"
+                                 (click)="emitChangeDataClickEvent('next_month')">
+            </tickist-menu-button>
+        </div>
+    </div>
+    <div id="delete-button">
+        <button mat-button (click)="emitDeleteTaskEvent()"><span>delete</span></button>
+    </div>
+
+
+</mat-menu>
+
+

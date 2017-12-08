@@ -1,0 +1,275 @@
+<div fxLayoutAlign="start start" fxLayout="row">
+    <div fxFlex fxFlex.xs="0" fxFlex.sm="0">
+
+    </div>
+
+    <mat-card *ngIf="user" fxFlex="600px" fxFlex.xs="100" fxFlex.sm="100">
+
+        <div fxLayout="column" fxLayoutAlign="center none">
+            <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
+                                                                 aria-hidden="true"></i></span></div>
+            <div fxLayout="row">
+                <div fxFlex="30%">
+                    <mat-list>
+                        <mat-list-item (click)="changeActiveItemInMenu('main')"
+                                       [ngClass]="{'active': checkActiveItemInMenu('main')}">
+
+                            <i class="fa fa-pencil-square-o menu_icon"></i>
+
+                            <p [fxHide.xs]="1"><span>Main</span></p>
+
+
+                        </mat-list-item>
+
+                        <mat-list-item (click)="changeActiveItemInMenu('password')"
+                                       [ngClass]="{'active': checkActiveItemInMenu('password')}">
+                            <i class="fa fa-wrench menu_iconn"></i>
+
+                            <p [fxHide.xs]="1"><span>Password</span></p>
+
+                        </mat-list-item>
+
+                        <mat-list-item (click)="changeActiveItemInMenu('notifications')"
+                                       [ngClass]="{'active': checkActiveItemInMenu('notifications')}">
+                            <i class="fa fa-bell menu_icon"></i>
+
+
+                            <p [fxHide.xs]="1"><span>Notifications</span></p>
+
+                        </mat-list-item>
+
+                        <mat-list-item (click)="changeActiveItemInMenu('settings')"
+                                       [ngClass]="{'active': checkActiveItemInMenu('settings')}">
+                            <i class="fa fa-cog menu_icon"></i>
+
+
+                            <p [fxHide.xs]="1"><span>Settings</span></p>
+
+                        </mat-list-item>
+
+
+                    </mat-list>
+                </div>
+                <div fxFlex="70%">
+                    <div [hidden]="!menu.main">
+
+
+                        <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="userData"
+                              *ngIf="userData" (ngSubmit)="onSubmitUserData(userData.value)" autocomplete="off"
+                              novalidate>
+                            <mat-form-field>
+                                <input matInput placeholder="username" formControlName="username">
+
+
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <input matInput placeholder="email" formControlName="email">
+                            </mat-form-field>
+
+                        </form>
+
+                        <img [src]="staticUrl + user.avatarUrl | avatarsize: '64x64'">
+                        <button (click)="changeAvatarTrigger()" mat-button>Change</button>
+                        <input #changeAvatarInput type="file" name="openFile" accept="image/x-png,image/jpeg"
+                               (change)="changeAvatar($event)"/>
+                    </div>
+
+                    <div [hidden]="!menu.password">
+
+
+                        <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="changePasswordForm"
+                              (ngSubmit)="changePassword($event, changePasswordForm.value)">
+                            <div class="errror"
+                                 *ngIf="changePasswordForm.hasError('oldSameNew') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['oldPassword'].touched">
+                                New Password should not be same as old password.
+                            </div>
+                            <div class="errror"
+                                 *ngIf="changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['confirmNewPassword'].touched">
+                                Password and conform password should be the same.
+                            </div>
+
+                            <div class="errror"
+                                 *ngIf="changePasswordForm.controls['oldPassword'].hasError('minlength') && changePasswordForm.controls['oldPassword'].touched">
+                                Old password should contain at least 4 distinct characters.
+                            </div>
+                            <div class="errror"
+                                 *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength') && changePasswordForm.controls['newPassword'].touched">
+                                New Password should contain at least 4 distinct characters.
+                            </div>
+
+                            <div class="errror" *ngIf="changePasswordForm.hasError('wrongOldPassword')">
+                                Old password is not correct.
+                            </div>
+
+
+                            <mat-form-field>
+                                <input matInput id="old password" type="password" name="old password"
+                                       placeholder="Old password"
+                                       [formControl]="changePasswordForm.controls['oldPassword']"
+                                       [ngClass]="{'input-error': ((changePasswordForm.controls['oldPassword'].hasError('required') || changePasswordForm.controls['oldPassword'].hasError('minlength')) && changePasswordForm.controls['oldPassword'].touched)}">
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <input matInput id="new_password" type="password" name="net password"
+                                       placeholder="New password"
+                                       [formControl]="changePasswordForm.controls['newPassword']"
+                                       [ngClass]="{'input-error': ((changePasswordForm.controls['newPassword'].hasError('required') || changePasswordForm.controls['newPassword'].hasError('minlength') || (changePasswordForm.controls['confirmNewPassword'].touched && changePasswordForm.hasError('mismatchedPasswords')))  && changePasswordForm.controls['newPassword'].touched)}">
+
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput id="confirm_new_password" type="password" name="confirm_new_password"
+                                       placeholder="Confirm new password"
+                                       [formControl]="changePasswordForm.controls['confirmNewPassword']"
+                                       [ngClass]="{'input-error': ((changePasswordForm.controls['confirmNewPassword'].hasError('required') ||
+                                   (changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched)) && changePasswordForm.controls['confirmNewPassword'].touched)}">
+                            </mat-form-field>
+
+                            <div class="pull-right">
+                                <button type="submit" mat-button [disabled]="!changePasswordForm.valid">Change password
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+
+                    <div [hidden]="!menu.notifications" *ngIf="user">
+
+                        <div fxLayout="column" fxLayoutAlign="space-between none"><span class="title">Please send me an email notification:</span>
+
+                            <mat-checkbox [(ngModel)]="dailySummaryCheckbox" aria-label="Switch 1"
+                                          (change)="toggleDailySumary()">
+
+
+                            </mat-checkbox>
+                            with the list of my tasks for every day at
+                            <p-calendar id="daily_summary" (onFocus)="changeUserDetails()"
+                                        (onBlur)="changeUserDetails()"
+                                        [(ngModel)]="user.dailySummaryHour" [timeOnly]="true"
+                                        [disabled]="!dailySummaryCheckbox"></p-calendar>
+
+
+                            <mat-checkbox [(ngModel)]="user.removesMeFromSharedList" aria-label="Switch 2"
+                                          (change)="changeUserDetails()">
+                                when another user removes me from a shared list
+                            </mat-checkbox>
+
+
+                            <mat-checkbox [(ngModel)]="user.assignsTaskToMe" aria-label="Switch 3"
+                                          (change)="changeUserDetails()">
+                                when another user assigns a task to me
+                            </mat-checkbox>
+
+
+                            <mat-checkbox [(ngModel)]="user.completesTaskFromSharedList" aria-label="Switch 4"
+                                          (change)="changeUserDetails()">
+                                when another user completes a task from a shared list
+                            </mat-checkbox>
+
+                            <mat-checkbox [(ngModel)]="user.changesTaskFromSharedListThatIsAssignedToMe"
+                                          aria-label="Checkbox 5"
+                                          (change)="changeUserDetails()">
+                                when another user changes a task from a shared list that is assigned to me
+                            </mat-checkbox>
+
+                            <mat-checkbox [(ngModel)]="user.changesTaskFromSharedListThatIAssignedToHimHer"
+                                          aria-label="Switch 6"
+                                          (change)="changeUserDetails()">
+                                when another user changes a task from a shared list that I assigned to him/her
+                            </mat-checkbox>
+
+
+                            <mat-checkbox [(ngModel)]="user.leavesSharedList" aria-label="Switch 7"
+                                          (change)="changeUserDetails()">
+                                when another user leaves a shared list
+                            </mat-checkbox>
+
+                            <mat-checkbox [(ngModel)]="user.sharesListWithMe" aria-label="Switch 8"
+                                          (change)="changeUserDetails()">
+                                when another user shares a list with me
+                            </mat-checkbox>
+
+
+                            <mat-checkbox [(ngModel)]="user.deletesListSharedWithMe" aria-label="Switch 9"
+                                          (change)="changeUserDetails()">
+                                when another user deletes a list shared with me
+                            </mat-checkbox>
+                        </div>
+
+
+                    </div>
+
+                    <div [hidden]="!menu.settings">
+                        <div fxLayout="column" fxLayoutAlign="space-between none">
+                            <mat-form-field>
+                                <mat-select (change)="changeUserDetails()" placeholder="Tasks order in dashboard"
+                                            [(ngModel)]="user.orderTasksDashboard" name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of tasksOrderOptions" [value]="option">
+                                        {{ option }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select (change)="changeUserDetails()" placeholder="Default task view"
+                                            [(ngModel)]="user.defaultTaskView" name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of defaultTaskViewOptions" [value]="option.name">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select (change)="changeUserDetails()"
+                                            placeholder="Default task view on todays tasks"
+                                            [(ngModel)]="user.defaultTaskViewTodayView" name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of defaultTaskViewOptions" [value]="option.name">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select (change)="changeUserDetails()"
+                                            placeholder="Default task view on overdue tasks"
+                                            [(ngModel)]="user.defaultTaskViewOverdueView" name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of defaultTaskViewOptions" [value]="option.name">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select (change)="changeUserDetails()"
+                                            placeholder="Default task view on future tasks"
+                                            [(ngModel)]="user.defaultTaskViewFutureView" name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of defaultTaskViewOptions" [value]="option.name">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select (change)="changeUserDetails()" placeholder="Default task view on tags "
+                                            [(ngModel)]="user.defaultTaskViewTagsView" name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of defaultTaskViewOptions" [value]="option.name">
+                                        {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-checkbox [(ngModel)]="user.dialogTimeWhenTaskFinishedInProject"
+                                          aria-label="Switch 9"
+                                          (change)="changeUserDetails()">
+                                Dialog with real time and estimation time after finish task
+                            </mat-checkbox>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </mat-card>
+
+
+    <div fxFlex fxFlex.xs="0" fxFlex.sm="0">
+
+    </div>
+
+</div>

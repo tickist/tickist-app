@@ -1,0 +1,9 @@
+<div class="header" fxLayout="row" fxLayoutAlign="start center">
+    <div fxFlex fxLayoutAlign="start center" ><span >Tasks for {{ activeDay?.format("DD-MM-YYYY")|datetostring }}</span></div>
+    <span fxFlex></span>
+    <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+</div>
+
+
+
+<app-tasks-list [tasks]="tasks" [taskView]="taskView"></app-tasks-list>

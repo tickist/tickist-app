@@ -1,0 +1,35 @@
+@import "../../shared/variables";
+@import "../../shared/commons";
+
+:host {
+  button {
+    @extend .tickist-icon-button;
+  }
+}
+
+.pinned {
+  transform: rotate(-45deg);
+  color: $orange !important;
+  visibility: visible !important;
+  &:hover {
+    transform: rotate(0deg);
+    color: $white;
+    .fa {
+      color: $white;
+    }
+  }
+  .fa {
+    color: $orange !important;
+  }
+
+}
+
+.unpinned {
+  &:hover {
+    transform: rotate(-45deg);
+    color: $orange !important;
+    .fa {
+      color: $orange !important;
+    }
+  }
+}

@@ -1,0 +1,174 @@
+@import "../shared/variables";
+
+ h1 {
+    text-align: center;
+    opacity: 1;
+    font-weight: 300;
+    font-size: 3rem;
+    line-height: 3.44rem;
+    margin: 1.72rem 0px 1.72rem 0px;
+    text-transform: uppercase;
+  }
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    color: #333;
+}
+
+p {
+  line-height: 28px;
+  font-weight: 300;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  font-weight: 300;
+  font-size: 16px;
+  color: #555;
+  -webkit-font-smoothing: antialiased;
+}
+.top {
+  background-color: $background_card_color;
+  .top-text {
+    opacity: 1;
+    font-weight: 300;
+    font-size: 3rem;
+    line-height: 3.44rem;
+    margin: 1.72rem 0px 1.72rem 0px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .middle-text {
+    opacity: 1;
+    line-height: 1.72rem;
+    text-align: center;
+    span {
+      color: #11a8ab
+    }
+  }
+  .button {
+    background-color: $orange;
+    color: $white;
+  }
+  .button-wrapper {
+    padding: 40px 0 40px 0
+  }
+}
+.images-box {
+  width: 100%;
+  max-width: 100%;
+  min-height:0;
+
+  div {
+    position: relative;
+    min-height:0;
+  }
+  img {
+    max-width: 100%;
+    position: absolute;
+    margin: 0 auto;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+  }
+  .img_main {
+    position: relative;
+  }
+}
+
+span {
+  color: $white;
+}
+
+#about {
+  background-color: $white;
+  padding-bottom: 40px;
+
+  p {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  span {
+    color: black;
+  }
+}
+
+#efficient-time-management {
+  background-image: url('/assets/images/landing_page/wallpaper1.png');
+  background-color: $white;
+  background-size: 100%;
+  background-repeat: no-repeat;
+
+  div {
+    max-height:450px;
+    height: 400px;
+  }
+  h1 {
+    color: $white;
+  }
+  p {
+    color: $white;
+    margin: 0 15px 0 15px;
+  }
+}
+
+#team {
+  background-color: $white;
+  .team-member {
+    text-align: center;
+  }
+  p {
+    margin: 15px;
+  }
+}
+
+#quota {
+  background-image: url('/assets/images/landing_page/2.png');
+  background-color: $white;
+  max-height: 450px;
+  min-height: 370px;
+  h1 {
+    color: $white;
+  }
+  div {
+    width: 100%;
+    padding: 0 15px 0 15px;
+    span {
+      float:right;
+
+    }
+  }
+}
+
+#contact {
+  background-color: $white;
+  a {
+
+    color: #3498db;
+    word-wrap: break-word;
+    cursor: pointer;
+    -webkit-transition: color .1s ease-in,background .1s ease-in;
+    -moz-transition: color .1s ease-in,background .1s ease-in;
+    -ms-transition: color .1s ease-in,background .1s ease-in;
+    -o-transition: color .1s ease-in,background .1s ease-in;
+    transition: color .1s ease-in,background .1s ease-in;
+  }
+
+}
+
+footer {
+  background-color: #394264;
+  a {
+    color: #11a8ab;
+  }
+  h4 {
+    color: $white;
+  }
+
+
+}
+

@@ -1,0 +1,19 @@
+<div fxLayout="column">
+    <div class="tag-row" fxLayout="row" fxLayoutAlign="space-around center" [ngClass]="{'is-active': isActive}">
+        <div class="tag-name" fxFlex  fxLayout="row" fxLayoutAlign="start center" [matTooltip]="label">
+            <i class="fa fa-tag"></i>
+            <span>{{ label }}</span>
+        </div>
+        <div fxFlex></div>
+        <span class="task-counter">{{ tasksCounter }}</span>
+        <i *ngIf="tag" class="fa fa-pencil-square-o" aria-hidden="true" (click)="toggleEditMode()"></i>
+    </div>
+    <form [formGroup]="editTagForm" novalidate (ngSubmit)="editTag(editTagForm.value)" *ngIf="tag && editMode" >
+        <mat-form-field [ngStyle]="{'margin-left':'20px', 'margin-top': '5px'}">
+            <input matInput name="tag-name" formControlName="name" placeholder="Tag name">
+            <mat-error *ngIf="editTagForm.controls['name'].hasError('required')">Name is required</mat-error>
+        </mat-form-field>
+        <button mat-button type="submit">Change name</button>
+        <button mat-button type="button" (click)="deleteTag()">Delete</button>
+    </form>
+</div>

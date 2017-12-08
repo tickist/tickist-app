@@ -1,0 +1,36 @@
+<div *ngIf="typeFinishDateOptions && task" fxLayout="column">
+    Complete:
+    <mat-radio-group [value]="typeFinishDate" (change)="saveTask($event, 'typeFinishDate')">
+        <mat-radio-button [ngStyle]="{'margin-right': '10px'}" *ngFor="let option of typeFinishDateOptions"
+                          [value]="option.id">
+            {{ option.name }}
+        </mat-radio-button>
+    </mat-radio-group>
+    <div fxLayout="row" fxLayoutAlign="space-between center" >
+        <mat-form-field>
+            <input matInput [matDatepickerFilter]="minFilter"
+                   [(ngModel)]="finishDate"
+                   (focus)="picker.open()"
+                   (click)="picker.open()"
+                   [matDatepicker]="picker"
+                   (dateChange)="saveTask($event)"
+                   (dateInput)="saveTask($event)"
+                   placeholder="Choose a date"
+                   #finishDateInputViewChild="ngModel">
+            <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishDate($event)" matSuffix></tickist-menu-button>
+            <mat-error
+                    *ngIf="finishDateInputViewChild.invalid && (finishDateInputViewChild.dirty || finishDateInputViewChild.touched)">
+                Date format is invalid
+            </mat-error>
+            <mat-datepicker #picker></mat-datepicker>
+
+        </mat-form-field>
+
+        <mat-form-field *ngIf="finishDate">
+            <input matInput #finishTimeInputViewChild="ngModel" type="time" [(ngModel)]="finishTime"
+                   placeholder="Choose a time (optional)">
+            <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishTime($event)" matSuffix></tickist-menu-button>
+        </mat-form-field>
+    </div>
+
+</div>

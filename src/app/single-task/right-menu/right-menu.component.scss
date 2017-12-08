@@ -1,0 +1,27 @@
+@import "../../shared/variables";
+
+:host {
+  float: right;
+  width: 90px;
+  button {
+    display: inline-block;
+  }
+  button:not(.pinned) {
+    visibility: hidden;
+  }
+  &:hover {
+    .right-menu {
+      float: right;
+      button {
+        visibility: visible;
+      }
+
+    }
+  }
+
+}
+
+span {
+    color: $white;
+  }
+
