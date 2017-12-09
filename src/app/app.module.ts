@@ -112,6 +112,9 @@ export function instrumentOptions() {
 }
 
 
+export function tokenGetter() {
+  return localStorage.getItem('JWT');
+}
 
 @NgModule({
   imports: [MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
@@ -223,9 +226,7 @@ export class TickistMaterialModule {
         headerName: 'Authorization',
         authScheme: '',
         whitelistedDomains: ['localhost:4200', 'tickist.com', 'localhost:8000'],
-        tokenGetter: () => {
-          return localStorage.getItem('JWT');
-        }
+        tokenGetter: tokenGetter
       }
     })
   ],
