@@ -4,6 +4,11 @@ import {TaskService} from '../services/taskService';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TagService} from '../services/tagService';
 import {Tag} from '../models/tags';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/bufferWhen';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
   selector: 'app-tag',
