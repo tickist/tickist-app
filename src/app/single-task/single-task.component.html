@@ -30,7 +30,7 @@
                                  [isDisabled]="task.tags.length === 0"
                                  (click)="changeShowing('isTags')">
             </tickist-menu-button>
-            <tickist-menu-button [icon]="'fa-repeat'"
+            <tickist-menu-button [icon]="'fa-repeat'" [matTooltip]="repeatString"
                                  [isDisabled]="task.repeat == 0"
                                  (click)="changeShowing('isRepeat')">
             </tickist-menu-button>

@@ -12,6 +12,7 @@ import {Project} from '../models/projects';
 import {DeleteTaskDialog} from "app/single-task/delete-task.dialog";
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
+import {RepeatStringExtension} from "../pipes/repeatStringExtension";
 
 
 
@@ -148,6 +149,8 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
   projects: Project[];
   private ngUnsubscribe: Subject<void> = new Subject<void>();
   typeFinishDateOptions: {};
+  repeatString: '';
+  repeatStringExtension;
 
   @HostListener('mouseenter')
   onMouseEnter() {
@@ -171,6 +174,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
   constructor(public taskService: TaskService, public configurationService: ConfigurationService,
               public dialog: MatDialog, protected projectService: ProjectService, private renderer: Renderer2) {
     super(taskService, dialog);
+    this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
   }
 
   ngOnInit() {
@@ -186,6 +190,9 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     if (this.mediaChange && this.mediaChange.mqAlias === 'xs') {
       this.dateFormat = 'DD-MM';
     }
+    const repeatDelta = this.task.repeatDelta;
+    const repeatDeltaExtension = this.repeatStringExtension.transform(this.task.repeat);
+    this.repeatString = `every ${repeatDelta} ${repeatDeltaExtension}`;
   }
 
   ngAfterViewInit() {
