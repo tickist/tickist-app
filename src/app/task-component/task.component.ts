@@ -357,9 +357,10 @@ export class TaskComponent implements OnInit, OnDestroy {
       this.task.fromRepeating = values['repeat']['fromRepeating'];
       this.task.estimateTime = values['extra']['estimateTime'];
       this.task.time = values['extra']['time'];
+      // We need to know which step will be deleted in the backend
       this.task.steps = this.task.steps.filter(step => step.delete);
       values['steps'].forEach((step, index) => {
-        if (step.name !== '' && !step.id) {
+        if (step.name !== '') {
           this.task.steps.push(new Step({'id': step.id, 'name': step.name, 'order': index, 'status': 0}));
         }
       });

@@ -5,12 +5,12 @@ WORKDIR /srv/tickist/frontend/
 #RUN apt-get install -y ca-certificates git wget libfreetype6 libfontconfig bzip2 make g++ libssl-dev python
 
 
-COPY package.json package-lock.json /srv/tickist/frontend/
+COPY . /srv/tickist/frontend/
 RUN rm -rf node_modules && npm set progress=false && npm config set depth 0 && npm cache clean --force
 ## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
 RUN npm install
 
-CMD /bin/bash -c 'npm install; npm start'
+#CMD /bin/bash -c 'npm install'
 
 #RUN npm install npm@5.4.2 -g
 
