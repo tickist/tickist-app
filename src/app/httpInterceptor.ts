@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+
 import {
   HttpInterceptor,
   HttpRequest,
@@ -11,14 +11,15 @@ import {
   HttpErrorResponse
 } from "@angular/common/http";
 import {Observable} from "rxjs/Observable";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/take';
-import {ConfirmationService} from "primeng/primeng";
+import {ConfigurationService} from "./services/configurationService";
+import {RouterState, RouterStateSnapshot} from "@angular/router";
+
 
 
 export class RequestInterceptorService implements HttpInterceptor {
@@ -27,7 +28,7 @@ export class RequestInterceptorService implements HttpInterceptor {
   snapshot: RouterStateSnapshot;
 
 
-  constructor(private router: Route, protected configurationService: ConfirmationService) {
+  constructor(private router: Route, protected configurationService: ConfigurationService) {
     this.state = this.router.routerState;
     this.snapshot = this.state.snapshot;
   }
