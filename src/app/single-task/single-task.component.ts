@@ -149,7 +149,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
   projects: Project[];
   private ngUnsubscribe: Subject<void> = new Subject<void>();
   typeFinishDateOptions: {};
-  repeatString: '';
+  repeatString = '';
   repeatStringExtension;
 
   @HostListener('mouseenter')

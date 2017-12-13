@@ -9,13 +9,10 @@ import {
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
-import {Http, HttpModule} from '@angular/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
 import {RouterModule} from '@angular/router';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {StoreModule} from '@ngrx/store';
-
 
 // HANDLERS
 import {MyErrorHandler} from './services/errorHandler';
@@ -30,7 +27,7 @@ import {ProjectsResolver, routes, TagsResolver, TasksResolver, TeamResolver, Use
 import {HomeComponent} from './home/home.component';
 import {AboutComponent} from './about/about.component';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {StoreLogMonitorModule, useLogMonitor} from '@ngrx/store-log-monitor';
+import {useLogMonitor} from '@ngrx/store-log-monitor';
 import {TaskService} from './services/taskService';
 import {LoginComponent} from './login/login.component';
 import {SignupComponent} from './signup/signup.component';
@@ -96,13 +93,13 @@ import {UserAvatarComponent} from './user-avatar/user-avatar.component';
 import {ProgressBarComponent} from './single-task/progress-bar/progress-bar.component';
 import {PinButtonComponent} from './single-task/pin-button/pin-button.component';
 import {RightMenuComponent} from './single-task/right-menu/right-menu.component';
-import {Moment} from "moment";
 import {MyDateAdapter} from "./shared/data-adapter";
 import {environment} from "../environments/environment";
 import {AutofocusDirective} from "./shared/autofocus";
 import { JwtModule } from '@auth0/angular-jwt';
-import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
 import { ChooseDayComponent } from './dashboard/choose-day/choose-day.component';
+import {RequestInterceptorService} from "./httpInterceptor";
 
 
 export function instrumentOptions() {
@@ -236,6 +233,7 @@ export class TickistMaterialModule {
   providers: [
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     {provide: DateAdapter, useClass: MyDateAdapter},
+    //{ provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true },
     LoggedInGuard,
     AnonymousGuard,
     UserService,
