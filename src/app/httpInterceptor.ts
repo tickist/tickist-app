@@ -23,10 +23,13 @@ import {ConfirmationService} from "primeng/primeng";
 
 export class RequestInterceptorService implements HttpInterceptor {
 
-  isRefreshingToken: boolean = false;
-  tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  state: RouterState;
+  snapshot: RouterStateSnapshot;
+
 
   constructor(private router: Route, protected configurationService: ConfirmationService) {
+    this.state = this.router.routerState;
+    this.snapshot = this.state.snapshot;
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpSentEvent | HttpHeaderResponse | HttpProgressEvent | HttpResponse<any> | HttpUserEvent<any>> {
