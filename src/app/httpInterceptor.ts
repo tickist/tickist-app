@@ -18,17 +18,15 @@ import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/take';
 import {ConfigurationService} from "./services/configurationService";
-import {RouterState, RouterStateSnapshot} from "@angular/router";
+import {Router, RouterState, RouterStateSnapshot} from "@angular/router";
 
 
 
 export class RequestInterceptorService implements HttpInterceptor {
-
   state: RouterState;
   snapshot: RouterStateSnapshot;
 
-
-  constructor(private router: Route, protected configurationService: ConfigurationService) {
+  constructor(private router: Router, protected configurationService: ConfigurationService) {
     this.state = this.router.routerState;
     this.snapshot = this.state.snapshot;
   }
