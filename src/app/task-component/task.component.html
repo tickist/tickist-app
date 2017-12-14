@@ -78,8 +78,10 @@
                         <div fxLayout="column" fxLayoutAlign="space-between none">
 
                             <mat-form-field>
-                                <input matInput (blur)="updateImmediately($event, taskForm.value)"
+                                <input matInput #taskName (blur)="updateImmediately($event, taskForm.value)"
                                        placeholder="Task name" maxlength="100" formControlName="name">
+                                <mat-hint align="end">{{taskName.value?.length || 0}}/100</mat-hint>
+                               <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">{{getErrorMessage()}}</mat-error>
                             </mat-form-field>
 
                             <mat-button-toggle-group formControlName="priority" [ngStyle]="{'width': '126px'}">
@@ -162,8 +164,9 @@
                             </mat-form-field>
 
                              <mat-form-field>
-                                <textarea matInput (blur)="updateImmediately($event, taskForm.value)"
+                                <textarea matInput #taskDescription (blur)="updateImmediately($event, taskForm.value)"
                                           placeholder="Task description" formControlName="description"></textarea>
+                                <mat-hint align="end">{{taskDescription.value?.length || 0}}/5000</mat-hint>
                             </mat-form-field>
 
                             <button type="button" mat-button (click)="deleteTask()">delete task</button>

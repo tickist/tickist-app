@@ -3,12 +3,7 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
-  HttpSentEvent,
-  HttpHeaderResponse,
-  HttpProgressEvent,
-  HttpResponse,
-  HttpUserEvent,
-  HttpErrorResponse
+  HttpErrorResponse, HttpEvent
 } from "@angular/common/http";
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/catch';
@@ -19,19 +14,21 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/take';
 import {ConfigurationService} from "./services/configurationService";
 import {Router, RouterState, RouterStateSnapshot} from "@angular/router";
+import {Injectable} from "@angular/core";
 
 
-
+@Injectable()
 export class RequestInterceptorService implements HttpInterceptor {
   state: RouterState;
   snapshot: RouterStateSnapshot;
 
-  constructor(private router: Router, protected configurationService: ConfigurationService) {
+  // constructor(protected router: Router, protected configurationService: ConfigurationService) {
+  constructor(protected router: Router, protected configurationService: ConfigurationService) {
     this.state = this.router.routerState;
     this.snapshot = this.state.snapshot;
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpSentEvent | HttpHeaderResponse | HttpProgressEvent | HttpResponse<any> | HttpUserEvent<any>> {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req)
       .catch(error => {
           if (error instanceof HttpErrorResponse) {

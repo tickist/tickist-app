@@ -1,4 +1,8 @@
-<span><span>{{ task.finishTime|date: "H:mm" }}</span><span [innerHTML]="task.name|truncate: 60 "></span> </span>
+<span>
+  <span>{{ task.finishTime|date: "H:mm" }}</span>
+  <span [innerHTML]="task.name|truncate: 60 " [matTooltip]="task.name" *ngIf="tooltip"></span>
+  <span *ngIf="!tooltip">{{ task.name }}</span>
+</span>
 <span *ngIf="onlyEstimateTime">
   <span  [matTooltip]="'estimated time'">({{ task.estimateTime|minutes2hours }})</span>
 </span>

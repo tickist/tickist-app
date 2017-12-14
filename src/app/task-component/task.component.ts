@@ -181,7 +181,7 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     return this.fb.group({
       'main': this.fb.group({
-        'name': [task.name, Validators.required],
+        'name': [task.name, [Validators.required, Validators.max(100)]],
         'priority': [task.priority, Validators.required],
         'taskProjectPk': [task.taskProject.id, Validators.required],
         'typeFinishDate': [task.typeFinishDate, Validators.required],
@@ -385,6 +385,10 @@ export class TaskComponent implements OnInit, OnDestroy {
   close() {
     // DRY
     this.location.back();
+  }
+
+  getErrorMessage(field) {
+    return field.hasError('max') ? 'Name is too long' : '';
   }
 
   initSteps(steps) {

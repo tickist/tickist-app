@@ -233,7 +233,7 @@ export class TickistMaterialModule {
   providers: [
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     {provide: DateAdapter, useClass: MyDateAdapter},
-    //{ provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true },
+
     LoggedInGuard,
     AnonymousGuard,
     UserService,
@@ -249,6 +249,7 @@ export class TickistMaterialModule {
     TeamResolver,
     UserResolver,
     TagsResolver,
+    { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true },
     {
       provide: ErrorHandler,
       useClass: MyErrorHandler

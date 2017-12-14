@@ -16,18 +16,20 @@ export class ChooseDayComponent implements OnInit {
   constructor(private configurationService: ConfigurationService) { }
 
   ngOnInit() {
-    this.selectedDate = new FormControl({disabled: true});
+    this.selectedDate = new FormControl({value: '', disabled: true});
     this.configurationService.activeDay$.subscribe((activeDay) => {
       const today = moment();
       const diffAbsTodaySelectedDate =  Math.abs(today.diff(moment(this.selectedDate.value), 'days'));
-      if (diffAbsTodaySelectedDate > 7) {
+      if (diffAbsTodaySelectedDate < 7) {
         this.selectedDate.setValue('');
       }
       const diffAbsTodayActiveDay =  Math.abs(today.diff(moment(activeDay), 'days'));
       if (diffAbsTodayActiveDay > 7) {
         this.selectedDate.setValue(activeDay.toDate());
       }
+      console.log(this.selectedDate)
     });
+
   }
 
   emitOnSelectedDate() {

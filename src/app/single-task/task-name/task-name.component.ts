@@ -12,6 +12,7 @@ export class TaskNameComponent implements OnInit, OnChanges {
   timeAndEstimateTime = false;
   onlyEstimateTime = false;
   onlyTime = false;
+  tooltip = false;
 
   constructor() {
   }
@@ -20,6 +21,9 @@ export class TaskNameComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: any) {
+    if (changes['task'].currentValue.name.length > 60) {
+       this.tooltip = true;
+    }
     if (changes['task'].currentValue.estimateTime && changes['task'].currentValue.time) {
       this.onlyEstimateTime = this.onlyTime = false;
       this.timeAndEstimateTime = true;
