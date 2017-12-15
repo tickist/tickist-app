@@ -1,7 +1,7 @@
 import {Component, Inject} from "@angular/core";
 import {MatDialogRef} from "@angular/material";
 import {FormGroup, FormBuilder} from "@angular/forms";
-import {Task} from '../models/tasks';
+import {Task} from '../../models/tasks';
 import {MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({

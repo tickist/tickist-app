@@ -1,15 +1,15 @@
 import {
   Component, OnInit, Input, OnDestroy, OnChanges, SimpleChange, ChangeDetectionStrategy,
-  AfterViewInit, HostBinding, ElementRef, ViewChild, Renderer2, HostListener
+  AfterViewInit, ElementRef, ViewChild, Renderer2, HostListener
 } from '@angular/core';
 import {TaskService} from '../services/taskService';
 import {Task} from '../models/tasks';
 import {ConfigurationService} from '../services/configurationService';
-import {TimeDialog} from './time-dialog.component';
+import {TimeDialog} from './time-dialog/time-dialog.component';
 import {MatDialog} from '@angular/material';
 import {ProjectService} from '../services/projectService';
 import {Project} from '../models/projects';
-import {DeleteTaskDialog} from "app/single-task/delete-task.dialog";
+import {DeleteTaskDialogComponent} from "app/single-task/delete-task-dialog/delete-task.dialog.component";
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
 import {RepeatStringExtension} from "../pipes/repeatStringExtension";
@@ -116,7 +116,7 @@ export class SingleTask {
 
 
   deleteTask() {
-    const dialogRef = this.dialog.open(DeleteTaskDialog);
+    const dialogRef = this.dialog.open(DeleteTaskDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.taskService.deleteTask(this.task);

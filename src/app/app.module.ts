@@ -37,7 +37,7 @@ import {ForgotPasswordComponent} from './forgot-password/forgot-password.compone
 import {TagService} from './services/tagService';
 import {NavComponent} from './nav-component/nav.component';
 import {TagsComponent} from './tags-component/tags.component';
-import {TaskComponent, DeleteTaskConfirmationDialog} from './task-component/task.component';
+import {TaskComponent} from './task-component/task.component';
 import {ProjectComponent, EditProjectConfirmationDialog} from './project-component/project.component';
 import {TasksListComponent} from './tasks-list/tasks-list.component';
 import {TodayComponent} from './dashboard/today/today.component';
@@ -67,7 +67,7 @@ import {SingleProjectComponent} from './single-project/single-project.component'
 import {AvatarSize} from './pipes/avatarSize';
 import {CalendarModule} from 'primeng/components/calendar/calendar';
 import {ColorPickerComponent} from './project-component/color-picker';
-import {TimeDialog} from './single-task/time-dialog.component';
+import {TimeDialog} from './single-task/time-dialog/time-dialog.component';
 import {ChangeTaskViewComponent} from './shared/change-task-view-component/change-task-view.component';
 import {ErrorService} from './services/errorService';
 import {ShowApiErrorComponent} from './showApiError/showApiError';
@@ -78,7 +78,7 @@ import {reducers} from './store';
 import {ChartsModule} from 'ng2-charts/ng2-charts';
 import {EditRepeatingOptionComponent} from './edit-repeating-options/edit-repeating-option.component';
 import {DateOptionsComponent} from './date-options/date-options.component';
-import {DeleteTaskDialog} from 'app/single-task/delete-task.dialog';
+import {DeleteTaskDialogComponent} from 'app/single-task/delete-task-dialog/delete-task.dialog.component';
 import {BlankComponent, RootComponent} from './testing/test.modules';
 import {TasksFromProjectsComponent} from './tasks-from-projects/tasks-from-projects.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
@@ -93,13 +93,13 @@ import {UserAvatarComponent} from './user-avatar/user-avatar.component';
 import {ProgressBarComponent} from './single-task/progress-bar/progress-bar.component';
 import {PinButtonComponent} from './single-task/pin-button/pin-button.component';
 import {RightMenuComponent} from './single-task/right-menu/right-menu.component';
-import {MyDateAdapter} from "./shared/data-adapter";
-import {environment} from "../environments/environment";
-import {AutofocusDirective} from "./shared/autofocus";
+import {MyDateAdapter} from './shared/data-adapter';
+import {environment} from '../environments/environment';
+import {AutofocusDirective} from './shared/autofocus';
 import { JwtModule } from '@auth0/angular-jwt';
-import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { ChooseDayComponent } from './dashboard/choose-day/choose-day.component';
-import {RequestInterceptorService} from "./httpInterceptor";
+import {RequestInterceptorService} from './httpInterceptor';
 
 
 export function instrumentOptions() {
@@ -168,8 +168,7 @@ export class TickistMaterialModule {
     TagsFilterDialog,
     SortingByDialog,
     EstimateTimeDialog,
-    DeleteTaskDialog,
-    DeleteTaskConfirmationDialog,
+    DeleteTaskDialogComponent,
     EditProjectConfirmationDialog,
     TimeDialog,
     ChangeTaskViewComponent,
@@ -229,7 +228,7 @@ export class TickistMaterialModule {
   ],
   bootstrap: [AppComponent],
   entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortingByDialog, EstimateTimeDialog,
-    DeleteTaskConfirmationDialog, EditProjectConfirmationDialog, TimeDialog, DeleteTaskDialog],
+    EditProjectConfirmationDialog, TimeDialog, DeleteTaskDialogComponent],
   providers: [
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     {provide: DateAdapter, useClass: MyDateAdapter},

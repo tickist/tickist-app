@@ -20,6 +20,7 @@ import {Tag} from '../models/tags';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 import {MatAutocompleteTrigger} from '@angular/material';
+import {DeleteTaskDialogComponent} from "../single-task/delete-task-dialog/delete-task.dialog.component";
 
 @Component({
   selector: 'app-task-component',
@@ -306,14 +307,17 @@ export class TaskComponent implements OnInit, OnDestroy {
       if (newTag instanceof MatAutocompleteSelectedEvent) {
         if (newTag.option.value) {
           this.task.tags.push(newTag.option.value);
+          this.taskService.saveTask(this.task);
         }
       } else {
         const existingTag = this.tags.filter((t: Tag) => t.name === this.tagsCtrl.value)[0];
         if (existingTag) {
           this.task.tags.push(existingTag);
+          this.taskService.saveTask(this.task);
         } else {
           this.tagService.createTagDuringEditingTask(new Tag({name: this.tagsCtrl.value})).subscribe((t) => {
-            this.task.tags.push(t);
+            this.task.tags.push(new Tag(t));
+            this.taskService.saveTask(this.task);
           });
         }
       }
@@ -322,7 +326,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
     this.trigger.closePanel();
     this.tagsCtrl.reset();
-    this.taskService.saveTask(this.task);
   }
 
   removeTagFromTask(tag) {
@@ -450,7 +453,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   }
 
   deleteTask() {
-    const dialogRef = this.dialog.open(DeleteTaskConfirmationDialog);
+    const dialogRef = this.dialog.open(DeleteTaskDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.taskService.deleteTask(this.task);
@@ -459,18 +462,4 @@ export class TaskComponent implements OnInit, OnDestroy {
     });
   }
 
-}
-
-@Component({
-  selector: 'delete-task-confirmation-dialog',
-  template: `<h1 mat-dialog-title>Deleting task</h1>
-  <div mat-dialog-content>If you want to delete this task, click Yes</div>
-  <div mat-dialog-actions>
-    <button mat-button (click)='dialogRef.close(true)'>Yes</button>
-    <button mat-button (click)='dialogRef.close(false)'>No</button>
-  </div>`,
-})
-export class DeleteTaskConfirmationDialog {
-  constructor(public dialogRef: MatDialogRef<DeleteTaskConfirmationDialog>) {
-  }
 }
