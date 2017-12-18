@@ -116,10 +116,29 @@ export class UserService {
       xhr.send(formData);
     });
   }
+
   checkNewTeamMember(email) {
     const userID = localStorage.getItem('USER_ID');
     return this.http.post(`${environment.apiUrl}/user/${userID}/checkteammember/`, {'email': email});
   }
+
+  checkEmail(email) {
+    return this.http.post(`${environment.apiUrl}/check_email/`, {'email': email});
+
+  }
+//  check_email: function (email) {
+//             var url = ENV.apiEndpoint + "/check_email/";
+//             var defer = $q.defer();
+//             $http({method: 'POST', url: url, data: {'email': email}}).
+//                 success(function (data, status, headers, config) {
+//                     defer.resolve(data);
+//                 }).
+//                 error(function (data, status, headers, config) {
+//                     defer.reject(data);
+//                  });
+//             return defer.promise;
+//         },
+
 
 }
 

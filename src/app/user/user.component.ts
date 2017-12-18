@@ -76,13 +76,13 @@ export class UserComponent implements OnInit, OnDestroy {
 
 
   changeAvatarTrigger() {
-    let clickEvent = new MouseEvent('click', {bubbles: true});
+    const clickEvent = new MouseEvent('click', {bubbles: true});
     this.renderer.invokeElementMethod(this.changeAvatarInput.nativeElement,
       'dispatchEvent', [clickEvent]);
   }
 
   changeAvatar(event: any) {
-    let file = event.target.files[0];
+    const file = event.target.files[0];
     this.userService.changeAvatar(file).then((data) => {
       this.userService.loadUser();
     });

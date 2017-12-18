@@ -9,14 +9,14 @@ export function projects (state = [], action: projectsActions.ProjectsActions): 
     case projectsActions.ADD_PROJECTS:
       return (<projectsActions.AddProjects>action).payload;
     case projectsActions.CREATE_PROJECT:
-      return [...state, new Project(action.payload)];
+      return [...state, action.payload];
     case projectsActions.UPDATE_PROJECT:
       return state.map(project => {
-        return project.id === (<projectsActions.UpdateProject>action).payload.id ?  new Project(action.payload) : project;
+        return project.id === (<projectsActions.UpdateProject>action).payload.id ?  action.payload : project;
       });
     case projectsActions.DELETE_PROJECT:
       return state.filter(project => {
-        return !(project.id !== (<projectsActions.DeleteProject>action).payload.id);
+        return !(project.id === (<projectsActions.DeleteProject>action).payload.id);
       });
     default:
       return state;

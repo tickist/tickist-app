@@ -30,12 +30,20 @@ export class SignupComponent implements OnInit {
   constructor(fb: FormBuilder, private userService: UserService, protected router: Router) {
     this.userForm = fb.group({
       'username': ['', Validators.required],
-      'email': ['', [Validators.required, Validators.email]],
+      'email': ['', [Validators.required, Validators.email], this.validateEmailNotTaken.bind(this)],
       'password': ['', Validators.required]
     });
   }
 
   ngOnInit() {
+  }
+
+  validateEmailNotTaken(control: AbstractControl) {
+    return this.userService.checkEmail(control.value).map(res => {
+      if (res['is_taken']) {
+        return { emailTaken: true };
+      }
+    });
   }
 
   onSubmit(values: any): void {

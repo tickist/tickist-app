@@ -171,6 +171,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       'defaultTaskView': this.user.defaultTaskView,
       'owner': this.user.id,
       'is_active': true,
+      'share_with': [],
       'dialogTimeWhenTaskFinished': this.user.dialogTimeWhenTaskFinishedInProject
     });
   }
@@ -277,6 +278,6 @@ export class EditProjectConfirmationDialog {
   }
 
   setContent(content: string) {
-    this.content = content
+    this.content = content;
   }
 }

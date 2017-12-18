@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {UserService} from '../services/userService'
-import {Response } from '@angular/http';
+import {Response} from '@angular/http';
 import {UserLogin} from '../models/user';
-import {Router} from "@angular/router";
-import {FormGroup, FormBuilder, Validators} from "@angular/forms";
-
+import {Router} from '@angular/router';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 
 @Component({
@@ -17,7 +16,7 @@ export class LoginComponent implements OnInit {
 
   constructor(fb: FormBuilder, protected router: Router, private userService: UserService) {
     this.loginForm = fb.group({
-       'email': ['', [Validators.required, Validators.email]],
+      'email': ['', [Validators.required, Validators.email]],
       'password': ['', Validators.required]
     });
   }
@@ -27,23 +26,23 @@ export class LoginComponent implements OnInit {
 
   getErrorMessage() {
     return this.loginForm.controls['email'].hasError('required') ? 'You must enter a value' :
-        this.loginForm.controls['email'].hasError('email') ? 'Not a valid email' :
-            '';
+      this.loginForm.controls['email'].hasError('email') ? 'Not a valid email' :
+        '';
   }
 
   onSubmit(values: any) {
     console.log(values);
     this.userService.login(values).subscribe(
       (response: Response) => { // on sucesss
-          console.log(response);
-          this.router.navigate(['home']);
-        },
-        (err: any) => { // on error
-          console.log(err);
-        },
-        () => { // on completion
+        console.log(response);
+        this.router.navigate(['home']);
+      },
+      (err: any) => { // on error
+        console.log(err);
+      },
+      () => { // on completion
 
-        }
+      }
     );
   }
 

@@ -17,6 +17,7 @@
                     <input matInput placeholder="Email" formControlName="email">
                     <mat-error *ngIf="!userForm.controls['email'].hasError('required') && userForm.controls['email'].hasError('email') && userForm.controls['email'].touched">Email address is invalid</mat-error>
                     <mat-error *ngIf="userForm.controls['email'].hasError('required') && userForm.controls['email'].touched">Email is required</mat-error>
+                    <mat-error *ngIf="userForm.controls['email'].hasError('emailTaken') && userForm.controls['email'].touched">This email is already taken!</mat-error>
                 </mat-form-field>
 
             </div>
@@ -39,7 +40,7 @@
                     <span [routerLink]="['/forgot-password']">Forgot password</span>
                 </div>
                 <div>
-                    <span [routerLink]="['/login']">Have you an account? Log in</span>
+                    <span class="login-text" [routerLink]="['/login']">Have you an account? Log in</span>
                 </div>
             </div>
 

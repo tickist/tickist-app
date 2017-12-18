@@ -8,7 +8,7 @@ export function tasks (state = [], action: tasksActions.Actions) {
     case tasksActions.ADD_TASKS:
       return (<tasksActions.AddTasks>action).payload;
     case tasksActions.CREATE_TASK:
-      return [...state, new Task(action.payload)];
+      return [...state, action.payload];
     case tasksActions.UPDATE_TASK:
       return state.map(task => {
         return task.id === (<tasksActions.UpdateTask>action).payload.id ? action.payload : task;

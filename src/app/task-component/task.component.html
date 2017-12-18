@@ -81,7 +81,7 @@
                                 <input matInput #taskName (blur)="updateImmediately($event, taskForm.value)"
                                        placeholder="Task name" maxlength="100" formControlName="name">
                                 <mat-hint align="end">{{taskName.value?.length || 0}}/100</mat-hint>
-                               <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">{{getErrorMessage()}}</mat-error>
+                               <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">{{getErrorMessage(taskForm.controls['main'].controls['name'])}}</mat-error>
                             </mat-form-field>
 
                             <mat-button-toggle-group formControlName="priority" [ngStyle]="{'width': '126px'}">
