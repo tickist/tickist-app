@@ -1,6 +1,5 @@
 import {Observable} from 'rxjs/Observable';
 import {Injectable} from '@angular/core';
-import {Headers, RequestOptions} from '@angular/http';
 import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
@@ -9,7 +8,8 @@ import {SimplyUser, PendingUser} from '../models/user';
 import {MatSnackBar} from '@angular/material';
 import * as tasksAction from '../reducers/actions/tasks';
 import * as projectsAction from '../reducers/actions/projects';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
+import {Router} from '@angular/router';
 
 
 @Injectable()
@@ -19,27 +19,24 @@ export class ProjectService {
   team: SimplyUser[];
   selectedProject$: Observable<Project>;
   selectedProjectsIds$: Observable<Array<number>>;
-  headers: Headers;
-  options: RequestOptions;
-
-  constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar) {
+  
+  constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
+              protected router: Router) {
     this.projects$ = this.store.select(store => store.projects);
     this.team$ = this.store.select(store => store.team);
     this.selectedProject$ = this.store.select(store => store.selectedProject);
     this.selectedProjectsIds$ = this.store.select(store => store.selectedProjectsIds);
-    this.headers = new Headers({'Content-Type': 'application/json'});
-    this.options = new RequestOptions({headers: this.headers});
     this.team$.subscribe((team) => {
       this.team = team;
     })
   }
-
+  
   loadProjects() {
     return this.http.get<Project[]>(`${environment['apiUrl']}/project/`)
       .map(payload => payload.map(project => new Project(project)))
       .map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)));
   }
-
+  
   selectProject(project: Project) {
     this.store.dispatch(new projectsAction.SelectProject(project));
     this.store.dispatch(new tasksAction.DeleteNonFixedAssignedTo({}));
@@ -70,21 +67,23 @@ export class ProjectService {
       });
     }
   }
-
+  
   saveProject(project: Project) {
     (project.id) ? this.updateProject(project) : this.createProject(project);
   }
-
+  
   createProject(project: Project) {
     this.http.post(`${environment['apiUrl']}/project/`, project.toApi())
       .subscribe(payload => {
         this.snackBar.open('Project has been saved successfully', '', {
           duration: 2000,
         });
-        this.store.dispatch(new projectsAction.CreateProject(new Project(payload)));
+        const newProject = new Project(payload);
+        this.store.dispatch(new projectsAction.CreateProject(newProject));
+        this.router.navigate(['/home/projects', newProject.id]);
       });
   }
-
+  
   updateProject(project: Project) {
     this.http.put(`${environment['apiUrl']}/project/${project.id}/`, project.toApi())
       .subscribe(payload => {
@@ -94,8 +93,8 @@ export class ProjectService {
         });
       });
   }
-
-
+  
+  
   deleteProject(project: Project) {
     this.http.delete(`${environment['apiUrl']}/project/${project.id}/`)
       .subscribe(action => {
@@ -105,15 +104,15 @@ export class ProjectService {
         });
       });
   }
-
+  
   selectProjectsIds(ids: Array<number>) {
     this.store.dispatch(new projectsAction.NewIds(ids));
   }
-
+  
   updateElementFromSelectedProjectsIds(id: number) {
     this.store.dispatch(new projectsAction.AddNewId(id));
   }
-
+  
   deleteElementFromSelectedProjectsIds(id: number) {
     this.store.dispatch(new projectsAction.DeleteId(id));
   }

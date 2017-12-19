@@ -7,14 +7,15 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/combineLatest';
 import {Subscription} from 'rxjs/Subscription';
 import {ConfigurationService} from '../services/configurationService';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {User, SimplyUser, PendingUser} from '../models/user';
 import {UserService} from '../services/userService';
-import {MatDialogRef, MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material';
 import {environment} from '../../environments/environment';
+import {DeleteProjectConfirmationDialogComponent} from './delete-project-dialog/delete-project-dialog.component';
 
 @Component({
-  selector: 'app-project',
+    selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.scss']
 })
@@ -39,7 +40,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
               private projectService: ProjectService, private location: Location, public dialog: MatDialog,
-              private configurationService: ConfigurationService) {
+              private configurationService: ConfigurationService, protected router: Router) {
 
     this.staticUrl = environment['staticUrl'];
     this.addUserToShareWithListCtrl = new FormControl();
@@ -68,12 +69,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
               this.projectForm = this.createForm(project);
             }
             if (this.user.id === project.owner) {
-              this.deleteOrLeaveProjectLabel = 'Delete list';
+              this.deleteOrLeaveProjectLabel = 'Delete project';
 
             } else {
-              this.deleteOrLeaveProjectLabel = 'Leave list';
+              this.deleteOrLeaveProjectLabel = 'Leave project';
             }
-            return project
+            return project;
           }
         }
       );
@@ -82,11 +83,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
     });
-    this.addUserToShareWithListCtrl = new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$")]));
+    this.addUserToShareWithListCtrl = new FormControl('',
+      Validators.compose([Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]));
     this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges
       .startWith(null)
       .map(name => this.filterUsers(name));
-
   }
 
   ngOnInit() {
@@ -112,15 +113,14 @@ export class ProjectComponent implements OnInit, OnDestroy {
       this.menu[key] = false;
     }
     this.menu[menu_item] = true;
-  };
+  }
 
   checkActiveItemInMenu(menu_item) {
     // DRY
     return this.menu[menu_item];
-  };
+  }
 
   onSubmit(values) {
-    debugger;
     this.project.name = values['main']['name'];
     this.project.description = values['main']['description'];
     this.project.ancestor = values['main']['ancestor'];
@@ -182,22 +182,22 @@ export class ProjectComponent implements OnInit, OnDestroy {
     if (this.user.id === this.project.owner) {
       title = 'Delete project';
       if (this.project.shareWith.length > 1) {
-        content = `If you are sure you want to delete the shared list ${this.project.name}, click Yes. All tasks assigned to you will be deleted and tasks assigned to others will be moved to their Inbox folder.`
+        content = `If you are sure you want to delete the shared project ${this.project.name}, click Yes. All tasks assigned to you will be deleted and tasks assigned to others will be moved to their Inbox folder.`
       } else {
-        content = `If you are sure you want to delete the list ${this.project.name}  and all tasks from this list, click Yes.`
+        content = `If you are sure you want to delete the project ${this.project.name}  and all tasks from this list, click Yes.`
       }
     } else {
       title = 'Delete project';
       content = `If you are sure you want to leave the shared list ${this.project.name} click Continue. All tasks assigned to you will be deleted.`
     }
 
-    const dialogRef = this.dialog.open(EditProjectConfirmationDialog);
+    const dialogRef = this.dialog.open(DeleteProjectConfirmationDialogComponent);
     dialogRef.componentInstance.setTitle(title);
     dialogRef.componentInstance.setContent(content);
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.projectService.deleteProject(this.project);
-        this.close();
+        this.router.navigate(['/home/projects', this.user.inboxPk]);
       }
     });
 
@@ -208,7 +208,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;
 
-    const dialogRef = this.dialog.open(EditProjectConfirmationDialog);
+    const dialogRef = this.dialog.open(DeleteProjectConfirmationDialogComponent);
     dialogRef.componentInstance.setTitle(title);
     dialogRef.componentInstance.setContent(content);
     dialogRef.afterClosed().subscribe(result => {
@@ -257,27 +257,4 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 }
 
-@Component({
-  selector: 'delete-task-confirmation-dialog',
-  template: `<h1 mat-dialog-title>{{title}}</h1>
-  <div mat-dialog-content>{{content}}</div>
-  <div md-dialog-actions>
-    <button mat-button (click)="dialogRef.close(true)">Yes</button>
-    <button mat-button (click)="dialogRef.close(false)">No</button>
-  </div>`,
-})
-export class EditProjectConfirmationDialog {
-  title: string;
-  content: string;
 
-  constructor(public dialogRef: MatDialogRef<EditProjectConfirmationDialog>) {
-  }
-
-  setTitle(title: string) {
-    this.title = title;
-  }
-
-  setContent(content: string) {
-    this.content = content;
-  }
-}

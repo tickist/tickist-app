@@ -79,7 +79,6 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
       this.projectService.projects$,
       this.userService.user$,
       (projectId: any, projects: Project[], user: User) => {
-        console.log("czy tutaj jestem?")
         if (projectId && projects && projects.length > 0 && user) {
           const project = projects.filter(p => p.id === parseInt(projectId, 10))[0];
           if (project.hasOwnProperty('allDescendants')) {

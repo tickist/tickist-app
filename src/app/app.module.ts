@@ -38,7 +38,7 @@ import {TagService} from './services/tagService';
 import {NavComponent} from './nav-component/nav.component';
 import {TagsComponent} from './tags-component/tags.component';
 import {TaskComponent} from './task-component/task.component';
-import {ProjectComponent, EditProjectConfirmationDialog} from './project-component/project.component';
+import {ProjectComponent} from './project-component/project.component';
 import {TasksListComponent} from './tasks-list/tasks-list.component';
 import {TodayComponent} from './dashboard/today/today.component';
 import {OverdueComponent} from './dashboard/overdue/overdue.component';
@@ -100,6 +100,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { ChooseDayComponent } from './dashboard/choose-day/choose-day.component';
 import {RequestInterceptorService} from './httpInterceptor';
+import {DeleteProjectConfirmationDialogComponent} from './project-component/delete-project-dialog/delete-project-dialog.component';
 
 
 export function instrumentOptions() {
@@ -169,7 +170,7 @@ export class TickistMaterialModule {
     SortingByDialog,
     EstimateTimeDialog,
     DeleteTaskDialogComponent,
-    EditProjectConfirmationDialog,
+    DeleteProjectConfirmationDialogComponent,
     TimeDialog,
     ChangeTaskViewComponent,
     ShowApiErrorComponent,
@@ -228,7 +229,7 @@ export class TickistMaterialModule {
   ],
   bootstrap: [AppComponent],
   entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortingByDialog, EstimateTimeDialog,
-    EditProjectConfirmationDialog, TimeDialog, DeleteTaskDialogComponent],
+   DeleteProjectConfirmationDialogComponent, TimeDialog, DeleteTaskDialogComponent],
   providers: [
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     {provide: DateAdapter, useClass: MyDateAdapter},
