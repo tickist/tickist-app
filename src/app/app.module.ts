@@ -1,11 +1,31 @@
 import {NgModule, ErrorHandler} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
-  MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
-  MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
-  MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
-  MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule, MAT_DATE_LOCALE, DateAdapter,
-  NativeDateAdapter
+    MatButtonModule,
+    MatCheckboxModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    MatMenuModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatListModule,
+    MatCardModule,
+    MatButtonToggleModule,
+    MatChipsModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatDialogModule,
+    MatTooltipModule,
+    MatSnackBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MAT_DATE_LOCALE,
+    DateAdapter,
+    NativeDateAdapter
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
@@ -13,7 +33,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {StoreModule} from '@ngrx/store';
-
+import { ServiceWorkerModule } from '@angular/service-worker';
 // HANDLERS
 import {MyErrorHandler} from './services/errorHandler';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -47,8 +67,8 @@ import {UserComponent} from './user/user.component';
 import {TeamComponent} from './team/team.component';
 import {SingleTaskComponent, SingleTaskSimplifiedComponent} from './single-task/single-task.component';
 import {
-  FilterTasksComponent, TasksFilterDialog, AssignedToDialog,
-  SortingByDialog, EstimateTimeDialog, TagsFilterDialog
+    FilterTasksComponent, TasksFilterDialog, AssignedToDialog,
+    SortingByDialog, EstimateTimeDialog, TagsFilterDialog
 } from './filter-tasks/filter-tasks.component';
 import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configurationService';
@@ -96,165 +116,168 @@ import {RightMenuComponent} from './single-task/right-menu/right-menu.component'
 import {MyDateAdapter} from './shared/data-adapter';
 import {environment} from '../environments/environment';
 import {AutofocusDirective} from './shared/autofocus';
-import { JwtModule } from '@auth0/angular-jwt';
+import {JwtModule} from '@auth0/angular-jwt';
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
-import { ChooseDayComponent } from './dashboard/choose-day/choose-day.component';
+import {ChooseDayComponent} from './dashboard/choose-day/choose-day.component';
 import {RequestInterceptorService} from './httpInterceptor';
 import {DeleteProjectConfirmationDialogComponent} from './project-component/delete-project-dialog/delete-project-dialog.component';
 
 
 export function instrumentOptions() {
-  return {
-    monitor: useLogMonitor({visible: false, position: 'right'})
-  };
+    return {
+        monitor: useLogMonitor({visible: false, position: 'right'})
+    };
 }
 
 
 export function tokenGetter() {
-  return localStorage.getItem('JWT');
+    return localStorage.getItem('JWT');
 }
 
 @NgModule({
-  imports: [MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
-    MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
-    MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
-    MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
-  providers: [
-    {provide: DateAdapter, useClass: MyDateAdapter}
-  ],
-  exports: [MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
-    MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
-    MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
-    MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule]
+    imports: [MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
+        MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
+        MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
+        MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
+    providers: [
+        {provide: DateAdapter, useClass: MyDateAdapter}
+    ],
+    exports: [MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
+        MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
+        MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
+        MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule]
 })
 export class TickistMaterialModule {
 }
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    AboutComponent,
-    LoginComponent,
-    SignupComponent,
-    DashboardComponent,
-    ForgotPasswordComponent,
-    NavComponent,
-    TagsComponent,
-    TaskComponent,
-    ProjectComponent,
-    TasksListComponent,
-    TodayComponent,
-    OverdueComponent,
-    FutureComponent,
-    UserComponent,
-    TeamComponent,
-    SingleTaskComponent,
-    SingleTaskSimplifiedComponent,
-    FilterTasksComponent,
-    NavBarLandingPageComponent,
-    TaskNameComponent,
-    DayStatisticsComponent,
-    GlobalStatisticsComponent,
-    ColorPickerComponent,
-    TruncatePipe,
-    Minutes2hoursPipe,
-    DateToString,
-    AvatarSize,
-    TagComponent,
-    AddTaskComponent,
-    SingleProjectComponent,
-    TasksFilterDialog,
-    AssignedToDialog,
-    TagsFilterDialog,
-    SortingByDialog,
-    EstimateTimeDialog,
-    DeleteTaskDialogComponent,
-    DeleteProjectConfirmationDialogComponent,
-    TimeDialog,
-    ChangeTaskViewComponent,
-    ShowApiErrorComponent,
-    RepeatString,
-    RepeatStringExtension,
-    TypeFinishDateString,
-    AutofocusDirective,
-    EditRepeatingOptionComponent,
-    DateOptionsComponent,
-    BlankComponent,
-    RootComponent,
-    TasksFromProjectsComponent,
-    ProjectsListComponent,
-    WeekDaysComponent,
-    TagsListComponent,
-    ScrollerDirective,
-    MenuButtonComponent,
-    DisplayFinishDateComponent,
-    ToggleButtonComponent,
-    UserAvatarComponent,
-    ProgressBarComponent,
-    PinButtonComponent,
-    RightMenuComponent,
-    ChooseDayComponent
-  ],
-  imports: [BrowserModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    StoreModule.forRoot(reducers, {
-      initialState: {}
-    }),
-    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
-    SortablejsModule,
-    TickistMaterialModule,
-    MenuModule,
-    TieredMenuModule,
-    SliderModule,
-    CalendarModule,
-    ChartModule,
-    FlexLayoutModule,
-    SharedModule,
-    ChartsModule,
-    VirtualScrollModule,
-    JwtModule.forRoot({
-      config: {
-        headerName: 'Authorization',
-        authScheme: '',
-        whitelistedDomains: ['localhost:4200', 'tickist.com', 'localhost:8000'],
-        tokenGetter: tokenGetter
-      }
-    })
-  ],
-  bootstrap: [AppComponent],
-  entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortingByDialog, EstimateTimeDialog,
-   DeleteProjectConfirmationDialogComponent, TimeDialog, DeleteTaskDialogComponent],
-  providers: [
-    {provide: LocationStrategy, useClass: HashLocationStrategy},
-    {provide: DateAdapter, useClass: MyDateAdapter},
-
-    LoggedInGuard,
-    AnonymousGuard,
-    UserService,
-    TaskService,
-    ProjectService,
-    TagService,
-    ConfigurationService,
-    StatisticsService,
-    MyErrorHandler,
-    ErrorService,
-    ProjectsResolver,
-    TasksResolver,
-    TeamResolver,
-    UserResolver,
-    TagsResolver,
-    { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true },
-    {
-      provide: ErrorHandler,
-      useClass: MyErrorHandler
-    }
-  ]
+    declarations: [
+        AppComponent,
+        HomeComponent,
+        AboutComponent,
+        LoginComponent,
+        SignupComponent,
+        DashboardComponent,
+        ForgotPasswordComponent,
+        NavComponent,
+        TagsComponent,
+        TaskComponent,
+        ProjectComponent,
+        TasksListComponent,
+        TodayComponent,
+        OverdueComponent,
+        FutureComponent,
+        UserComponent,
+        TeamComponent,
+        SingleTaskComponent,
+        SingleTaskSimplifiedComponent,
+        FilterTasksComponent,
+        NavBarLandingPageComponent,
+        TaskNameComponent,
+        DayStatisticsComponent,
+        GlobalStatisticsComponent,
+        ColorPickerComponent,
+        TruncatePipe,
+        Minutes2hoursPipe,
+        DateToString,
+        AvatarSize,
+        TagComponent,
+        AddTaskComponent,
+        SingleProjectComponent,
+        TasksFilterDialog,
+        AssignedToDialog,
+        TagsFilterDialog,
+        SortingByDialog,
+        EstimateTimeDialog,
+        DeleteTaskDialogComponent,
+        DeleteProjectConfirmationDialogComponent,
+        TimeDialog,
+        ChangeTaskViewComponent,
+        ShowApiErrorComponent,
+        RepeatString,
+        RepeatStringExtension,
+        TypeFinishDateString,
+        AutofocusDirective,
+        EditRepeatingOptionComponent,
+        DateOptionsComponent,
+        BlankComponent,
+        RootComponent,
+        TasksFromProjectsComponent,
+        ProjectsListComponent,
+        WeekDaysComponent,
+        TagsListComponent,
+        ScrollerDirective,
+        MenuButtonComponent,
+        DisplayFinishDateComponent,
+        ToggleButtonComponent,
+        UserAvatarComponent,
+        ProgressBarComponent,
+        PinButtonComponent,
+        RightMenuComponent,
+        ChooseDayComponent
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
+        
+        RouterModule.forRoot(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        StoreModule.forRoot(reducers, {
+            initialState: {}
+        }),
+        !environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
+        SortablejsModule,
+        TickistMaterialModule,
+        MenuModule,
+        TieredMenuModule,
+        SliderModule,
+        CalendarModule,
+        ChartModule,
+        FlexLayoutModule,
+        SharedModule,
+        ChartsModule,
+        VirtualScrollModule,
+        JwtModule.forRoot({
+            config: {
+                headerName: 'Authorization',
+                authScheme: '',
+                whitelistedDomains: ['localhost:4200', 'tickist.com', 'localhost:8000'],
+                tokenGetter: tokenGetter
+            }
+        })
+    ],
+    bootstrap: [AppComponent],
+    entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortingByDialog, EstimateTimeDialog,
+        DeleteProjectConfirmationDialogComponent, TimeDialog, DeleteTaskDialogComponent],
+    providers: [
+        {provide: LocationStrategy, useClass: HashLocationStrategy},
+        {provide: DateAdapter, useClass: MyDateAdapter},
+        
+        LoggedInGuard,
+        AnonymousGuard,
+        UserService,
+        TaskService,
+        ProjectService,
+        TagService,
+        ConfigurationService,
+        StatisticsService,
+        MyErrorHandler,
+        ErrorService,
+        ProjectsResolver,
+        TasksResolver,
+        TeamResolver,
+        UserResolver,
+        TagsResolver,
+        {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true},
+        {
+            provide: ErrorHandler,
+            useClass: MyErrorHandler
+        }
+    ]
 })
 export class AppModule {
 

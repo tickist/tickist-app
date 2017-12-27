@@ -84,7 +84,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     });
     this.addUserToShareWithListCtrl = new FormControl('',
-      Validators.compose([Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]));
+      Validators.compose([Validators.required, Validators.email]));
     this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges
       .startWith(null)
       .map(name => this.filterUsers(name));
@@ -182,13 +182,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
     if (this.user.id === this.project.owner) {
       title = 'Delete project';
       if (this.project.shareWith.length > 1) {
-        content = `If you are sure you want to delete the shared project ${this.project.name}, click Yes. All tasks assigned to you will be deleted and tasks assigned to others will be moved to their Inbox folder.`
+        content = `If you are sure you want to delete the shared project ${this.project.name}, click Yes. All tasks assigned to you will be deleted and tasks assigned to others will be moved to their Inbox folder.`;
       } else {
-        content = `If you are sure you want to delete the project ${this.project.name}  and all tasks from this list, click Yes.`
+        content = `If you are sure you want to delete the project ${this.project.name}  and all tasks from this project, click Yes.`;
       }
     } else {
       title = 'Delete project';
-      content = `If you are sure you want to leave the shared list ${this.project.name} click Continue. All tasks assigned to you will be deleted.`
+      content = `If you are sure you want to leave the shared project ${this.project.name} click Continue. All tasks assigned to you will be deleted.`;
     }
 
     const dialogRef = this.dialog.open(DeleteProjectConfirmationDialogComponent);

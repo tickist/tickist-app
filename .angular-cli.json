@@ -1,84 +1,85 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "project": {
-    "version": "1.0.0",
-    "name": "tickist"
-  },
-  "apps": [
-    {
-      "root": "src",
-      "outDir": "dist",
-      "assets": [
-        "assets",
-        "favicon.png"
-      ],
-      "index": "index.html",
-      "main": "main.ts",
-      "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "testTsconfig": "tsconfig.spec.json",
-      "tsconfig": "tsconfig.app.json",
-      "prefix": "tickist",
-      "mobile": false,
-      "styles": [
-        "../src/style.scss",
-        "../src/app/shared/variables.scss",
-        "../src/app/shared/commons.scss",
-        "../node_modules/primeng/resources/primeng.min.css",
-        "../node_modules/primeng/resources/themes/omega/theme.css"
-      ],
-      "stylePreprocessorOptions": {
-        "includePaths": [
-          "../node_modules"
-        ]
-      },
-      "scripts": [],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.dev.ts",
-        "prod": "environments/environment.prod.ts"
-      }
-    }
-  ],
-  "e2e": {
-    "protractor": {
-      "config": "./protractor.conf.js"
-    }
-  },
-  "lint": [
-    {
-      "project": "src/tsconfig.app.json",
-      "exclude": "**/node_modules/**"
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "project": {
+        "version": "1.0.0",
+        "name": "tickist"
     },
-    {
-      "project": "src/tsconfig.spec.json",
-      "exclude": "**/node_modules/**"
+    "apps": [
+        {
+            "root": "src",
+            "outDir": "dist",
+            "assets": [
+                "assets",
+                "favicon.png"
+            ],
+            "index": "index.html",
+            "main": "main.ts",
+            "polyfills": "polyfills.ts",
+            "test": "test.ts",
+            "testTsconfig": "tsconfig.spec.json",
+            "tsconfig": "tsconfig.app.json",
+            "prefix": "tickist",
+            "mobile": false,
+            "styles": [
+                "../src/style.scss",
+                "../src/app/shared/variables.scss",
+                "../src/app/shared/commons.scss",
+                "../node_modules/primeng/resources/primeng.min.css",
+                "../node_modules/primeng/resources/themes/omega/theme.css"
+            ],
+            "stylePreprocessorOptions": {
+                "includePaths": [
+                    "../node_modules"
+                ]
+            },
+            "scripts": [],
+            "environmentSource": "environments/environment.ts",
+            "environments": {
+                "dev": "environments/environment.dev.ts",
+                "prod": "environments/environment.prod.ts"
+            },
+            serviceWorker: true
+        }
+    ],
+    "e2e": {
+        "protractor": {
+            "config": "./protractor.conf.js"
+        }
     },
-    {
-      "project": "e2e/tsconfig.e2e.json",
-      "exclude": "**/node_modules/**"
+    "lint": [
+        {
+            "project": "src/tsconfig.app.json",
+            "exclude": "**/node_modules/**"
+        },
+        {
+            "project": "src/tsconfig.spec.json",
+            "exclude": "**/node_modules/**"
+        },
+        {
+            "project": "e2e/tsconfig.e2e.json",
+            "exclude": "**/node_modules/**"
+        }
+    ],
+    "test": {
+        "karma": {
+            "config": "./karma.conf.js"
+        }
+    },
+    "defaults": {
+        "styleExt": "scss",
+        "prefixInterfaces": false,
+        "inline": {
+            "style": false,
+            "template": false
+        },
+        "spec": {
+            "class": false,
+            "component": true,
+            "directive": true,
+            "module": false,
+            "pipe": true,
+            "service": true
+        },
+        "lazyRoutePrefix": "+"
     }
-  ],
-  "test": {
-    "karma": {
-      "config": "./karma.conf.js"
-    }
-  },
-  "defaults": {
-    "styleExt": "scss",
-    "prefixInterfaces": false,
-    "inline": {
-      "style": false,
-      "template": false
-    },
-    "spec": {
-      "class": false,
-      "component": true,
-      "directive": true,
-      "module": false,
-      "pipe": true,
-      "service": true
-    },
-    "lazyRoutePrefix": "+"
-  }
 }
