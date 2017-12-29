@@ -17,11 +17,12 @@
                 <mat-form-field>
                     <input matInput type="password" placeholder="Password" formControlName="password">
                     <mat-error *ngIf="loginForm.controls['password'].hasError('required')">Password is required</mat-error>
+                    <mat-error *ngIf="loginForm.controls['password'].hasError('incorrectLoginPassword')">Login or password are incorrect</mat-error>
                 </mat-form-field>
             </div>
 
             <div>
-                <button fxFlex mat-button [disabled]="!loginForm.valid" type="submit" class="btn btn-default">Login
+                <button fxFlex mat-button  type="submit">Login
                 </button>
             </div>
 

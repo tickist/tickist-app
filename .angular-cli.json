@@ -38,7 +38,7 @@
                 "dev": "environments/environment.dev.ts",
                 "prod": "environments/environment.prod.ts"
             },
-            serviceWorker: true
+            "serviceWorker": true
         }
     ],
     "e2e": {
