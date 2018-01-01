@@ -1,11 +1,12 @@
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
+import {ConfigurationService} from './configurationService';
 
 
 @Injectable()
 export class ErrorService {
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, protected configurationService: ConfigurationService) {
   }
 
   logError(error: Error, location, user) {
@@ -19,4 +20,5 @@ export class ErrorService {
       return res;
     });
   }
+
 }

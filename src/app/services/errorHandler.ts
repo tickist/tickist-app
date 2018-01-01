@@ -13,7 +13,7 @@ export class MyErrorHandler implements ErrorHandler {
     }
     //debugger
     try {
-      this.errorService.logError(error, window.location.href, window.localStorage["USER_ID"]);
+      this.errorService.logError(error, window.location.href, window.localStorage['USER_ID']);
       console.group('ErrorHandler');
       console.error(error.message);
       console.error(error.stack);

@@ -1,11 +1,11 @@
 import {Observable} from 'rxjs/Observable';
 import {Injectable} from '@angular/core';
-import {Headers, RequestOptions, Response} from '@angular/http';
+import {Headers, RequestOptions} from '@angular/http';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../store';
 import 'rxjs/add/operator/map';
 import * as moment from 'moment';
-import {MediaChange, ObservableMedia} from '@angular/flex-layout';
+import {ObservableMedia} from '@angular/flex-layout';
 import * as configurationAction from '../reducers/actions/configuration';
 
 
@@ -14,20 +14,19 @@ import * as configurationAction from '../reducers/actions/configuration';
 export class ConfigurationService {
   activeDay$: Observable<moment.Moment>;
   detectApiError$: Observable<any>;
+  offlineModeNotification$: Observable<any>;
   leftSidenavVisibility$: Observable<any>;
   rightSidenavVisibility$: Observable<any>;
   progressBar$: Observable<any>;
-  headers: Headers;
-  options: RequestOptions;
   configuration: {};
 
   constructor(private store: Store<AppStore>, protected media: ObservableMedia) {
     this.activeDay$ = this.store.select(store => store.activeDay);
     this.detectApiError$ = this.store.select(store => store.detectApiError);
+    this.offlineModeNotification$ = this.store.select(store => store.offlineModeNotification);
     this.leftSidenavVisibility$ = this.store.select(store => store.leftSidenavVisibility);
     this.rightSidenavVisibility$ = this.store.select(store => store.rightSidenavVisibility);
     this.progressBar$ = this.store.select(store => store.progressBar);
-    this.options = new RequestOptions({headers: this.headers});
     this.configuration = {
       'commons': {
         'COLOR_LIST_DEFAULT': '#2c86ff',
@@ -95,6 +94,10 @@ export class ConfigurationService {
 
   updateDetectApiError(isVisible: boolean) {
     this.store.dispatch(new configurationAction.UpdateDetectApiError(isVisible));
+  }
+  
+  updateOfflineModeNotification(isActive: boolean) {
+      this.store.dispatch(new configurationAction.UpdateOfflineModeNotification(isActive));
   }
 
   changeOpenStateLeftSidenavVisibility(state) {

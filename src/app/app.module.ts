@@ -90,7 +90,6 @@ import {ColorPickerComponent} from './project-component/color-picker';
 import {TimeDialog} from './single-task/time-dialog/time-dialog.component';
 import {ChangeTaskViewComponent} from './shared/change-task-view-component/change-task-view.component';
 import {ErrorService} from './services/errorService';
-import {ShowApiErrorComponent} from './showApiError/showApiError';
 import {RepeatString} from './pipes/repeatString';
 import {RepeatStringExtension} from './pipes/repeatStringExtension';
 import {TypeFinishDateString} from './pipes/typeFinishDateString';
@@ -121,6 +120,9 @@ import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {ChooseDayComponent} from './dashboard/choose-day/choose-day.component';
 import {RequestInterceptorService} from './httpInterceptor';
 import {DeleteProjectConfirmationDialogComponent} from './project-component/delete-project-dialog/delete-project-dialog.component';
+import { ShowApiErrorComponent } from './show-api-error/show-api-error.component';
+import { ShowOfflineModeComponent } from './show-offline-mode/show-offline-mode.component';
+import { ShowNotificationAboutNewDayComponent } from './show-notification-about-new-day/show-notification-about-new-day.component';
 
 
 export function instrumentOptions() {
@@ -214,13 +216,14 @@ export class TickistMaterialModule {
         ProgressBarComponent,
         PinButtonComponent,
         RightMenuComponent,
-        ChooseDayComponent
+        ChooseDayComponent,
+        ShowOfflineModeComponent,
+        ShowNotificationAboutNewDayComponent
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
-        
         RouterModule.forRoot(routes),
         CommonModule,
         FormsModule,
@@ -256,7 +259,6 @@ export class TickistMaterialModule {
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         {provide: DateAdapter, useClass: MyDateAdapter},
-        
         LoggedInGuard,
         AnonymousGuard,
         UserService,

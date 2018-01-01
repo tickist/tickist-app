@@ -51,18 +51,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.rightSidenavVisibility = visibility;
       }
     }));
-
-
-    // this.projectService.projects$.subscribe((projects) => {
-    //   if (projects) {
-    //     this.projects = projects;
-    //   }
-    // });
-    //this.taskService.loadTasks();
-    //this.tagService.loadTags();
-    //this.projectService.loadProjects();
-    //this.userService.loadUser();
-    //this.userService.loadTeam();
+    
   }
 
   ngOnDestroy() {
