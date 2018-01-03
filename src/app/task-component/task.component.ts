@@ -20,7 +20,7 @@ import {Tag} from '../models/tags';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 import {MatAutocompleteTrigger} from '@angular/material';
-import {DeleteTaskDialogComponent} from "../single-task/delete-task-dialog/delete-task.dialog.component";
+import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delete-task.dialog.component';
 
 @Component({
   selector: 'app-task-component',
@@ -364,7 +364,7 @@ export class TaskComponent implements OnInit, OnDestroy {
       this.task.steps = this.task.steps.filter(step => step.delete);
       values['steps'].forEach((step, index) => {
         if (step.name !== '') {
-          this.task.steps.push(new Step({'id': step.id, 'name': step.name, 'order': index, 'status': 0}));
+          this.task.steps.push(new Step({'id': step.id, 'name': step.name, 'order': index, 'status': step.status}));
         }
       });
       console.log(this.task.steps);
@@ -399,7 +399,8 @@ export class TaskComponent implements OnInit, OnDestroy {
     steps.filter(step => !step.delete).forEach((step: Step) => {
       array.push(this.fb.group({
         'name': [step.name, Validators.required],
-        'id': [step.id, Validators.required]
+        'id': [step.id, Validators.required],
+        'status': [step.status, Validators.required]
       }));
     });
     array.push(this.initStep());
@@ -409,8 +410,9 @@ export class TaskComponent implements OnInit, OnDestroy {
 
   initStep() {
     return this.fb.group({
-      'name': [''],
-      'id': ['']
+        'name': [''],
+        'id': [''],
+        'status': [0]
     });
   }
 

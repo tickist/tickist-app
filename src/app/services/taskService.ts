@@ -44,21 +44,16 @@ export class TaskService {
           }
         }));
         return result;
-      })
+      });
     } else if (tags.value === 'allTags') {
       tasks = tasks.filter((task) => {
-        return !(task.tags.length === 0)
-      })
+        return !(task.tags.length === 0);
+      });
     } else if (tags.value === 'withoutTags') {
       tasks = tasks.filter((task) => {
-        if (task.tags.length === 0) {
-          return true
-        } else {
-          return false
-        }
+        return (task.tags.length === 0);
       });
     }
-    debugger;
     tasks = _.orderBy(tasks, sortingBy.value, [sortingBy.order]);
     return tasks;
   }

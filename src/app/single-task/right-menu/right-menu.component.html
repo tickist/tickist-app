@@ -19,14 +19,14 @@
     <div>
         <span>Priority</span>
         <div>
-            <mat-button-toggle-group [value]="task.priority" (change)="emitChangePriorityClickEvent($event)">
-                <mat-button-toggle [value]="'A'">A</mat-button-toggle>
-                <mat-button-toggle [value]="'B'">B</mat-button-toggle>
-                <mat-button-toggle [value]="'C'">C</mat-button-toggle>
+            <mat-button-toggle-group [value]="task.priority">
+                <mat-button-toggle value="A" (click)="emitChangePriorityClickEvent('A')">A</mat-button-toggle>
+                <mat-button-toggle value="B" (click)="emitChangePriorityClickEvent('B')">B</mat-button-toggle>
+                <mat-button-toggle value="C" (click)="emitChangePriorityClickEvent('C')">C</mat-button-toggle>
             </mat-button-toggle-group>
         </div>
-    </div>
-    <div>
+
+
         <span>Change date</span>
         <div style="margin-top:10px">
             <tickist-menu-button [icon]="'fa-desktop'"
