@@ -7,15 +7,15 @@ import {AppStore} from '../store';
 import {Task} from '../models/tasks';
 import {UserService} from './userService';
 import {User} from '../models/user';
-import * as _ from 'underscore';
+import * as _ from 'lodash';
 import {MatSnackBar} from '@angular/material';
 import {StatisticsService} from './statisticsService';
 import {ConfigurationService} from './configurationService';
-import {TagService} from "./tagService";
-import {ProjectService} from "./projectService";
+import {TagService} from './tagService';
+import {ProjectService} from './projectService';
 import * as tasksAction from '../reducers/actions/tasks';
-import {Filter} from "../models/filter";
-import {HttpClient} from "@angular/common/http";
+import {Filter} from '../models/filter';
+import {HttpClient} from '@angular/common/http';
 
 
 @Injectable()
@@ -58,7 +58,8 @@ export class TaskService {
         }
       });
     }
-    tasks = _.sortBy(tasks, sortingBy.value);
+    debugger;
+    tasks = _.orderBy(tasks, sortingBy.value, [sortingBy.order]);
     return tasks;
   }
 
@@ -100,7 +101,7 @@ export class TaskService {
       }),
       new Filter({'id': 1, 'value': task => task.estimateTime >= 0, label: 'estimateTime__lt', 'name': '0'}),
       new Filter({'id': 8, 'value': task => task.estimateTime <= 4294967296, label: 'estimateTime__gt', 'name': 'inf'}),
-      new Filter({'id': 1, 'label': 'sorting', value: 'priority', name: 'priority <i class="fa fa-arrow-up"></i>'}),
+      new Filter({'id': 1, 'label': 'sorting', value: 'priority', order: 'asc', name: 'priority <i class="fa fa-arrow-up"></i>'}),
       new Filter({'id': 1, 'label': 'tags', 'value': 'allTasks', 'name': 'all tasks'})
     ];
 
@@ -156,14 +157,14 @@ export class TaskService {
       {'id': 6, 'value': task => task.estimateTime <= 240, label: 'estimateTime__gt', 'name': '4h'},
       {'id': 7, 'value': task => task.estimateTime <= 480, label: 'estimateTime__gt', 'name': '8h'},
       {'id': 8, 'value': task => task.estimateTime <= 4294967296, label: 'estimateTime__gt', 'name': 'inf'},
-      {'id': 1, 'label': 'sorting', value: 'priority', name: 'priority <i class="fa fa-arrow-up"></i>'},
-      {'id': 2, 'label': 'sorting', value: 'finish_date_obj', name: 'due date <i class="fa fa-arrow-up"></i>'},
-      {'id': 3, 'label': 'sorting', value: 'creation_date', name: 'data added <i class="fa fa-arrow-up"></i>'},
-      {'id': 4, 'label': 'sorting', value: 'name', name: 'A-Z <i class="fa fa-arrow-up"></i>'},
-      {'id': 5, 'label': 'sorting', value: '-priority', name: 'priority <i class="fa fa-arrow-down"></i>'},
-      {'id': 6, 'label': 'sorting', value: '-finish_date_obj', name: 'due date <i class="fa fa-arrow-down"></i>'},
-      {'id': 7, 'label': 'sorting', value: '-creation_date', name: 'data added  <i class="fa fa-arrow-down"></i>'},
-      {'id': 8, 'label': 'sorting', value: '-name', name: 'A-Z <i class="fa fa-arrow-down"></i>'},
+      {'id': 1, 'label': 'sorting', value: 'priority', order: 'desc', name: 'priority <i class="fa fa-arrow-up"></i>'},
+      {'id': 2, 'label': 'sorting', value: 'finish_date_obj', order: 'asc', name: 'due date <i class="fa fa-arrow-up"></i>'},
+      {'id': 3, 'label': 'sorting', value: 'creation_date', order: 'asc', name: 'data added <i class="fa fa-arrow-up"></i>'},
+      {'id': 4, 'label': 'sorting', value: 'name', order: 'asc', name: 'A-Z <i class="fa fa-arrow-up"></i>'},
+      {'id': 5, 'label': 'sorting', value: 'priority', order: 'asc', name: 'priority <i class="fa fa-arrow-down"></i>'},
+      {'id': 6, 'label': 'sorting', value: 'finish_date_obj', order: 'desc', name: 'due date <i class="fa fa-arrow-down"></i>'},
+      {'id': 7, 'label': 'sorting', value: 'creation_date', order: 'desc', name: 'data added  <i class="fa fa-arrow-down"></i>'},
+      {'id': 8, 'label': 'sorting', value: 'name', order: 'desc', name: 'A-Z <i class="fa fa-arrow-down"></i>'},
       {'id': 1, 'label': 'tags', 'value': 1}
     ].map(filter => new Filter(filter));
 

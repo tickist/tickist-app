@@ -70,6 +70,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.overdueTasks = this.tasks.filter((task: Task) => {
           return ( task.pinned === false && task.finishDate && task.finishDate < this.activeDay);
         });
+        
         this.futureTasks = this.tasks.filter((task: Task) => {
           return ( task.pinned === false && task.typeFinishDate === 0 && task.finishDate && task.finishDate > this.activeDay);
         });

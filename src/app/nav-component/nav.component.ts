@@ -6,6 +6,7 @@ import {environment} from '../../environments/environment';
 import {ObservableMedia} from '@angular/flex-layout';
 import {Router} from '@angular/router';
 import {TaskService} from '../services/taskService';
+import {ProjectService} from '../services/projectService';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class NavComponent implements OnInit, OnDestroy {
   progressBar = false;
 
   constructor(private userService: UserService, private configurationService: ConfigurationService,
-              protected media: ObservableMedia, protected router: Router, protected taskService: TaskService) {
+              protected projectService: ProjectService, protected media: ObservableMedia, protected router: Router,
+              protected taskService: TaskService) {
   }
 
   ngOnInit() {
@@ -66,14 +68,15 @@ export class NavComponent implements OnInit, OnDestroy {
     if (primaryPath) {
       const primaryArgs = [];
       if (primaryPath) {
-        primaryArgs.push(primaryPath)
+        primaryArgs.push(primaryPath);
       }
       if (primaryArg ) {
-        primaryArgs.push(primaryArg)
+        primaryArgs.push(primaryArg);
       }
       navigate.push({outlets: {'primary': primaryArgs, 'leftSideNav': [leftSideNavPath]}});
     }
     this.taskService.loadCurrentTasksFilters(this.user);
+    this.projectService.selectProject(null);
     this.router.navigate(navigate);
     if (this.media.isActive('sm') || this.media.isActive('xs')) {
       this.configurationService.changeOpenStateLeftSidenavVisibility('close');

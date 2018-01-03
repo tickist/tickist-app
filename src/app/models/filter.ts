@@ -6,6 +6,7 @@ export class Filter {
   name: string;
   value: (task: Task) => boolean;
   avatar?: string;
+  order?: string;
 
   constructor (object) {
     this.id = object.id;
@@ -13,5 +14,6 @@ export class Filter {
     this.name = object.name;
     this.value = object.value;
     this.avatar = object.avatar;
+    this.order = object.order;
   }
 }

@@ -49,7 +49,7 @@ export class ShowOfflineModeComponent implements OnInit {
 class Ping {
     constructor(opt) {
         this.opt = opt || {};
-        this.favicon = this.opt.favicon || '/favicon.ico';
+        this.favicon = this.opt.favicon || '/favicon.png';
         this.timeout = this.opt.timeout || 0;
     }
     

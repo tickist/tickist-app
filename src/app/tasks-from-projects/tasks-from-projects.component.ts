@@ -106,7 +106,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.tasks = tasks;
         this.cd.markForCheck(); // marks path
       } else {
-        this.tasks = []
+        this.tasks = [];
       }
     })
   }
