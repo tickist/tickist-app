@@ -89,7 +89,8 @@ export class ConfigurationService {
     if (!date) {
       date = moment().format('DD-MM-YYYY');
     }
-    this.store.dispatch(new configurationAction.UpdateActiveDay(moment(date, 'DD-MM-YYYY').set({hour:0,minute:0,second:0,millisecond:0})));
+    this.store.dispatch(new configurationAction.UpdateActiveDay(moment(date, 'DD-MM-YYYY')
+        .set({hour: 0, minute: 0, second: 0, millisecond: 0})));
   }
 
   updateDetectApiError(isVisible: boolean) {

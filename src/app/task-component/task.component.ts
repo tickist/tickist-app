@@ -391,7 +391,8 @@ export class TaskComponent implements OnInit, OnDestroy {
   }
 
   getErrorMessage(field) {
-    return field.hasError('max') ? 'Name is too long' : '';
+    return field.hasError('max') ? 'Name is too long' :
+        field.hasError('required') ? 'You have to add task name' : '' ;
   }
 
   initSteps(steps) {

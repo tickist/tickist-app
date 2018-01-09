@@ -105,29 +105,33 @@
                                 </mat-radio-button>
                             </mat-radio-group>
 
-                            <mat-form-field>
-                                <input matInput [matDatepickerFilter]="minFilter"
-                                       formControlName="finishDate"
-                                       (focus)="picker.open()"
-                                       (click)="picker.open()"
-                                       [matDatepicker]="picker"
-                                       placeholder="Choose a date">
-                                <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishDate($event)"
-                                                     matSuffix></tickist-menu-button>
-                                <mat-error
-                                        *ngIf="taskForm.controls['main'].controls['finishDate'].invalid && (taskForm.controls['main'].controls['finishDate'].dirty || taskForm.controls['main'].controls['finishDate'].touched)">
-                                    Date format is invalid
-                                </mat-error>
-                                <mat-datepicker #picker></mat-datepicker>
+                            <div fxLayout.xs="column"  fxLayout="row" fxLayoutAlign.xs="center none" fxLayoutAlign="space-between end" >
 
-                            </mat-form-field>
+                                <mat-form-field fxFlex="45">
+                                    <input matInput [matDatepickerFilter]="minFilter"
+                                           formControlName="finishDate"
+                                           (focus)="picker.open()"
+                                           (click)="picker.open()"
+                                           [matDatepicker]="picker"
+                                           placeholder="Choose date">
+                                    <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishDate($event)"
+                                                         matSuffix></tickist-menu-button>
+                                    <mat-error
+                                            *ngIf="taskForm.controls['main'].controls['finishDate'].invalid && (taskForm.controls['main'].controls['finishDate'].dirty || taskForm.controls['main'].controls['finishDate'].touched)">
+                                        Date format is invalid
+                                    </mat-error>
+                                    <mat-datepicker #picker></mat-datepicker>
 
-                            <mat-form-field *ngIf="taskForm.controls['main'].controls['finishDate'].value">
-                                <input matInput formControlName="finishTime" type="time"
-                                       placeholder="Choose a time (optional)">
-                                <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishTime($event)"
-                                                     matSuffix></tickist-menu-button>
-                            </mat-form-field>
+                                </mat-form-field>
+
+                                <mat-form-field fxFlex="45">
+                                    <input matInput formControlName="finishTime" type="time"
+                                           placeholder="Choose time">
+                                    <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishTime($event)"
+                                                         matSuffix></tickist-menu-button>
+                                </mat-form-field>
+
+                            </div>
 
                         </div>
 

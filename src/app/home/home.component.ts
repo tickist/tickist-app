@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import {Component, OnInit, OnDestroy, HostListener} from '@angular/core';
+import {Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef} from '@angular/core';
 import {AppStore} from '../store';
 import {Store} from '@ngrx/store';
 import {Router, RouterStateSnapshot, NavigationEnd} from '@angular/router';
@@ -17,53 +17,61 @@ import * as _ from 'lodash';
 
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  tasks: Task[];
-  projects: Project[];
-  subscriptions: Subscription;
-  activeMediaQuery = '';
-  leftSidenavVisibility: SideNavVisibility;
-  rightSidenavVisibility: SideNavVisibility;
+    tasks: Task[];
+    projects: Project[];
+    subscriptions: Subscription;
+    activeMediaQuery = '';
+    leftSidenavVisibility: SideNavVisibility;
+    rightSidenavVisibility: SideNavVisibility;
 
-  constructor(public store: Store<AppStore>, public taskService: TaskService, public userService: UserService,
-              public router: Router, public projectService: ProjectService, public tagService: TagService,
-              protected media: ObservableMedia, protected configurationService: ConfigurationService) {
-  }
+    constructor(public store: Store<AppStore>, public taskService: TaskService, public userService: UserService,
+                public router: Router, public projectService: ProjectService, public tagService: TagService,
+                protected media: ObservableMedia, protected configurationService: ConfigurationService,
+                private cd: ChangeDetectorRef) {
+    }
 
 
-  ngOnInit() {
-    this.subscriptions = this.media.subscribe((change: MediaChange) => {
-      this.configurationService.updateLeftSidenavVisibility();
-      this.configurationService.updateRightSidenavVisibility();
-    });
+    ngOnInit() {
+        this.leftSidenavVisibility = new SideNavVisibility(
+            {'open': true, 'mode': '', 'position': 'start'});
+        this.rightSidenavVisibility = new SideNavVisibility({'open': true, 'mode': '', 'position': 'end'});
 
-    this.subscriptions = this.configurationService.leftSidenavVisibility$.subscribe((visibility: SideNavVisibility) => {
-      if (!_.isEmpty(visibility)) {
-        this.leftSidenavVisibility = visibility;
-      }
-    });
-    this.subscriptions.add(this.configurationService.rightSidenavVisibility$.subscribe((visibility) => {
-      if (!_.isEmpty(visibility)) {
-        this.rightSidenavVisibility = visibility;
-      }
-    }));
-    
-  }
+        this.subscriptions = this.media.subscribe((change: MediaChange) => {
+            this.configurationService.updateLeftSidenavVisibility();
+            this.configurationService.updateRightSidenavVisibility();
+            this.cd.detectChanges();
+        });
 
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
-  }
+        this.subscriptions = this.configurationService.leftSidenavVisibility$.subscribe((visibility: SideNavVisibility) => {
+            if (!_.isEmpty(visibility)) {
+                this.leftSidenavVisibility = visibility;
+                this.cd.detectChanges();
+            }
+        });
+        this.subscriptions.add(this.configurationService.rightSidenavVisibility$.subscribe((visibility) => {
+            if (!_.isEmpty(visibility)) {
+                this.rightSidenavVisibility = visibility;
+                this.cd.detectChanges();
+            }
+        }));
 
-  closeLeftSidenavVisiblity() {
-    this.configurationService.changeOpenStateLeftSidenavVisibility('close');
-  }
+    }
 
-  closeRightSidenavVisiblity() {
-    this.configurationService.changeOpenStateRightSidenavVisibility('close');
-  }
+    ngOnDestroy() {
+        this.subscriptions.unsubscribe();
+    }
+
+    closeLeftSidenavVisiblity() {
+        this.configurationService.changeOpenStateLeftSidenavVisibility('close');
+    }
+
+    closeRightSidenavVisiblity() {
+        this.configurationService.changeOpenStateRightSidenavVisibility('close');
+    }
 
 }

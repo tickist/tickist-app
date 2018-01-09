@@ -46,25 +46,15 @@ export class SingleProjectComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
   }
-
-  // // When change detection begins
-  // ngDoCheck() {
-  //   this.t = new Timer(`single task component ${this.project.name}`)
-  // }
-  //
-  //
-  // ngAfterViewChecked() {
-  //   this.t.stop();  // Prints the time elapsed to the JS console.
-  // }
-  //
-
+  
   ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
     //console.log("changes", changes);
     // if (this.mediaChange && (this.mediaChange.mqAlias === 'xs' || this.mediaChange.mqAlias === 'sm')) {
     //   this.isSmallScreen = true;
     // } else {
     //   this.isSmallScreen = false;
-    // }
+
+
     console.log(this.isActive);
     this.isActive = this.selectedProjectsIds && this.selectedProjectsIds.indexOf(this.project.id) > -1;
 

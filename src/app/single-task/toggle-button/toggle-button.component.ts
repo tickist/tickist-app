@@ -1,4 +1,7 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+    ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2, SimpleChange,
+    ViewChild
+} from '@angular/core';
 
 @Component({
     selector: 'tickist-toggle-button',

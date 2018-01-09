@@ -1,7 +1,7 @@
 export class SideNavVisibility {
   open: boolean;
   mode: string;
-  position: boolean;
+  position: string;
 
   constructor(sidenav) {
     this.open = sidenav.open;

@@ -23,7 +23,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   allProjects: Project[];
   user: User;
   selectedProject: Project;
-  selectedProjectsIds: Array<number>;
+  selectedProjectsIds: Array<number> = [4];
   showOnlyProjectsWithTasks = true;
 
   constructor(protected taskService: TaskService, private projectService: ProjectService, private route: ActivatedRoute,
@@ -37,12 +37,14 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       if (projects) {
         this.allProjects = projects;
         this.projects = this.generateDifferentLevelsOfProjects();
+        this.cd.detectChanges();
       }
     });
 
     this.projectService.selectedProject$.takeUntil(this.ngUnsubscribe).subscribe((project) => {
       this.selectedProject = project;
       this.projects = this.generateDifferentLevelsOfProjects();
+      this.cd.detectChanges();
     });
 
     this.projectService.selectedProjectsIds$.takeUntil(this.ngUnsubscribe).subscribe((ids) => {
@@ -50,7 +52,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       if (ids && ids.length > 0) {
         this.selectedProjectsIds = ids;
       }
-      this.cd.markForCheck(); // marks path
+      this.cd.detectChanges();
     });
 
   }
