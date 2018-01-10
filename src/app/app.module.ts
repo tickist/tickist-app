@@ -97,7 +97,7 @@ import {reducers} from './store';
 import {ChartsModule} from 'ng2-charts/ng2-charts';
 import {EditRepeatingOptionComponent} from './edit-repeating-options/edit-repeating-option.component';
 import {DateOptionsComponent} from './date-options/date-options.component';
-import {DeleteTaskDialogComponent} from 'app/single-task/delete-task-dialog/delete-task.dialog.component';
+import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete-task.dialog.component';
 import {BlankComponent, RootComponent} from './testing/test.modules';
 import {TasksFromProjectsComponent} from './tasks-from-projects/tasks-from-projects.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
@@ -218,12 +218,13 @@ export class TickistMaterialModule {
         RightMenuComponent,
         ChooseDayComponent,
         ShowOfflineModeComponent,
-        ShowNotificationAboutNewDayComponent
+        ShowNotificationAboutNewDayComponent,
+        ShowApiErrorComponent
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
+        // ServiceWorkerModule.register('../ngsw-worker.js', {enabled: environment.production}),
         RouterModule.forRoot(routes),
         CommonModule,
         FormsModule,

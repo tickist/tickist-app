@@ -18,7 +18,7 @@ import {TagService} from './services/tagService';
 import {UserService} from './services/userService';
 import {Observable} from 'rxjs/Observable';
 import {Project} from './models/projects';
-import {Task} from 'app/models/tasks';
+import {Task} from './models/tasks';
 import {TaskService} from './services/taskService';
 import { TasksFromProjectsComponent } from './tasks-from-projects/tasks-from-projects.component';
 import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';

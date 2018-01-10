@@ -9,7 +9,7 @@ import {TimeDialog} from './time-dialog/time-dialog.component';
 import {MatDialog} from '@angular/material';
 import {ProjectService} from '../services/projectService';
 import {Project} from '../models/projects';
-import {DeleteTaskDialogComponent} from 'app/single-task/delete-task-dialog/delete-task.dialog.component';
+import {DeleteTaskDialogComponent} from './delete-task-dialog/delete-task.dialog.component';
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
 import {RepeatStringExtension} from '../pipes/repeatStringExtension';
@@ -17,10 +17,10 @@ import {RepeatStringExtension} from '../pipes/repeatStringExtension';
 
 class Timer {
     readonly start = performance.now();
-    
+
     constructor(private readonly name: string) {
     }
-    
+
     stop() {
         const time = performance.now() - this.start;
         //console.log('Timer:', this.name, 'finished in', Math.round(time), 'ms');
@@ -30,11 +30,11 @@ class Timer {
 
 export class SingleTask {
     task: Task;
-    
+
     constructor(public taskService: TaskService, public dialog: MatDialog) {
-    
+
     }
-    
+
     changeShowing(show) {
         for (let key in this.task.menuShowing) {
             if (key !== show && key !== 'id') {
@@ -48,7 +48,7 @@ export class SingleTask {
             this.task.menuShowing['sharedList'] = true;
         }
     };
-    
+
     toggleDoneStep(step) {
         this.task.steps.forEach((s) => {
             if (s.id === step.id) {
@@ -61,7 +61,7 @@ export class SingleTask {
         });
         this.taskService.updateTask(this.task);
     }
-    
+
     toggleDone() {
         if (this.task.status === 0) {
             this.task.status = 1;
@@ -84,9 +84,9 @@ export class SingleTask {
             this.task.status = 0;
             this.taskService.updateTask(this.task);
         }
-        
+
     }
-    
+
     togglePin() {
         this.task.pinned = !this.task.pinned;
         this.taskService.updateTask(this.task);

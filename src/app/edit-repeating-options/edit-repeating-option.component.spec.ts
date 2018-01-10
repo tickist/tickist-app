@@ -7,7 +7,7 @@ import {TickistMaterialModule} from '../app.module';
 import {FormsModule} from '@angular/forms';
 import {fakeAsync} from '@angular/core/testing';
 import {ConfigurationService} from '../services/configurationService';
-import {Task} from 'app/models/tasks';
+import {Task} from '../models/tasks';
 import {TaskService} from '../services/taskService';
 import { task1 } from '../testing/mocks/api_mocks/tasks'
 
