@@ -10,6 +10,7 @@ import * as tasksAction from '../reducers/actions/tasks';
 import * as projectsAction from '../reducers/actions/projects';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {Filter} from '../models/filter';
 
 
 @Injectable()
@@ -19,6 +20,8 @@ export class ProjectService {
     team: SimplyUser[];
     selectedProject$: Observable<Project>;
     selectedProjectsIds$: Observable<Array<number>>;
+      projectsFilters$: Observable<any>;
+  currentProjectsFilters$: Observable<any>;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router) {
@@ -26,15 +29,40 @@ export class ProjectService {
         this.team$ = this.store.select(store => store.team);
         this.selectedProject$ = this.store.select(store => store.selectedProject);
         this.selectedProjectsIds$ = this.store.select(store => store.selectedProjectsIds);
+        this.projectsFilters$ = this.store.select(store => store.projectsFilters);
+        this.currentProjectsFilters$ = this.store.select(store => store.currentProjectsFilters);
         this.team$.subscribe((team) => {
             this.team = team;
         });
+        this.loadProjectsFilters();
+        this.loadCurrentProjectsFilters();
     }
 
     loadProjects() {
         return this.http.get<Project[]>(`${environment['apiUrl']}/project/`)
             .map(payload => payload.map(project => new Project(project)))
             .map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)));
+    }
+    
+    loadCurrentProjectsFilters() {
+        const filter = new Filter({'id': 1, 'label': 'filter', 'name': 'All projects', 'value': project => project});
+        this.store.dispatch(new projectsAction.AddCurrentFilters(filter));
+    }
+    
+    loadProjectsFilters() {
+        const filters = [
+            new Filter({'id': 1, 'label': 'filter', 'name': 'All projects',
+                'value': project => project}),
+            new Filter({'id': 2, 'label': 'filter', 'name': 'Projects with tasks',
+                'value': project => project.tasksCounter > 0} ),
+            new Filter({'id': 3, 'label': 'filter', 'name': 'Projects without tasks',
+                'value': project => project.tasksCounter === 0})
+        ];
+         this.store.dispatch(new projectsAction.AddFilters(filters));
+    }
+    
+    updateCurrentFilter(currentFilter) {
+        this.store.dispatch(new projectsAction.UpdateCurrentFilter(currentFilter));
     }
 
     selectProject(project: Project | null) {
@@ -47,7 +75,7 @@ export class ProjectService {
                         {
                             'id': user['id'],
                             'label': 'assignedTo',
-                            'value': task => task.owner.id === user['id'],
+                            'value': (task: Task) => task.owner.id === user['id'],
                             'name': user.username
                         }
                     ));
@@ -59,7 +87,7 @@ export class ProjectService {
                     {
                         'id': user.id,
                         'label': 'assignedTo',
-                        'value': task => task.owner.id === user.id,
+                        'value': (task: Task) => task.owner.id === user.id,
                         'name': user.username
                     }
                     )

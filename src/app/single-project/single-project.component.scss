@@ -1,18 +1,23 @@
 #project {
-  cursor: pointer;
-  height: 40px;
-  &:hover {
-    background-color: grey;
-  }
-  .tasks-counter {
-    margin-right: 10px
-  }
-  i {
-    margin-right: 5px;
-    margin-left: 5px;
-  }
+    cursor: pointer;
+    height: 40px;
+    &:hover {
+        background-color: grey;
+    }
+    .tasks-counter {
+        margin-right: 10px
+    }
+    i {
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+    .mat-checkbox {
+        margin-right: 5px;
+        margin-left: 5px;
+        margin-top: 0;
+    }
 }
 
 .isActive {
-  background-color: grey;
+    background-color: grey;
 }

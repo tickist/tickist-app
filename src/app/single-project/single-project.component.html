@@ -1,17 +1,30 @@
-<div id="project"  fxLayout="row" fxLayoutAlign="center center"
-     [ngClass]="{'isActive': isSelected}" (click)="navigateTo('/home/projects', project.id, $event)" >
-    <div fxFlex  fxLayout="row" fxLayoutAlign="center center">
+<div id="project" fxLayout="row" fxLayoutAlign="center center"
+     [ngClass]="{'isActive': isSelected}" (click)="navigateTo('/home/projects', project.id, $event)">
+    <div fxFlex fxLayout="row" fxLayoutAlign="center center">
         <span *ngIf='project.level==1' fxFlex="15px"></span>
         <span *ngIf='project.level==2' fxFlex="30px"></span>
-        <i class="fa fa-folder" [ngStyle]="{'color': project.color}"></i>
-
+        <i *ngIf='!activeCheckboxMode' class="fa fa-folder" [ngStyle]="{'color': project.color}"></i>
+        <mat-checkbox [(ngModel)]="isActive" *ngIf="isSelected && activeCheckboxMode"
+                      (change)="changeId($event)">
+        </mat-checkbox>
         <span> {{ project.name }} </span>
         <span fxFlex></span>
-        <span class="tasks-counter" *ngIf="!activeCheckboxMode"> {{ project.tasksCounter }} </span>
+        <span *ngIf="!isMenuVisible" class="tasks-counter"> {{ project.tasksCounter }} </span>
+        <tickist-menu-button *ngIf="isMenuVisible" [icon]="'fa-ellipsis-v'"
+                     [matMenuTriggerFor]="menu"
+                     (onMenuClose)="changeFastMenuVisible(false)"
+                     (onMenuOpen)="changeFastMenuVisible(true)">
+        </tickist-menu-button>
+
+
     </div>
 
-    <mat-checkbox [(ngModel)]="isActive" *ngIf="isSelected && activeCheckboxMode"
-                 (change)="changeId($event)">
-    </mat-checkbox>
+
 </div>
 
+<mat-menu #menu="matMenu" >
+    <button mat-menu-item [routerLink]="['/home/project/', project.id]">Edit</button>
+    <button mat-menu-item (click)="deleteOrLeaveProject()">{{ deleteOrLeave }}</button>
+
+
+</mat-menu>

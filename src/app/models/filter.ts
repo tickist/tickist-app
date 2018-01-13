@@ -1,10 +1,11 @@
 import {Task} from './tasks';
+import {Project} from './projects';
 
 export class Filter {
   id: number;
   label: string;
   name: string;
-  value: (task: Task) => boolean;
+  value: (object: Task | Project) => boolean;
   avatar?: string;
   order?: string;
 

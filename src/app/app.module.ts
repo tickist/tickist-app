@@ -123,6 +123,7 @@ import {DeleteProjectConfirmationDialogComponent} from './project-component/dele
 import { ShowApiErrorComponent } from './show-api-error/show-api-error.component';
 import { ShowOfflineModeComponent } from './show-offline-mode/show-offline-mode.component';
 import { ShowNotificationAboutNewDayComponent } from './show-notification-about-new-day/show-notification-about-new-day.component';
+import {FilterProjectDialogComponent} from './projects-list/filter-projects-dialog/filter-projects.dialog.component';
 
 
 export function instrumentOptions() {
@@ -219,7 +220,8 @@ export class TickistMaterialModule {
         ChooseDayComponent,
         ShowOfflineModeComponent,
         ShowNotificationAboutNewDayComponent,
-        ShowApiErrorComponent
+        ShowApiErrorComponent,
+        FilterProjectDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -256,7 +258,7 @@ export class TickistMaterialModule {
     ],
     bootstrap: [AppComponent],
     entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortingByDialog, EstimateTimeDialog,
-        DeleteProjectConfirmationDialogComponent, TimeDialog, DeleteTaskDialogComponent],
+        DeleteProjectConfirmationDialogComponent, TimeDialog, DeleteTaskDialogComponent, FilterProjectDialogComponent],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         {provide: DateAdapter, useClass: MyDateAdapter},

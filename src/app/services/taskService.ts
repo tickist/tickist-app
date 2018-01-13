@@ -154,11 +154,11 @@ export class TaskService {
       {'id': 8, 'value': task => task.estimateTime <= 4294967296, label: 'estimateTime__gt', 'name': 'inf'},
       {'id': 1, 'label': 'sorting', value: 'priority', order: 'desc', name: 'priority <i class="fa fa-arrow-up"></i>'},
       {'id': 2, 'label': 'sorting', value: 'finish_date_obj', order: 'asc', name: 'due date <i class="fa fa-arrow-up"></i>'},
-      {'id': 3, 'label': 'sorting', value: 'creation_date', order: 'asc', name: 'data added <i class="fa fa-arrow-up"></i>'},
+      {'id': 3, 'label': 'sorting', value: 'creation_date', order: 'asc', name: 'creation date <i class="fa fa-arrow-up"></i>'},
       {'id': 4, 'label': 'sorting', value: 'name', order: 'asc', name: 'A-Z <i class="fa fa-arrow-up"></i>'},
       {'id': 5, 'label': 'sorting', value: 'priority', order: 'asc', name: 'priority <i class="fa fa-arrow-down"></i>'},
       {'id': 6, 'label': 'sorting', value: 'finish_date_obj', order: 'desc', name: 'due date <i class="fa fa-arrow-down"></i>'},
-      {'id': 7, 'label': 'sorting', value: 'creation_date', order: 'desc', name: 'data added  <i class="fa fa-arrow-down"></i>'},
+      {'id': 7, 'label': 'sorting', value: 'creation_date', order: 'desc', name: 'creation dat  <i class="fa fa-arrow-down"></i>'},
       {'id': 8, 'label': 'sorting', value: 'name', order: 'desc', name: 'A-Z <i class="fa fa-arrow-down"></i>'},
       {'id': 1, 'label': 'tags', 'value': 1}
     ].map(filter => new Filter(filter));

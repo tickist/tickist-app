@@ -5,7 +5,7 @@ import {Tag} from './models/tags';
 import {ActionReducer, ActionReducerMap, combineReducers} from '@ngrx/store';
 import {compose} from '@ngrx/core';
 import {storeFreeze} from 'ngrx-store-freeze';
-import {projects, selectedProject, selectedProjectsIds} from './reducers/projects';
+import {projects, selectedProject, selectedProjectsIds, currentProjectsFilters, projectsFilters} from './reducers/projects';
 import {team} from './reducers/team';
 import {user} from './reducers/user';
 import {tags} from './reducers/tags';
@@ -24,8 +24,10 @@ export interface AppStore {
     user: any;
     tasks: any;
     currentTasksFilters: any;
+    currentProjectsFilters: any;
     tags: any;
     tasksFilters: any;
+    projectsFilters: any;
     globalStatistics: any;
     dailyStatistics: any;
     activeDay: any;
@@ -67,7 +69,9 @@ export const reducers: ActionReducerMap<any> = {
     selectedProjectsIds: selectedProjectsIds,
     leftSidenavVisibility: leftSidenavVisibility,
     rightSidenavVisibility: rightSidenavVisibility,
-    progressBar: progressBar
+    progressBar: progressBar,
+    currentProjectsFilters: currentProjectsFilters,
+    projectsFilters: projectsFilters
 };
 
 

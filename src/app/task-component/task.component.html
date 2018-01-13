@@ -162,9 +162,11 @@
 
                              <mat-form-field>
                                 <input matInput placeholder="Estimated time" formControlName="estimateTime">
+                                 <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix aria-hidden="true"></i>
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Real time" formControlName="time">
+                                <i  matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix aria-hidden="true"></i>
                             </mat-form-field>
 
                              <mat-form-field>
@@ -172,8 +174,6 @@
                                           placeholder="Task description" formControlName="description"></textarea>
                                 <mat-hint align="end">{{taskDescription.value?.length || 0}}/5000</mat-hint>
                             </mat-form-field>
-
-                            <button type="button" mat-button (click)="deleteTask()">delete task</button>
 
                         </div>
 

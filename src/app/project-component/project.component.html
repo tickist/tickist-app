@@ -84,9 +84,8 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-checkbox formControlName="dialogTimeWhenTaskFinished">Adding estimated time and real
-                                time
-                                after finished task
+                            <mat-checkbox formControlName="dialogTimeWhenTaskFinished">
+                                Always open the form to edit estimated / real time after completing a task from this project
                             </mat-checkbox>
                             <mat-form-field>
                                 <mat-select placegolder="Default task view" formControlName="defaultTaskView"
@@ -96,11 +95,6 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <button mat-button type="button" *ngIf="!project.isInbox" (click)="deleteOrLeaveProject()">
-                                {{ deleteOrLeaveProjectLabel }}
-                            </button>
-
-
                         </div>
                     </div>
 
