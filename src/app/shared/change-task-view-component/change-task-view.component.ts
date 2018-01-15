@@ -14,6 +14,7 @@ export class ChangeTaskViewComponent implements OnInit, OnChanges {
   @Input() defaultTaskView: string;
   @Output() currentTaskViewEvent: EventEmitter<string> = new EventEmitter<string>();
   taskView: any;
+  tooltipLabel: string;
   currentTaskView: string;
   defaultTaskViewOptions: Array<any>;
 
@@ -35,9 +36,11 @@ export class ChangeTaskViewComponent implements OnInit, OnChanges {
     if (this.currentTaskView === this.defaultTaskViewOptions[0].name) {
       this.currentTaskViewEvent.emit(this.defaultTaskViewOptions[1].name);
       this.currentTaskView = this.defaultTaskViewOptions[1].name;
+      this.tooltipLabel = 'Change to extended view';
     } else {
       this.currentTaskViewEvent.emit(this.defaultTaskViewOptions[0].name);
       this.currentTaskView = this.defaultTaskViewOptions[0].name;
+      this.tooltipLabel = 'Change to simple view';
     }
   }
 

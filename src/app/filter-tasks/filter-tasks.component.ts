@@ -14,7 +14,6 @@ export class FilterTasksComponent implements OnInit {
   @Input() showTags: boolean;
   filterValue: any = {};
   assignedToValue: any = {};
-  sortingByValue: any = {};
   estimateTime__ltValue: any = {};
   estimateTime__gtValue: any = {};
   tagsFilterValue: any = {};
@@ -45,14 +44,7 @@ export class FilterTasksComponent implements OnInit {
       console.log("aaa")
     });
   }
-
-  openSortingByDialog() {
-    const dialogRef = this.dialog.open(SortingByDialog);
-    dialogRef.afterClosed().subscribe(result => {
-      console.log("aaa")
-    });
-  }
-
+  
   openEstimateTimeDialog() {
     const dialogRef = this.dialog.open(EstimateTimeDialog);
     dialogRef.afterClosed().subscribe(result => {
@@ -66,7 +58,6 @@ export class FilterTasksComponent implements OnInit {
       if (filters.length > 0) {
         this.filterValue = filters.filter(filter => filter.label == 'filter')[0];
         this.assignedToValue = filters.filter(filter => filter.label == 'assignedTo')[0];
-        this.sortingByValue = filters.filter(filter => filter.label == 'sorting')[0];
         this.estimateTime__ltValue = filters.filter(filter => filter.label == 'estimateTime__lt')[0];
         this.estimateTime__gtValue = filters.filter(filter => filter.label == 'estimateTime__gt')[0];
         this.tagsFilterValue = filters.filter(filter => filter.label == 'tags')[0];
@@ -226,45 +217,6 @@ export class TagsFilterDialog {
 
 }
 
-@Component({
-  selector: 'sorting-by-dialog',
-  templateUrl: './sorting-by-dialog.html'
-})
-export class SortingByDialog {
-
-  sortingByValues: any = [];
-  sortingByValue: any = {};
-  sortingByValueId: number;
-
-  constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService) {
-    this.taskService.currentTasksFilters$.subscribe((filters) => {
-
-      if (filters.length > 0) {
-        this.sortingByValue = filters.filter(filter => filter.label === 'sorting')[0];
-        this.sortingByValueId = this.sortingByValue['id'];
-      }
-
-    });
-
-    this.taskService.tasksFilters$.subscribe((filters) => {
-      if (filters.length > 0) {
-        this.sortingByValues = filters.filter(filter => filter.label === 'sorting');
-
-      }
-    });
-
-  }
-
-  changeSortingBy($event) {
-    if (this.sortingByValues.length > 0) {
-      this.sortingByValue = this.sortingByValues.filter(sortingBy => sortingBy.label === 'sorting' && sortingBy.id === $event.value)[0];
-      this.sortingByValueId = this.sortingByValue['id'];
-      this.taskService.updateCurrentFilter(this.sortingByValue);
-      this.dialogRef.close();
-    }
-  }
-
-}
 
 
 @Component({

@@ -5,6 +5,7 @@
                     <div class="header" fxLayout="row" fxLayoutAlign="center center">
                         <div>All tasks</div>
                         <div fxFlex></div>
+                        <tickist-sort-tasks></tickist-sort-tasks>
                         <app-filter-tasks [showTags]="true"></app-filter-tasks>
                         <change-task-view [defaultTaskView]="defaultTaskView"
                                           (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
@@ -17,6 +18,7 @@
                         <tickist-menu-button [icon]="'fa-pencil-square-o'" [fontSize]="'18px'"
                               [routerLink]="['/home/project/', selectedProject.id]">
                         </tickist-menu-button>
+                        <tickist-sort-tasks></tickist-sort-tasks>
                         <app-filter-tasks [showTags]="true"></app-filter-tasks>
                         <change-task-view [defaultTaskView]="defaultTaskView"
                                           (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>

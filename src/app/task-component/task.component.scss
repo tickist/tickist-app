@@ -1,18 +1,22 @@
 @import "../shared/variables";
 
 mat-list-item {
-  cursor: pointer;
-  p {
-    margin: 0 5px 0 5px;
-  }
-  &:hover {
-    background: gray;
-    margin-right:10px;
-  }
+    cursor: pointer;
+    p {
+        margin: 0 5px 0 5px;
+    }
+    &:hover {
+        background: gray;
+        margin-right: 10px;
+        border-bottom-left-radius: 2px;
+        border-bottom-right-radius: 2px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px
+    }
 }
 
 .fa {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .fa-question {
@@ -20,27 +24,33 @@ mat-list-item {
 }
 
 .close {
-  float: right;
+    float: right;
 }
 
 #steps {
-   // position:fixed;
-  padding-left: 0;
-  list-style:none;
+    // position:fixed;
+    padding-left: 0;
+    list-style: none;
 }
+
 .step {
- .hover-visible {
-   visibility: hidden;
-   margin-right: 5px;
- }
-  &:hover {
     .hover-visible {
-      visibility: visible;
+        visibility: hidden;
+        margin-right: 5px;
     }
-  }
+    &:hover {
+        .hover-visible {
+            visibility: visible;
+        }
+    }
 }
 
 .active {
-  background: gray;
-  margin-right:10px;
+    background: gray;
+    margin-right: 10px;
+    border-bottom: solid 5px #11a8ab;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
 }

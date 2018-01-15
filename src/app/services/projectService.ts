@@ -4,6 +4,7 @@ import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Project} from '../models/projects';
+import {Task} from '../models/tasks';
 import {SimplyUser, PendingUser} from '../models/user';
 import {MatSnackBar} from '@angular/material';
 import * as tasksAction from '../reducers/actions/tasks';

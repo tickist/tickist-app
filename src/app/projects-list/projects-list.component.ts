@@ -10,7 +10,7 @@ import {ConfigurationService} from '../services/configurationService';
 import {User} from '../models/user';
 import {UserService} from '../services/userService';
 import {ObservableMedia} from '@angular/flex-layout';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatDialogConfig} from '@angular/material';
 import {FilterProjectDialogComponent} from './filter-projects-dialog/filter-projects.dialog.component';
 import {Filter} from '../models/filter';
 

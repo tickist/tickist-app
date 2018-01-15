@@ -68,7 +68,7 @@ import {TeamComponent} from './team/team.component';
 import {SingleTaskComponent, SingleTaskSimplifiedComponent} from './single-task/single-task.component';
 import {
     FilterTasksComponent, TasksFilterDialog, AssignedToDialog,
-    SortingByDialog, EstimateTimeDialog, TagsFilterDialog
+    EstimateTimeDialog, TagsFilterDialog
 } from './filter-tasks/filter-tasks.component';
 import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configurationService';
@@ -124,6 +124,8 @@ import { ShowApiErrorComponent } from './show-api-error/show-api-error.component
 import { ShowOfflineModeComponent } from './show-offline-mode/show-offline-mode.component';
 import { ShowNotificationAboutNewDayComponent } from './show-notification-about-new-day/show-notification-about-new-day.component';
 import {FilterProjectDialogComponent} from './projects-list/filter-projects-dialog/filter-projects.dialog.component';
+import {SortTasksComponent} from './sort-tasks/sort-tasks.component';
+import {SortByDialog} from './sort-tasks/sort-tasks-dialog/sort-tasks.dialog.component';
 
 
 export function instrumentOptions() {
@@ -190,7 +192,7 @@ export class TickistMaterialModule {
         TasksFilterDialog,
         AssignedToDialog,
         TagsFilterDialog,
-        SortingByDialog,
+        SortByDialog,
         EstimateTimeDialog,
         DeleteTaskDialogComponent,
         DeleteProjectConfirmationDialogComponent,
@@ -221,7 +223,8 @@ export class TickistMaterialModule {
         ShowOfflineModeComponent,
         ShowNotificationAboutNewDayComponent,
         ShowApiErrorComponent,
-        FilterProjectDialogComponent
+        FilterProjectDialogComponent,
+        SortTasksComponent
     ],
     imports: [
         BrowserModule,
@@ -257,7 +260,7 @@ export class TickistMaterialModule {
         })
     ],
     bootstrap: [AppComponent],
-    entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortingByDialog, EstimateTimeDialog,
+    entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialog, EstimateTimeDialog,
         DeleteProjectConfirmationDialogComponent, TimeDialog, DeleteTaskDialogComponent, FilterProjectDialogComponent],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

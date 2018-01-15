@@ -1,27 +1,35 @@
 mat-list-item {
-  cursor: pointer;
-  p {
-    margin: 0 5px 0 5px;
-  }
-  &:hover {
-    background: gray;
-    margin-right:10px;
-  }
+    cursor: pointer;
+    p {
+        margin: 0 5px 0 5px;
+    }
+    &:hover {
+        background: gray;
+        margin-right: 10px;
+        border-bottom-left-radius: 2px;
+        border-bottom-right-radius: 2px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px
+    }
 }
 
 input[type=file] {
-  display: none;
+    display: none;
 }
 
 .close {
-  float: right;
-  cursor: pointer;
+    float: right;
+    cursor: pointer;
 }
 
-
 .active {
-  background: gray;
-  margin-right:10px;
+    background: gray;
+    margin-right: 10px;
+    border-bottom: solid 5px #11a8ab;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
 }
 
 
