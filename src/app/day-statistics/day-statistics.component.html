@@ -4,15 +4,18 @@
 <div *ngIf="dayStatistics">
 
     <div class="single-chart"  *ngFor="let chart of charts" [hidden]="!isChartActive(chart.id)">
-        <canvas baseChart
-            [datasets]="chart.data.datasets"
-            [labels]="chart.data.labels"
-            [options]="chart.data.options"
-            [legend]="chart.data.legend"
-            [chartType]="chart.data.chartType"
-            (chartHover)="chartHovered($event)"
-            (chartClick)="chartClicked($event)"></canvas>
-
+        <canvas baseChart height="300"
+                [datasets]="chart.data.datasets" 
+                [colors]="chart.data.colors"
+                [options]="chart.data.options"
+                [legend]="chart.data.legend"
+                [chartType]="chart.data.chartType"
+                (chartHover)="chartHovered($event)"
+                (chartClick)="chartClicked($event)">
+            
+        </canvas>
+        
+        <tickist-chart-legend [data]="chart.legend"></tickist-chart-legend>
 
     </div>
 

@@ -2,11 +2,13 @@ class SimpleTag {
   name: string;
   count: number;
   estimatedTime: number;
+  color: string;
 
   constructor(tag) {
     this.name = tag.name;
     this.count = tag.count;
     this.estimatedTime = tag.time;
+    this.color = tag.color;
   }
 }
 
@@ -14,11 +16,13 @@ class SimpleList {
   name: string;
   count: number;
   estimatedTime: number;
+  color: string;
 
   constructor(list) {
     this.name = list.name;
     this.count = list.count;
     this.estimatedTime = list.time;
+    this.color = list.color;
   }
 }
 
@@ -26,11 +30,13 @@ class SimplePriority {
   name: string;
   count: number;
   estimatedTime: number;
+  color: string;
 
   constructor(list) {
     this.name = list.name;
     this.count = list.count;
     this.estimatedTime = list.time;
+    this.color = list.color;
   }
 }
 

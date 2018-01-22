@@ -39,7 +39,10 @@ export class ConfigurationService {
           'Today->Overdue->You can do this too',
           'Overdue->Today->You can do this too'
         ],
-        'DEFAULT_TASK_VIEW_OPTIONS': [{'name': 'extended'}, {'name': 'simple'}],
+        'DEFAULT_TASK_VIEW_OPTIONS': [
+            {'name': 'extended view', 'value': 'extended'},
+            {'name': 'simple view', 'value': 'simple'}
+        ],
         'STATIC_URL': '/site_media/static/',
         'Google_plus_scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email',
         'DEFAULT_REPEAT_OPTIONS': [{'name_of_extension': '', 'id': 0, 'name': 'never'}, {

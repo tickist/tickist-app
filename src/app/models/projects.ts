@@ -36,7 +36,7 @@ export class Project extends Api {
     this.level = project.level;
     this.isActive = project.is_active;
     this.defaultTaskView = project.task_view || 'extended';
-    this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished || true;
+    this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
     this.isInbox = project.is_inbox;
     if (!project.share_with) {
       debugger

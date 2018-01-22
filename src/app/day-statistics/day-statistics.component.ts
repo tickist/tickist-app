@@ -1,358 +1,299 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {StatisticsService} from "../services/statisticsService";
-import {ConfigurationService} from "../services/configurationService";
+import {StatisticsService} from '../services/statisticsService';
+import {ConfigurationService} from '../services/configurationService';
 import * as moment from 'moment';
-import {Subscription} from "rxjs";
+import {Subscription} from 'rxjs/Subscription';
 
 class Chart {
-  id: number;
-  name: string;
-  data: any;
+    id: number;
+    name: string;
+    data: any;
+    legend: Array<any>;
 
 
-  constructor(chart) {
-    this.id = chart.id;
-    this.name = chart.name;
-    this.data = chart.data;
-  }
+    constructor(chart) {
+        this.id = chart.id;
+        this.name = chart.name;
+        this.data = chart.data;
+        this.legend = chart.legend;
+    }
 }
 
 @Component({
-  selector: 'app-day-statistics',
-  templateUrl: './day-statistics.component.html',
-  styleUrls: ['./day-statistics.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-day-statistics',
+    templateUrl: './day-statistics.component.html',
+    styleUrls: ['./day-statistics.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DayStatisticsComponent implements OnInit, OnDestroy {
-  dayStatistics: any;
-  activeDay: moment.Moment;
-  data: any;
-  prioritiesTasksCounter: any;
-  options: any;
-  charts: Chart[];
-  activeChart: Chart;
-  numberOfCharts: number;
-  nextChart: any;
-  previousChart: any;
-  chartInterval: any;
-  subscriptions: Subscription;
-  protected interval = 10000;
+    dayStatistics: any;
+    activeDay: moment.Moment;
+    data: any;
+    prioritiesTasksCounter: any;
+    options: any;
+    charts: Chart[];
+    activeChart: Chart;
+    numberOfCharts: number;
+    nextChart: any;
+    previousChart: any;
+    chartInterval: any;
+    subscriptions: Subscription;
+    protected interval = 10000;
 
-  constructor(private statisticsService: StatisticsService, private configurationService: ConfigurationService) {
-    console.log("DAY STATISTICS")
-  }
-
-  ngOnInit() {
-    this.subscriptions = this.statisticsService.daily$.subscribe((daily) => {
-      if (daily) {
-        this.dayStatistics = daily;
-        this.charts = [
-          new Chart({
-            'id': 1,
-            'name': 'prioritiesTasksCounter',
-            'data': this.generatePrioritiesTasksCounterChartData()
-          }),
-          new Chart({'id': 2, 'name': 'projectsTasksCounter', 'data': this.generateProjectsTasksCounterChartData()}),
-          new Chart({'id': 3, 'name': 'tagsTasksCounter', 'data': this.generateTagsTasksCounterChartData()}),
-        ];
-        this.activeChart = this.charts[0];
-        this.numberOfCharts = this.charts.length;
-
-      }
-    });
-    this.subscriptions.add(this.configurationService.activeDay$.subscribe((activeDay) => {
-      this.activeDay = activeDay;
-    }));
-
-    this.nextChart = (() => {
-      if (this.activeChart) {
-        let newActiveChartId = this.activeChart.id + 1;
-        if (newActiveChartId > this.numberOfCharts) {
-          newActiveChartId = 1;
-        }
-        if (this.charts && this.charts.length > 0) {
-          this.activeChart = this.charts.filter((chart) => chart.id === newActiveChartId)[0];
-        }
-      }
-
-    });
-
-    this.previousChart = (() => {
-      let newActiveChartId = this.activeChart.id - 1;
-      if (newActiveChartId === 0) {
-        newActiveChartId = this.numberOfCharts;
-      }
-      this.activeChart = this.charts.filter((chart) => chart.id === newActiveChartId)[0];
-
-    });
-    this.chartInterval = setInterval(this.nextChart, this.interval);
-  }
-
-  ngOnDestroy() {
-    if (this.subscriptions) {
-      this.subscriptions.unsubscribe();
+    constructor(private statisticsService: StatisticsService, private configurationService: ConfigurationService) {
+        console.log('DAY STATISTICS');
     }
-    clearInterval(this.chartInterval);
-  }
 
-  generatePrioritiesTasksCounterChartData() {
-    const labels = [], data = [];
-    this.dayStatistics.priorities.forEach((priority) => {
-      labels.push(priority.name);
-      data.push(priority.count);
-    });
-    return {
-      labels: labels,
-      datasets: [
-        {
-          data: data,
-          backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ],
-          hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ]
-        }],
-      chartType: 'pie',
-      legend: true,
-      options: {
-        title: {
-          display: true,
-          text: 'Priorities tasks counter',
-          fontSize: 16,
-          fontColor: 'white'
-        },
-        legend: {
-          position: 'bottom',
-          labels: {
-            fontColor: '#fff'
-          },
-          onHover: function (event, legendItem) {
-            debugger;
-          }
-        },
-        tooltips: {
-          custom: function (tooltip) {
-            // tooltip will be false if tooltip is not visible or should be hidden
-            console.log(tooltip)
-            if (!tooltip) {
-              return;
-            }
-
-            // Otherwise, tooltip will be an object with all tooltip properties like:
-
-            // tooltip.caretSize
-            // tooltip.caretPadding
-            // tooltip.chart
-            // tooltip.cornerRadius
-            // tooltip.fillColor
-            // tooltip.font...
-            // tooltip.text
-            // tooltip.x
-            // tooltip.y
-            // tooltip.caretX
-            // tooltip.caretY
-            // etc...
-          },
-          callbacks: {
-            'label': function (tooltipItem, data) {
-              let index = tooltipItem.index,
-                label = data.labels[index],
-                tasksCounter = data.datasets[0].data[index];
-              return `Priority ${label} (${tasksCounter} tasks)`;
+    ngOnInit() {
+        this.subscriptions = this.statisticsService.daily$.subscribe((daily) => {
+            if (daily) {
+                this.dayStatistics = daily;
+                this.charts = [
+                    new Chart({
+                        'id': 1,
+                        'name': 'prioritiesTasksCounter',
+                        'data': this.generatePrioritiesTasksCounterChartData(),
+                        'legend': this.generateLegendPrioritiesTasksCounterChartData()
+                    }),
+                    new Chart({
+                        'id': 2,
+                        'name': 'projectsTasksCounter',
+                        'data': this.generateProjectsTasksCounterChartData(),
+                        'legend': this.generateLegendProjectsTasksCounterChartData()
+                    }),
+                    new Chart({
+                        'id': 3,
+                        'name': 'tagsTasksCounter',
+                        'data': this.generateTagsTasksCounterChartData(),
+                        'legend': this.generateLegendTagsTasksCounterChartData()
+                    }),
+                ];
+                this.activeChart = this.charts[0];
+                this.numberOfCharts = this.charts.length;
 
             }
-          }
-        },
-        hover: {
-          onHover: function () {
-            //debugger;
-          }
+        });
+        this.subscriptions.add(this.configurationService.activeDay$.subscribe((activeDay) => {
+            this.activeDay = activeDay;
+        }));
+
+        this.nextChart = (() => {
+            if (this.activeChart) {
+                let newActiveChartId = this.activeChart.id + 1;
+                if (newActiveChartId > this.numberOfCharts) {
+                    newActiveChartId = 1;
+                }
+                if (this.charts && this.charts.length > 0) {
+                    this.activeChart = this.charts.filter((chart) => chart.id === newActiveChartId)[0];
+                }
+            }
+
+        });
+
+        this.previousChart = (() => {
+            let newActiveChartId = this.activeChart.id - 1;
+            if (newActiveChartId === 0) {
+                newActiveChartId = this.numberOfCharts;
+            }
+            this.activeChart = this.charts.filter((chart) => chart.id === newActiveChartId)[0];
+
+        });
+        this.chartInterval = setInterval(this.nextChart, this.interval);
+    }
+
+    ngOnDestroy() {
+        if (this.subscriptions) {
+            this.subscriptions.unsubscribe();
         }
+        clearInterval(this.chartInterval);
+    }
 
-      }
-    };
-  }
+    generatePrioritiesTasksCounterChartData() {
+        const labels = [], data = [], colors = [];
+        this.dayStatistics.priorities.forEach((priority) => {
+            labels.push(priority.name);
+            data.push(priority.count);
+            colors.push(priority.color);
+        });
+        console.log(colors);
+        return {
+            labels: labels,
+            datasets: [
+                {
+                    data: data,
+                    labels: labels,
+                    borderColor: 'grey'
+                }],
+            chartType: 'pie',
+            legend: false,
+            colors: [{backgroundColor: colors}],
+            options: {
+                title: {
+                    display: true,
+                    text: 'Priorities tasks counter',
+                    fontSize: 16,
+                    fontColor: 'white'
+                },
+                tooltips: {
+                    custom: function (tooltip) {
+                        // tooltip will be false if tooltip is not visible or should be hidden
+                        console.log(tooltip);
+                        if (!tooltip) {
+                            return;
+                        }
+                    },
+                    callbacks: {
+                        'label': function (tooltipItem, data) {
+                            const index = tooltipItem.index,
+                                label = data.datasets[0].labels[index],
+                                tasksCounter = data.datasets[0].data[index];
+                            return `Priority ${label} (${tasksCounter} tasks)`;
 
-
-  generateProjectsTasksCounterChartData() {
-    const labels = [], data = [];
-    this.dayStatistics.lists.forEach((project) => {
-      labels.push(project.name);
-      data.push(project.count);
-    });
-    return {
-      labels: labels,
-      datasets: [
-        {
-          data: data,
-          backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ],
-          hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ]
-        }],
-      chartType: 'pie',
-      legend: true,
-      options: {
-        title: {
-          display: true,
-          text: 'Projects tasks counter',
-          fontSize: 16,
-          fontColor: 'white'
-        },
-        legend: {
-          position: 'bottom',
-          labels: {
-            fontColor: '#fff'
-          },
-          onHover: function (event, legendItem) {
-            debugger;
-          }
-        },
-        tooltips: {
-          custom: function (tooltip) {
-            // tooltip will be false if tooltip is not visible or should be hidden
-            console.log(tooltip)
-            if (!tooltip) {
-              return;
+                        }
+                    }
+                },
             }
+        };
+    }
 
-            // Otherwise, tooltip will be an object with all tooltip properties like:
-
-            // tooltip.caretSize
-            // tooltip.caretPadding
-            // tooltip.chart
-            // tooltip.cornerRadius
-            // tooltip.fillColor
-            // tooltip.font...
-            // tooltip.text
-            // tooltip.x
-            // tooltip.y
-            // tooltip.caretX
-            // tooltip.caretY
-            // etc...
-          },
-          callbacks: {
-            'label': function (tooltipItem, data) {
-              let index = tooltipItem.index,
-                label = data.labels[index],
-                tasksCounter = data.datasets[0].data[index];
-              return `${label} (${tasksCounter} tasks)`;
-            }
-          }
-        },
-        hover: {
-          onHover: function () {
-            //debugger;
-          }
-        }
-
-      }
-    };
-  }
+    generateLegendPrioritiesTasksCounterChartData() {
+        const legend = [];
+        this.dayStatistics.priorities.forEach((priority) => {
+            legend.push({'name': priority.name, 'color': priority.color});
+        });
+        return legend;
+    }
 
 
-  generateTagsTasksCounterChartData() {
-    const labels = [], data = [];
-    this.dayStatistics.tags.forEach((tag) => {
-      labels.push(tag.name);
-      data.push(tag.count);
-    });
-    return {
-      labels: labels,
-      datasets: [
-        {
-          data: data,
-          backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ],
-          hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ]
-        }],
-      chartType: 'pie',
-      legend: true,
-      options: {
-        title: {
-          display: true,
-          text: 'Tags tasks counter',
-          fontSize: 16,
-          fontColor: 'white'
-        },
-        legend: {
-          position: 'bottom',
-          onHover: function (event, legendItem) {
-            debugger;
-          },
-          labels: {
-            fontColor: '#fff'
-          }
-        },
-        tooltips: {
-          custom: function (tooltip) {
-            // tooltip will be false if tooltip is not visible or should be hidden
-            console.log(tooltip)
-            if (!tooltip) {
-              return;
-            }
-
-            // Otherwise, tooltip will be an object with all tooltip properties like:
-
-            // tooltip.caretSize
-            // tooltip.caretPadding
-            // tooltip.chart
-            // tooltip.cornerRadius
-            // tooltip.fillColor
-            // tooltip.font...
-            // tooltip.text
-            // tooltip.x
-            // tooltip.y
-            // tooltip.caretX
-            // tooltip.caretY
-            // etc...
-          },
-          callbacks: {
-            'label': function (tooltipItem, data) {
-              let index = tooltipItem.index,
-                label = data.labels[index],
-                tasksCounter = data.datasets[0].data[index];
-              return `${label} (${tasksCounter} tasks)`;
+    generateProjectsTasksCounterChartData() {
+        const labels = [], data = [], colors = [];
+        this.dayStatistics.lists.forEach((project) => {
+            labels.push(project.name);
+            data.push(project.count);
+            colors.push(project.color);
+        });
+        return {
+            datasets: [
+                {
+                    data: data,
+                    labels: labels,
+                    borderColor: 'grey'
+                }],
+            chartType: 'pie',
+            colors: [{'backgroundColor': colors}],
+            legend: true,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Projects tasks counter',
+                    fontSize: 16,
+                    fontColor: 'white'
+                },
+                tooltips: {
+                    custom: function (tooltip) {
+                        // tooltip will be false if tooltip is not visible or should be hidden
+                        console.log(tooltip);
+                        if (!tooltip) {
+                            return;
+                        }
+                    },
+                    callbacks: {
+                        'label': function (tooltipItem, data) {
+                            const index = tooltipItem.index,
+                                label = data.datasets[0].labels[index],
+                                tasksCounter = data.datasets[0].data[index];
+                            return `${label} (${tasksCounter} tasks)`;
+                        }
+                    }
+                },
+                hover: {
+                    onHover: function () {
+                        //debugger;
+                    }
+                }
 
             }
-          }
-        },
-        hover: {
-          onHover: function () {
-            //debugger;
-          }
-        }
+        };
+    }
+    
+    generateLegendProjectsTasksCounterChartData() {
+        const legend = [];
+        this.dayStatistics.lists.forEach((project) => {
+            legend.push({'name': project.name, 'color': project.color});
+        });
+        return legend;
+    }
+    
 
-      }
-    };
-  }
+    generateTagsTasksCounterChartData() {
+        const labels = [], data = [], colors = [];
+        this.dayStatistics.tags.forEach((tag) => {
+            labels.push(tag.name);
+            data.push(tag.count);
+            colors.push(tag.color);
+        });
+        return {
+
+            datasets: [
+                {
+                    data: data,
+                    labels: labels,
+                    borderColor: 'grey'
+                }],
+            chartType: 'pie',
+            colors: [{'backgroundColor': colors}],
+            legend: true,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Tags tasks counter',
+                    fontSize: 16,
+                    fontColor: 'white'
+                },
+                tooltips: {
+                    custom: function (tooltip) {
+                        // tooltip will be false if tooltip is not visible or should be hidden
+                        console.log(tooltip);
+                        if (!tooltip) {
+                            return;
+                        }
+                    },
+                    callbacks: {
+                        'label': function (tooltipItem, data) {
+                            const index = tooltipItem.index,
+                                label = data.datasets[0].labels[index],
+                                tasksCounter = data.datasets[0].data[index];
+                            return `${label} (${tasksCounter} tasks)`;
+
+                        }
+                    }
+                },
+                hover: {
+                    onHover: function () {
+                        //debugger;
+                    }
+                }
+
+            }
+        };
+    }
+    
+    generateLegendTagsTasksCounterChartData() {
+        const legend = [];
+        this.dayStatistics.tags.forEach((tag) => {
+            legend.push({'name': tag.name, 'color':tag.color});
+        });
+        return legend;
+    }
 
 
-  isChartActive(chartId) {
-    return chartId === this.activeChart.id;
-  }
+    isChartActive(chartId) {
+        return chartId === this.activeChart.id;
+    }
 
-  changeActiveChart(chartId) {
-    this.activeChart = this.charts.filter((chart) => chart.id === chartId)[0];
+    changeActiveChart(chartId) {
+        this.activeChart = this.charts.filter((chart) => chart.id === chartId)[0];
 
-  }
+    }
 
 }

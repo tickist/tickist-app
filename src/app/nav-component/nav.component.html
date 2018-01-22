@@ -1,5 +1,5 @@
 <mat-toolbar>
-    <button mat-mini-fab color="primary"  [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
+    <button class="fab-button" mat-mini-fab color="primary"  [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
         <i class="fa fa-bars"></i>
     </button>
 
@@ -7,21 +7,21 @@
                 <div class="docs-logotype"><img [src]="'/assets/images/logo_32.png'"></div>
      </a>
 
-    <button mat-button (click)='navigateTo("/", "", "", "")'  [fxHide.xs]="1" [fxHide.sm]="1" >
+    <button class="navigation-button active" mat-button (click)='navigateTo("/", "", "", "")'  [fxHide.xs]="1" [fxHide.sm]="1" >
         <i class="fa fa-home menu_icon"></i>
         <span>Dashboard</span>
     </button>
     <button mat-button (click)='navigateTo("/", "", "", "")'  [fxHide.gt-sm]="1" >
         <i class="fa fa-home menu_icon"></i>
     </button>
-    <button  mat-button (click)='navigateTo("home", "projects", user?.inboxPk, "projects")' [fxHide.xs]="1" [fxHide.sm]="1">
+    <button class="navigation-button" mat-button (click)='navigateTo("home", "projects", user?.inboxPk, "projects")' [fxHide.xs]="1" [fxHide.sm]="1">
         <i class="fa fa-folder menu_icon"></i>
         <span >Projects</span>
     </button>
     <button  mat-button (click)='navigateTo("home", "projects", user?.inboxPk, "projects")' [fxHide.gt-sm]="1">
         <i class="fa fa-folder menu_icon"></i>
     </button>
-    <button mat-button (click)='navigateTo("home", "tags", "", "tags")'  [fxHide.xs]="1" [fxHide.sm]="1">
+    <button class="navigation-button" mat-button (click)='navigateTo("home", "tags", "", "tags")'  [fxHide.xs]="1" [fxHide.sm]="1">
         <i class="fa fa-tags menu_icon"></i>
         <span>Tags</span>
     </button>
@@ -41,5 +41,5 @@
     </mat-menu>
 
 </mat-toolbar>
-<div style="height: 5px;width:100%;background-color: #394264" *ngIf="!progressBar"></div>
+<div style="height: 5px;width:100%;background-color: #1F253D" *ngIf="!progressBar"></div>
 <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>

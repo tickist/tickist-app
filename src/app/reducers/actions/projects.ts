@@ -70,7 +70,7 @@ export class DeleteId implements Action {
 export class AddCurrentFilters implements Action {
   readonly type = ADD_CURRENT_FILTERS;
 
-  constructor(public payload: Filter[]) {
+  constructor(public payload: Filter) {
   }
 }
 

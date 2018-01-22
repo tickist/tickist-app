@@ -1,5 +1,6 @@
 import {
-    ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2, SimpleChange,
+    AfterViewInit,
+    ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
     ViewChild
 } from '@angular/core';
 
@@ -9,7 +10,7 @@ import {
     styleUrls: ['./toggle-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ToggleButtonComponent implements OnInit {
+export class ToggleButtonComponent implements OnInit, OnChanges, AfterViewInit {
     @Input() status: number;
     @Input() priority: string;
     @ViewChild('iconElement') iconElement: ElementRef;
@@ -21,9 +22,10 @@ export class ToggleButtonComponent implements OnInit {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-
-        this.renderer.removeClass(this.elRef.nativeElement, changes.priority.previousValue);
-        this.renderer.addClass(this.elRef.nativeElement, changes.priority.currentValue);
+        if (changes.hasOwnProperty('priority')) {
+            this.renderer.removeClass(this.elRef.nativeElement, changes.priority.previousValue);
+            this.renderer.addClass(this.elRef.nativeElement, changes.priority.currentValue);
+        }
     }
 
     ngAfterViewInit() {

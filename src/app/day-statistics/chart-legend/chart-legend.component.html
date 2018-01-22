@@ -1,0 +1,11 @@
+<div class="text-wrapper">
+   <span class="text-button" (click)="changeLegendVisibility()" *ngIf="!isLegendVisible">show legend</span>
+    <span class="text-button" (click)="changeLegendVisibility()" *ngIf="isLegendVisible">hide legend</span> 
+</div>
+
+
+<div *ngIf="isLegendVisible" fxLayout="column" fxLayoutAlign="start start">
+    <span *ngFor="let element of data" >
+        <i class="fa fa-square" [ngStyle]="{'color': element.color}"></i> {{ element.name }}
+    </span>
+</div>

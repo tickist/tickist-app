@@ -126,6 +126,7 @@ import { ShowNotificationAboutNewDayComponent } from './show-notification-about-
 import {FilterProjectDialogComponent} from './projects-list/filter-projects-dialog/filter-projects.dialog.component';
 import {SortTasksComponent} from './sort-tasks/sort-tasks.component';
 import {SortByDialog} from './sort-tasks/sort-tasks-dialog/sort-tasks.dialog.component';
+import { ChartLegendComponent } from './day-statistics/chart-legend/chart-legend.component';
 
 
 export function instrumentOptions() {
@@ -224,7 +225,8 @@ export class TickistMaterialModule {
         ShowNotificationAboutNewDayComponent,
         ShowApiErrorComponent,
         FilterProjectDialogComponent,
-        SortTasksComponent
+        SortTasksComponent,
+        ChartLegendComponent
     ],
     imports: [
         BrowserModule,

@@ -90,7 +90,7 @@
                             <mat-form-field>
                                 <mat-select placegolder="Default task view" formControlName="defaultTaskView"
                                            name="defaultTaskView">
-                                    <mat-option *ngFor="let option of defaultTaskView" [value]="option.name">
+                                    <mat-option *ngFor="let option of defaultTaskView" [value]="option.value">
                                         {{ option.name }}
                                     </mat-option>
                                 </mat-select>
@@ -150,7 +150,7 @@
             </div>
 
 
-            <button type="submit" mat-button>Send</button>
+            <button type="submit" mat-button>Save</button>
 
         </form>
     </mat-card>

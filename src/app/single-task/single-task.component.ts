@@ -36,7 +36,7 @@ export class SingleTask {
     }
 
     changeShowing(show) {
-        for (let key in this.task.menuShowing) {
+        for (const key in this.task.menuShowing) {
             if (key !== show && key !== 'id') {
                 this.task.menuShowing[key] = false;
             }
@@ -47,7 +47,7 @@ export class SingleTask {
         if (this.task.taskProject.shareWith.length > 0) {
             this.task.menuShowing['sharedList'] = true;
         }
-    };
+    }
 
     toggleDoneStep(step) {
         this.task.steps.forEach((s) => {
@@ -76,6 +76,8 @@ export class SingleTask {
                     }
                     this.taskService.updateTask(this.task);
                 });
+            } else {
+                this.taskService.updateTask(this.task);
             }
         } else if (this.task.status === 1) {
             this.task.status = 0;
@@ -91,14 +93,14 @@ export class SingleTask {
         this.task.pinned = !this.task.pinned;
         this.taskService.updateTask(this.task);
     }
-    
+
     changePriority(priority) {
         if (this.task.priority !== priority) {
             this.task.priority = priority;
             this.taskService.updateTask(this.task);
         }
     }
-    
+
     changeDate(date) {
         let delta;
         if (date === 'today') {
@@ -113,8 +115,8 @@ export class SingleTask {
         this.task.moveFinishDateFromPreviousFinishDate(delta);
         this.taskService.updateTask(this.task);
     }
-    
-    
+
+
     deleteTask() {
         const dialogRef = this.dialog.open(DeleteTaskDialogComponent);
         dialogRef.afterClosed().subscribe(result => {
@@ -122,12 +124,12 @@ export class SingleTask {
                 this.taskService.deleteTask(this.task);
             }
         });
-    };
-    
+    }
+
     saveTimeValues(time) {
         this.task.time = time.time;
         this.task.estimateTime = time.estimateTime;
-    };
+    }
 }
 
 
@@ -141,7 +143,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     @Input() task;
     @Input() mediaChange;
     @ViewChild('container') container: ElementRef;
-    
+
     isRightMenuVisible = false;
     isFastMenuVisible = false;
     isMouseOver = false;
@@ -151,14 +153,14 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     typeFinishDateOptions: {};
     repeatString = '';
     repeatStringExtension;
-    
+
     @HostListener('mouseenter')
     onMouseEnter() {
         this.isMouseOver = true;
         this.changeRightMenuVisiblity();
         this.isRightMenuVisible = true;
     }
-    
+
     @HostListener('mouseleave')
     onMouseLeave() {
         this.isMouseOver = false;
@@ -166,26 +168,26 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         if (!this.isFastMenuVisible) {
             this.isRightMenuVisible = false;
         }
-        
+
     }
-    
+
     private timer: Timer;
     private t2: Timer;
-    
+
     constructor(public taskService: TaskService, public configurationService: ConfigurationService,
                 public dialog: MatDialog, protected projectService: ProjectService, private renderer: Renderer2) {
         super(taskService, dialog);
         this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
     }
-    
+
     ngOnInit() {
         // this.t2 = new Timer(`on changes`)
-        
+
         if (this.task.taskProject.shareWith.length > 0) {
             this.task.menuShowing.sharedList = true;
         }
         this.projectService.projects$.takeUntil(this.ngUnsubscribe).subscribe((projects) => {
-            this.projects = projects
+            this.projects = projects;
             // this.t2.stop();  // Prints the time elapsed to the JS console.
         });
         if (this.mediaChange && this.mediaChange.mqAlias === 'xs') {
@@ -195,48 +197,48 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         const repeatDeltaExtension = this.repeatStringExtension.transform(this.task.repeat);
         this.repeatString = `every ${repeatDelta} ${repeatDeltaExtension}`;
     }
-    
+
     ngAfterViewInit() {
         this.renderer.addClass(this.container.nativeElement, 'flow');
         this.renderer.addClass(this.container.nativeElement, 'row');
     }
-    
+
     // When change detection begins
     ngDoCheck() {
-        this.timer = new Timer(`single task component ${this.task.name}`)
+        this.timer = new Timer(`single task component ${this.task.name}`);
     }
-    
-    
+
+
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
-    
+
     ngAfterViewChecked() {
         this.timer.stop();  // Prints the time elapsed to the JS console.
     }
-    
+
     changeAssignedTo(event) {
         this.task.owner = this.task.taskProject.shareWith.filter(user => user.id === event.value)[0];
         this.taskService.updateTask(this.task);
     }
-    
+
     changeProject(event) {
         this.task.taskProject = this.projects.filter(project => project.id === event.value)[0];
         this.taskService.updateTask(this.task);
     }
-    
+
     removeTag(tag) {
         this.task.removeTag(tag);
         this.taskService.updateTask(this.task);
     }
-    
+
     changeFastMenuVisible(value) {
         this.isFastMenuVisible = value;
         this.changeRightMenuVisiblity();
-        console.log(value)
+        console.log(value);
     }
-    
+
     changeRightMenuVisiblity() {
         if (this.isMouseOver) {
             this.isRightMenuVisible = true;
@@ -248,7 +250,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
             this.isRightMenuVisible = false;
         }
     }
-    
+
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('mediaChange') && changes['mediaChange'].hasOwnProperty('currentValue')
             && changes['mediaChange'].currentValue && changes['mediaChange'].currentValue.mqAlias === 'xs') {
@@ -268,18 +270,18 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
 })
 export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit, AfterViewInit {
     @Input() task;
-    
+
     constructor(public taskService: TaskService, public dialog: MatDialog) {
         super(taskService, dialog);
     }
-    
+
     ngOnInit() {
         console.time(`simple single task component ${this.task.name}`);
     }
-    
+
     ngAfterViewInit() {
-        console.log('stop')
+        console.log('stop');
         console.timeEnd(`simple single task component ${this.task.name}`);
     }
-    
+
 }
