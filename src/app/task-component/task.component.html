@@ -81,7 +81,9 @@
                                 <input matInput #taskName (blur)="updateImmediately($event, taskForm.value)"
                                        placeholder="Task name" maxlength="100" formControlName="name">
                                 <mat-hint align="end">{{taskName.value?.length || 0}}/100</mat-hint>
-                               <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">{{getErrorMessage(taskForm.controls['main'].controls['name'])}}</mat-error>
+                                <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">
+                                    {{getErrorMessage(taskForm.controls['main'].controls['name'])}}
+                                </mat-error>
                             </mat-form-field>
 
                             <mat-button-toggle-group formControlName="priority" [ngStyle]="{'width': '126px'}">
@@ -94,18 +96,22 @@
                                 <mat-select placeholder="Project:" formControlName="taskProjectPk"
                                             (change)="changeProjectInTask($event)">
                                     <mat-option *ngFor="let project of projects"
-                                                [value]="project.id"> {{ project.name }} </mat-option>
+                                                [value]="project.id"> {{ project.name }}
+                                    </mat-option>
                                 </mat-select>
                             </mat-form-field>
 
                             Complete:
                             <mat-radio-group formControlName="typeFinishDate">
-                                <mat-radio-button [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}" *ngFor="let option of typeFinishDateOptions" [value]="option.id">
+                                <mat-radio-button
+                                    [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}"
+                                    *ngFor="let option of typeFinishDateOptions" [value]="option.id">
                                     {{ option.name }}
                                 </mat-radio-button>
                             </mat-radio-group>
 
-                            <div fxLayout.xs="column"  fxLayout="row" fxLayoutAlign.xs="center none" fxLayoutAlign="space-between end" >
+                            <div fxLayout.xs="column" fxLayout="row" fxLayoutAlign.xs="center none"
+                                 fxLayoutAlign="space-between end">
 
                                 <mat-form-field fxFlex="45">
                                     <input matInput [matDatepickerFilter]="minFilter"
@@ -117,7 +123,7 @@
                                     <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishDate($event)"
                                                          matSuffix></tickist-menu-button>
                                     <mat-error
-                                            *ngIf="taskForm.controls['main'].controls['finishDate'].invalid && (taskForm.controls['main'].controls['finishDate'].dirty || taskForm.controls['main'].controls['finishDate'].touched)">
+                                        *ngIf="taskForm.controls['main'].controls['finishDate'].invalid && (taskForm.controls['main'].controls['finishDate'].dirty || taskForm.controls['main'].controls['finishDate'].touched)">
                                         Date format is invalid
                                     </mat-error>
                                     <mat-datepicker #picker></mat-datepicker>
@@ -143,33 +149,61 @@
                             <mat-form-field>
                                 <mat-select placeholder="Assigned to:" formControlName="ownerId">
                                     <mat-option *ngFor="let user of task.taskProject.shareWith"
-                                                [value]="user.id"> {{ user.username }} </mat-option>
+                                                [value]="user.id"> {{ user.username }}
+                                    </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-slide-toggle [formControl]="taskForm.controls['extra'].controls['suspended']">
-                                <span *ngIf="taskForm.controls['extra'].controls['suspended'].value == false">This task is active</span>
-                                <span *ngIf="taskForm.controls['extra'].controls['suspended'].value == true">This task is suspended</span>
-                            </mat-slide-toggle>
+
+                            <mat-radio-group formControlName="suspended">
+                                <mat-radio-button 
+                                    [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}" 
+                                    [value]="false">
+                                    This task is active
+                                </mat-radio-button>
+                                <mat-radio-button 
+                                    [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}" 
+                                    [value]="true">
+                                    This task is suspended
+                                </mat-radio-button>
+                            </mat-radio-group>
 
                             <div>
                                 <div *ngIf="taskForm.controls['extra'].controls['suspended'].value">
-                                    <h4><span>Enter date when the task will be unsuspend.</span></h4>
-                                    <p-calendar #suspendedDate formControlName="suspendedDate" [minDate]="minDate"
-                                                [readonlyInput]="true"></p-calendar>
+                                    <h4><span>Choose a date when the task should become active (optional).</span></h4>
+
+                                    <mat-form-field>
+                                        <input matInput [matDatepickerFilter]="minFilter"
+                                               formControlName="suspendedDate"
+                                               (focus)="suspendedDatePicker.open()"
+                                               (click)="suspendedDatePicker.open()"
+                                               [matDatepicker]="suspendedDatePicker"
+                                               placeholder="Choose date">
+                                        <tickist-menu-button [icon]="'fa-close'" (click)="clearSuspendedDate($event)"
+                                                             matSuffix></tickist-menu-button>
+                                        <mat-error
+                                            *ngIf="taskForm.controls['main'].controls['finishDate'].invalid && (taskForm.controls['main'].controls['finishDate'].dirty || taskForm.controls['main'].controls['finishDate'].touched)">
+                                            Date format is invalid
+                                        </mat-error>
+                                        <mat-datepicker #suspendedDatePicker></mat-datepicker>
+
+                                    </mat-form-field>
+
                                 </div>
                             </div>
 
 
-                             <mat-form-field>
+                            <mat-form-field>
                                 <input matInput placeholder="Estimated time" formControlName="estimateTime">
-                                 <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix aria-hidden="true"></i>
+                                <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
+                                   aria-hidden="true"></i>
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Real time" formControlName="time">
-                                <i  matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix aria-hidden="true"></i>
+                                <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
+                                   aria-hidden="true"></i>
                             </mat-form-field>
 
-                             <mat-form-field>
+                            <mat-form-field>
                                 <textarea matInput #taskDescription (blur)="updateImmediately($event, taskForm.value)"
                                           placeholder="Task description" formControlName="description"></textarea>
                                 <mat-hint align="end">{{taskDescription.value?.length || 0}}/5000</mat-hint>
@@ -183,11 +217,13 @@
                     <div [hidden]="!menu.tags" formGroupName="tags">
 
                         <mat-form-field>
-                            <input #trigger type="text" matInput placeholder="Add new tag" (keydown.enter)="addingTag($event)"
+                            <input #trigger type="text" matInput placeholder="Add new tag"
+                                   (keydown.enter)="addingTag($event)"
                                    [matAutocomplete]="autocompleteTags" [formControl]="tagsCtrl">
                         </mat-form-field>
 
-                        <mat-autocomplete (optionSelected)="addingTag($event)" #autocompleteTags="matAutocomplete" [displayWith]="autocompleteTagsDisplayFn">
+                        <mat-autocomplete (optionSelected)="addingTag($event)" #autocompleteTags="matAutocomplete"
+                                          [displayWith]="autocompleteTagsDisplayFn">
                             <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
                                 {{ tag.name }}
                             </mat-option>
@@ -197,14 +233,15 @@
                         <mat-chip-list>
 
                             <mat-chip *ngFor="let tag of task.tags">
-                                <span>{{ tag.name }}</span><span fxFlex></span><i matTooltip="Remove tag" (click)="removeTagFromTask(tag)"
+                                <span>{{ tag.name }}</span><span fxFlex></span><i matTooltip="Remove tag"
+                                                                                  (click)="removeTagFromTask(tag)"
                                                                                   class="fa fa-times"></i>
                             </mat-chip>
 
                         </mat-chip-list>
                     </div>
 
-                    <div [hidden]="!menu.steps" formArrayName="steps" >
+                    <div [hidden]="!menu.steps" formArrayName="steps">
                         <div>
                             <ul id="steps" [sortablejs]="taskForm.controls.steps" fxLayout="column">
                                 <li class="step"
@@ -212,7 +249,8 @@
                                     [formGroupName]="i">
                                     <i class="fa fa-arrows hover-visible" aria-hidden="true"></i>
                                     <mat-form-field>
-                                        <input matInput placeholder="Step name" formControlName="name" [autofocus]="last">
+                                        <input matInput placeholder="Step name" formControlName="name"
+                                               [autofocus]="last">
                                     </mat-form-field>
 
                                     <i class="fa fa-trash-o pointer" (click)="removeStep(i)"></i>
@@ -221,7 +259,9 @@
 
 
                             </ul>
-                            <button mat-button type="button" (keyup.escape)="addNewStep()" (click)="addNewStep()">Add new step</button>
+                            <button mat-button type="button" (keyup.escape)="addNewStep()" (click)="addNewStep()">Add
+                                new step
+                            </button>
                         </div>
                     </div>
 
@@ -244,7 +284,8 @@
 
                                 <mat-select placeholder="Repeat custom:" formControlName="repeatCustom">
                                     <mat-option *ngFor="let option of customRepeatOptions"
-                                                [value]="option.id">  {{ option.name_of_extension }}</mat-option>
+                                                [value]="option.id"> {{ option.name_of_extension }}
+                                    </mat-option>
                                 </mat-select>
 
                             </div>
