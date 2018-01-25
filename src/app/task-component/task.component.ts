@@ -245,8 +245,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         main.controls['suspendedDate'].setValue('');
         this.suspendedDateViewChild.overlayVisible = false;
     }
-
-
+    
     createNewTask(selectedProject: Project) {
         let defaultTypeFinishDate = 1;
         const finishDateOption = this.defaultFinishDateOptions
@@ -344,6 +343,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             this.task.priority = values['main']['priority'];
             this.task.description = values['extra']['description'];
             this.task.finishDate = values['main']['finishDate'] ? moment(values['main']['finishDate'], 'DD-MM-YYYY') : '';
+            this.task.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
             this.task.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             this.task.typeFinishDate = values['main']['typeFinishDate'];
             this.task.taskProject = this.projects.filter(project => project.id === parseInt(values['main']['taskProjectPk'], 10))[0];
