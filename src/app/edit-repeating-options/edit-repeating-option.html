@@ -1,35 +1,37 @@
- <div fxLayout="column" *ngIf="repeatDefault && defaultRepeatOptions">Repeat:
+<div fxLayout="column" *ngIf="repeatDefault && defaultRepeatOptions">Repeat:
 
-     <mat-radio-group [value]="repeatDefault" (change)="saveTask($event, 'repeatDefault')" fxLayout="column">
-         <mat-radio-button *ngFor="let option of defaultRepeatOptions" [value]="option.id">
-             {{ option.name }}
-         </mat-radio-button>
-         <mat-radio-button [value]="99">custom</mat-radio-button>
-     </mat-radio-group>
+    <mat-radio-group [(ngModel)]="repeatDefault" (change)="saveTask($event, 'repeatDefault')" fxLayout="column">
+        <mat-radio-button *ngFor="let option of defaultRepeatOptions" [value]="option.id">
+            {{ option.name }}
+        </mat-radio-button>
+        <mat-radio-button [value]="99">every</mat-radio-button>
+    </mat-radio-group>
 
-     <div [hidden]="repeatDefault !== 99">
+    <div [hidden]="repeatDefault !== 99" fxLayout.xs="column" fxLayout="row" fxLayoutAlign.xs="center none"
+         fxLayoutAlign="space-between center">
 
-         <mat-form-field>
-             <input matInput placeholder="every" [value]="repeatDelta" type="number"
-                    pattern="\d+" min="2" (blur)="saveTask($event, 'repeatDelta')"
-                    max="100">
+        <mat-form-field fxFlex="40">
+            <input matInput [value]="repeatDelta" type="number"
+                   pattern="\d+" min="2" (blur)="saveTask($event, 'repeatDelta')"
+                   max="100">
 
-         </mat-form-field>
-        <mat-form-field>
-             <mat-select placeholder="Repeat custom:"  (change)="saveTask($event, 'repeatCustom')" [(ngModel)]="repeatCustom">
-                 <mat-option *ngFor="let option of customRepeatOptions"
-                            [value]="option.id">  {{ option.name_of_extension }}</mat-option>
-             </mat-select>
         </mat-form-field>
-     </div>
+        <mat-form-field fxFlex="40">
+            <mat-select (change)="saveTask($event, 'repeatCustom')" [(ngModel)]="repeatCustom">
+                <mat-option *ngFor="let option of customRepeatOptions"
+                            [value]="option.id"> {{ option.name_of_extension }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
 
-     <div [hidden]="repeatDefault == 0">
-         From:
-         <mat-radio-group  [value]="fromRepeating" fxLayout="column" (change)="saveTask($event, 'fromRepeating')">
-             <mat-radio-button *ngFor="let option of fromRepetingOptions" [value]="option.id">
-                 {{ option.name }}
-             </mat-radio-button>
-         </mat-radio-group>
-     </div>
+    <div [hidden]="repeatDefault == 0">
+        From:
+        <mat-radio-group [value]="fromRepeating" fxLayout="column" (change)="saveTask($event, 'fromRepeating')">
+            <mat-radio-button *ngFor="let option of fromRepetingOptions" [value]="option.id">
+                {{ option.name }}
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
 
- </div>
+</div>

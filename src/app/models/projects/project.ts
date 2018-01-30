@@ -1,6 +1,7 @@
-import {SimplyUser, PendingUser} from './user';
-import * as _ from 'lodash';
-import {Api} from './commons';
+import {SimplyUser} from '../user/simply-user';
+import {PendingUser} from '../user/pending-user';
+import {Api} from '../commons';
+
 
 export class Project extends Api {
   id: number;
@@ -52,18 +53,5 @@ export class Project extends Api {
     } else {
       this.shareWith.push(new PendingUser(user));
     }
-  }
-}
-
-export class SimpleProject extends Api {
-  id: number;
-  name: string;
-  color: string;
-
-  constructor(project) {
-    super();
-    this.id = project.id;
-    this.name = project.name;
-    this.color = project.color;
   }
 }

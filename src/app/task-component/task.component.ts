@@ -178,7 +178,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             repeat.repeatDelta = 1;
             repeat.repeatDefault = task.repeat;
         }
-        repeat.repeatCustom = task.repeat;
+        repeat.repeatCustom = (task.repeat > 0) ? task.repeat : 1;
 
         return this.fb.group({
             'main': this.fb.group({

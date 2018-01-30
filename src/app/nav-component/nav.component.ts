@@ -38,7 +38,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.router.events
             .filter(event => event instanceof NavigationEnd)
-            .subscribe(event => {
+            .subscribe((event: NavigationEnd) => {
                 this.addClassToActiveElement(event.urlAfterRedirects);
             });
         this.configurationService.progressBar$.subscribe(progressBar => this.progressBar = progressBar);

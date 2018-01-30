@@ -14,7 +14,7 @@ class Legend {
 })
 export class ChartLegendComponent implements OnInit {
     @Input() data;
-    isLegendVisible = true;
+    isLegendVisible = false;
 
     constructor() {
     }

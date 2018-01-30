@@ -271,26 +271,28 @@
                                 <mat-radio-button *ngFor="let option of defaultRepeatOptions" [value]="option.id">
                                     {{ option.name }}
                                 </mat-radio-button>
-                                <mat-radio-button [value]="99">custom</mat-radio-button>
+                                <mat-radio-button [value]="99">every</mat-radio-button>
                             </mat-radio-group>
-                            <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value == 99">
+                            <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value == 99" 
+                                 fxLayout.xs="column" fxLayout="row" fxLayoutAlign.xs="center none"
+                                 fxLayoutAlign="space-between center">
 
-                                <mat-form-field>
-                                    <input matInput placeholder="every" formControlName="repeatDelta" type="number"
+                                <mat-form-field fxFlex="45">
+                                    <input matInput formControlName="repeatDelta" type="number"
                                            pattern="\d+" min="1"
                                            max="100">
 
                                 </mat-form-field>
 
-                                <mat-select placeholder="Repeat custom:" formControlName="repeatCustom">
+                                <mat-select formControlName="repeatCustom" fxFlex="45">
                                     <mat-option *ngFor="let option of customRepeatOptions"
                                                 [value]="option.id"> {{ option.name_of_extension }}
                                     </mat-option>
                                 </mat-select>
 
                             </div>
-                            <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value != 0">
-                                From:
+                            <div id="from-repeating-wrapper" *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value != 0">
+                                <span>From:</span>
                                 <mat-radio-group formControlName="fromRepeating" fxLayout="column">
                                     <mat-radio-button *ngFor="let option of fromRepetingOptions" [value]="option.id">
                                         {{ option.name }}

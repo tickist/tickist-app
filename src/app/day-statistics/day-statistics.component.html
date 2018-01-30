@@ -4,7 +4,7 @@
 <div *ngIf="dayStatistics">
 
     <div class="single-chart"  *ngFor="let chart of charts" [hidden]="!isChartActive(chart.id)">
-        <canvas baseChart height="300"
+        <canvas baseChart height="300" width="250px"
                 [datasets]="chart.data.datasets" 
                 [colors]="chart.data.colors"
                 [options]="chart.data.options"
@@ -14,14 +14,14 @@
                 (chartClick)="chartClicked($event)">
             
         </canvas>
-        
+        <div id="charts-dots" div fxLayout="row" fxLayoutAlign="center center" >
+        <i *ngFor="let chart of charts" [ngClass]="{'fa-circle': isChartActive(chart.id), 'fa-circle-o': !isChartActive(chart.id)}" (click)="changeActiveChart(chart.id)" class="fa" aria-hidden="true"></i>
+    </div>
         <tickist-chart-legend [data]="chart.legend"></tickist-chart-legend>
 
     </div>
 
-    <div id="charts-dots" div fxLayout="row" fxLayoutAlign="center center" >
-        <i *ngFor="let chart of charts" [ngClass]="{'fa-circle': isChartActive(chart.id), 'fa-circle-o': !isChartActive(chart.id)}" (click)="changeActiveChart(chart.id)" class="fa" aria-hidden="true"></i>
-    </div>
+    
 
     <div fxLayout="row" fxLayoutAlign="start center">
         <div>All tasks</div>
