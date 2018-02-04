@@ -1,5 +1,6 @@
 <span>
-  <span class="finish-time">{{ task.finishTime }} </span>
+    
+  <span class="finish-time"></span>
   <span [innerHTML]="task.name|truncate: 60 " [matTooltip]="task.name" *ngIf="tooltip"></span>
   <span *ngIf="!tooltip">{{ task.name }}</span>
 </span>
@@ -7,10 +8,10 @@
   <span  [matTooltip]="'estimated time'">({{ task.estimateTime|minutes2hours }})</span>
 </span>
 <span  *ngIf="timeAndEstimateTime">
-  <span  [matTooltip]="'estimated time and real time'">({{ task.estimateTime|minutes2hours }} / {{ task.time|minutes2hours }})</span>
+  <span [matTooltip]="'estimated time and real time'">({{ task.estimateTime|minutes2hours }} / {{ task.time|minutes2hours }})</span>
 </span>
 <span  *ngIf="onlyTime">
-  <span  [matTooltip]="'time'">({{ task.time|minutes2hours }})</span>
+  <span [matTooltip]="'time'">({{ task.time|minutes2hours }})</span>
 </span>
 
 

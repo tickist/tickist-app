@@ -8,5 +8,16 @@
 }
 
 .legend {
-    padding-top:10px;
+    padding-top: 10px;
+}
+
+.rectangle {
+    width: 30px;
+    height: 15px;
+    float: left;
+    border-radius: 3px;
+    margin-right: 3px;
+    border-color: grey;
+    border-width: 1px;
+    border-style: solid;
 }

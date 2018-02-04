@@ -4,7 +4,7 @@
 <div *ngIf="dayStatistics">
 
     <div class="single-chart"  *ngFor="let chart of charts" [hidden]="!isChartActive(chart.id)">
-        <canvas baseChart height="300" width="250px"
+        <canvas baseChart height="200" width="250px"
                 [datasets]="chart.data.datasets" 
                 [colors]="chart.data.colors"
                 [options]="chart.data.options"

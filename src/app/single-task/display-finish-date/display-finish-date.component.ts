@@ -1,29 +1,58 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
+    ViewChild
+} from '@angular/core';
+import * as _ from 'lodash';
 import {Task} from '../../models/tasks';
+
+
 @Component({
-  selector: 'tickist-display-finish-date',
-  templateUrl: './display-finish-date.component.html',
-  styleUrls: ['./display-finish-date.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'tickist-display-finish-date',
+    templateUrl: './display-finish-date.component.html',
+    styleUrls: ['./display-finish-date.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DisplayFinishDateComponent implements OnInit {
-  @Input() task: Task;
-  @ViewChild('typeFinishDateIcon') typeFinishDateIcon: ElementRef;
-  dateFormat = 'DD-MM-YYYY';
+export class DisplayFinishDateComponent implements OnInit, OnChanges, AfterViewInit {
+    @Input() task: Task;
+    @ViewChild('typeFinishDateIcon') typeFinishDateIcon: ElementRef;
+    @ViewChild('finishTime') finishTime: ElementRef;
+    @ViewChild('finishTimeIcon') finishTimeIcon: ElementRef;
+    dateFormat = 'DD-MM-YYYY';
 
-  constructor(private elRef: ElementRef, private renderer: Renderer2) { }
+    constructor(private renderer: Renderer2) {
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
-  ngAfterViewInit() {
-      this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa');
-      if (this.task.typeFinishDate === 1) {
-         this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa-dot-circle-o');
-      } else if (this.task.typeFinishDate === 0) {
-         this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa-arrow-right');
-      }
-      this.renderer.setStyle(this.typeFinishDateIcon.nativeElement, 'margin-right', '3px');
-  }
+    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+        if (changes.hasOwnProperty('task')) {
+
+            this.addTypeFinishDateIcon();
+        }
+    }
+
+    ngAfterViewInit() {
+        this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa');
+        this.addTypeFinishDateIcon();
+
+        this.renderer.setStyle(this.typeFinishDateIcon.nativeElement, 'margin-right', '3px');
+        if (this.finishTime) {
+            this.renderer.addClass(this.finishTimeIcon.nativeElement, 'fa');
+            this.renderer.addClass(this.finishTimeIcon.nativeElement, 'fa-clock-o');
+            this.renderer.setStyle(this.finishTime.nativeElement, 'margin-right', '3px');
+            this.renderer.setStyle(this.finishTime.nativeElement, 'margin-left', '3px');
+        }
+    }
+
+    addTypeFinishDateIcon() {
+        this.renderer.removeClass(this.typeFinishDateIcon.nativeElement, 'fa-dot-circle-o');
+        this.renderer.removeClass(this.typeFinishDateIcon.nativeElement, 'fa-arrow-right');
+        if (this.task.typeFinishDate === 1) {
+            this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa-dot-circle-o');
+        } else if (this.task.typeFinishDate === 0) {
+            this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa-arrow-right');
+        }
+    }
 
 }

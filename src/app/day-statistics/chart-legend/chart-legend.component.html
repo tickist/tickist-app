@@ -5,7 +5,7 @@
 
 
 <div class="legend" *ngIf="isLegendVisible" fxLayout="column" fxLayoutAlign="start start">
-    <span *ngFor="let element of data" >
-        <i class="fa fa-square" [ngStyle]="{'color': element.color}"></i> {{ element.name }}
-    </span>
+    <div *ngFor="let element of data" >
+        <div class="rectangle" [ngStyle]="{'background': element.color}"></div> {{ element.name }}
+    </div>
 </div>

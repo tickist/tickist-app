@@ -44,7 +44,7 @@ export class EditRepeatingOptionComponent implements OnInit {
     }
 
     saveTask($event: any, source: string) {
-        debugger
+
         if (source === 'repeatDefault') {
             if ($event.value !== 99) {
                 this.task.repeat = $event.value;

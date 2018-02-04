@@ -6,6 +6,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   font-family: 'Roboto', 'sans-serif';
+
 }
 
 input[type="time"]::-webkit-clear-button {
@@ -300,6 +301,10 @@ body::-webkit-scrollbar-thumb {
     }
   }
   margin-top: 10px;
+}
+
+.mat-input-element {
+    caret-color: $white;
 }
 
 mat-radio-group {
