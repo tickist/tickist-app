@@ -1,141 +1,153 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {StatisticsService} from '../services/statisticsService';
 import {ChartStatistics} from '../models/statistics';
 import * as moment from 'moment';
+import {BaseChartDirective} from 'ng2-charts';
 
 
 @Component({
-  selector: 'app-global-statistics',
-  templateUrl: './global-statistics.component.html',
-  styleUrls: ['./global-statistics.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-global-statistics',
+    templateUrl: './global-statistics.component.html',
+    styleUrls: ['./global-statistics.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GlobalStatisticsComponent implements OnInit {
-  global: any;
-  charts: ChartStatistics;
-  dataTasksCounter: any;
-  dataTimeChart: any;
-  optionsTasksCounter: any = {};
-  optionsTimeChart: any = {};
-
-  constructor(private statisticsService: StatisticsService) {
-  }
-
-  public chartClicked(e: any): void {
-    console.log(e);
-  }
-
-  public chartHovered(e: any): void {
-    console.log(e);
-  }
-
-
-  ngOnInit() {
-    this.statisticsService.global$.subscribe((global) => {
-      if (global) {
-        this.global = global;
-      }
-    });
-    this.statisticsService.charts$.subscribe((charts) => {
-      const tasksCounterX: string[] = [], tasksCounterY = [], timeChartX: string[] = [], estimateTimeChartY = [],
-        timeChartY = [];
-      this.charts = charts;
-      if (this.charts) {
-        this.charts.tasksChart.forEach((elem) => {
-          tasksCounterX.push(moment(elem.x).format('ddd'));
-          tasksCounterY.push(elem.tasksCounter);
+    global: any;
+    charts: ChartStatistics;
+    dataTasksCounter: any;
+    dataTimeChart: any;
+    optionsTasksCounter: any = {};
+    optionsTimeChart: any = {};
+    @ViewChild('tasksCounterChart', {read: BaseChartDirective}) tasksCounterChart: any;
+    @ViewChild('timeChart', {read: BaseChartDirective}) timeChart: any;
+    
+    constructor(private statisticsService: StatisticsService, private cd: ChangeDetectorRef) {
+    }
+    
+    public chartClicked(e: any): void {
+        console.log(e);
+    }
+    
+    public chartHovered(e: any): void {
+        console.log(e);
+    }
+    
+    
+    ngOnInit() {
+        this.statisticsService.global$.subscribe((global) => {
+            if (global) {
+                this.global = global;
+            }
         });
-        this.charts.timeChart.forEach((elem) => {
-          timeChartX.push(moment(elem.x).format('ddd'));
-          timeChartY.push(elem.time);
-          estimateTimeChartY.push(elem.estimateTime);
+        this.statisticsService.charts$.subscribe((charts) => {
+            const tasksCounterX: string[] = [], tasksCounterY = [], timeChartX: string[] = [], estimateTimeChartY = [],
+                timeChartY = [];
+            
+            this.charts = charts;
+            if (this.charts) {
+                this.charts.tasksChart.forEach((elem) => {
+                    tasksCounterX.push(moment(elem.x).format('ddd'));
+                    tasksCounterY.push(elem.tasksCounter);
+                });
+                this.charts.timeChart.forEach((elem) => {
+                    timeChartX.push(moment(elem.x).format('ddd'));
+                    timeChartY.push(elem.time);
+                    estimateTimeChartY.push(elem.estimateTime);
+                });
+                this.dataTimeChart = {
+                    labels: timeChartX,
+                    datasets: [
+                        {
+                            label: 'Estimated time',
+                            data: estimateTimeChartY
+                        },
+                        {
+                            label: 'Time',
+                            data: timeChartY
+                        }
+                    ],
+                    chartType: 'line',
+                    legend: true,
+                    options: {
+                        scaleShowVerticalLines: false,
+                        responsive: true,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    callback: function (value) {
+                                        if (value % 1 === 0) {
+                                            return value;
+                                        }
+                                    },
+                                    fontColor: 'white'
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontColor: 'white',
+                                    fontSize: 10,
+                                }
+                            }]
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                fontColor: '#fff'
+                            }
+                        }
+                    }
+                };
+                this.dataTasksCounter = {
+                    labels: tasksCounterX,
+                    datasets: [
+                        {
+                            label: 'Task counter',
+                            data: tasksCounterY
+                        }
+                    ],
+                    chartType: 'line',
+                    legend: true,
+                    options: {
+                        scaleShowVerticalLines: false,
+                        responsive: true,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    callback: function (value) {
+                                        if (value % 1 === 0) {
+                                            return value;
+                                        }
+                                    },
+                                    fontColor: 'white'
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontColor: 'white',
+                                    fontSize: 10,
+                                }
+                            }]
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                fontColor: '#fff'
+                            }
+                        }
+                    }
+                };
+                if (this.tasksCounterChart) {
+                    this.tasksCounterChart.chart.update();
+                }
+                if (this.timeChart) {
+                    this.timeChart.chart.update();
+                }
+                this.cd.detectChanges();
+                
+            }
         });
-        this.dataTimeChart = {
-          labels: timeChartX,
-          datasets: [
-            {
-              label: 'Estimated time',
-              data: estimateTimeChartY
-            },
-            {
-              label: 'Time',
-              data: timeChartY
-            }
-          ],
-          chartType: 'line',
-          legend: true,
-          options: {
-            scaleShowVerticalLines: false,
-            responsive: true,
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true,
-                  callback: function (value) {
-                    if (value % 1 === 0) {
-                      return value;
-                    }
-                  },
-                  fontColor: 'white'
-                }
-              }],
-              xAxes: [{
-                ticks: {
-                  fontColor: 'white',
-                  fontSize: 10,
-                }
-              }]
-            },
-            legend: {
-              position: 'bottom',
-              labels: {
-                fontColor: '#fff'
-              }
-            }
-          }
-        };
-        this.dataTasksCounter = {
-          labels: tasksCounterX,
-          datasets: [
-            {
-              label: 'Task counter',
-              data: tasksCounterY
-            }
-          ],
-          chartType: 'line',
-          legend: true,
-          options: {
-            scaleShowVerticalLines: false,
-            responsive: true,
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true,
-                  callback: function (value) {
-                    if (value % 1 === 0) {
-                      return value;
-                    }
-                  },
-                  fontColor: 'white'
-                }
-              }],
-              xAxes: [{
-                ticks: {
-                  fontColor: 'white',
-                  fontSize: 10,
-                }
-              }]
-            },
-            legend: {
-              position: 'bottom',
-              labels: {
-                fontColor: '#fff'
-              }
-            }
-          }
-        };
-      }
-    });
-  }
-
+    }
+    
 }

@@ -41,7 +41,7 @@ export class ShowOfflineModeComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-         clearInterval(this.pingCheck);
+        clearInterval(this.pingCheck);
     }
 
 }

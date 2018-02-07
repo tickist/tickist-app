@@ -169,7 +169,7 @@
 
                             <div>
                                 <div *ngIf="taskForm.controls['extra'].controls['suspended'].value">
-                                    <h4><span>Choose a date when the task should become active (optional).</span></h4>
+                                    <h4><span class="radio-button-active-task">Choose a date when the task should become active (optional).</span></h4>
 
                                     <mat-form-field>
                                         <input matInput [matDatepickerFilter]="minFilter"
@@ -271,7 +271,7 @@
                                 <mat-radio-button *ngFor="let option of defaultRepeatOptions" [value]="option.id">
                                     {{ option.name }}
                                 </mat-radio-button>
-                                <mat-radio-button [value]="99">every</mat-radio-button>
+                                <mat-radio-button [value]="99">every&hellip;</mat-radio-button>
                             </mat-radio-group>
                             <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value == 99" 
                                  fxLayout.xs="column" fxLayout="row" fxLayoutAlign.xs="center none"

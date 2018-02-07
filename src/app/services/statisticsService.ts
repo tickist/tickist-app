@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 import {GlobalStatistics, DailyStatistics, ChartStatistics} from '../models/statistics';
 import {ConfigurationService} from '../services/configurationService';
 import * as statisticsAction from '../reducers/actions/statistics';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class StatisticsService {
@@ -16,8 +16,6 @@ export class StatisticsService {
   charts$: Observable<ChartStatistics>;
   daily$: Observable<DailyStatistics>;
   globalStatisticsDateRage$: Observable<any>;
-  headers: Headers;
-  options: RequestOptions;
   activeDay: any
 
   constructor(public http: HttpClient, private store: Store<AppStore>, private configurationService: ConfigurationService) {
@@ -25,7 +23,6 @@ export class StatisticsService {
     this.charts$ = this.store.select(store => store.chartsData);
     this.globalStatisticsDateRage$ = this.store.select(store => store.globalStatisticsDateRage);
     this.daily$ = this.store.select(store => store.dailyStatistics);
-    this.options = new RequestOptions({ headers: this.headers });
     configurationService.activeDay$.subscribe((date) => {
       this.loadDailyStatistics(date);
       this.activeDay = date;

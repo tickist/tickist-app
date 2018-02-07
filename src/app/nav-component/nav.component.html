@@ -1,4 +1,6 @@
-<mat-toolbar>
+<tickist-show-api-error></tickist-show-api-error>
+<tickist-show-offline-mode></tickist-show-offline-mode>
+<mat-toolbar [ngClass]="{'add-margin': isOffline}">
     <button class="fab-button" mat-mini-fab color="primary"  [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
         <i class="fa fa-bars"></i>
     </button>

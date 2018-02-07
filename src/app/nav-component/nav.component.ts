@@ -7,6 +7,7 @@ import {ObservableMedia} from '@angular/flex-layout';
 import {NavigationEnd, Router} from '@angular/router';
 import {TaskService} from '../services/taskService';
 import {ProjectService} from '../services/projectService';
+import {Subject} from 'rxjs/Subject';
 
 
 @Component({
@@ -15,11 +16,13 @@ import {ProjectService} from '../services/projectService';
     styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     user: User;
     staticUrl: string;
     leftSideNavVisibility: any = {};
     rightSideNavVisibility: any = {};
     progressBar = false;
+    isOffline = false;
 
     @ViewChild('homeElement', {read: ElementRef}) homeElement: ElementRef;
     @ViewChild('homeMobileElement', {read: ElementRef}) homeMobileElement: ElementRef;
@@ -53,6 +56,10 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.configurationService.rightSidenavVisibility$.subscribe((state) => {
             this.rightSideNavVisibility = state;
         });
+        this.configurationService.offlineModeNotification$.takeUntil(this.ngUnsubscribe).subscribe(value => {
+            this.isOffline = value;
+        });
+        
     }
 
     ngAfterViewInit(): void {
@@ -105,7 +112,8 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngOnDestroy() {
-
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     addClassToActiveElement(url) {

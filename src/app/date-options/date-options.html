@@ -6,7 +6,7 @@
             {{ option.name }}
         </mat-radio-button>
     </mat-radio-group>
-    <div fxLayout="row" fxLayoutAlign="space-between center" >
+    <div class="date-wrapper" fxLayout="row" fxLayoutAlign="space-between center" >
         <mat-form-field>
             <input matInput [matDatepickerFilter]="minFilter"
                    [(ngModel)]="finishDate"
@@ -27,8 +27,8 @@
         </mat-form-field>
 
         <mat-form-field *ngIf="finishDate">
-            <input matInput #finishTimeInputViewChild="ngModel" type="time" [(ngModel)]="finishTime"
-                   placeholder="Choose a time (optional)">
+            <input matInput #finishTimeInputViewChild="ngModel" type="time" [(ngModel)]="finishTime" (change)="saveTask($event)"
+                   placeholder="Choose time">
             <tickist-menu-button [icon]="'fa-close'" (click)="clearFinishTime($event)" matSuffix></tickist-menu-button>
         </mat-form-field>
     </div>

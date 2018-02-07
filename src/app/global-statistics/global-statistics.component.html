@@ -8,12 +8,12 @@
              tooltip-placement="bottom">
             <span>
                 You finished {{ global.last7thDays }} tasks in the last 7 days and your
-                estimation rate stands at {{ global.correntEstimation }}.
+                estimation rate stands at {{ global.currentEstimation }}.
             </span>
         </div>
     </div>
     <div class="chart" *ngIf="dataTasksCounter && dataTasksCounter.datasets.length > 0" >
-        <canvas baseChart style=""
+        <canvas #tasksCounterChart baseChart style=""
             [datasets]="dataTasksCounter.datasets"
             [labels]="dataTasksCounter.labels"
             [options]="dataTasksCounter.options"
@@ -27,7 +27,7 @@
 
 
     <div class="chart" *ngIf="dataTimeChart && dataTimeChart.datasets.length > 0">
-        <canvas baseChart
+        <canvas #timeChart baseChart
             [datasets]="dataTimeChart.datasets"
             [labels]="dataTimeChart.labels"
             [options]="dataTimeChart.options"
