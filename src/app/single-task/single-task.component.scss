@@ -55,6 +55,10 @@
 
 #first-row {
     min-height: 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    place-content: flex-start space-between;
 }
 
 i {

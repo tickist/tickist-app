@@ -22,12 +22,23 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     week: Array<any> = [];
     subscriptions: Subscription;
     mediaChange: MediaChange;
-    
+
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef, protected taskService: TaskService,
                 private configurationService: ConfigurationService, protected router: Router,
                 protected media: ObservableMedia) {
+
+        regenerateWeekListAfterMidnight();
     }
-    
+
+    regenerateWeekListAfterMidnight() {
+        const today = new Date();
+        const tommorow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+        const timeToMidnight = (tommorow - today);
+        this.timer = setTimeout(() => {
+             this.feelWeekData();
+        }, timeToMidnight);
+    }
+
     isToday(date = this.activeDay) {
         const today = moment().format('DD-MM-YYYY');
         if (date instanceof Object) {
@@ -35,7 +46,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }
         return (today === date);
     }
-    
+
     ngOnInit() {
         this.subscriptions = this.route.params.map(params => params['date']).subscribe((param) => {
             this.configurationService.updateActiveDay(param);
@@ -47,40 +58,41 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         this.subscriptions.add(this.configurationService.activeDay$.subscribe((activeDay) => {
             this.activeDay = activeDay;
             this.cd.detectChanges();
-            
+
         }));
         this.subscriptions.add(this.taskService.tasks$.subscribe(tasks => {
             this.tasks = tasks;
             this.feelWeekData();
         }));
     }
-    
+
     ngOnDestroy() {
         if (this.subscriptions) {
             this.subscriptions.unsubscribe();
         }
+        clearTimeout(this.timer);
     }
-    
+
     isSelected(day) {
         return (day.date === this.activeDay.format('DD-MM-YYYY'));
     }
-    
+
     navigateTo(path, arg) {
         if (this.isToday(arg)) {
             this.router.navigate([path]);
         } else {
             this.router.navigate([path, arg]);
         }
-        
+
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         }
     }
-    
+
     chooseDay(date) {
         this.navigateTo('/home', date);
     }
-    
+
     feelWeekData() {
         let nextDay = moment();
         this.week = [];
@@ -99,6 +111,6 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
             nextDay = nextDay.add(1, 'days');
         }
     }
-    
+
 }
 

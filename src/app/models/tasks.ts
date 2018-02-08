@@ -4,6 +4,7 @@ import {Tag} from './tags';
 import * as _ from 'lodash';
 import {Api} from './commons';
 import * as moment from 'moment';
+import {SimpleProject} from './projects/simply-project';
 
 class Menu {
     isDescription;
@@ -42,7 +43,7 @@ export class Task extends Api {
     isActive: boolean;
     status: number;
     typeFinishDate: number;
-    taskProject: Project;
+    taskProject: SimpleProject;
     owner: SimplyUser;
     steps: Step[] = [];
     priority: string;
@@ -69,7 +70,7 @@ export class Task extends Api {
         this.pinned = task.pinned;
         this.status = task.status;
         this.typeFinishDate = task.type_finish_date;
-        this.taskProject = new Project(task.task_project);
+        this.taskProject = new SimpleProject(task.task_project);
         this.owner = new SimplyUser(task.owner);
         this.author = new SimplyUser(task.author);
         this.percent = task.percent;

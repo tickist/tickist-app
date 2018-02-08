@@ -1,17 +1,21 @@
 <form [formGroup]="timeForm" (ngSubmit)="saveTime(timeForm.value)">
 
-<h1 mat-dialog-title>Adding estimation time and real time</h1>
-<mat-dialog-content fxLayout="column">
-     <mat-form-field>
-        <input matInput placeholder="Estimated time" name="estimate-time" formControlName="estimateTime">
-    </mat-form-field>
-     <mat-form-field>
-        <input matInput placeholder="Real time" name="real-time" formControlName="realTime">
-    </mat-form-field>
+    <h1 mat-dialog-title>Adding estimation time and real time</h1>
+    <mat-dialog-content fxLayout="column">
+        <mat-form-field>
+            <input matInput placeholder="Estimated time" name="estimate-time" formControlName="estimateTime">
+             <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
+                                   aria-hidden="true"></i>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="Real time" name="real-time" formControlName="realTime">
+            <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
+                                   aria-hidden="true"></i>
+        </mat-form-field>
 
-</mat-dialog-content>
-<mat-dialog-actions>
-    <button mat-button type="submit">Save</button>
-     <button mat-button mat-dialog-close type="button">Cancel</button>
-</mat-dialog-actions>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-button type="submit">Save</button>
+        <button mat-button mat-dialog-close type="button">Cancel</button>
+    </mat-dialog-actions>
 </form>
