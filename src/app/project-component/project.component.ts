@@ -21,6 +21,7 @@ import {DeleteProjectConfirmationDialogComponent} from './delete-project-dialog/
 })
 export class ProjectComponent implements OnInit, OnDestroy {
     project: Project;
+    projects: Project[];
     stream$: Observable<any>;
     projectForm: FormGroup;
     menu: {};
@@ -61,6 +62,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.team = team;
 
                     if (projects.length > 0 && user) {
+                        this.projects = projects;
                         if (projectId) {
                             project = projects.find(p => p.id === projectId);
                             this.projectForm = this.createForm(project);
@@ -142,10 +144,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     createForm(project: Project) {
+        const ancestorId = (_.get(project, 'ancestor')) ? project.ancestor : null;
         return this.fb.group({
             'main': this.fb.group({
                 'name': [project.name, Validators.required],
-                'ancestor': [project.ancestor],
+                'ancestorPk': [project.ancestor],
                 'color': [project.color],
                 'description': [project.description]
             }),

@@ -86,7 +86,7 @@ import {AddTaskComponent} from './add-task/add-task.component';
 import {SingleProjectComponent} from './single-project/single-project.component';
 import {AvatarSize} from './pipes/avatarSize';
 import {CalendarModule} from 'primeng/components/calendar/calendar';
-import {ColorPickerComponent} from './project-component/color-picker';
+import {ColorPickerComponent} from './project-component/color-picker/color-picker.component';
 import {TimeDialog} from './single-task/time-dialog/time-dialog.component';
 import {ChangeTaskViewComponent} from './shared/change-task-view-component/change-task-view.component';
 import {ErrorService} from './services/errorService';

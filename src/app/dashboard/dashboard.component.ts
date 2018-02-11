@@ -54,15 +54,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     changeActiveDayAfterMidnight() {
         const today = new Date();
         const tommorow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-        const timeToMidnight = (tommorow - today);
+        const timeToMidnight = (tommorow.getTime() - today.getTime());
         this.timer = setTimeout(() => {
-             this.router.navigate(['/home']);
+            if (this.isTomorrow()) {
+                this.router.navigate(['/home']);
+            }
         }, timeToMidnight);
     }
 
     isToday(date = this.activeDay) {
         const today = moment().format('DD-MM-YYYY');
         return (today === date.format('DD-MM-YYYY'));
+    }
+    
+    isTomorrow(date = this.activeDay) {
+        const tomorrow = moment().add(1, 'days').format('DD-MM-YYYY');
+        return (tomorrow === date.format('DD-MM-YYYY'));
     }
 
     ngOnInit() {
@@ -88,7 +95,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.todayTasks = _.sortBy(this.todayTasks, ['priority', 'name']);
                 this.overdueTasks = _.sortBy(this.overdueTasks, ['priority', 'finishDate', 'name']);
                 this.futureTasks = _.sortBy(this.futureTasks, ['finishDate', 'finishTime', 'name']);
-                this.feelWeekData();
             }
         });
         this.subscriptions.add(this.route.params.map(params => params['date']).subscribe((param) => {
@@ -106,37 +112,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
         clearTimeout(this.timer);
     }
-
-    isSelected(day) {
-        return (day.date === this.activeDay.format('DD-MM-YYYY'));
-
-    }
-
+    
     navigateTo(path, arg) {
         this.router.navigate([path, arg]);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         }
     }
-
-    feelWeekData() {
-        let nextDay = moment();
-        this.week = [];
-        for (let i = 0; i < 7; i++) {
-            this.week.push({
-                'name': nextDay.format('dddd'),
-                'date': nextDay.format('DD-MM-YYYY'),
-                'tasksCounter': this.tasks.filter(task => {
-                    const finishDate = task.finishDate;
-                    return (
-                        (finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
-                        (this.isToday(nextDay) && task.pinned)
-                    );
-                }).length
-            });
-            nextDay = nextDay.add(1, 'days');
-        }
-    }
-
+    
 }
 

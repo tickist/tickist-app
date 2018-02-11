@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {TaskService} from '../../services/taskService';
+import {UserService} from '../../services/userService';
 
 
 @Component({
@@ -22,18 +23,19 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     week: Array<any> = [];
     subscriptions: Subscription;
     mediaChange: MediaChange;
+    user: User;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef, protected taskService: TaskService,
                 private configurationService: ConfigurationService, protected router: Router,
-                protected media: ObservableMedia) {
+                protected userService: UserService, protected media: ObservableMedia) {
 
-        regenerateWeekListAfterMidnight();
+        this.regenerateWeekListAfterMidnight();
     }
 
     regenerateWeekListAfterMidnight() {
         const today = new Date();
-        const tommorow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-        const timeToMidnight = (tommorow - today);
+        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+        const timeToMidnight = (tomorrow.getTime() - today.getTime());
         this.timer = setTimeout(() => {
              this.feelWeekData();
         }, timeToMidnight);
@@ -62,6 +64,11 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }));
         this.subscriptions.add(this.taskService.tasks$.subscribe(tasks => {
             this.tasks = tasks;
+            this.feelWeekData();
+        }));
+        
+        this.subscriptions.add(this.userService.user$.subscribe(user => {
+            this.user = user
             this.feelWeekData();
         }));
     }
@@ -95,17 +102,25 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
 
     feelWeekData() {
         let nextDay = moment();
+        const userId = _.get(this.user, 'id');
         this.week = [];
+        if (!userId || this.tasks.length === 0) return;
         for (let i = 0; i < 7; i++) {
             this.week.push({
                 'name': nextDay.format('dddd'),
                 'date': nextDay.format('DD-MM-YYYY'),
                 'tasksCounter': this.tasks.filter(task => {
+                    return task.owner.id === userId && task.status === 0;
+                })
+                    .filter(task => {
                     const finishDate = task.finishDate;
-                    return (
-                        (finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
+                    const a = ((finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
                         (this.isToday(nextDay) && task.pinned)
                     );
+                    if (a) {
+                        console.log("task", task)
+                    }
+                    return a;
                 }).length
             });
             nextDay = nextDay.add(1, 'days');
