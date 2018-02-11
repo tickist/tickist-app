@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {TaskService} from '../../services/taskService';
 import {UserService} from '../../services/userService';
+import {User} from '../../models/user/user';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     subscriptions: Subscription;
     mediaChange: MediaChange;
     user: User;
+    timer: any;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef, protected taskService: TaskService,
                 private configurationService: ConfigurationService, protected router: Router,
@@ -41,12 +43,12 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }, timeToMidnight);
     }
 
-    isToday(date = this.activeDay) {
-        const today = moment().format('DD-MM-YYYY');
-        if (date instanceof Object) {
-            date = date.format('DD-MM-YYYY');
+    isToday(date: (moment.Moment | string) = this.activeDay) {
+        const today: moment.Moment = moment();
+        if (moment.isMoment(date)) {
+            date = (<string>(date.format('DD-MM-YYYY')));
         }
-        return (today === date);
+        return (today.format('DD-MM-YYYY') === date);
     }
 
     ngOnInit() {
@@ -68,7 +70,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }));
         
         this.subscriptions.add(this.userService.user$.subscribe(user => {
-            this.user = user
+            this.user = user;
             this.feelWeekData();
         }));
     }

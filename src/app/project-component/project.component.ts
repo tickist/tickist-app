@@ -13,6 +13,8 @@ import {UserService} from '../services/userService';
 import {MatDialog} from '@angular/material';
 import {environment} from '../../environments/environment';
 import {DeleteProjectConfirmationDialogComponent} from './delete-project-dialog/delete-project-dialog.component';
+import * as _ from 'lodash';
+
 
 @Component({
     selector: 'app-project',
