@@ -62,7 +62,7 @@ export class GlobalStatisticsComponent implements OnInit {
                             data: estimateTimeChartY
                         },
                         {
-                            label: 'Time',
+                            label: 'Real time',
                             data: timeChartY
                         }
                     ],
