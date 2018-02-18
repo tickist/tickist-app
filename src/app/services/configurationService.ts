@@ -18,6 +18,8 @@ export class ConfigurationService {
     rightSidenavVisibility$: Observable<any>;
     progressBar$: Observable<any>;
     configuration: {};
+    TASK_EXTENDED_VIEW: any;
+    TASK_SIMPLE_VIEW: any;
     
     constructor(private store: Store<AppStore>, protected media: ObservableMedia) {
         this.activeDay$ = this.store.select(store => store.activeDay);
@@ -26,6 +28,8 @@ export class ConfigurationService {
         this.leftSidenavVisibility$ = this.store.select(store => store.leftSidenavVisibility);
         this.rightSidenavVisibility$ = this.store.select(store => store.rightSidenavVisibility);
         this.progressBar$ = this.store.select(store => store.progressBar);
+        this.TASK_EXTENDED_VIEW =  {'name': 'extended view', 'value': 'extended'};
+        this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
         this.configuration = {
             'commons': {
                 'COLOR_LIST_DEFAULT': '#2c86ff',
@@ -40,8 +44,8 @@ export class ConfigurationService {
                     'Overdue->Today->You can do this too'
                 ],
                 'DEFAULT_TASK_VIEW_OPTIONS': [
-                    {'name': 'extended view', 'value': 'extended'},
-                    {'name': 'simple view', 'value': 'simple'}
+                    this.TASK_EXTENDED_VIEW,
+                    this.TASK_SIMPLE_VIEW
                 ],
                 'STATIC_URL': '/site_media/static/',
                 'Google_plus_scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email',

@@ -16,3 +16,12 @@ canvas {
 .single-chart {
     margin-bottom: 30px;
 }
+
+.chart-empty {
+    height: 200px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

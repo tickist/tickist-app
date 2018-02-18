@@ -1,8 +1,10 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {StatisticsService} from '../services/statisticsService';
 import {ConfigurationService} from '../services/configurationService';
 import * as moment from 'moment';
 import {Subscription} from 'rxjs/Subscription';
+import * as _ from 'lodash';
+
 
 class Chart {
     id: number;
@@ -40,8 +42,8 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
     subscriptions: Subscription;
     protected interval = 10000;
 
-    constructor(private statisticsService: StatisticsService, private configurationService: ConfigurationService) {
-        console.log('DAY STATISTICS');
+    constructor(private statisticsService: StatisticsService, private configurationService: ConfigurationService, 
+                private cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -70,11 +72,13 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                 ];
                 this.activeChart = this.charts[0];
                 this.numberOfCharts = this.charts.length;
+                 this.cd.detectChanges();
 
             }
         });
         this.subscriptions.add(this.configurationService.activeDay$.subscribe((activeDay) => {
             this.activeDay = activeDay;
+            //this.statisticsService.loadDailyStatistics(this.activeDay);
         }));
 
         this.nextChart = (() => {
@@ -115,7 +119,6 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
             data.push(priority.count);
             colors.push(priority.color);
         });
-        console.log(colors);
         return {
             labels: labels,
             datasets: [
@@ -294,6 +297,11 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
     changeActiveChart(chartId) {
         this.activeChart = this.charts.filter((chart) => chart.id === chartId)[0];
 
+    }
+    
+    isChartEmpty(chart: Chart) {
+        const chartData = _.get(chart, 'data.datasets.0.data');
+        return (<Array<any>>chartData).length === 0;
     }
 
 }

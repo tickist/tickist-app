@@ -16,7 +16,7 @@ export class StatisticsService {
   charts$: Observable<ChartStatistics>;
   daily$: Observable<DailyStatistics>;
   globalStatisticsDateRage$: Observable<any>;
-  activeDay: any
+  activeDay: any;
 
   constructor(public http: HttpClient, private store: Store<AppStore>, private configurationService: ConfigurationService) {
     this.global$ = this.store.select(store => store.globalStatistics);

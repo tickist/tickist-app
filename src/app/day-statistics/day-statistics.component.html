@@ -3,25 +3,26 @@
 
 <div *ngIf="dayStatistics">
 
-    <div class="single-chart"  *ngFor="let chart of charts" [hidden]="!isChartActive(chart.id)">
-        <canvas baseChart height="200" width="250px"
-                [datasets]="chart.data.datasets" 
+    <div class="single-chart"  *ngFor="let chart of charts" [hidden]="!isChartActive(chart.id)"  >
+        <canvas baseChart height="200" width="250px" *ngIf="!isChartEmpty(chart)"
+                [datasets]="chart.data.datasets"
                 [colors]="chart.data.colors"
                 [options]="chart.data.options"
                 [legend]="chart.data.legend"
                 [chartType]="chart.data.chartType"
                 (chartHover)="chartHovered($event)"
                 (chartClick)="chartClicked($event)">
-            
+
         </canvas>
+        <div class="chart-empty" *ngIf="isChartEmpty(chart)"> <span>No data</span></div>
         <div id="charts-dots" div fxLayout="row" fxLayoutAlign="center center" >
         <i *ngFor="let chart of charts" [ngClass]="{'fa-circle': isChartActive(chart.id), 'fa-circle-o': !isChartActive(chart.id)}" (click)="changeActiveChart(chart.id)" class="fa" aria-hidden="true"></i>
     </div>
-        <tickist-chart-legend [data]="chart.legend"></tickist-chart-legend>
+        <tickist-chart-legend [data]="chart.legend" *ngIf="!isChartEmpty(chart)"></tickist-chart-legend>
 
     </div>
 
-    
+
 
     <div fxLayout="row" fxLayoutAlign="start center">
         <div>All tasks</div>

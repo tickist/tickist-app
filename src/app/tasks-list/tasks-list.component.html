@@ -2,13 +2,13 @@
 
 <div *ngIf="tasks && tasks.length !== 0; else emptyList">
 
-   <div *ngIf="taskView == 'extended'">
+   <div *ngIf="taskView === task_extended_view_value">
             <app-single-task [task]="task" [mediaChange]="mediaChange" *ngFor="let task of tasks;trackBy: trackByFn">
 
             </app-single-task>
     </div>
 
- <div *ngIf="taskView == 'simple'" >
+ <div *ngIf="taskView === task_simple_view_value">
       <app-single-task-simplified [task]="task" *ngFor="let task of tasks;trackBy: trackByFn"></app-single-task-simplified>
  </div>
 
