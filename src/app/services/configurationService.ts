@@ -20,6 +20,8 @@ export class ConfigurationService {
     configuration: {};
     TASK_EXTENDED_VIEW: any;
     TASK_SIMPLE_VIEW: any;
+    TYPE_FINISH_DATE_ON: any;
+    TYPE_FINISH_DATE_BY: any;
     
     constructor(private store: Store<AppStore>, protected media: ObservableMedia) {
         this.activeDay$ = this.store.select(store => store.activeDay);
@@ -30,14 +32,19 @@ export class ConfigurationService {
         this.progressBar$ = this.store.select(store => store.progressBar);
         this.TASK_EXTENDED_VIEW =  {'name': 'extended view', 'value': 'extended'};
         this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
+        this.TYPE_FINISH_DATE_BY = {'id': 0, 'name': 'by'};
+        this.TYPE_FINISH_DATE_ON = {'id': 1, 'name': 'on'};
         this.configuration = {
             'commons': {
+                'DEFAULT_PRIORITY_OF_TASK': 'B',
+                'DEFAULT_TYPE_FINISH_DATE': 0,
                 'COLOR_LIST_DEFAULT': '#2c86ff',
                 'COLOR_LIST': ['#6be494', '#f3d749', '#fcb150', '#f3df9a', '#b6926e', '#2c86ff', '#4fc4f6', '#367cdc', '#b679b2', '#be5753', '#fb7087'],
                 'CHOICES_DEFAULT_FINISH_DATE': [
                     {'id': 0, 'name': 'today'},
-                    {'id': 1, 'name': 'tomorrow'},
-                    {'id': 2, 'name': 'next week'}
+                    {'id': 1, 'name': 'next day'},
+                    {'id': 2, 'name': 'next week'},
+                    {'id': 3, 'name': 'next month'}
                 ],
                 'TASKS_ORDER_OPTIONS': [
                     'Today->Overdue->You can do this too',

@@ -3,6 +3,7 @@ import {StatisticsService} from '../services/statisticsService';
 import {ChartStatistics} from '../models/statistics';
 import * as moment from 'moment';
 import {BaseChartDirective} from 'ng2-charts';
+import {Minutes2hoursPipe} from '../pipes/minutes2hours';
 
 
 @Component({
@@ -18,10 +19,12 @@ export class GlobalStatisticsComponent implements OnInit {
     dataTimeChart: any;
     optionsTasksCounter: any = {};
     optionsTimeChart: any = {};
+    minutes2Hours: Minutes2hoursPipe;
     @ViewChild('tasksCounterChart', {read: BaseChartDirective}) tasksCounterChart: any;
     @ViewChild('timeChart', {read: BaseChartDirective}) timeChart: any;
     
     constructor(private statisticsService: StatisticsService, private cd: ChangeDetectorRef) {
+        this.minutes2Hours = new Minutes2hoursPipe();
     }
     
     public chartClicked(e: any): void {
@@ -75,9 +78,9 @@ export class GlobalStatisticsComponent implements OnInit {
                             yAxes: [{
                                 ticks: {
                                     beginAtZero: true,
-                                    callback: function (value) {
+                                    callback: (value) => {
                                         if (value % 1 === 0) {
-                                            return value;
+                                            return this.minutes2Hours.transform(value);
                                         }
                                     },
                                     fontColor: 'white'

@@ -146,7 +146,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     createForm(project: Project) {
-        const ancestorId = (_.get(project, 'ancestor')) ? project.ancestor : null;
         return this.fb.group({
             'main': this.fb.group({
                 'name': [project.name, Validators.required],
@@ -171,9 +170,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
             'ancestor': null,
             'color': this.configurationService.loadConfiguration()['commons']['COLOR_LIST_DEFAULT'],
             'default_finish_date': '',
-            'default_priority': '',
-            'default_type_finish_date': '',
-            'defaultTaskView': this.user.defaultTaskView,
+            'default_priority': this.configurationService.loadConfiguration()['commons']['DEFAULT_PRIORITY_OF_TASK'],
+            'default_type_finish_date': this.configurationService.loadConfiguration()['commons']['DEFAULT_TYPE_FINISH_DATE'],
+            'default_task_view': this.user.defaultTaskView,
             'owner': this.user.id,
             'is_active': true,
             'share_with': [],

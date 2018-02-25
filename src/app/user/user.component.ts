@@ -48,7 +48,7 @@ export class UserComponent implements OnInit, OnDestroy {
                 this.userData = this.fb.group({
                     'username': [user.username, Validators.compose([Validators.required, Validators.minLength(4)])],
                     'email': [user.email, Validators.compose([Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')])],
-                })
+                });
             }
         });
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');

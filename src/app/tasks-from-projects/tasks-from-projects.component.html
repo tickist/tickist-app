@@ -23,7 +23,8 @@
                         <change-task-view [defaultTaskView]="defaultTaskView"
                                           (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
                     </div>
-                    {{ selectedProject.description }}
+                    
+                    <div class="project-description">{{ selectedProject.richDescription }}</div>
                 </div>
             </div>
 

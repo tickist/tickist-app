@@ -181,9 +181,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     }
 
     ngOnInit() {
-        // this.t2 = new Timer(`on changes`)
-
-        if (this.task.taskProject.shareWith.length > 0) {
+        if (this.task.taskProject.shareWith.length > 1) {
             this.task.menuShowing.sharedList = true;
         }
         this.projectService.projects$.takeUntil(this.ngUnsubscribe).subscribe((projects) => {

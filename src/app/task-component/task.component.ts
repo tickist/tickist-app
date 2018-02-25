@@ -1,4 +1,7 @@
-import {Component, OnInit, OnDestroy, ViewChild, Renderer2} from '@angular/core';
+import {
+    Component, OnInit, OnDestroy, ViewChild, Renderer2,
+    ElementRef, HostListener
+} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../services/taskService';
 import {TagService} from '../services/tagService';
@@ -19,8 +22,10 @@ import * as moment from 'moment';
 import {Tag} from '../models/tags';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
-import {MatAutocompleteTrigger} from '@angular/material';
+import {MatAutocompleteTrigger, MatInput} from '@angular/material';
 import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delete-task.dialog.component';
+import {KEY_CODE} from '../shared/keymap';
+
 
 @Component({
     selector: 'app-task-component',
@@ -32,7 +37,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     stream$: Observable<any>;
     projects: Project[];
     selectedProject: Project;
-    menu: {};
+    menu: Array<any>;
     user: User;
     taskForm: FormGroup;
     defaultRepeatOptions: {};
@@ -49,7 +54,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     tags: Tag[] = [];
     test: any;
     minFilter: any;
-    // @ViewChild(MdAutocompleteTrigger) trigger;
 
     @ViewChild('finishDate') finishDateViewChild;
     @ViewChild('finishTime') finishTimeViewChild;
@@ -60,7 +64,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private location: Location,
-                private tagService: TagService, protected renderer: Renderer2) {
+                private tagService: TagService, protected renderer: Renderer2, private elRef: ElementRef) {
     }
 
     ngOnInit() {
@@ -123,6 +127,44 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.configurationService.changeOpenStateRightSidenavVisibility('close');
     }
 
+    @HostListener('window:keyup', ['$event'])
+    keyEvent(event: KeyboardEvent) {
+        console.log(event);
+        if (event.keyCode === KEY_CODE.ENTER && this.checkActiveItemInMenu('steps')) {
+            this.addNewStep();
+        }
+        if (event.keyCode === KEY_CODE.DOWN_ARROW && event.shiftKey) {
+            this.nextMenuElement();
+        }
+
+        if (event.keyCode === KEY_CODE.UP_ARROW && event.shiftKey) {
+            this.previousMenuElement();
+        }
+
+    }
+
+    getActiveMenuElement() {
+        return this.menu.find(item => item.isActive);
+    }
+
+    previousMenuElement() {
+        const activeMenuElement = this.getActiveMenuElement();
+        let previousIndex = activeMenuElement.id - 1;
+        if (previousIndex < 1) {
+            previousIndex = this.menu.length;
+        }
+        return this.changeActiveItemInMenu(this.menu.find(item => item.id === previousIndex).name);
+    }
+
+    nextMenuElement() {
+        const activeMenuElement = this.getActiveMenuElement();
+        let nextIndex = activeMenuElement.id + 1;
+        if (nextIndex > this.menu.length) {
+            nextIndex = 1;
+        }
+        return this.changeActiveItemInMenu(this.menu.find(item => item.id === nextIndex).name);
+    }
+
     filterTags(val: string) {
         console.log(val);
         if (val) {
@@ -156,10 +198,33 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     createMenuDict() {
-        return {
-            'main': true, 'extra': false, 'tags': false, 'steps': false, 'dateAndTime': false,
-            'repeat': false, 'notifications': false
-        };
+        return [
+            {
+                name: 'main',
+                isActive: true,
+                id: 1
+            }, {
+                name: 'extra',
+                isActive: false,
+                id: 5
+            }, {
+                name: 'tags',
+                isActive: false,
+                id: 3
+            }, {
+                name: 'steps',
+                isActive: false,
+                id: 4
+            }, {
+                name: 'repeat',
+                isActive: false,
+                id: 2
+            }, {
+                name: 'notifications',
+                isActive: false,
+                id: 6
+            }
+        ];
     }
 
     createTaskForm(task: Task) {
@@ -239,13 +304,13 @@ export class TaskComponent implements OnInit, OnDestroy {
         main.controls['finishTime'].setValue('');
         this.finishTimeViewChild.overlayVisible = false;
     }
-    
+
     clearSuspendedDate() {
         const main = <FormGroup>this.taskForm.controls['extra'];
         main.controls['suspendedDate'].setValue('');
         this.suspendedDateViewChild.overlayVisible = false;
     }
-    
+
     createNewTask(selectedProject: Project) {
         let defaultTypeFinishDate = 1;
         const finishDateOption = this.defaultFinishDateOptions
@@ -287,23 +352,21 @@ export class TaskComponent implements OnInit, OnDestroy {
                 task.moveFinishDateFromPreviousFinishDate(1);
             } else if (finishDateOption.name === 'next week') {
                 task.moveFinishDateFromPreviousFinishDate(7);
+            } else if (finishDateOption.name === 'next month') {
+                task.moveFinishDateFromPreviousFinishDate(30);
             }
         }
 
         return task;
     }
 
-    changeActiveItemInMenu(menu_item) {
-        // DRY
-        for (const key in this.menu) {
-            this.menu[key] = false;
-        }
-        this.menu[menu_item] = true;
+    changeActiveItemInMenu(name) {
+        this.menu.forEach(item => item.isActive = false);
+        this.menu.find(item => item.name === name).isActive = true;
     }
 
-    checkActiveItemInMenu(menu_item) {
-        // DRY
-        return this.menu[menu_item];
+    checkActiveItemInMenu(name) {
+        return this.menu.find(item => item.name === name).isActive;
     }
 
     addingTag(newTag) {

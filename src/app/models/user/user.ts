@@ -57,8 +57,7 @@ export class User extends Api {
     this.defaultTaskViewOverdueView = user.default_task_view_overdue_view;
     this.defaultTaskViewFutureView = user.default_task_view_future_view;
     this.defaultTaskViewTagsView = user.default_task_view_tags_view;
-
-
+      
   }
 
   setDailySummaryHour(dailySummaryHour: string) {

@@ -8,11 +8,11 @@
               fxLayoutAlign="center none" class="flex-container" fxLayout="column">
             <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
                                                                  aria-hidden="true"></i></span></div>
-            <div fxLayout="row">
+            <div fxLayout="row" class="main-view">
                 <div fxFlex="20%">
                     <mat-list>
                         <mat-list-item (click)="changeActiveItemInMenu('main')"
-                                      [ngClass]="{'active': checkActiveItemInMenu('main')}">
+                                       [ngClass]="{'active': checkActiveItemInMenu('main')}">
 
                             <i class="fa fa-pencil-square-o menu_icon"></i>
 
@@ -22,7 +22,7 @@
                         </mat-list-item>
 
                         <mat-list-item (click)="changeActiveItemInMenu('extra')"
-                                      [ngClass]="{'active': checkActiveItemInMenu('extra')}">
+                                       [ngClass]="{'active': checkActiveItemInMenu('extra')}">
                             <i class="fa fa-wrench menu_iconn"></i>
 
                             <p [fxHide.xs]="1"><span>Extra</span></p>
@@ -30,7 +30,7 @@
                         </mat-list-item>
 
                         <mat-list-item (click)="changeActiveItemInMenu('sharing')"
-                                      [ngClass]="{'active': checkActiveItemInMenu('sharing')}">
+                                       [ngClass]="{'active': checkActiveItemInMenu('sharing')}">
                             <i class="fa fa-tags menu_icon"></i>
 
 
@@ -46,65 +46,78 @@
 
                         <div fxLayout="column">
                             <mat-form-field>
-                                <input matInput placeholder="Project name" maxlength="100" formControlName="name">
+                                <input matInput placeholder="Project name" maxlength="100" formControlName="name"
+                                       autofocus>
 
                             </mat-form-field>
                             <color-picker [colors]="colors" customColorPicker="true"
                                           formControlName="color"></color-picker>
-                            
-                             <mat-form-field>
+
+                            <mat-form-field>
                                 <mat-select placeholder="Ancestor:" formControlName="ancestorPk">
                                     <mat-option *ngFor="let project of projects"
                                                 [value]="project.id"> {{ project.name }}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            
-                            
+
                             <mat-form-field>
-                                <textarea matInput placeholder="Project description"></textarea>
+                                <textarea matInput #projectDescription formControlName="description"
+                                          placeholder="Project description"></textarea>
+                                <mat-hint align="end">{{projectDescription.value?.length || 0}}/5000</mat-hint>
                             </mat-form-field>
                         </div>
                     </div>
 
                     <div [hidden]="!menu.extra" formGroupName="extra">
                         <div fxLayout="column">
-                            <span class="label">Default priority of project tasks</span>
-                            <mat-button-toggle-group formControlName="defaultPriority"
-                                                    [ngStyle]="{'width': '126px'}">
-                                <mat-button-toggle value="A">A</mat-button-toggle>
-                                <mat-button-toggle value="B">B</mat-button-toggle>
-                                <mat-button-toggle value="C">C</mat-button-toggle>
-                            </mat-button-toggle-group>
-                            <mat-form-field>
-                                <mat-select placeholder="Default due date for all tasks"
-                                           formControlName="defaultTypeFinishDate"
-                                           name="defaultTypeFinishDate">
-                                    <mat-option *ngFor="let option of typeFinishDateOptions" [value]="option.id">
+                            <div class="form-field" fxLayout="column">
+                                <span>Default priority of project tasks</span>
+                                <mat-button-toggle-group formControlName="defaultPriority"
+                                                         [ngStyle]="{'width': '126px'}">
+                                    <mat-button-toggle value="A">A</mat-button-toggle>
+                                    <mat-button-toggle value="B">B</mat-button-toggle>
+                                    <mat-button-toggle value="C">C</mat-button-toggle>
+                                </mat-button-toggle-group>
+                            </div>
+
+                            <div class="form-field">
+                                <span>Default due date for all tasks in the project:</span>
+                                <mat-radio-group formControlName="defaultTypeFinishDate" fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of typeFinishDateOptions" [value]="option.id">
                                         {{ option.name }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+                            <div class="form-field">
+                                <span>Default task view:</span>
+                                <mat-radio-group formControlName="defaultTaskView" fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskView" [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
                             <mat-form-field>
-                                <mat-select placeholder="Default finish date for all tasks"
-                                           formControlName="defaultFinishDate"
-                                           name="defaultFinishDate">
+                                <mat-select placeholder="Choose default date"
+                                            formControlName="defaultFinishDate"
+                                            name="defaultFinishDate">
                                     <mat-option *ngFor="let option of defaultFinishDateOptions" [value]="option.id">
                                         {{ option.name }}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
+
+
                             <mat-checkbox formControlName="dialogTimeWhenTaskFinished">
-                                Always open the form to edit estimated / real time after completing a task from this project
+                                Always open the form to edit estimated / real time after completing a task from this
+                                project
                             </mat-checkbox>
-                            <mat-form-field>
-                                <mat-select placegolder="Default task view" formControlName="defaultTaskView"
-                                           name="defaultTaskView">
-                                    <mat-option *ngFor="let option of defaultTaskView" [value]="option.value">
-                                        {{ option.name }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+
+
                         </div>
                     </div>
 
@@ -119,7 +132,8 @@
 
                             <mat-autocomplete #auto="matAutocomplete">
                                 <mat-option *ngFor="let u of filteredUsers | async" [value]="u.email">
-                                    <img [src]="staticUrl + u.avatarUrl | avatarsize: '32x32'"><span>{{ u.email }}</span>
+                                    <img
+                                        [src]="staticUrl + u.avatarUrl | avatarsize: '32x32'"><span>{{ u.email }}</span>
                                 </mat-option>
                             </mat-autocomplete>
 
@@ -159,8 +173,10 @@
 
             </div>
 
+            <div fxLayout="row" fxLayoutAlign="end none">
+                <button type="submit" mat-button class="button">Save</button>
 
-            <button type="submit" mat-button>Save</button>
+            </div>
 
         </form>
     </mat-card>

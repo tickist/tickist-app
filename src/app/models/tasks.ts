@@ -151,7 +151,7 @@ export class Task extends Api {
     }
 
     moveFinishDateFromPreviousFinishDate(delta) {
-        if (delta === 'today') {
+        if (delta === 'today' || !this.finishDate) {
             this.finishDate = moment();
         }
         this.finishDate = this.finishDate.add(delta, 'day');
@@ -168,8 +168,6 @@ export class Task extends Api {
         }
         return richText;
     }
-
-
 }
 
 

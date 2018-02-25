@@ -9,6 +9,7 @@ export class Project extends Api {
     isActive: boolean;
     isInbox: boolean;
     description: string;
+    richDescription: string;
     ancestor: Project;
     color: string;
     tasksCounter: number;
@@ -30,6 +31,8 @@ export class Project extends Api {
         this.color = project.color || undefined;
         this.tasksCounter = !(isNaN(project.tasks_counter)) ? project.tasks_counter : undefined;
         this.allDescendants = project.get_all_descendants;
+        this.description = project.description;
+        this.richDescription = this.convert(project.description);
         this.defaultFinishDate = project.default_finish_date;
         this.defaultPriority = project.default_priority;
         this.defaultTypeFinishDate = project.default_type_finish_date;
@@ -54,5 +57,17 @@ export class Project extends Api {
         } else {
             this.shareWith.push(new PendingUser(user));
         }
+    }
+    
+    private convert(text) {
+        const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+        const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        let richText;
+        if (text) {
+            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>').replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
+        } else {
+            richText = text;
+        }
+        return richText;
     }
 }

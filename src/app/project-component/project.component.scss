@@ -1,3 +1,5 @@
+@import "../shared/variables";
+
 mat-list-item {
     cursor: pointer;
     p {
@@ -32,7 +34,15 @@ mat-list-item {
     border-top-right-radius: 2px;
 }
 
-.label {
-    color: grey;
-    font-size: 12px;
+.form-field {
+    margin-bottom: 10px;
+}
+
+.button {
+    background-color: $orange;
+    margin-left: 20px;
+}
+
+.main-view {
+    margin-bottom: 10px;
 }

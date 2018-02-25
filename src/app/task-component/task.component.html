@@ -73,13 +73,13 @@
                     </mat-list>
                 </div>
                 <div fxFlex>
-                    <div [hidden]="!menu.main" formGroupName="main">
+                    <div [hidden]="!checkActiveItemInMenu('main')" formGroupName="main">
 
                         <div fxLayout="column" fxLayoutAlign="space-between none">
 
                             <mat-form-field>
                                 <input matInput #taskName (blur)="updateImmediately($event, taskForm.value)"
-                                       placeholder="Task name" maxlength="100" formControlName="name">
+                                       placeholder="Task name" maxlength="100" formControlName="name" autofocus>
                                 <mat-hint align="end">{{taskName.value?.length || 0}}/100</mat-hint>
                                 <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">
                                     {{getErrorMessage(taskForm.controls['main'].controls['name'])}}
@@ -87,9 +87,9 @@
                             </mat-form-field>
 
                             <mat-button-toggle-group formControlName="priority" [ngStyle]="{'width': '126px'}">
-                                <mat-button-toggle value="A">A</mat-button-toggle>
-                                <mat-button-toggle value="B">B</mat-button-toggle>
-                                <mat-button-toggle value="C">C</mat-button-toggle>
+                                <mat-button-toggle value="A" class="priority_A">A</mat-button-toggle>
+                                <mat-button-toggle value="B" class="priority_B">B</mat-button-toggle>
+                                <mat-button-toggle value="C" class="priority_C">C</mat-button-toggle>
                             </mat-button-toggle-group>
 
                             <mat-form-field>
@@ -143,7 +143,7 @@
 
                     </div>
 
-                    <div [hidden]="!menu.extra" formGroupName="extra">
+                    <div [hidden]="!checkActiveItemInMenu('extra')" formGroupName="extra">
 
                         <div fxLayout="column">
                             <mat-form-field>
@@ -190,13 +190,13 @@
 
                                 </div>
                             </div>
-
-
+                            
                             <mat-form-field>
                                 <input matInput placeholder="Estimated time" formControlName="estimateTime">
                                 <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
                                    aria-hidden="true"></i>
                             </mat-form-field>
+                            
                             <mat-form-field>
                                 <input matInput placeholder="Real time" formControlName="time">
                                 <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
@@ -214,7 +214,7 @@
 
                     </div>
 
-                    <div [hidden]="!menu.tags" formGroupName="tags">
+                    <div [hidden]="!checkActiveItemInMenu('tags')" formGroupName="tags">
 
                         <mat-form-field>
                             <input #trigger type="text" matInput placeholder="Add new tag"
@@ -233,15 +233,15 @@
                         <mat-chip-list>
 
                             <mat-chip *ngFor="let tag of task.tags">
-                                <span>{{ tag.name }}</span><span fxFlex></span><i matTooltip="Remove tag"
-                                                                                  (click)="removeTagFromTask(tag)"
-                                                                                  class="fa fa-times"></i>
+                                <span>{{ tag.name }}</span>
+                                <span fxFlex></span>
+                                <i matTooltip="Remove tag" (click)="removeTagFromTask(tag)" class="fa fa-times"></i>
                             </mat-chip>
 
                         </mat-chip-list>
                     </div>
 
-                    <div [hidden]="!menu.steps" formArrayName="steps">
+                    <div [hidden]="!checkActiveItemInMenu('steps')" formArrayName="steps">
                         <div>
                             <ul id="steps" [sortablejs]="taskForm.controls.steps" fxLayout="column">
                                 <li class="step"
@@ -250,22 +250,21 @@
                                     <i class="fa fa-arrows hover-visible" aria-hidden="true"></i>
                                     <mat-form-field>
                                         <input matInput placeholder="Step name" formControlName="name"
-                                               [autofocus]="last">
+                                               [appAutofocus]="last && checkActiveItemInMenu('steps')">
                                     </mat-form-field>
 
                                     <i class="fa fa-trash-o pointer" (click)="removeStep(i)"></i>
 
                                 </li>
-
-
+                                
                             </ul>
-                            <button mat-button type="button" (keyup.escape)="addNewStep()" (click)="addNewStep()">Add
-                                new step
+                            <button mat-button type="button" (click)="addNewStep()">
+                                Add new step
                             </button>
                         </div>
                     </div>
 
-                    <div [hidden]="!menu.repeat" formGroupName="repeat">
+                    <div [hidden]="!checkActiveItemInMenu('repeat')" formGroupName="repeat">
                         <div fxLayout="column">Repeat:
                             <mat-radio-group formControlName="repeatDefault" fxLayout="column">
                                 <mat-radio-button *ngFor="let option of defaultRepeatOptions" [value]="option.id">
@@ -303,19 +302,19 @@
 
                     </div>
 
-                    <div [hidden]="!menu.notifications">
+                    <div [hidden]="!checkActiveItemInMenu('notifications')">
 
                     </div>
                 </div>
             </div>
 
+            <div fxLayout="row" fxLayoutAlign="end none" >
+            <button type="submit" mat-button class="button">Save</button>
 
-            <button type="submit" mat-button>Save</button>
-
-            <button type="button" mat-button *ngIf="!task.id" (click)="createAndAddMore($event, taskForm.value)">Create
-                and add
-                more
+            <button type="button" mat-button  class="button" *ngIf="!task.id" (click)="createAndAddMore($event, taskForm.value)">
+                Create and add more
             </button>
+            </div>
         </form>
     </mat-card>
 
