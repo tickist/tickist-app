@@ -91,10 +91,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.futureTasks = this.tasks.filter((task: Task) => {
                     return ( task.pinned === false && task.typeFinishDate === 0 && task.finishDate && task.finishDate > this.activeDay);
                 });
-
+                const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
+                const futureTasksSortBy = JSON.parse(this.user.futureTasksSortBy);
                 this.todayTasks = _.sortBy(this.todayTasks, ['priority', 'name']);
-                this.overdueTasks = _.sortBy(this.overdueTasks, ['priority', 'finishDate', 'name']);
-                this.futureTasks = _.sortBy(this.futureTasks, ['finishDate', 'finishTime', 'name']);
+                this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);
+                this.futureTasks = _.orderBy(this.futureTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);
             }
         });
         this.subscriptions.add(this.route.params.map(params => params['date']).subscribe((param) => {

@@ -20,6 +20,8 @@ export class UserComponent implements OnInit, OnDestroy {
     staticUrl: string;
     tasksOrderOptions: Array<string>;
     defaultTaskViewOptions: Array<any>;
+    overdueTasksSortByOptions: Array<any>;
+    futureTasksSortByOptions: Array<any>;
     @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
     
     constructor(private fb: FormBuilder, private userService: UserService, private location: Location,
@@ -28,6 +30,8 @@ export class UserComponent implements OnInit, OnDestroy {
         this.staticUrl = environment['staticUrl'];
         this.tasksOrderOptions = this.configurationService.loadConfiguration()['commons']['TASKS_ORDER_OPTIONS'];
         this.defaultTaskViewOptions = this.configurationService.loadConfiguration()['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
+        this.overdueTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['OVERDUE_TASKS_SORT_BY_OPTIONS'];
+        this.futureTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['FUTURE_TASKS_SORT_BY_OPTIONS'];
         this.menu = {
             'main': true, 'password': false, 'notifications': false, 'settings': false
         };
@@ -65,7 +69,7 @@ export class UserComponent implements OnInit, OnDestroy {
         if (this.dailySummaryCheckbox) {
             this.user.dailySummaryHour = null;
         } else {
-            var d = new Date();
+            const d = new Date();
             d.setHours(7, 0);
             d.setMinutes(0);
             this.user.dailySummaryHour = d;

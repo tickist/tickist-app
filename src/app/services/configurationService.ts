@@ -39,12 +39,21 @@ export class ConfigurationService {
                 'DEFAULT_PRIORITY_OF_TASK': 'B',
                 'DEFAULT_TYPE_FINISH_DATE': 0,
                 'COLOR_LIST_DEFAULT': '#2c86ff',
-                'COLOR_LIST': ['#6be494', '#f3d749', '#fcb150', '#f3df9a', '#b6926e', '#2c86ff', '#4fc4f6', '#367cdc', '#b679b2', '#be5753', '#fb7087'],
+                'COLOR_LIST': ['#6be494', '#f3d749', '#fcb150', '#f3df9a', '#b6926e', '#2c86ff', '#4fc4f6', '#367cdc',
+                    '#b679b2', '#be5753', '#fb7087'],
                 'CHOICES_DEFAULT_FINISH_DATE': [
                     {'id': 0, 'name': 'today'},
                     {'id': 1, 'name': 'next day'},
                     {'id': 2, 'name': 'next week'},
                     {'id': 3, 'name': 'next month'}
+                ],
+                'OVERDUE_TASKS_SORT_BY_OPTIONS': [
+                    {'name': 'priority, finishDate, name', 'value': '{"fields": ["priority", "finishDate", "name"], "orders": ["asc", "asc", "asc"]}'},
+                    {'name': 'priority, -finishDate, name', 'value': '{"fields": ["priority", "finishDate", "name"], "orders": ["asc", "desc", "asc"]}'}
+                ],
+                'FUTURE_TASKS_SORT_BY_OPTIONS': [
+                    {'name': 'finishDate, finishTime, name', 'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["desc", "asc", "asc"]}'},
+                    {'name': '-finishDate, finishTime, name', 'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["asc", "desc", "asc"]}'}
                 ],
                 'TASKS_ORDER_OPTIONS': [
                     'Today->Overdue->You can do this too',
