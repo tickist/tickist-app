@@ -1,6 +1,4 @@
 <span>
-    
-  <span class="finish-time"></span>
   <span [innerHTML]="task.name|truncate: 60 " [matTooltip]="task.name" *ngIf="tooltip"></span>
   <span *ngIf="!tooltip">{{ task.name }}</span>
 </span>
