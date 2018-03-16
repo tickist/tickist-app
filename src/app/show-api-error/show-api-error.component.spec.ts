@@ -1,25 +1,29 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ShowApiErrorComponent } from './show-api-error.component';
+import {ShowApiErrorComponent} from './show-api-error.component';
+import {MockConfigurationService} from '../testing/mocks/configurationService';
+import {APP_BASE_HREF} from '@angular/common';
 
 describe('ShowApiErrorComponent', () => {
-  let component: ShowApiErrorComponent;
-  let fixture: ComponentFixture<ShowApiErrorComponent>;
+    let component: ShowApiErrorComponent;
+    let fixture: ComponentFixture<ShowApiErrorComponent>;
+    const configurationService = new MockConfigurationService();
+    
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [ShowApiErrorComponent],
+            providers: [
+                configurationService.getProviders(),
+                {provide: APP_BASE_HREF, useValue: '/'}
+            ]
+        }).compileComponents().then(() => {
+            fixture = TestBed.createComponent(ShowApiErrorComponent);
+            component = fixture.componentInstance;
+        });
+    }));
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ShowApiErrorComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ShowApiErrorComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

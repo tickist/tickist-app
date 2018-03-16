@@ -102,7 +102,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.configurationService.updateActiveDay(param);
         }));
         this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {
-            console.log(mediaChange);
             this.mediaChange = mediaChange;
         }));
     }

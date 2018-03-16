@@ -1,7 +1,8 @@
 <div (click)="picker.open()">
-        <mat-form-field>
-            <input matInput (dateChange)="emitOnSelectedDate()" [formControl]="selectedDate" [matDatepicker]="picker" placeholder="Select the specific date">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker disabled="false"></mat-datepicker>
-        </mat-form-field>
-    </div>
+    <mat-form-field>
+        <input matInput (dateChange)="emitOnSelectedDate()" [formControl]="selectedDate" [matDatepicker]="picker"
+               placeholder="Select the specific date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker disabled="false"></mat-datepicker>
+    </mat-form-field>
+</div>

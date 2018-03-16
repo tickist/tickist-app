@@ -1,6 +1,6 @@
 <span>
     <i #typeFinishDateIcon></i>
 </span>
-<span>{{ task.finishDate.format(dateFormat) }}</span>
+<span>{{ finishDateFormat }}</span>
 
 <span #finishTime *ngIf="task.finishTime"><i #finishTimeIcon></i>  {{ task.finishTime }} </span>

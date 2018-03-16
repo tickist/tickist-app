@@ -56,7 +56,6 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
             this.configurationService.updateActiveDay(param);
         });
         this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {
-            console.log(mediaChange);
             this.mediaChange = mediaChange;
         }));
         this.subscriptions.add(this.configurationService.activeDay$.subscribe((activeDay) => {
@@ -106,7 +105,9 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         let nextDay = moment();
         const userId = _.get(this.user, 'id');
         this.week = [];
-        if (!userId || this.tasks.length === 0) return;
+        if (!userId || this.tasks.length === 0) {
+            return;
+        }
         for (let i = 0; i < 7; i++) {
             this.week.push({
                 'name': nextDay.format('dddd'),
@@ -119,9 +120,6 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
                     const a = ((finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
                         (this.isToday(nextDay) && task.pinned)
                     );
-                    if (a) {
-                        console.log("task", task)
-                    }
                     return a;
                 }).length
             });

@@ -68,6 +68,7 @@
         "karma-coverage-istanbul-reporter": "^1.2.1",
         "karma-jasmine": "^1.1.1",
         "karma-jasmine-html-reporter": "^0.2.2",
+        "mock-component": "5.0.0",
         "ngrx-store-freeze": "^0.1.6",
         "node-sass": "^4.7.2",
         "npm-check-updates": "^2.11.1",

@@ -1,25 +1,65 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ProjectsListComponent} from './projects-list.component';
+import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';
+import {TickistMaterialModule} from '../app.module';
+import {BlankComponent, RootComponent} from '../testing/test.modules';
+import {RouterModule, Routes} from '@angular/router';
+import {SingleProjectComponent} from '../single-project/single-project.component';
+import { MockComponent } from 'mock-component';
+import {FormsModule} from '@angular/forms';
+import {APP_BASE_HREF} from '@angular/common';
+import {MockTaskService} from '../testing/mocks/taskService';
+import {MockProjectService} from '../testing/mocks/projectService';
+import {MockUserService} from '../testing/mocks/userService';
+import {MockConfigurationService} from '../testing/mocks/configurationService';
+import {MockObservableMedia} from '../testing/mocks/observableMedia';
 
-import { ProjectsListComponent } from './projects-list.component';
+export const routes: Routes = [
+    {
+        path: '',
+        pathMatch: 'full',
+        component: RootComponent,
+        children: [
+            {path: 'projects/:projectId', component: BlankComponent},
+            {path: 'projects', component: BlankComponent}
+        ]
+    }
+];
+
 
 describe('ProjectsListComponent', () => {
-  let component: ProjectsListComponent;
-  let fixture: ComponentFixture<ProjectsListComponent>;
+    let component: ProjectsListComponent;
+    let fixture: ComponentFixture<ProjectsListComponent>;
+    const taskService = new MockTaskService();
+    const projectService = new MockProjectService();
+    const userService = new MockUserService();
+    const configurationService = new MockConfigurationService();
+    const observableMedia = new MockObservableMedia();
+    
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            imports: [TickistMaterialModule, RouterModule.forRoot(routes), FormsModule],
+            declarations: [ProjectsListComponent,
+                MockComponent(MenuButtonComponent),
+                RootComponent,
+                BlankComponent,
+                MockComponent(SingleProjectComponent)],
+            providers: [
+                {provide: APP_BASE_HREF, useValue: '/'},
+                taskService.getProviders(),
+                projectService.getProviders(),
+                observableMedia.getProviders(),
+                configurationService.getProviders(),
+                userService.getProviders()
+            ]
+            
+        }).compileComponents().then(() => {
+            fixture = TestBed.createComponent(ProjectsListComponent);
+            component = fixture.componentInstance;
+        });
+    }));
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ProjectsListComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ProjectsListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should be created', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(component).toBeTruthy();
+    });
 });

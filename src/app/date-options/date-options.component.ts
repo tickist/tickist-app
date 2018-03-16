@@ -27,6 +27,9 @@ export class DateOptionsComponent implements OnInit {
     }
 
     ngOnInit() {
+         if (this.task === null) {
+            throw new Error(`Attribute 'task' is required`);
+        }
         this.typeFinishDateOptions = this.configurationService.loadConfiguration()['commons']['TYPE_FINISH_DATE_OPTIONS'];
         this.finishDate = this.task.finishDate.toDate();
         this.finishTime = this.task.finishTime;
@@ -35,7 +38,6 @@ export class DateOptionsComponent implements OnInit {
     }
 
     saveTask($event: any, source: string) {
-        console.log('test');
         if (this.finishDateInputViewChild.valid) {
             if (source === 'typeFinishDate') {
                 this.task.typeFinishDate = $event.value;

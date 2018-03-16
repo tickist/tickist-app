@@ -1,5 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit, Output, EventEmitter, HostListener} from '@angular/core';
-import {TaskService} from '../../services/taskService';
+import {ChangeDetectionStrategy, Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {Task} from '../../models/tasks';
 
 @Component({
@@ -18,10 +17,13 @@ export class RightMenuComponent implements OnInit {
     @Output() onFastMenuOpen = new EventEmitter();
     @Output() onFastMenuClose = new EventEmitter();
 
-    constructor(public taskService: TaskService) {
+    constructor() {
     }
 
     ngOnInit() {
+        if (!this.task) {
+            throw new Error(`Attribute 'task' is required`);
+        }
     }
 
     emitDeleteTaskEvent() {

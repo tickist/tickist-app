@@ -140,7 +140,6 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                 tooltips: {
                     custom: function (tooltip) {
                         // tooltip will be false if tooltip is not visible or should be hidden
-                        console.log(tooltip);
                         if (!tooltip) {
                             return;
                         }
@@ -195,7 +194,6 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                 tooltips: {
                     custom: function (tooltip) {
                         // tooltip will be false if tooltip is not visible or should be hidden
-                        console.log(tooltip);
                         if (!tooltip) {
                             return;
                         }
@@ -256,7 +254,6 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                 tooltips: {
                     custom: function (tooltip) {
                         // tooltip will be false if tooltip is not visible or should be hidden
-                        console.log(tooltip);
                         if (!tooltip) {
                             return;
                         }

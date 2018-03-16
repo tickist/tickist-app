@@ -2,7 +2,6 @@ import {
     AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
     ViewChild
 } from '@angular/core';
-import * as _ from 'lodash';
 import {Task} from '../../models/tasks';
 
 
@@ -18,16 +17,19 @@ export class DisplayFinishDateComponent implements OnInit, OnChanges, AfterViewI
     @ViewChild('finishTime') finishTime: ElementRef;
     @ViewChild('finishTimeIcon') finishTimeIcon: ElementRef;
     dateFormat = 'DD-MM-YYYY';
+    finishDateFormat: string;
 
     constructor(private renderer: Renderer2) {
     }
 
     ngOnInit() {
+        if (!this.task) {
+            throw new Error(`Attribute 'task' is required`);
+        }
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('task')) {
-
             this.addTypeFinishDateIcon();
         }
     }
@@ -53,6 +55,7 @@ export class DisplayFinishDateComponent implements OnInit, OnChanges, AfterViewI
         } else if (this.task.typeFinishDate === 0) {
             this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa-arrow-right');
         }
+        this.finishDateFormat = this.task.finishDate.format(this.dateFormat);
     }
 
 }

@@ -1,4 +1,7 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2,
+    ViewChild
+} from '@angular/core';
 
 @Component({
   selector: 'tickist-menu-button',
@@ -6,7 +9,7 @@ import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2
   styleUrls: ['./menu-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MenuButtonComponent implements OnInit {
+export class MenuButtonComponent implements OnInit, AfterViewInit {
   @Input() icon: string;
   @Input() color = 'white';
   @Input() isDisabled = false;

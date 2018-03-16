@@ -101,7 +101,6 @@ import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete
 import {BlankComponent, RootComponent} from './testing/test.modules';
 import {TasksFromProjectsComponent} from './tasks-from-projects/tasks-from-projects.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
-import {VirtualScrollModule} from './shared/virtual-scroll';
 import {ScrollerDirective} from './shared/scroller';
 import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';
 import {TagsListComponent} from './tags-list/tags-list.component';
@@ -251,7 +250,6 @@ export class TickistMaterialModule {
         FlexLayoutModule,
         SharedModule,
         ChartsModule,
-        VirtualScrollModule,
         JwtModule.forRoot({
             config: {
                 headerName: 'Authorization',
