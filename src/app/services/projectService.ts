@@ -110,6 +110,7 @@ export class ProjectService {
                 const newProject = new Project(payload);
                 this.store.dispatch(new projectsAction.CreateProject(newProject));
                 this.router.navigate(['/home/projects', newProject.id]);
+                this.loadProjects(); // we need to update getAllDescendant set.
             });
     }
 
@@ -120,6 +121,7 @@ export class ProjectService {
                 this.snackBar.open('Project has been saved successfully', '', {
                     duration: 2000,
                 });
+                this.loadProjects(); // we need to update getAllDescendant set.
             });
     }
 

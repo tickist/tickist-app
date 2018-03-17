@@ -54,8 +54,8 @@
                                           formControlName="color"></color-picker>
 
                             <mat-form-field>
-                                <mat-select placeholder="Ancestor:" formControlName="ancestorPk">
-                                    <mat-option *ngFor="let project of projects"
+                                <mat-select placeholder="Ancestor:" formControlName="ancestor">
+                                    <mat-option *ngFor="let project of projectsAncestors"
                                                 [value]="project.id"> {{ project.name }}
                                     </mat-option>
                                 </mat-select>

@@ -48,8 +48,8 @@ export class ConfigurationService {
                     {'id': 3, 'name': 'next month'}
                 ],
                 'OVERDUE_TASKS_SORT_BY_OPTIONS': [
-                    {'name': 'priority, finishDate, name', 'value': '{"fields": ["priority", "finishDate", "name"], "orders": ["asc", "asc", "asc"]}'},
-                    {'name': 'priority, -finishDate, name', 'value': '{"fields": ["priority", "finishDate", "name"], "orders": ["asc", "desc", "asc"]}'}
+                    {'name': 'priority, finishDate, name', 'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "asc", "asc", "asc"]}'},
+                    {'name': 'priority, -finishDate, name', 'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "desc", "desc", "asc"]}'}
                 ],
                 'FUTURE_TASKS_SORT_BY_OPTIONS': [
                     {'name': 'finishDate, finishTime, name', 'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["desc", "asc", "asc"]}'},

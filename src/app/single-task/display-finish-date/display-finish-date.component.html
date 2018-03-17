@@ -1,6 +1,11 @@
+<span #finishTime *ngIf="task.finishTime">
+    <i #finishTimeIcon></i>  {{ task.finishTime }} 
+</span>
+
 <span>
     <i #typeFinishDateIcon></i>
 </span>
+
 <span>{{ finishDateFormat }}</span>
 
-<span #finishTime *ngIf="task.finishTime"><i #finishTimeIcon></i>  {{ task.finishTime }} </span>
+

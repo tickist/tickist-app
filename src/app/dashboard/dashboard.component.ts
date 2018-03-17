@@ -93,7 +93,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 });
                 const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
                 const futureTasksSortBy = JSON.parse(this.user.futureTasksSortBy);
-                this.todayTasks = _.sortBy(this.todayTasks, ['priority', 'name']);
+                debugger
+                this.todayTasks = _.orderBy(this.todayTasks, ['priority', 'finishDate', 'finishTime', 'name'], ['desc', 'desc', 'asc', 'asc']);
                 this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);
                 this.futureTasks = _.orderBy(this.futureTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);
             }
