@@ -1,75 +1,75 @@
 //variables
 @import "../shared/variables";
 
-
 .task {
-  height: 25px;
-  .done {
-    margin-right: 5px;
-    cursor: pointer;
-  }
-  &:hover {
-    .without-hover {
-      display: none;
+    min-height: 25px;
+    margin-bottom: 5px;
+    .done {
+        margin-right: 5px;
+        cursor: pointer;
     }
+    &:hover {
+        .without-hover {
+            display: none;
+        }
+        .hover {
+            display: block;
+        }
+    }
+
     .hover {
-      display: block;
+        display: none;
     }
-  }
+    .task-icon {
+        width: 24px !important;
+        min-width: 24px !important;
+        height: 24px !important;
+        margin-left: 4px;
+        margin-right: 4px;
+        line-height: 18px;
+        border-radius: 10px;
+        padding: 0;
+        font-size: 16px;
+        padding-bottom: 4px;
+        .mat-button-ripple {
+            line-height: 18px;
+        }
+        .mat-button-wrapper {
+            line-height: 18px !important;
 
-  .hover {
-    display: none;
-  }
-  .task-icon {
-    width: 24px !important;
-    min-width: 24px !important;
-    height: 24px !important;
-    margin-left: 4px;
-    margin-right: 4px;
-    line-height: 18px;
-    border-radius: 10px;
-    padding: 0;
-    font-size: 16px;
-    padding-bottom: 4px;
-    .mat-button-ripple {
-      line-height: 18px;
+        }
     }
-    .mat-button-wrapper {
-      line-height: 18px !important;
-
-    }
-  }
 }
 
 .pinned {
-  transform: rotate(-45deg);
-  color: $orange !important;
-  visibility: visible !important;
-  &:hover {
-    transform: rotate(0deg);
-    color: $white;
-    .fa {
-      color: $white;
-    }
-  }
-  .fa {
+    transform: rotate(-45deg);
     color: $orange !important;
-  }
+    visibility: visible !important;
+    &:hover {
+        transform: rotate(0deg);
+        color: $white;
+        .fa {
+            color: $white;
+        }
+    }
+    .fa {
+        color: $orange !important;
+    }
 }
 
 .unpinned {
-  &:hover {
-    transform: rotate(-45deg);
-    color: $orange !important;
-    .fa {
-      color: $orange !important;
+    &:hover {
+        transform: rotate(-45deg);
+        color: $orange !important;
+        .fa {
+            color: $orange !important;
+        }
     }
-  }
 }
 
 .date {
-  font-size: 14px;
-  i {
     font-size: 14px;
-  }
+    i {
+        font-size: 14px;
+    }
 }

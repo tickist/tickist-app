@@ -118,13 +118,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "app",
+      "tickist",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "app",
+      "tickist",
       "kebab-case"
     ],
     "use-input-property-decorator": true,

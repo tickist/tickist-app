@@ -5,7 +5,7 @@ import {
 import {TaskService} from '../services/taskService';
 import {Task} from '../models/tasks';
 import {ConfigurationService} from '../services/configurationService';
-import {TimeDialog} from './time-dialog/time-dialog.component';
+import {TimeDialogComponent} from './time-dialog/time-dialog.component';
 import {MatDialog} from '@angular/material';
 import {ProjectService} from '../services/projectService';
 import {Project} from '../models/projects';
@@ -30,6 +30,9 @@ class Timer {
 
 export class SingleTask {
     task: Task;
+    isRightMenuVisible = false;
+    isFastMenuVisible = false;
+    isMouseOver = false;
 
     constructor(public taskService: TaskService, public dialog: MatDialog) {
 
@@ -66,7 +69,7 @@ export class SingleTask {
         if (this.task.status === 0) {
             this.task.status = 1;
             if (this.task.taskProject.dialogTimeWhenTaskFinished) {
-                const dialogRef = this.dialog.open(TimeDialog, {
+                const dialogRef = this.dialog.open(TimeDialogComponent, {
                     data: {'task': this.task}
                 });
                 dialogRef.afterClosed().subscribe(result => {
@@ -130,6 +133,18 @@ export class SingleTask {
         this.task.time = time.time;
         this.task.estimateTime = time.estimateTime;
     }
+
+    changeRightMenuVisiblity() {
+        if (this.isMouseOver) {
+            this.isRightMenuVisible = true;
+        }
+        if (!this.isMouseOver && this.isFastMenuVisible) {
+            this.isRightMenuVisible = true;
+        }
+        if (!this.isMouseOver && !this.isFastMenuVisible) {
+            this.isRightMenuVisible = false;
+        }
+    }
 }
 
 
@@ -144,9 +159,6 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     @Input() mediaChange;
     @ViewChild('container') container: ElementRef;
 
-    isRightMenuVisible = false;
-    isFastMenuVisible = false;
-    isMouseOver = false;
     dateFormat = 'DD-MM-YYYY';
     projects: Project[];
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -237,17 +249,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         console.log(value);
     }
 
-    changeRightMenuVisiblity() {
-        if (this.isMouseOver) {
-            this.isRightMenuVisible = true;
-        }
-        if (!this.isMouseOver && this.isFastMenuVisible) {
-            this.isRightMenuVisible = true;
-        }
-        if (!this.isMouseOver && !this.isFastMenuVisible) {
-            this.isRightMenuVisible = false;
-        }
-    }
+
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('mediaChange') && changes['mediaChange'].hasOwnProperty('currentValue')
@@ -269,6 +271,23 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
 export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit, AfterViewInit {
     @Input() task;
 
+    @HostListener('mouseenter')
+    onMouseEnter() {
+        this.isMouseOver = true;
+        this.changeRightMenuVisiblity();
+        this.isRightMenuVisible = true;
+    }
+
+    @HostListener('mouseleave')
+    onMouseLeave() {
+        this.isMouseOver = false;
+        this.changeRightMenuVisiblity();
+        if (!this.isFastMenuVisible) {
+            this.isRightMenuVisible = false;
+        }
+
+    }
+    
     constructor(public taskService: TaskService, public dialog: MatDialog) {
         super(taskService, dialog);
     }

@@ -22,16 +22,16 @@ export class TaskService {
     tasks$: Observable<Task[]>;
     tasksFilters$: Observable<any>;
     currentTasksFilters$: Observable<any>;
-    
+
     static useFilters(tasks, currentFilters) {
-        
+
         tasks = tasks.filter(currentFilters[0].value);
         tasks = tasks.filter(currentFilters[1].value);
         tasks = tasks.filter(currentFilters[2].value);
         tasks = tasks.filter(currentFilters[3].value);
         const tags = currentFilters.filter(filter => filter.label === 'tags')[0];
         const sortingBy = currentFilters.filter(filter => filter.label === 'sorting')[0];
-        
+
         if (tags.value instanceof Array) {
             tasks = tasks.filter((task) => {
                 let result = false;
@@ -51,19 +51,18 @@ export class TaskService {
                 return (task.tags.length === 0);
             });
         }
-        debugger
         tasks = _.orderBy(tasks, sortingBy.value, sortingBy.order);
         return tasks;
     }
-    
+
     constructor(public http: HttpClient, private store: Store<AppStore>, private userService: UserService,
                 public snackBar: MatSnackBar, protected statisticsService: StatisticsService,
                 protected configurationService: ConfigurationService, protected projectService: ProjectService,
                 protected tagService: TagService) {
-        
-        this.tasks$ = this.store.select(store => store.tasks);
-        this.tasksFilters$ = this.store.select(store => store.tasksFilters);
-        this.currentTasksFilters$ = this.store.select(store => store.currentTasksFilters);
+
+        this.tasks$ = this.store.select(s => s.tasks);
+        this.tasksFilters$ = this.store.select(s => s.tasksFilters);
+        this.currentTasksFilters$ = this.store.select(s => s.currentTasksFilters);
         this.userService.user$.subscribe((user) => {
             if (user) {
                 this.loadTasksFilters(user);
@@ -71,13 +70,13 @@ export class TaskService {
             }
         });
     }
-    
+
     loadTasks() {
         return this.http.get<Task[]>(`${environment['apiUrl']}/tasks/?assign=all&status=0&status=2`)
             .map(payload => payload.map(task => new Task(task)))
             .map(payload => this.store.dispatch(new tasksAction.AddTasks(payload)));
     }
-    
+
     loadCurrentTasksFilters(user: User) {
         const filters = [
             new Filter({'id': 1, label: 'filter', 'name': 'not done', 'value': task => task.status === 0}),
@@ -105,21 +104,21 @@ export class TaskService {
             }),
             new Filter({'id': 1, label: 'tags', 'value': 'allTasks', 'name': 'all tasks'})
         ];
-        
+
         this.store.dispatch(new tasksAction.AddCurrentFilters(filters));
     }
-    
+
     updateCurrentFilter(currentFilter) {
         this.store.dispatch(new tasksAction.UpdateCurrentFilter(currentFilter));
     }
-    
+
     getCurrentTagsFilterValue() {
         let state: State<any>;
         // we need to use 'synchronous' subscribe. It is only options to get current value
         this.currentTasksFilters$.take(1).subscribe(s => state = s);
         return state.filter(filter => filter.label === 'tags')[0].value;
     }
-    
+
     loadTasksFilters(user: User) {
         const filters = [
             {id: 1, label: 'filter', name: 'not done', value: task => task.status === 0},
@@ -209,14 +208,14 @@ export class TaskService {
             {id: 8, label: 'sorting', value: name, order: ['desc'], name: 'A-Z <i class="fa fa-arrow-down"></i>'},
             {id: 1, label: 'tags', value: 1}
         ].map(filter => new Filter(filter));
-        
+
         this.store.dispatch(new tasksAction.AddFilters(filters));
     }
-    
+
     saveTask(task: Task) {
         (task.id) ? this.updateTask(task) : this.createTask(task);
     }
-    
+
     postponeToToday() {
         this.http.post<Task[]>(`${environment['apiUrl']}/tasks/move_tasks_for_today/`, {}).subscribe((tasks: Task[]) => {
             tasks.map((task) => {
@@ -224,7 +223,7 @@ export class TaskService {
             });
         });
     }
-    
+
     createTask(task: Task) {
         this.http.post(`${environment['apiUrl']}/tasks/`, task.toApi())
             .map(payload => new Task(payload))
@@ -235,7 +234,7 @@ export class TaskService {
                 this.store.dispatch(new tasksAction.CreateTask(payload));
             });
     }
-    
+
     updateTask(task: Task, isSilenceUpdate = false) {
         const menuStateCopy = task.toApi()['menu_showing'];
         this.configurationService.switchOnProgressBar();
@@ -254,7 +253,7 @@ export class TaskService {
                 this.tagService.loadTags().subscribe();
             });
     }
-    
+
     deleteTask(task: Task) {
         this.http.delete(`${environment['apiUrl']}/tasks/${task.id}/`)
             .subscribe(action => {
@@ -264,5 +263,5 @@ export class TaskService {
                 });
             });
     }
-    
+
 }

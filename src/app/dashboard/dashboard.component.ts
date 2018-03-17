@@ -9,13 +9,12 @@ import 'rxjs/add/observable/combineLatest';
 import {Subscription} from 'rxjs/Subscription';
 import * as moment from 'moment';
 import {User} from '../models/user';
-import {SideNavVisibility} from '../models/configurations';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 
 
 @Component({
-    selector: 'app-dashboard',
+    selector: 'tickist-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss']
 })
@@ -66,7 +65,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const today = moment().format('DD-MM-YYYY');
         return (today === date.format('DD-MM-YYYY'));
     }
-    
+
     isTomorrow(date = this.activeDay) {
         const tomorrow = moment().add(1, 'days').format('DD-MM-YYYY');
         return (tomorrow === date.format('DD-MM-YYYY'));
@@ -93,8 +92,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 });
                 const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
                 const futureTasksSortBy = JSON.parse(this.user.futureTasksSortBy);
-                debugger
-                this.todayTasks = _.orderBy(this.todayTasks, ['priority', 'finishDate', 'finishTime', 'name'], ['desc', 'desc', 'asc', 'asc']);
+                this.todayTasks = _.orderBy(this.todayTasks,
+                    ['priority', 'finishDate', 'finishTime', 'name'],
+                    ['desc', 'desc', 'asc', 'asc']
+                );
                 this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);
                 this.futureTasks = _.orderBy(this.futureTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);
             }
@@ -113,13 +114,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
         clearTimeout(this.timer);
     }
-    
+
     navigateTo(path, arg) {
         this.router.navigate([path, arg]);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         }
     }
-    
+
 }
 

@@ -35,7 +35,7 @@ describe('ProjectsListComponent', () => {
     const userService = new MockUserService();
     const configurationService = new MockConfigurationService();
     const observableMedia = new MockObservableMedia();
-    
+
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, RouterModule.forRoot(routes), FormsModule],
@@ -52,7 +52,6 @@ describe('ProjectsListComponent', () => {
                 configurationService.getProviders(),
                 userService.getProviders()
             ]
-            
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(ProjectsListComponent);
             component = fixture.componentInstance;

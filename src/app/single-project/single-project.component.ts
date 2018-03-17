@@ -129,7 +129,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy, OnChanges {
                 ${this.project.name}, click Yes. All tasks assigned to you will
                 be deleted and tasks assigned to others will be moved to their Inbox folder.`;
             } else {
-                content = `If you are sure you want to delete the project ${this.project.name}  and all tasks from this project, click Yes.`;
+                content = `If you are sure you want to delete the project ${this.project.name} and all tasks from this project, click Yes.`;
             }
         } else {
             title = 'Delete project';

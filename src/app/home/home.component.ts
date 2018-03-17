@@ -3,8 +3,8 @@ import {Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef} from '@an
 import {AppStore} from '../store';
 import {Store} from '@ngrx/store';
 import {Router, RouterStateSnapshot, NavigationEnd} from '@angular/router';
-import {Task} from '../models/tasks'
-import {Project} from '../models/projects'
+import {Task} from '../models/tasks';
+import {Project} from '../models/projects';
 import {ProjectService} from '../services/projectService';
 import {TaskService} from '../services/taskService';
 import {UserService} from '../services/userService';
@@ -17,7 +17,7 @@ import * as _ from 'lodash';
 
 
 @Component({
-    selector: 'app-home',
+    selector: 'tickist-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })
@@ -25,7 +25,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     tasks: Task[];
     projects: Project[];
     subscriptions: Subscription;
-    activeMediaQuery = '';
     leftSidenavVisibility: SideNavVisibility;
     rightSidenavVisibility: SideNavVisibility;
 

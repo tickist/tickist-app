@@ -68,7 +68,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     }
 
     generateDifferentLevelsOfProjects() {
-        console.time('generateDifferentLevelsOfProjects');
         let projects: Project[] = this.allProjects;
 
         if (this.filter) {
@@ -116,7 +115,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
                 list_of_list.push(item_2);
             }
         });
-        console.timeEnd('generateDifferentLevelsOfProjects');
         return list_of_list;
     }
 

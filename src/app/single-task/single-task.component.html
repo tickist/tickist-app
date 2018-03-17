@@ -1,10 +1,12 @@
 <div #container>
     <tickist-toggle-button (click)="toggleDone()" [priority]="task.priority"
-                           [status]="task.status"></tickist-toggle-button>
+                           [status]="task.status">
+        
+    </tickist-toggle-button>
 
     <div style="width: 100%;">
         <div #firstRow id="first-row">
-            <task-name [task]=task></task-name>
+            <tickist-task-name [task]=task></tickist-task-name>
             <span style="flex: 1 1 1e-09px;"></span>
             <tickist-right-menu [isRightMenuVisible]="isRightMenuVisible"
                                 [task]="task"

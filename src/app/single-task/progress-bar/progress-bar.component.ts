@@ -16,10 +16,10 @@ export class ProgressBarComponent implements OnInit, AfterViewInit {
     @ViewChild('progressBar') progressBar: ElementRef;
     showProgressBar = false;
     showIcon = false;
-    
+
     constructor(private elRef: ElementRef, protected media: ObservableMedia, private renderer: Renderer2) {
     }
-    
+
     ngOnInit() {
         if (this.media.isActive('xs')) {
             this.showIcon = true;
@@ -27,7 +27,7 @@ export class ProgressBarComponent implements OnInit, AfterViewInit {
             this.showProgressBar = true;
         }
     }
-    
+
     ngAfterViewInit() {
         if (this.showProgressBar) {
             this.renderer.setStyle(this.elRef.nativeElement, 'width', '30%');

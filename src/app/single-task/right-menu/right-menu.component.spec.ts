@@ -28,7 +28,7 @@ class MenuButtonComponent {
     @Input() isDisabled = false;
     @Input() fontSize = '16px';
     @Input() transform = '';
-    
+
     constructor() {
     }
 }
@@ -53,7 +53,7 @@ const routes: Routes = [
 describe('RightMenuComponent', () => {
     let component: RightMenuComponent;
     let fixture: ComponentFixture<RightMenuComponent>;
-    
+
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, RouterModule.forRoot(routes)],
@@ -67,13 +67,14 @@ describe('RightMenuComponent', () => {
         });
     }));
 
-    
+
     it('should create', () => {
         component.task = new Task(task1);
         fixture.detectChanges();
         expect(component).toBeTruthy();
     });
-    
+
+
     it('should throw an exception', () => {
         component.task = null;
         expect(() => component.ngOnInit()).toThrowError(`Attribute 'task' is required`);

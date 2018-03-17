@@ -5,28 +5,37 @@
         <i class="fa" [ngClass]="{'fa-check-square-o': task.status == 1, 'fa-square-o': task.status == 0, 'fa-pause': task.status == 2 }"></i>
     </div>
 
-    <task-name [task]="task" ></task-name>
-    <span fxFlex></span>
-    <div class="right-menu">
-        <div class="without-hover">
-            <span class="date" *ngIf="task.finishDate">
-                <i class="fa" [ngClass]="{'fa-dot-circle-o': task.typeFinishDate == '1', 'fa-arrow-right': task.typeFinishDate == '0'}"></i>
-            </span>
-            <span class="mat-caption date" *ngIf="task.finishDate">{{ task.finishDate.format("DD-MM-YYYY") }}</span>
-        </div>
-        <div class="hover">
-            <tickist-pin-button [pinned]="task.pinned"  (click)="togglePin()">
+    <tickist-task-name [task]="task" ></tickist-task-name>
+    <span style="flex: 1 1 1e-09px;"></span>
+     <tickist-right-menu [isRightMenuVisible]="isRightMenuVisible"
+                                [task]="task"
+                                (deleteTaskClick)="deleteTask()"
+                                (togglePinClick)="togglePin()"
+                                (changeDateClick)="changeDate($event)"
+                                (changePriorityClick)="changePriority($event)"
+                                (onFastMenuOpen)="changeFastMenuVisible($event)"
+                                (onFastMenuClose)="changeFastMenuVisible($event)">
+            </tickist-right-menu>
+    <!--<div class="right-menu">-->
+        <!--<div class="without-hover">-->
+            <!--<span class="date" *ngIf="task.finishDate">-->
+                <!--<i class="fa" [ngClass]="{'fa-dot-circle-o': task.typeFinishDate == '1', 'fa-arrow-right': task.typeFinishDate == '0'}"></i>-->
+            <!--</span>-->
+            <!--<span class="mat-caption date" *ngIf="task.finishDate">{{ task.finishDate.format("DD-MM-YYYY") }}</span>-->
+        <!--</div>-->
+        <!--<div class="hover">-->
+            <!--<tickist-pin-button [pinned]="task.pinned"  (click)="togglePin()">-->
 
-            </tickist-pin-button>
+            <!--</tickist-pin-button>-->
 
-            <tickist-menu-button [icon]="'fa-edit'"
-                     [routerLink]="['/home/task', task.id]">
-            </tickist-menu-button>
+            <!--<tickist-menu-button [icon]="'fa-edit'"-->
+                     <!--[routerLink]="['/home/task', task.id]">-->
+            <!--</tickist-menu-button>-->
 
-            <tickist-menu-button [icon]="'fa-ellipsis-v'">
-            </tickist-menu-button>
-        </div>
-    </div>
+            <!--<tickist-menu-button [icon]="'fa-ellipsis-v'">-->
+            <!--</tickist-menu-button>-->
+        <!--</div>-->
+    <!--</div>-->
 
 
 </div>

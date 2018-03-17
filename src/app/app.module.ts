@@ -87,7 +87,7 @@ import {SingleProjectComponent} from './single-project/single-project.component'
 import {AvatarSize} from './pipes/avatarSize';
 import {CalendarModule} from 'primeng/components/calendar/calendar';
 import {ColorPickerComponent} from './project-component/color-picker/color-picker.component';
-import {TimeDialog} from './single-task/time-dialog/time-dialog.component';
+import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {ChangeTaskViewComponent} from './shared/change-task-view-component/change-task-view.component';
 import {ErrorService} from './services/errorService';
 import {RepeatString} from './pipes/repeatString';
@@ -196,7 +196,7 @@ export class TickistMaterialModule {
         EstimateTimeDialog,
         DeleteTaskDialogComponent,
         DeleteProjectConfirmationDialogComponent,
-        TimeDialog,
+        TimeDialogComponent,
         ChangeTaskViewComponent,
         ShowApiErrorComponent,
         RepeatString,
@@ -261,7 +261,7 @@ export class TickistMaterialModule {
     ],
     bootstrap: [AppComponent],
     entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialog, EstimateTimeDialog,
-        DeleteProjectConfirmationDialogComponent, TimeDialog, DeleteTaskDialogComponent, FilterProjectDialogComponent],
+        DeleteProjectConfirmationDialogComponent, TimeDialogComponent, DeleteTaskDialogComponent, FilterProjectDialogComponent],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         {provide: DateAdapter, useClass: MyDateAdapter},
