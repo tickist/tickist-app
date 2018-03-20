@@ -7,7 +7,7 @@ import {Minutes2hoursPipe} from '../pipes/minutes2hours';
 
 
 @Component({
-    selector: 'app-global-statistics',
+    selector: 'tickist-global-statistics',
     templateUrl: './global-statistics.component.html',
     styleUrls: ['./global-statistics.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

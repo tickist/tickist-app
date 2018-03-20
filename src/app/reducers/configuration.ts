@@ -29,6 +29,15 @@ export function offlineModeNotification(state: any = false, action: configuratio
     }
 }
 
+export function addTaskComponentVisibility(state: any = true, action: configurationActions.Actions) {
+    switch (action.type) {
+        case configurationActions.UPDATE_ADD_TASK_VISIBILITY:
+            return action.payload;
+        default:
+            return state;
+    }
+}
+
 export function progressBar(state: any = false, action: configurationActions.Actions) {
     switch (action.type) {
         case configurationActions.SWITCH_OFF_PROGRESS_BAR:

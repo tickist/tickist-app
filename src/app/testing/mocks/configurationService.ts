@@ -10,12 +10,16 @@ export class MockConfigurationService extends SpyObject {
     activeDay$: any;
     offlineModeNotification$: any;
     detectApiError$: any;
+    addTaskComponentVisibility$: any;
+    leftSidenavVisibility$: any;
+    rightSidenavVisibility$: any;
     mockConfiguration: any;
+    addTaskComponentVisibilityResponse: boolean;
     TASK_EXTENDED_VIEW: any;
     TASK_SIMPLE_VIEW: any;
     TYPE_FINISH_DATE_BY: any;
     TYPE_FINISH_DATE_ON: any;
-    
+
     constructor() {
         super(ConfigurationService);
         this.TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};
@@ -102,9 +106,12 @@ export class MockConfigurationService extends SpyObject {
         this.activeDay$ = this.spy('activeDay$').and.returnValue(this);
         this.offlineModeNotification$ = this.spy('offlineModeNotification$').and.returnValue(Observable.of(this.fakeResponse));
         this.detectApiError$ = this.spy('detectApiError$').and.returnValue(Observable.of(this.fakeResponse));
+        this.leftSidenavVisibility$ = Observable.of(this.fakeResponse);
+        this.rightSidenavVisibility$ = Observable.of(this.fakeResponse);
+        this.addTaskComponentVisibility$ = Observable.of(this.addTaskComponentVisibilityResponse);
         this.activeDay$ = Observable.of(this.fakeResponse);
     }
-    
+
     subscribe(success, error) {
         if (this.responseSuccess) {
             success(this.fakeResponse);
@@ -112,19 +119,23 @@ export class MockConfigurationService extends SpyObject {
             error(this.fakeResponse);
         }
     }
-    
+
     takeUntil() {
         return this;
     }
-    
+
     setErrorResponse() {
         this.responseSuccess = false;
     }
-    
+
     setResponse(json: any): void {
         this.fakeResponse = json;
     }
-    
+
+    setAddTaskComponentVisibilityResponse(response: boolean): void {
+        this.addTaskComponentVisibility$ = Observable.of(response);
+    }
+
     getProviders(): Array<any> {
         return [{provide: ConfigurationService, useValue: this}];
     }

@@ -155,13 +155,13 @@
                             </mat-form-field>
 
                             <mat-radio-group formControlName="suspended">
-                                <mat-radio-button 
-                                    [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}" 
+                                <mat-radio-button
+                                    [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}"
                                     [value]="false">
                                     This task is active
                                 </mat-radio-button>
-                                <mat-radio-button 
-                                    [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}" 
+                                <mat-radio-button
+                                    [ngStyle]="{'margin-right': '10px', 'margin-bottom': '10px', 'margin-top': '5px'}"
                                     [value]="true">
                                     This task is suspended
                                 </mat-radio-button>
@@ -169,7 +169,8 @@
 
                             <div>
                                 <div *ngIf="taskForm.controls['extra'].controls['suspended'].value">
-                                    <h4><span class="radio-button-active-task">Choose a date when the task should become active (optional).</span></h4>
+                                    <h4><span class="radio-button-active-task">Choose a date when the task should become active (optional).</span>
+                                    </h4>
 
                                     <mat-form-field>
                                         <input matInput [matDatepickerFilter]="minFilter"
@@ -190,13 +191,13 @@
 
                                 </div>
                             </div>
-                            
+
                             <mat-form-field>
                                 <input matInput placeholder="Estimated time" formControlName="estimateTime">
                                 <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
                                    aria-hidden="true"></i>
                             </mat-form-field>
-                            
+
                             <mat-form-field>
                                 <input matInput placeholder="Real time" formControlName="time">
                                 <i matTooltip="e.g. 30m or 1h 15m" class="fa fa-question" matSuffix
@@ -256,7 +257,7 @@
                                     <i class="fa fa-trash-o pointer" (click)="removeStep(i)"></i>
 
                                 </li>
-                                
+
                             </ul>
                             <button mat-button type="button" (click)="addNewStep()">
                                 Add new step
@@ -272,7 +273,7 @@
                                 </mat-radio-button>
                                 <mat-radio-button [value]="99">every&hellip;</mat-radio-button>
                             </mat-radio-group>
-                            <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value == 99" 
+                            <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value == 99"
                                  fxLayout.xs="column" fxLayout="row" fxLayoutAlign.xs="center none"
                                  fxLayoutAlign="space-between center">
 
@@ -290,7 +291,8 @@
                                 </mat-select>
 
                             </div>
-                            <div id="from-repeating-wrapper" *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value != 0">
+                            <div id="from-repeating-wrapper"
+                                 *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value != 0">
                                 <span>From:</span>
                                 <mat-radio-group formControlName="fromRepeating" fxLayout="column">
                                     <mat-radio-button *ngFor="let option of fromRepetingOptions" [value]="option.id">
@@ -308,12 +310,13 @@
                 </div>
             </div>
 
-            <div fxLayout="row" fxLayoutAlign="end none" >
-            <button type="submit" mat-button class="button">Save</button>
+            <div fxLayout="row" fxLayoutAlign="end none">
+                <button type="submit" mat-button class="button">Save</button>
 
-            <button type="button" mat-button  class="button" *ngIf="!task.id" (click)="createAndAddMore($event, taskForm.value)">
-                Create and add more
-            </button>
+                <button type="button" mat-button class="button" *ngIf="!task.id"
+                        (click)="createAndAddMore($event, taskForm.value)">
+                    Create and add more
+                </button>
             </div>
         </form>
     </mat-card>

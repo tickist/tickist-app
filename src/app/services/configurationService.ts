@@ -16,20 +16,22 @@ export class ConfigurationService {
     offlineModeNotification$: Observable<any>;
     leftSidenavVisibility$: Observable<any>;
     rightSidenavVisibility$: Observable<any>;
+    addTaskComponentVisibility$: Observable<any>;
     progressBar$: Observable<any>;
     configuration: {};
     TASK_EXTENDED_VIEW: any;
     TASK_SIMPLE_VIEW: any;
     TYPE_FINISH_DATE_ON: any;
     TYPE_FINISH_DATE_BY: any;
-    
+
     constructor(private store: Store<AppStore>, protected media: ObservableMedia) {
-        this.activeDay$ = this.store.select(store => store.activeDay);
-        this.detectApiError$ = this.store.select(store => store.detectApiError);
-        this.offlineModeNotification$ = this.store.select(store => store.offlineModeNotification);
-        this.leftSidenavVisibility$ = this.store.select(store => store.leftSidenavVisibility);
-        this.rightSidenavVisibility$ = this.store.select(store => store.rightSidenavVisibility);
-        this.progressBar$ = this.store.select(store => store.progressBar);
+        this.activeDay$ = this.store.select(s => s.activeDay);
+        this.detectApiError$ = this.store.select(s => s.detectApiError);
+        this.offlineModeNotification$ = this.store.select(s => s.offlineModeNotification);
+        this.leftSidenavVisibility$ = this.store.select(s => s.leftSidenavVisibility);
+        this.rightSidenavVisibility$ = this.store.select(s => s.rightSidenavVisibility);
+        this.addTaskComponentVisibility$ = this.store.select(s => s.addTaskComponentVisibility);
+        this.progressBar$ = this.store.select(s => s.progressBar);
         this.TASK_EXTENDED_VIEW =  {'name': 'extended view', 'value': 'extended'};
         this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
         this.TYPE_FINISH_DATE_BY = {'id': 0, 'name': 'by'};
@@ -97,11 +99,11 @@ export class ConfigurationService {
             }
         };
     }
-    
+
     loadConfiguration() {
         return this.configuration;
     }
-    
+
     updateActiveDay(date: any) {
         if (!date) {
             date = moment().format('DD-MM-YYYY');
@@ -109,15 +111,19 @@ export class ConfigurationService {
         this.store.dispatch(new configurationAction.UpdateActiveDay(moment(date, 'DD-MM-YYYY')
             .set({hour: 0, minute: 0, second: 0, millisecond: 0})));
     }
-    
+
     updateDetectApiError(isVisible: boolean) {
         this.store.dispatch(new configurationAction.UpdateDetectApiError(isVisible));
     }
-    
+
     updateOfflineModeNotification(isActive: boolean) {
         this.store.dispatch(new configurationAction.UpdateOfflineModeNotification(isActive));
     }
-    
+
+    updateAddTaskComponentVisibility(isVisible: boolean) {
+        this.store.dispatch(new configurationAction.UpdateAddTaskComponentVisibility(isVisible));
+    }
+
     changeOpenStateLeftSidenavVisibility(state) {
         let open;
         if (state === 'close') {
@@ -127,7 +133,7 @@ export class ConfigurationService {
         }
         this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({'open': open}));
     }
-    
+
     changeOpenStateRightSidenavVisibility(state) {
         let open;
         if (state === 'close') {
@@ -137,7 +143,7 @@ export class ConfigurationService {
         }
         this.store.dispatch(new configurationAction.UpdateRightSidenavVisibility({'open': open}));
     }
-    
+
     updateLeftSidenavVisibility() {
         let open, position, mode;
         position = 'start';
@@ -155,7 +161,7 @@ export class ConfigurationService {
             'open': open
         }));
     }
-    
+
     updateRightSidenavVisibility() {
         let open, position, mode;
         position = 'end';
@@ -172,14 +178,13 @@ export class ConfigurationService {
             'open': open
         }));
     }
-    
+
     switchOffProgressBar() {
         this.store.dispatch(new configurationAction.SwitchOffProgressBar(false));
     }
-    
+
     switchOnProgressBar() {
         this.store.dispatch(new configurationAction.SwitchOnProgressBar(true));
     }
-    
     
 }

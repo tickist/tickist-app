@@ -57,11 +57,13 @@ export class UserComponent implements OnInit, OnDestroy {
         });
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         this.configurationService.changeOpenStateRightSidenavVisibility('close');
+        this.configurationService.updateAddTaskComponentVisibility(false);
     }
     
     ngOnDestroy() {
         this.configurationService.updateLeftSidenavVisibility();
         this.configurationService.updateRightSidenavVisibility();
+        this.configurationService.updateAddTaskComponentVisibility(true);
     }
     
     toggleDailySumary() {

@@ -97,12 +97,14 @@ export class ProjectComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         this.configurationService.changeOpenStateRightSidenavVisibility('close');
+        this.configurationService.updateAddTaskComponentVisibility(false);
     }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
         this.configurationService.updateLeftSidenavVisibility();
         this.configurationService.updateRightSidenavVisibility();
+        this.configurationService.updateAddTaskComponentVisibility(true);
     }
 
     createMenuDict() {

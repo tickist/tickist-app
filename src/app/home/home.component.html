@@ -1,5 +1,5 @@
 
-<app-nav></app-nav>
+<tickist-nav></tickist-nav>
 
 <mat-sidenav-container *ngIf="leftSidenavVisibility && rightSidenavVisibility">
     <mat-sidenav [mode]="leftSidenavVisibility.mode"
@@ -12,7 +12,7 @@
 
     <mat-sidenav [align]="rightSidenavVisibility.position" [opened]="rightSidenavVisibility.open" [mode]="rightSidenavVisibility.mode"
                 (close)="closeRightSidenavVisiblity()" >
-        <app-global-statistics></app-global-statistics>
+        <tickist-global-statistics></tickist-global-statistics>
     </mat-sidenav>
     <div [ngClass.gt-sm]="'right-sidenav left-sidenav'" class="content">
 
@@ -21,7 +21,7 @@
 
 
 </mat-sidenav-container>
-<app-add-task></app-add-task>
+<tickist-add-task *ngIf="addTaskComponentVisibility"></tickist-add-task>
 
 
 

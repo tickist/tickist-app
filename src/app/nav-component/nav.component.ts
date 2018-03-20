@@ -11,7 +11,7 @@ import {Subject} from 'rxjs/Subject';
 
 
 @Component({
-    selector: 'app-nav',
+    selector: 'tickist-nav',
     templateUrl: './nav.component.html',
     styleUrls: ['./nav.component.scss']
 })
@@ -59,7 +59,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.configurationService.offlineModeNotification$.takeUntil(this.ngUnsubscribe).subscribe(value => {
             this.isOffline = value;
         });
-        
+
     }
 
     ngAfterViewInit(): void {

@@ -125,6 +125,7 @@ export class TaskComponent implements OnInit, OnDestroy {
 
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         this.configurationService.changeOpenStateRightSidenavVisibility('close');
+        this.configurationService.updateAddTaskComponentVisibility(false);
     }
 
     @HostListener('window:keyup', ['$event'])
@@ -195,6 +196,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.subscriptions.unsubscribe();
         this.configurationService.updateLeftSidenavVisibility();
         this.configurationService.updateRightSidenavVisibility();
+        this.configurationService.updateAddTaskComponentVisibility(true);
     }
 
     createMenuDict() {
@@ -276,20 +278,20 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     private finishTimeWithFinishDate(group: any) {
-        //let oldPassword = group.controls.oldPassword;
-        //let newPassword = group.controls.newPassword;
-        //let confirmNewPassword = group.controls.confirmNewPassword;
+        // let oldPassword = group.controls.oldPassword;
+        // let newPassword = group.controls.newPassword;
+        // let confirmNewPassword = group.controls.confirmNewPassword;
         const result = null;
-        //if (newPassword.value !== confirmNewPassword.value) {
+        // if (newPassword.value !== confirmNewPassword.value) {
         //  result = {
         //    mismatchedPasswords: true
         //  };
-        //}
-        //if (oldPassword.value === newPassword.value) {
+        // }
+        // if (oldPassword.value === newPassword.value) {
         //  result = {
         //    oldSameNew: true
         //  };
-        //}
+        // }
         return result;
     }
 

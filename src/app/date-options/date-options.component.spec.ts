@@ -6,7 +6,7 @@ import {FormsModule} from '@angular/forms';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
 import {TaskService} from '../services/taskService';
 import {Task} from '../models/tasks';
-import {task1} from '../testing/mocks/api_mocks/tasks'
+import {task1} from '../testing/mocks/api_mocks/tasks';
 import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 

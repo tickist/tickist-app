@@ -13,7 +13,7 @@ import {tasks, tasksFilters, currentTasksFilters} from './reducers/tasks';
 import {globalStatistics, dailyStatistics, globalStatisticsDateRange, chartsData} from './reducers/statistics';
 import {
     activeDay, detectApiError, leftSidenavVisibility, rightSidenavVisibility,
-    progressBar, offlineModeNotification
+    progressBar, offlineModeNotification, addTaskComponentVisibility
 } from './reducers/configuration';
 import {environment} from '../environments/environment';
 
@@ -33,6 +33,7 @@ export interface AppStore {
     activeDay: any;
     detectApiError: any;
     offlineModeNotification: any;
+    addTaskComponentVisibility: any;
     globalStatisticsDateRage: any;
     team: any;
     chartsData: any;
@@ -63,6 +64,7 @@ export const reducers: ActionReducerMap<any> = {
     activeDay: activeDay,
     detectApiError: detectApiError,
     offlineModeNotification: offlineModeNotification,
+    addTaskComponentVisibility: addTaskComponentVisibility,
     globalStatisticsDateRange: globalStatisticsDateRange,
     team: team,
     chartsData: chartsData,

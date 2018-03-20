@@ -30,7 +30,7 @@ import {TagsListComponent} from './tags-list/tags-list.component';
 export class UserResolver implements Resolve<any> {
     constructor(private userService: UserService) {
     }
-    
+
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
         return this.userService.loadUser();
     }
@@ -40,7 +40,7 @@ export class UserResolver implements Resolve<any> {
 export class TagsResolver implements Resolve<any> {
     constructor(private tagService: TagService) {
     }
-    
+
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
         return this.tagService.loadTags();
     }
@@ -50,7 +50,7 @@ export class TagsResolver implements Resolve<any> {
 export class TasksResolver implements Resolve<Task> {
     constructor(private taskService: TaskService) {
     }
-    
+
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
         return this.taskService.loadTasks();
     }
@@ -60,7 +60,7 @@ export class TasksResolver implements Resolve<Task> {
 export class TeamResolver implements Resolve<Task> {
     constructor(private userService: UserService) {
     }
-    
+
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
         return this.userService.loadTeam();
     }
@@ -70,7 +70,7 @@ export class TeamResolver implements Resolve<Task> {
 export class ProjectsResolver implements Resolve<Project> {
     constructor(private projectService: ProjectService) {
     }
-    
+
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
         return this.projectService.loadProjects();
     }
