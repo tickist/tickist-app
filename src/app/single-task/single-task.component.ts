@@ -145,6 +145,12 @@ export class SingleTask {
             this.isRightMenuVisible = false;
         }
     }
+
+    changeFastMenuVisible(value) {
+        this.isFastMenuVisible = value;
+        this.changeRightMenuVisiblity();
+        console.log(value);
+    }
 }
 
 
@@ -243,11 +249,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         this.taskService.updateTask(this.task);
     }
 
-    changeFastMenuVisible(value) {
-        this.isFastMenuVisible = value;
-        this.changeRightMenuVisiblity();
-        console.log(value);
-    }
+
 
 
 
@@ -287,7 +289,7 @@ export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit,
         }
 
     }
-    
+
     constructor(public taskService: TaskService, public dialog: MatDialog) {
         super(taskService, dialog);
     }
