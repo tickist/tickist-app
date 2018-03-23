@@ -21,8 +21,8 @@ export class ProjectService {
     team: SimplyUser[];
     selectedProject$: Observable<Project>;
     selectedProjectsIds$: Observable<Array<number>>;
-      projectsFilters$: Observable<any>;
-  currentProjectsFilters$: Observable<any>;
+    projectsFilters$: Observable<any>;
+    currentProjectsFilters$: Observable<any>;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router) {
@@ -44,24 +44,30 @@ export class ProjectService {
             .map(payload => payload.map(project => new Project(project)))
             .map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)));
     }
-    
+
     loadCurrentProjectsFilters() {
         const filter = new Filter({'id': 1, 'label': 'filter', 'name': 'All projects', 'value': project => project});
         this.store.dispatch(new projectsAction.AddCurrentFilters(filter));
     }
-    
+
     loadProjectsFilters() {
         const filters = [
-            new Filter({'id': 1, 'label': 'filter', 'name': 'All projects',
-                'value': project => project}),
-            new Filter({'id': 2, 'label': 'filter', 'name': 'Projects with tasks',
-                'value': project => project.tasksCounter > 0} ),
-            new Filter({'id': 3, 'label': 'filter', 'name': 'Projects without tasks',
-                'value': project => project.tasksCounter === 0})
+            new Filter({
+                'id': 1, 'label': 'filter', 'name': 'All projects',
+                'value': project => project
+            }),
+            new Filter({
+                'id': 2, 'label': 'filter', 'name': 'Projects with tasks',
+                'value': project => project.tasksCounter > 0
+            }),
+            new Filter({
+                'id': 3, 'label': 'filter', 'name': 'Projects without tasks',
+                'value': project => project.tasksCounter === 0
+            })
         ];
-         this.store.dispatch(new projectsAction.AddFilters(filters));
+        this.store.dispatch(new projectsAction.AddFilters(filters));
     }
-    
+
     updateCurrentFilter(currentFilter) {
         this.store.dispatch(new projectsAction.UpdateCurrentFilter(currentFilter));
     }
@@ -110,7 +116,7 @@ export class ProjectService {
                 const newProject = new Project(payload);
                 this.store.dispatch(new projectsAction.CreateProject(newProject));
                 this.router.navigate(['/home/projects', newProject.id]);
-                this.loadProjects(); // we need to update getAllDescendant set.
+                this.loadProjects().subscribe(); // we need to update getAllDescendant set.
             });
     }
 
@@ -121,7 +127,7 @@ export class ProjectService {
                 this.snackBar.open('Project has been saved successfully', '', {
                     duration: 2000,
                 });
-                this.loadProjects(); // we need to update getAllDescendant set.
+                this.loadProjects().subscribe(); // we need to update getAllDescendant set.
             });
     }
 

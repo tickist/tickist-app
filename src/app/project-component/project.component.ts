@@ -23,7 +23,7 @@ import * as _ from 'lodash';
 })
 export class ProjectComponent implements OnInit, OnDestroy {
     project: Project;
-    projectsAncestors: Project[];
+    projectsAncestors: Project[] | any[];
     stream$: Observable<any>;
     projectForm: FormGroup;
     menu: {};
@@ -38,7 +38,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     filteredUsers: any;
     addUserToShareWithListCtrl: FormControl;
     subscription: Subscription;
-    
+
     @ViewChild('auto') auto: any;
     @ViewChild('matAutocomplete') matAutocomplete: any;
 
@@ -65,7 +65,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.team = team;
 
                     if (projects.length > 0 && user) {
-                        this.projectsAncestors = projects.filter(p => p.level < 2);
+                        this.projectsAncestors = [{id: '', name: ''},
+                            ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
                         if (projectId) {
                             project = projects.find(p => p.id === projectId);
                             this.projectForm = this.createForm(project);
