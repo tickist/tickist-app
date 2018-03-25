@@ -101,7 +101,6 @@ import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete
 import {BlankComponent, RootComponent} from './testing/test.modules';
 import {TasksFromProjectsComponent} from './tasks-from-projects/tasks-from-projects.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
-import {ScrollerDirective} from './shared/scroller';
 import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';
 import {TagsListComponent} from './tags-list/tags-list.component';
 import {MenuButtonComponent} from './shared/menu-button/menu-button.component';
@@ -126,6 +125,7 @@ import {FilterProjectDialogComponent} from './projects-list/filter-projects-dial
 import {SortTasksComponent} from './sort-tasks/sort-tasks.component';
 import {SortByDialog} from './sort-tasks/sort-tasks-dialog/sort-tasks.dialog.component';
 import { ChartLegendComponent } from './day-statistics/chart-legend/chart-legend.component';
+import { PriorityComponent } from './shared/priority/priority.component';
 
 
 export function instrumentOptions() {
@@ -211,7 +211,6 @@ export class TickistMaterialModule {
         ProjectsListComponent,
         WeekDaysComponent,
         TagsListComponent,
-        ScrollerDirective,
         MenuButtonComponent,
         DisplayFinishDateComponent,
         ToggleButtonComponent,
@@ -225,7 +224,8 @@ export class TickistMaterialModule {
         ShowApiErrorComponent,
         FilterProjectDialogComponent,
         SortTasksComponent,
-        ChartLegendComponent
+        ChartLegendComponent,
+        PriorityComponent
     ],
     imports: [
         BrowserModule,

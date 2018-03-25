@@ -1,0 +1,51 @@
+@import "../../shared/variables";
+
+.priority_A {
+    .mat-button-toggle-label-content {
+        color: $priority_A
+    }
+    &.mat-button-toggle-checked {
+        .mat-button-toggle-label-content {
+             color: $white;
+        }
+        background-color: $priority_A;
+        
+    }
+    .mat-button-toggle-focus-overlay {
+        background-color: transparent !important;
+    }
+}
+
+.priority_B {
+    .mat-button-toggle-label-content {
+        color: $priority_B
+    }
+    &.mat-button-toggle-checked {
+        .mat-button-toggle-label-content {
+             color: $white;
+        }
+        background-color: $priority_B;
+        
+    }
+    .mat-button-toggle-focus-overlay {
+        background-color: transparent !important;
+    }
+    
+    
+}
+
+.priority_C {
+    .mat-button-toggle-label-content {
+        color: $priority_C
+    }
+     &.mat-button-toggle-checked {
+        .mat-button-toggle-label-content {
+             color: grey;
+        }
+        background-color: $priority_C;
+        
+    }
+    .mat-button-toggle-focus-overlay {
+        background-color: transparent !important;
+    }
+}
