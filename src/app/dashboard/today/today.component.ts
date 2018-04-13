@@ -1,10 +1,12 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Task} from '../../models/tasks';
 import {ConfigurationService} from '../../services/configurationService';
-import * as moment from 'moment'
+import * as moment from 'moment';
+import {UserService} from '../../services/userService';
+import {User} from '../../models/user/user';
 
 @Component({
-    selector: 'app-today',
+    selector: 'tickist-today',
     templateUrl: './today.component.html',
     styleUrls: ['./today.component.scss']
 })
@@ -13,19 +15,26 @@ export class TodayComponent implements OnInit {
     @Input() defaultTaskView: string;
     taskView: string;
     activeDay: moment.Moment;
-    
-    constructor(protected configurationService: ConfigurationService) {
-        
+    user: User;
+
+    constructor(protected configurationService: ConfigurationService, protected userService: UserService) {
     }
-    
+
     ngOnInit() {
         this.configurationService.activeDay$.subscribe((activeDay) => {
             this.activeDay = activeDay;
         });
+        this.userService.user$.subscribe((user) => {
+            if (user) {
+                this.user = user;
+            }
+        });
     }
-    
+
     changeTaskView(event) {
         this.taskView = event;
+        this.user.defaultTaskViewTodayView = event;
+        this.userService.updateUser(this.user, true);
     }
-    
+
 }

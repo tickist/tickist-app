@@ -9,123 +9,127 @@ import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material';
 import * as userAction from '../reducers/actions/user';
 import * as teamAction from '../reducers/actions/team';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class UserService {
-  headers: Headers;
-  options: RequestOptions;
-  user$: Observable<User>;
-  team$: Observable<SimplyUser[]>;
+    headers: Headers;
+    options: RequestOptions;
+    user$: Observable<User>;
+    team$: Observable<SimplyUser[]>;
 
-  constructor(private http: HttpClient, private store: Store<AppStore>, private router: Router,
-              public snackBar: MatSnackBar) {
-    this.user$ = this.store.select(s => {
-      return s.user;
-    });
-    this.team$ = this.store.select(s => s.team);
-    this.headers = new Headers({'Content-Type': 'application/json'});
-    this.options = new RequestOptions({headers: this.headers});
-
-  }
-
-  isLoggedIn(): boolean {
-    return localStorage.getItem('JWT') !== null;
-  }
-
-  loadUser(): any {
-    const userID = localStorage.getItem('USER_ID');
-    if (userID == null) {
-      this.logout();
-    } else {
-      return this.http.get(`${environment['apiUrl']}/user/${userID}/`)
-        .map(payload => {
-          this.store.dispatch(new userAction.AddUser(new User(payload)));
+    constructor(private http: HttpClient, private store: Store<AppStore>, private router: Router,
+                public snackBar: MatSnackBar) {
+        this.user$ = this.store.select(s => {
+            return s.user;
         });
+        this.team$ = this.store.select(s => s.team);
+        this.headers = new Headers({'Content-Type': 'application/json'});
+        this.options = new RequestOptions({headers: this.headers});
+
     }
-  }
 
-  updateUser(user: User) {
-    this.http.put(`${environment['apiUrl']}/user/${user.id}/`, user.toApi())
-      .subscribe(user => {
-         this.snackBar.open('User data has been update successfully', '', {
-          duration: 2000,
-        });
-        this.store.dispatch(new userAction.UpdateUser(new User(user)));
-      });
-  }
-
-  loadTeam(): any {
-    const userID = localStorage.getItem('USER_ID');
-    if (userID == null) {
-      this.logout();
-    } else {
-      return this.http.get<SimplyUser[]>(`${environment['apiUrl']}/user/${userID}/teamlist/`)
-        .map(payload => (payload.map(user => new SimplyUser(user))))
-        .map(payload => this.store.dispatch(new teamAction.AddTeamMembers(payload)));
+    isLoggedIn(): boolean {
+        return localStorage.getItem('JWT') !== null;
     }
-  }
 
-  login(user: UserLogin) {
-    return this.http.post(`${environment.apiUrl}/api-token-auth/`, user).map((response: Response) => {
-      localStorage.setItem('JWT', `JWT ${response['token']}`);
-      localStorage.setItem('USER_ID', response['user_id']);
-      return response;
-    });
-  }
-
-  signup(user: any) {
-    return this.http.post(`${environment.apiUrl}/registration/`, user).map((response: Response) => {
-      localStorage.setItem('JWT', `JWT ${response['token']}`);
-      localStorage.setItem('USER_ID', response['user_id']);
-      return response;
-    });
-  }
-
-  logout() {
-    localStorage.removeItem('JWT');
-    localStorage.removeItem('USER_ID');
-    location.reload();
-  }
-
-  changePassword(values: any) {
-    const userID = localStorage.getItem('USER_ID');
-    return this.http.put(`${environment.apiUrl}/user/${userID}/changepassword/`, values);
-  }
-
-  changeAvatar(avatar: File) {
-    const userID = localStorage.getItem('USER_ID');
-    return new Promise((resolve, reject) => {
-
-      const xhr: XMLHttpRequest = new XMLHttpRequest();
-
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            resolve(JSON.parse(xhr.response));
-          } else {
-            reject(xhr.response);
-          }
+    loadUser(): any {
+        const userID = localStorage.getItem('USER_ID');
+        if (userID == null) {
+            this.logout();
+        } else {
+            return this.http.get(`${environment['apiUrl']}/user/${userID}/`)
+                .map(payload => {
+                    this.store.dispatch(new userAction.AddUser(new User(payload)));
+                });
         }
-      };
+    }
 
-      xhr.open('POST', `${environment.apiUrl}/user/${userID}/changeavatar/`, true);
-      xhr.setRequestHeader('Authorization', localStorage.getItem('JWT'));
-      const formData = new FormData();
-      formData.append('file', avatar, avatar.name);
-      xhr.send(formData);
-    });
-  }
+    updateUser(user: User, withoutSnackBar = false) {
+        this.http.put(`${environment['apiUrl']}/user/${user.id}/`, user.toApi())
+            .subscribe(user => {
+                if (!withoutSnackBar) {
+                    this.snackBar.open('User data has been update successfully', '', {
+                        duration: 2000,
+                    });
+                }
 
-  checkNewTeamMember(email) {
-    const userID = localStorage.getItem('USER_ID');
-    return this.http.post(`${environment.apiUrl}/user/${userID}/checkteammember/`, {'email': email});
-  }
+                this.store.dispatch(new userAction.UpdateUser(new User(user)));
+            });
+    }
 
-  checkEmail(email) {
-    return this.http.post(`${environment.apiUrl}/check_email/`, {'email': email});
+    loadTeam(): any {
+        const userID = localStorage.getItem('USER_ID');
+        if (userID == null) {
+            this.logout();
+        } else {
+            return this.http.get<SimplyUser[]>(`${environment['apiUrl']}/user/${userID}/teamlist/`)
+                .map(payload => (payload.map(user => new SimplyUser(user))))
+                .map(payload => this.store.dispatch(new teamAction.AddTeamMembers(payload)));
+        }
+    }
 
-  }
+    login(user: UserLogin) {
+        return this.http.post(`${environment.apiUrl}/api-token-auth/`, user).map((response: Response) => {
+            localStorage.setItem('JWT', `JWT ${response['token']}`);
+            localStorage.setItem('USER_ID', response['user_id']);
+            return response;
+        });
+    }
+
+    signup(user: any) {
+        return this.http.post(`${environment.apiUrl}/registration/`, user).map((response: Response) => {
+            localStorage.setItem('JWT', `JWT ${response['token']}`);
+            localStorage.setItem('USER_ID', response['user_id']);
+            return response;
+        });
+    }
+
+    logout() {
+        localStorage.removeItem('JWT');
+        localStorage.removeItem('USER_ID');
+        location.reload();
+    }
+
+    changePassword(values: any) {
+        const userID = localStorage.getItem('USER_ID');
+        return this.http.put(`${environment.apiUrl}/user/${userID}/changepassword/`, values);
+    }
+
+    changeAvatar(avatar: File) {
+        const userID = localStorage.getItem('USER_ID');
+        return new Promise((resolve, reject) => {
+
+            const xhr: XMLHttpRequest = new XMLHttpRequest();
+
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        resolve(JSON.parse(xhr.response));
+                    } else {
+                        reject(xhr.response);
+                    }
+                }
+            };
+
+            xhr.open('POST', `${environment.apiUrl}/user/${userID}/changeavatar/`, true);
+            xhr.setRequestHeader('Authorization', localStorage.getItem('JWT'));
+            const formData = new FormData();
+            formData.append('file', avatar, avatar.name);
+            xhr.send(formData);
+        });
+    }
+
+    checkNewTeamMember(email) {
+        const userID = localStorage.getItem('USER_ID');
+        return this.http.post(`${environment.apiUrl}/user/${userID}/checkteammember/`, {'email': email});
+    }
+
+    checkEmail(email) {
+        return this.http.post(`${environment.apiUrl}/check_email/`, {'email': email});
+
+    }
+
 //  check_email: function (email) {
 //             var url = ENV.apiEndpoint + "/check_email/";
 //             var defer = $q.defer();
