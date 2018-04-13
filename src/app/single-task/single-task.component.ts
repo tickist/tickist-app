@@ -74,6 +74,7 @@ export class SingleTask {
                 });
                 dialogRef.afterClosed().subscribe(result => {
                     if (result) {
+                        debugger;
                         this.task.estimateTime = result['estimateTime'];
                         this.task.time = result['realTime'];
                     }

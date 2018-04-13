@@ -1,5 +1,5 @@
-import {Component, forwardRef, Input} from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
+import {Component, EventEmitter, forwardRef, Input, Output} from '@angular/core';
+import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 
 
 const noop = () => {
@@ -12,13 +12,21 @@ export const PRIORITY_INPUT_CONTROL_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-  selector: 'tickist-priority',
-  templateUrl: './priority.component.html',
-  styleUrls: ['./priority.component.scss'],
-  providers: [PRIORITY_INPUT_CONTROL_VALUE_ACCESSOR]
+    selector: 'tickist-priority',
+    templateUrl: './priority.component.html',
+    styleUrls: ['./priority.component.scss'],
+    providers: [PRIORITY_INPUT_CONTROL_VALUE_ACCESSOR]
 })
-export class PriorityComponent implements ControlValueAccessor  {
-    
+export class PriorityComponent implements ControlValueAccessor {
+    @Output() change = new EventEmitter();
+
+    @Input('manualValue') set manualValue(manualValue) {
+        this.innerValue = manualValue;
+    }
+    get manualValue() {
+        return this.innerValue;
+    }
+
     // The internal data model
     innerValue: any = '';
 
@@ -30,7 +38,7 @@ export class PriorityComponent implements ControlValueAccessor  {
     // get accessor
     get value(): any {
         return this.innerValue;
-    };
+    }
 
     // set accessor including call the onchange callback
     set value(v: any) {
@@ -40,31 +48,34 @@ export class PriorityComponent implements ControlValueAccessor  {
         }
     }
 
+    constructor() {}
 
-  constructor() {
-  }
+    // From ControlValueAccessor interface
+    writeValue(value: any) {
+        if (value !== this.innerValue) {
+            this.innerValue = value;
+        }
+    }
 
-  // From ControlValueAccessor interface
-  writeValue(value: any) {
-    if (value !== this.innerValue) {
-          this.innerValue = value;
-      }
-  }
+    // From ControlValueAccessor interface
+    registerOnChange(fn: any) {
+        this.onChangeCallback = fn;
+    }
 
-  // From ControlValueAccessor interface
-  registerOnChange(fn: any) {
-      this.onChangeCallback = fn;
-  }
+    // From ControlValueAccessor interface
+    registerOnTouched(fn: any) {
+        this.onTouchedCallback = fn;
+    }
 
-  // From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
-      this.onTouchedCallback = fn;
-  }
+    changePriority($event) {
+        this.innerValue = $event.value;
+        this.change.emit($event.value);
+        this.onChangeCallback($event.value);
+    }
 
-  changePriority($event) {
-    this.innerValue = $event;
-    this.onChangeCallback($event);
-  }
+    onClickChangePriority(priority) {
+         this.change.emit(priority);
+    }
 
 
 }

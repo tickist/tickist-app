@@ -402,7 +402,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.task.removeTag(tag);
     }
 
-    onSubmit($event, values, withoutClose = false) {
+    onSubmit(values, withoutClose = false) {
         if (this.taskForm.valid) {
             this.task.name = values['main']['name'];
             this.task.priority = values['main']['priority'];
@@ -518,17 +518,18 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     createAndAddMore($event, values) {
-        this.onSubmit($event, values, true);
+        this.onSubmit(values, true);
         this.task = this.createNewTask(this.selectedProject);
         this.taskForm.reset();
         this.taskForm = this.createTaskForm(this.task);
     }
 
-    updateImmediately($event, values) {
+    updateImmediately(source, formControlName, values) {
         if (this.task.id) {
-            this.onSubmit($event, values, true);
+            if (this.task[source] !== this.taskForm.get(formControlName).value) {
+                this.onSubmit(values, true);
+            }
         }
-
     }
 
     deleteTask() {

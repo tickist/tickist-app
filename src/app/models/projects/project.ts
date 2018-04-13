@@ -22,7 +22,7 @@ export class Project extends Api {
     defaultTypeFinishDate: any;
     dialogTimeWhenTaskFinished: boolean;
     defaultTaskView: string;
-    
+
     constructor(project) {
         super();
         this.name = project.name;
@@ -47,10 +47,10 @@ export class Project extends Api {
         }
         project.share_with.forEach((user) => {
             this.addUserToShareList(user);
-            
+
         });
     }
-    
+
     addUserToShareList(user) {
         if (user.hasOwnProperty('id')) {
             this.shareWith.push(new SimplyUser(user));
@@ -58,7 +58,7 @@ export class Project extends Api {
             this.shareWith.push(new PendingUser(user));
         }
     }
-    
+
     private convert(text) {
         const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;

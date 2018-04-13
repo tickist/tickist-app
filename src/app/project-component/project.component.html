@@ -73,12 +73,9 @@
                         <div fxLayout="column">
                             <div class="form-field" fxLayout="column">
                                 <span>Default priority of project tasks</span>
-                                <mat-button-toggle-group formControlName="defaultPriority"
-                                                         [ngStyle]="{'width': '126px'}">
-                                    <mat-button-toggle value="A">A</mat-button-toggle>
-                                    <mat-button-toggle value="B">B</mat-button-toggle>
-                                    <mat-button-toggle value="C">C</mat-button-toggle>
-                                </mat-button-toggle-group>
+                                <tickist-priority formControlName="defaultPriority">
+                                </tickist-priority>
+                                
                             </div>
 
                             <div class="form-field">

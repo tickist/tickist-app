@@ -1,144 +1,94 @@
 @import "../shared/variables";
+
 $animation-curve-fast-out-slow-in: cubic-bezier(0.4, 0, 0.2, 1) !default;
 $animation-curve-fast-out-linear-in: cubic-bezier(0.4, 0, 1, 1) !default;
 $animation-curve-default: $animation-curve-fast-out-slow-in !default;
 
-
-
 .close {
-  float: right;
+    float: right;
 }
 
 .header {
-  margin-bottom: 20px;
-  span {
-    font-size: 18px
-  }
+    margin-bottom: 20px;
+    span {
+        font-size: 18px
+    }
 }
 
 .A {
-  color: $priority_A;
+    color: $priority_A;
 }
 
 .B {
-  color: $priority_B;
+    color: $priority_B;
 }
 
 .C {
-  color: $priority_C;
+    color: $priority_C;
 }
 
 .left-menu {
-  .invalid {
-    color: red;
-  }
+    .invalid {
+        color: red;
+    }
 }
 
 h1 {
-  span {
-    color: $white;
-  }
+    span {
+        color: $white;
+    }
 }
 
 a {
-  color: grey;
-  text-decoration: none;
-  cursor: pointer;
+    color: grey;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .tickist-icon-button {
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  color: inherit;
-  position: relative;
-  height: 24px;
-  margin: 0;
-  min-width: 24px;
-  width: 24px;
-  padding: 0;
-  display: inline-block;
-  overflow: hidden;
-  will-change: box-shadow;
-  transition: box-shadow 0.2s $animation-curve-fast-out-linear-in,
-  background-color 0.2s $animation-curve-default,
-  color 0.2s $animation-curve-default;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  line-height: normal;
-  vertical-align: middle;
-  font-size: 16px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: inherit;
+    position: relative;
+    height: 24px;
+    margin: 0;
+    min-width: 24px;
+    width: 24px;
+    padding: 0;
+    display: inline-block;
+    overflow: hidden;
+    will-change: box-shadow;
+    transition: box-shadow 0.2s $animation-curve-fast-out-linear-in,
+    background-color 0.2s $animation-curve-default,
+    color 0.2s $animation-curve-default;
+    outline: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    line-height: normal;
+    vertical-align: middle;
+    font-size: 16px;
 
-  &::-moz-focus-inner {
-    border: 0;
-  }
-
-  &:hover {
-    background-color: grey;
-  }
-
-  &:active {
-    background-color: grey;
-  }
-
-  &.mdl-button--colored {
-    color: white;
-
-    &:focus:not(:active) {
-      background-color: blue;
+    &::-moz-focus-inner {
+        border: 0;
     }
-  }
-}
 
-
-.priority_A {
-    .mat-button-toggle-label-content {
-        color: $priority_A
+    &:hover {
+        background-color: grey;
     }
-    &.mat-button-toggle-checked {
-        .mat-button-toggle-label-content {
-             color: $white;
+
+    &:active {
+        background-color: grey;
+    }
+
+    &.mdl-button--colored {
+        color: white;
+
+        &:focus:not(:active) {
+            background-color: blue;
         }
-        background-color: $priority_A;
-        
-    }
-    .mat-button-toggle-focus-overlay {
-        background-color: transparent !important;
     }
 }
 
-.priority_B {
-    .mat-button-toggle-label-content {
-        color: $priority_B
-    }
-    &.mat-button-toggle-checked {
-        .mat-button-toggle-label-content {
-             color: $white;
-        }
-        background-color: $priority_B;
-        
-    }
-    .mat-button-toggle-focus-overlay {
-        background-color: transparent !important;
-    }
-    
-    
-}
 
-.priority_C {
-    .mat-button-toggle-label-content {
-        color: $priority_C
-    }
-     &.mat-button-toggle-checked {
-        .mat-button-toggle-label-content {
-             color: grey;
-        }
-        background-color: $priority_C;
-        
-    }
-    .mat-button-toggle-focus-overlay {
-        background-color: transparent !important;
-    }
-}
