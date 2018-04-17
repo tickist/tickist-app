@@ -21,7 +21,7 @@ export class Project extends Api {
     defaultPriority: any;
     defaultTypeFinishDate: any;
     dialogTimeWhenTaskFinished: boolean;
-    defaultTaskView: string;
+    taskView: string;
 
     constructor(project) {
         super();
@@ -39,7 +39,7 @@ export class Project extends Api {
         this.owner = project.owner;
         this.level = project.level;
         this.isActive = project.is_active;
-        this.defaultTaskView = project.task_view || 'extended';
+        this.taskView = project.task_view;
         this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
         this.isInbox = project.is_inbox;
         if (!project.share_with) {

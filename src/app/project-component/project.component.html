@@ -90,7 +90,7 @@
 
                             <div class="form-field">
                                 <span>Default task view:</span>
-                                <mat-radio-group formControlName="defaultTaskView" fxLayout.xs="column">
+                                <mat-radio-group formControlName="taskView" fxLayout.xs="column">
                                     <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
                                                       *ngFor="let option of defaultTaskView" [value]="option.value">
                                         {{ option.name }}

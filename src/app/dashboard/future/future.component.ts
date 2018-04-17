@@ -1,6 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Task} from '../../models/tasks';
 import {UserService} from '../../services/userService';
+import {User} from '../../models/user/user';
 
 @Component({
     selector: 'tickist-future',
@@ -11,11 +12,12 @@ export class FutureComponent implements OnInit {
     @Input() tasks: Task[];
     @Input() defaultTaskView: string;
     taskView: string;
-    
-    
+    user: User;
+
+
     constructor(protected userService: UserService) {
     }
-    
+
     ngOnInit() {
         this.userService.user$.subscribe((user) => {
             if (user) {
@@ -23,11 +25,14 @@ export class FutureComponent implements OnInit {
             }
         });
     }
-    
+
     changeTaskView(event) {
         this.taskView = event;
-        this.user.defaultTaskViewFutureView = event;
-        this.userService.updateUser(this.user, true);
+        if (this.user.defaultTaskViewFutureView !== event) {
+            this.user.defaultTaskViewFutureView = event;
+            this.userService.updateUser(this.user, true);
+        }
+
     }
-    
+
 }

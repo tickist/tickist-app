@@ -22,6 +22,7 @@ export class User extends Api {
     sharesListWithMe: boolean;
     avatarUrl: string;
     dialogTimeWhenTaskFinishedInProject: boolean;
+    allTasksView: string;
     defaultTaskView: string;
     defaultTaskViewTodayView: string;
     defaultTaskViewOverdueView: string;
@@ -55,6 +56,7 @@ export class User extends Api {
         // settings
         this.dialogTimeWhenTaskFinishedInProject = user.dialog_time_when_task_finished_in_project;
         this.defaultTaskView = user.default_task_view;
+        this.allTasksView = user.all_tasks_view;
         this.defaultTaskViewTodayView = user.default_task_view_today_view;
         this.defaultTaskViewOverdueView = user.default_task_view_overdue_view;
         this.defaultTaskViewFutureView = user.default_task_view_future_view;

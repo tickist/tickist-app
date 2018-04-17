@@ -136,7 +136,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.project.defaultPriority = values['extra']['defaultPriority'];
         this.project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
         this.project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
-        this.project.defaultTaskView = values['extra']['defaultTaskView'];
+        this.project.taskView = values['extra']['taskView'];
         this.project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
 
         // List share with is added directly
@@ -162,7 +162,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 'defaultPriority': [project.defaultPriority],
                 'defaultTypeFinishDate': [project.defaultTypeFinishDate],
                 'dialogTimeWhenTaskFinished': [project.dialogTimeWhenTaskFinished],
-                'defaultTaskView': [project.defaultTaskView]
+                'taskView': [project.taskView]
             })
         });
     }

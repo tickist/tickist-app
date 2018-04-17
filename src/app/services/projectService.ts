@@ -120,13 +120,15 @@ export class ProjectService {
             });
     }
 
-    updateProject(project: Project) {
+    updateProject(project: Project, withoutSnackBar = false) {
         this.http.put(`${environment['apiUrl']}/project/${project.id}/`, project.toApi())
             .subscribe(payload => {
                 this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));
-                this.snackBar.open('Project has been saved successfully', '', {
+                if (!withoutSnackBar) {
+                    this.snackBar.open('Project has been saved successfully', '', {
                     duration: 2000,
-                });
+                    });
+                }
                 this.loadProjects().subscribe(); // we need to update getAllDescendant set.
             });
     }

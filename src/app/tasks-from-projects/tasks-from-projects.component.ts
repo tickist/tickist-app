@@ -14,10 +14,10 @@ import {Subject} from 'rxjs/Subject';
 
 class Timer {
     readonly start = performance.now();
-    
+
     constructor(private readonly name: string) {
     }
-    
+
     stop() {
         const time = performance.now() - this.start;
         console.log('Timer:', this.name, 'finished in', Math.round(time), 'ms');
@@ -36,26 +36,27 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     selectedProjectsStream$: Observable<any>;
     taskView: string;
     tasks: Task[];
+    user: User;
     defaultTaskView: string;
     selectedProject: Project;
     t: Timer;
     t2: Timer;
-    
+
     constructor(protected taskService: TaskService, private route: ActivatedRoute, protected userService: UserService,
                 private projectService: ProjectService, private cd: ChangeDetectorRef) {
     }
-    
+
     // When change detection begins
     ngDoCheck() {
         this.t = new Timer(`WHOLE LIST OF TASKS`)
     }
-    
-    
+
+
     ngAfterViewChecked() {
         this.t.stop();  // Prints the time elapsed to the JS console.
     }
-    
-    
+
+
     ngOnInit() {
         this.tasksStream$ = Observable.combineLatest(
             this.taskService.tasks$,
@@ -78,6 +79,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
             this.projectService.projects$,
             this.userService.user$,
             (projectId: any, projects: Project[], user: User) => {
+                this.user = user;
                 if (projectId && projects && projects.length > 0 && user) {
                     const project = projects.filter(p => p.id === parseInt(projectId, 10))[0];
                     if (project.hasOwnProperty('allDescendants')) {
@@ -87,8 +89,8 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 } else {
                     this.projectService.selectProjectsIds(null);
                     this.projectService.selectProject(null);
-                    this.defaultTaskView = user.defaultTaskView;
-                    this.taskView = user.defaultTaskView;
+                    this.defaultTaskView = user.allTasksView;
+                    this.taskView = user.allTasksView;
                 }
             }
         );
@@ -96,10 +98,10 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.projectService.selectedProject$.subscribe(project => {
             if (project) {
                 this.selectedProject = project;
-                this.defaultTaskView = project.defaultTaskView;
-                this.taskView = project.defaultTaskView;
+                this.defaultTaskView = project.taskView;
+                this.taskView = project.taskView;
             }
-        })
+        });
         this.tasksStream$.takeUntil(this.ngUnsubscribe).subscribe(tasks => {
             if (tasks && tasks.length > 0) {
                 this.tasks = tasks;
@@ -107,17 +109,25 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
             } else {
                 this.tasks = [];
             }
-        })
+        });
     }
-    
+
     changeTaskView(event) {
         console.log(event);
         this.taskView = event;
+        if (this.selectedProject && this.selectedProject.taskView !== event) {
+            this.selectedProject.taskView = event;
+            this.projectService.updateProject(this.selectedProject, true);
+        }
+        if (!this.selectedProject && this.user.allTasksView !== event) {
+            this.user.allTasksView = event;
+            this.userService.updateUser(this.user, true);
+        }
     }
-    
+
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
-    
+
 }

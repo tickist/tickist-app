@@ -33,8 +33,11 @@ export class TodayComponent implements OnInit {
 
     changeTaskView(event) {
         this.taskView = event;
-        this.user.defaultTaskViewTodayView = event;
-        this.userService.updateUser(this.user, true);
+        if (this.user.defaultTaskViewTodayView !== event) {
+            this.user.defaultTaskViewTodayView = event;
+            this.userService.updateUser(this.user, true);
+        }
+
     }
 
 }
