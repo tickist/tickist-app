@@ -243,11 +243,11 @@
                     <div [hidden]="!checkActiveItemInMenu('steps')" formArrayName="steps">
                         <div>
                             <ul id="steps" [sortablejs]="taskForm.controls.steps" fxLayout="column">
-                                <li class="step"
+                                <li class="step" fxFlex
                                     *ngFor="let step of taskForm.controls.steps.controls; let i=index; let last = last"
                                     [formGroupName]="i">
                                     <i class="fa fa-arrows hover-visible" aria-hidden="true"></i>
-                                    <mat-form-field>
+                                    <mat-form-field style="width: 80%;">
                                         <input matInput placeholder="Step name" formControlName="name"
                                                [appAutofocus]="last && checkActiveItemInMenu('steps')">
                                     </mat-form-field>

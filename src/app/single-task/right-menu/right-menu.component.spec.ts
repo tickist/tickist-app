@@ -2,36 +2,16 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RightMenuComponent} from './right-menu.component';
 import {TickistMaterialModule} from '../../app.module';
 import {Component, Input} from '@angular/core';
+import { MockComponent } from 'mock-component';
 import {BlankComponent, RootComponent} from '../../testing/test.modules';
 import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {Task} from '../../models/tasks';
 import {task1} from '../../testing/mocks/api_mocks/tasks';
+import {PinButtonComponent} from '../pin-button/pin-button.component';
+import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
+import {PriorityComponent} from '../../shared/priority/priority.component';
 
-@Component({
-    selector: 'tickist-pin-button',
-    template: '',
-})
-class PinButtonComponent {
-    @Input() pinned: boolean;
-    constructor() {}
-}
-
-
-@Component({
-    selector: 'tickist-menu-button',
-    template: '',
-})
-class MenuButtonComponent {
-    @Input() icon: string;
-    @Input() color = 'white';
-    @Input() isDisabled = false;
-    @Input() fontSize = '16px';
-    @Input() transform = '';
-
-    constructor() {
-    }
-}
 
 const routes: Routes = [
     {
@@ -57,7 +37,8 @@ describe('RightMenuComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, RouterModule.forRoot(routes)],
-            declarations: [RightMenuComponent, PinButtonComponent, MenuButtonComponent, RootComponent, BlankComponent],
+            declarations: [RightMenuComponent, MockComponent(PinButtonComponent), MockComponent(MenuButtonComponent), 
+                MockComponent(PriorityComponent), RootComponent, BlankComponent],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'}
             ]

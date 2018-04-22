@@ -113,7 +113,6 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     }
 
     changeTaskView(event) {
-        console.log(event);
         this.taskView = event;
         if (this.selectedProject && this.selectedProject.taskView !== event) {
             this.selectedProject.taskView = event;

@@ -1,10 +1,19 @@
-FROM node:8.7-stretch
+FROM node:9.6.1
 
 ENV REFRESHED_AT 20160922:000000
-WORKDIR /srv/tickist/frontend/
+
 #RUN apt-get install -y ca-certificates git wget libfreetype6 libfontconfig bzip2 make g++ libssl-dev python
+RUN mkdir /srv/tickist
+RUN mkdir /srv/tickist/frontend
+RUN chown -R node:node /srv/tickist
 
+USER node
+RUN mkdir /home/node/.npm-global
+ENV PATH=/home/node/.npm-global/bin:$PATH
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+RUN npm install -g @angular/cli
 
+WORKDIR /srv/tickist/frontend/
 COPY . /srv/tickist/frontend/
 RUN rm -rf node_modules && npm set progress=false && npm config set depth 0 && npm cache clean --force
 ## Storing node modules on a separate layer will prevent unnecessary npm installs at each build

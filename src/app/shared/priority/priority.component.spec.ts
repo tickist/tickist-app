@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PriorityComponent } from './priority.component';
+import {TickistMaterialModule} from '../../app.module';
 
 describe('PriorityComponent', () => {
   let component: PriorityComponent;
@@ -8,7 +9,8 @@ describe('PriorityComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PriorityComponent ]
+        imports: [TickistMaterialModule],
+        declarations: [ PriorityComponent,  ]
     })
     .compileComponents();
   }));

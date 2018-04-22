@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
+import {MockComponent} from 'mock-component';
 import {TasksFromProjectsComponent} from './tasks-from-projects.component';
 import {ChangeTaskViewComponent} from '../shared/change-task-view-component/change-task-view.component';
 import {TickistMaterialModule} from '../app.module';
@@ -30,52 +30,33 @@ import {Component, Input} from '@angular/core';
 import {Task} from '../models/tasks';
 import {MockTagService} from '../testing/mocks/tagService';
 import {BlankComponent, RootComponent} from '../testing/test.modules';
+import {PriorityComponent} from '../shared/priority/priority.component';
+import {TasksListComponent} from '../tasks-list/tasks-list.component';
+import {SortTasksComponent} from '../sort-tasks/sort-tasks.component';
+import {FilterTasksComponent} from '../filter-tasks/filter-tasks.component';
 
-@Component({
-    selector: 'app-tasks-list',
-    template: ''
-})
-class TasksListComponent {
-    @Input() tasks: Task[];
-    @Input() taskView: string;
-}
-
-@Component({
-  selector: 'tickist-sort-tasks',
-  template: ''
-})
-class SortTasksComponent {}
-
-@Component({
-  selector: 'app-filter-tasks',
-  template: ''
-})
-class FilterTasksComponent {
-     @Input() showTags: boolean;
-}
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
-  },
-  {
-    path: 'home',
-    component: RootComponent
-  },
-  {
-    path: 'home/task',
-    component: BlankComponent
-  }
+    {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+    },
+    {
+        path: 'home',
+        component: RootComponent
+    },
+    {
+        path: 'home/task',
+        component: BlankComponent
+    }
 ];
-
 
 
 describe('TasksFromProjectsComponent', () => {
     let component: TasksFromProjectsComponent;
     let fixture: ComponentFixture<TasksFromProjectsComponent>;
-    
+
     beforeEach(async(() => {
         const configurationService = new MockConfigurationService();
         const projectService = new MockProjectService();
@@ -83,17 +64,21 @@ describe('TasksFromProjectsComponent', () => {
         const tagService = new MockTagService();
         const userService = new MockUserService();
         const activatedRoute = new MockActivatedRoute;
-        
+
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, FlexLayoutModule, RouterModule.forRoot(routes), FormsModule],
-            declarations: [TasksFromProjectsComponent, ChangeTaskViewComponent,  FilterTasksComponent,
-                SortTasksComponent, TasksListComponent, MenuButtonComponent, SingleTaskSimplifiedComponent,
-                SingleTaskComponent, TaskNameComponent, PinButtonComponent, DateOptionsComponent, RightMenuComponent,
-                EditRepeatingOptionComponent, ProgressBarComponent, DisplayFinishDateComponent, UserAvatarComponent,
-                ToggleButtonComponent, TruncatePipe, Minutes2hoursPipe, AvatarSize, RootComponent, BlankComponent],
+            declarations: [TasksFromProjectsComponent, ChangeTaskViewComponent, FilterTasksComponent,
+                MockComponent(SortTasksComponent), MockComponent(TasksListComponent), MockComponent(MenuButtonComponent),
+                MockComponent(SingleTaskSimplifiedComponent), MockComponent(SingleTaskComponent), 
+                MockComponent(TaskNameComponent), MockComponent(PinButtonComponent), 
+                MockComponent(DateOptionsComponent), MockComponent(RightMenuComponent), 
+                MockComponent(EditRepeatingOptionComponent), MockComponent(ProgressBarComponent), 
+                MockComponent(DisplayFinishDateComponent), MockComponent(UserAvatarComponent),
+                MockComponent(PriorityComponent),
+                MockComponent(ToggleButtonComponent), TruncatePipe, Minutes2hoursPipe, AvatarSize, RootComponent, BlankComponent],
             providers: [
                 configurationService.getProviders(),
-                projectService .getProviders(),
+                projectService.getProviders(),
                 taskService.getProviders(),
                 tagService.getProviders(),
                 userService.getProviders(),
@@ -102,12 +87,12 @@ describe('TasksFromProjectsComponent', () => {
             ]
         }).compileComponents();
     }));
-    
+
     beforeEach(() => {
         fixture = TestBed.createComponent(TasksFromProjectsComponent);
         component = fixture.componentInstance;
     });
-    
+
     it('should be created', () => {
         expect(component).toBeTruthy();
     });
