@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
@@ -12,6 +12,7 @@ import * as projectsAction from '../reducers/actions/projects';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
+import {map} from 'rxjs/operators';
 
 
 @Injectable()
@@ -41,8 +42,10 @@ export class ProjectService {
 
     loadProjects() {
         return this.http.get<Project[]>(`${environment['apiUrl']}/project/`)
-            .map(payload => payload.map(project => new Project(project)))
-            .map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)));
+            .pipe(
+                map(payload => payload.map(project => new Project(project))),
+                map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)))
+            );
     }
 
     loadCurrentProjectsFilters() {

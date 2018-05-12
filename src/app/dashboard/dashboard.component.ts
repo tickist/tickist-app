@@ -4,13 +4,12 @@ import {UserService} from '../services/userService';
 import {ConfigurationService} from '../services/configurationService';
 import {Task} from '../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/combineLatest';
-import {Subscription} from 'rxjs/Subscription';
+import {Observable, Subscription, combineLatest} from 'rxjs';
 import * as moment from 'moment';
 import {User} from '../models/user';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
+import {map} from 'rxjs/operators';
 
 
 @Component({
@@ -36,8 +35,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     constructor(private taskService: TaskService, protected route: ActivatedRoute, private  userService: UserService,
                 private configurationService: ConfigurationService, protected router: Router,
                 protected media: ObservableMedia) {
-        this.stream$ = Observable
-            .combineLatest(
+        this.stream$ = combineLatest(
                 this.taskService.tasks$,
                 this.configurationService.activeDay$,
                 this.userService.user$,
@@ -100,7 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.futureTasks = _.orderBy(this.futureTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);
             }
         });
-        this.subscriptions.add(this.route.params.map(params => params['date']).subscribe((param) => {
+        this.subscriptions.add(this.route.params.pipe(map(params => params['date'])).subscribe((param) => {
             this.configurationService.updateActiveDay(param);
         }));
         this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {

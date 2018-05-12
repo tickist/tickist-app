@@ -10,9 +10,10 @@ import {MatDialog} from '@angular/material';
 import {ProjectService} from '../services/projectService';
 import {Project} from '../models/projects';
 import {DeleteTaskDialogComponent} from './delete-task-dialog/delete-task.dialog.component';
-import 'rxjs/add/operator/takeUntil';
-import {Subject} from 'rxjs/Subject';
+
+import {Subject, pipe} from 'rxjs';
 import {RepeatStringExtension} from '../pipes/repeatStringExtension';
+import {takeUntil} from 'rxjs/operators';
 
 
 class Timer {
@@ -203,7 +204,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         if (this.task.taskProject.shareWith.length > 1) {
             this.task.menuShowing.sharedList = true;
         }
-        this.projectService.projects$.takeUntil(this.ngUnsubscribe).subscribe((projects) => {
+        this.projectService.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((projects) => {
             this.projects = projects;
             // this.t2.stop();  // Prints the time elapsed to the JS console.
         });

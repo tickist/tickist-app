@@ -1,6 +1,6 @@
 import {SpyObject} from '../test.helpers';
 import {ProjectService} from '../../services/projectService';
-import {Observable} from 'rxjs/Observable';
+import {of} from 'rxjs';
 
 
 export class MockProjectService extends SpyObject {
@@ -16,10 +16,10 @@ export class MockProjectService extends SpyObject {
 
     this.fakeResponse = null;
     this.responseSuccess = true;
-    this.team$ = Observable.of([]);
-    this.selectedProjectsIds$ = Observable.of([]);
-    this.selectedProject$ = Observable.of([]);
-    this.projects$ = Observable.of([]);
+    this.team$ = of([]);
+    this.selectedProjectsIds$ = of([]);
+    this.selectedProject$ = of([]);
+    this.projects$ = of([]);
   }
 
   subscribe(success, error) {

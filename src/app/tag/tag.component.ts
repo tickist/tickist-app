@@ -1,14 +1,14 @@
 import {Component, OnInit, Input, ViewContainerRef, EventEmitter, Output, AfterViewInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, fromEvent, pipe} from 'rxjs';
 import {TaskService} from '../services/taskService';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TagService} from '../services/tagService';
 import {Tag} from '../models/tags';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/bufferWhen';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/debounceTime';
+
+
+
+
+
 
 @Component({
   selector: 'app-tag',
@@ -60,7 +60,7 @@ export class TagComponent implements OnInit, AfterViewInit  {
   }
 
   ngAfterViewInit() {
-    this.eventStreamDouble = Observable.fromEvent(this.viewContainerRef.element.nativeElement.querySelector('div.tag-name'), 'click');
+    this.eventStreamDouble = fromEvent(this.viewContainerRef.element.nativeElement.querySelector('div.tag-name'), 'click');
     this.eventStreamDouble
       .bufferWhen(() => this.eventStreamDouble.debounceTime(250))
       .map((list) => list.length)

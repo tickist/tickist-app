@@ -16,7 +16,7 @@ import {Injectable} from '@angular/core';
 import {ProjectService} from './services/projectService';
 import {TagService} from './services/tagService';
 import {UserService} from './services/userService';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Project} from './models/projects';
 import {Task} from './models/tasks';
 import {TaskService} from './services/taskService';

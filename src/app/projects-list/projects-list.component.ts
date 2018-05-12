@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {Router} from '@angular/router';
-import 'rxjs/add/operator/takeUntil';
-import {Subject} from 'rxjs/Subject';
+
+import {Subject, pipe} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../services/taskService';
 import {ProjectService} from '../services/projectService';
@@ -13,6 +13,7 @@ import {ObservableMedia} from '@angular/flex-layout';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {FilterProjectDialogComponent} from './filter-projects-dialog/filter-projects.dialog.component';
 import {Filter} from '../models/filter';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -38,7 +39,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.projectService.projects$.takeUntil(this.ngUnsubscribe).subscribe(projects => {
+        this.projectService.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(projects => {
             if (projects) {
                 this.allProjects = projects;
                 this.projects = this.generateDifferentLevelsOfProjects();
@@ -46,13 +47,13 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
             }
         });
 
-        this.projectService.selectedProject$.takeUntil(this.ngUnsubscribe).subscribe((project) => {
+        this.projectService.selectedProject$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((project) => {
             this.selectedProject = project;
             this.projects = this.generateDifferentLevelsOfProjects();
             this.cd.detectChanges();
         });
 
-        this.projectService.selectedProjectsIds$.takeUntil(this.ngUnsubscribe).subscribe((ids) => {
+        this.projectService.selectedProjectsIds$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((ids) => {
             console.log('selectedProjectsIds$');
             if (ids && ids.length > 0) {
                 this.selectedProjectsIds = ids;
@@ -60,7 +61,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
             this.cd.detectChanges();
         });
 
-        this.projectService.currentProjectsFilters$.takeUntil(this.ngUnsubscribe).subscribe(filter => {
+        this.projectService.currentProjectsFilters$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(filter => {
             this.filter = filter;
             this.projects = this.generateDifferentLevelsOfProjects();
         });

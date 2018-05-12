@@ -2,13 +2,14 @@ import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy
 import {ConfigurationService} from '../../services/configurationService';
 import {Task} from '../../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {TaskService} from '../../services/taskService';
 import {UserService} from '../../services/userService';
 import {User} from '../../models/user/user';
+import {map} from 'rxjs/operators';
 
 
 @Component({
@@ -52,7 +53,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscriptions = this.route.params.map(params => params['date']).subscribe((param) => {
+        this.subscriptions = this.route.params.pipe(map(params => params['date'])).subscribe((param) => {
             this.configurationService.updateActiveDay(param);
         });
         this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {

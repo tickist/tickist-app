@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store, State} from '@ngrx/store';
 import {environment} from '../../environments/environment';
@@ -15,6 +15,7 @@ import {ProjectService} from './projectService';
 import * as tasksAction from '../reducers/actions/tasks';
 import {Filter} from '../models/filter';
 import {HttpClient} from '@angular/common/http';
+import {filter, map, take} from 'rxjs/operators';
 
 
 @Injectable()
@@ -73,8 +74,10 @@ export class TaskService {
 
     loadTasks() {
         return this.http.get<Task[]>(`${environment['apiUrl']}/tasks/?assign=all&status=0&status=2`)
-            .map(payload => payload.map(task => new Task(task)))
-            .map(payload => this.store.dispatch(new tasksAction.AddTasks(payload)));
+            .pipe(
+                map(payload => payload.map(task => new Task(task))),
+                map(payload => this.store.dispatch(new tasksAction.AddTasks(payload)))
+            );
     }
 
     loadCurrentTasksFilters(user: User) {
@@ -115,8 +118,8 @@ export class TaskService {
     getCurrentTagsFilterValue() {
         let state: State<any>;
         // we need to use 'synchronous' subscribe. It is only options to get current value
-        this.currentTasksFilters$.take(1).subscribe(s => state = s);
-        return state.filter(filter => filter.label === 'tags')[0].value;
+        this.currentTasksFilters$.pipe(take(1)).subscribe(s => state = s);
+        return state.pipe(filter(filter => filter.label === 'tags'))[0].value;
     }
 
     loadTasksFilters(user: User) {
@@ -226,7 +229,7 @@ export class TaskService {
 
     createTask(task: Task) {
         this.http.post(`${environment['apiUrl']}/tasks/`, task.toApi())
-            .map(payload => new Task(payload))
+            .pipe(map(payload => new Task(payload)))
             .subscribe(payload => {
                 this.snackBar.open('Task has been saved successfully', '', {
                     duration: 2000,

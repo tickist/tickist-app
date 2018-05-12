@@ -1,14 +1,15 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Headers, RequestOptions, Response} from '@angular/http';
 import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
-import 'rxjs/add/operator/map';
+
 import {GlobalStatistics, DailyStatistics, ChartStatistics} from '../models/statistics';
 import {ConfigurationService} from '../services/configurationService';
 import * as statisticsAction from '../reducers/actions/statistics';
 import {HttpClient} from '@angular/common/http';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class StatisticsService {
@@ -41,19 +42,19 @@ export class StatisticsService {
   loadDailyStatistics(date) {
     const formatedDate = date ? date.format('YYYY-MM-DD') : this.activeDay.format('YYYY-MM-DD');
     this.http.get(`${environment['apiUrl']}/day_statistics/?date=${formatedDate}`)
-      .map(payload => new DailyStatistics(payload))
+      .pipe(map(payload => new DailyStatistics(payload)))
       .subscribe(payload => this.store.dispatch((new statisticsAction.UpdateDailyStatistics(payload))));
   }
 
   loadGlobalStatistics() {
     this.http.get(`${environment['apiUrl']}/global/`)
-      .map(payload => new GlobalStatistics(payload))
+      .pipe(map(payload => new GlobalStatistics(payload)))
       .subscribe(payload => this.store.dispatch(new statisticsAction.UpdateGlobalStatistics(payload)));
   }
 
   loadChartsData() {
     this.http.get(`${environment['apiUrl']}/charts/`)
-      .map(payload => new ChartStatistics(payload))
+      .pipe(map(payload => new ChartStatistics(payload)))
       .subscribe(payload => this.store.dispatch(new statisticsAction.UpdateChartsData(payload)));
   }
 }

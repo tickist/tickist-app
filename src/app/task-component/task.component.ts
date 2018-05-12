@@ -6,9 +6,8 @@ import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../services/taskService';
 import {TagService} from '../services/tagService';
 import {Task, Step} from '../models/tasks';
-import {Observable} from 'rxjs/Observable';
-import {Subscription} from 'rxjs/Subscription';
-import 'rxjs/add/observable/combineLatest';
+import {Observable, Subscription, pipe, combineLatest} from 'rxjs';
+
 import {ProjectService} from '../services/projectService';
 import {UserService} from '../services/userService';
 import {Project} from '../models/projects';
@@ -20,12 +19,12 @@ import {Minutes2hoursPipe} from '../pipes/minutes2hours';
 import {MatDialogRef, MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
 import * as moment from 'moment';
 import {Tag} from '../models/tags';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/map';
+
+
 import {MatAutocompleteTrigger, MatInput} from '@angular/material';
 import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../shared/keymap';
-
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
     selector: 'app-task-component',
@@ -76,10 +75,9 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.typeFinishDateOptions = this.configurationService.loadConfiguration()['commons']['TYPE_FINISH_DATE_OPTIONS'];
         this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
         this.typeFinishDateOptions = this.configurationService.configuration['commons']['TYPE_FINISH_DATE_OPTIONS'];
-        this.stream$ = Observable
-            .combineLatest(
+        this.stream$ = combineLatest(
                 this.taskService.tasks$,
-                this.route.params.map(params => params['taskId']),
+                this.route.params.pipe(map(params => params['taskId'])),
                 this.projectService.selectedProject$,
                 this.projectService.projects$,
                 this.userService.user$,
@@ -120,8 +118,10 @@ export class TaskComponent implements OnInit, OnDestroy {
 
         this.tagsCtrl = new FormControl();
         this.filteredTags = this.tagsCtrl.valueChanges
-            .startWith(null)
-            .map(name => this.filterTags(name));
+            .pipe(
+                startWith(null),
+                map(name => this.filterTags(name))
+            );
 
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         this.configurationService.changeOpenStateRightSidenavVisibility('close');

@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import {Observable} from 'rxjs';
+
 import {ObservableMedia} from '@angular/flex-layout';
 import {SpyObject} from '../test.helpers';
 

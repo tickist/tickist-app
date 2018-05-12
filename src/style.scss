@@ -288,6 +288,24 @@ body::-webkit-scrollbar-thumb {
     color: grey;
 }
 
+.mat-form-field.mat-focused .mat-form-field-label {
+    color: grey;
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: grey;
+}
+
+
+.mat-form-field.mat-focused.ng-invalid .mat-form-field-label {
+    color: #f44336;
+}
+
+.mat-form-field.mat-focused.ng-invalid .mat-form-field-ripple {
+    background-color: #f44336;
+}
+
+
 .mat-form-field-ripple {
     background-color: grey
 }

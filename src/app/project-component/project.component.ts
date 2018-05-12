@@ -3,9 +3,7 @@ import {Project} from '../models/projects';
 import {ProjectService} from '../services/projectService';
 import {Location} from '@angular/common';
 import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/combineLatest';
-import {Subscription} from 'rxjs/Subscription';
+import {Observable, Subscription, combineLatest} from 'rxjs';
 import {ConfigurationService} from '../services/configurationService';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User, SimplyUser, PendingUser} from '../models/user';
@@ -14,6 +12,7 @@ import {MatDialog} from '@angular/material';
 import {environment} from '../../environments/environment';
 import {DeleteProjectConfirmationDialogComponent} from './delete-project-dialog/delete-project-dialog.component';
 import * as _ from 'lodash';
+import {map, startWith} from 'rxjs/operators';
 
 
 @Component({
@@ -53,10 +52,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
         this.defaultTaskView = this.configurationService.configuration['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
         this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
-        this.stream$ = Observable
-            .combineLatest(
+        this.stream$ = combineLatest(
                 projectService.projects$,
-                this.route.params.map(params => parseInt(params['projectId'], 10)),
+                this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
                 this.userService.user$,
                 this.userService.team$,
                 (projects: Project[], projectId, user: User, team: SimplyUser[]) => {
@@ -90,9 +88,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
         });
         this.addUserToShareWithListCtrl = new FormControl('',
             Validators.compose([Validators.required, Validators.email]));
-        this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges
-            .startWith(null)
-            .map(name => this.filterUsers(name));
+        this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges.pipe(
+            startWith(null),
+            map(name => this.filterUsers(name))
+        );
     }
 
     ngOnInit() {

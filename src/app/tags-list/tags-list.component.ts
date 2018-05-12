@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/combineLatest';
+import {Observable, Subscription, combineLatest} from 'rxjs';
+
 import {TagService} from '../services/tagService';
 import {Tag} from '../models/tags';
 import {Task} from '../models/tasks';
@@ -10,7 +10,6 @@ import {UserService} from '../services/userService';
 import {User} from '../models/user';
 import {SideNavVisibility} from '../models';
 import {ConfigurationService} from '../services/configurationService';
-import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-tags-list',
@@ -36,14 +35,14 @@ export class TagsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tagsStream$ = Observable.combineLatest(
+    this.tagsStream$ = combineLatest(
       this.tagService.tags$,
       this.taskService.currentTasksFilters$,
       (tags: Tag[], currentTasksFilters: any) => {
         return tags;
       }
     );
-    this.tasksStream$ = Observable.combineLatest(
+    this.tasksStream$ = combineLatest(
       this.taskService.tasks$,
       this.taskService.currentTasksFilters$,
       (tasks: Task[], currentTasksFilters: any) => {

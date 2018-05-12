@@ -9,6 +9,8 @@ import {
 import {UserService} from '../services/userService';
 import {Router} from '@angular/router';
 import {Headers, RequestOptions, Response, RequestOptionsArgs} from '@angular/http';
+import {map} from 'rxjs/operators';
+import {pipe} from 'rxjs';
 
 class User {
   username: string;
@@ -39,11 +41,11 @@ export class SignupComponent implements OnInit {
   }
 
   validateEmailNotTaken(control: AbstractControl) {
-    return this.userService.checkEmail(control.value).map(res => {
+    return this.userService.checkEmail(control.value).pipe(map(res => {
       if (res['is_taken']) {
         return { emailTaken: true };
       }
-    });
+    }));
   }
 
   onSubmit(values: any): void {

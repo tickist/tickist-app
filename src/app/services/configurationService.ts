@@ -1,9 +1,9 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Headers, RequestOptions} from '@angular/http';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import 'rxjs/add/operator/map';
+
 import * as moment from 'moment';
 import {ObservableMedia} from '@angular/flex-layout';
 import * as configurationAction from '../reducers/actions/configuration';

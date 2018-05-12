@@ -12,8 +12,9 @@ import {ObservableMedia, MediaChange} from '@angular/flex-layout';
 import {ConfigurationService} from '../services/configurationService';
 import {SideNavVisibility} from '../models/configurations';
 import * as _ from 'lodash';
-import {Subject} from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+
 
 
 @Component({
@@ -47,20 +48,20 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.cd.detectChanges();
         });
 
-        this.configurationService.leftSidenavVisibility$.takeUntil(this.ngUnsubscribe).subscribe((visibility: SideNavVisibility) => {
+        this.configurationService.leftSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((visibility: SideNavVisibility) => {
             if (!_.isEmpty(visibility)) {
                 this.leftSidenavVisibility = visibility;
                 this.cd.detectChanges();
             }
         });
-        this.configurationService.rightSidenavVisibility$.takeUntil(this.ngUnsubscribe).subscribe((visibility) => {
+        this.configurationService.rightSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((visibility) => {
             if (!_.isEmpty(visibility)) {
                 this.rightSidenavVisibility = visibility;
                 this.cd.detectChanges();
             }
         });
 
-        this.configurationService.addTaskComponentVisibility$.takeUntil(this.ngUnsubscribe).subscribe(visibility => {
+        this.configurationService.addTaskComponentVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(visibility => {
             this.addTaskComponentVisibility = visibility;
             this.cd.detectChanges();
         });

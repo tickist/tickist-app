@@ -3,14 +3,11 @@ import {TaskService} from '../services/taskService';
 import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../services/userService';
 import {ProjectService} from '../services/projectService';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject, pipe, combineLatest } from 'rxjs';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
 import {User} from '../models/user';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/observable/combineLatest';
-import {Subject} from 'rxjs/Subject';
-
+import { map, takeUntil } from 'rxjs/operators';
 
 class Timer {
     readonly start = performance.now();
@@ -58,7 +55,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
-        this.tasksStream$ = Observable.combineLatest(
+        this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
             this.projectService.selectedProjectsIds$,
             this.taskService.currentTasksFilters$,
@@ -74,8 +71,8 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 return tasks;
             }
         );
-        this.selectedProjectsStream$ = Observable.combineLatest(
-            this.route.params.map(params => params['projectId']),
+        this.selectedProjectsStream$ = combineLatest(
+            this.route.params.pipe(map(params => params['projectId'])),
             this.projectService.projects$,
             this.userService.user$,
             (projectId: any, projects: Project[], user: User) => {
@@ -94,7 +91,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 }
             }
         );
-        this.selectedProjectsStream$.takeUntil(this.ngUnsubscribe).subscribe();
+        this.selectedProjectsStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe();
         this.projectService.selectedProject$.subscribe(project => {
             if (project) {
                 this.selectedProject = project;
@@ -102,7 +99,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 this.taskView = project.taskView;
             }
         });
-        this.tasksStream$.takeUntil(this.ngUnsubscribe).subscribe(tasks => {
+        this.tasksStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(tasks => {
             if (tasks && tasks.length > 0) {
                 this.tasks = tasks;
                 this.cd.markForCheck(); // marks path

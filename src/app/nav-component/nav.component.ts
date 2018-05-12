@@ -7,7 +7,8 @@ import {ObservableMedia} from '@angular/flex-layout';
 import {NavigationEnd, Router} from '@angular/router';
 import {TaskService} from '../services/taskService';
 import {ProjectService} from '../services/projectService';
-import {Subject} from 'rxjs/Subject';
+import {Subject, pipe} from 'rxjs';
+import {filter, takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -39,8 +40,8 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit() {
         this.staticUrl = environment['staticUrl'];
 
-        this.router.events
-            .filter(event => event instanceof NavigationEnd)
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd))
             .subscribe((event: NavigationEnd) => {
                 this.addClassToActiveElement(event.urlAfterRedirects);
             });
@@ -56,7 +57,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.configurationService.rightSidenavVisibility$.subscribe((state) => {
             this.rightSideNavVisibility = state;
         });
-        this.configurationService.offlineModeNotification$.takeUntil(this.ngUnsubscribe).subscribe(value => {
+        this.configurationService.offlineModeNotification$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
             this.isOffline = value;
         });
 

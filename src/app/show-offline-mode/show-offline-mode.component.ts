@@ -1,7 +1,8 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ConfigurationService} from '../services/configurationService';
-import {Subject} from 'rxjs/Subject';
+import {Subject, pipe} from 'rxjs';
 import {Ping} from './ping';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'tickist-show-offline-mode',
@@ -22,7 +23,7 @@ export class ShowOfflineModeComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.configurationService.offlineModeNotification$.takeUntil(this.ngUnsubscribe).subscribe(value => {
+        this.configurationService.offlineModeNotification$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
             this.isOffline = value;
             this.cd.markForCheck();
         });

@@ -5,7 +5,7 @@ import {Project} from '../models/projects';
 import {ProjectService} from '../services/projectService';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../services/configurationService';
-import 'rxjs/add/operator/takeUntil';
+
 import {ObservableMedia} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../project-component/delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material';

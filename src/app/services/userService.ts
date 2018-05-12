@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, pipe} from 'rxjs';
 import {Headers, RequestOptions, Response, RequestOptionsArgs} from '@angular/http';
 import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
@@ -10,6 +10,7 @@ import {MatSnackBar} from '@angular/material';
 import * as userAction from '../reducers/actions/user';
 import * as teamAction from '../reducers/actions/team';
 import {HttpClient} from '@angular/common/http';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class UserService {
@@ -39,9 +40,9 @@ export class UserService {
             this.logout();
         } else {
             return this.http.get(`${environment['apiUrl']}/user/${userID}/`)
-                .map(payload => {
+                .pipe(map(payload => {
                     this.store.dispatch(new userAction.AddUser(new User(payload)));
-                });
+                }));
         }
     }
 
@@ -64,25 +65,27 @@ export class UserService {
             this.logout();
         } else {
             return this.http.get<SimplyUser[]>(`${environment['apiUrl']}/user/${userID}/teamlist/`)
-                .map(payload => (payload.map(user => new SimplyUser(user))))
-                .map(payload => this.store.dispatch(new teamAction.AddTeamMembers(payload)));
+                .pipe(
+                    map(payload => (payload.map(user => new SimplyUser(user)))),
+                    map(payload => this.store.dispatch(new teamAction.AddTeamMembers(payload)))
+                );
         }
     }
 
     login(user: UserLogin) {
-        return this.http.post(`${environment.apiUrl}/api-token-auth/`, user).map((response: Response) => {
+        return this.http.post(`${environment.apiUrl}/api-token-auth/`, user).pipe(map((response: Response) => {
             localStorage.setItem('JWT', `JWT ${response['token']}`);
             localStorage.setItem('USER_ID', response['user_id']);
             return response;
-        });
+        }));
     }
 
     signup(user: any) {
-        return this.http.post(`${environment.apiUrl}/registration/`, user).map((response: Response) => {
+        return this.http.post(`${environment.apiUrl}/registration/`, user).pipe(map((response: Response) => {
             localStorage.setItem('JWT', `JWT ${response['token']}`);
             localStorage.setItem('USER_ID', response['user_id']);
             return response;
-        });
+        }));
     }
 
     logout() {

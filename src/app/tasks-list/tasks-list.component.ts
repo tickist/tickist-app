@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import {Task} from '../models/tasks';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {ConfigurationService} from '../services/configurationService';
 
 

@@ -1,7 +1,3 @@
-import {Task} from './models/tasks';
-import {User, SimplyUser} from './models/user';
-import {Project} from './models/projects';
-import {Tag} from './models/tags';
 import {ActionReducer, ActionReducerMap, combineReducers} from '@ngrx/store';
 import {compose} from '@ngrx/core';
 import {storeFreeze} from 'ngrx-store-freeze';

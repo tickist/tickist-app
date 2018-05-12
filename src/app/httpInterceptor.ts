@@ -1,20 +1,22 @@
 
+import {throwError as observableThrowError, Observable} from 'rxjs';
+
 import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
   HttpErrorResponse, HttpEvent
 } from "@angular/common/http";
-import {Observable} from "rxjs/Observable";
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/finally';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/take';
+
+
+
+
+
+
 import {ConfigurationService} from "./services/configurationService";
 import {Router, RouterState, RouterStateSnapshot} from "@angular/router";
 import {Injectable} from "@angular/core";
+import {catchError} from 'rxjs/operators';
 
 
 @Injectable()
@@ -29,8 +31,8 @@ export class RequestInterceptorService implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(req)
-      .catch(error => {
+    return next.handle(req).pipe(
+      catchError(error => {
           if (error instanceof HttpErrorResponse) {
             const status = (<HttpErrorResponse>error).status;
             if (status === 401 || status === 403) {
@@ -51,9 +53,9 @@ export class RequestInterceptorService implements HttpInterceptor {
             //  this.configurationService.updateDetectApiError(false);
             //}
 
-            return Observable.throw(error);
+            return observableThrowError(error);
           }
         }
-      );
+      ));
   }
 }

@@ -1,7 +1,7 @@
 import {SpyObject} from '../test.helpers';
 import {ConfigurationService} from '../../services/configurationService';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import {of} from 'rxjs';
+
 
 export class MockConfigurationService extends SpyObject {
     fakeResponse;
@@ -104,12 +104,12 @@ export class MockConfigurationService extends SpyObject {
         this.fakeResponse = null;
         this.responseSuccess = true;
         this.activeDay$ = this.spy('activeDay$').and.returnValue(this);
-        this.offlineModeNotification$ = this.spy('offlineModeNotification$').and.returnValue(Observable.of(this.fakeResponse));
-        this.detectApiError$ = this.spy('detectApiError$').and.returnValue(Observable.of(this.fakeResponse));
-        this.leftSidenavVisibility$ = Observable.of(this.fakeResponse);
-        this.rightSidenavVisibility$ = Observable.of(this.fakeResponse);
-        this.addTaskComponentVisibility$ = Observable.of(this.addTaskComponentVisibilityResponse);
-        this.activeDay$ = Observable.of(this.fakeResponse);
+        this.offlineModeNotification$ = this.spy('offlineModeNotification$').and.returnValue(of(this.fakeResponse));
+        this.detectApiError$ = this.spy('detectApiError$').and.returnValue(of(this.fakeResponse));
+        this.leftSidenavVisibility$ = of(this.fakeResponse);
+        this.rightSidenavVisibility$ = of(this.fakeResponse);
+        this.addTaskComponentVisibility$ = of(this.addTaskComponentVisibilityResponse);
+        this.activeDay$ = of(this.fakeResponse);
     }
 
     subscribe(success, error) {
@@ -133,7 +133,7 @@ export class MockConfigurationService extends SpyObject {
     }
 
     setAddTaskComponentVisibilityResponse(response: boolean): void {
-        this.addTaskComponentVisibility$ = Observable.of(response);
+        this.addTaskComponentVisibility$ = of(response);
     }
 
     getProviders(): Array<any> {
