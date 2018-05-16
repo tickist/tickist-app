@@ -136,18 +136,7 @@ export class SingleTask {
         this.task.estimateTime = time.estimateTime;
     }
 
-    changeRightMenuVisiblity() {
-        if (this.isMouseOver) {
-            this.isRightMenuVisible = true;
-        }
-        if (!this.isMouseOver && this.isFastMenuVisible) {
-            this.isRightMenuVisible = true;
-        }
-        if (!this.isMouseOver && !this.isFastMenuVisible) {
-            this.isRightMenuVisible = false;
-        }
-    }
-
+    
     changeFastMenuVisible(value) {
         this.isFastMenuVisible = value;
         this.changeRightMenuVisiblity();
@@ -189,6 +178,18 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
             this.isRightMenuVisible = false;
         }
 
+    }
+    
+    changeRightMenuVisiblity() {
+        if (this.isMouseOver) {
+            this.isRightMenuVisible = true;
+        }
+        if (!this.isMouseOver && this.isFastMenuVisible) {
+            this.isRightMenuVisible = true;
+        }
+        if (!this.isMouseOver && !this.isFastMenuVisible) {
+            this.isRightMenuVisible = false;
+        }
     }
 
     private timer: Timer;
@@ -250,11 +251,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         this.task.removeTag(tag);
         this.taskService.updateTask(this.task);
     }
-
-
-
-
-
+    
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('mediaChange') && changes['mediaChange'].hasOwnProperty('currentValue')
             && changes['mediaChange'].currentValue && changes['mediaChange'].currentValue.mqAlias === 'xs') {
@@ -274,6 +271,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
 })
 export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit, AfterViewInit {
     @Input() task;
+    finishDateVisible = true;
 
     @HostListener('mouseenter')
     onMouseEnter() {
@@ -303,6 +301,21 @@ export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit,
     ngAfterViewInit() {
         console.log('stop');
         console.timeEnd(`simple single task component ${this.task.name}`);
+    }
+    
+    changeRightMenuVisiblity() {
+        if (this.isMouseOver) {
+            this.isRightMenuVisible = true;
+            this.finishDateVisible = false;
+        }
+        if (!this.isMouseOver && this.isFastMenuVisible) {
+            this.isRightMenuVisible = true;
+            this.finishDateVisible = false;
+        }
+        if (!this.isMouseOver && !this.isFastMenuVisible) {
+            this.isRightMenuVisible = false;
+            this.finishDateVisible = true;
+        }
     }
 
 }

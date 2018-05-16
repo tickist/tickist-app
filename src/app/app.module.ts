@@ -126,6 +126,8 @@ import {SortTasksComponent} from './sort-tasks/sort-tasks.component';
 import {SortByDialog} from './sort-tasks/sort-tasks-dialog/sort-tasks.dialog.component';
 import { ChartLegendComponent } from './day-statistics/chart-legend/chart-legend.component';
 import { PriorityComponent } from './shared/priority/priority.component';
+import {TasksFiltersService} from './services/tasks-filters.service';
+import {ProjectsFiltersService} from './services/projects-filters.service';
 
 
 export function instrumentOptions() {
@@ -269,6 +271,8 @@ export class TickistMaterialModule {
         AnonymousGuard,
         UserService,
         TaskService,
+        TasksFiltersService,
+        ProjectsFiltersService,
         ProjectService,
         TagService,
         ConfigurationService,

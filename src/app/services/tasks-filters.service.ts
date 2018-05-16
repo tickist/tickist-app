@@ -1,9 +1,7 @@
 import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store, State} from '@ngrx/store';
-import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
-import {Task} from '../models/tasks';
 import {UserService} from './userService';
 import {User} from '../models/user';
 import * as _ from 'lodash';
@@ -19,11 +17,13 @@ import {filter, map, take} from 'rxjs/operators';
 
 
 @Injectable()
-export class TaskService {
-    tasks$: Observable<Task[]>;
+export class TasksFiltersService {
     tasksFilters$: Observable<any>;
     currentTasksFilters$: Observable<any>;
-
+    user: User;
+    assignedToAll: Filter;
+    assignedToMe: Filter;
+    
     static useFilters(tasks, currentFilters) {
 
         tasks = tasks.filter(currentFilters[0].value);
@@ -58,26 +58,34 @@ export class TaskService {
 
     constructor(public http: HttpClient, private store: Store<AppStore>, private userService: UserService,
                 public snackBar: MatSnackBar, protected statisticsService: StatisticsService,
-                protected configurationService: ConfigurationService, protected projectService: ProjectService,
+                protected configurationService: ConfigurationService,
                 protected tagService: TagService) {
 
-        this.tasks$ = this.store.select(s => s.tasks);
         this.tasksFilters$ = this.store.select(s => s.tasksFilters);
         this.currentTasksFilters$ = this.store.select(s => s.currentTasksFilters);
         this.userService.user$.subscribe((user) => {
             if (user) {
+                this.user = user;
                 this.loadTasksFilters(user);
                 this.loadCurrentTasksFilters(user);
+                this.assignedToMe = new Filter({
+                    id: user.id,
+                    label: 'assignedTo',
+                    value: task => task.owner.id === user.id,
+                    name: 'me',
+                    avatar: user.avatarUrl,
+                    fixed: true
+                });
+                this.assignedToAll = new Filter({
+                    id: 0,
+                    label: 'assignedTo',
+                    value: task => true,
+                    name: 'all',
+                    avatar: '/assets/default_avatar.png',
+                    fixed: true
+                });
             }
         });
-    }
-
-    loadTasks() {
-        return this.http.get<Task[]>(`${environment['apiUrl']}/tasks/?assign=all&status=0&status=2`)
-            .pipe(
-                map(payload => payload.map(task => new Task(task))),
-                map(payload => this.store.dispatch(new tasksAction.AddTasks(payload)))
-            );
     }
 
     loadCurrentTasksFilters(user: User) {
@@ -130,6 +138,14 @@ export class TaskService {
         // we need to use 'synchronous' subscribe. It is only options to get current value
         this.currentTasksFilters$.pipe(take(1)).subscribe(s => state = s);
         return state.pipe(filter(filter => filter.label === 'tags'))[0].value;
+    }
+
+    resetAssignedFilterToAssignedToAll() {
+        this.updateCurrentFilter(this.assignedToAll);
+    }
+
+    resetAssignedFilterToAssignedToMe() {
+        this.updateCurrentFilter(this.assignedToMe);
     }
 
     loadTasksFilters(user: User) {
@@ -223,58 +239,6 @@ export class TaskService {
         ].map(filter => new Filter(filter));
 
         this.store.dispatch(new tasksAction.AddFilters(filters));
-    }
-
-    saveTask(task: Task) {
-        (task.id) ? this.updateTask(task) : this.createTask(task);
-    }
-
-    postponeToToday() {
-        this.http.post<Task[]>(`${environment['apiUrl']}/tasks/move_tasks_for_today/`, {}).subscribe((tasks: Task[]) => {
-            tasks.map((task) => {
-                this.store.dispatch(new tasksAction.UpdateTask(task));
-            });
-        });
-    }
-
-    createTask(task: Task) {
-        this.http.post(`${environment['apiUrl']}/tasks/`, task.toApi())
-            .pipe(map(payload => new Task(payload)))
-            .subscribe(payload => {
-                this.snackBar.open('Task has been saved successfully', '', {
-                    duration: 2000,
-                });
-                this.store.dispatch(new tasksAction.CreateTask(payload));
-            });
-    }
-
-    updateTask(task: Task, isSilenceUpdate = false) {
-        const menuStateCopy = task.toApi()['menu_showing'];
-        this.configurationService.switchOnProgressBar();
-        this.http.put(`${environment['apiUrl']}/tasks/${task.id}/`, task.toApi())
-            .subscribe(payload => {
-                // this.snackBar.open('Task has been updated successfully', '', {
-                //   duration: 2000,
-                // });
-                payload['menu_showing'] = menuStateCopy;
-                this.store.dispatch(new tasksAction.UpdateTask(new Task(payload)));
-                if (!isSilenceUpdate) {
-                    this.statisticsService.loadAllStatistics(undefined);
-                }
-                this.configurationService.switchOffProgressBar();
-                this.projectService.loadProjects().subscribe();
-                this.tagService.loadTags().subscribe();
-            });
-    }
-
-    deleteTask(task: Task) {
-        this.http.delete(`${environment['apiUrl']}/tasks/${task.id}/`)
-            .subscribe(action => {
-                this.store.dispatch(new tasksAction.DeleteTask(task));
-                this.snackBar.open('Task has been deleted successfully', '', {
-                    duration: 2000,
-                });
-            });
     }
 
 }

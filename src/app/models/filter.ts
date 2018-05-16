@@ -8,6 +8,7 @@ export class Filter {
   value: (object: Task | Project) => boolean;
   avatar?: string;
   order?: string;
+  fixed?: boolean;
 
   constructor (object) {
     this.id = object.id;
@@ -16,5 +17,6 @@ export class Filter {
     this.value = object.value;
     this.avatar = object.avatar;
     this.order = object.order;
+    this.fixed = object.fixed;
   }
 }

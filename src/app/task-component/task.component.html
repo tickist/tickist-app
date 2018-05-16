@@ -79,7 +79,7 @@
 
                             <mat-form-field>
                                 <input matInput #taskName (blur)="updateImmediately('name', 'main.name', taskForm.value)"
-                                       placeholder="Task name" maxlength="100" formControlName="name" autofocus>
+                                       placeholder="Task name" maxlength="500" formControlName="name" autofocus>
                                 <mat-hint align="end">{{taskName.value?.length || 0}}/100</mat-hint>
                                 <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">
                                     {{getErrorMessage(taskForm.controls['main'].controls['name'])}}

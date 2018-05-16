@@ -15,14 +15,11 @@
                                 (changePriorityClick)="changePriority($event)"
                                 (onFastMenuOpen)="changeFastMenuVisible($event)"
                                 (onFastMenuClose)="changeFastMenuVisible($event)">
-            </tickist-right-menu>
-    <!--<div class="right-menu">-->
-        <!--<div class="without-hover">-->
-            <!--<span class="date" *ngIf="task.finishDate">-->
-                <!--<i class="fa" [ngClass]="{'fa-dot-circle-o': task.typeFinishDate == '1', 'fa-arrow-right': task.typeFinishDate == '0'}"></i>-->
-            <!--</span>-->
-            <!--<span class="mat-caption date" *ngIf="task.finishDate">{{ task.finishDate.format("DD-MM-YYYY") }}</span>-->
-        <!--</div>-->
+         
+     </tickist-right-menu>
+    <div class="right-menu" *ngIf="finishDateVisible">
+        <tickist-display-finish-date [task]="task" *ngIf="task.finishDate"></tickist-display-finish-date>
+    </div>
         <!--<div class="hover">-->
             <!--<tickist-pin-button [pinned]="task.pinned"  (click)="togglePin()">-->
 

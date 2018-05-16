@@ -13,6 +13,8 @@ import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
 import {map} from 'rxjs/operators';
+import {TaskService} from './taskService';
+import {TasksFiltersService} from './tasks-filters.service';
 
 
 @Injectable()
@@ -26,7 +28,8 @@ export class ProjectService {
     currentProjectsFilters$: Observable<any>;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
-                protected router: Router) {
+                protected router: Router, protected tasksFiltersService: TasksFiltersService) {
+        
         this.projects$ = this.store.select(store => store.projects);
         this.team$ = this.store.select(store => store.team);
         this.selectedProject$ = this.store.select(store => store.selectedProject);
@@ -91,6 +94,9 @@ export class ProjectService {
                     ));
                 }
             });
+            //const assignedToAll = this.taskFilters.find(filter => filter.label === 'assignedTo' && filter.name === 'all');
+            //this.taskService.updateCurrentFilter(assignedToAll);
+            this.tasksFiltersService.resetAssignedFilterToAssignedToAll();
         } else {
             this.team.map((user) => {
                 this.store.dispatch(new tasksAction.AddNewAssignedTo(
@@ -103,6 +109,9 @@ export class ProjectService {
                     )
                 );
             });
+            //const assignedToMe = this.taskFilters.find(filter => filter.label === 'assignedTo' && filter.name === 'all');
+            //this.taskService.updateCurrentFilter(this.assignedToMe);
+            this.tasksFiltersService.resetAssignedFilterToAssignedToMe();
         }
     }
 
