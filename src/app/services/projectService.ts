@@ -29,7 +29,7 @@ export class ProjectService {
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router, protected tasksFiltersService: TasksFiltersService) {
-        
+
         this.projects$ = this.store.select(store => store.projects);
         this.team$ = this.store.select(store => store.team);
         this.selectedProject$ = this.store.select(store => store.selectedProject);
@@ -39,8 +39,6 @@ export class ProjectService {
         this.team$.subscribe((team) => {
             this.team = team;
         });
-        this.loadProjectsFilters();
-        this.loadCurrentProjectsFilters();
     }
 
     loadProjects() {
@@ -49,33 +47,6 @@ export class ProjectService {
                 map(payload => payload.map(project => new Project(project))),
                 map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)))
             );
-    }
-
-    loadCurrentProjectsFilters() {
-        const filter = new Filter({'id': 1, 'label': 'filter', 'name': 'All projects', 'value': project => project});
-        this.store.dispatch(new projectsAction.AddCurrentFilters(filter));
-    }
-
-    loadProjectsFilters() {
-        const filters = [
-            new Filter({
-                'id': 1, 'label': 'filter', 'name': 'All projects',
-                'value': project => project
-            }),
-            new Filter({
-                'id': 2, 'label': 'filter', 'name': 'Projects with tasks',
-                'value': project => project.tasksCounter > 0
-            }),
-            new Filter({
-                'id': 3, 'label': 'filter', 'name': 'Projects without tasks',
-                'value': project => project.tasksCounter === 0
-            })
-        ];
-        this.store.dispatch(new projectsAction.AddFilters(filters));
-    }
-
-    updateCurrentFilter(currentFilter) {
-        this.store.dispatch(new projectsAction.UpdateCurrentFilter(currentFilter));
     }
 
     selectProject(project: Project | null) {
@@ -94,8 +65,6 @@ export class ProjectService {
                     ));
                 }
             });
-            //const assignedToAll = this.taskFilters.find(filter => filter.label === 'assignedTo' && filter.name === 'all');
-            //this.taskService.updateCurrentFilter(assignedToAll);
             this.tasksFiltersService.resetAssignedFilterToAssignedToAll();
         } else {
             this.team.map((user) => {
@@ -109,8 +78,6 @@ export class ProjectService {
                     )
                 );
             });
-            //const assignedToMe = this.taskFilters.find(filter => filter.label === 'assignedTo' && filter.name === 'all');
-            //this.taskService.updateCurrentFilter(this.assignedToMe);
             this.tasksFiltersService.resetAssignedFilterToAssignedToMe();
         }
     }

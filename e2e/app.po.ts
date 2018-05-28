@@ -1,7 +1,7 @@
 import {browser, by, element} from 'protractor';
 
 
-export class TickistShoppingPage {
+export class TickistDashboard {
   navigateTo() {
     return browser.get('/');
   }

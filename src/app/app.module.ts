@@ -128,6 +128,9 @@ import { ChartLegendComponent } from './day-statistics/chart-legend/chart-legend
 import { PriorityComponent } from './shared/priority/priority.component';
 import {TasksFiltersService} from './services/tasks-filters.service';
 import {ProjectsFiltersService} from './services/projects-filters.service';
+import { FilterTagsDialogComponent } from './tags-list/filter-tags-dialog/filter-tags-dialog.component';
+import {TagsFiltersService} from './services/tags-filters-service';
+import {TickistMaterialModule} from './material.module';
 
 
 export function instrumentOptions() {
@@ -141,21 +144,6 @@ export function tokenGetter() {
     return localStorage.getItem('JWT');
 }
 
-@NgModule({
-    imports: [MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
-        MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
-        MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
-        MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
-    providers: [
-        {provide: DateAdapter, useClass: MyDateAdapter}
-    ],
-    exports: [MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatInputModule, MatRadioModule, MatSelectModule,
-        MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
-        MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
-        MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule]
-})
-export class TickistMaterialModule {
-}
 
 @NgModule({
     declarations: [
@@ -227,7 +215,8 @@ export class TickistMaterialModule {
         FilterProjectDialogComponent,
         SortTasksComponent,
         ChartLegendComponent,
-        PriorityComponent
+        PriorityComponent,
+        FilterTagsDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -263,7 +252,9 @@ export class TickistMaterialModule {
     ],
     bootstrap: [AppComponent],
     entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialog, EstimateTimeDialog,
-        DeleteProjectConfirmationDialogComponent, TimeDialogComponent, DeleteTaskDialogComponent, FilterProjectDialogComponent],
+        DeleteProjectConfirmationDialogComponent, TimeDialogComponent, DeleteTaskDialogComponent,
+        FilterProjectDialogComponent, FilterTagsDialogComponent
+    ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         {provide: DateAdapter, useClass: MyDateAdapter},
@@ -275,6 +266,7 @@ export class TickistMaterialModule {
         ProjectsFiltersService,
         ProjectService,
         TagService,
+        TagsFiltersService,
         ConfigurationService,
         StatisticsService,
         MyErrorHandler,

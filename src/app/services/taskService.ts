@@ -35,13 +35,13 @@ export class TaskService {
 
         if (tags.value instanceof Array) {
             tasks = tasks.filter((task) => {
-                let result = false;
+                const result = [];
                 task.tags.forEach((tag => {
                     if (tags.value.indexOf(tag.id) > -1) {
-                        result = true;
+                        result.push(tag.id);
                     }
                 }));
-                return result;
+                return result.length === tags.value.length;
             });
         } else if (tags.value === 'allTags') {
             tasks = tasks.filter((task) => {
@@ -115,21 +115,23 @@ export class TaskService {
                 order: 'asc',
                 name: 'priority <i class="fa fa-arrow-up"></i>'
             }),
-            new Filter({'id': 1, label: 'tags', 'value': 'allTasks', 'name': 'all tasks'})
+            new Filter({'id': 1, label: 'tags', 'value': 'allTags', 'name': 'all tags'})
         ];
 
         this.store.dispatch(new tasksAction.AddCurrentFilters(filters));
     }
 
     updateCurrentFilter(currentFilter) {
+        debugger;
         this.store.dispatch(new tasksAction.UpdateCurrentFilter(currentFilter));
     }
 
     getCurrentTagsFilterValue() {
-        let state: State<any>;
+        
+        let state: Array<Filter>;
         // we need to use 'synchronous' subscribe. It is only options to get current value
         this.currentTasksFilters$.pipe(take(1)).subscribe(s => state = s);
-        return state.pipe(filter(filter => filter.label === 'tags'))[0].value;
+        return state.filter(filter => filter.label === 'tags')[0].value;
     }
 
     loadTasksFilters(user: User) {

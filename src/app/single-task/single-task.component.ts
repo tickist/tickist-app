@@ -10,7 +10,7 @@ import {MatDialog} from '@angular/material';
 import {ProjectService} from '../services/projectService';
 import {Project} from '../models/projects';
 import {DeleteTaskDialogComponent} from './delete-task-dialog/delete-task.dialog.component';
-
+import * as _ from 'lodash';
 import {Subject, pipe} from 'rxjs';
 import {RepeatStringExtension} from '../pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
@@ -136,12 +136,7 @@ export class SingleTask {
         this.task.estimateTime = time.estimateTime;
     }
 
-    
-    changeFastMenuVisible(value) {
-        this.isFastMenuVisible = value;
-        this.changeRightMenuVisiblity();
-        console.log(value);
-    }
+
 }
 
 
@@ -179,7 +174,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         }
 
     }
-    
+
     changeRightMenuVisiblity() {
         if (this.isMouseOver) {
             this.isRightMenuVisible = true;
@@ -206,7 +201,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
             this.task.menuShowing.sharedList = true;
         }
         this.projectService.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((projects) => {
-            this.projects = projects;
+            this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);
             // this.t2.stop();  // Prints the time elapsed to the JS console.
         });
         if (this.mediaChange && this.mediaChange.mqAlias === 'xs') {
@@ -251,7 +246,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         this.task.removeTag(tag);
         this.taskService.updateTask(this.task);
     }
-    
+
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('mediaChange') && changes['mediaChange'].hasOwnProperty('currentValue')
             && changes['mediaChange'].currentValue && changes['mediaChange'].currentValue.mqAlias === 'xs') {
@@ -259,6 +254,12 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         } else {
             this.dateFormat = 'DD-MM-YYYY';
         }
+    }
+
+    changeFastMenuVisible(value) {
+        this.isFastMenuVisible = value;
+        this.changeRightMenuVisiblity();
+        console.log(value);
     }
 }
 
@@ -302,7 +303,7 @@ export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit,
         console.log('stop');
         console.timeEnd(`simple single task component ${this.task.name}`);
     }
-    
+
     changeRightMenuVisiblity() {
         if (this.isMouseOver) {
             this.isRightMenuVisible = true;
@@ -316,6 +317,12 @@ export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit,
             this.isRightMenuVisible = false;
             this.finishDateVisible = true;
         }
+    }
+
+    changeFastMenuVisible(value) {
+        this.isFastMenuVisible = value;
+        this.changeRightMenuVisiblity();
+        console.log(value);
     }
 
 }

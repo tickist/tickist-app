@@ -1,19 +1,21 @@
+import {Component, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {Component} from '@angular/core';
-import {ProjectsFiltersService} from '../../services/projects-filters.service';
+import {TagsFiltersService} from '../../services/tags-filters-service';
 
 
 @Component({
-    selector: 'app-filter-projects',
-    templateUrl: './filter-projects.dialog.component.html',
+    selector: 'tickst-filter-tags-dialog',
+    templateUrl: './filter-tags-dialog.component.html',
+    styleUrls: ['./filter-tags-dialog.component.css']
 })
-export class FilterProjectDialogComponent {
+export class FilterTagsDialogComponent implements OnInit {
     filtersValues: any = [];
     filterValue: any = {};
     filterValueId: number;
 
-    constructor(public dialogRef: MatDialogRef<FilterProjectDialogComponent>, protected projectsFiltersService: ProjectsFiltersService) {
-        this.projectsFiltersService.currentProjectsFilters$.subscribe((filter) => {
+
+    constructor(public dialogRef: MatDialogRef<FilterTagsDialogComponent>, protected tagsFiltersService: TagsFiltersService) {
+        this.tagsFiltersService.currentTagsFilters$.subscribe((filter) => {
 
             if (filter) {
                 this.filterValue = filter;
@@ -22,13 +24,17 @@ export class FilterProjectDialogComponent {
 
         });
 
-        this.projectsFiltersService.projectsFilters$.subscribe((filters) => {
+        this.tagsFiltersService.tagsFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.filtersValues = filters.filter(filter => filter.label === 'filter');
 
             }
         });
 
+
+    }
+
+    ngOnInit() {
     }
 
     close(result) {
@@ -39,11 +45,10 @@ export class FilterProjectDialogComponent {
         if (this.filtersValues.length > 0) {
             this.filterValue = this.filtersValues.find(filter => filter.label === 'filter' && filter.id === $event.value);
             this.filterValueId = this.filterValue['id'];
-            this.projectsFiltersService.updateCurrentFilter(this.filterValue);
+            this.tagsFiltersService.updateCurrentFilter(this.filterValue);
             this.dialogRef.close();
 
         }
 
     }
-
 }

@@ -1,10 +1,10 @@
-import { TickistShoppingPage } from './app.po';
+import { TickistDashboard  } from './app.po';
 
-describe('tickist-shopping App', function() {
-  let page: TickistShoppingPage;
+describe('tickist App', function() {
+  let page: TickistMain;
 
   beforeEach(() => {
-    page = new TickistShoppingPage();
+    page = new TickistDashboard ();
   });
 
   it('should display message saying app works', () => {

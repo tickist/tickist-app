@@ -19,7 +19,7 @@ import {Minutes2hoursPipe} from '../pipes/minutes2hours';
 import {MatDialogRef, MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
 import * as moment from 'moment';
 import {Tag} from '../models/tags';
-
+import * as _ from 'lodash';
 
 import {MatAutocompleteTrigger, MatInput} from '@angular/material';
 import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delete-task.dialog.component';
@@ -85,7 +85,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     let task: Task;
                     if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
                         this.user = user;
-                        this.projects = projects;
+                        this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);;
                         if (taskId) {
                             task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
                         } else {

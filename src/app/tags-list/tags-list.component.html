@@ -1,13 +1,19 @@
 <mat-card>
+    <div fxLayout="row">
+        <div fxFlex=""></div>
+        <tickist-menu-button fxFlex="23px" [icon]="'fa-filter'" (click)="openFilterDialog()">
+        </tickist-menu-button>
+    </div>
     <div>
-        <app-tag label="All tasks" id="allTasks" (singleClick)="selectTagSingleClick($event)"
+        <app-tag fxFlex label="All tasks" id="allTasks" (singleClick)="selectTagSingleClick($event)"
                  (doubleClick)="selectTagDoubleClick($event)"></app-tag>
-        <app-tag label="All tags" id="allTags" (singleClick)="selectTagSingleClick($event)"
+        <app-tag fxFlex label="All tags" id="allTags" (singleClick)="selectTagSingleClick($event)"
                  (doubleClick)="selectTagDoubleClick($event)"></app-tag>
-        <app-tag *ngFor="let tag of tags; trackBy: trackByFn" [label]="tag.name" [id]="tag.id" [tasksCounter]="tag.tasksCounter"
+        <app-tag fxFlex *ngFor="let tag of tags; trackBy: trackByFn" [label]="tag.name" [id]="tag.id"
+                 [tasksCounter]="tag.tasksCounter"
                  (singleClick)="selectTagSingleClick($event)"
                  (doubleClick)="selectTagDoubleClick($event)" [tag]="tag"></app-tag>
-        <app-tag label="Without tags" id="withoutTags" (singleClick)="selectTagSingleClick($event)"
+        <app-tag fxFlex label="Without tags" id="withoutTags" (singleClick)="selectTagSingleClick($event)"
                  (doubleClick)="selectTagDoubleClick($event)"></app-tag>
     </div>
 

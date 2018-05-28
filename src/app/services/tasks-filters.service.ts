@@ -35,13 +35,13 @@ export class TasksFiltersService {
 
         if (tags.value instanceof Array) {
             tasks = tasks.filter((task) => {
-                let result = false;
+                const result = [];
                 task.tags.forEach((tag => {
                     if (tags.value.indexOf(tag.id) > -1) {
-                        result = true;
+                        result.push(tag.id);
                     }
                 }));
-                return result;
+                return result.length === tags.value.length;
             });
         } else if (tags.value === 'allTags') {
             tasks = tasks.filter((task) => {
