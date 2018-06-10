@@ -1,8 +1,8 @@
 import {Component, OnInit, Input, ViewContainerRef, EventEmitter, Output, AfterViewInit} from '@angular/core';
 import {Observable, fromEvent, pipe} from 'rxjs';
-import {TaskService} from '../services/taskService';
+import {TaskService} from '../services/task-service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {TagService} from '../services/tagService';
+import {TagService} from '../services/tag-service';
 import {Tag} from '../models/tags';
 import {bufferWhen, debounceTime, filter, map} from 'rxjs/operators';
 import {interval} from 'rxjs/observable/interval';

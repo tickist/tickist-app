@@ -1,13 +1,14 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {TaskService} from '../services/taskService';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {TaskService} from '../services/task-service';
 import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../services/userService';
-import {ProjectService} from '../services/projectService';
-import {Observable, Subject, pipe, combineLatest } from 'rxjs';
+import {ProjectService} from '../services/project-service';
+import {Observable, Subject, combineLatest } from 'rxjs';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
 import {User} from '../models/user';
 import { map, takeUntil } from 'rxjs/operators';
+import {TasksFiltersService} from '../services/tasks-filters.service';
 
 class Timer {
     readonly start = performance.now();
@@ -40,7 +41,8 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     t2: Timer;
 
     constructor(protected taskService: TaskService, private route: ActivatedRoute, protected userService: UserService,
-                private projectService: ProjectService, private cd: ChangeDetectorRef) {
+                private projectService: ProjectService, private cd: ChangeDetectorRef,
+                protected tasksFiltersService: TasksFiltersService ) {
     }
 
     // When change detection begins
@@ -53,7 +55,6 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.t.stop();  // Prints the time elapsed to the JS console.
     }
 
-
     ngOnInit() {
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
@@ -65,7 +66,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                     if (selectedProjectsIds) {
                         tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));
                     }
-                    tasks = TaskService.useFilters(tasks, currentTasksFilters);
+                    tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
                 }
                 this.t2.stop();
                 return tasks;

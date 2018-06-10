@@ -6,7 +6,7 @@ import {Subscription} from 'rxjs';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
-import {TaskService} from '../../services/taskService';
+import {TaskService} from '../../services/task-service';
 import {UserService} from '../../services/userService';
 import {User} from '../../models/user/user';
 import {map} from 'rxjs/operators';

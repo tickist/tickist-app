@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {ConfigurationService} from '../services/configurationService';
 import {Task} from '../models/tasks';
-import {TaskService} from '../services/taskService';
+import {TaskService} from '../services/task-service';
 import * as moment from 'moment';
 
 @Component({

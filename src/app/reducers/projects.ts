@@ -49,7 +49,7 @@ export function selectedProjectsIds (state: any = [], action: projectsActions.Se
   }
 }
 
-export function currentProjectsFilters (state = [], action: projectsActions.CurrentProjectsFilters)  {
+export function currentProjectsFilters (state = null, action: projectsActions.CurrentProjectsFilters)  {
 
   switch (action.type) {
     case projectsActions.ADD_CURRENT_FILTERS:

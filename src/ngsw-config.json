@@ -7,12 +7,9 @@
             "resources": {
                 "files": [
                     "/favicon.ico",
-                    "/index.html"
-                ],
-                "versionedFiles": [
-                    "/*.bundle.css",
-                    "/*.bundle.js",
-                    "/*.chunk.js"
+                    "/index.html",
+                    "/*.css",
+                    "/*.js"
                 ]
             }
         },
@@ -33,7 +30,9 @@
     "dataGroups": [
         {
             "name": "users-api",
-            "urls": ["/user"],
+            "urls": [
+                "/user"
+            ],
             "cacheConfig": {
                 "strategy": "freshness",
                 "maxSize": 20,

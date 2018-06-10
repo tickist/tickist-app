@@ -3,8 +3,8 @@ import {Router} from '@angular/router';
 
 import {Subject, pipe} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
-import {TaskService} from '../services/taskService';
-import {ProjectService} from '../services/projectService';
+import {TaskService} from '../services/task-service';
+import {ProjectService} from '../services/project-service';
 import {Project} from '../models/projects';
 import {ConfigurationService} from '../services/configurationService';
 import {User} from '../models/user';
@@ -14,6 +14,7 @@ import {MatDialog, MatDialogConfig} from '@angular/material';
 import {FilterProjectDialogComponent} from './filter-projects-dialog/filter-projects.dialog.component';
 import {Filter} from '../models/filter';
 import {takeUntil} from 'rxjs/operators';
+import {ProjectsFiltersService} from '../services/projects-filters.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     filter: Filter;
 
     constructor(protected taskService: TaskService, private projectService: ProjectService,
+                protected projectsFiltersService: ProjectsFiltersService,
                 private route: ActivatedRoute, protected userService: UserService,
                 protected configurationService: ConfigurationService, protected router: Router,
                 protected media: ObservableMedia, private cd: ChangeDetectorRef, public dialog: MatDialog) {
@@ -61,7 +63,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
             this.cd.detectChanges();
         });
 
-        this.projectService.currentProjectsFilters$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(filter => {
+        this.projectsFiltersService.currentProjectsFilters$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(filter => {
             this.filter = filter;
             this.projects = this.generateDifferentLevelsOfProjects();
         });

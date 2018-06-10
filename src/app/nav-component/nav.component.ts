@@ -5,8 +5,8 @@ import {ConfigurationService} from '../services/configurationService';
 import {environment} from '../../environments/environment';
 import {ObservableMedia} from '@angular/flex-layout';
 import {NavigationEnd, Router} from '@angular/router';
-import {TaskService} from '../services/taskService';
-import {ProjectService} from '../services/projectService';
+import {TaskService} from '../services/task-service';
+import {ProjectService} from '../services/project-service';
 import {Subject, pipe} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 

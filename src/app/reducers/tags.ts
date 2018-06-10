@@ -23,7 +23,7 @@ export function tags(state = [], action: tagActions.Actions) {
 }
 
 
-export function currentTagsFilters(state = [], action: tagActions.CurrentTagsFilters) {
+export function currentTagsFilters(state = null, action: tagActions.CurrentTagsFilters) {
 
     switch (action.type) {
         case tagActions.ADD_CURRENT_FILTERS:

@@ -4,10 +4,10 @@ import {Store} from '@ngrx/store';
 import {Router, RouterStateSnapshot, NavigationEnd} from '@angular/router';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
-import {ProjectService} from '../services/projectService';
-import {TaskService} from '../services/taskService';
+import {ProjectService} from '../services/project-service';
+import {TaskService} from '../services/task-service';
 import {UserService} from '../services/userService';
-import {TagService} from '../services/tagService';
+import {TagService} from '../services/tag-service';
 import {ObservableMedia, MediaChange} from '@angular/flex-layout';
 import {ConfigurationService} from '../services/configurationService';
 import {SideNavVisibility} from '../models/configurations';
@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.leftSidenavVisibility = new SideNavVisibility(
             {'open': true, 'mode': '', 'position': 'start'});
         this.rightSidenavVisibility = new SideNavVisibility({'open': true, 'mode': '', 'position': 'end'});
-        
+
         this.media.subscribe((change: MediaChange) => {
             this.configurationService.updateLeftSidenavVisibility();
             this.configurationService.updateRightSidenavVisibility();

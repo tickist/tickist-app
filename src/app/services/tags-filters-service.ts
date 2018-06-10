@@ -2,12 +2,13 @@ import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {SimplyUser} from '../models/user';
+import {SimplyUser, User} from '../models/user';
 import {MatSnackBar} from '@angular/material';
 import * as tagsAction from '../reducers/actions/tags';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
+import {UserService} from './userService';
 
 
 @Injectable()
@@ -15,22 +16,15 @@ export class TagsFiltersService {
     team: SimplyUser[];
     tagsFilters$: Observable<any>;
     currentTagsFilters$: Observable<any>;
+    filters: Filter[];
+    user: User;
 
-    constructor(public http: HttpClient, private store: Store<AppStore>, protected router: Router) {
+    constructor(private store: Store<AppStore>, protected router: Router,
+                protected userService: UserService) {
 
         this.tagsFilters$ = this.store.select(s => s.tagsFilters);
         this.currentTagsFilters$ = this.store.select(s => s.currentTagsFilters);
-        this.loadTagsFilters();
-        this.loadCurrentTagsFilters();
-    }
-
-    loadCurrentTagsFilters() {
-        const filter = new Filter({'id': 1, 'label': 'filter', 'name': 'All projects', 'value': tag => tag});
-        this.store.dispatch(new tagsAction.AddCurrentFilters(filter));
-    }
-
-    loadTagsFilters() {
-        const filters = [
+        this.filters = [
             new Filter({
                 'id': 1, 'label': 'filter', 'name': 'All tags',
                 'value': tag => tag
@@ -44,10 +38,26 @@ export class TagsFiltersService {
                 'value': tag => tag.tasksCounter === 0
             })
         ];
-        this.store.dispatch(new tagsAction.AddFilters(filters));
+        this.userService.user$.subscribe(user => {
+            this.user = user;
+            this.loadCurrentTagsFilters();
+        });
+        this.loadTagsFilters();
+
+    }
+
+    loadCurrentTagsFilters() {
+        const filter = this.filters.find(elem => elem.id === this.user.tagsFilterId);
+        this.store.dispatch(new tagsAction.AddCurrentFilters(filter));
+    }
+
+    loadTagsFilters() {
+        this.store.dispatch(new tagsAction.AddFilters(this.filters));
     }
 
     updateCurrentFilter(currentFilter) {
+        this.user.updateTagsFilterId(currentFilter);
+        this.userService.updateUser(this.user, false);
         this.store.dispatch(new tagsAction.UpdateCurrentFilter(currentFilter));
     }
 }

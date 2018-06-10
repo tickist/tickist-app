@@ -40,7 +40,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChartModule, SharedModule} from 'primeng/primeng';
 import {AppComponent} from './app.component';
 import {UserService} from './services/userService';
-import {ProjectService} from './services/projectService';
+import {ProjectService} from './services/project-service';
 import {LoggedInGuard} from './guards/loggedIn.guard';
 import {AnonymousGuard} from './guards/anonymous.guard';
 import {ProjectsResolver, routes, TagsResolver, TasksResolver, TeamResolver, UserResolver} from './app.routes';
@@ -48,13 +48,13 @@ import {HomeComponent} from './home/home.component';
 import {AboutComponent} from './about/about.component';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {useLogMonitor} from '@ngrx/store-log-monitor';
-import {TaskService} from './services/taskService';
+import {TaskService} from './services/task-service';
 import {LoginComponent} from './login/login.component';
 import {SignupComponent} from './signup/signup.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 
-import {TagService} from './services/tagService';
+import {TagService} from './services/tag-service';
 import {NavComponent} from './nav-component/nav.component';
 import {TagsComponent} from './tags-component/tags.component';
 import {TaskComponent} from './task-component/task.component';
@@ -221,7 +221,6 @@ export function tokenGetter() {
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        // ServiceWorkerModule.register('../ngsw-worker.js', {enabled: environment.production}),
         RouterModule.forRoot(routes),
         CommonModule,
         FormsModule,
@@ -248,7 +247,8 @@ export function tokenGetter() {
                 whitelistedDomains: ['localhost:4200', 'tickist.com', 'localhost:8000'],
                 tokenGetter: tokenGetter
             }
-        })
+        }),
+        ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
     ],
     bootstrap: [AppComponent],
     entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialog, EstimateTimeDialog,

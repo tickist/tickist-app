@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subscription, combineLatest} from 'rxjs';
 
-import {TagService} from '../services/tagService';
+import {TagService} from '../services/tag-service';
 import {Tag} from '../models/tags';
 import {Task} from '../models/tasks';
-import {TaskService} from '../services/taskService';
+import {TaskService} from '../services/task-service';
 import {FormBuilder, Validators, FormGroup} from '@angular/forms';
 import {UserService} from '../services/userService';
 import {User} from '../models/user';

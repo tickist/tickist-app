@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import {Project} from '../models/projects';
-import {ProjectService} from '../services/projectService';
+import {ProjectService} from '../services/project-service';
 import {Location} from '@angular/common';
 import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angular/forms';
 import {Observable, Subscription, combineLatest} from 'rxjs';

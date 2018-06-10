@@ -2,7 +2,7 @@ import {
     Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, OnChanges, SimpleChange, HostListener
 } from '@angular/core';
 import {Project} from '../models/projects';
-import {ProjectService} from '../services/projectService';
+import {ProjectService} from '../services/project-service';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../services/configurationService';
 

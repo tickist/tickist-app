@@ -1,7 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {TieredMenuModule, MenuItem} from 'primeng/primeng';
-import {TaskService} from '../services/taskService';
-import {TagService} from '../services/tagService';
+import {TaskService} from '../services/task-service';
+import {TagService} from '../services/tag-service';
 import {Tag} from '../models/tags';
 import {MatDialogRef, MatDialog} from '@angular/material';
 

@@ -5,48 +5,28 @@ import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Project} from '../models/projects';
 import {Task} from '../models/tasks';
-import {SimplyUser, PendingUser} from '../models/user';
+import {SimplyUser, PendingUser, User} from '../models/user';
 import {MatSnackBar} from '@angular/material';
 import * as tasksAction from '../reducers/actions/tasks';
 import * as projectsAction from '../reducers/actions/projects';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
+import {UserService} from './userService';
 
 
 @Injectable()
 export class ProjectsFiltersService {
-    projects$: Observable<Project[]>;
-    team$: Observable<SimplyUser[]>;
-    team: SimplyUser[];
-    selectedProject$: Observable<Project>;
-    selectedProjectsIds$: Observable<Array<number>>;
     projectsFilters$: Observable<any>;
     currentProjectsFilters$: Observable<any>;
+    filters: Filter[];
+    user: User;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
-                protected router: Router) {
-
-        this.projects$ = this.store.select(store => store.projects);
-        this.team$ = this.store.select(store => store.team);
-        this.selectedProject$ = this.store.select(store => store.selectedProject);
-        this.selectedProjectsIds$ = this.store.select(store => store.selectedProjectsIds);
+                protected router: Router, protected userService: UserService) {
         this.projectsFilters$ = this.store.select(store => store.projectsFilters);
         this.currentProjectsFilters$ = this.store.select(store => store.currentProjectsFilters);
-        this.team$.subscribe((team) => {
-            this.team = team;
-        });
-        this.loadProjectsFilters();
-        this.loadCurrentProjectsFilters();
-    }
-
-    loadCurrentProjectsFilters() {
-        const filter = new Filter({'id': 1, 'label': 'filter', 'name': 'All projects', 'value': project => project});
-        this.store.dispatch(new projectsAction.AddCurrentFilters(filter));
-    }
-
-    loadProjectsFilters() {
-        const filters = [
+        this.filters = [
             new Filter({
                 'id': 1, 'label': 'filter', 'name': 'All projects',
                 'value': project => project
@@ -60,10 +40,28 @@ export class ProjectsFiltersService {
                 'value': project => project.tasksCounter === 0
             })
         ];
-        this.store.dispatch(new projectsAction.AddFilters(filters));
+        this.userService.user$.subscribe(user => {
+            if (user) {
+                 this.user = user;
+                this.loadCurrentProjectsFilters();
+            }
+        });
+        this.loadProjectsFilters();
+
+    }
+
+    loadCurrentProjectsFilters() {
+        const filter = this.filters.find(elem => elem.id === this.user.projectsFilterId);
+        this.store.dispatch(new projectsAction.AddCurrentFilters(filter));
+    }
+
+    loadProjectsFilters() {
+        this.store.dispatch(new projectsAction.AddFilters(this.filters));
     }
 
     updateCurrentFilter(currentFilter) {
+        this.user.updateProjectsFilterId(currentFilter);
+        this.userService.updateUser(this.user, false);
         this.store.dispatch(new projectsAction.UpdateCurrentFilter(currentFilter));
     }
 }

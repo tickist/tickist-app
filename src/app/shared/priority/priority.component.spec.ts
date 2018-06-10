@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PriorityComponent } from './priority.component';
-import {TickistMaterialModule} from '../../app.module';
+import {TickistMaterialModule} from '../../material.module';
 
 describe('PriorityComponent', () => {
   let component: PriorityComponent;

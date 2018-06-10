@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {TaskService} from '../services/taskService';
-import {TagService} from '../services/tagService';
+import {TaskService} from '../services/task-service';
+import {TagService} from '../services/tag-service';
 import {MatDialog} from '@angular/material';
 import {SortByDialog} from './sort-tasks-dialog/sort-tasks.dialog.component';
 

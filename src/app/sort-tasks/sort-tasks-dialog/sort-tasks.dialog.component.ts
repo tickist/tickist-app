@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {TaskService} from '../../services/taskService';
+import {TaskService} from '../../services/task-service';
 import {MatDialogRef} from '@angular/material';
 
 

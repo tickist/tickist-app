@@ -5,9 +5,9 @@ import { DebugElement } from '@angular/core';
 
 import { TagComponent } from './tag.component';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
-import {MockTaskService} from '../testing/mocks/taskService';
-import {MockTagService} from '../testing/mocks/tagService';
-import {TickistMaterialModule} from "../app.module";
+import {MockTaskService} from '../testing/mocks/task-service';
+import {MockTagService} from '../testing/mocks/tag-service';
+import {TickistMaterialModule} from '../material.module';
 
 let comp: TagComponent;
 let fixture: ComponentFixture<TagComponent>;

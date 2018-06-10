@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {PinButtonComponent} from './pin-button.component';
-import {TickistMaterialModule} from '../../app.module';
+import {TickistMaterialModule} from '../../material.module';
 
 describe('PinButtonComponent', () => {
     let component: PinButtonComponent;

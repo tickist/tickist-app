@@ -14,8 +14,6 @@ import {map} from 'rxjs/operators';
 
 @Injectable()
 export class UserService {
-    headers: Headers;
-    options: RequestOptions;
     user$: Observable<User>;
     team$: Observable<SimplyUser[]>;
 
@@ -25,9 +23,6 @@ export class UserService {
             return s.user;
         });
         this.team$ = this.store.select(s => s.team);
-        this.headers = new Headers({'Content-Type': 'application/json'});
-        this.options = new RequestOptions({headers: this.headers});
-
     }
 
     isLoggedIn(): boolean {

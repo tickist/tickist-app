@@ -1,15 +1,15 @@
 import {EditRepeatingOptionComponent} from './edit-repeating-option.component';
 import {async, ComponentFixture, inject, TestBed} from '@angular/core/testing';
 import {User} from '../models/user';
-import {MockTaskService} from '../testing/mocks/taskService';
+import {MockTaskService} from '../testing/mocks/task-service';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TickistMaterialModule} from '../app.module';
+import {TickistMaterialModule} from '../material.module';
 import {FormsModule} from '@angular/forms';
 import {fakeAsync} from '@angular/core/testing';
 import {ConfigurationService} from '../services/configurationService';
 import {Task} from '../models/tasks';
-import {TaskService} from '../services/taskService';
-import { task1 } from '../testing/mocks/api_mocks/tasks'
+import {TaskService} from '../services/task-service';
+import { task1 } from '../testing/mocks/api_mocks/tasks';
 
 let comp: EditRepeatingOptionComponent;
 let fixture: ComponentFixture<EditRepeatingOptionComponent>;

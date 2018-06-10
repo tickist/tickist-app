@@ -30,7 +30,9 @@ export class User extends Api {
     defaultTaskViewTagsView: string;
     overdueTasksSortBy: string;
     futureTasksSortBy: string;
-    
+    projectsFilterId: number;
+    tagsFilterId: number;
+
     constructor(user) {
         super();
         this.id = user.id || undefined;
@@ -63,8 +65,10 @@ export class User extends Api {
         this.defaultTaskViewTagsView = user.default_task_view_tags_view;
         this.overdueTasksSortBy = user.overdue_tasks_sort_by;
         this.futureTasksSortBy = user.future_tasks_sort_by;
+        this.projectsFilterId = user.projects_filter_id;
+        this.tagsFilterId = user.tags_filter_id;
     }
-    
+
     setDailySummaryHour(dailySummaryHour: string) {
         if (dailySummaryHour) {
             const date = new Date();
@@ -74,9 +78,17 @@ export class User extends Api {
         } else {
             return null;
         }
-        
+
     }
     
+    updateProjectsFilterId(filter) {
+        this.projectsFilterId = filter.id;
+    }
+    
+    updateTagsFilterId(filter) {
+        this.tagsFilterId = filter.id;
+    }
+
     toApi() {
         const result = super.toApi();
         if (this.dailySummaryHour) {
@@ -88,7 +100,7 @@ export class User extends Api {
             const secondFormatted = second < 10 ? '0' + second : second;
             result['daily_summary_hour'] = `${hourFormatted}:${minuteFormatted}:${secondFormatted}`;
         }
-        
+
         return result;
     }
 }

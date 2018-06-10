@@ -7,11 +7,11 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {SingleProjectComponent} from './single-project.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
-import {MockProjectService} from '../testing/mocks/projectService';
+import {MockProjectService} from '../testing/mocks/project-service';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
 import {MockUserService} from '../testing/mocks/userService';
 import {BlankComponent, RootComponent} from '../testing/test.modules';
-import {TickistMaterialModule} from '../app.module';
+import {TickistMaterialModule} from '../material.module';
 import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';
 import {ObservableMedia} from '@angular/flex-layout';
 

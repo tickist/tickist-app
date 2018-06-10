@@ -1,10 +1,10 @@
 import {async, ComponentFixture, fakeAsync, inject, TestBed} from '@angular/core/testing';
 import {DateOptionsComponent} from './date-options.component';
-import {TickistMaterialModule} from '../app.module';
-import {MockTaskService} from '../testing/mocks/taskService';
+import {TickistMaterialModule} from '../material.module';
+import {MockTaskService} from '../testing/mocks/task-service';
 import {FormsModule} from '@angular/forms';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TaskService} from '../services/taskService';
+import {TaskService} from '../services/task-service';
 import {Task} from '../models/tasks';
 import {task1} from '../testing/mocks/api_mocks/tasks';
 import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';

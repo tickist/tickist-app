@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ToggleButtonComponent} from './toggle-button.component';
-import {TickistMaterialModule} from '../../app.module';
+import {TickistMaterialModule} from '../../material.module';
 
 describe('ToggleButtonComponent', () => {
     let component: ToggleButtonComponent;

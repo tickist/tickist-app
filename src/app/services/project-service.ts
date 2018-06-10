@@ -11,9 +11,7 @@ import * as tasksAction from '../reducers/actions/tasks';
 import * as projectsAction from '../reducers/actions/projects';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {Filter} from '../models/filter';
 import {map} from 'rxjs/operators';
-import {TaskService} from './taskService';
 import {TasksFiltersService} from './tasks-filters.service';
 
 
@@ -24,19 +22,15 @@ export class ProjectService {
     team: SimplyUser[];
     selectedProject$: Observable<Project>;
     selectedProjectsIds$: Observable<Array<number>>;
-    projectsFilters$: Observable<any>;
-    currentProjectsFilters$: Observable<any>;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router, protected tasksFiltersService: TasksFiltersService) {
 
-        this.projects$ = this.store.select(store => store.projects);
-        this.team$ = this.store.select(store => store.team);
-        this.selectedProject$ = this.store.select(store => store.selectedProject);
-        this.selectedProjectsIds$ = this.store.select(store => store.selectedProjectsIds);
-        this.projectsFilters$ = this.store.select(store => store.projectsFilters);
-        this.currentProjectsFilters$ = this.store.select(store => store.currentProjectsFilters);
-        this.team$.subscribe((team) => {
+        this.projects$ = this.store.select(storeElem => storeElem.projects);
+        this.team$ = this.store.select(storeElem => storeElem.team);
+        this.selectedProject$ = this.store.select(storeElem => storeElem.selectedProject);
+        this.selectedProjectsIds$ = this.store.select(storeElem => storeElem.selectedProjectsIds);
+        this.team$.subscribe(team => {
             this.team = team;
         });
     }

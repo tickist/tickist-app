@@ -3,12 +3,12 @@ import {
     ElementRef, HostListener
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {TaskService} from '../services/taskService';
-import {TagService} from '../services/tagService';
+import {TaskService} from '../services/task-service';
+import {TagService} from '../services/tag-service';
 import {Task, Step} from '../models/tasks';
 import {Observable, Subscription, pipe, combineLatest} from 'rxjs';
 
-import {ProjectService} from '../services/projectService';
+import {ProjectService} from '../services/project-service';
 import {UserService} from '../services/userService';
 import {Project} from '../models/projects';
 import {ConfigurationService} from '../services/configurationService';
@@ -54,9 +54,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     test: any;
     minFilter: any;
 
-    @ViewChild('finishDate') finishDateViewChild;
-    @ViewChild('finishTime') finishTimeViewChild;
-    @ViewChild('suspendedDate') suspendedDateViewChild;
     @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
     @ViewChild('autocompleteTags') autocompleteTags;
 
@@ -295,22 +292,22 @@ export class TaskComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    clearFinishDate() {
+    clearFinishDate($event) {
         const main = <FormGroup>this.taskForm.controls['main'];
         main.controls['finishDate'].setValue('');
-        this.finishDateViewChild.overlayVisible = false;
+        $event.stopPropagation();
     }
 
-    clearFinishTime() {
+    clearFinishTime($event) {
         const main = <FormGroup>this.taskForm.controls['main'];
         main.controls['finishTime'].setValue('');
-        this.finishTimeViewChild.overlayVisible = false;
+        $event.stopPropagation();
     }
 
-    clearSuspendedDate() {
+    clearSuspendedDate($event) {
         const main = <FormGroup>this.taskForm.controls['extra'];
         main.controls['suspendedDate'].setValue('');
-        this.suspendedDateViewChild.overlayVisible = false;
+        $event.stopPropagation();
     }
 
     createNewTask(selectedProject: Project) {

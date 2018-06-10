@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RightMenuComponent} from './right-menu.component';
-import {TickistMaterialModule} from '../../app.module';
+import {TickistMaterialModule} from '../../material.module';
 import {Component, Input} from '@angular/core';
 import { MockComponent } from 'mock-component';
 import {BlankComponent, RootComponent} from '../../testing/test.modules';
