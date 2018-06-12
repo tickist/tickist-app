@@ -43,7 +43,15 @@ import {UserService} from './services/userService';
 import {ProjectService} from './services/project-service';
 import {LoggedInGuard} from './guards/loggedIn.guard';
 import {AnonymousGuard} from './guards/anonymous.guard';
-import {ProjectsResolver, routes, TagsResolver, TasksResolver, TeamResolver, UserResolver} from './app.routes';
+import {
+    ProjectsResolver,
+    routes, SetAllTagsFilterResolver,
+    SetAllTasksFilterResolver,
+    TagsResolver,
+    TasksResolver,
+    TeamResolver,
+    UserResolver
+} from './app.routes';
 import {HomeComponent} from './home/home.component';
 import {AboutComponent} from './about/about.component';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
@@ -276,6 +284,8 @@ export function tokenGetter() {
         TeamResolver,
         UserResolver,
         TagsResolver,
+        SetAllTasksFilterResolver,
+        SetAllTagsFilterResolver,
         {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true},
         {
             provide: ErrorHandler,

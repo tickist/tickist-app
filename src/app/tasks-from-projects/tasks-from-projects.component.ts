@@ -46,14 +46,14 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     }
 
     // When change detection begins
-    ngDoCheck() {
-        this.t = new Timer(`WHOLE LIST OF TASKS`)
-    }
-
-
-    ngAfterViewChecked() {
-        this.t.stop();  // Prints the time elapsed to the JS console.
-    }
+    // ngDoCheck() {
+    //     this.t = new Timer(`WHOLE LIST OF TASKS`)
+    // }
+    //
+    //
+    // ngAfterViewChecked() {
+    //     this.t.stop();  // Prints the time elapsed to the JS console.
+    // }
 
     ngOnInit() {
         this.tasksStream$ = combineLatest(

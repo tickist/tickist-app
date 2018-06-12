@@ -24,6 +24,7 @@ import {TasksFromProjectsComponent} from './tasks-from-projects/tasks-from-proje
 import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
 import {TagsListComponent} from './tags-list/tags-list.component';
+import {TasksFiltersService} from "./services/tasks-filters.service";
 
 
 @Injectable()
@@ -76,18 +77,44 @@ export class ProjectsResolver implements Resolve<Project> {
     }
 }
 
+@Injectable()
+export class SetAllTasksFilterResolver implements Resolve<Project> {
+    constructor(protected tasksFiltersService: TasksFiltersService) {
+    }
+
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
+        return this.tasksFiltersService.setAllTasksFilter();
+    }
+}
+
+@Injectable()
+export class SetAllTagsFilterResolver implements Resolve<Project> {
+    constructor(protected tasksFiltersService: TasksFiltersService) {
+    }
+
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
+        return this.tasksFiltersService.setAllTagsFilter();
+    }
+}
+
 
 export const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
     {path: 'home', component: HomeComponent, canActivate: [LoggedInGuard], children: [
-        {path: 'projects/:projectId', component: TasksFromProjectsComponent},
+        {path: 'projects/:projectId', component: TasksFromProjectsComponent, resolve: {
+                setAllTasksFilter:  SetAllTasksFilterResolver 
+            }},
         {path: 'projects', component: ProjectsListComponent, outlet: 'leftSideNav'},
-        {path: 'projects', component: TasksFromProjectsComponent},
+        {path: 'projects', component: TasksFromProjectsComponent, resolve: {
+                setAllTasksFilter:  SetAllTasksFilterResolver 
+            }},
         {path: 'project', component: ProjectComponent},
         {path: 'project/:projectId', component: ProjectComponent},
         {path: 'task', component: TaskComponent},
         {path: 'task/:taskId', component: TaskComponent},
-        {path: 'tags', component: TagsComponent},
+        {path: 'tags', component: TagsComponent, resolve: {
+                setAllTagsFilter:  SetAllTagsFilterResolver 
+            }},
         {path: 'tags', component: TagsListComponent, outlet: 'leftSideNav'},
         {path: 'team', component: TeamComponent},
         {path: 'user', component: UserComponent},

@@ -147,6 +147,14 @@ export class TasksFiltersService {
     resetAssignedFilterToAssignedToMe() {
         this.updateCurrentFilter(this.assignedToMe);
     }
+    
+    setAllTasksFilter() {
+        this.updateCurrentFilter(new Filter({'id': 1, label: 'tags', 'value': 'allTasks', 'name': 'all tasks'}));
+    }
+    
+    setAllTagsFilter() {
+        this.updateCurrentFilter(new Filter({'id': 1, label: 'tags', 'value': 'allTags', 'name': 'all tasks'}));
+    }
 
     loadTasksFilters(user: User) {
         const filters = [
