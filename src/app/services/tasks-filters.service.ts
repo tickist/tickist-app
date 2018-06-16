@@ -56,36 +56,38 @@ export class TasksFiltersService {
         return tasks;
     }
 
-    constructor(public http: HttpClient, private store: Store<AppStore>, private userService: UserService,
-                public snackBar: MatSnackBar, protected statisticsService: StatisticsService,
-                protected configurationService: ConfigurationService,
+    constructor(public http: HttpClient, private store: Store<AppStore>,
+                public snackBar: MatSnackBar, protected configurationService: ConfigurationService,
                 protected tagService: TagService) {
 
         this.tasksFilters$ = this.store.select(s => s.tasksFilters);
         this.currentTasksFilters$ = this.store.select(s => s.currentTasksFilters);
-        this.userService.user$.subscribe((user) => {
-            if (user) {
-                this.user = user;
-                this.loadTasksFilters(user);
-                this.loadCurrentTasksFilters(user);
-                this.assignedToMe = new Filter({
-                    id: user.id,
-                    label: 'assignedTo',
-                    value: task => task.owner.id === user.id,
-                    name: 'me',
-                    avatar: user.avatarUrl,
-                    fixed: true
-                });
-                this.assignedToAll = new Filter({
-                    id: 0,
-                    label: 'assignedTo',
-                    value: task => true,
-                    name: 'all',
-                    avatar: '/assets/default_avatar.png',
-                    fixed: true
-                });
-            }
+        // this.userService.user$.subscribe((user) => {
+        //     if (user) {
+        //        
+        //     }
+        // });
+    }
+    
+    createDefaultFilters(user) {
+       this.user = user;
+               
+        this.assignedToMe = new Filter({
+            id: user.id,
+            label: 'assignedTo',
+            value: task => task.owner.id === user.id,
+            name: 'me',
+            avatar: user.avatarUrl,
+            fixed: true
         });
+        this.assignedToAll = new Filter({
+            id: 0,
+            label: 'assignedTo',
+            value: task => true,
+            name: 'all',
+            avatar: '/assets/default_avatar.png',
+            fixed: true
+        }); 
     }
 
     loadCurrentTasksFilters(user: User) {

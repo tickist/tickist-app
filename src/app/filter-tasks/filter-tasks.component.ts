@@ -4,6 +4,7 @@ import {TaskService} from '../services/task-service';
 import {TagService} from '../services/tag-service';
 import {Tag} from '../models/tags';
 import {MatDialogRef, MatDialog} from '@angular/material';
+import {TasksFiltersService} from "../services/tasks-filters.service";
 
 @Component({
     selector: 'app-filter-tasks',
@@ -91,7 +92,7 @@ export class TasksFilterDialog {
     filterValue: any = {};
     filterValueId: number;
 
-    constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService) {
+    constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
         this.taskService.currentTasksFilters$.subscribe((filters) => {
 
             if (filters.length > 0) {
@@ -113,7 +114,7 @@ export class TasksFilterDialog {
             this.filterValue = this.filterValues
                 .filter(filter => filter.label === 'filter' && filter.id === $event.value)[0];
             this.filterValueId = this.filterValue['id'];
-            this.taskService.updateCurrentFilter(this.filterValue);
+            this.tasksFiltersService.updateCurrentFilter(this.filterValue);
             this.dialogRef.close();
         }
     }
@@ -130,7 +131,7 @@ export class AssignedToDialog {
     assignedToValue: any = {};
     assignedToValueId: number;
 
-    constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService) {
+    constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
         this.taskService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.assignedToValue = filters.filter(filter => filter.label === 'assignedTo')[0];
@@ -151,7 +152,7 @@ export class AssignedToDialog {
             this.assignedToValue = this.assignedToValues
                 .filter(assignedTo => assignedTo.label === 'assignedTo' && assignedTo.id === $event.value)[0];
             this.assignedToValueId = this.assignedToValue['id'];
-            this.taskService.updateCurrentFilter(this.assignedToValue);
+            this.tasksFiltersService.updateCurrentFilter(this.assignedToValue);
             this.dialogRef.close();
         }
     }
@@ -169,7 +170,7 @@ export class TagsFilterDialog {
     tags: Tag[] = [];
 
     constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService,
-                public tagService: TagService) {
+                public tagService: TagService, protected tasksFiltersService: TasksFiltersService) {
         this.taskService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.tagsFilterValue = filters.filter(filter => filter.label == 'tags')[0];
@@ -202,7 +203,7 @@ export class TagsFilterDialog {
         } else if (this.isInt(tagId)) {
             value = [tagId];
         }
-        this.taskService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
+        this.tasksFiltersService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
         this.dialogRef.close();
     }
 
@@ -227,7 +228,7 @@ export class EstimateTimeDialog {
     estimateTime__gtValue: any = {};
     estimateTime__gtId: number;
 
-    constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService) {
+    constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
         this.taskService.currentTasksFilters$.subscribe((filters) => {
 
             if (filters.length > 0) {
@@ -265,8 +266,8 @@ export class EstimateTimeDialog {
 
             this.estimateTime__gtValue = this.estimateTime__gtValues.filter(elem => elem.label === 'estimateTime__gt' && elem.id == this.rangeValues[1])[0];
             this.estimateTime__gtId = this.estimateTime__gtValue['id'];
-            this.taskService.updateCurrentFilter(this.estimateTime__ltValue);
-            this.taskService.updateCurrentFilter(this.estimateTime__gtValue);
+            this.tasksFiltersService.updateCurrentFilter(this.estimateTime__ltValue);
+            this.tasksFiltersService.updateCurrentFilter(this.estimateTime__gtValue);
             this.dialogRef.close();
         }
     }

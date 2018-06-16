@@ -11,14 +11,15 @@ import * as userAction from '../reducers/actions/user';
 import * as teamAction from '../reducers/actions/team';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
+import {TasksFiltersService} from "./tasks-filters.service";
 
 @Injectable()
 export class UserService {
     user$: Observable<User>;
     team$: Observable<SimplyUser[]>;
 
-    constructor(private http: HttpClient, private store: Store<AppStore>, private router: Router,
-                public snackBar: MatSnackBar) {
+    constructor(private http: HttpClient, private store: Store<AppStore>,
+                public snackBar: MatSnackBar, protected tasksFiltersService: TasksFiltersService) {
         this.user$ = this.store.select(s => {
             return s.user;
         });
@@ -36,8 +37,12 @@ export class UserService {
         } else {
             return this.http.get(`${environment['apiUrl']}/user/${userID}/`)
                 .pipe(map(payload => {
-                    this.store.dispatch(new userAction.AddUser(new User(payload)));
-                }));
+                    const user = new User(payload);
+                    this.store.dispatch(new userAction.AddUser(user));
+                    this.tasksFiltersService.createDefaultFilters(user);
+                    this.tasksFiltersService.loadTasksFilters(user);
+                    this.tasksFiltersService.loadCurrentTasksFilters(user);
+                }))
         }
     }
 

@@ -9,6 +9,7 @@ import {TaskService} from '../services/task-service';
 import {ProjectService} from '../services/project-service';
 import {Subject, pipe} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
+import {TasksFiltersService} from "../services/tasks-filters.service";
 
 
 @Component({
@@ -34,7 +35,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
 
     constructor(private userService: UserService, private configurationService: ConfigurationService,
                 protected projectService: ProjectService, protected media: ObservableMedia, protected router: Router,
-                protected taskService: TaskService, private renderer: Renderer2) {
+                protected taskService: TaskService, private renderer: Renderer2, protected tasksFiltersService: TasksFiltersService) {
     }
 
     ngOnInit() {
@@ -100,7 +101,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             navigate.push({outlets: {'primary': primaryArgs, 'leftSideNav': [leftSideNavPath]}});
         }
-        this.taskService.loadCurrentTasksFilters(this.user);
+        this.tasksFiltersService.loadCurrentTasksFilters(this.user);
         this.projectService.selectProject(null);
         this.router.navigate(navigate);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {

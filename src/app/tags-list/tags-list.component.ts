@@ -15,6 +15,7 @@ import {FilterTagsDialogComponent} from './filter-tags-dialog/filter-tags-dialog
 import {MatDialog} from '@angular/material';
 import {TagsFiltersService} from '../services/tags-filters-service';
 import {Filter} from '../models/filter';
+import {TasksFiltersService} from "../services/tasks-filters.service";
 
 @Component({
     selector: 'app-tags-list',
@@ -35,7 +36,8 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
                 protected userService: UserService, protected configurationService: ConfigurationService,
-                public dialog: MatDialog, protected tagsFiltersService: TagsFiltersService) {
+                public dialog: MatDialog, protected tagsFiltersService: TagsFiltersService, 
+                protected tasksFiltersService: TasksFiltersService) {
 
     }
 
@@ -108,17 +110,17 @@ export class TagsListComponent implements OnInit, OnDestroy {
         } else if (this.isInt(tagId)) {
             value = [tagId];
         }
-        this.taskService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
+        this.tasksFiltersService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
     }
 
     selectTagDoubleClick(tagId) {
-        let value = this.taskService.getCurrentTagsFilterValue();
+        let value = this.tasksFiltersService.getCurrentTagsFilterValue();
         if (value instanceof String || typeof tagId === 'string') {
             value = tagId;
         } else if (value instanceof Array) {
             value.push(tagId);
         }
-        this.taskService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
+        this.tasksFiltersService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
     }
 
     changeTaskView(event) {

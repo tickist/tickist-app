@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {TaskService} from '../../services/task-service';
 import {MatDialogRef} from '@angular/material';
+import {TasksFiltersService} from "../../services/tasks-filters.service";
 
 
 @Component({
@@ -13,7 +14,7 @@ export class SortByDialog {
     sortingByValue: any = {};
     sortingByValueId: number;
     
-    constructor(public dialogRef: MatDialogRef<SortByDialog>, public taskService: TaskService) {
+    constructor(public dialogRef: MatDialogRef<SortByDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
         this.taskService.currentTasksFilters$.subscribe((filters) => {
             
             if (filters.length > 0) {
@@ -36,7 +37,7 @@ export class SortByDialog {
         if (this.sortingByValues.length > 0) {
             this.sortingByValue = this.sortingByValues.filter(sortingBy => sortingBy.label === 'sorting' && sortingBy.id === $event.value)[0];
             this.sortingByValueId = this.sortingByValue['id'];
-            this.taskService.updateCurrentFilter(this.sortingByValue);
+            this.tasksFiltersService.updateCurrentFilter(this.sortingByValue);
             this.dialogRef.close();
         }
     }

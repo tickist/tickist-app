@@ -15,6 +15,7 @@ import {FilterProjectDialogComponent} from './filter-projects-dialog/filter-proj
 import {Filter} from '../models/filter';
 import {takeUntil} from 'rxjs/operators';
 import {ProjectsFiltersService} from '../services/projects-filters.service';
+import * as _ from 'lodash';
 
 
 @Component({
@@ -79,6 +80,10 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         if (this.selectedProject && !projects.find(project => project.id === this.selectedProject.id)) {
             projects.push(this.allProjects.find(project => project.id === this.selectedProject.id));
         }
+        projects = _.orderBy(projects,
+                    ['isInbox', 'name'],
+                    ['desc', 'asc']
+                );
 
         const list_of_list = [],
             the_first_level = projects.filter((project) => project.level === 0),

@@ -44,17 +44,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 private projectService: ProjectService, private cd: ChangeDetectorRef,
                 protected tasksFiltersService: TasksFiltersService ) {
     }
-
-    // When change detection begins
-    // ngDoCheck() {
-    //     this.t = new Timer(`WHOLE LIST OF TASKS`)
-    // }
-    //
-    //
-    // ngAfterViewChecked() {
-    //     this.t.stop();  // Prints the time elapsed to the JS console.
-    // }
-
+    
     ngOnInit() {
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
@@ -62,6 +52,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
             this.taskService.currentTasksFilters$,
             (tasks: Task[], selectedProjectsIds: Array<number>, currentTasksFilters: any) => {
                 this.t2 = new Timer(`tasksStream$`)
+                debugger
                 if (tasks && currentTasksFilters && currentTasksFilters.length > 0) {
                     if (selectedProjectsIds) {
                         tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));
