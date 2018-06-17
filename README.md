@@ -1,31 +1,40 @@
-# Tickist
+# Tickist - frontend 
+Official website: [Tickist.com](https://tickist.com)
+[![Build Status](https://travis-ci.org/tickist/frontend.svg?branch=master)](https://travis-ci.org/tickist/frontend)
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.5.0
+## How to run
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+If you want to run this application, please download docker-compose from here and next run initial script: 
+* python initial&#46;py.
 
-## Code scaffolding
+Afterwards you can start development using this command: docker-compose up. 
+The Tickist application will be available from this address: http://localhost:4200
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class`.
+If you want  to read more about technologies used in this project, please see this online documentation: 
+ * [Angular](https://angular.io/)
+ * [Django](https://www.djangoproject.com/)
+ * [Docker](https://www.docker.com/) / [Docker-compose](https://docs.docker.com/compose/)
 
-## Build
+### Bug reporting
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+If you have any problems with application or you find a bug, please report it:
+* in github issues [backend](https://github.com/tickist/backend/issues)/ [frontend](https://github.com/tickist/frontend/issues)/ [development](https://github.com/tickist/development/issues)
+* send us an e-mail to tickist@tickist.com
 
-## Running unit tests
+### Useful links
+ * [backend (written in Django)](https://github.com/tickist/backend)
+ * [frontend (written in Angular/Typescript)](https://github.com/tickist/frontend)
+ * [docker-compose](https://github.com/tickist/development)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+ 
+## What is Tickist
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). 
-Before running the tests make sure you are serving the app via `ng serve`.
+Tickist is not only a place, where you may gather your daily tasks. It was also designed as a tool for the continuous improvement of effectiveness and efficiency of time management. The functionalities offered by Tickist ― such as nested lists, tags, flexible due dates (on that date and by a date) and estimated time ― should help us all to manage our time more effectively. A to-do list doesn’t have to cause negative associations. We want to enjoy the ticking and our well-deserved free time
 
-## Deploying to Github Pages
+## Licence 
 
-Run `ng github-pages:deploy` to deploy to Github Pages.
+Every code patch accepted in Tickist is licensed under GPL v3.0. You must be careful to not include any code that can not be licensed under this license.
 
-## Further help
+Please read carefully [our license](https://github.com/tickist/frontend/blob/master/LICENSE) and ask us if you have any questions.
 
-To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
