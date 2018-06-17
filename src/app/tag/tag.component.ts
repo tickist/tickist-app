@@ -6,6 +6,7 @@ import {TagService} from '../services/tag-service';
 import {Tag} from '../models/tags';
 import {bufferWhen, debounceTime, filter, map} from 'rxjs/operators';
 import {interval} from 'rxjs/observable/interval';
+import {TasksFiltersService} from "../services/tasks-filters.service";
 
 
 @Component({
@@ -26,13 +27,13 @@ export class TagComponent implements OnInit, AfterViewInit {
     editTagForm: FormGroup;
     editMode = false;
 
-    constructor(private fb: FormBuilder, public viewContainerRef: ViewContainerRef, private taskService: TaskService,
+    constructor(private fb: FormBuilder, public viewContainerRef: ViewContainerRef, private tasksFiltersService: TasksFiltersService,
                 protected tagService: TagService) {
         this.isActive = false;
     }
 
     ngOnInit() {
-        this.taskService.currentTasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.tagsIds = filters.filter((myFilter) => myFilter.label === 'tags')[0].value;
                 this.isActive = (this.tagsIds.indexOf(this.id) > -1 || this.tagsIds === this.id);

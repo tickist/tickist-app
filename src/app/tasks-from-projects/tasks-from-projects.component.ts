@@ -49,10 +49,9 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
             this.projectService.selectedProjectsIds$,
-            this.taskService.currentTasksFilters$,
+            this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], selectedProjectsIds: Array<number>, currentTasksFilters: any) => {
                 this.t2 = new Timer(`tasksStream$`)
-                debugger
                 if (tasks && currentTasksFilters && currentTasksFilters.length > 0) {
                     if (selectedProjectsIds) {
                         tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));

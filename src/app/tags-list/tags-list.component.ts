@@ -44,7 +44,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.tagsStream$ = combineLatest(
             this.tagService.tags$,
-            this.taskService.currentTasksFilters$,
+            this.tasksFiltersService.currentTasksFilters$,
             this.tagsFiltersService.currentTagsFilters$,
             (tags: Tag[], currentTasksFilters: any, currentTagsFilters: any) => {
                 this.currentTagsFilters = currentTagsFilters;
@@ -53,7 +53,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
         );
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
-            this.taskService.currentTasksFilters$,
+            this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], currentTasksFilters: any) => {
                 if (currentTasksFilters.length > 0) {
                     tasks = TaskService.useFilters(tasks, currentTasksFilters);

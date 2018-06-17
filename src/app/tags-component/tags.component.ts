@@ -9,6 +9,7 @@ import {UserService} from '../services/userService';
 import {User} from '../models/user';
 import {SideNavVisibility} from '../models';
 import {ConfigurationService} from '../services/configurationService';
+import {TasksFiltersService} from "../services/tasks-filters.service";
 
 @Component({
     selector: 'app-tags',
@@ -27,7 +28,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     rightSidenavVisibility: SideNavVisibility;
     subscriptions: Subscription;
 
-    constructor(private tagService: TagService, private  taskService: TaskService,
+    constructor(private tagService: TagService, private  taskService: TaskService, protected tasksFiltersService: TasksFiltersService,
                 protected userService: UserService, protected configurationService: ConfigurationService) {
 
     }
@@ -35,14 +36,14 @@ export class TagsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.tagsStream$ = combineLatest(
             this.tagService.tags$,
-            this.taskService.currentTasksFilters$,
+            this.tasksFiltersService.currentTasksFilters$,
             (tags: Tag[], currentTasksFilters: any) => {
                 return tags;
             }
         );
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
-            this.taskService.currentTasksFilters$,
+            this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], currentTasksFilters: any) => {
                 if (currentTasksFilters.length > 0) {
                     tasks = TaskService.useFilters(tasks, currentTasksFilters);

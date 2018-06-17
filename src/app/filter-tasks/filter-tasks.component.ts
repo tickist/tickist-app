@@ -19,7 +19,7 @@ export class FilterTasksComponent implements OnInit {
     estimateTime__gtValue: any = {};
     tagsFilterValue: any = {};
 
-    constructor(public dialog: MatDialog, private taskService: TaskService, private tagService: TagService) {
+    constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService, private tagService: TagService) {
     }
 
     openTasksFilterDialog() {
@@ -54,7 +54,7 @@ export class FilterTasksComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.taskService.currentTasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
 
             if (filters.length > 0) {
                 this.filterValue = filters.filter(filter => filter.label === 'filter')[0];
@@ -93,7 +93,7 @@ export class TasksFilterDialog {
     filterValueId: number;
 
     constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
-        this.taskService.currentTasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
 
             if (filters.length > 0) {
                 this.filterValue = filters.filter(filter => filter.label === 'filter')[0];
@@ -102,7 +102,7 @@ export class TasksFilterDialog {
 
         });
 
-        this.taskService.tasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.filterValues = filters.filter(filter => filter.label === 'filter');
             }
@@ -132,14 +132,14 @@ export class AssignedToDialog {
     assignedToValueId: number;
 
     constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
-        this.taskService.currentTasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.assignedToValue = filters.filter(filter => filter.label === 'assignedTo')[0];
                 this.assignedToValueId = this.assignedToValue['id'];
             }
         });
 
-        this.taskService.tasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.assignedToValues = filters.filter(filter => filter.label === 'assignedTo');
             }
@@ -171,14 +171,14 @@ export class TagsFilterDialog {
 
     constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService,
                 public tagService: TagService, protected tasksFiltersService: TasksFiltersService) {
-        this.taskService.currentTasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.tagsFilterValue = filters.filter(filter => filter.label == 'tags')[0];
                 this.tagsFilterValueId = this.tagsFilterValue['id'];
             }
         });
 
-        this.taskService.tasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.tagsFilterValues = filters.filter(filter => filter.label == 'tags');
             }
@@ -229,7 +229,7 @@ export class EstimateTimeDialog {
     estimateTime__gtId: number;
 
     constructor(public dialogRef: MatDialogRef<TasksFilterDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
-        this.taskService.currentTasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
 
             if (filters.length > 0) {
                 this.estimateTime__ltValue = filters.filter(filter => filter.label === 'estimateTime__lt')[0];
@@ -240,7 +240,7 @@ export class EstimateTimeDialog {
 
         });
 
-        this.taskService.tasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.estimateTime__ltValues = filters.filter(filter => filter.label === 'estimateTime__lt');
                 this.estimateTime__gtValues = filters.filter(filter => filter.label === 'estimateTime__gt');

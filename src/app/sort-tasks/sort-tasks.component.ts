@@ -3,6 +3,7 @@ import {TaskService} from '../services/task-service';
 import {TagService} from '../services/tag-service';
 import {MatDialog} from '@angular/material';
 import {SortByDialog} from './sort-tasks-dialog/sort-tasks.dialog.component';
+import {TasksFiltersService} from "../services/tasks-filters.service";
 
 @Component({
   selector: 'tickist-sort-tasks',
@@ -12,7 +13,7 @@ import {SortByDialog} from './sort-tasks-dialog/sort-tasks.dialog.component';
 export class SortTasksComponent implements OnInit {
   sortByValue: any = {};
     
-  constructor(public dialog: MatDialog, private taskService: TaskService) {
+  constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService) {
   }
 
 
@@ -26,7 +27,7 @@ export class SortTasksComponent implements OnInit {
 
 
   ngOnInit() {
-    this.taskService.currentTasksFilters$.subscribe((filters) => {
+    this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
       if (filters.length > 0) {
         this.sortByValue = filters.filter(filter => filter.label === 'sorting')[0];
       }

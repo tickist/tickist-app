@@ -15,7 +15,7 @@ export class SortByDialog {
     sortingByValueId: number;
     
     constructor(public dialogRef: MatDialogRef<SortByDialog>, public taskService: TaskService, protected tasksFiltersService: TasksFiltersService) {
-        this.taskService.currentTasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             
             if (filters.length > 0) {
                 this.sortingByValue = filters.filter(filter => filter.label === 'sorting')[0];
@@ -24,7 +24,7 @@ export class SortByDialog {
             
         });
         
-        this.taskService.tasksFilters$.subscribe((filters) => {
+        this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.sortingByValues = filters.filter(filter => filter.label === 'sorting');
                 
