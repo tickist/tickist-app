@@ -5,28 +5,103 @@ import * as _ from 'lodash';
 import {Api} from './commons';
 import * as moment from 'moment';
 import {SimpleProject} from './projects/simply-project';
+import {Step} from './steps';
 
 class Menu {
-    isDescription;
-    isSteps;
-    isTags;
-    isRepeat;
-    sharedList;
-    isAssignedTo;
-    isTaskProject;
-    isFinishDate;
+    private _isDescription;
+    private _isSteps;
+    private _isTags;
+    private _isRepeat;
+    private _isAssignedTo;
+    private _isTaskProject;
+    private _isFinishDate;
 
     constructor(menu: any = {}) {
-        this.isDescription = menu.isDescription || false;
-        this.isSteps = menu.isSteps || false;
-        this.isTags = menu.isTags || false;
-        this.isRepeat = menu.isRepeat || false;
-        this.sharedList = menu.sharedList || false;
-        this.isAssignedTo = menu.isAssignedTo || false;
-        this.isTaskProject = menu.isTaskProject || false;
-        this.isFinishDate = menu.isFinishDate || false;
+        this._isDescription = menu.isDescription || false;
+        this._isSteps = menu.isSteps || false;
+        this._isTags = menu.isTags || false;
+        this._isRepeat = menu.isRepeat || false;
+        this._isAssignedTo = menu.isAssignedTo || false;
+        this._isTaskProject = menu.isTaskProject || false;
+        this._isFinishDate = menu.isFinishDate || false;
     }
 
+    get isDescription() {
+        return this._isDescription;
+    }
+
+    set isDescription(newValue: boolean) {
+        this._isDescription = newValue;
+    }
+
+    get isSteps() {
+        return this._isSteps;
+    }
+
+    set isSteps(newValue: boolean) {
+        this._isSteps = newValue;
+    }
+
+    get isTags() {
+        return this._isTags;
+    }
+
+    set isTags(newValue: boolean) {
+        this._isTags = newValue;
+    }
+
+    get isRepeat() {
+        return this._isRepeat;
+    }
+
+    set isRepeat(newValue: boolean) {
+        this._isRepeat = newValue;
+    }
+
+    get isAssignedTo() {
+        return this._isAssignedTo;
+    }
+
+    set isAssignedTo(newValue: boolean) {
+        this._isAssignedTo = newValue;
+    }
+
+    get isTaskProject() {
+        return this._isTaskProject;
+    }
+
+    set isTaskProject(newValue: boolean) {
+        this._isTaskProject = newValue;
+    }
+
+    get isFinishDate() {
+        return this._isFinishDate;
+    }
+
+    set isFinishDate(newValue: boolean) {
+        this._isFinishDate = newValue;
+    }
+
+    isAtLeastOneMenuElementEnabled(): boolean {
+        let result = false;
+        for (const prop in this) {
+            if (this.hasOwnProperty(prop) && this[prop]) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    hideAllMenuElements(): void {
+        this.isFinishDate = false;
+        this.isTaskProject = false;
+        this.isAssignedTo = false;
+        this.isRepeat = false;
+        this.isTags = false;
+        this.isSteps = false;
+        this.isDescription = false;
+    }
 
 }
 
@@ -56,7 +131,7 @@ export class Task extends Api {
     time: number;
     estimateTime: number;
     prefix_formset = 'steps';
-    menuShowing: any;
+    menuShowing: Menu;
 
 
     constructor(task) {
@@ -142,7 +217,7 @@ export class Task extends Api {
         }
         return formset_step;
     }
-    
+
     removeTag(tag: Tag) {
         const index: number = this.tags.indexOf(tag, 0);
         if (index > -1) {
@@ -167,28 +242,6 @@ export class Task extends Api {
             richText = text;
         }
         return richText;
-    }
-}
-
-
-export class Step extends Api {
-    id: number;
-    name: string;
-    status: number;
-    order: number;
-    delete: boolean;
-    taskId: number;
-
-
-    constructor(step) {
-        super();
-        this.id = step.id;
-        this.name = step.name;
-        this.status = step.status;
-        this.order = step.order;
-        this.delete = step.delete;
-        this.taskId = step.task;
-
     }
 }
 

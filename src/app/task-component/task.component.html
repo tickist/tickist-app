@@ -6,7 +6,7 @@
     <mat-card fxFlex="600px" fxFlex.xs="100" fxFlex.sm="100">
         <form *ngIf="taskForm" (keydown.enter)="$event.preventDefault()" [formGroup]="taskForm" novalidate
               (ngSubmit)="onSubmit(taskForm.value)" fxLayout="column"
-              fxLayoutAlign="center none" class="flex-container">
+              fxLayoutAlign="center none">
             <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
                                                                  aria-hidden="true"></i></span>
             </div>
@@ -80,7 +80,7 @@
                             <mat-form-field>
                                 <input matInput #taskName (blur)="updateImmediately('name', 'main.name', taskForm.value)"
                                        placeholder="Task name" maxlength="500" formControlName="name" autofocus>
-                                <mat-hint align="end">{{taskName.value?.length || 0}}/100</mat-hint>
+                                <mat-hint align="end">{{taskName.value?.length || 0}}/500</mat-hint>
                                 <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">
                                     {{getErrorMessage(taskForm.controls['main'].controls['name'])}}
                                 </mat-error>
@@ -311,7 +311,7 @@
             <div fxLayout="row" fxLayoutAlign="end none">
                 <button type="submit" mat-button class="button">Save</button>
 
-                <button type="button" mat-button class="button" *ngIf="!task.id"
+                <button type="button" mat-button class="button" *ngIf="!isNewTask()"
                         (click)="createAndAddMore($event, taskForm.value)">
                     Create and add more
                 </button>

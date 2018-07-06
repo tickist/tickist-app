@@ -1,7 +1,7 @@
 <div #container>
     <tickist-toggle-button (click)="toggleDone()" [priority]="task.priority"
                            [status]="task.status">
-        
+
     </tickist-toggle-button>
 
     <div style="width: 100%;">
@@ -38,7 +38,7 @@
             </tickist-menu-button>
 
             <tickist-user-avatar (click)="changeShowing('isAssignedTo')" [user]="task.owner"
-                                 *ngIf="task.menuShowing['sharedList']">
+                                 *ngIf="isSharedList()">
             </tickist-user-avatar>
             <tickist-progress-bar (click)="changeShowing('isSteps')" [percent]="task.percent"
                                   [isDisabled]="task.steps.length === 0"></tickist-progress-bar>
@@ -53,14 +53,23 @@
 </div>
 
 <div style="margin-top: 20px">
-    <div class="task-description" *ngIf="task.menuShowing['isDescription']"
-         [innerHTML]="task.richDescription">
+
+    <div class="task-description" *ngIf="task.menuShowing.isDescription">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            </tickist-menu-button>
+        </div>
+        <div [innerHTML]="task.richDescription"></div>
+
 
     </div>
 
 
-    <div *ngIf="task.menuShowing['isSteps']" class="steps">
-
+    <div *ngIf="task.menuShowing.isSteps" class="steps">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            </tickist-menu-button>
+        </div>
         <div class="step" *ngFor="let step of task.steps" fxLayout="row" fxLayoutAlign="start stretch"
              (click)="toggleDoneStep(step)"
              [ngClass]="{'taskstep-done': step.status == 1, 'taskstep-undone': step.status == 0}">
@@ -71,8 +80,11 @@
 
     </div>
 
-    <div *ngIf="task.menuShowing['isTags']" class="task-tags">
-
+    <div *ngIf="task.menuShowing.isTags" class="task-tags">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            </tickist-menu-button>
+        </div>
         <mat-chip-list>
             <mat-chip *ngFor="let tag of task.tags">
                 <span>{{ tag.name }}</span><span fxFlex></span><i matTooltip="Remove tag" (click)="removeTag(tag)"
@@ -82,35 +94,51 @@
 
     </div>
 
-    <div id="repeat-options" *ngIf="task.menuShowing['isRepeat']">
-
+    <div id="repeat-options" *ngIf="task.menuShowing.isRepeat">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            </tickist-menu-button>
+        </div>
         <app-edit-repeating-option [task]="task"></app-edit-repeating-option>
 
     </div>
 
-    <div id="change-project-task" *ngIf="task.menuShowing['isTaskProject']">
-
+    <div id="change-project-task" *ngIf="task.menuShowing.isTaskProject">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            </tickist-menu-button>
+        </div>
         <mat-form-field>
             <mat-select placeholder="Project:" [(ngModel)]="task.taskProject.id" (change)="changeProject($event)">
                 <mat-option *ngFor="let project of projects"
-                            [value]="project.id"> {{ project.name }} </mat-option>
+                            [value]="project.id"> {{ project.name }}
+                </mat-option>
             </mat-select>
         </mat-form-field>
 
     </div>
 
-    <div id="change-assigned-to" *ngIf="task.menuShowing['isAssignedTo']">
-
+    <div id="change-assigned-to" *ngIf="task.menuShowing.isAssignedTo">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            </tickist-menu-button>
+        </div>
         <mat-form-field>
             <mat-select placeholder="Assigned to:" [(ngModel)]="task.owner.id" (change)="changeAssignedTo($event)">
                 <mat-option *ngFor="let user of task.taskProject.shareWith"
-                            [value]="user.id"> {{ user.username }} </mat-option>
+                            [value]="user.id"> {{ user.username }}
+                </mat-option>
             </mat-select>
         </mat-form-field>
 
     </div>
 
-    <div id="finish-date-options" *ngIf="task.menuShowing['isFinishDate']">
+    <div id="finish-date-options" *ngIf="task.menuShowing.isFinishDate">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            </tickist-menu-button>
+        </div>
+
         <app-date-options [task]="task"></app-date-options>
 
     </div>

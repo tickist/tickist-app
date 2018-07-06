@@ -5,7 +5,7 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../services/task-service';
 import {TagService} from '../services/tag-service';
-import {Task, Step} from '../models/tasks';
+import {Task} from '../models/tasks';
 import {Observable, Subscription, pipe, combineLatest} from 'rxjs';
 
 import {ProjectService} from '../services/project-service';
@@ -25,6 +25,7 @@ import {MatAutocompleteTrigger, MatInput} from '@angular/material';
 import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../shared/keymap';
 import { map, startWith } from 'rxjs/operators';
+import {Step} from '../models/steps';
 
 @Component({
     selector: 'app-task-component',
@@ -292,19 +293,19 @@ export class TaskComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    clearFinishDate($event) {
+    clearFinishDate($event): void {
         const main = <FormGroup>this.taskForm.controls['main'];
         main.controls['finishDate'].setValue('');
         $event.stopPropagation();
     }
 
-    clearFinishTime($event) {
+    clearFinishTime($event): void {
         const main = <FormGroup>this.taskForm.controls['main'];
         main.controls['finishTime'].setValue('');
         $event.stopPropagation();
     }
 
-    clearSuspendedDate($event) {
+    clearSuspendedDate($event): void {
         const main = <FormGroup>this.taskForm.controls['extra'];
         main.controls['suspendedDate'].setValue('');
         $event.stopPropagation();
@@ -359,12 +360,12 @@ export class TaskComponent implements OnInit, OnDestroy {
         return task;
     }
 
-    changeActiveItemInMenu(name) {
+    changeActiveItemInMenu(name): void {
         this.menu.forEach(item => item.isActive = false);
         this.menu.find(item => item.name === name).isActive = true;
     }
 
-    checkActiveItemInMenu(name) {
+    checkActiveItemInMenu(name): boolean {
         return this.menu.find(item => item.name === name).isActive;
     }
 
@@ -374,17 +375,24 @@ export class TaskComponent implements OnInit, OnDestroy {
             if (newTag instanceof MatAutocompleteSelectedEvent) {
                 if (newTag.option.value) {
                     this.task.tags.push(newTag.option.value);
-                    this.taskService.saveTask(this.task);
+                    if (!this.isNewTask()) {
+                        this.taskService.saveTask(this.task);
+                    }
                 }
             } else {
                 const existingTag = this.tags.filter((t: Tag) => t.name === this.tagsCtrl.value)[0];
                 if (existingTag) {
                     this.task.tags.push(existingTag);
-                    this.taskService.saveTask(this.task);
+                    if (!this.isNewTask()) {
+                        this.taskService.saveTask(this.task);
+                    }
                 } else {
                     this.tagService.createTagDuringEditingTask(new Tag({name: this.tagsCtrl.value})).subscribe((t) => {
                         this.task.tags.push(new Tag(t));
-                        this.taskService.saveTask(this.task);
+                        if (!this.isNewTask()) {
+                            this.taskService.saveTask(this.task);
+                        }
+
                     });
                 }
             }
@@ -395,11 +403,11 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.tagsCtrl.reset();
     }
 
-    removeTagFromTask(tag) {
+    removeTagFromTask(tag): void {
         this.task.removeTag(tag);
     }
 
-    onSubmit(values, withoutClose = false) {
+    onSubmit(values, withoutClose = false): void {
         if (this.taskForm.valid) {
             this.task.name = values['main']['name'];
             this.task.priority = values['main']['priority'];
@@ -440,9 +448,9 @@ export class TaskComponent implements OnInit, OnDestroy {
                     }));
                 }
             });
-            console.log(this.task.steps);
+
             this.taskService.saveTask(this.task);
-            // @TODO adding tags
+
             if (!withoutClose) {
                 this.close();
             }
@@ -539,4 +547,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         });
     }
 
+    isNewTask(): boolean {
+        return this.task.hasOwnProperty('id');
+    }
 }
