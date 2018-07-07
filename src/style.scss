@@ -297,12 +297,16 @@ body::-webkit-scrollbar-thumb {
 }
 
 
-.mat-form-field.mat-focused.ng-invalid .mat-form-field-label {
-    color: #f44336;
+//.mat-form-field.mat-focused.ng-invalid .mat-form-field-label {
+//    color: #f44336;
+//}
+//
+.mat-form-field.mat-form-field-invalid .mat-form-field-ripple {
+    background-color: #f44336;
 }
 
-.mat-form-field.mat-focused.ng-invalid .mat-form-field-ripple {
-    background-color: #f44336;
+.mat-form-field.mat-form-field-invalid .mat-form-field-label {
+    color: #f44336;
 }
 
 
@@ -331,6 +335,3 @@ body::-webkit-scrollbar-thumb {
 mat-radio-group {
     overflow: hidden;
 }
-
-
-

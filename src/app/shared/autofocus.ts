@@ -30,7 +30,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
 
         this.elementRef = elementRef;
 
-        this.shouldFocusElement = "";
+        this.shouldFocusElement = '';
         this.timer = null;
         this.timerDelay = BASE_TIMER_DELAY;
 
@@ -46,7 +46,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
         // the more specialized "appAutofocus" property, we need to check to see if the
         // "shouldFocusElement" input property is the empty string. This will signify
         // that the focus it not being data-driven and should be performed automatically.
-        if ( this.shouldFocusElement === "" ) {
+        if ( this.shouldFocusElement === '' ) {
 
             this.startFocusWorkflow();
 
@@ -88,7 +88,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
 
 
     // I get called once when the directive is being unmounted.
-    public ngOnDestroy() : void {
+    public ngOnDestroy(): void {
 
         this.stopFocusWorkflow();
 
@@ -98,7 +98,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
     // PRIVATE METHODS.
     // ---
     // I start the timer-based workflow that will focus the current element.
-    private startFocusWorkflow() : void {
+    private startFocusWorkflow(): void {
 
         // If there is already a timer running for this element, just let it play out -
         // resetting it at this point will only push-out the time at which the focus is
@@ -123,7 +123,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
 
 
     // I stop the timer-based workflow, preventing focus from taking place.
-    private stopFocusWorkflow() : void {
+    private stopFocusWorkflow(): void {
 
         clearTimeout( this.timer );
         this.timer = null;

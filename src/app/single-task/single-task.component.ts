@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 import {Subject, pipe} from 'rxjs';
 import {RepeatStringExtension} from '../pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
+import {Step} from '../models/steps';
 
 
 class Timer {
@@ -29,7 +30,7 @@ class Timer {
 }
 
 
-export class SingleTask {
+class SingleTask {
     task: Task;
     isRightMenuVisible = false;
     isFastMenuVisible = false;
@@ -40,21 +41,23 @@ export class SingleTask {
     }
 
     changeShowing(show) {
-        for (const key in this.task.menuShowing) {
-            if (key !== show && key !== 'id') {
-                this.task.menuShowing[key] = false;
-            }
-        }
+        const oldValue = this.task.menuShowing[show];
+        this.task.menuShowing.hideAllMenuElements();
         if (show !== undefined) {
-            this.task.menuShowing[show] = !this.task.menuShowing[show];
-        }
-        if (this.task.taskProject.shareWith.length > 0) {
-            this.task.menuShowing['sharedList'] = true;
+            this.task.menuShowing[show] = !oldValue;
         }
     }
 
+    isSharedList(): boolean {
+        return this.task.taskProject.shareWith.length > 0;
+    }
+
+    hideAllMenuElements(): void {
+        this.task.menuShowing.hideAllMenuElements();
+    }
+
     toggleDoneStep(step) {
-        this.task.steps.forEach((s) => {
+        this.task.steps.forEach((s: Step) => {
             if (s.id === step.id) {
                 if (s.status === 1) {
                     s.status = 0;
@@ -94,19 +97,19 @@ export class SingleTask {
 
     }
 
-    togglePin() {
+    togglePin(): void {
         this.task.pinned = !this.task.pinned;
         this.taskService.updateTask(this.task);
     }
 
-    changePriority(priority) {
+    changePriority(priority: string) {
         if (this.task.priority !== priority) {
             this.task.priority = priority;
             this.taskService.updateTask(this.task);
         }
     }
 
-    changeDate(date) {
+    changeDate(date: string) {
         let delta;
         if (date === 'today') {
             delta = 'today';
@@ -197,9 +200,6 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     }
 
     ngOnInit() {
-        if (this.task.taskProject.shareWith.length > 1) {
-            this.task.menuShowing.sharedList = true;
-        }
         this.projectService.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((projects) => {
             this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);
             // this.t2.stop();  // Prints the time elapsed to the JS console.

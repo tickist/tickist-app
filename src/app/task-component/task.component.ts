@@ -5,7 +5,7 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../services/task-service';
 import {TagService} from '../services/tag-service';
-import {Task, Step} from '../models/tasks';
+import {Task} from '../models/tasks';
 import {Observable, Subscription, pipe, combineLatest} from 'rxjs';
 
 import {ProjectService} from '../services/project-service';
@@ -25,6 +25,8 @@ import {MatAutocompleteTrigger, MatInput} from '@angular/material';
 import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../shared/keymap';
 import { map, startWith } from 'rxjs/operators';
+import {Step} from '../models/steps';
+import {MyErrorStateMatcher} from '../shared/error-state-matcher';
 
 @Component({
     selector: 'app-task-component',
@@ -53,6 +55,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     tags: Tag[] = [];
     test: any;
     minFilter: any;
+    matcher = new MyErrorStateMatcher();
 
     @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
     @ViewChild('autocompleteTags') autocompleteTags;
@@ -78,11 +81,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.projectService.selectedProject$,
                 this.projectService.projects$,
                 this.userService.user$,
-                (tasks: Task[], taskId: any, selectedProject: Project, projects: Project[], user: User) => {
+                (tasks: Task[], taskId: string, selectedProject: Project, projects: Project[], user: User) => {
                     let task: Task;
                     if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
                         this.user = user;
-                        this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);;
+                        this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);
                         if (taskId) {
                             task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
                         } else {
@@ -252,13 +255,13 @@ export class TaskComponent implements OnInit, OnDestroy {
                 'typeFinishDate': [task.typeFinishDate, Validators.required],
                 'finishDate': [finishDate],
                 'finishTime': [finishTime],
-            }),
+            }, { updateOn: 'blur' }),
             'extra': this.fb.group({
                 'description': [task.description],
                 'time': [this.minutes2Hours.transform(task.time)],
                 'estimateTime': [this.minutes2Hours.transform(task.estimateTime)],
                 'ownerId': [task.owner.id, Validators.required],
-                'suspended': [(task.status === 2) ? true : false, Validators.required],
+                'suspended': [task.status === 2, Validators.required],
                 'suspendedDate': [task.suspendDate],
             }, {validator: this.finishTimeWithFinishDate}),
             'repeat': this.fb.group({
@@ -292,25 +295,25 @@ export class TaskComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    clearFinishDate($event) {
+    clearFinishDate($event): void {
         const main = <FormGroup>this.taskForm.controls['main'];
         main.controls['finishDate'].setValue('');
         $event.stopPropagation();
     }
 
-    clearFinishTime($event) {
+    clearFinishTime($event): void {
         const main = <FormGroup>this.taskForm.controls['main'];
         main.controls['finishTime'].setValue('');
         $event.stopPropagation();
     }
 
-    clearSuspendedDate($event) {
+    clearSuspendedDate($event): void {
         const main = <FormGroup>this.taskForm.controls['extra'];
         main.controls['suspendedDate'].setValue('');
         $event.stopPropagation();
     }
 
-    createNewTask(selectedProject: Project) {
+    createNewTask(selectedProject: Project): Task {
         let defaultTypeFinishDate = 1;
         const finishDateOption = this.defaultFinishDateOptions
             .find((defaultFinishDateOption) => defaultFinishDateOption.id === selectedProject.defaultFinishDate);
@@ -359,12 +362,12 @@ export class TaskComponent implements OnInit, OnDestroy {
         return task;
     }
 
-    changeActiveItemInMenu(name) {
+    changeActiveItemInMenu(name): void {
         this.menu.forEach(item => item.isActive = false);
         this.menu.find(item => item.name === name).isActive = true;
     }
 
-    checkActiveItemInMenu(name) {
+    checkActiveItemInMenu(name): boolean {
         return this.menu.find(item => item.name === name).isActive;
     }
 
@@ -374,17 +377,24 @@ export class TaskComponent implements OnInit, OnDestroy {
             if (newTag instanceof MatAutocompleteSelectedEvent) {
                 if (newTag.option.value) {
                     this.task.tags.push(newTag.option.value);
-                    this.taskService.saveTask(this.task);
+                    if (!this.isNewTask()) {
+                        this.taskService.saveTask(this.task);
+                    }
                 }
             } else {
                 const existingTag = this.tags.filter((t: Tag) => t.name === this.tagsCtrl.value)[0];
                 if (existingTag) {
                     this.task.tags.push(existingTag);
-                    this.taskService.saveTask(this.task);
+                    if (!this.isNewTask()) {
+                        this.taskService.saveTask(this.task);
+                    }
                 } else {
                     this.tagService.createTagDuringEditingTask(new Tag({name: this.tagsCtrl.value})).subscribe((t) => {
                         this.task.tags.push(new Tag(t));
-                        this.taskService.saveTask(this.task);
+                        if (!this.isNewTask()) {
+                            this.taskService.saveTask(this.task);
+                        }
+
                     });
                 }
             }
@@ -395,11 +405,11 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.tagsCtrl.reset();
     }
 
-    removeTagFromTask(tag) {
+    removeTagFromTask(tag): void {
         this.task.removeTag(tag);
     }
 
-    onSubmit(values, withoutClose = false) {
+    onSubmit(values, withoutClose = false): void {
         if (this.taskForm.valid) {
             this.task.name = values['main']['name'];
             this.task.priority = values['main']['priority'];
@@ -440,9 +450,9 @@ export class TaskComponent implements OnInit, OnDestroy {
                     }));
                 }
             });
-            console.log(this.task.steps);
+
             this.taskService.saveTask(this.task);
-            // @TODO adding tags
+
             if (!withoutClose) {
                 this.close();
             }
@@ -458,17 +468,21 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     }
 
-    close() {
+    close(): void {
         // DRY
         this.location.back();
     }
-
-    getErrorMessage(field) {
-        return field.hasError('max') ? 'Name is too long' :
+    
+    getErrorMessage(field: FormControl): string {
+        return field.hasError('maxLength') ? 'Name is too long' :
             field.hasError('required') ? 'You have to add task name' : '';
     }
 
-    initSteps(steps) {
+    hasErrorMessage(field: FormControl): boolean {
+        return field.hasError('maxLength') ||  field.hasError('required');
+    }
+
+    initSteps(steps: Step[]) {
         const array = [];
         steps.filter(step => !step.delete).forEach((step: Step) => {
             array.push(this.fb.group({
@@ -522,6 +536,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     updateImmediately(source, formControlName, values) {
+        console.log(' updateImmediately')
         if (this.task.id) {
             if (this.task[source] !== this.taskForm.get(formControlName).value) {
                 this.onSubmit(values, true);
@@ -539,4 +554,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         });
     }
 
+    isNewTask(): boolean {
+        return this.task.hasOwnProperty('id');
+    }
 }
