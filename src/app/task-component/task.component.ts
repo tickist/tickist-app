@@ -26,6 +26,7 @@ import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delet
 import {KEY_CODE} from '../shared/keymap';
 import { map, startWith } from 'rxjs/operators';
 import {Step} from '../models/steps';
+import {MyErrorStateMatcher} from '../shared/error-state-matcher';
 
 @Component({
     selector: 'app-task-component',
@@ -54,6 +55,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     tags: Tag[] = [];
     test: any;
     minFilter: any;
+    matcher = new MyErrorStateMatcher();
 
     @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
     @ViewChild('autocompleteTags') autocompleteTags;
@@ -79,11 +81,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.projectService.selectedProject$,
                 this.projectService.projects$,
                 this.userService.user$,
-                (tasks: Task[], taskId: any, selectedProject: Project, projects: Project[], user: User) => {
+                (tasks: Task[], taskId: string, selectedProject: Project, projects: Project[], user: User) => {
                     let task: Task;
                     if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
                         this.user = user;
-                        this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);;
+                        this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);
                         if (taskId) {
                             task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
                         } else {
@@ -253,13 +255,13 @@ export class TaskComponent implements OnInit, OnDestroy {
                 'typeFinishDate': [task.typeFinishDate, Validators.required],
                 'finishDate': [finishDate],
                 'finishTime': [finishTime],
-            }),
+            }, { updateOn: 'blur' }),
             'extra': this.fb.group({
                 'description': [task.description],
                 'time': [this.minutes2Hours.transform(task.time)],
                 'estimateTime': [this.minutes2Hours.transform(task.estimateTime)],
                 'ownerId': [task.owner.id, Validators.required],
-                'suspended': [(task.status === 2) ? true : false, Validators.required],
+                'suspended': [task.status === 2, Validators.required],
                 'suspendedDate': [task.suspendDate],
             }, {validator: this.finishTimeWithFinishDate}),
             'repeat': this.fb.group({
@@ -311,7 +313,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         $event.stopPropagation();
     }
 
-    createNewTask(selectedProject: Project) {
+    createNewTask(selectedProject: Project): Task {
         let defaultTypeFinishDate = 1;
         const finishDateOption = this.defaultFinishDateOptions
             .find((defaultFinishDateOption) => defaultFinishDateOption.id === selectedProject.defaultFinishDate);
@@ -466,17 +468,21 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     }
 
-    close() {
+    close(): void {
         // DRY
         this.location.back();
     }
-
-    getErrorMessage(field) {
-        return field.hasError('max') ? 'Name is too long' :
+    
+    getErrorMessage(field: FormControl): string {
+        return field.hasError('maxLength') ? 'Name is too long' :
             field.hasError('required') ? 'You have to add task name' : '';
     }
 
-    initSteps(steps) {
+    hasErrorMessage(field: FormControl): boolean {
+        return field.hasError('maxLength') ||  field.hasError('required');
+    }
+
+    initSteps(steps: Step[]) {
         const array = [];
         steps.filter(step => !step.delete).forEach((step: Step) => {
             array.push(this.fb.group({
@@ -530,6 +536,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     updateImmediately(source, formControlName, values) {
+        console.log(' updateImmediately')
         if (this.task.id) {
             if (this.task[source] !== this.taskForm.get(formControlName).value) {
                 this.onSubmit(values, true);

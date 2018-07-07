@@ -78,14 +78,14 @@
                         <div fxLayout="column" fxLayoutAlign="space-between none">
 
                             <mat-form-field>
-                                <input matInput #taskName (blur)="updateImmediately('name', 'main.name', taskForm.value)"
-                                       placeholder="Task name" maxlength="500" formControlName="name" autofocus>
+                                <input autofocus matInput #taskName (blur)="updateImmediately('name', 'main.name', taskForm.value)"
+                                       placeholder="Task name" maxlength="500" formControlName="name" [errorStateMatcher]="matcher">
                                 <mat-hint align="end">{{taskName.value?.length || 0}}/500</mat-hint>
-                                <mat-error *ngIf="taskForm.controls['main'].controls['name'].invalid">
+                                <mat-error *ngIf="hasErrorMessage(taskForm.controls['main'].controls['name'])">
                                     {{getErrorMessage(taskForm.controls['main'].controls['name'])}}
                                 </mat-error>
                             </mat-form-field>
-
+                            
                             <tickist-priority formControlName="priority">
 
                             </tickist-priority>
