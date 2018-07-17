@@ -233,8 +233,8 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     }
 
     changeAssignedTo(event) {
-        this.task.owner = this.task.taskProject.shareWith.filter(user => user.id === event.value)[0];
-        this.taskService.updateTask(this.task);
+        this.task.owner = this.task.taskProject.shareWith.find(user => user.id === event.value);
+        this.taskService.updateTask(this.task, true, true);
     }
 
     changeProject(event) {
