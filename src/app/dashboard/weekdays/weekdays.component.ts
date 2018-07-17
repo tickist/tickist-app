@@ -44,7 +44,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }, timeToMidnight);
     }
 
-    isToday(date: (moment.Moment | string) = this.activeDay) {
+    isToday(date: (moment.Moment | string) = this.activeDay): boolean {
         const today: moment.Moment = moment();
         if (moment.isMoment(date)) {
             date = (<string>(date.format('DD-MM-YYYY')));
@@ -68,7 +68,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
             this.tasks = tasks;
             this.feelWeekData();
         }));
-        
+
         this.subscriptions.add(this.userService.user$.subscribe(user => {
             this.user = user;
             this.feelWeekData();
@@ -126,6 +126,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
             });
             nextDay = nextDay.add(1, 'days');
         }
+        console.log(this.week)
     }
 
 }

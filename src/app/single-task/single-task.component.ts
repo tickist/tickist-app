@@ -238,8 +238,8 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     }
 
     changeProject(event) {
-        this.task.taskProject = this.projects.filter(project => project.id === event.value)[0];
-        this.taskService.updateTask(this.task);
+        this.task.taskProject = this.projects.find(project => project.id === event.value);
+        this.taskService.updateTask(this.task, true, true);
     }
 
     removeTag(tag) {

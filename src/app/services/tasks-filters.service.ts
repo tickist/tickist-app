@@ -23,9 +23,8 @@ export class TasksFiltersService {
     user: User;
     assignedToAll: Filter;
     assignedToMe: Filter;
-    
-    static useFilters(tasks, currentFilters) {
 
+    static useFilters(tasks, currentFilters) {
         tasks = tasks.filter(currentFilters[0].value);
         tasks = tasks.filter(currentFilters[1].value);
         tasks = tasks.filter(currentFilters[2].value);
@@ -52,7 +51,7 @@ export class TasksFiltersService {
                 return (task.tags.length === 0);
             });
         }
-        tasks = _.orderBy(tasks, sortingBy.value, sortingBy.order);
+        tasks = _.orderBy(tasks, sortingBy.sortKeys, sortingBy.order);
         return tasks;
     }
 
@@ -62,16 +61,11 @@ export class TasksFiltersService {
 
         this.tasksFilters$ = this.store.select(s => s.tasksFilters);
         this.currentTasksFilters$ = this.store.select(s => s.currentTasksFilters);
-        // this.userService.user$.subscribe((user) => {
-        //     if (user) {
-        //        
-        //     }
-        // });
     }
-    
+
     createDefaultFilters(user) {
        this.user = user;
-               
+
         this.assignedToMe = new Filter({
             id: user.id,
             label: 'assignedTo',
@@ -87,7 +81,7 @@ export class TasksFiltersService {
             name: 'all',
             avatar: '/assets/default_avatar.png',
             fixed: true
-        }); 
+        });
     }
 
     loadCurrentTasksFilters(user: User) {
@@ -149,11 +143,11 @@ export class TasksFiltersService {
     resetAssignedFilterToAssignedToMe() {
         this.updateCurrentFilter(this.assignedToMe);
     }
-    
+
     setAllTasksFilter() {
         this.updateCurrentFilter(new Filter({'id': 1, label: 'tags', 'value': 'allTasks', 'name': 'all tasks'}));
     }
-    
+
     setAllTagsFilter() {
         this.updateCurrentFilter(new Filter({'id': 1, label: 'tags', 'value': 'allTags', 'name': 'all tasks'}));
     }
@@ -161,12 +155,12 @@ export class TasksFiltersService {
     loadTasksFilters(user: User) {
         const filters = [
             {id: 1, label: 'filter', name: 'not done', value: task => task.status === 0},
-            {id: 2, label: 'filter', name: 'w/o due date', value: task => task.finishDate !== undefined},
+            {id: 2, label: 'filter', name: 'w/o due date', value: task => task.finishDate !== ''},
             {
                 id: 3,
                 label: 'filter',
                 name: 'w/o estimated time',
-                value: task => task.estimateTime !== undefined
+                value: task => task.estimateTime === null
             },
             {id: 4, label: 'filter', name: 'on hold', value: task => task.status === 2},
             {
@@ -204,47 +198,47 @@ export class TasksFiltersService {
             {
                 id: 1,
                 label: 'sorting',
-                value: ['priority'],
+                sortKeys: ['priority'],
                 order: ['desc'],
                 name: 'priority <i class="fa fa-arrow-up"></i>'
             },
             {
                 id: 2,
                 label: 'sorting',
-                value: ['finish_date_obj', 'finishTime'],
+                sortKeys: ['finish_date_obj', 'finishTime'],
                 order: ['asc', 'desc'],
                 name: 'due date <i class="fa fa-arrow-up"></i>'
             },
             {
                 id: 3,
                 label: 'sorting',
-                value: ['creation_date'],
+                sortKeys: ['creation_date'],
                 order: ['asc'],
                 name: 'creation date <i class="fa fa-arrow-up"></i>'
             },
-            {id: 4, label: 'sorting', value: ['name'], order: ['asc'], name: 'A-Z <i class="fa fa-arrow-up"></i>'},
+            {id: 4, label: 'sorting', sortKeys: ['name'], order: ['asc'], name: 'A-Z <i class="fa fa-arrow-up"></i>'},
             {
                 id: 5,
                 label: 'sorting',
-                value: ['priority'],
+                sortKeys: ['priority'],
                 order: ['asc'],
                 name: 'priority <i class="fa fa-arrow-down"></i>'
             },
             {
                 id: 6,
                 label: 'sorting',
-                value: ['finish_date_obj', 'finishTime'],
+                sortKeys: ['finish_date_obj', 'finishTime'],
                 order: ['desc', 'asc'],
                 name: 'due date <i class="fa fa-arrow-down"></i>'
             },
             {
                 id: 7,
                 label: 'sorting',
-                value: ['creation_date'],
+                sortKeys: ['creation_date'],
                 order: ['desc'],
                 name: 'creation date  <i class="fa fa-arrow-down"></i>'
             },
-            {id: 8, label: 'sorting', value: name, order: ['desc'], name: 'A-Z <i class="fa fa-arrow-down"></i>'},
+            {id: 8, label: 'sorting', sortKeys: ['name'], order: ['desc'], name: 'A-Z <i class="fa fa-arrow-down"></i>'},
             {id: 1, label: 'tags', value: 1}
         ].map(filter => new Filter(filter));
 

@@ -155,7 +155,7 @@ export class Task extends Api {
         this.repeatDelta = task.repeat_delta;
         this.description = task.description;
         this.richDescription = this.convert(task.description);
-        this.estimateTime = task.estimate_time;
+        this.estimateTime = task.estimate_time ? task.estimate_time : null;
         this.time = task.time;
         this.isActive = task.is_active;
         task.steps.forEach((step) => {
