@@ -9,6 +9,7 @@ export class Filter {
   avatar?: string;
   order?: string;
   fixed?: boolean;
+  sortKeys?: Array<string>;
 
   constructor (object) {
     this.id = object.id;
@@ -18,5 +19,6 @@ export class Filter {
     this.avatar = object.avatar;
     this.order = object.order;
     this.fixed = object.fixed;
+    this.sortKeys = object.sortKeys;
   }
 }

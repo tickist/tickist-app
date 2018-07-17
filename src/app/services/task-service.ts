@@ -21,7 +21,7 @@ import {filter, map, take} from 'rxjs/operators';
 @Injectable()
 export class TaskService {
     tasks$: Observable<Task[]>;
-    
+
     static useFilters(tasks, currentFilters) {
 
         tasks = tasks.filter(currentFilters[0].value);
@@ -69,7 +69,7 @@ export class TaskService {
                 map(payload => this.store.dispatch(new tasksAction.AddTasks(payload)))
             );
     }
-    
+
     saveTask(task: Task) {
         (task.id) ? this.updateTask(task) : this.createTask(task);
     }
@@ -93,15 +93,20 @@ export class TaskService {
             });
     }
 
-    updateTask(task: Task, isSilenceUpdate = false) {
-        const menuStateCopy = task.toApi()['menu_showing'];
+    updateTask(task: Task, isSilenceUpdate = false, cleanMenuState = false): void {
+        let menuStateCopy;
+        if (!cleanMenuState) {
+            menuStateCopy = task.toApi()['menu_showing'];
+        }
         this.configurationService.switchOnProgressBar();
         this.http.put(`${environment['apiUrl']}/tasks/${task.id}/`, task.toApi())
             .subscribe(payload => {
                 // this.snackBar.open('Task has been updated successfully', '', {
                 //   duration: 2000,
                 // });
-                payload['menu_showing'] = menuStateCopy;
+                if (!cleanMenuState) {
+                    payload['menu_showing'] = menuStateCopy;
+                }
                 this.store.dispatch(new tasksAction.UpdateTask(new Task(payload)));
                 if (!isSilenceUpdate) {
                     this.statisticsService.loadAllStatistics(undefined);
