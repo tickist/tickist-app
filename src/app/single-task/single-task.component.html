@@ -123,7 +123,7 @@
             </tickist-menu-button>
         </div>
         <mat-form-field>
-            <mat-select placeholder="Assigned to:" [(ngModel)]="task.owner.id" (change)="changeAssignedTo($event)">
+            <mat-select placeholder="Assigned to:" [(ngModel)]="task.owner.id" (selectionChange)="changeAssignedTo($event)">
                 <mat-option *ngFor="let user of task.taskProject.shareWith"
                             [value]="user.id"> {{ user.username }}
                 </mat-option>
