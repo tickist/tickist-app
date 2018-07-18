@@ -13,6 +13,7 @@ import {MockProjectService} from '../testing/mocks/project-service';
 import {MockUserService} from '../testing/mocks/userService';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
 import {MockObservableMedia} from '../testing/mocks/observableMedia';
+import {MockProjectsFiltersService} from '../testing/mocks/projects-filters-service';
 
 export const routes: Routes = [
     {
@@ -35,6 +36,7 @@ describe('ProjectsListComponent', () => {
     const userService = new MockUserService();
     const configurationService = new MockConfigurationService();
     const observableMedia = new MockObservableMedia();
+    const projectsFiltersService = new MockProjectsFiltersService();
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -50,7 +52,8 @@ describe('ProjectsListComponent', () => {
                 projectService.getProviders(),
                 observableMedia.getProviders(),
                 configurationService.getProviders(),
-                userService.getProviders()
+                userService.getProviders(),
+                projectsFiltersService.getProviders()
             ]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(ProjectsListComponent);

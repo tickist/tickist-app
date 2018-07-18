@@ -29,6 +29,7 @@ import {MockUserService} from '../testing/mocks/userService';
 import {Component, Input} from '@angular/core';
 import {Task} from '../models/tasks';
 import {MockTagService} from '../testing/mocks/tag-service';
+import {MockTasksFiltersService} from '../testing/mocks/tasks-filters-service';
 import {BlankComponent, RootComponent} from '../testing/test.modules';
 import {PriorityComponent} from '../shared/priority/priority.component';
 import {TasksListComponent} from '../tasks-list/tasks-list.component';
@@ -61,6 +62,7 @@ describe('TasksFromProjectsComponent', () => {
         const configurationService = new MockConfigurationService();
         const projectService = new MockProjectService();
         const taskService = new MockTaskService();
+        const tasksFiltersService = new MockTasksFiltersService();
         const tagService = new MockTagService();
         const userService = new MockUserService();
         const activatedRoute = new MockActivatedRoute;
@@ -69,16 +71,17 @@ describe('TasksFromProjectsComponent', () => {
             imports: [TickistMaterialModule, FlexLayoutModule, RouterModule.forRoot(routes), FormsModule],
             declarations: [TasksFromProjectsComponent, ChangeTaskViewComponent, FilterTasksComponent,
                 MockComponent(SortTasksComponent), MockComponent(TasksListComponent), MockComponent(MenuButtonComponent),
-                MockComponent(SingleTaskSimplifiedComponent), MockComponent(SingleTaskComponent), 
-                MockComponent(TaskNameComponent), MockComponent(PinButtonComponent), 
-                MockComponent(DateOptionsComponent), MockComponent(RightMenuComponent), 
-                MockComponent(EditRepeatingOptionComponent), MockComponent(ProgressBarComponent), 
+                MockComponent(SingleTaskSimplifiedComponent), MockComponent(SingleTaskComponent),
+                MockComponent(TaskNameComponent), MockComponent(PinButtonComponent),
+                MockComponent(DateOptionsComponent), MockComponent(RightMenuComponent),
+                MockComponent(EditRepeatingOptionComponent), MockComponent(ProgressBarComponent),
                 MockComponent(DisplayFinishDateComponent), MockComponent(UserAvatarComponent),
                 MockComponent(PriorityComponent),
                 MockComponent(ToggleButtonComponent), TruncatePipe, Minutes2hoursPipe, AvatarSize, RootComponent, BlankComponent],
             providers: [
                 configurationService.getProviders(),
                 projectService.getProviders(),
+                tasksFiltersService.getProviders(),
                 taskService.getProviders(),
                 tagService.getProviders(),
                 userService.getProviders(),

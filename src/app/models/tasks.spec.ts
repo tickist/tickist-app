@@ -31,8 +31,6 @@ describe('Task model', () => {
         expect(task.repeat).toBe(task1JSON.repeat);
         expect(task.fromRepeating).toBe(task1JSON.from_repeating);
         expect(task.repeatDelta).toBe(task1JSON.repeat_delta);
-        expect(task.estimateTime).toBe(task1JSON.estimate_time);
-        expect(task.time).toBe(task1JSON.time);
         expect(task.isActive).toBe(task1JSON.is_active);
     });
 
