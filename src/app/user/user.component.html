@@ -58,13 +58,18 @@
                               *ngIf="userData" (ngSubmit)="onSubmitUserData(userData.value)" autocomplete="off"
                               novalidate>
                             <mat-form-field>
-                                <input matInput placeholder="username" formControlName="username">
-
+                                <input matInput placeholder="username" formControlName="username" [errorStateMatcher]="matcher">
+                                 <mat-error *ngIf="hasErrorMessage(userData.controls['username'])">
+                                    {{ getErrorMessage(userData.get('username')) }}
+                                </mat-error>
 
                             </mat-form-field>
 
                             <mat-form-field>
-                                <input matInput placeholder="email" formControlName="email">
+                                <input matInput placeholder="email" formControlName="email" [readonly]="true">
+                                <mat-hint>
+                                    You cannot change your email
+                                </mat-hint>
                             </mat-form-field>
 
                         </form>
@@ -203,14 +208,14 @@
                     <div [hidden]="!menu.settings">
                         <div fxLayout="column" fxLayoutAlign="space-between none">
                             <mat-form-field>
-                                <mat-select (change)="changeUserDetails()" placeholder="Tasks order in dashboard"
+                                <mat-select (selectionChange)="changeUserDetails()" placeholder="Tasks order in dashboard"
                                             [(ngModel)]="user.orderTasksDashboard" name="orderTasksDashboard">
                                     <mat-option *ngFor="let option of tasksOrderOptions" [value]="option">
                                         {{ option }}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            
+
                             <div class="form-field">
                                 <span>Default task view:</span>
                                 <mat-radio-group [(ngModel)]="user.defaultTaskView"  (change)="changeUserDetails()" fxLayout.xs="column">
@@ -219,8 +224,8 @@
                                         {{ option.name }}
                                     </mat-radio-button>
                                 </mat-radio-group>
-                            </div> 
-                            
+                            </div>
+
                             <div class="form-field">
                                 <span>Default task view on todays tasks:</span>
                                 <mat-radio-group [(ngModel)]="user.defaultTaskViewTodayView"  (change)="changeUserDetails()" fxLayout.xs="column">
@@ -229,9 +234,9 @@
                                         {{ option.name }}
                                     </mat-radio-button>
                                 </mat-radio-group>
-                            </div>             
-                            
-                            
+                            </div>
+
+
                             <div class="form-field">
                                 <span>Default task view on overdue tasks:</span>
                                 <mat-radio-group [(ngModel)]="user.defaultTaskViewOverdueView"  (change)="changeUserDetails()" fxLayout.xs="column">
@@ -240,9 +245,9 @@
                                         {{ option.name }}
                                     </mat-radio-button>
                                 </mat-radio-group>
-                            </div>                        
-                            
-                            
+                            </div>
+
+
                             <div class="form-field">
                                 <span>Default task view on future tasks:</span>
                                 <mat-radio-group [(ngModel)]="user.defaultTaskViewFutureView"  (change)="changeUserDetails()" fxLayout.xs="column">
@@ -251,8 +256,8 @@
                                         {{ option.name }}
                                     </mat-radio-button>
                                 </mat-radio-group>
-                            </div>                  
-                            
+                            </div>
+
                             <div class="form-field">
                                 <span>Default task view on tags:</span>
                                 <mat-radio-group [(ngModel)]="user.defaultTaskViewTagsView" (change)="changeUserDetails()" fxLayout.xs="column">
@@ -271,7 +276,7 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            
+
                             <mat-form-field>
                                 <mat-select placeholder="Future tasks sort by:" [(ngModel)]="user.futureTasksSortBy"
                                             (change)="changeUserDetails()">
@@ -280,8 +285,8 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            
-                            
+
+
                             <mat-checkbox [(ngModel)]="user.dialogTimeWhenTaskFinishedInProject"
                                           aria-label="Switch 9"
                                           (change)="changeUserDetails()">

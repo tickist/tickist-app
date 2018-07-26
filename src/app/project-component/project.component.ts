@@ -149,19 +149,19 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     createForm(project: Project) {
-        return this.fb.group({
-            'main': this.fb.group({
-                'name': [project.name, Validators.required],
-                'ancestor': [project.ancestor],
-                'color': [project.color],
-                'description': [project.description]
+        return new FormGroup({
+            'main': new FormGroup({
+                'name': new FormControl(project.name, {validators: Validators.required}),
+                'ancestor': new FormControl(project.ancestor),
+                'color': new FormControl(project.color),
+                'description': new FormControl(project.description)
             }),
-            'extra': this.fb.group({
-                'defaultFinishDate': [project.defaultFinishDate],
-                'defaultPriority': [project.defaultPriority],
-                'defaultTypeFinishDate': [project.defaultTypeFinishDate],
-                'dialogTimeWhenTaskFinished': [project.dialogTimeWhenTaskFinished],
-                'taskView': [project.taskView]
+            'extra': new FormGroup({
+                'defaultFinishDate': new FormControl(project.defaultFinishDate),
+                'defaultPriority': new FormControl(project.defaultPriority),
+                'defaultTypeFinishDate': new FormControl(project.defaultTypeFinishDate),
+                'dialogTimeWhenTaskFinished': new FormControl(project.dialogTimeWhenTaskFinished),
+                'taskView': new FormControl(project.taskView)
             })
         });
     }

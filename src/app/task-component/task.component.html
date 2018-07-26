@@ -92,7 +92,7 @@
 
                             <mat-form-field>
                                 <mat-select placeholder="Project:" formControlName="taskProjectPk"
-                                            (change)="changeProjectInTask($event)">
+                                            (selectionChange)="changeProjectInTask($event)">
                                     <mat-option *ngFor="let project of projects"
                                                 [value]="project.id"> {{ project.name }}
                                     </mat-option>

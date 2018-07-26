@@ -332,6 +332,10 @@ body::-webkit-scrollbar-thumb {
     caret-color: $white;
 }
 
+.mat-input-element:disabled {
+    color: $white;
+}
+
 mat-radio-group {
     overflow: hidden;
 }

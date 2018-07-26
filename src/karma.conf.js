@@ -1,5 +1,6 @@
 // Karma configuration file, see link for more information
-// https://karma-runner.github.io/0.13/config/configuration-file.html
+// https://karma-runner.github.io/1.0/config/configuration-file.html
+
 
 module.exports = function (config) {
     config.set({
@@ -15,9 +16,6 @@ module.exports = function (config) {
         client: {
             clearContext: false // leave Jasmine Spec Runner output visible in browser
         },
-        files: [
-            {pattern: './test.ts', watched: false}
-        ],
         mime: {
             'text/x-typescript': ['ts', 'tsx']
         },
@@ -25,12 +23,7 @@ module.exports = function (config) {
             dir: require('path').join(__dirname, 'coverage'), reports: [ 'html', 'lcovonly' ],
             fixWebpackSourcePaths: true
         },
-        angularCli: {
-            environment: 'dev'
-        },
-        reporters: config.angularCli && config.angularCli.codeCoverage
-            ? ['progress', 'coverage-istanbul']
-            : ['progress', 'kjhtml'],
+        reporters: ['progress', 'kjhtml'],
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,
