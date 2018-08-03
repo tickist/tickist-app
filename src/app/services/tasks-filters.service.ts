@@ -33,7 +33,6 @@ export class TasksFiltersService {
         tasks = tasks.filter(currentFilters[3].value);
         const tags = currentFilters.find(filter => filter.label === 'tags');
         const sortingBy = currentFilters.find(filter => filter.label === 'sorting');
-        debugger
         if (tags.value instanceof Set) {
             tasks = tasks.filter((task: Task) => {
                 const result = [];

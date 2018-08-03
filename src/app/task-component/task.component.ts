@@ -376,10 +376,13 @@ export class TaskComponent implements OnInit, OnDestroy {
 
             if (newTag instanceof MatAutocompleteSelectedEvent) {
                 if (newTag.option.value) {
-                    this.task.tags.push(newTag.option.value);
-                    if (!this.isNewTask()) {
-                        this.taskService.saveTask(this.task);
-                    }
+                     this.tagService.createTagDuringEditingTask(new Tag({name: newTag.option.value.name})).subscribe((t) => {
+                        this.task.tags.push(new Tag(t));
+                        if (!this.isNewTask()) {
+                            this.taskService.saveTask(this.task);
+                        }
+
+                    });
                 }
             } else {
                 const existingTag = this.tags.filter((t: Tag) => t.name === this.tagsCtrl.value)[0];
