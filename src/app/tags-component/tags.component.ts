@@ -46,7 +46,7 @@ export class TagsComponent implements OnInit, OnDestroy {
             this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], currentTasksFilters: any) => {
                 if (currentTasksFilters.length > 0) {
-                    tasks = TaskService.useFilters(tasks, currentTasksFilters);
+                    tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
                 }
                 return tasks;
             }

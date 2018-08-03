@@ -1,12 +1,13 @@
 import {Component, OnInit, Input, ViewContainerRef, EventEmitter, Output, AfterViewInit} from '@angular/core';
 import {Observable, fromEvent, pipe} from 'rxjs';
 import {TaskService} from '../services/task-service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {TagService} from '../services/tag-service';
 import {Tag} from '../models/tags';
 import {bufferWhen, debounceTime, filter, map} from 'rxjs/operators';
 import {interval} from 'rxjs/observable/interval';
 import {TasksFiltersService} from "../services/tasks-filters.service";
+import {Filter} from '../models/filter';
 
 
 @Component({
@@ -14,18 +15,18 @@ import {TasksFiltersService} from "../services/tasks-filters.service";
     templateUrl: './tag.component.html',
     styleUrls: ['./tag.component.scss']
 })
-export class TagComponent implements OnInit, AfterViewInit {
+export class TagComponent implements OnInit {
     @Input() label: string;
-    @Input() id: any;
+    @Input() id: string | number;
     @Input() tasksCounter: number;
     @Input() tag?: Tag;
-    @Output() singleClick: EventEmitter<any> = new EventEmitter();
-    @Output() doubleClick: EventEmitter<any> = new EventEmitter();
     eventStreamDouble: any;
-    tagsIds: any;
+    tagsIds: string | Set<number>;
     isActive: boolean;
+    isChecked: boolean;
     editTagForm: FormGroup;
     editMode = false;
+    isCheckboxModeEnabled = false;
 
     constructor(private fb: FormBuilder, public viewContainerRef: ViewContainerRef, private tasksFiltersService: TasksFiltersService,
                 protected tagService: TagService) {
@@ -35,12 +36,14 @@ export class TagComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
-                this.tagsIds = filters.filter((myFilter) => myFilter.label === 'tags')[0].value;
-                this.isActive = (this.tagsIds.indexOf(this.id) > -1 || this.tagsIds === this.id);
+                this.tagsIds = filters.find((myFilter) => myFilter.label === 'tags').value;
+                this.isActive = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
+                this.isChecked = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
+                this.isCheckboxModeEnabled = this.isInt(this.id)  && (this.tagsIds instanceof Set) && this.tagsIds.size > 0;
             }
         });
-        this.editTagForm = this.fb.group({
-            'name': [this.label, Validators.required]
+        this.editTagForm = new FormGroup({
+            'name': new FormControl(this.label, Validators.required)
         });
     }
 
@@ -57,25 +60,56 @@ export class TagComponent implements OnInit, AfterViewInit {
     toggleEditMode() {
         this.editMode = !this.editMode;
     }
-
-    ngAfterViewInit() {
-        this.eventStreamDouble = fromEvent(this.viewContainerRef.element.nativeElement.querySelector('div.tag-name'), 'click');
-        this.eventStreamDouble.pipe(
-            bufferWhen(() => interval(500)),
-            map((list: any) => {
-                return list.hasOwnProperty(length) ? (<Array<number>>list).length : 0;
-            }),
-            filter(x => x >= 1)
-        ).subscribe((v) => {
-            if (v === 1) {
-                this.singleClick.emit(this.id);
-                console.log('single click');
-            } else {
-                this.doubleClick.emit(this.id);
-                console.log('double click');
-            }
-        }, (a) => console.log(a));
+    
+    selectTag() {
+        let value;
+        if (!this.isInt(this.id)) {
+            value = this.id;
+        } else if (this.isInt(this.id)) {
+            value = new Set([this.id]);
+        }
+        this.tasksFiltersService.updateCurrentFilter(new Filter({'id': 1, 'label': 'tags', 'value': value}));
     }
+    
+    selectTags() {
+        let value = this.tasksFiltersService.getCurrentTagsFilterValue();
+        if (value instanceof String || typeof this.id === 'string') {
+            value = this.id;
+        } else if (value instanceof Set) {
+            if (value.has(this.id)) {
+                value.delete(this.id);
+            } else {
+                value.add(this.id);
+            }
+        }
+        this.tasksFiltersService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
+    }
+    
+    private isInt(value: any) {
+        // @TODO DRY
+        return !isNaN(value) && (function (x) {
+            return (x | 0) === x;
+        })(parseFloat(value));
+    }
+
+    // ngAfterViewInit() {
+    //     this.eventStreamDouble = fromEvent(this.viewContainerRef.element.nativeElement.querySelector('div.tag-name'), 'click');
+    //     this.eventStreamDouble.pipe(
+    //         bufferWhen(() => interval(500)),
+    //         map((list: any) => {
+    //             return list.hasOwnProperty(length) ? (<Array<number>>list).length : 0;
+    //         }),
+    //         filter(x => x >= 1)
+    //     ).subscribe((v) => {
+    //         if (v === 1) {
+    //             this.singleClick.emit(this.id);
+    //             console.log('single click');
+    //         } else {
+    //             this.doubleClick.emit(this.id);
+    //             console.log('double click');
+    //         }
+    //     }, (a) => console.log(a));
+    // }
 
 }
 
