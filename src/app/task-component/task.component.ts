@@ -85,7 +85,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     let task: Task;
                     if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
                         this.user = user;
-                        this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);
+                        this.projects = ProjectService.sortProjectList(projects);
                         if (taskId) {
                             task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
                         } else {
@@ -250,7 +250,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         return new FormGroup({
             'main': new FormGroup({
                 'name': new FormControl(task.name, {validators: [Validators.required, Validators.max(500)]}),
-                'priority': new FormControl(task.priority, Validators.required),
+                'priority': new FormControl(task.priority),
                 'taskProjectPk': new FormControl(task.taskProject.id, Validators.required),
                 'typeFinishDate': new FormControl(task.typeFinishDate, Validators.required),
                 'finishDate': new FormControl(finishDate),
@@ -558,6 +558,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     isNewTask(): boolean {
-        return this.task.hasOwnProperty('id');
+        return Number.isInteger(this.task.id );
     }
 }

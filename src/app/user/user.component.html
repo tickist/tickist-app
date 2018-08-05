@@ -270,7 +270,7 @@
 
                             <mat-form-field>
                                 <mat-select placeholder="Overdue tasks sort by:" [(ngModel)]="user.overdueTasksSortBy"
-                                            (change)="changeUserDetails()">
+                                            (selectionChange)="changeUserDetails()">
                                     <mat-option *ngFor="let option of overdueTasksSortByOptions"
                                                 [value]="option.value"> {{ option.name }}
                                     </mat-option>
@@ -279,7 +279,7 @@
 
                             <mat-form-field>
                                 <mat-select placeholder="Future tasks sort by:" [(ngModel)]="user.futureTasksSortBy"
-                                            (change)="changeUserDetails()">
+                                            (selectionChange)="changeUserDetails()">
                                     <mat-option *ngFor="let option of futureTasksSortByOptions"
                                                 [value]="option.value"> {{ option.name }}
                                     </mat-option>

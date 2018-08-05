@@ -1,6 +1,7 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
-
+const puppeteer = require('puppeteer');
+process.env.CHROME_BIN = puppeteer.executablePath();
 
 module.exports = function (config) {
     config.set({
@@ -29,20 +30,20 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         autoWatch: true,
         browsers: ['ChromeHeadless'],
-        customLaunchers: {
-            ChromeHeadless: {
-                base: 'Chrome',
-                flags: [
-                    // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
-                    '--headless',
-                    '--disable-gpu',
-                    // Without a remote debugging port, Google Chrome exits immediately.
-                    '--remote-debugging-port=9222',
-                    // no sandbox because we use docker and root user
-                    '--no-sandbox'
-                ]
-            }
-        },
+        // customLaunchers: {
+        //     ChromeHeadless: {
+        //         base: 'Chrome',
+        //         flags: [
+        //             // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
+        //             '--headless',
+        //             '--disable-gpu',
+        //             // Without a remote debugging port, Google Chrome exits immediately.
+        //             '--remote-debugging-port=9222',
+        //             // no sandbox because we use docker and root user
+        //             '--no-sandbox'
+        //         ]
+        //     }
+        // },
         singleRun: false
     });
 };
