@@ -1,5 +1,5 @@
-import {SimplyUser} from '../user/simply-user';
-import {PendingUser} from '../user/pending-user';
+import {SimplyUser} from '../user';
+import {PendingUser} from '../user';
 import {Api} from '../commons';
 
 

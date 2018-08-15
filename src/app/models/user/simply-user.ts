@@ -1,6 +1,5 @@
-import {SimpleProject} from '../projects/simply-project';
 import {Api} from '../commons';
-
+import {SimpleProject} from '../projects/simply-project';
 
 export class SimplyUser extends Api {
   id: number;
@@ -25,3 +24,5 @@ export class SimplyUser extends Api {
   }
 
 }
+
+
