@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Headers, RequestOptions} from '@angular/http';
+import {Headers} from '@angular/http';
 import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';

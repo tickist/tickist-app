@@ -5,17 +5,14 @@ import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Task} from '../models/tasks';
 import {UserService} from './userService';
-import {User} from '../models/user';
-import * as _ from 'lodash';
 import {MatSnackBar} from '@angular/material';
 import {StatisticsService} from './statisticsService';
 import {ConfigurationService} from './configurationService';
 import {TagService} from './tag-service';
 import {ProjectService} from './project-service';
 import * as tasksAction from '../reducers/actions/tasks';
-import {Filter} from '../models/filter';
 import {HttpClient} from '@angular/common/http';
-import {filter, map, take} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 
 @Injectable()

@@ -5,7 +5,6 @@ import {AnonymousGuard} from './guards/anonymous.guard';
 import {HomeComponent} from './home/home.component';
 import {SignupComponent} from './signup/signup.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
-import {AboutComponent} from './about/about.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 import {ProjectComponent} from './project-component/project.component';
 import {TagsComponent} from './tags-component/tags.component';
@@ -24,7 +23,7 @@ import {TasksFromProjectsComponent} from './tasks-from-projects/tasks-from-proje
 import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
 import {TagsListComponent} from './tags-list/tags-list.component';
-import {TasksFiltersService} from "./services/tasks-filters.service";
+import {TasksFiltersService} from './services/tasks-filters.service';
 
 
 @Injectable()
@@ -100,28 +99,35 @@ export class SetAllTagsFilterResolver implements Resolve<Project> {
 
 export const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
-    {path: 'home', component: HomeComponent, canActivate: [LoggedInGuard], children: [
-        {path: 'projects/:projectId', component: TasksFromProjectsComponent, resolve: {
-                setAllTasksFilter:  SetAllTasksFilterResolver 
-            }},
-        {path: 'projects', component: ProjectsListComponent, outlet: 'leftSideNav'},
-        {path: 'projects', component: TasksFromProjectsComponent, resolve: {
-                setAllTasksFilter:  SetAllTasksFilterResolver 
-            }},
-        {path: 'project', component: ProjectComponent},
-        {path: 'project/:projectId', component: ProjectComponent},
-        {path: 'task', component: TaskComponent},
-        {path: 'task/:taskId', component: TaskComponent},
-        {path: 'tags', component: TagsComponent, resolve: {
-                setAllTagsFilter:  SetAllTagsFilterResolver 
-            }},
-        {path: 'tags', component: TagsListComponent, outlet: 'leftSideNav'},
-        {path: 'team', component: TeamComponent},
-        {path: 'user', component: UserComponent},
-        {path: '', component: WeekDaysComponent, outlet: 'leftSideNav'},
-        {path: '', component: DashboardComponent},
-        {path: ':date', component: DashboardComponent},
-    ],
+    {
+        path: 'home', component: HomeComponent, canActivate: [LoggedInGuard], children: [
+            {
+                path: 'projects/:projectId', component: TasksFromProjectsComponent, resolve: {
+                    setAllTasksFilter: SetAllTasksFilterResolver
+                }
+            },
+            {path: 'projects', component: ProjectsListComponent, outlet: 'leftSideNav'},
+            {
+                path: 'projects', component: TasksFromProjectsComponent, resolve: {
+                    setAllTasksFilter: SetAllTasksFilterResolver
+                }
+            },
+            {path: 'project', component: ProjectComponent},
+            {path: 'project/:projectId', component: ProjectComponent},
+            {path: 'task', component: TaskComponent},
+            {path: 'task/:taskId', component: TaskComponent},
+            {
+                path: 'tags', component: TagsComponent, resolve: {
+                    setAllTagsFilter: SetAllTagsFilterResolver
+                }
+            },
+            {path: 'tags', component: TagsListComponent, outlet: 'leftSideNav'},
+            {path: 'team', component: TeamComponent},
+            {path: 'user', component: UserComponent},
+            {path: '', component: WeekDaysComponent, outlet: 'leftSideNav'},
+            {path: '', component: DashboardComponent},
+            {path: ':date', component: DashboardComponent},
+        ],
         resolve: {
             projects: ProjectsResolver,
             tasks: TasksResolver,
@@ -133,5 +139,4 @@ export const routes: Routes = [
     {path: 'signup', component: SignupComponent, canActivate: [AnonymousGuard]},
     {path: 'login', component: LoginComponent, canActivate: [AnonymousGuard]},
     {path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [AnonymousGuard]},
-    {path: 'about', component: AboutComponent}
 ];

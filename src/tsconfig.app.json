@@ -4,6 +4,7 @@
     "outDir": "../out-tsc/app",
     "baseUrl": "./",
     "module": "es2015",
+      "target": "es2018",
     "types": [
       "jasmine",
       "node"
