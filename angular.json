@@ -4,7 +4,7 @@
     "newProjectRoot": "projects",
     "projects": {
         "tickist": {
-            "root": "src",
+            "root": "",
             "sourceRoot": "src",
             "projectType": "application",
             "prefix": "tickst",
@@ -64,6 +64,25 @@
                                     "with": "src/environments/environment.prod.ts"
                                 }
                             ]
+                        },
+                        "e2e": {
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "aot": true,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
+                            "serviceWorker": true,
+                            "ngswConfigPath": "src/ngsw-config.json",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.e2e.ts"
+                                }
+                            ]
                         }
                     }
                 },
@@ -78,6 +97,9 @@
                         },
                         "production": {
                             "browserTarget": "tickist:build:production"
+                        },
+                        "e2e": {
+                            "browserTarget": "tickist:build:e2e"
                         }
                     }
                 },
@@ -132,7 +154,13 @@
                     "options": {
                         "protractorConfig": "e2e/protractor.conf.js",
                         "devServerTarget": "tickist:serve"
+                    },
+                    "configurations": {
+                        "production": {
+                            "devServerTarget": "tickist:serve:production"
+                        }
                     }
+
                 },
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",

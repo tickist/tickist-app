@@ -5,16 +5,11 @@
         </tickist-menu-button>
     </div>
     <div>
-        <app-tag fxFlex label="All tasks" id="allTasks" (singleClick)="selectTagSingleClick($event)"
-                 (doubleClick)="selectTagDoubleClick($event)"></app-tag>
-        <app-tag fxFlex label="All tags" id="allTags" (singleClick)="selectTagSingleClick($event)"
-                 (doubleClick)="selectTagDoubleClick($event)"></app-tag>
+        <app-tag fxFlex label="All tasks" id="allTasks"></app-tag>
+        <app-tag fxFlex label="All tags" id="allTags"></app-tag>
         <app-tag fxFlex *ngFor="let tag of tags; trackBy: trackByFn" [label]="tag.name" [id]="tag.id"
-                 [tasksCounter]="tag.tasksCounter"
-                 (singleClick)="selectTagSingleClick($event)"
-                 (doubleClick)="selectTagDoubleClick($event)" [tag]="tag"></app-tag>
-        <app-tag fxFlex label="Without tags" id="withoutTags" (singleClick)="selectTagSingleClick($event)"
-                 (doubleClick)="selectTagDoubleClick($event)"></app-tag>
+                 [tasksCounter]="tag.tasksCounter"[tag]="tag"></app-tag>
+        <app-tag fxFlex label="Without tags" id="withoutTags"></app-tag>
     </div>
 
 </mat-card>

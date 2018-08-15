@@ -13,7 +13,7 @@ import {UserService} from '../services/userService';
 import {Project} from '../models/projects';
 import {ConfigurationService} from '../services/configurationService';
 import {User, SimplyUser} from '../models/user';
-import {FormBuilder, FormGroup, Validators, FormArray, FormControl} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../pipes/minutes2hours';
 import {MatDialogRef, MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
@@ -85,7 +85,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     let task: Task;
                     if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
                         this.user = user;
-                        this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);
+                        this.projects = ProjectService.sortProjectList(projects);
                         if (taskId) {
                             task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
                         } else {
@@ -247,31 +247,31 @@ export class TaskComponent implements OnInit, OnDestroy {
         }
         repeat.repeatCustom = (task.repeat > 0) ? task.repeat : 1;
 
-        return this.fb.group({
-            'main': this.fb.group({
-                'name': [task.name, [Validators.required, Validators.max(100)]],
-                'priority': [task.priority, Validators.required],
-                'taskProjectPk': [task.taskProject.id, Validators.required],
-                'typeFinishDate': [task.typeFinishDate, Validators.required],
-                'finishDate': [finishDate],
-                'finishTime': [finishTime],
+        return new FormGroup({
+            'main': new FormGroup({
+                'name': new FormControl(task.name, {validators: [Validators.required, Validators.max(500)]}),
+                'priority': new FormControl(task.priority),
+                'taskProjectPk': new FormControl(task.taskProject.id, Validators.required),
+                'typeFinishDate': new FormControl(task.typeFinishDate, Validators.required),
+                'finishDate': new FormControl(finishDate),
+                'finishTime': new FormControl(finishTime),
             }, { updateOn: 'blur' }),
-            'extra': this.fb.group({
-                'description': [task.description],
-                'time': [this.minutes2Hours.transform(task.time)],
-                'estimateTime': [this.minutes2Hours.transform(task.estimateTime)],
-                'ownerId': [task.owner.id, Validators.required],
-                'suspended': [task.status === 2, Validators.required],
-                'suspendedDate': [task.suspendDate],
-            }, {validator: this.finishTimeWithFinishDate}),
-            'repeat': this.fb.group({
-                'repeatDefault': [repeat.repeatDefault],
-                'repeatDelta': [repeat.repeatDelta],
-                'repeatCustom': [repeat.repeatCustom],
-                'fromRepeating': [task.fromRepeating]
+            'extra': new FormGroup({
+                'description': new FormControl(task.description),
+                'time': new FormControl(this.minutes2Hours.transform(task.time)),
+                'estimateTime': new FormControl(this.minutes2Hours.transform(task.estimateTime)),
+                'ownerId': new FormControl(task.owner.id, {validators: Validators.required}),
+                'suspended': new FormControl(task.status === 2, {validators: Validators.required}),
+                'suspendedDate': new FormControl(task.suspendDate),
+            }, {validators: this.finishTimeWithFinishDate}),
+            'repeat':  new FormGroup({
+                'repeatDefault': new FormControl(repeat.repeatDefault),
+                'repeatDelta': new FormControl(repeat.repeatDelta),
+                'repeatCustom': new FormControl(repeat.repeatCustom),
+                'fromRepeating': new FormControl(task.fromRepeating)
             }),
-            'tags': this.fb.group({
-                'tags': [''],
+            'tags': new FormGroup({
+                'tags': new FormControl(''),
             }),
             'steps': this.initSteps(task.steps)
         });
@@ -376,10 +376,13 @@ export class TaskComponent implements OnInit, OnDestroy {
 
             if (newTag instanceof MatAutocompleteSelectedEvent) {
                 if (newTag.option.value) {
-                    this.task.tags.push(newTag.option.value);
-                    if (!this.isNewTask()) {
-                        this.taskService.saveTask(this.task);
-                    }
+                     this.tagService.createTagDuringEditingTask(new Tag({name: newTag.option.value.name})).subscribe((t) => {
+                        this.task.tags.push(new Tag(t));
+                        if (!this.isNewTask()) {
+                            this.taskService.saveTask(this.task);
+                        }
+
+                    });
                 }
             } else {
                 const existingTag = this.tags.filter((t: Tag) => t.name === this.tagsCtrl.value)[0];
@@ -472,13 +475,13 @@ export class TaskComponent implements OnInit, OnDestroy {
         // DRY
         this.location.back();
     }
-    
-    getErrorMessage(field: FormControl): string {
+
+    getErrorMessage(field: AbstractControl): string {
         return field.hasError('maxLength') ? 'Name is too long' :
             field.hasError('required') ? 'You have to add task name' : '';
     }
 
-    hasErrorMessage(field: FormControl): boolean {
+    hasErrorMessage(field: AbstractControl): boolean {
         return field.hasError('maxLength') ||  field.hasError('required');
     }
 
@@ -555,6 +558,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     isNewTask(): boolean {
-        return this.task.hasOwnProperty('id');
+        return Number.isInteger(this.task.id );
     }
 }

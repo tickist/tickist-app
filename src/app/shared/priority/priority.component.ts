@@ -70,7 +70,9 @@ export class PriorityComponent implements ControlValueAccessor {
     changePriority($event) {
         this.innerValue = $event.value;
         this.change.emit($event.value);
+        this.writeValue($event.value);
         this.onChangeCallback($event.value);
+
     }
 
     onClickChangePriority(priority) {

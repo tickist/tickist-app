@@ -53,7 +53,6 @@ import {
     UserResolver
 } from './app.routes';
 import {HomeComponent} from './home/home.component';
-import {AboutComponent} from './about/about.component';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {useLogMonitor} from '@ngrx/store-log-monitor';
 import {TaskService} from './services/task-service';
@@ -157,7 +156,6 @@ export function tokenGetter() {
     declarations: [
         AppComponent,
         HomeComponent,
-        AboutComponent,
         LoginComponent,
         SignupComponent,
         DashboardComponent,

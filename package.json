@@ -7,8 +7,8 @@
         "ng": "ng",
         "start": "ng serve -c dev --host 0.0.0.0",
         "build": "ng build --prod",
-        "test:once": "ng test --watch=false",
-        "ci": "npm run test:once && npm run e2e",
+        "test_once": "ng test --watch=false",
+        "ci": "npm run test_once && npm run e2e",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"
@@ -46,6 +46,7 @@
         "moment": "^2.22.2",
         "ng2-charts": "^1.5.0",
         "primeng": "^4.3.0",
+        "puppeteer": "^1.6.2",
         "reflect-metadata": "0.1.8",
         "rxjs": "^6.2.1",
         "rxjs-compat": "^6.2.1",
@@ -74,6 +75,7 @@
         "node-sass": "^4.9.1",
         "npm-check-updates": "^2.11.1",
         "protractor": "~5.3.0",
+        "puppeteer": "^1.6.2",
         "ts-node": "~5.0.1",
         "tslint": "~5.9.1",
         "typescript": "~2.7.2"

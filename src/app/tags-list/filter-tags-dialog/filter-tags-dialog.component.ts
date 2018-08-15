@@ -15,8 +15,10 @@ export class FilterTagsDialogComponent implements OnInit {
 
 
     constructor(public dialogRef: MatDialogRef<FilterTagsDialogComponent>, protected tagsFiltersService: TagsFiltersService) {
-        this.tagsFiltersService.currentTagsFilters$.subscribe((filter) => {
+    }
 
+    ngOnInit() {
+        this.tagsFiltersService.currentTagsFilters$.subscribe((filter) => {
             if (filter) {
                 this.filterValue = filter;
                 this.filterValueId = this.filterValue['id'];
@@ -30,11 +32,6 @@ export class FilterTagsDialogComponent implements OnInit {
 
             }
         });
-
-
-    }
-
-    ngOnInit() {
     }
 
     close(result) {

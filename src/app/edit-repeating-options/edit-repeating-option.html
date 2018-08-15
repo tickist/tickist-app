@@ -17,7 +17,7 @@
 
             </mat-form-field>
             <mat-form-field fxFlex="40">
-                <mat-select (change)="saveTask($event, 'repeatCustom')" [(ngModel)]="repeatCustom">
+                <mat-select (selectionChange)="saveTask($event, 'repeatCustom')" [(ngModel)]="repeatCustom">
                     <mat-option *ngFor="let option of customRepeatOptions"
                                 [value]="option.id"> {{ option.name_of_extension }}
                     </mat-option>

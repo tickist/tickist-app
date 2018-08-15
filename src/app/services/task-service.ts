@@ -5,55 +5,20 @@ import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Task} from '../models/tasks';
 import {UserService} from './userService';
-import {User} from '../models/user';
-import * as _ from 'lodash';
 import {MatSnackBar} from '@angular/material';
 import {StatisticsService} from './statisticsService';
 import {ConfigurationService} from './configurationService';
 import {TagService} from './tag-service';
 import {ProjectService} from './project-service';
 import * as tasksAction from '../reducers/actions/tasks';
-import {Filter} from '../models/filter';
 import {HttpClient} from '@angular/common/http';
-import {filter, map, take} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 
 @Injectable()
 export class TaskService {
     tasks$: Observable<Task[]>;
-
-    static useFilters(tasks, currentFilters) {
-
-        tasks = tasks.filter(currentFilters[0].value);
-        tasks = tasks.filter(currentFilters[1].value);
-        tasks = tasks.filter(currentFilters[2].value);
-        tasks = tasks.filter(currentFilters[3].value);
-        const tags = currentFilters.filter(filter => filter.label === 'tags')[0];
-        const sortingBy = currentFilters.filter(filter => filter.label === 'sorting')[0];
-
-        if (tags.value instanceof Array) {
-            tasks = tasks.filter((task) => {
-                const result = [];
-                task.tags.forEach((tag => {
-                    if (tags.value.indexOf(tag.id) > -1) {
-                        result.push(tag.id);
-                    }
-                }));
-                return result.length === tags.value.length;
-            });
-        } else if (tags.value === 'allTags') {
-            tasks = tasks.filter((task) => {
-                return !(task.tags.length === 0);
-            });
-        } else if (tags.value === 'withoutTags') {
-            tasks = tasks.filter((task) => {
-                return (task.tags.length === 0);
-            });
-        }
-        tasks = _.orderBy(tasks, sortingBy.value, sortingBy.order);
-        return tasks;
-    }
-
+    
     constructor(public http: HttpClient, private store: Store<AppStore>, private userService: UserService,
                 public snackBar: MatSnackBar, protected statisticsService: StatisticsService,
                 protected configurationService: ConfigurationService, protected projectService: ProjectService,

@@ -14,6 +14,8 @@ import * as tasksAction from '../reducers/actions/tasks';
 import {Filter} from '../models/filter';
 import {HttpClient} from '@angular/common/http';
 import {filter, map, take} from 'rxjs/operators';
+import {Task} from '../models/tasks';
+import {Tag} from '../models/tags';
 
 
 @Injectable()
@@ -29,18 +31,17 @@ export class TasksFiltersService {
         tasks = tasks.filter(currentFilters[1].value);
         tasks = tasks.filter(currentFilters[2].value);
         tasks = tasks.filter(currentFilters[3].value);
-        const tags = currentFilters.filter(filter => filter.label === 'tags')[0];
-        const sortingBy = currentFilters.filter(filter => filter.label === 'sorting')[0];
-
-        if (tags.value instanceof Array) {
-            tasks = tasks.filter((task) => {
+        const tags = currentFilters.find(filter => filter.label === 'tags');
+        const sortingBy = currentFilters.find(filter => filter.label === 'sorting');
+        if (tags.value instanceof Set) {
+            tasks = tasks.filter((task: Task) => {
                 const result = [];
-                task.tags.forEach((tag => {
-                    if (tags.value.indexOf(tag.id) > -1) {
+                task.tags.forEach((tag: Tag) => {
+                    if (tags.value.has(tag.id)) {
                         result.push(tag.id);
                     }
-                }));
-                return result.length === tags.value.length;
+                });
+                return result.length === tags.value.size;
             });
         } else if (tags.value === 'allTags') {
             tasks = tasks.filter((task) => {
@@ -130,10 +131,10 @@ export class TasksFiltersService {
     }
 
     getCurrentTagsFilterValue() {
-        let state: State<any>;
+        let state: any;
         // we need to use 'synchronous' subscribe. It is only options to get current value
         this.currentTasksFilters$.pipe(take(1)).subscribe(s => state = s);
-        return state.pipe(filter(filter => filter.label === 'tags'))[0].value;
+        return state.find(filter => filter.label === 'tags').value;
     }
 
     resetAssignedFilterToAssignedToAll() {

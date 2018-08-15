@@ -1,11 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subscription, combineLatest} from 'rxjs';
-
 import {TagService} from '../services/tag-service';
 import {Tag} from '../models/tags';
 import {Task} from '../models/tasks';
 import {TaskService} from '../services/task-service';
-import {FormBuilder, Validators, FormGroup} from '@angular/forms';
+import {FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import {UserService} from '../services/userService';
 import {User} from '../models/user';
 import {SideNavVisibility} from '../models';
@@ -16,6 +15,7 @@ import {MatDialog} from '@angular/material';
 import {TagsFiltersService} from '../services/tags-filters-service';
 import {Filter} from '../models/filter';
 import {TasksFiltersService} from "../services/tasks-filters.service";
+
 
 @Component({
     selector: 'app-tags-list',
@@ -55,8 +55,9 @@ export class TagsListComponent implements OnInit, OnDestroy {
             this.taskService.tasks$,
             this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], currentTasksFilters: any) => {
+                debugger
                 if (currentTasksFilters.length > 0) {
-                    tasks = TaskService.useFilters(tasks, currentTasksFilters);
+                    tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
                 }
                 return tasks;
             }
@@ -74,8 +75,8 @@ export class TagsListComponent implements OnInit, OnDestroy {
                 this.tasks = tasks;
             }
         })));
-        this.createTagForm = this.fb.group({
-            'name': ['', Validators.required]
+        this.createTagForm = new FormGroup({
+            'name': new FormControl('', Validators.required)
         });
         this.subscriptions.add(this.userService.user$.subscribe((user) => {
             this.user = user;
@@ -102,27 +103,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
             return (x | 0) === x;
         })(parseFloat(value));
     }
-
-    selectTagSingleClick(tagId) {
-        let value;
-        if (tagId instanceof String || typeof tagId === 'string') {
-            value = tagId;
-        } else if (this.isInt(tagId)) {
-            value = [tagId];
-        }
-        this.tasksFiltersService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
-    }
-
-    selectTagDoubleClick(tagId) {
-        let value = this.tasksFiltersService.getCurrentTagsFilterValue();
-        if (value instanceof String || typeof tagId === 'string') {
-            value = tagId;
-        } else if (value instanceof Array) {
-            value.push(tagId);
-        }
-        this.tasksFiltersService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
-    }
-
+    
     changeTaskView(event) {
         console.log(event);
         this.taskView = event;
