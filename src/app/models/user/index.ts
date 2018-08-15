@@ -1,4 +1,8 @@
-export {PendingUser} from './pending-user';
-export {SimplyUser} from './simply-user';
-export {User} from './user';
-export { UserLogin} from './user-login';
+import {PendingUser} from './pending-user';
+import {SimplyUser} from './simply-user';
+import {User} from './user';
+import { UserLogin} from './user-login';
+
+
+
+export {PendingUser, SimplyUser, User, UserLogin};

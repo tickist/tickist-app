@@ -1,3 +1,5 @@
-export {Project} from './project';
-export {SimpleProject} from './simply-project';
+import {SimpleProject} from './simply-project';
+import {Project} from './project';
+
+export {Project, SimpleProject };
 

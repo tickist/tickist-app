@@ -1,6 +1,6 @@
 import {Api} from '../commons';
-import {SimplyUser} from '../user/simply-user';
-import {PendingUser} from '../user/pending-user';
+import {PendingUser} from '../user';
+import {SimplyUser} from '../user';
 
 
 export class SimpleProject extends Api {
@@ -9,7 +9,7 @@ export class SimpleProject extends Api {
     color: string;
     dialogTimeWhenTaskFinished: boolean;
     shareWith: (SimplyUser | PendingUser)[] = [];
-    
+
     constructor(project) {
         super();
         this.id = project.id;
@@ -21,9 +21,9 @@ export class SimpleProject extends Api {
                 this.addUserToShareList(user);
             });
         }
-        
+
     }
-    
+
     addUserToShareList(user) {
         if (user.hasOwnProperty('id')) {
             this.shareWith.push(new SimplyUser(user));
@@ -32,3 +32,5 @@ export class SimpleProject extends Api {
         }
     }
 }
+
+
