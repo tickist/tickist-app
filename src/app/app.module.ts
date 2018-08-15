@@ -250,7 +250,7 @@ export function tokenGetter() {
             config: {
                 headerName: 'Authorization',
                 authScheme: '',
-                whitelistedDomains: ['localhost:4200', 'tickist.com', 'localhost:8000'],
+                whitelistedDomains: ['localhost:4200', 'tickist.com', 'app.tickist.com', 'localhost:8000'],
                 tokenGetter: tokenGetter
             }
         }),
