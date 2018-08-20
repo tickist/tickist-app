@@ -11,7 +11,6 @@ export class MyErrorHandler implements ErrorHandler {
     if (!this.errorService) {
       this.errorService = <ErrorService>this.injector.get(ErrorService);
     }
-    //debugger
     try {
       this.errorService.logError(error, window.location.href, window.localStorage['USER_ID']);
       console.group('ErrorHandler');

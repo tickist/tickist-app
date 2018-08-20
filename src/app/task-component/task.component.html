@@ -85,13 +85,13 @@
                                     {{getErrorMessage(taskForm.controls['main'].controls['name'])}}
                                 </mat-error>
                             </mat-form-field>
-                            
+
                             <tickist-priority formControlName="priority"></tickist-priority>
 
                             <mat-form-field>
                                 <mat-select placeholder="Project:" formControlName="taskProjectPk"
                                             (selectionChange)="changeProjectInTask($event)">
-                                    <mat-option *ngFor="let project of projects"
+                                    <mat-option *ngFor="let project of projects" [ngClass]="project.matOptionClass"
                                                 [value]="project.id"> {{ project.name }}
                                     </mat-option>
                                 </mat-select>

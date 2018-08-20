@@ -55,7 +55,6 @@ export class TagsListComponent implements OnInit, OnDestroy {
             this.taskService.tasks$,
             this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], currentTasksFilters: any) => {
-                debugger
                 if (currentTasksFilters.length > 0) {
                     tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
                 }

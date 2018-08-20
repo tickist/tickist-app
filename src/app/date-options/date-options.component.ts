@@ -66,7 +66,6 @@ export class DateOptionsComponent implements OnInit {
 
     clearFinishDate($event) {
         this.finishDateInputViewChild;
-        debugger;
         this.finishDate = '';
         this.saveTask({'value': ''}, 'finishDate ');
         $event.stopPropagation();
