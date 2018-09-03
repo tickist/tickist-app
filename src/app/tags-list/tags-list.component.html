@@ -4,7 +4,7 @@
         <tickist-menu-button fxFlex="23px" [icon]="'fa-filter'" (click)="openFilterDialog()">
         </tickist-menu-button>
     </div>
-    <div>
+    <div fxLayout="column">
         <app-tag fxFlex label="All tasks" id="allTasks"></app-tag>
         <app-tag fxFlex label="All tags" id="allTags"></app-tag>
         <app-tag fxFlex *ngFor="let tag of tags; trackBy: trackByFn" [label]="tag.name" [id]="tag.id"
