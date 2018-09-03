@@ -250,7 +250,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         return new FormGroup({
             'main': new FormGroup({
                 'name': new FormControl(task.name, {validators: [Validators.required, Validators.max(500)]}),
-                'priority': new FormControl(task.priority),
+                'priority': new FormControl(task.priority, {updateOn: 'change'}),
                 'taskProjectPk': new FormControl(task.taskProject.id, Validators.required),
                 'typeFinishDate': new FormControl(task.typeFinishDate, Validators.required),
                 'finishDate': new FormControl(finishDate),
@@ -264,7 +264,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 'suspended': new FormControl(task.status === 2, {validators: Validators.required}),
                 'suspendedDate': new FormControl(task.suspendDate),
             }, {validators: this.finishTimeWithFinishDate}),
-            'repeat':  new FormGroup({
+            'repeat': new FormGroup({
                 'repeatDefault': new FormControl(repeat.repeatDefault),
                 'repeatDelta': new FormControl(repeat.repeatDelta),
                 'repeatCustom': new FormControl(repeat.repeatCustom),
@@ -539,7 +539,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     updateImmediately(source, formControlName, values) {
-        console.log(' updateImmediately')
         if (this.task.id) {
             if (this.task[source] !== this.taskForm.get(formControlName).value) {
                 this.onSubmit(values, true);
