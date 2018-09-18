@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import {Injectable} from '@angular/core';
 import {Observable, pipe} from 'rxjs';
 import {Headers, RequestOptions, Response, RequestOptionsArgs} from '@angular/http';
@@ -95,8 +96,12 @@ export class UserService {
     }
 
     changePassword(values: any) {
+        const  object = {};
+        _.keys(values).forEach(key => {
+            object[_.snakeCase(key)] = values[key];
+        });
         const userID = localStorage.getItem('USER_ID');
-        return this.http.put(`${environment.apiUrl}/user/${userID}/changepassword/`, values);
+        return this.http.put(`${environment.apiUrl}/user/${userID}/changepassword/`, object);
     }
 
     changeAvatar(avatar: File) {

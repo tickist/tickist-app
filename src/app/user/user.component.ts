@@ -61,9 +61,9 @@ export class UserComponent implements OnInit, OnDestroy {
         });
 
         this.changePasswordForm = new FormGroup({
-            'oldPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)])),
+            'password': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)])),
             'newPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)])),
-            'confirmNewPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)]))
+            'repeatNewPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)]))
         }, {validators: this.matchingPasswords});
 
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
@@ -131,16 +131,16 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     private matchingPasswords(group: any) {
-        const oldPassword = group.controls.oldPassword;
+        const password = group.controls.password;
         const newPassword = group.controls.newPassword;
-        const confirmNewPassword = group.controls.confirmNewPassword;
+        const repeatNewPassword = group.controls.repeatNewPassword;
         let result = null;
-        if (newPassword.value !== confirmNewPassword.value) {
+        if (newPassword.value !== repeatNewPassword.value) {
             result = {
                 mismatchedPasswords: true
             };
         }
-        if (oldPassword.value === newPassword.value) {
+        if (password.value === newPassword.value) {
             result = {
                 oldSameNew: true
             };
@@ -152,7 +152,7 @@ export class UserComponent implements OnInit, OnDestroy {
         this.userService.changePassword(values).subscribe(() => {
         }, (error: any) => {
             console.log(error);
-            this.changePasswordForm.setErrors({'wrongOldPassword': true});
+            this.changePasswordForm.setErrors({'wrongPassword': true});
         });
     }
 
