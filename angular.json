@@ -20,7 +20,10 @@
                         "polyfills": "src/polyfills.ts",
                         "stylePreprocessorOptions": {
                             "includePaths": [
-                                "node_modules"
+                                "node_modules",
+                                "src/app/shared/",
+                                "src/",
+                                "src/app/"
                             ]
                         },
                         "assets": [
@@ -30,8 +33,6 @@
                         ],
                         "styles": [
                             "src/style.scss",
-                            "src/app/shared/variables.scss",
-                            "src/app/shared/commons.scss",
                             "node_modules/primeng/resources/primeng.min.css",
                             "node_modules/primeng/resources/themes/omega/theme.css"
                         ],

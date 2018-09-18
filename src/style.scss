@@ -339,3 +339,15 @@ body::-webkit-scrollbar-thumb {
 mat-radio-group {
     overflow: hidden;
 }
+
+.level_1 {
+    .mat-option-text {
+        padding-left: 20px
+    }
+}
+
+.level_2 {
+    .mat-option-text {
+        padding-left: 40px
+    }
+}

@@ -42,16 +42,13 @@ export class Project extends Api {
         this.taskView = project.task_view;
         this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
         this.isInbox = project.is_inbox;
-        if (!project.share_with) {
-            debugger
-        }
         project.share_with.forEach((user) => {
             this.addUserToShareList(user);
 
         });
     }
 
-    addUserToShareList(user) {
+    addUserToShareList(user): void {
         if (user.hasOwnProperty('id')) {
             this.shareWith.push(new SimplyUser(user));
         } else {
@@ -59,7 +56,11 @@ export class Project extends Api {
         }
     }
 
-    private convert(text) {
+    get matOptionClass(): string {
+        return `level_${this.level}`;
+    }
+
+    private convert(text: string): string {
         const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
         let richText;

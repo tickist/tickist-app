@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProjectService} from '../services/project-service';
 import {SimplyUser} from '../models/user';
 import {ConfigurationService} from '../services/configurationService';
@@ -9,7 +9,7 @@ import {environment} from '../../environments/environment';
     templateUrl: './team.component.html',
     styleUrls: ['./team.component.scss']
 })
-export class TeamComponent implements OnInit {
+export class TeamComponent implements OnInit, OnDestroy {
     team: SimplyUser[];
     staticUrl: string;
 
@@ -17,10 +17,18 @@ export class TeamComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.configurationService.changeOpenStateLeftSidenavVisibility('close');
+        this.configurationService.changeOpenStateRightSidenavVisibility('close');
         this.staticUrl = environment['staticUrl'];
         this.projectService.team$.subscribe((team) => {
             this.team = team;
         });
+    }
+
+    ngOnDestroy(): void {
+        this.configurationService.updateLeftSidenavVisibility();
+        this.configurationService.updateRightSidenavVisibility();
+        this.configurationService.updateAddTaskComponentVisibility(true);
     }
 
 }

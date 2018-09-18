@@ -10,24 +10,12 @@ import {MatDialog} from '@angular/material';
 import {ProjectService} from '../services/project-service';
 import {Project} from '../models/projects';
 import {DeleteTaskDialogComponent} from './delete-task-dialog/delete-task.dialog.component';
-import * as _ from 'lodash';
 import {Subject, pipe} from 'rxjs';
 import {RepeatStringExtension} from '../pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {Step} from '../models/steps';
 
 
-class Timer {
-    readonly start = performance.now();
-
-    constructor(private readonly name: string) {
-    }
-
-    stop() {
-        const time = performance.now() - this.start;
-        //console.log('Timer:', this.name, 'finished in', Math.round(time), 'ms');
-    }
-}
 
 
 class SingleTask {
@@ -78,7 +66,6 @@ class SingleTask {
                 });
                 dialogRef.afterClosed().subscribe(result => {
                     if (result) {
-                        debugger;
                         this.task.estimateTime = result['estimateTime'];
                         this.task.time = result['realTime'];
                     }
@@ -190,9 +177,6 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         }
     }
 
-    private timer: Timer;
-    private t2: Timer;
-
     constructor(public taskService: TaskService, public configurationService: ConfigurationService,
                 public dialog: MatDialog, protected projectService: ProjectService, private renderer: Renderer2) {
         super(taskService, dialog);
@@ -201,8 +185,7 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
 
     ngOnInit() {
         this.projectService.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((projects) => {
-            this.projects = _.orderBy(projects, ['isInbox', 'name'], ['desc', 'asc']);
-            // this.t2.stop();  // Prints the time elapsed to the JS console.
+            this.projects = ProjectService.sortProjectList(projects);
         });
         if (this.mediaChange && this.mediaChange.mqAlias === 'xs') {
             this.dateFormat = 'DD-MM';
@@ -217,19 +200,9 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
         this.renderer.addClass(this.container.nativeElement, 'row');
     }
 
-    // When change detection begins
-    ngDoCheck() {
-        this.timer = new Timer(`single task component ${this.task.name}`);
-    }
-
-
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-    }
-
-    ngAfterViewChecked() {
-        this.timer.stop();  // Prints the time elapsed to the JS console.
     }
 
     changeAssignedTo(event) {
@@ -270,19 +243,19 @@ export class SingleTaskComponent extends SingleTask implements OnInit, OnChanges
     styleUrls: ['./single-task-simplified.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit, AfterViewInit {
+export class SingleTaskSimplifiedComponent extends SingleTask {
     @Input() task;
     finishDateVisible = true;
 
     @HostListener('mouseenter')
-    onMouseEnter() {
+    onMouseEnter(): void {
         this.isMouseOver = true;
         this.changeRightMenuVisiblity();
         this.isRightMenuVisible = true;
     }
 
     @HostListener('mouseleave')
-    onMouseLeave() {
+    onMouseLeave(): void {
         this.isMouseOver = false;
         this.changeRightMenuVisiblity();
         if (!this.isFastMenuVisible) {
@@ -295,16 +268,7 @@ export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit,
         super(taskService, dialog);
     }
 
-    ngOnInit() {
-        console.time(`simple single task component ${this.task.name}`);
-    }
-
-    ngAfterViewInit() {
-        console.log('stop');
-        console.timeEnd(`simple single task component ${this.task.name}`);
-    }
-
-    changeRightMenuVisiblity() {
+    changeRightMenuVisiblity(): void {
         if (this.isMouseOver) {
             this.isRightMenuVisible = true;
             this.finishDateVisible = false;
@@ -319,10 +283,9 @@ export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit,
         }
     }
 
-    changeFastMenuVisible(value) {
+    changeFastMenuVisible(value: boolean) {
         this.isFastMenuVisible = value;
         this.changeRightMenuVisiblity();
-        console.log(value);
     }
 
 }

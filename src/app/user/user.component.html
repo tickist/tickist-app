@@ -86,16 +86,16 @@
                         <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="changePasswordForm"
                               (ngSubmit)="changePassword($event, changePasswordForm.value)">
                             <div class="errror"
-                                 *ngIf="changePasswordForm.hasError('oldSameNew') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['oldPassword'].touched">
+                                 *ngIf="changePasswordForm.hasError('oldSameNew') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['password'].touched">
                                 New Password should not be same as old password.
                             </div>
                             <div class="errror"
-                                 *ngIf="changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['confirmNewPassword'].touched">
+                                 *ngIf="changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['repeatNewPassword'].touched">
                                 Password and conform password should be the same.
                             </div>
 
                             <div class="errror"
-                                 *ngIf="changePasswordForm.controls['oldPassword'].hasError('minlength') && changePasswordForm.controls['oldPassword'].touched">
+                                 *ngIf="changePasswordForm.controls['password'].hasError('minlength') && changePasswordForm.controls['password'].touched">
                                 Old password should contain at least 4 distinct characters.
                             </div>
                             <div class="errror"
@@ -103,7 +103,7 @@
                                 New Password should contain at least 4 distinct characters.
                             </div>
 
-                            <div class="errror" *ngIf="changePasswordForm.hasError('wrongOldPassword')">
+                            <div class="errror" *ngIf="changePasswordForm.hasError('wrongPassword')">
                                 Old password is not correct.
                             </div>
 
@@ -111,23 +111,23 @@
                             <mat-form-field>
                                 <input matInput id="old password" type="password" name="old password"
                                        placeholder="Old password"
-                                       [formControl]="changePasswordForm.controls['oldPassword']"
-                                       [ngClass]="{'input-error': ((changePasswordForm.controls['oldPassword'].hasError('required') || changePasswordForm.controls['oldPassword'].hasError('minlength')) && changePasswordForm.controls['oldPassword'].touched)}">
+                                       [formControl]="changePasswordForm.controls['password']"
+                                       [ngClass]="{'input-error': ((changePasswordForm.controls['password'].hasError('required') || changePasswordForm.controls['password'].hasError('minlength')) && changePasswordForm.controls['password'].touched)}">
                             </mat-form-field>
 
                             <mat-form-field>
                                 <input matInput id="new_password" type="password" name="net password"
                                        placeholder="New password"
                                        [formControl]="changePasswordForm.controls['newPassword']"
-                                       [ngClass]="{'input-error': ((changePasswordForm.controls['newPassword'].hasError('required') || changePasswordForm.controls['newPassword'].hasError('minlength') || (changePasswordForm.controls['confirmNewPassword'].touched && changePasswordForm.hasError('mismatchedPasswords')))  && changePasswordForm.controls['newPassword'].touched)}">
+                                       [ngClass]="{'input-error': ((changePasswordForm.controls['newPassword'].hasError('required') || changePasswordForm.controls['newPassword'].hasError('minlength') || (changePasswordForm.controls['repeatNewPassword'].touched && changePasswordForm.hasError('mismatchedPasswords')))  && changePasswordForm.controls['newPassword'].touched)}">
 
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput id="confirm_new_password" type="password" name="confirm_new_password"
                                        placeholder="Confirm new password"
-                                       [formControl]="changePasswordForm.controls['confirmNewPassword']"
-                                       [ngClass]="{'input-error': ((changePasswordForm.controls['confirmNewPassword'].hasError('required') ||
-                                   (changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched)) && changePasswordForm.controls['confirmNewPassword'].touched)}">
+                                       [formControl]="changePasswordForm.controls['repeatNewPassword']"
+                                       [ngClass]="{'input-error': ((changePasswordForm.controls['repeatNewPassword'].hasError('required') ||
+                                   (changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched)) && changePasswordForm.controls['repeatNewPassword'].touched)}">
                             </mat-form-field>
 
                             <div class="pull-right">
