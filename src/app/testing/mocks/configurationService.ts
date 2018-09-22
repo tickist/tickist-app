@@ -103,13 +103,13 @@ export class MockConfigurationService extends SpyObject {
         this.loadConfiguration = this.spy('loadConfiguration').and.returnValue(this.mockConfiguration);
         this.fakeResponse = null;
         this.responseSuccess = true;
-        this.activeDay$ = this.spy('activeDay$').and.returnValue(this);
+        this.activeDateElement$ = this.spy('activeDay$').and.returnValue(this);
         this.offlineModeNotification$ = this.spy('offlineModeNotification$').and.returnValue(of(this.fakeResponse));
         this.detectApiError$ = this.spy('detectApiError$').and.returnValue(of(this.fakeResponse));
         this.leftSidenavVisibility$ = of(this.fakeResponse);
         this.rightSidenavVisibility$ = of(this.fakeResponse);
         this.addTaskComponentVisibility$ = of(this.addTaskComponentVisibilityResponse);
-        this.activeDay$ = of(this.fakeResponse);
+        this.activeDateElement$ = of(this.fakeResponse);
     }
 
     subscribe(success, error) {
