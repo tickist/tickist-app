@@ -1,17 +1,18 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Headers, RequestOptions} from '@angular/http';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../store';
 
 import * as moment from 'moment';
 import {ObservableMedia} from '@angular/flex-layout';
 import * as configurationAction from '../reducers/actions/configuration';
+import {IActiveDateElement} from '../models/active-data-element.interface';
+import {stateActiveDateElement} from '../models/state-active-date-element.enum';
 
 
 @Injectable()
 export class ConfigurationService {
-    activeDay$: Observable<moment.Moment>;
+    activeDateElement$: Observable<IActiveDateElement>;
     detectApiError$: Observable<any>;
     offlineModeNotification$: Observable<any>;
     leftSidenavVisibility$: Observable<any>;
@@ -25,7 +26,7 @@ export class ConfigurationService {
     TYPE_FINISH_DATE_BY: any;
 
     constructor(private store: Store<AppStore>, protected media: ObservableMedia) {
-        this.activeDay$ = this.store.select(s => s.activeDay);
+        this.activeDateElement$ = this.store.select(s => s.activeDateElement);
         this.detectApiError$ = this.store.select(s => s.detectApiError);
         this.offlineModeNotification$ = this.store.select(s => s.offlineModeNotification);
         this.leftSidenavVisibility$ = this.store.select(s => s.leftSidenavVisibility);
@@ -104,27 +105,39 @@ export class ConfigurationService {
         return this.configuration;
     }
 
-    updateActiveDay(date: any) {
+    updateActiveDateElement(date?: string) {
+        let toStore: moment.Moment;
+        let state: stateActiveDateElement;
         if (!date) {
             date = moment().format('DD-MM-YYYY');
         }
-        this.store.dispatch(new configurationAction.UpdateActiveDay(moment(date, 'DD-MM-YYYY')
-            .set({hour: 0, minute: 0, second: 0, millisecond: 0})));
+        const splittedDate: string[] = date.split("-");
+        if (splittedDate.length == 2) {
+            toStore = moment().month(splittedDate[0]).year(parseInt(splittedDate[1])).date(1);
+            state = stateActiveDateElement.future;
+        } else if (date.split("-").length == 3) {
+            toStore = moment().month(parseInt(splittedDate[1])-1).year(parseInt(splittedDate[2])).date(parseInt(splittedDate[0]));
+            state = stateActiveDateElement.weekdays;
+        }
+        this.store.dispatch(new configurationAction.UpdateActiveDateElement({
+            date: toStore.set({hour: 0, minute: 0, second: 0, millisecond: 0}),
+            state: state
+        }));
     }
 
-    updateDetectApiError(isVisible: boolean) {
+    updateDetectApiError(isVisible: boolean): void {
         this.store.dispatch(new configurationAction.UpdateDetectApiError(isVisible));
     }
 
-    updateOfflineModeNotification(isActive: boolean) {
+    updateOfflineModeNotification(isActive: boolean): void {
         this.store.dispatch(new configurationAction.UpdateOfflineModeNotification(isActive));
     }
 
-    updateAddTaskComponentVisibility(isVisible: boolean) {
+    updateAddTaskComponentVisibility(isVisible: boolean): void {
         this.store.dispatch(new configurationAction.UpdateAddTaskComponentVisibility(isVisible));
     }
 
-    changeOpenStateLeftSidenavVisibility(state) {
+    changeOpenStateLeftSidenavVisibility(state): void {
         let open;
         if (state === 'close') {
             open = false;
@@ -134,7 +147,7 @@ export class ConfigurationService {
         this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({'open': open}));
     }
 
-    changeOpenStateRightSidenavVisibility(state) {
+    changeOpenStateRightSidenavVisibility(state): void {
         let open;
         if (state === 'close') {
             open = false;
@@ -144,7 +157,7 @@ export class ConfigurationService {
         this.store.dispatch(new configurationAction.UpdateRightSidenavVisibility({'open': open}));
     }
 
-    updateLeftSidenavVisibility() {
+    updateLeftSidenavVisibility(): void {
         let open, position, mode;
         position = 'start';
         if (this.media.isActive('xs') || this.media.isActive('sm')) {
@@ -162,7 +175,7 @@ export class ConfigurationService {
         }));
     }
 
-    updateRightSidenavVisibility() {
+    updateRightSidenavVisibility(): void {
         let open, position, mode;
         position = 'end';
         if (this.media.isActive('lg') || this.media.isActive('xl')) {
@@ -179,11 +192,11 @@ export class ConfigurationService {
         }));
     }
 
-    switchOffProgressBar() {
+    switchOffProgressBar(): void {
         this.store.dispatch(new configurationAction.SwitchOffProgressBar(false));
     }
 
-    switchOnProgressBar() {
+    switchOnProgressBar(): void {
         this.store.dispatch(new configurationAction.SwitchOnProgressBar(true));
     }
     

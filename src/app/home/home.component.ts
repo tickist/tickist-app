@@ -30,9 +30,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     addTaskComponentVisibility: boolean;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public store: Store<AppStore>, public taskService: TaskService, public userService: UserService,
-                public router: Router, public projectService: ProjectService, public tagService: TagService,
-                protected media: ObservableMedia, protected configurationService: ConfigurationService,
+    constructor(private store: Store<AppStore>, private taskService: TaskService, private userService: UserService,
+                private router: Router, private projectService: ProjectService, private tagService: TagService,
+                private media: ObservableMedia, private configurationService: ConfigurationService,
                 private cd: ChangeDetectorRef) {
     }
 

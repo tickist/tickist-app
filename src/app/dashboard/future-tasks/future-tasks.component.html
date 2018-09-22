@@ -1,0 +1,20 @@
+<div [ngClass.gt-sm]="'right-sidenav left-sidenav'">
+    <mat-card>
+
+            <div class="header" fxLayout="row" fxLayoutAlign="start none">
+            
+                <div fxFlex fxLayoutAlign="start center" ><span>Future tasks from {{ activeDateElement?.date.format("MMMM YYYY") }}</span></div>
+                <span fxFlex></span>
+                <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+            </div>
+            <tickist-filter-future-tasks></tickist-filter-future-tasks>
+
+            <app-tasks-list [tasks]="futureTasks" [taskView]="taskView"></app-tasks-list>
+
+    </mat-card>
+</div>
+
+
+
+
+

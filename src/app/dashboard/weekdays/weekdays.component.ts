@@ -10,16 +10,17 @@ import {TaskService} from '../../services/task-service';
 import {UserService} from '../../services/userService';
 import {User} from '../../models/user/user';
 import {map} from 'rxjs/operators';
+import {IActiveDateElement} from '../../models/active-data-element.interface';
 
 
 @Component({
-    selector: 'app-dashboard',
+    selector: 'tickist-weekdays-list',
     templateUrl: './weekdays.component.html',
     styleUrls: ['./weekdays.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeekDaysComponent implements OnInit, OnDestroy {
-    activeDay: moment.Moment;
+    activeDateElement: IActiveDateElement;
     today: moment.Moment;
     tasks: Task[] = [];
     week: Array<any> = [];
@@ -44,23 +45,23 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }, timeToMidnight);
     }
 
-    isToday(date: (moment.Moment | string) = this.activeDay): boolean {
+    isToday(date: (moment.Moment | string) = this.activeDateElement.date): boolean {
         const today: moment.Moment = moment();
         if (moment.isMoment(date)) {
             date = (<string>(date.format('DD-MM-YYYY')));
         }
-        return (today.format('DD-MM-YYYY') === date);
+        return today.format('DD-MM-YYYY') ===  date;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.subscriptions = this.route.params.pipe(map(params => params['date'])).subscribe((param) => {
-            this.configurationService.updateActiveDay(param);
+            this.configurationService.updateActiveDateElement(param);
         });
         this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {
             this.mediaChange = mediaChange;
         }));
-        this.subscriptions.add(this.configurationService.activeDay$.subscribe((activeDay) => {
-            this.activeDay = activeDay;
+        this.subscriptions.add(this.configurationService.activeDateElement$.subscribe((activeDateElement) => {
+            this.activeDateElement = activeDateElement;
             this.cd.detectChanges();
 
         }));
@@ -75,15 +76,15 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }));
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         if (this.subscriptions) {
             this.subscriptions.unsubscribe();
         }
         clearTimeout(this.timer);
     }
 
-    isSelected(day) {
-        return (day.date === this.activeDay.format('DD-MM-YYYY'));
+    isSelected(day): boolean {
+        return (day.date === this.activeDateElement.date.format('DD-MM-YYYY'));
     }
 
     navigateTo(path, arg) {

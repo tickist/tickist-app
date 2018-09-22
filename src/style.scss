@@ -351,3 +351,20 @@ mat-radio-group {
         padding-left: 40px
     }
 }
+
+
+// expansion-panel 
+.mat-expansion-panel:not([class*=mat-elevation-z]) {
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow:  none !important;
+    box-shadow:  none !important;
+    
+}
+.mat-expansion-panel-header {
+    padding: 0 !important;
+}
+
+.mat-expansion-panel-body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}

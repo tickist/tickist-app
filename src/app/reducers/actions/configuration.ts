@@ -1,5 +1,6 @@
 import {Action} from '@ngrx/store';
-export const UPDATE_ACTIVE_DAY = 'UPDATE_ACTIVE_DAY';
+import {IActiveDateElement} from '../../models/active-data-element.interface';
+export const UPDATE_ACTIVE_DATA_ELEMENT = 'UPDATE_ACTIVE_DATA_ELEMENT';
 export const UPDATE_DETECT_API_ERROR = 'UPDATE_DETECT_API_ERROR';
 export const SWITCH_OFF_PROGRESS_BAR = 'SWITCH_OFF_PROGRESS_BAR';
 export const SWITCH_ON_PROGRESS_BAR = 'SWITCH_ON_PROGRESS_BAR';
@@ -9,10 +10,10 @@ export const UPDATE_OFFLINE_MODE_NOTIFICATION = 'UPDATE_OFFLINE_MODE_NOTIFICATIO
 export const UPDATE_ADD_TASK_VISIBILITY = 'UPDATE_ADD_TASK_VISIBILITY';
 
 
-export class UpdateActiveDay implements Action {
-    readonly type = UPDATE_ACTIVE_DAY;
+export class UpdateActiveDateElement implements Action {
+    readonly type = UPDATE_ACTIVE_DATA_ELEMENT;
 
-    constructor(public payload: any) {
+    constructor(public payload: IActiveDateElement) {
     }
 }
 
@@ -71,6 +72,6 @@ export type Actions = UpdateDetectApiError
     | UpdateLeftSidenavVisibility
     | SwitchOffProgressBar
     | SwitchOnProgressBar
-    | UpdateActiveDay
+    | UpdateActiveDateElement
     | UpdateOfflineModeNotification
     | UpdateAddTaskComponentVisibility;

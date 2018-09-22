@@ -1,0 +1,29 @@
+<div style="min-height: 100%; height: 100%;">
+    <mat-card>
+        <mat-accordion>
+            <mat-expansion-panel [expanded]="activeDateElement.state === stateActiveDateElement.weekdays" >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Weekdays
+                    </mat-panel-title>
+                    
+                </mat-expansion-panel-header>
+
+                <tickist-weekdays-list></tickist-weekdays-list>
+            </mat-expansion-panel>
+            <mat-expansion-panel [expanded]="activeDateElement.state === stateActiveDateElement.future" >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Future
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <tickist-future-list></tickist-future-list>
+            </mat-expansion-panel>
+        </mat-accordion>
+        
+    </mat-card>
+
+
+    <app-day-statistics></app-day-statistics>
+</div>
+

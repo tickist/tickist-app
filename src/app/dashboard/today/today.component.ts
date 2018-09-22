@@ -4,6 +4,7 @@ import {ConfigurationService} from '../../services/configurationService';
 import * as moment from 'moment';
 import {UserService} from '../../services/userService';
 import {User} from '../../models/user/user';
+import {IActiveDateElement} from '../../models/active-data-element.interface';
 
 @Component({
     selector: 'tickist-today',
@@ -14,15 +15,15 @@ export class TodayComponent implements OnInit {
     @Input() tasks: Task[];
     @Input() defaultTaskView: string;
     taskView: string;
-    activeDay: moment.Moment;
+    activeDateElement: IActiveDateElement;
     user: User;
 
     constructor(protected configurationService: ConfigurationService, protected userService: UserService) {
     }
 
     ngOnInit() {
-        this.configurationService.activeDay$.subscribe((activeDay) => {
-            this.activeDay = activeDay;
+        this.configurationService.activeDateElement$.subscribe((activeDateElement) => {
+            this.activeDateElement = activeDateElement;
         });
         this.userService.user$.subscribe((user) => {
             if (user) {

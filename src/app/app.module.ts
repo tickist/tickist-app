@@ -1,32 +1,6 @@
 import {NgModule, ErrorHandler} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {
-    MatButtonModule,
-    MatCheckboxModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatSlideToggleModule,
-    MatMenuModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatCardModule,
-    MatButtonToggleModule,
-    MatChipsModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatDialogModule,
-    MatTooltipModule,
-    MatSnackBarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MAT_DATE_LOCALE,
-    DateAdapter,
-    NativeDateAdapter
-} from '@angular/material';
+import { DateAdapter,} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -69,7 +43,6 @@ import {ProjectComponent} from './project-component/project.component';
 import {TasksListComponent} from './tasks-list/tasks-list.component';
 import {TodayComponent} from './dashboard/today/today.component';
 import {OverdueComponent} from './dashboard/overdue/overdue.component';
-import {FutureComponent} from './dashboard/future/future.component';
 import {UserComponent} from './user/user.component';
 import {TeamComponent} from './team/team.component';
 import {SingleTaskComponent, SingleTaskSimplifiedComponent} from './single-task/single-task.component';
@@ -138,6 +111,10 @@ import {ProjectsFiltersService} from './services/projects-filters.service';
 import { FilterTagsDialogComponent } from './tags-list/filter-tags-dialog/filter-tags-dialog.component';
 import {TagsFiltersService} from './services/tags-filters-service';
 import {TickistMaterialModule} from './material.module';
+import {DaysWeeksYearListComponent} from "./dashboard/days-weeks-year-list/days-weeks-year-list.component";
+import {FutureListComponent} from "./dashboard/future-list/future-list.component";
+import {FutureTasksComponent} from './dashboard/future-tasks/future-tasks.component';
+import {FilterFutureTasksComponent} from './dashboard/filter-future-tasks/filter-future-tasks.component';
 
 
 export function instrumentOptions() {
@@ -167,7 +144,6 @@ export function tokenGetter() {
         TasksListComponent,
         TodayComponent,
         OverdueComponent,
-        FutureComponent,
         UserComponent,
         TeamComponent,
         SingleTaskComponent,
@@ -222,7 +198,11 @@ export function tokenGetter() {
         SortTasksComponent,
         ChartLegendComponent,
         PriorityComponent,
-        FilterTagsDialogComponent
+        FilterTagsDialogComponent,
+        DaysWeeksYearListComponent,
+        FutureListComponent,
+        FutureTasksComponent,
+        FilterFutureTasksComponent
     ],
     imports: [
         BrowserModule,

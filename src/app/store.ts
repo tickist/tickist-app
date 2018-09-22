@@ -1,6 +1,4 @@
-import {ActionReducer, ActionReducerMap, combineReducers} from '@ngrx/store';
-import {compose} from '@ngrx/core';
-import {storeFreeze} from 'ngrx-store-freeze';
+import {ActionReducerMap} from '@ngrx/store';
 import {projects, selectedProject, selectedProjectsIds, currentProjectsFilters, projectsFilters} from './reducers/projects';
 import {team} from './reducers/team';
 import {user} from './reducers/user';
@@ -8,11 +6,9 @@ import {currentTagsFilters, tags, tagsFilters} from './reducers/tags';
 import {tasks, tasksFilters, currentTasksFilters} from './reducers/tasks';
 import {globalStatistics, dailyStatistics, globalStatisticsDateRange, chartsData} from './reducers/statistics';
 import {
-    activeDay, detectApiError, leftSidenavVisibility, rightSidenavVisibility,
-    progressBar, offlineModeNotification, addTaskComponentVisibility
+    detectApiError, leftSidenavVisibility, rightSidenavVisibility,
+    progressBar, offlineModeNotification, addTaskComponentVisibility, activeDateElement
 } from './reducers/configuration';
-import {environment} from '../environments/environment';
-
 
 export interface AppStore {
     projects: any;
@@ -28,7 +24,7 @@ export interface AppStore {
     tagsFilters: any;
     globalStatistics: any;
     dailyStatistics: any;
-    activeDay: any;
+    activeDateElement: IActiveDateElement;
     detectApiError: any;
     offlineModeNotification: any;
     addTaskComponentVisibility: any;
@@ -39,10 +35,11 @@ export interface AppStore {
     leftSidenavVisibility: any;
     rightSidenavVisibility: any;
     progressBar: boolean;
+    dashboardActiveFutureElement: any;
 }
 
 // const reducers = {projects, selectedProject, user, tasks, currentTasksFilters, tags,
-//       tasksFilters, globalStatistics, dailyStatistics, activeDay, detectApiError, globalStatisticsDateRange, team,
+//       tasksFilters, globalStatistics, dailyStatistics,activeDateElement, detectApiError, globalStatisticsDateRange, team,
 //       chartsData, selectedProjectsIds, leftSidenavVisibility, rightSidenavVisibility, progressBar}
 
 
@@ -59,7 +56,7 @@ export const reducers: ActionReducerMap<any> = {
     tasksFilters: tasksFilters,
     globalStatistics: globalStatistics,
     dailyStatistics: dailyStatistics,
-    activeDay: activeDay,
+    activeDateElement: activeDateElement,
     detectApiError: detectApiError,
     offlineModeNotification: offlineModeNotification,
     addTaskComponentVisibility: addTaskComponentVisibility,

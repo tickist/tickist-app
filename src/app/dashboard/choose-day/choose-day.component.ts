@@ -1,7 +1,9 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {ConfigurationService} from '../../services/configurationService';
 import {FormControl} from '@angular/forms';
+import {IActiveDateElement} from '../../models/active-data-element.interface';
+import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
 
 @Component({
     selector: 'tickist-choose-day',
@@ -18,15 +20,19 @@ export class ChooseDayComponent implements OnInit {
     
     ngOnInit() {
         this.selectedDate = new FormControl({value: '', disabled: true});
-        this.configurationService.activeDay$.subscribe((activeDay) => {
-            const today = moment();
-            const diffAbsTodaySelectedDate = Math.abs(today.diff(moment(this.selectedDate.value), 'days'));
-            if (diffAbsTodaySelectedDate < 7) {
+        this.configurationService.activeDateElement$.subscribe((activeDateElement: IActiveDateElement) => {
+            if (activeDateElement.state === stateActiveDateElement.future) {
                 this.selectedDate.setValue('');
-            }
-            const diffAbsTodayActiveDay = Math.abs(today.diff(moment(activeDay), 'days'));
-            if (diffAbsTodayActiveDay > 7) {
-                this.selectedDate.setValue(activeDay.toDate());
+            } else if (activeDateElement.state === stateActiveDateElement.weekdays) {
+                const today = moment();
+                const diffAbsTodaySelectedDate = Math.abs(today.diff(moment(this.selectedDate.value), 'days'));
+                if (diffAbsTodaySelectedDate < 7) {
+                    this.selectedDate.setValue('');
+                }
+                const diffAbsTodayActiveDay = Math.abs(today.diff(moment(activeDateElement.date), 'days'));
+                if (diffAbsTodayActiveDay > 7 && moment.isMoment(activeDateElement.date)) {
+                    this.selectedDate.setValue( activeDateElement.date.toDate());
+                }
             }
         });
         

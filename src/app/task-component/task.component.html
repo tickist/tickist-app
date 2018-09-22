@@ -24,19 +24,13 @@
                                        [ngClass]="{'active': checkActiveItemInMenu('repeat'),
                                   'invalid': !taskForm.controls['repeat'].valid && taskForm.controls['repeat'].touched}">
                             <i class="fa fa-repeat menu_icon"></i>
-
-
                             <p [fxHide.xs]="1"><span>Repeat</span></p>
-
                         </mat-list-item>
 
                         <mat-list-item (click)="changeActiveItemInMenu('tags')"
                                        [ngClass]="{'active': checkActiveItemInMenu('tags'),
                                   'invalid': !taskForm.controls['tags'].valid && taskForm.controls['tags'].touched}">
-
-
                             <i class="fa fa-tags menu_icon"></i>
-
                             <p [fxHide.xs]="1"><span>Tags</span></p>
 
                         </mat-list-item>
@@ -44,33 +38,23 @@
                                        [ngClass]="{'active': checkActiveItemInMenu('steps'),
                                   'invalid': !taskForm.controls['steps'].valid && taskForm.controls['steps'].touched}">
                             <i class="fa fa-list menu_icon"></i>
-
                             <p [fxHide.xs]="1"><span>Steps</span></p>
-
-
                         </mat-list-item>
 
 
                         <mat-list-item (click)="changeActiveItemInMenu('extra')"
                                        [ngClass]="{'active': checkActiveItemInMenu('extra'),
                                   'invalid': !taskForm.controls['extra'].valid && taskForm.controls['extra'].touched}">
-
-
                             <i class="fa fa-wrench menu_icon"></i>
-
                             <p [fxHide.xs]="1"><span>Extra</span></p>
-
                         </mat-list-item>
 
                         <mat-list-item (click)="changeActiveItemInMenu('notifications')">
                             <i class="fa fa-bell menu_icon"></i>
-
-
                             <p [fxHide.xs]="1"><span>Notifications</span></p>
-
                         </mat-list-item>
-
                     </mat-list>
+                    
                 </div>
                 <div fxFlex>
                     <div [hidden]="!checkActiveItemInMenu('main')" formGroupName="main">

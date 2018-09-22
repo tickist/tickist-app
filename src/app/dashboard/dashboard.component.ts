@@ -10,6 +10,7 @@ import {User} from '../models/user';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {map} from 'rxjs/operators';
+import {IActiveDateElement} from '../models/active-data-element.interface';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     overdueTasks: Task[] = [];
     futureTasks: Task[] = [];
     tasks: Task[] = [];
-    activeDay: moment.Moment;
+    activeDateElement: IActiveDateElement;
     today: moment.Moment;
     stream$: Observable<any>;
     week: Array<any> = [];
@@ -37,10 +38,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 protected media: ObservableMedia) {
         this.stream$ = combineLatest(
                 this.taskService.tasks$,
-                this.configurationService.activeDay$,
+                this.configurationService.activeDateElement$,
                 this.userService.user$,
-                (tasks: Task[], activeDay: any, user: User) => {
-                    this.activeDay = activeDay;
+                (tasks: Task[],activeDateElement: IActiveDateElement, user: User) => {
+                    this.activeDateElement =activeDateElement;
                     this.user = user;
                     return tasks;
                 }
@@ -59,14 +60,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }, timeToMidnight);
     }
 
-    isToday(date = this.activeDay) {
+    isToday(activeDateElement = this.activeDateElement) {
         const today = moment().format('DD-MM-YYYY');
-        return (today === date.format('DD-MM-YYYY'));
+        return (today === activeDateElement.date.format('DD-MM-YYYY'));
     }
 
-    isTomorrow(date = this.activeDay) {
+    isTomorrow(activeDateElement = this.activeDateElement) {
         const tomorrow = moment().add(1, 'days').format('DD-MM-YYYY');
-        return (tomorrow === date.format('DD-MM-YYYY'));
+        return (tomorrow === activeDateElement.date.format('DD-MM-YYYY'));
     }
 
     ngOnInit() {
@@ -76,30 +77,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.tasks = tasks.filter(task => task.owner.id === this.user.id && task.status === 0);
                 this.todayTasks = this.tasks.filter((task: Task) => {
                     return (
-                        (task.finishDate && task.finishDate.format('DD-MM-YYYY') === this.activeDay.format('DD-MM-YYYY') ||
+                        (task.finishDate && task.finishDate.format('DD-MM-YYYY') === this.activeDateElement.date.format('DD-MM-YYYY') ||
                         (task.pinned === true && this.isToday()))
                     );
                 });
 
                 this.overdueTasks = this.tasks.filter((task: Task) => {
-                    return ( task.pinned === false && task.finishDate && task.finishDate < this.activeDay);
+                    return ( task.pinned === false && task.finishDate && task.finishDate < this.activeDateElement.date);
                 });
-
-                this.futureTasks = this.tasks.filter((task: Task) => {
-                    return ( task.pinned === false && task.typeFinishDate === 0 && task.finishDate && task.finishDate > this.activeDay);
-                });
+                
                 const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
-                const futureTasksSortBy = JSON.parse(this.user.futureTasksSortBy);
                 this.todayTasks = _.orderBy(this.todayTasks,
                     ['priority', 'finishDate', 'finishTime', 'name'],
                     ['asc', 'desc', 'asc', 'asc']
                 );
                 this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);
-                this.futureTasks = _.orderBy(this.futureTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);
             }
         });
         this.subscriptions.add(this.route.params.pipe(map(params => params['date'])).subscribe((param) => {
-            this.configurationService.updateActiveDay(param);
+            this.configurationService.updateActiveDateElement(param);
         }));
         this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {
             this.mediaChange = mediaChange;

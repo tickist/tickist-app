@@ -5,18 +5,12 @@
                 <tickist-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></tickist-today>
                 <tickist-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
                              [defaultTaskView]="user.defaultTaskViewOverdueView"></tickist-overdue>
-                <tickist-future *ngIf="futureTasks?.length > 0" [tasks]="futureTasks"
-                            [defaultTaskView]="user.defaultTaskViewFutureView"></tickist-future>
             </div>
             <div *ngIf="user.orderTasksDashboard == 'Overdue->Today->You can do this too'">
                 <tickist-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
                              [defaultTaskView]="user.defaultTaskViewOverdueView"></tickist-overdue>
                 <tickist-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></tickist-today>
-                <tickist-future *ngIf="futureTasks?.length > 0" [tasks]="futureTasks"
-                            [defaultTaskView]="user.defaultTaskViewFutureView"></tickist-future>
             </div>
-
-
         </div>
     </mat-card>
 </div>

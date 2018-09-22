@@ -24,6 +24,8 @@ import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
 import {TagsListComponent} from './tags-list/tags-list.component';
 import {TasksFiltersService} from './services/tasks-filters.service';
+import {DaysWeeksYearListComponent} from "./dashboard/days-weeks-year-list/days-weeks-year-list.component";
+import {FutureTasksComponent} from './dashboard/future-tasks/future-tasks.component';
 
 
 @Injectable()
@@ -124,9 +126,10 @@ export const routes: Routes = [
             {path: 'tags', component: TagsListComponent, outlet: 'leftSideNav'},
             {path: 'team', component: TeamComponent},
             {path: 'user', component: UserComponent},
-            {path: '', component: WeekDaysComponent, outlet: 'leftSideNav'},
+            {path: '', component: DaysWeeksYearListComponent, outlet: 'leftSideNav'},
             {path: '', component: DashboardComponent},
             {path: ':date', component: DashboardComponent},
+            {path: 'future/:date', component: FutureTasksComponent},
         ],
         resolve: {
             projects: ProjectsResolver,

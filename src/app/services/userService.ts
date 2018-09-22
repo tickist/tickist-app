@@ -1,12 +1,10 @@
 import * as _ from "lodash";
 import {Injectable} from '@angular/core';
-import {Observable, pipe} from 'rxjs';
-import {Headers, RequestOptions, Response, RequestOptionsArgs} from '@angular/http';
+import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {User, UserLogin, SimplyUser} from '../models/user';
-import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material';
 import * as userAction from '../reducers/actions/user';
 import * as teamAction from '../reducers/actions/team';
@@ -74,7 +72,7 @@ export class UserService {
     }
 
     login(user: UserLogin) {
-        return this.http.post(`${environment.apiUrl}/api-token-auth/`, user).pipe(map((response: Response) => {
+        return this.http.post(`${environment.apiUrl}/api-token-auth/`, user).pipe(map((response) => {
             localStorage.setItem('JWT', `JWT ${response['token']}`);
             localStorage.setItem('USER_ID', response['user_id']);
             return response;
@@ -82,7 +80,7 @@ export class UserService {
     }
 
     signup(user: any) {
-        return this.http.post(`${environment.apiUrl}/registration/`, user).pipe(map((response: Response) => {
+        return this.http.post(`${environment.apiUrl}/registration/`, user).pipe(map((response) => {
             localStorage.setItem('JWT', `JWT ${response['token']}`);
             localStorage.setItem('USER_ID', response['user_id']);
             return response;

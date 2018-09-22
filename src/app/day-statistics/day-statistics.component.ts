@@ -4,6 +4,7 @@ import {ConfigurationService} from '../services/configurationService';
 import * as moment from 'moment';
 import {Subscription} from 'rxjs';
 import * as _ from 'lodash';
+import {IActiveDateElement} from '../models/active-data-element.interface';
 
 
 class Chart {
@@ -29,7 +30,7 @@ class Chart {
 })
 export class DayStatisticsComponent implements OnInit, OnDestroy {
     dayStatistics: any;
-    activeDay: moment.Moment;
+    activeDateElement: IActiveDateElement;
     data: any;
     prioritiesTasksCounter: any;
     options: any;
@@ -76,8 +77,8 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
 
             }
         });
-        this.subscriptions.add(this.configurationService.activeDay$.subscribe((activeDay) => {
-            this.activeDay = activeDay;
+        this.subscriptions.add(this.configurationService.activeDateElement$.subscribe((activeDateElement) => {
+            this.activeDateElement = activeDateElement;
             //this.statisticsService.loadDailyStatistics(this.activeDay);
         }));
 

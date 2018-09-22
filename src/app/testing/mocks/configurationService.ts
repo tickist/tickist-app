@@ -7,7 +7,7 @@ export class MockConfigurationService extends SpyObject {
     fakeResponse;
     responseSuccess: boolean;
     loadConfiguration: any;
-    activeDay$: any;
+    activeDateElement$: any;
     offlineModeNotification$: any;
     detectApiError$: any;
     addTaskComponentVisibility$: any;

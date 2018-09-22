@@ -1,10 +1,15 @@
 import * as moment from 'moment';
 import * as configurationActions from './actions/configuration';
+import {stateActiveDateElement} from '../models/state-active-date-element.enum';
+import {IActiveDateElement} from '../models/active-data-element.interface';
 
 
-export function activeDay(state: any = moment(new Date(), 'DD-MM-YYYY'), action: configurationActions.Actions) {
+export function activeDateElement(state: IActiveDateElement = 
+                                      { date: moment(new Date(), 'DD-MM-YYYY'), 
+                                        state: stateActiveDateElement.weekdays}, 
+                                  action: configurationActions.Actions) {
     switch (action.type) {
-        case configurationActions.UPDATE_ACTIVE_DAY:
+        case configurationActions.UPDATE_ACTIVE_DATA_ELEMENT:
             return action.payload;
         default:
             return state;
