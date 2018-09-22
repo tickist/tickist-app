@@ -11,3 +11,7 @@
         cursor: pointer;
     }
 }
+
+::ng-deep .mat-icon-button {
+    color: $white;
+}

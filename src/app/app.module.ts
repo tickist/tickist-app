@@ -115,6 +115,7 @@ import {DaysWeeksYearListComponent} from "./dashboard/days-weeks-year-list/days-
 import {FutureListComponent} from "./dashboard/future-list/future-list.component";
 import {FutureTasksComponent} from './dashboard/future-tasks/future-tasks.component';
 import {FilterFutureTasksComponent} from './dashboard/filter-future-tasks/filter-future-tasks.component';
+import {FutureTasksFiltersService} from './services/future-tasks-filters-service';
 
 
 export function instrumentOptions() {
@@ -264,6 +265,7 @@ export function tokenGetter() {
         TagsResolver,
         SetAllTasksFilterResolver,
         SetAllTagsFilterResolver,
+        FutureTasksFiltersService,
         {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true},
         {
             provide: ErrorHandler,

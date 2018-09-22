@@ -9,6 +9,8 @@ import * as _ from 'lodash';
 import {User} from '../../models/user';
 import {UserService} from '../../services/userService';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
+import {Filter} from '../../models/filter';
+import {FutureTasksFiltersService} from '../../services/future-tasks-filters-service';
 
 @Component({
     selector: 'tickist-future-tasks',
@@ -17,23 +19,27 @@ import {IActiveDateElement} from '../../models/active-data-element.interface';
 })
 export class FutureTasksComponent implements OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    tasks: Task[];
+    tasks: Task[] = [];
     user: User;
     stream$: Observable<any>;
     activeDateElement: IActiveDateElement;
-    futureTasks: Task[];
+    futureTasks: Task[] = [];
     taskView: string;
     defaultTaskView: string;
+    currentFilter: Filter;
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private router: Router,
-                private configurationService: ConfigurationService, private userService: UserService) {
+                private configurationService: ConfigurationService, private userService: UserService, 
+                private futureTasksFiltersService: FutureTasksFiltersService) {
         this.stream$ = combineLatest(
             this.taskService.tasks$,
             this.configurationService.activeDateElement$,
             this.userService.user$,
-            (tasks: Task[], activeDateElement: IActiveDateElement, user: User) => {
+            this.futureTasksFiltersService.currentFutureTasksFilters$,
+            (tasks: Task[], activeDateElement: IActiveDateElement, user: User, currentFilter: Filter) => {
                 this.activeDateElement = activeDateElement;
                 this.user = user;
+                this.currentFilter = currentFilter;
                 return tasks;
             }
         );
@@ -41,7 +47,7 @@ export class FutureTasksComponent implements OnInit {
 
     ngOnInit(): void {
         this.stream$.subscribe((tasks) => {
-            if (tasks && tasks.length > 0 && this.user && this.activeDateElement) {
+            if (tasks && tasks.length > 0 && this.user && this.activeDateElement && this.currentFilter) {
                 this.defaultTaskView = this.user.defaultTaskViewFutureView;
                 this.futureTasks = tasks.filter(task => {
                     return task.owner.id === this.user.id
@@ -50,7 +56,7 @@ export class FutureTasksComponent implements OnInit {
                     && task.finishDate.month() === this.activeDateElement.date.month()
                     && task.finishDate.year() === this.activeDateElement.date.year();
                 });
-
+                this.futureTasks = this.futureTasks.filter(this.currentFilter.value);
                 const futureTasksSortBy = JSON.parse(this.user.futureTasksSortBy);
                 this.futureTasks = _.orderBy(this.futureTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);
             }
@@ -62,7 +68,6 @@ export class FutureTasksComponent implements OnInit {
             .subscribe((param) => {
                 this.configurationService.updateActiveDateElement(param);
             });
-
     }
 
     ngOnDestroy(): void {

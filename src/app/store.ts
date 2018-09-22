@@ -3,12 +3,13 @@ import {projects, selectedProject, selectedProjectsIds, currentProjectsFilters, 
 import {team} from './reducers/team';
 import {user} from './reducers/user';
 import {currentTagsFilters, tags, tagsFilters} from './reducers/tags';
-import {tasks, tasksFilters, currentTasksFilters} from './reducers/tasks';
+import {tasks, tasksFilters, currentTasksFilters, futureTasksFilters, currentTasksFutureFilters} from './reducers/tasks';
 import {globalStatistics, dailyStatistics, globalStatisticsDateRange, chartsData} from './reducers/statistics';
 import {
     detectApiError, leftSidenavVisibility, rightSidenavVisibility,
     progressBar, offlineModeNotification, addTaskComponentVisibility, activeDateElement
 } from './reducers/configuration';
+import {IActiveDateElement} from './models/active-data-element.interface';
 
 export interface AppStore {
     projects: any;
@@ -36,6 +37,8 @@ export interface AppStore {
     rightSidenavVisibility: any;
     progressBar: boolean;
     dashboardActiveFutureElement: any;
+    currentTasksFutureFilters: any;
+    futureTasksFilters: any;
 }
 
 // const reducers = {projects, selectedProject, user, tasks, currentTasksFilters, tags,
@@ -70,7 +73,9 @@ export const reducers: ActionReducerMap<any> = {
     currentProjectsFilters: currentProjectsFilters,
     projectsFilters: projectsFilters,
     currentTagsFilters: currentTagsFilters,
-    tagsFilters: tagsFilters
+    tagsFilters: tagsFilters,
+    currentTasksFutureFilters: currentTasksFutureFilters,
+    futureTasksFilters: futureTasksFilters
 };
 
 

@@ -8,7 +8,7 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {TaskService} from '../../services/task-service';
-import {Task} from './models/tasks';
+import {Task} from '../../models/tasks';
 import {UserService} from '../../services/userService';
 import {User} from '../../models/user';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
@@ -32,7 +32,7 @@ export class FutureListComponent implements OnInit {
                 private cd: ChangeDetectorRef) {
     }
     
-    ngOnInit() {
+    ngOnInit(): void {
         this.configurationService.activeDateElement$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((activeDateElement: IActiveDateElement) => {
             this.activeDateElement = activeDateElement;
             this.cd.detectChanges();
