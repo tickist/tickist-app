@@ -1,7 +1,5 @@
-import {Project} from './projects';
 import {SimplyUser} from './user';
 import {Tag} from './tags';
-import * as _ from 'lodash';
 import {Api} from './commons';
 import * as moment from 'moment';
 import {SimpleProject} from './projects/simply-project';
@@ -140,7 +138,7 @@ export class Task extends Api {
         this.richName = this.convert(task.name);
         this.id = task.id || undefined;
         this.finishDate = task.finish_date ? moment(task.finish_date, 'DD-MM-YYYY') : '';
-        this.finishTime =  task.finish_time ?  task.finish_time : '';
+        this.finishTime = task.finish_time ? task.finish_time : '';
         this.suspendDate = task.suspend_date ? moment(task.suspend_date, 'DD-MM-YYYY') : '';
         this.pinned = task.pinned;
         this.status = task.status;
@@ -230,6 +228,14 @@ export class Task extends Api {
             this.finishDate = moment();
         }
         this.finishDate = this.finishDate.add(delta, 'day');
+    }
+
+    isRepeated(): boolean {
+        return this.repeat > 0;
+    }
+
+    isOverdue(): boolean {
+        return  this.finishDate < moment().hours(0).minutes(0).seconds(0);
     }
 
     private convert(text) {

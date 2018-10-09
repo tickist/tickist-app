@@ -48,7 +48,6 @@ import {TeamComponent} from './team/team.component';
 import {SingleTaskComponent, SingleTaskSimplifiedComponent} from './single-task/single-task.component';
 import {
     FilterTasksComponent, TasksFilterDialog, AssignedToDialog,
-    EstimateTimeDialog, TagsFilterDialog
 } from './filter-tasks/filter-tasks.component';
 import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configurationService';
@@ -116,6 +115,9 @@ import {FutureListComponent} from "./dashboard/future-list/future-list.component
 import {FutureTasksComponent} from './dashboard/future-tasks/future-tasks.component';
 import {FilterFutureTasksComponent} from './dashboard/filter-future-tasks/filter-future-tasks.component';
 import {FutureTasksFiltersService} from './services/future-tasks-filters-service';
+import {ChangeFinishDateDialogComponent} from './single-task/change-finish-date-dialog/change-finish-date-dialog.component';
+import {TagsFilterDialog} from './filter-tasks/tags-filter-dialog/tags-filter-dialog.component';
+import {EstimateTimeDialog} from './filter-tasks/estimate-time-dialog/estimate-time-dialog.component';
 
 
 export function instrumentOptions() {
@@ -203,7 +205,8 @@ export function tokenGetter() {
         DaysWeeksYearListComponent,
         FutureListComponent,
         FutureTasksComponent,
-        FilterFutureTasksComponent
+        FilterFutureTasksComponent,
+        ChangeFinishDateDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -240,7 +243,7 @@ export function tokenGetter() {
     bootstrap: [AppComponent],
     entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialog, EstimateTimeDialog,
         DeleteProjectConfirmationDialogComponent, TimeDialogComponent, DeleteTaskDialogComponent,
-        FilterProjectDialogComponent, FilterTagsDialogComponent
+        FilterProjectDialogComponent, FilterTagsDialogComponent, ChangeFinishDateDialogComponent
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

@@ -1,0 +1,19 @@
+<h1 mat-dialog-title><span>Change finish date of the task</span></h1>
+<mat-dialog-content>
+    <form>
+        <mat-form-field>
+            <input matInput
+                   [formControl]="changeDate"
+                   (focus)="picker.open()"
+                   (click)="picker.open()"
+                   [matDatepicker]="picker"
+                   placeholder="Choose date">
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="close(true)">Yes</button>
+    <button mat-button (click)="close(false)">No</button>
+</mat-dialog-actions>
+
+<mat-datepicker #picker></mat-datepicker>

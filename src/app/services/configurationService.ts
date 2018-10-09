@@ -45,6 +45,7 @@ export class ConfigurationService {
                 'COLOR_LIST': ['#6be494', '#f3d749', '#fcb150', '#f3df9a', '#b6926e', '#2c86ff', '#4fc4f6', '#367cdc',
                     '#b679b2', '#be5753', '#fb7087'],
                 'CHOICES_DEFAULT_FINISH_DATE': [
+                    {'id': null, 'name': 'not set'},
                     {'id': 0, 'name': 'today'},
                     {'id': 1, 'name': 'next day'},
                     {'id': 2, 'name': 'next week'},

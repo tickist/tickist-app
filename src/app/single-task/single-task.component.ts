@@ -14,6 +14,7 @@ import {Subject, pipe} from 'rxjs';
 import {RepeatStringExtension} from '../pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {Step} from '../models/steps';
+import {ChangeFinishDateDialogComponent} from './change-finish-date-dialog/change-finish-date-dialog.component';
 
 
 
@@ -68,6 +69,16 @@ class SingleTask {
                     if (result) {
                         this.task.estimateTime = result['estimateTime'];
                         this.task.time = result['realTime'];
+                    }
+                    this.taskService.updateTask(this.task);
+                });
+            } else if (this.task.isRepeated() && this.task.isOverdue()) {
+                const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
+                    data: {'task': this.task}
+                });
+                dialogRef.afterClosed().subscribe(result => {
+                    if (result) {
+                       // @TODO change data 
                     }
                     this.taskService.updateTask(this.task);
                 });

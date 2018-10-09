@@ -29,11 +29,11 @@ export class FutureTasksFiltersService {
             }),
             new Filter({
                 'id': 2, 'label': 'filter', 'name': 'Only <i class="fa fa-arrow-right"></i>  &lt;date&gt; ',
-                'value': task => task.typeFinishDate === 1
+                'value': task => task.typeFinishDate === 0
             }),
             new Filter({
                 'id': 3, 'label': 'filter', 'name': 'Only <i class="fa fa-dot-circle-o"></i> &lt;date&gt;',
-                'value': tag => tag.typeFinishDate === 0
+                'value': tag => tag.typeFinishDate === 1
             })
         ];
         this.userService.user$.subscribe(user => {

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {TaskService} from '../../services/task-service';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -15,7 +15,8 @@ import {FutureTasksFiltersService} from '../../services/future-tasks-filters-ser
 @Component({
     selector: 'tickist-future-tasks',
     templateUrl: './future-tasks.component.html',
-    styleUrls: ['./future-tasks.component.scss']
+    styleUrls: ['./future-tasks.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FutureTasksComponent implements OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();

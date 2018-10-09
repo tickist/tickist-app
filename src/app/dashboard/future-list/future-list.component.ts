@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {FutureListElement} from './models';
 import * as moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -16,7 +16,8 @@ import {stateActiveDateElement} from '../../models/state-active-date-element.enu
 @Component({
     selector: 'tickist-future-list',
     templateUrl: './future-list.component.html',
-    styleUrls: ['./future-list.component.scss']
+    styleUrls: ['./future-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FutureListComponent implements OnInit {
     futureList: FutureListElement[];
