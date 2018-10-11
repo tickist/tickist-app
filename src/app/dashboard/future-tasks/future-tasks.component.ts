@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {TaskService} from '../../services/task-service';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -31,7 +31,7 @@ export class FutureTasksComponent implements OnInit {
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private router: Router,
                 private configurationService: ConfigurationService, private userService: UserService, 
-                private futureTasksFiltersService: FutureTasksFiltersService) {
+                private futureTasksFiltersService: FutureTasksFiltersService, private cd: ChangeDetectorRef) {
         this.stream$ = combineLatest(
             this.taskService.tasks$,
             this.configurationService.activeDateElement$,
@@ -60,6 +60,7 @@ export class FutureTasksComponent implements OnInit {
                 this.futureTasks = this.futureTasks.filter(this.currentFilter.value);
                 const futureTasksSortBy = JSON.parse(this.user.futureTasksSortBy);
                 this.futureTasks = _.orderBy(this.futureTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);
+                this.cd.detectChanges();
             }
         });
         

@@ -1,12 +1,12 @@
 <div [ngClass.gt-sm]="'right-sidenav left-sidenav'">
     <mat-card>
         <div *ngIf="user">
-            <div *ngIf="user.orderTasksDashboard == 'Today->Overdue->You can do this too'">
+            <div *ngIf="user.orderTasksDashboard == 'Today->Overdue'">
                 <tickist-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></tickist-today>
                 <tickist-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
                              [defaultTaskView]="user.defaultTaskViewOverdueView"></tickist-overdue>
             </div>
-            <div *ngIf="user.orderTasksDashboard == 'Overdue->Today->You can do this too'">
+            <div *ngIf="user.orderTasksDashboard == 'Overdue->Today'">
                 <tickist-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
                              [defaultTaskView]="user.defaultTaskViewOverdueView"></tickist-overdue>
                 <tickist-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></tickist-today>

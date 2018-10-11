@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MockComponent} from 'mock-component';
+import { MockComponent } from 'ng-mocks';
 import {TasksFromProjectsComponent} from './tasks-from-projects.component';
 import {ChangeTaskViewComponent} from '../shared/change-task-view-component/change-task-view.component';
 import {TickistMaterialModule} from '../material.module';

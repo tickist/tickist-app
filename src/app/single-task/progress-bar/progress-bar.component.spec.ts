@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import { MockComponent } from 'mock-component';
+import { MockComponent } from 'ng-mocks';
 import {ProgressBarComponent} from './progress-bar.component';
 import {TickistMaterialModule} from '../../material.module';
 import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';

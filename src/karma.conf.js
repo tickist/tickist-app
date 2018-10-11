@@ -30,20 +30,6 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         autoWatch: true,
         browsers: ['ChromeHeadless'],
-        // customLaunchers: {
-        //     ChromeHeadless: {
-        //         base: 'Chrome',
-        //         flags: [
-        //             // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
-        //             '--headless',
-        //             '--disable-gpu',
-        //             // Without a remote debugging port, Google Chrome exits immediately.
-        //             '--remote-debugging-port=9222',
-        //             // no sandbox because we use docker and root user
-        //             '--no-sandbox'
-        //         ]
-        //     }
-        // },
         singleRun: false
     });
 };

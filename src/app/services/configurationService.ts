@@ -57,11 +57,12 @@ export class ConfigurationService {
                 ],
                 'FUTURE_TASKS_SORT_BY_OPTIONS': [
                     {'name': 'finishDate, finishTime, name', 'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["desc", "asc", "asc"]}'},
+                    {'name': 'priority finishDate, finishTime, name', 'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "desc", "asc", "asc"]}'},
                     {'name': '-finishDate, finishTime, name', 'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["asc", "desc", "asc"]}'}
                 ],
                 'TASKS_ORDER_OPTIONS': [
-                    'Today->Overdue->You can do this too',
-                    'Overdue->Today->You can do this too'
+                    'Today->Overdue',
+                    'Overdue->Today'
                 ],
                 'DEFAULT_TASK_VIEW_OPTIONS': [
                     this.TASK_EXTENDED_VIEW,
