@@ -25,7 +25,7 @@ export class ProjectService {
     selectedProjectsIds$: Observable<Array<number>>;
     
     
-    static sortProjectList(projects) {
+    static sortProjectList(projects: Project[]): Project[] {
         projects = _.orderBy(projects,
                     ['isInbox', 'name'],
                     ['desc', 'asc']

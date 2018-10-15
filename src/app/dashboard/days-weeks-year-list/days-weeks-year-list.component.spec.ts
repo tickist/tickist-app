@@ -1,25 +1,34 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DaysWeeksYearListComponent } from './days-weeks-year-list.component';
+import {DaysWeeksYearListComponent} from './days-weeks-year-list.component';
+import {TickistMaterialModule} from '../../material.module';
+import {ReactiveFormsModule} from '@angular/forms';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {MockComponent} from 'ng-mocks';
+import {FutureListComponent} from '../future-list/future-list.component';
+import {WeekDaysComponent} from '../weekdays/weekdays.component';
+import {DayStatisticsComponent} from '../../day-statistics/day-statistics.component';
 
 describe('DaysWeeksYearListComponent', () => {
-  let component: DaysWeeksYearListComponent;
-  let fixture: ComponentFixture<DaysWeeksYearListComponent>;
+    let component: DaysWeeksYearListComponent;
+    let fixture: ComponentFixture<DaysWeeksYearListComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ DaysWeeksYearListComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            imports: [TickistMaterialModule, ReactiveFormsModule, NoopAnimationsModule],
+            declarations: [DaysWeeksYearListComponent, MockComponent(DayStatisticsComponent),
+                MockComponent(FutureListComponent), MockComponent(WeekDaysComponent)]
+        })
+            .compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(DaysWeeksYearListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(DaysWeeksYearListComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

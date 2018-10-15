@@ -10,11 +10,12 @@ import {MatDialog} from '@angular/material';
 import {ProjectService} from '../services/project-service';
 import {Project} from '../models/projects';
 import {DeleteTaskDialogComponent} from './delete-task-dialog/delete-task.dialog.component';
-import {Subject, pipe} from 'rxjs';
+import {Subject} from 'rxjs';
 import {RepeatStringExtension} from '../pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {Step} from '../models/steps';
 import {ChangeFinishDateDialogComponent} from './change-finish-date-dialog/change-finish-date-dialog.component';
+import * as moment from 'moment';
 
 
 
@@ -72,13 +73,13 @@ class SingleTask {
                     }
                     this.taskService.updateTask(this.task);
                 });
-            } else if (this.task.isRepeated() && this.task.isOverdue()) {
+            } else if (this.task.isRepeated() && this.task.isOverdue() && this.task.fromRepeating === 1) {
                 const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
                     data: {'task': this.task}
                 });
                 dialogRef.afterClosed().subscribe(result => {
-                    if (result) {
-                       // @TODO change data 
+                    if (result && result.hasOwnProperty('finishDate')) {
+                        this.task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY')
                     }
                     this.taskService.updateTask(this.task);
                 });

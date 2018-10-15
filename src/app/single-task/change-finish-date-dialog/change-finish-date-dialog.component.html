@@ -1,9 +1,10 @@
-<h1 mat-dialog-title><span>Change finish date of the task</span></h1>
+<h1 mat-dialog-title><span>Change finish date</span></h1>
 <mat-dialog-content>
-    <form>
+    <span class="description">You can change finish date because this task is overdue.</span>
+    <form [formGroup]="changeDate" novalidate>
         <mat-form-field>
             <input matInput
-                   [formControl]="changeDate"
+                   formControlName="finishDate"
                    (focus)="picker.open()"
                    (click)="picker.open()"
                    [matDatepicker]="picker"
@@ -12,8 +13,8 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button (click)="close(true)">Yes</button>
-    <button mat-button (click)="close(false)">No</button>
+    <button mat-button (click)="close(changeDate.value)">Save</button>
+    <button mat-button (click)="close()">Cancel</button>
 </mat-dialog-actions>
 
 <mat-datepicker #picker></mat-datepicker>
