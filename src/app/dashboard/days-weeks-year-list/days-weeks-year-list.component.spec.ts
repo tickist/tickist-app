@@ -8,16 +8,22 @@ import {MockComponent} from 'ng-mocks';
 import {FutureListComponent} from '../future-list/future-list.component';
 import {WeekDaysComponent} from '../weekdays/weekdays.component';
 import {DayStatisticsComponent} from '../../day-statistics/day-statistics.component';
+import {MockConfigurationService} from '../../testing/mocks/configurationService';
 
 describe('DaysWeeksYearListComponent', () => {
     let component: DaysWeeksYearListComponent;
     let fixture: ComponentFixture<DaysWeeksYearListComponent>;
 
     beforeEach(async(() => {
+        const configurationService = new MockConfigurationService();
+        
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, ReactiveFormsModule, NoopAnimationsModule],
             declarations: [DaysWeeksYearListComponent, MockComponent(DayStatisticsComponent),
-                MockComponent(FutureListComponent), MockComponent(WeekDaysComponent)]
+                MockComponent(FutureListComponent), MockComponent(WeekDaysComponent)],
+            providers: [
+                configurationService.getProviders(),
+            ]
         })
             .compileComponents();
     }));

@@ -109,7 +109,7 @@ export class MockConfigurationService extends SpyObject {
         this.leftSidenavVisibility$ = of(this.fakeResponse);
         this.rightSidenavVisibility$ = of(this.fakeResponse);
         this.addTaskComponentVisibility$ = of(this.addTaskComponentVisibilityResponse);
-        this.activeDateElement$ = of(this.fakeResponse);
+        this.activeDateElement$ = of({});
     }
 
     subscribe(success, error) {
