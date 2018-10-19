@@ -73,7 +73,8 @@ export class UserService {
 
     login(user: UserLogin) {
         return this.http.post(`${environment.apiUrl}/api-token-auth/`, user).pipe(map((response) => {
-            localStorage.setItem('JWT', `JWT ${response['token']}`);
+            localStorage.setItem('JWT', `JWT ${response['access']}`);
+            localStorage.setItem('JWT_REFRESH', `JWT ${response['refresh']}`);
             localStorage.setItem('USER_ID', response['user_id']);
             return response;
         }));
@@ -81,7 +82,8 @@ export class UserService {
 
     signup(user: any) {
         return this.http.post(`${environment.apiUrl}/registration/`, user).pipe(map((response) => {
-            localStorage.setItem('JWT', `JWT ${response['token']}`);
+            localStorage.setItem('JWT', `JWT ${response['access']}`);
+            localStorage.setItem('JWT_REFRESH', `JWT ${response['refresh']}`);
             localStorage.setItem('USER_ID', response['user_id']);
             return response;
         }));
