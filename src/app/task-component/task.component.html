@@ -10,8 +10,8 @@
             <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
                                                                  aria-hidden="true"></i></span>
             </div>
-            <div fxLayout="row" class="left-menu">
-                <div fxFlex="30%">
+            <div fxLayout="row" >
+                <div fxFlex="30%" class="left-menu">
                     <mat-list>
                         <mat-list-item (click)="changeActiveItemInMenu('main')"
                                        [ngClass]="{'active': checkActiveItemInMenu('main'),
@@ -56,7 +56,7 @@
                     </mat-list>
                     
                 </div>
-                <div fxFlex>
+                <div fxFlex="68%" class="right-menu">
                     <div [hidden]="!checkActiveItemInMenu('main')" formGroupName="main">
 
                         <div fxLayout="column" fxLayoutAlign="space-between none">
@@ -230,8 +230,8 @@
                                     [formGroupName]="i">
                                     <i class="fa fa-arrows hover-visible" aria-hidden="true"></i>
                                     <mat-form-field style="width: 80%;">
-                                        <input matInput placeholder="Step name" formControlName="name"
-                                               [shouldFocusElement]="last" && checkActiveItemInMenu('steps')">
+                                        <input matInput placeholder="Step name" formControlName="name" autofocus
+                                               [shouldFocusElement]="last && checkActiveItemInMenu('steps')">
                                     </mat-form-field>
 
                                     <i class="fa fa-trash-o pointer" (click)="removeStep(i)"></i>

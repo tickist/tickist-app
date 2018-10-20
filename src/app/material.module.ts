@@ -25,7 +25,7 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
         MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
         MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
         MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule, MatExpansionModule, PlatformModule, MatTabsModule,
-        ScrollingModule],
+        ScrollingModule, MatInputModule],
     providers: [
         {provide: DateAdapter, useClass: MyDateAdapter, deps: [MAT_DATE_LOCALE, Platform]}
     ],
@@ -33,7 +33,7 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
         MatSlideToggleModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatListModule, MatCardModule,
         MatButtonToggleModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatDialogModule,
         MatTooltipModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule, MatExpansionModule, PlatformModule, MatTabsModule,
-        ScrollingModule],
+        ScrollingModule, MatInputModule],
     declarations: []
 })
 export class TickistMaterialModule {

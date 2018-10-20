@@ -1,28 +1,33 @@
 @import "../../shared/variables";
 
 :host {
-  width: 90px;
-  max-width: 90px;  
+    width: 90px;
+    max-width: 90px;
     flex: 1 1 100%;
-  button {
-    display: inline-block;
-  }
-  button:not(.pinned) {
-    visibility: hidden;
-  }
-  &:hover {
-    .right-menu {
-      float: right;
-      button {
-        visibility: visible;
-      }
 
+    button {
+        display: inline-block;
     }
-  }
+
+    button:not(.pinned) {
+        visibility: hidden;
+    }
+
+    &:hover {
+        .right-menu {
+            float: right;
+
+            button {
+                visibility: visible;
+            }
+
+        }
+    }
 
 }
 
 span {
     color: $white;
-  }
+    margin-left: 10px
+}
 

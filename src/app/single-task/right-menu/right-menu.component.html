@@ -19,11 +19,6 @@
     <div>
         <span>Priority</span>
         <div>
-            <!--<mat-button-toggle-group [value]="task.priority">-->
-                <!--<mat-button-toggle value="A" (click)="emitChangePriorityClickEvent('A')">A</mat-button-toggle>-->
-                <!--<mat-button-toggle value="B" (click)="emitChangePriorityClickEvent('B')">B</mat-button-toggle>-->
-                <!--<mat-button-toggle value="C" (click)="emitChangePriorityClickEvent('C')">C</mat-button-toggle>-->
-            <!--</mat-button-toggle-group>-->
             <tickist-priority [ngStyle]="{'z-index': '1000'}" [manualValue]="task.priority" (change)="emitChangePriorityClickEvent($event)">
 
             </tickist-priority>
@@ -44,6 +39,10 @@
                                  [matTooltip]="'next week'"
                                  [transform]="'rotate(-180deg)'"
                                  (click)="emitChangeDataClickEvent('next_week')">
+            </tickist-menu-button> 
+            <tickist-menu-button [icon]="'fa-fast-forward'"
+                                 [matTooltip]="'end of this month'"
+                                 (click)="emitChangeDataClickEvent('lastDayOfMonth')">
             </tickist-menu-button>
             <tickist-menu-button [icon]="'fa-reply-all'"
                                  [matTooltip]="'next month'"

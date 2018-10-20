@@ -1,11 +1,12 @@
-
-
 <div *ngIf="tasks && tasks.length !== 0; else emptyList">
 
    <div *ngIf="taskView === task_extended_view_value">
-            <app-single-task [task]="task" [mediaChange]="mediaChange" *ngFor="let task of tasks;trackBy: trackByFn">
+       <cdk-virtual-scroll-viewport itemSize="80" class="example-viewport" minBufferPx="200" maxBufferPx="400">
+           <app-single-task  class="example-item" [task]="task" [mediaChange]="mediaChange" *cdkVirtualFor="let task of tasks;trackBy: trackByFn">
 
-            </app-single-task>
+           </app-single-task>
+
+       </cdk-virtual-scroll-viewport>
     </div>
 
  <div *ngIf="taskView === task_simple_view_value">

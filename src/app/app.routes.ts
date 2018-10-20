@@ -24,7 +24,7 @@ import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
 import {TagsListComponent} from './tags-list/tags-list.component';
 import {TasksFiltersService} from './services/tasks-filters.service';
-import {DaysWeeksYearListComponent} from "./dashboard/days-weeks-year-list/days-weeks-year-list.component";
+import {DaysWeeksYearListComponent} from './dashboard/days-weeks-year-list/days-weeks-year-list.component';
 import {FutureTasksComponent} from './dashboard/future-tasks/future-tasks.component';
 
 
@@ -88,17 +88,6 @@ export class SetAllTasksFilterResolver implements Resolve<Project> {
     }
 }
 
-@Injectable()
-export class SetAllTagsFilterResolver implements Resolve<Project> {
-    constructor(protected tasksFiltersService: TasksFiltersService) {
-    }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
-        return this.tasksFiltersService.setAllTagsFilter();
-    }
-}
-
-
 export const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
     {
@@ -118,11 +107,7 @@ export const routes: Routes = [
             {path: 'project/:projectId', component: ProjectComponent},
             {path: 'task', component: TaskComponent},
             {path: 'task/:taskId', component: TaskComponent},
-            {
-                path: 'tags', component: TagsComponent, resolve: {
-                    setAllTagsFilter: SetAllTagsFilterResolver
-                }
-            },
+            {path: 'tags', component: TagsComponent},
             {path: 'tags', component: TagsListComponent, outlet: 'leftSideNav'},
             {path: 'team', component: TeamComponent},
             {path: 'user', component: UserComponent},

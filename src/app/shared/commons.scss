@@ -28,9 +28,14 @@ $animation-curve-default: $animation-curve-fast-out-slow-in !default;
 }
 
 .left-menu {
+    padding: 5px;
     .invalid {
         color: red;
     }
+}
+
+.right-menu {
+    padding: 5px;
 }
 
 h1 {

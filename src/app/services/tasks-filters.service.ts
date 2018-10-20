@@ -150,7 +150,8 @@ export class TasksFiltersService {
     }
 
     setAllTagsFilter() {
-        this.updateCurrentFilter(new Filter({'id': 1, label: 'tags', 'value': 'allTags', 'name': 'all tasks'}));
+        // Temporary disabled
+        // this.updateCurrentFilter(new Filter({'id': 1, label: 'tags', 'value': 'allTags', 'name': 'all tasks'}));
     }
 
     loadTasksFilters(user: User) {

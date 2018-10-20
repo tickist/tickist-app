@@ -19,7 +19,7 @@ import {LoggedInGuard} from './guards/loggedIn.guard';
 import {AnonymousGuard} from './guards/anonymous.guard';
 import {
     ProjectsResolver,
-    routes, SetAllTagsFilterResolver,
+    routes, 
     SetAllTasksFilterResolver,
     TagsResolver,
     TasksResolver,
@@ -258,7 +258,6 @@ export function tokenGetter() {
         UserResolver,
         TagsResolver,
         SetAllTasksFilterResolver,
-        SetAllTagsFilterResolver,
         FutureTasksFiltersService,
         {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true},
         {

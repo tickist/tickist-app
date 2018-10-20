@@ -116,6 +116,8 @@ class SingleTask {
             delta = 1;
         } else if (date === 'next_week') {
             delta = 7;
+        } else if (date === 'lastDayOfMonth') {
+            delta = 'lastDayOfMonth';
         } else if (date === 'next_month') {
             delta = 30;
         }

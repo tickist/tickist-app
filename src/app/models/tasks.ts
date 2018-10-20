@@ -128,11 +128,16 @@ export class Task extends Api {
         }
     }
 
-    moveFinishDateFromPreviousFinishDate(delta) {
-        if (delta === 'today' || !this.finishDate) {
-            this.finishDate = moment();
+    moveFinishDateFromPreviousFinishDate(delta: string | number): void {
+        if (!moment.isMoment(this.finishDate)) {
+            if (delta === 'today' || !this.finishDate) {
+                this.finishDate = moment();
+            } else if (delta === 'lastDayOfMonth') {
+                this.finishDate = (<moment.Moment> this.finishDate).date(moment().daysInMonth());
+            } else {
+                this.finishDate = (<moment.Moment> this.finishDate).add(delta, 'day');
+            }
         }
-        this.finishDate = this.finishDate.add(delta, 'day');
     }
 
     isRepeated(): boolean {
@@ -140,10 +145,10 @@ export class Task extends Api {
     }
 
     isOverdue(): boolean {
-        return  this.finishDate < moment().hours(0).minutes(0).seconds(0);
+        return this.finishDate < moment().hours(0).minutes(0).seconds(0);
     }
 
-    private convert(text) {
+    private convert(text: string): string {
         const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
         let richText;
