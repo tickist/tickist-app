@@ -8,8 +8,9 @@
                 "files": [
                     "/favicon.ico",
                     "/index.html",
-                    "/*.css",
-                    "/*.js"
+                    "/*.bundle.css",
+                    "/*.bundle.js",
+                    "/*.chunk.js"
                 ]
             }
         },

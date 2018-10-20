@@ -12,20 +12,19 @@ import { Task } from '../../models/tasks';
 export class ChangeFinishDateDialogComponent implements OnInit {
     changeDate: FormGroup;
     task: Task;
-    
+
     constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ChangeFinishDateDialogComponent>) {
         this.task = data.task;
     }
-    
+
     ngOnInit() {
         this.changeDate = new FormGroup({
             finishDate: new FormControl(this.task.finishDate.toDate(), Validators.required)
-        })
-            
-        
+        });
+
     }
 
-    close(result) {
+    close(result?) {
         this.dialogRef.close(result);
     }
 }

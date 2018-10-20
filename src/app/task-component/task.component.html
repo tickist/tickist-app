@@ -231,7 +231,7 @@
                                     <i class="fa fa-arrows hover-visible" aria-hidden="true"></i>
                                     <mat-form-field style="width: 80%;">
                                         <input matInput placeholder="Step name" formControlName="name"
-                                               [appAutofocus]="last && checkActiveItemInMenu('steps')">
+                                               [shouldFocusElement]="last" && checkActiveItemInMenu('steps')">
                                     </mat-form-field>
 
                                     <i class="fa fa-trash-o pointer" (click)="removeStep(i)"></i>

@@ -33,7 +33,7 @@ export class ConfigurationService {
         this.rightSidenavVisibility$ = this.store.select(s => s.rightSidenavVisibility);
         this.addTaskComponentVisibility$ = this.store.select(s => s.addTaskComponentVisibility);
         this.progressBar$ = this.store.select(s => s.progressBar);
-        this.TASK_EXTENDED_VIEW =  {'name': 'extended view', 'value': 'extended'};
+        this.TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};
         this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
         this.TYPE_FINISH_DATE_BY = {'id': 0, 'name': 'by'};
         this.TYPE_FINISH_DATE_ON = {'id': 1, 'name': 'on'};
@@ -43,7 +43,8 @@ export class ConfigurationService {
                 'DEFAULT_TYPE_FINISH_DATE': 0,
                 'COLOR_LIST_DEFAULT': '#2c86ff',
                 'COLOR_LIST': ['#6be494', '#f3d749', '#fcb150', '#f3df9a', '#b6926e', '#2c86ff', '#4fc4f6', '#367cdc',
-                    '#b679b2', '#be5753', '#fb7087'],
+                    '#b679b2', '#be5753', '#fb7087', '#365D37', '#543562', '#FF0000', '#A8EF0E', '#CCFFE5', '#40E0D0',
+                    '#B0E0E6', '#F5F5DC', '#FFFAFA', '#C0C0C0', '#C71585'],
                 'CHOICES_DEFAULT_FINISH_DATE': [
                     {'id': null, 'name': 'not set'},
                     {'id': 0, 'name': 'today'},
@@ -52,13 +53,28 @@ export class ConfigurationService {
                     {'id': 3, 'name': 'next month'}
                 ],
                 'OVERDUE_TASKS_SORT_BY_OPTIONS': [
-                    {'name': 'priority, finishDate, name', 'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "asc", "asc", "asc"]}'},
-                    {'name': 'priority, -finishDate, name', 'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "desc", "desc", "asc"]}'}
+                    {
+                        'name': 'priority, finishDate, name',
+                        'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "asc", "asc", "asc"]}'
+                    },
+                    {
+                        'name': 'priority, -finishDate, name',
+                        'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "desc", "desc", "asc"]}'
+                    }
                 ],
                 'FUTURE_TASKS_SORT_BY_OPTIONS': [
-                    {'name': 'finishDate, finishTime, name', 'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["desc", "asc", "asc"]}'},
-                    {'name': 'priority finishDate, finishTime, name', 'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "desc", "asc", "asc"]}'},
-                    {'name': '-finishDate, finishTime, name', 'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["asc", "desc", "asc"]}'}
+                    {
+                        'name': 'finishDate, finishTime, name',
+                        'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["desc", "asc", "asc"]}'
+                    },
+                    {
+                        'name': 'priority finishDate, finishTime, name',
+                        'value': '{"fields": ["priority", "finishDate", "finishTime", "name"], "orders": ["asc", "desc", "asc", "asc"]}'
+                    },
+                    {
+                        'name': '-finishDate, finishTime, name',
+                        'value': '{"fields": ["finishDate", "finishTime", "name"], "orders": ["asc", "desc", "asc"]}'
+                    }
                 ],
                 'TASKS_ORDER_OPTIONS': [
                     'Today->Overdue',
@@ -113,12 +129,12 @@ export class ConfigurationService {
         if (!date) {
             date = moment().format('DD-MM-YYYY');
         }
-        const splittedDate: string[] = date.split("-");
+        const splittedDate: string[] = date.split('-');
         if (splittedDate.length == 2) {
             toStore = moment().month(splittedDate[0]).year(parseInt(splittedDate[1])).date(1);
             state = stateActiveDateElement.future;
-        } else if (date.split("-").length == 3) {
-            toStore = moment().month(parseInt(splittedDate[1])-1).year(parseInt(splittedDate[2])).date(parseInt(splittedDate[0]));
+        } else if (date.split('-').length == 3) {
+            toStore = moment().month(parseInt(splittedDate[1]) - 1).year(parseInt(splittedDate[2])).date(parseInt(splittedDate[0]));
             state = stateActiveDateElement.weekdays;
         }
         this.store.dispatch(new configurationAction.UpdateActiveDateElement({
@@ -201,5 +217,5 @@ export class ConfigurationService {
     switchOnProgressBar(): void {
         this.store.dispatch(new configurationAction.SwitchOnProgressBar(true));
     }
-    
+
 }

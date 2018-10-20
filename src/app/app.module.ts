@@ -1,6 +1,6 @@
 import {NgModule, ErrorHandler} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { DateAdapter,} from '@angular/material';
+import { DateAdapter } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -28,7 +28,6 @@ import {
 } from './app.routes';
 import {HomeComponent} from './home/home.component';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {useLogMonitor} from '@ngrx/store-log-monitor';
 import {TaskService} from './services/task-service';
 import {LoginComponent} from './login/login.component';
 import {SignupComponent} from './signup/signup.component';
@@ -110,22 +109,14 @@ import {ProjectsFiltersService} from './services/projects-filters.service';
 import { FilterTagsDialogComponent } from './tags-list/filter-tags-dialog/filter-tags-dialog.component';
 import {TagsFiltersService} from './services/tags-filters-service';
 import {TickistMaterialModule} from './material.module';
-import {DaysWeeksYearListComponent} from "./dashboard/days-weeks-year-list/days-weeks-year-list.component";
-import {FutureListComponent} from "./dashboard/future-list/future-list.component";
+import {DaysWeeksYearListComponent} from './dashboard/days-weeks-year-list/days-weeks-year-list.component';
+import {FutureListComponent} from './dashboard/future-list/future-list.component';
 import {FutureTasksComponent} from './dashboard/future-tasks/future-tasks.component';
 import {FilterFutureTasksComponent} from './dashboard/filter-future-tasks/filter-future-tasks.component';
 import {FutureTasksFiltersService} from './services/future-tasks-filters-service';
 import {ChangeFinishDateDialogComponent} from './single-task/change-finish-date-dialog/change-finish-date-dialog.component';
 import {TagsFilterDialog} from './filter-tasks/tags-filter-dialog/tags-filter-dialog.component';
 import {EstimateTimeDialog} from './filter-tasks/estimate-time-dialog/estimate-time-dialog.component';
-
-
-export function instrumentOptions() {
-    return {
-        monitor: useLogMonitor({visible: false, position: 'right'})
-    };
-}
-
 
 export function tokenGetter() {
     return localStorage.getItem('JWT');

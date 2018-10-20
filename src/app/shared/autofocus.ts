@@ -1,29 +1,25 @@
 // Import the core angular services.
-import {AfterContentInit} from '@angular/core';
+import {AfterContentInit, Input} from '@angular/core';
 import {Directive} from '@angular/core';
 import {ElementRef} from '@angular/core';
 import {OnChanges} from '@angular/core';
 import {OnDestroy} from '@angular/core';
 import {SimpleChanges} from '@angular/core';
+import Timeout = NodeJS.Timeout;
 
 // ----------------------------------------------------------------------------------- //
 // ----------------------------------------------------------------------------------- //
-var BASE_TIMER_DELAY = 10;
+const BASE_TIMER_DELAY = 10;
 
 @Directive({
     selector: '[autofocus], [appAutofocus]',
-    inputs: [
-        'shouldFocusElement: appAutofocus',
-        'timerDelay: autofocusDelay'
-    ]
 })
 export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestroy {
-
-    public shouldFocusElement: any;
-    public timerDelay: number | string;
-
+    @Input() shouldFocusElement: any;
+    @Input() timerDelay: number;
+    
     private elementRef: ElementRef;
-    private timer: number;
+    private timer: any;
 
     // I initialize the autofocus directive.
     constructor(elementRef: ElementRef) {
@@ -47,9 +43,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
         // "shouldFocusElement" input property is the empty string. This will signify
         // that the focus it not being data-driven and should be performed automatically.
         if (this.shouldFocusElement === '') {
-
             this.startFocusWorkflow();
-
         }
 
     }
