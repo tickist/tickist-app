@@ -18,8 +18,9 @@ export class ChangeFinishDateDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+        const finishDate = this.task.finishDate ? this.task.finishDate.toDate() : '';
         this.changeDate = new FormGroup({
-            finishDate: new FormControl(this.task.finishDate.toDate(), Validators.required)
+            finishDate: new FormControl(finishDate, Validators.required)
         });
 
     }

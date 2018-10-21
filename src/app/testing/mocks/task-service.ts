@@ -14,7 +14,7 @@ export class MockTaskService extends SpyObject {
         this.fakeResponse = null;
         this.responseSuccess = true;
         this.currentTasksFilters$ =  this.spy('activeDay$').and.returnValue(of([]));
-        this.tasks$ =  this.spy('activeDay$').and.returnValue(of([]));
+        this.tasks$ = of([]);
     }
 
     subscribe(success, error) {
