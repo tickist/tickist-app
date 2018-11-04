@@ -1,34 +1,33 @@
-<div class="content" [ngClass.gt-sm]="'right-sidenav left-sidenav'" style="min-height: 100%">
-        <mat-card>
-            <div id="project-header">
-                <div *ngIf="!selectedProject">
-                    <div class="header" fxLayout="row" fxLayoutAlign="center center">
-                        <div>All tasks</div>
-                        <div fxFlex></div>
-                        <tickist-sort-tasks></tickist-sort-tasks>
-                        <app-filter-tasks [showTags]="true"></app-filter-tasks>
-                        <change-task-view [defaultTaskView]="defaultTaskView"
-                                          (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
-                    </div>
-                </div>
-                <div *ngIf="selectedProject">
-                    <div class="header" fxLayout="row" fxLayoutAlign="center center">
-                        <div>{{ selectedProject.name }}</div>
-                        <div fxFlex></div>
-                        <tickist-menu-button [icon]="'fa-pencil-square-o'" [fontSize]="'18px'"
-                              [routerLink]="['/home/project/', selectedProject.id]">
-                        </tickist-menu-button>
-                        <tickist-sort-tasks></tickist-sort-tasks>
-                        <app-filter-tasks [showTags]="true"></app-filter-tasks>
-                        <change-task-view [defaultTaskView]="defaultTaskView"
-                                          (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
-                    </div>
-                    
-                    <div class="project-description">{{ selectedProject.richDescription }}</div>
-                    
-                </div>
-            </div>
+<div class="content" [ngClass.gt-sm]="'right-sidenav left-sidenav'" style="min-height: calc(100%); max-height: calc(100%)" fxLayout="column"
+     fxLayoutAlign=" none">
 
-            <app-tasks-list [tasks]="tasks" [taskView]="taskView"></app-tasks-list>
-        </mat-card>
+    <div *ngIf="!selectedProject" [fxFlex]="projectHeaderHeightFlex" class="project-header">
+        <div class="header" fxLayout="row" fxLayoutAlign="center center">
+            <div>All tasks</div>
+            <div fxFlex></div>
+            <tickist-sort-tasks></tickist-sort-tasks>
+            <app-filter-tasks [showTags]="true"></app-filter-tasks>
+            <change-task-view [defaultTaskView]="defaultTaskView"
+                              (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+        </div>
     </div>
+    <div *ngIf="selectedProject" [fxFlex]="projectHeaderHeightFlex" class="project-header">
+        <div class="header" fxLayout="row" fxLayoutAlign="center center">
+            <div>{{ selectedProject.name }}</div>
+            <div fxFlex></div>
+            <tickist-menu-button [icon]="'fa-pencil-square-o'" [fontSize]="'18px'"
+                                 [routerLink]="['/home/project/', selectedProject.id]">
+            </tickist-menu-button>
+            <tickist-sort-tasks></tickist-sort-tasks>
+            <app-filter-tasks [showTags]="true"></app-filter-tasks>
+            <change-task-view [defaultTaskView]="defaultTaskView"
+                              (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+        </div>
+
+        <div class="project-description">{{ selectedProject.richDescription }}</div>
+
+    </div>
+
+
+    <app-tasks-list [tasks]="tasks" [taskView]="taskView" [fxFlex]="tasksListHeightFlex"></app-tasks-list>
+</div>

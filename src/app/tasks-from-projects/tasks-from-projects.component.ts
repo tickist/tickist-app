@@ -30,6 +30,12 @@ class Timer {
 })
 export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    readonly TASKS_LIST_HEIGHT_WITH_PROJECT_DESCRIPTION_FLEX = 80;
+    readonly TASKS_LIST_HEIGHT_WITHOUT_PROJECT_DESCRIPTION_FLEX = 'auto';
+    readonly PROJECT_HEADER_WITH_DESCRIPTION_HEIGHT_FLEX = 20;
+    readonly PROJECT_HEADER_WITHOUT_DESCRIPTION_HEIGHT_FLEX = 'auto';
+    tasksListHeightFlex: number | string;
+    projectHeaderHeightFlex: number | string;
     tasksStream$: Observable<any>;
     selectedProjectsStream$: Observable<any>;
     taskView: string;
@@ -84,10 +90,16 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         );
         this.selectedProjectsStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe();
         this.projectService.selectedProject$.subscribe(project => {
+            this.tasksListHeightFlex = this.TASKS_LIST_HEIGHT_WITHOUT_PROJECT_DESCRIPTION_FLEX;
+            this.projectHeaderHeightFlex = this.PROJECT_HEADER_WITHOUT_DESCRIPTION_HEIGHT_FLEX;
             if (project) {
                 this.selectedProject = project;
                 this.defaultTaskView = project.taskView;
                 this.taskView = project.taskView;
+                if (project.hasDescription()) {
+                    this.tasksListHeightFlex = this.TASKS_LIST_HEIGHT_WITH_PROJECT_DESCRIPTION_FLEX;
+                    this.projectHeaderHeightFlex = this.PROJECT_HEADER_WITH_DESCRIPTION_HEIGHT_FLEX;
+                }
             }
         });
         this.tasksStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(tasks => {

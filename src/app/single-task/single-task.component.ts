@@ -297,7 +297,7 @@ export class SingleTaskSimplifiedComponent extends SingleTask {
         }
     }
 
-    changeFastMenuVisible(value: boolean) {
+    changeFastMenuVisible(value: boolean): void {
         this.isFastMenuVisible = value;
         this.changeRightMenuVisiblity();
     }

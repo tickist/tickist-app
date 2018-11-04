@@ -55,6 +55,10 @@ export class Project extends Api {
             this.shareWith.push(new PendingUser(user));
         }
     }
+    
+    hasDescription(): boolean {
+        return this.description && this.description.length > 0;
+    }
 
     get matOptionClass(): string {
         return `level_${this.level}`;

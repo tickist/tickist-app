@@ -2,56 +2,61 @@
 @import "../shared/commons";
 
 :host {
-  margin-bottom: 20px;
-  height: 50px;
+    margin-bottom: 20px;
+    height: 50px;
+   
 
-  span {
-    color: $white;
-  }
+    span {
+        color: $white;
+    }
 
-  .task-list-icon {
-    width: 24px;
-    height: 24px;
-    margin-top: 2px;
-  }
+    .task-list-icon {
+        width: 24px;
+        height: 24px;
+        margin-top: 2px;
+    }
 
-  .fa-dot-circle-o, .fa-arrow-right {
-    margin-right: 5px;
-  }
+    .fa-dot-circle-o, .fa-arrow-right {
+        margin-right: 5px;
+    }
 }
-
 
 
 .steps {
-  margin-bottom: 15px;
-  .step {
-    height: 20px
-  }
-  .step-name {
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  i {
-    margin-right: 10px;
-  }
-  .taskstep-done {
-    .step-name {
-      text-decoration: line-through;
-      text-decoration-color: $white;
-    }
-    .fa-square-o {
-      display: none;
-    }
-  }
-  .taskstep-undone {
-    .fa-check-square-o {
-      display: none;
-    }
-  }
-}
+    margin-bottom: 15px;
 
+    .step {
+        height: 20px
+    }
+
+    .step-name {
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    i {
+        margin-right: 10px;
+    }
+
+    .taskstep-done {
+        .step-name {
+            text-decoration: line-through;
+            text-decoration-color: $white;
+        }
+
+        .fa-square-o {
+            display: none;
+        }
+    }
+
+    .taskstep-undone {
+        .fa-check-square-o {
+            display: none;
+        }
+    }
+}
 
 
 #first-row {
@@ -63,55 +68,54 @@
 }
 
 i {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 
 .task-description {
-  margin-bottom: 15px;
-  font-size: 14px
+    margin-bottom: 15px;
+    font-size: 14px
 }
 
 #repeat-options {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 #finish-date-options {
- margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .task-tags {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 
-
 .fa-times {
-  margin-left: 5px
+    margin-left: 5px
 }
 
 
 .fast-menu {
-  #delete-button {
-    margin-top: 5px;
-  }
+    #delete-button {
+        margin-top: 5px;
+    }
 
-  .change-data-icon-set {
-    margin-top: 10px
-  }
+    .change-data-icon-set {
+        margin-top: 10px
+    }
 
-  span, i {
-    color: $white;
-  }
+    span, i {
+        color: $white;
+    }
 
-  span {
-    margin: 0 10px 0 10px;
-  }
+    span {
+        margin: 0 10px 0 10px;
+    }
 
 }
 
 #second-row {
-      box-sizing: border-box;
+    box-sizing: border-box;
     max-height: 100%;
     display: flex;
     flex-direction: row;
@@ -121,20 +125,21 @@ i {
 
 
 .flow {
-  display: flex;
-  box-sizing: border-box;
-  -webkit-box-direction: normal;
-  margin-top: 5px;
+    display: flex;
+    box-sizing: border-box;
+    -webkit-box-direction: normal;
+    background: #394264;
+    padding: 16px;
+    
+    .row {
+        flex-direction: row;
+        -webkit-box-orient: horizontal;
+    }
 
-  .row {
-    flex-direction: row;
-    -webkit-box-orient: horizontal;
-  }
-
-  .column {
-     flex-direction: column;
-     -webkit-box-orient: vertical;
-     height:100px;       /*  important for sizing of row heights */
-     margin-bottom: 20px;
-  }
+    .column {
+        flex-direction: column;
+        -webkit-box-orient: vertical;
+        height: 100px; /*  important for sizing of row heights */
+        margin-bottom: 20px;
+    }
 }

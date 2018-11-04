@@ -25,9 +25,11 @@ Object.defineProperty(window, 'getComputedStyle', {
 });
 
 Object.defineProperty(window, 'matchMedia', {
-    value: jest.fn(() => {
-        return {matches: true};
-    })
+    value: () => {
+        return {
+            matches: true
+        };
+    }
 });
 /**
  * ISSUE: https://github.com/angular/material2/issues/7101
