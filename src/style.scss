@@ -147,18 +147,9 @@ html, body, .my-content {
 
 mat-sidenav-container {
     background-color: #1F253D !important;
-    min-height: 100%;
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-
-}
-
-.main-container {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
+    flex: 1;
 
 }
 
@@ -168,7 +159,6 @@ mat-sidenav {
 }
 
 .mat-sidenav-content {
-    min-height: 100%;
     background-color: $background_color !important;
 }
 
@@ -246,20 +236,31 @@ mat-button-toggle-group {
     outline: none;
 }
 
-body::-webkit-scrollbar {
+.example-viewport::-webkit-scrollbar {
     width: 10px;
     background-color: #F5F5F5;
 }
 
 /**  STYLE 4 */
-body::-webkit-scrollbar-track {
+.example-viewportt::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #F5F5F5;
 }
 
-body::-webkit-scrollbar-thumb {
+.example-viewport::-webkit-scrollbar-thumb {
     background-color: #000000;
     border: 2px solid #555555;
+}
+
+.example-viewport {
+    margin-left: 16px;
+    height: 100%;
+    max-height: 100%;
+    min-height: 100%;
+
+    .example-item {
+        height: 85px;
+    }
 }
 
 .mat-drawer-inner-container::-webkit-scrollbar {

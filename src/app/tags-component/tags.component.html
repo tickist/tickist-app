@@ -1,21 +1,21 @@
-<div [ngClass.gt-sm]="'right-sidenav left-sidenav'">
-    <mat-card>
-        <div class="header" fxLayout="row" fxLayoutAlign="center center">
-            <span>Tags</span>
-            <span fxFlex></span>
+<cdk-virtual-scroll-viewport itemSize="90" class="example-viewport">
 
-            <change-task-view [defaultTaskView]="user?.defaultTaskViewTagsView"
-                              (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+    <div class="header" fxLayout="row" fxLayoutAlign="center center">
+        <span>Tags</span>
+        <span fxFlex></span>
 
-            <app-filter-tasks [showTags]="false"></app-filter-tasks>
+        <change-task-view [defaultTaskView]="user?.defaultTaskViewTagsView"
+                          (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
 
-
-        </div>
+        <app-filter-tasks [showTags]="false"></app-filter-tasks>
 
 
-        <app-tasks-list [tasks]="tasks" [taskView]="taskView"></app-tasks-list>
+    </div>
 
 
-    </mat-card>
-</div>
+    <app-single-task class="example-item" [task]="task" [mediaChange]="mediaChange"
+                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn">
 
+    </app-single-task>
+
+</cdk-virtual-scroll-viewport>>

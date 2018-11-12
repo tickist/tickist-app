@@ -1,7 +1,7 @@
 import {Routes, ActivatedRouteSnapshot, RouterStateSnapshot, Resolve} from '@angular/router';
 import {LoginComponent} from './login/login.component';
-import {LoggedInGuard} from './guards/loggedIn.guard';
-import {AnonymousGuard} from './guards/anonymous.guard';
+import {LoggedInGuard} from './routing/guards/loggedIn.guard';
+import {AnonymousGuard} from './routing/guards/anonymous.guard';
 import {HomeComponent} from './home/home.component';
 import {SignupComponent} from './signup/signup.component';
 import {DashboardComponent} from './dashboard/dashboard.component';

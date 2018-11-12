@@ -1,7 +1,7 @@
-import {Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {AppStore} from '../store';
 import {Store} from '@ngrx/store';
-import {Router, RouterStateSnapshot, NavigationEnd} from '@angular/router';
+import {Router} from '@angular/router';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
 import {ProjectService} from '../services/project-service';
@@ -10,7 +10,7 @@ import {UserService} from '../services/userService';
 import {TagService} from '../services/tag-service';
 import {ObservableMedia, MediaChange} from '@angular/flex-layout';
 import {ConfigurationService} from '../services/configurationService';
-import {SideNavVisibility} from '../models/configurations';
+import {SideNavVisibility} from '../models';
 import * as _ from 'lodash';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -43,6 +43,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.rightSidenavVisibility = new SideNavVisibility({'open': true, 'mode': '', 'position': 'end'});
 
         this.media.subscribe((change: MediaChange) => {
+            console.log(change)
             this.configurationService.updateLeftSidenavVisibility();
             this.configurationService.updateRightSidenavVisibility();
             this.cd.detectChanges();

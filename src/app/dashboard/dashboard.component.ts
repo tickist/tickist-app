@@ -40,8 +40,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.taskService.tasks$,
                 this.configurationService.activeDateElement$,
                 this.userService.user$,
-                (tasks: Task[],activeDateElement: IActiveDateElement, user: User) => {
-                    this.activeDateElement =activeDateElement;
+                (tasks: Task[], activeDateElement: IActiveDateElement, user: User) => {
+                    this.activeDateElement = activeDateElement;
                     this.user = user;
                     return tasks;
                 }
@@ -71,7 +71,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
         this.subscriptions = this.stream$.subscribe((tasks) => {
             if (tasks && tasks.length > 0 && this.user) {
                 this.tasks = tasks.filter(task => task.owner.id === this.user.id && task.status === 0);

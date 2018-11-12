@@ -11,7 +11,7 @@
         "test_watch": "jest --watch",
         "test_ci": "jest --runInBand",
         "test:coverage": "jest --coverage",
-        "ci": "npm run test ci && npm run e2e",
+        "ci": "npm run test_ci && npm run e2e",
         "test": "jest",
         "lint": "ng lint",
         "e2e": "ng e2e"

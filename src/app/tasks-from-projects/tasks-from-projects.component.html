@@ -1,8 +1,6 @@
-<div class="content" [ngClass.gt-sm]="'right-sidenav left-sidenav'" style="min-height: calc(100%); max-height: calc(100%)" fxLayout="column"
-     fxLayoutAlign=" none">
-
-    <div *ngIf="!selectedProject" [fxFlex]="projectHeaderHeightFlex" class="project-header">
-        <div class="header" fxLayout="row" fxLayoutAlign="center center">
+<cdk-virtual-scroll-viewport itemSize="90" class="example-viewport">
+    <div *ngIf="!selectedProject"  class="project-header">
+        <div class="header">
             <div>All tasks</div>
             <div fxFlex></div>
             <tickist-sort-tasks></tickist-sort-tasks>
@@ -11,8 +9,8 @@
                               (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
         </div>
     </div>
-    <div *ngIf="selectedProject" [fxFlex]="projectHeaderHeightFlex" class="project-header">
-        <div class="header" fxLayout="row" fxLayoutAlign="center center">
+    <div *ngIf="selectedProject"  class="project-header">
+        <div class="header">
             <div>{{ selectedProject.name }}</div>
             <div fxFlex></div>
             <tickist-menu-button [icon]="'fa-pencil-square-o'" [fontSize]="'18px'"
@@ -24,10 +22,17 @@
                               (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
         </div>
 
-        <div class="project-description">{{ selectedProject.richDescription }}</div>
+        <div *ngIf=selectedProject.hasDescription()
+             class="project-description">{{ selectedProject.richDescription }}</div>
 
     </div>
 
+    <!--<app-tasks-list [tasks]="tasks" [taskView]="taskView" [fxFlex]="tasksListHeightFlex"></app-tasks-list>-->
+    <app-single-task class="example-item" [task]="task" [mediaChange]="mediaChange"
+                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn">
 
-    <app-tasks-list [tasks]="tasks" [taskView]="taskView" [fxFlex]="tasksListHeightFlex"></app-tasks-list>
-</div>
+    </app-single-task>
+</cdk-virtual-scroll-viewport>
+
+
+

@@ -16,6 +16,7 @@ import {ConfigurationService} from '../services/configurationService';
 export class TasksListComponent implements OnInit, OnDestroy {
     @Input() tasks: Task[];
     @Input() taskView: string;
+    @Input() virtualScrollEnabled = true;
     watcher: Subscription;
     mediaChange: MediaChange;
     task_simple_view_value: string;

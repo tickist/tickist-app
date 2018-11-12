@@ -1,15 +1,22 @@
+@import "../shared/variables";
+@import "style";
+
 :host {
-    height: calc(100vh - 79px);
-    overflow: hidden;
-    .content {
-        height: calc(100vh - 79px);
-        overflow: hidden;
-    }
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;    
+    
     .project-description {
-        margin-bottom: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-size: 12px;
+        overflow: auto;
     }
     .project-header {
-        background: #394264;
+        background: $background_card_color;
         padding: 16px;
     }
 }

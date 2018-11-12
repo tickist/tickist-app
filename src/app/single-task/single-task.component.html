@@ -64,7 +64,7 @@
     </div>
 
 
-    <div *ngIf="task.menuShowing.isSteps" class="steps">
+    <div id="steps" *ngIf="task.menuShowing.isSteps" class="steps">
         <div fxLayout="row" fxLayoutAlign="end center">
             <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>

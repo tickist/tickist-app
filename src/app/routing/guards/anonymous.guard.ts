@@ -2,19 +2,17 @@ import {Router, ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/rout
 
 import {Injectable} from "@angular/core";
 import {CanActivate} from "@angular/router";
-import {UserService} from "../services/userService"
+import {UserService} from "../../services/userService"
 
 
 @Injectable()
-export class LoggedInGuard implements CanActivate {
+export class AnonymousGuard implements CanActivate {
 
-  constructor(protected router: Router, private userService: UserService) {
-
-  }
+  constructor(protected router: Router, private userService: UserService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (state.url !== '/login' && !this.userService.isLoggedIn()) {
-      this.router.navigate(['login']);
+    if (state.url !== '/home' && this.userService.isLoggedIn()) {
+      this.router.navigate(['home']);
       return false;
     }
     return true;

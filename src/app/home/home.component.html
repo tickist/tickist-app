@@ -1,23 +1,28 @@
-
 <tickist-nav></tickist-nav>
 
-<mat-sidenav-container *ngIf="leftSidenavVisibility && rightSidenavVisibility">
+<mat-sidenav-container *ngIf="leftSidenavVisibility && rightSidenavVisibility" style="flex: 1">
     <mat-sidenav [mode]="leftSidenavVisibility.mode"
-                [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisiblity()" >
+                 [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisiblity()"
+                 [fixedInViewport]="'fixed'" [fixedTopGap]="79">
 
-       <router-outlet name="leftSideNav"></router-outlet>
+        <router-outlet name="leftSideNav"></router-outlet>
 
+        
+        
     </mat-sidenav>
-
-
-    <mat-sidenav [position]="rightSidenavVisibility.position" [opened]="rightSidenavVisibility.open" [mode]="rightSidenavVisibility.mode"
-                (close)="closeRightSidenavVisiblity()" >
+    
+    <mat-sidenav [position]="rightSidenavVisibility.position"
+                 [opened]="rightSidenavVisibility.open"
+                 [mode]="rightSidenavVisibility.mode"
+                 (close)="closeRightSidenavVisiblity()"
+                 [fixedInViewport]="true"
+                 [fixedTopGap]="79" >
         <tickist-global-statistics></tickist-global-statistics>
     </mat-sidenav>
-    <div [ngClass.gt-sm]="'right-sidenav left-sidenav'" class="content">
+    <mat-sidenav-content>
 
         <router-outlet></router-outlet>
-    </div>
+    </mat-sidenav-content>
 
 
 </mat-sidenav-container>

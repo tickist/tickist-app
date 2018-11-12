@@ -6,4 +6,9 @@
     </change-task-view>
 </div>
 
-<app-tasks-list [tasks]="tasks" [taskView]="taskView"></app-tasks-list>
+<app-single-task class="example-item" [task]="task" [mediaChange]="mediaChange"
+                 *ngFor="let task of tasks;trackBy: trackByFn">
+
+</app-single-task>
+
+<!--<app-tasks-list [tasks]="tasks" [taskView]="taskView" [virtualScrollEnabled]="false"></app-tasks-list>-->

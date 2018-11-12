@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {TaskService} from '../../services/task-service';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -18,7 +18,7 @@ import {FutureTasksFiltersService} from '../../services/future-tasks-filters-ser
     styleUrls: ['./future-tasks.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FutureTasksComponent implements OnInit {
+export class FutureTasksComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     tasks: Task[] = [];
     user: User;
@@ -30,7 +30,7 @@ export class FutureTasksComponent implements OnInit {
     currentFilter: Filter;
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private router: Router,
-                private configurationService: ConfigurationService, private userService: UserService, 
+                private configurationService: ConfigurationService, private userService: UserService,
                 private futureTasksFiltersService: FutureTasksFiltersService, private cd: ChangeDetectorRef) {
         this.stream$ = combineLatest(
             this.taskService.tasks$,
@@ -78,13 +78,17 @@ export class FutureTasksComponent implements OnInit {
     }
 
     changeTaskView(event): void {
-        if (!event) return;
+        if (!event) {return};
         this.taskView = event;
         if (this.user.defaultTaskViewFutureView !== event) {
             this.user.defaultTaskViewFutureView = event;
             this.userService.updateUser(this.user, true);
         }
 
+    }
+
+    trackByFn(index, item) {
+        return item.id;
     }
 
 }

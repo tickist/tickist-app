@@ -7,15 +7,13 @@ import {TaskService} from '../services/task-service';
 import {FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import {UserService} from '../services/userService';
 import {User} from '../models/user';
-import {SideNavVisibility} from '../models';
 import {ConfigurationService} from '../services/configurationService';
-import {FilterProjectDialogComponent} from '../projects-list/filter-projects-dialog/filter-projects.dialog.component';
 import {FilterTagsDialogComponent} from './filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material';
 import {TagsFiltersService} from '../services/tags-filters-service';
 import {Filter} from '../models/filter';
-import {TasksFiltersService} from "../services/tasks-filters.service";
-
+import {TasksFiltersService} from '../services/tasks-filters.service';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-tags-list',
@@ -36,12 +34,12 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
                 protected userService: UserService, protected configurationService: ConfigurationService,
-                public dialog: MatDialog, protected tagsFiltersService: TagsFiltersService, 
+                public dialog: MatDialog, protected tagsFiltersService: TagsFiltersService,
                 protected tasksFiltersService: TasksFiltersService) {
 
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.tagsStream$ = combineLatest(
             this.tagService.tags$,
             this.tasksFiltersService.currentTasksFilters$,
@@ -66,7 +64,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
                 if (this.currentTagsFilters) {
                     tags = tags.filter(this.currentTagsFilters.value);
                 }
-                this.tags = tags;
+                this.tags = _.orderBy(tags, 'name', 'asc');
             }
         });
         this.subscriptions.add(this.tasksStream$.subscribe(((tasks) => {
@@ -82,13 +80,13 @@ export class TagsListComponent implements OnInit, OnDestroy {
         }));
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         if (this.subscriptions) {
             this.subscriptions.unsubscribe();
         }
     }
 
-    createTag(values) {
+    createTag(values): void {
         if (this.createTagForm.valid) {
             this.tagService.createTag(new Tag({name: values['name']}));
             this.createTagForm.reset();
@@ -96,23 +94,23 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     }
 
-    private isInt(value) {
+    private isInt(value): boolean {
         // @TODO DRY
         return !isNaN(value) && (function (x) {
             return (x | 0) === x;
         })(parseFloat(value));
     }
     
-    changeTaskView(event) {
+    changeTaskView(event): void {
         console.log(event);
         this.taskView = event;
     }
 
-    trackByFn(index, item) {
+    trackByFn(index, item): number {
         return item.id;
     }
 
-    openFilterDialog() {
+    openFilterDialog(): void {
         const dialogRef = this.dialog.open(FilterTagsDialogComponent);
         dialogRef.afterClosed().subscribe(result => {
             if (result) {

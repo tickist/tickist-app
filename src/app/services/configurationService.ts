@@ -130,7 +130,7 @@ export class ConfigurationService {
             date = moment().format('DD-MM-YYYY');
         }
         const splittedDate: string[] = date.split('-');
-        if (splittedDate.length == 2) {
+        if (splittedDate.length === 2) {
             toStore = moment().month(splittedDate[0]).year(parseInt(splittedDate[1])).date(1);
             state = stateActiveDateElement.future;
         } else if (date.split('-').length == 3) {
@@ -197,8 +197,8 @@ export class ConfigurationService {
         let open, position, mode;
         position = 'end';
         if (this.media.isActive('lg') || this.media.isActive('xl')) {
-            open = true;
-            mode = 'side';
+            open = false;
+            mode = 'over';
         } else {
             mode = 'over';
             open = false;

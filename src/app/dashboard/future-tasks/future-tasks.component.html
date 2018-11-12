@@ -1,5 +1,4 @@
-<div [ngClass.gt-sm]="'right-sidenav left-sidenav'">
-    <mat-card>
+<cdk-virtual-scroll-viewport itemSize="90" class="example-viewport">
 
             <div class="header" fxLayout="row" fxLayoutAlign="start none">
             
@@ -7,12 +6,17 @@
                 <span fxFlex></span>
                 <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
             </div>
-            <tickist-filter-future-tasks></tickist-filter-future-tasks>
-            <div></div>
-            <app-tasks-list [tasks]="futureTasks" [taskView]="taskView"></app-tasks-list>
+            
+           
+    <tickist-filter-future-tasks></tickist-filter-future-tasks>
 
-    </mat-card>
-</div>
+    <app-single-task class="example-item" [task]="task" [mediaChange]="mediaChange"
+                     *cdkVirtualFor="let task of futureTasks;trackBy: trackByFn">
+
+    </app-single-task>
+
+
+</cdk-virtual-scroll-viewport>
 
 
 

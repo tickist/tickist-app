@@ -22,9 +22,8 @@
 }
 
 
-.steps {
-    margin-bottom: 15px;
-
+#steps {
+    @extend .additional-info;
     .step {
         height: 20px
     }
@@ -71,14 +70,20 @@ i {
     cursor: pointer;
 }
 
+.additional-info {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 15px;
+    background: $background_card_color;
+}
 
 .task-description {
-    margin-bottom: 15px;
-    font-size: 14px
+    font-size: 14px;
+    @extend .additional-info;
 }
 
 #repeat-options {
-    margin-bottom: 15px;
+    @extend .additional-info;
 }
 
 #finish-date-options {
@@ -86,9 +91,20 @@ i {
 }
 
 .task-tags {
-    margin-bottom: 15px;
+    @extend .additional-info;
 }
 
+#change-project-task {
+    @extend .additional-info;
+}
+
+#change-assigned-to {
+    @extend .additional-info;
+}
+
+#finish-date-options {
+    @extend .additional-info;
+}
 
 .fa-times {
     margin-left: 5px

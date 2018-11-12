@@ -4,7 +4,6 @@ import { DateAdapter } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {RouterModule} from '@angular/router';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {StoreModule} from '@ngrx/store';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -15,25 +14,15 @@ import {ChartModule, SharedModule} from 'primeng/primeng';
 import {AppComponent} from './app.component';
 import {UserService} from './services/userService';
 import {ProjectService} from './services/project-service';
-import {LoggedInGuard} from './guards/loggedIn.guard';
-import {AnonymousGuard} from './guards/anonymous.guard';
-import {
-    ProjectsResolver,
-    routes, 
-    SetAllTasksFilterResolver,
-    TagsResolver,
-    TasksResolver,
-    TeamResolver,
-    UserResolver
-} from './app.routes';
-import {HomeComponent} from './home/home.component';
+import {LoggedInGuard} from './routing/guards/loggedIn.guard';
+import {AnonymousGuard} from './routing/guards/anonymous.guard';
+import {HomeComponent} from './home';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TaskService} from './services/task-service';
 import {LoginComponent} from './login/login.component';
 import {SignupComponent} from './signup/signup.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
-
 import {TagService} from './services/tag-service';
 import {NavComponent} from './nav-component/nav.component';
 import {TagsComponent} from './tags-component/tags.component';
@@ -117,6 +106,7 @@ import {FutureTasksFiltersService} from './services/future-tasks-filters-service
 import {ChangeFinishDateDialogComponent} from './single-task/change-finish-date-dialog/change-finish-date-dialog.component';
 import {TagsFilterDialog} from './filter-tasks/tags-filter-dialog/tags-filter-dialog.component';
 import {EstimateTimeDialog} from './filter-tasks/estimate-time-dialog/estimate-time-dialog.component';
+import {TickistRoutingModule} from './routing/routing.module';
 
 export function tokenGetter() {
     return localStorage.getItem('JWT');
@@ -202,7 +192,6 @@ export function tokenGetter() {
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        RouterModule.forRoot(routes),
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
@@ -229,7 +218,8 @@ export function tokenGetter() {
                 tokenGetter: tokenGetter
             }
         }),
-        ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
+        ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+        TickistRoutingModule
     ],
     bootstrap: [AppComponent],
     entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialog, EstimateTimeDialog,
@@ -239,8 +229,6 @@ export function tokenGetter() {
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         {provide: DateAdapter, useClass: MyDateAdapter},
-        LoggedInGuard,
-        AnonymousGuard,
         UserService,
         TaskService,
         TasksFiltersService,
@@ -252,13 +240,6 @@ export function tokenGetter() {
         StatisticsService,
         MyErrorHandler,
         ErrorService,
-        ProjectsResolver,
-        TasksResolver,
-        TeamResolver,
-        UserResolver,
-        TagsResolver,
-        SetAllTasksFilterResolver,
-        FutureTasksFiltersService,
         {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true},
         {
             provide: ErrorHandler,
