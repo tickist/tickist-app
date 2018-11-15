@@ -9,7 +9,7 @@ import {UserService} from '../services/userService';
 import {User} from '../models/user';
 import {SideNavVisibility} from '../models';
 import {ConfigurationService} from '../services/configurationService';
-import {TasksFiltersService} from "../services/tasks-filters.service";
+import {TasksFiltersService} from '../services/tasks-filters.service';
 
 @Component({
     selector: 'app-tags',
@@ -72,13 +72,6 @@ export class TagsComponent implements OnInit, OnDestroy {
         }
     }
 
-    private isInt(value) {
-        // @TODO DRY
-        return !isNaN(value) && (function (x) {
-                return (x | 0) === x;
-            })(parseFloat(value));
-    }
-
     changeTaskView(event) {
         console.log(event);
         this.taskView = event;
@@ -86,7 +79,9 @@ export class TagsComponent implements OnInit, OnDestroy {
             this.user.defaultTaskViewTagsView = event;
             this.userService.updateUser(this.user, true);
         }
-        
-        
+    }
+
+    trackByFn(index, item): number {
+        return item.id;
     }
 }

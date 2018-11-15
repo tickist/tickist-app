@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {FutureListElement} from './models';
 import * as moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -19,7 +19,7 @@ import {stateActiveDateElement} from '../../models/state-active-date-element.enu
     styleUrls: ['./future-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FutureListComponent implements OnInit {
+export class FutureListComponent implements OnInit, OnDestroy {
     futureList: FutureListElement[];
     monthsRequired = 12;
     activeDateElement: IActiveDateElement;
@@ -27,17 +27,20 @@ export class FutureListComponent implements OnInit {
     user: User;
     stateActiveDateElement = stateActiveDateElement;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
-    constructor(private route: ActivatedRoute, private router: Router, private configurationService: ConfigurationService, 
-                protected media: ObservableMedia, private taskService: TaskService, private userService: UserService,
+
+    constructor(private route: ActivatedRoute, private router: Router, private configurationService: ConfigurationService,
+                private media: ObservableMedia, private taskService: TaskService, private userService: UserService,
                 private cd: ChangeDetectorRef) {
     }
-    
+
     ngOnInit(): void {
-        this.configurationService.activeDateElement$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((activeDateElement: IActiveDateElement) => {
-            this.activeDateElement = activeDateElement;
-            this.cd.detectChanges();
-        });
+        this.configurationService
+            .activeDateElement$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((activeDateElement: IActiveDateElement) => {
+                this.activeDateElement = activeDateElement;
+                this.cd.detectChanges();
+            });
         this.taskService.tasks$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((tasks: Task[]) => {
             this.tasks = tasks;
             this.futureList = this.createFutureList();
@@ -45,7 +48,7 @@ export class FutureListComponent implements OnInit {
         this.userService.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((user: User) => {
             this.user = user;
             this.futureList = this.createFutureList();
-        })
+        });
     }
 
     ngOnDestroy(): void {
@@ -59,23 +62,24 @@ export class FutureListComponent implements OnInit {
         for (let i = 0; i <= this.monthsRequired; i++) {
             const momentDate = moment().add(i, 'months');
             futureList.push({
-                'url': momentDate.format('MMMM-YYYY'), 
-                'label':momentDate.format('MMMM YYYY'),
+                'url': momentDate.format('MMMM-YYYY'),
+                'label': momentDate.format('MMMM YYYY'),
                 'tasksCounter': this.tasks.filter(task => {
                     return task.owner.id === this.user.id
                         && task.status === 0
                         && task.finishDate
-                        && task.finishDate.month() ===  momentDate.month()
+                        && task.finishDate.month() === momentDate.month()
                         && task.finishDate.year() === momentDate.year();
                 }).length
             });
         }
 
-        return futureList
+        return futureList;
     }
 
     isSelected(elem: FutureListElement) {
-        return this.activeDateElement.state === this.stateActiveDateElement.future && elem.url === this.activeDateElement.date.format('MMMM-YYYY');
+        return this.activeDateElement.state === this.stateActiveDateElement.future
+            && elem.url === this.activeDateElement.date.format('MMMM-YYYY');
     }
 
     navigateTo(path, arg) {

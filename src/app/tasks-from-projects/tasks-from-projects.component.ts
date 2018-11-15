@@ -50,7 +50,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 private projectService: ProjectService, private cd: ChangeDetectorRef,
                 protected tasksFiltersService: TasksFiltersService ) {
     }
-    
+
     ngOnInit() {
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
@@ -127,6 +127,10 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    trackByFn(index, item): number {
+        return item.id;
     }
 
 }

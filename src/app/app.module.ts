@@ -63,7 +63,7 @@ import { ShowOfflineModeComponent } from './show-offline-mode/show-offline-mode.
 import { ShowNotificationAboutNewDayComponent } from './show-notification-about-new-day/show-notification-about-new-day.component';
 import {FilterProjectDialogComponent} from './projects-list/filter-projects-dialog/filter-projects.dialog.component';
 import {SortTasksComponent} from './sort-tasks/sort-tasks.component';
-import {SortByDialog} from './sort-tasks/sort-tasks-dialog/sort-tasks.dialog.component';
+import {SortByDialogComponent} from './sort-tasks/sort-tasks-dialog/sort-tasks.dialog.component';
 import {TasksFiltersService} from './services/tasks-filters.service';
 import {ProjectsFiltersService} from './services/projects-filters.service';
 import { FilterTagsDialogComponent } from './tags-list/filter-tags-dialog/filter-tags-dialog.component';
@@ -107,7 +107,7 @@ export function tokenGetter() {
         TasksFilterDialog,
         AssignedToDialog,
         TagsFilterDialog,
-        SortByDialog,
+        SortByDialogComponent,
         EstimateTimeDialog,
         DeleteTaskDialogComponent,
         DeleteProjectConfirmationDialogComponent,
@@ -167,7 +167,7 @@ export function tokenGetter() {
         TickistRoutingModule
     ],
     bootstrap: [AppComponent],
-    entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialog, EstimateTimeDialog,
+    entryComponents: [TasksFilterDialog, AssignedToDialog, TagsFilterDialog, SortByDialogComponent, EstimateTimeDialog,
         DeleteProjectConfirmationDialogComponent, TimeDialogComponent, DeleteTaskDialogComponent,
         FilterProjectDialogComponent, FilterTagsDialogComponent, ChangeFinishDateDialogComponent
     ],

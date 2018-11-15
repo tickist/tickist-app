@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FutureTasksFiltersService} from '../../services/future-tasks-filters-service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -8,12 +8,12 @@ import {takeUntil} from 'rxjs/operators';
     templateUrl: './filter-future-tasks.component.html',
     styleUrls: ['./filter-future-tasks.component.scss']
 })
-export class FilterFutureTasksComponent implements OnInit {
+export class FilterFutureTasksComponent implements OnInit, OnDestroy {
     filtersValues: any = [];
     filterValue: any = {};
     filterValueId: number;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
+
     constructor(private futureTasksFiltersService: FutureTasksFiltersService) {
     }
 

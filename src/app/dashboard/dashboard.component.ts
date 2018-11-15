@@ -84,7 +84,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.overdueTasks = this.tasks.filter((task: Task) => {
                     return ( task.pinned === false && task.finishDate && task.finishDate < this.activeDateElement.date);
                 });
-                
+
                 const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
                 this.todayTasks = _.orderBy(this.todayTasks,
                     ['priority', 'finishDate', 'finishTime', 'name'],

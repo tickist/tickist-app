@@ -2,7 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Task} from '../../models/tasks';
 import {TaskService} from '../../services/task-service';
 import {UserService} from '../../services/userService';
-import {User} from '../../models/user/user';
+import {User} from '../../models/user';
 
 
 @Component({
@@ -36,5 +36,9 @@ export class OverdueComponent implements OnInit {
             this.user.defaultTaskViewOverdueView = event;
             this.userService.updateUser(this.user, true);
         }
+    }
+
+    trackByFn(index, item): number {
+        return item.id;
     }
 }

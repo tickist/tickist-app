@@ -2,7 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {TaskService} from '../services/task-service';
 import {TagService} from '../services/tag-service';
 import {MatDialog} from '@angular/material';
-import {SortByDialog} from './sort-tasks-dialog/sort-tasks.dialog.component';
+import {SortByDialogComponent} from './sort-tasks-dialog/sort-tasks.dialog.component';
 import {TasksFiltersService} from "../services/tasks-filters.service";
 
 @Component({
@@ -18,7 +18,7 @@ export class SortTasksComponent implements OnInit {
 
 
   openSortByDialog() {
-    const dialogRef = this.dialog.open(SortByDialog);
+    const dialogRef = this.dialog.open(SortByDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
       console.log('aaa');
     });

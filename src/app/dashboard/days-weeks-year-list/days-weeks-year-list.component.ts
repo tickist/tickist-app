@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ConfigurationService} from '../../services/configurationService';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {Subject} from 'rxjs';
@@ -10,11 +10,11 @@ import {stateActiveDateElement} from '../../models/state-active-date-element.enu
     templateUrl: './days-weeks-year-list.component.html',
     styleUrls: ['./days-weeks-year-list.component.scss']
 })
-export class DaysWeeksYearListComponent implements OnInit {
+export class DaysWeeksYearListComponent implements OnInit, OnDestroy {
     activeDateElement: IActiveDateElement;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     stateActiveDateElement = stateActiveDateElement;
-    
+
     constructor(private configurationService: ConfigurationService, private cd: ChangeDetectorRef) {
     }
 
@@ -24,7 +24,7 @@ export class DaysWeeksYearListComponent implements OnInit {
             .subscribe((activeDateElement: IActiveDateElement) => {
                 this.activeDateElement = activeDateElement;
                 this.cd.detectChanges();
-            })
+            });
     }
 
     ngOnDestroy(): void {

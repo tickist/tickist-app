@@ -12,35 +12,35 @@ import {stateActiveDateElement} from '../../models/state-active-date-element.enu
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChooseDayComponent implements OnInit {
-    @Output() onSelectedDate = new EventEmitter();
-    selectedDate: FormControl;
-    
+    @Output() selectedDate = new EventEmitter();
+    selectedDateFormControl: FormControl;
+
     constructor(protected configurationService: ConfigurationService) {
     }
-    
+
     ngOnInit() {
-        this.selectedDate = new FormControl({value: '', disabled: true});
+        this.selectedDateFormControl = new FormControl({value: '', disabled: true});
         this.configurationService.activeDateElement$.subscribe((activeDateElement: IActiveDateElement) => {
             if (activeDateElement.state === stateActiveDateElement.future) {
-                this.selectedDate.setValue('');
+                this.selectedDateFormControl.setValue('');
             } else if (activeDateElement.state === stateActiveDateElement.weekdays) {
                 const today = moment();
-                const diffAbsTodaySelectedDate = Math.abs(today.diff(moment(this.selectedDate.value), 'days'));
+                const diffAbsTodaySelectedDate = Math.abs(today.diff(moment(this.selectedDateFormControl.value), 'days'));
                 if (diffAbsTodaySelectedDate < 7) {
-                    this.selectedDate.setValue('');
+                    this.selectedDateFormControl.setValue('');
                 }
                 const diffAbsTodayActiveDay = Math.abs(today.diff(moment(activeDateElement.date), 'days'));
                 if (diffAbsTodayActiveDay > 7 && moment.isMoment(activeDateElement.date)) {
-                    this.selectedDate.setValue( activeDateElement.date.toDate());
+                    this.selectedDateFormControl.setValue( activeDateElement.date.toDate());
                 }
             }
         });
-        
+
     }
-    
+
     emitOnSelectedDate() {
-        if (this.selectedDate.value) {
-            this.onSelectedDate.emit(moment(this.selectedDate.value).format('DD-MM-YYYY'));
+        if (this.selectedDateFormControl.value) {
+            this.selectedDate.emit(moment(this.selectedDateFormControl.value).format('DD-MM-YYYY'));
         }
     }
 }

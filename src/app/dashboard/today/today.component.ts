@@ -40,4 +40,8 @@ export class TodayComponent implements OnInit {
 
     }
 
+    trackByFn(index, item): number {
+        return item.id;
+    }
+
 }
