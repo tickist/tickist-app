@@ -1,0 +1,39 @@
+:host {
+    margin-right: 10px;
+}
+
+
+.form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    font-size: 14px;
+}
+
+.task-name {
+    height: 30px;
+    flex: 1 1 auto;
+    line-height: 30px;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-project-name {
+    height: 30px;
+    font-size: 10px;
+    flex: 1 1 auto;
+    line-height: 24px;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mat-options {
+    line-height: 60px;
+    height: 60px;
+}
