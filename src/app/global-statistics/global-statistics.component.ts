@@ -3,7 +3,7 @@ import {StatisticsService} from '../services/statisticsService';
 import {ChartStatistics} from '../models/statistics';
 import * as moment from 'moment';
 import {BaseChartDirective} from 'ng2-charts';
-import {Minutes2hoursPipe} from '../pipes/minutes2hours';
+import {Minutes2hoursPipe} from '../shared/pipes/minutes2hours';
 
 
 @Component({

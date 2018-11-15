@@ -1,19 +1,12 @@
 @import "../shared/variables";
+@import "style";
 
 :host {
     flex: 1;
     display: flex;
     min-height: 100%;
     flex-direction: row;
-
-
-    .content {
-        flex: 1;
-        display: flex;
-        flex-direction: row;
-        padding-left: 16px;
-        padding-right: 16px;
+    .viewport {
+        width: 100%;
     }
-
 }
-

@@ -11,7 +11,7 @@ import {ProjectService} from '../services/project-service';
 import {Project} from '../models/projects';
 import {DeleteTaskDialogComponent} from './delete-task-dialog/delete-task.dialog.component';
 import {Subject} from 'rxjs';
-import {RepeatStringExtension} from '../pipes/repeatStringExtension';
+import {RepeatStringExtension} from '../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {Step} from '../models/steps';
 import {ChangeFinishDateDialogComponent} from './change-finish-date-dialog/change-finish-date-dialog.component';

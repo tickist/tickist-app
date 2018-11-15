@@ -31,6 +31,9 @@ $animation-curve-default: $animation-curve-fast-out-slow-in !default;
 
 .left-menu {
     padding: 5px;
+    max-width: 30%;
+    width: 30%;
+    min-width: 30%;
     .invalid {
         color: red;
     }

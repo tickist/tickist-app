@@ -15,7 +15,7 @@ import {ConfigurationService} from '../services/configurationService';
 import {User, SimplyUser} from '../models/user';
 import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
-import {Minutes2hoursPipe} from '../pipes/minutes2hours';
+import {Minutes2hoursPipe} from '../shared/pipes/minutes2hours';
 import {MatDialogRef, MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
 import * as moment from 'moment';
 import {Tag} from '../models/tags';

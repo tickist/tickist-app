@@ -17,9 +17,9 @@ import {DisplayFinishDateComponent} from '../single-task/display-finish-date/dis
 import {UserAvatarComponent} from '../user-avatar/user-avatar.component';
 import {RightMenuComponent} from '../single-task/right-menu/right-menu.component';
 import {ToggleButtonComponent} from '../single-task/toggle-button/toggle-button.component';
-import {TruncatePipe} from '../pipes/truncate.pipe';
-import {Minutes2hoursPipe} from '../pipes/minutes2hours';
-import {AvatarSize} from '../pipes/avatarSize';
+import {TruncatePipe} from '../shared/pipes/truncate.pipe';
+import {Minutes2hoursPipe} from '../shared/pipes/minutes2hours';
+import {AvatarSize} from '../shared/pipes/avatarSize';
 import {MockTaskService} from '../testing/mocks/task-service';
 import {MockProjectService} from '../testing/mocks/project-service';
 import {MockConfigurationService} from '../testing/mocks/configurationService';

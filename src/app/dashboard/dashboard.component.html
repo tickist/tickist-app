@@ -1,4 +1,4 @@
-<div *ngIf="user" class="content" fxLayout="column" fxLayoutAlign="start stretch" >
+<div *ngIf="user" class="viewport" fxLayout="column" fxLayoutAlign="start stretch" >
     <div *ngIf="user.orderTasksDashboard == 'Today->Overdue'"  fxLayout="column" fxLayoutAlign="start stretch"  >
         <tickist-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView" fxLayout="column" fxLayoutAlign="start stretch" ></tickist-today>
         <tickist-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks" fxLayout="column" fxLayoutAlign="start stretch"

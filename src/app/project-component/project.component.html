@@ -9,7 +9,7 @@
             <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
                                                                  aria-hidden="true"></i></span></div>
             <div fxLayout="row" class="main-view">
-                <div fxFlex="20%">
+                <div fxFlex="30%" class="left-menu">
                     <mat-list>
                         <mat-list-item (click)="changeActiveItemInMenu('main')"
                                        [ngClass]="{'active': checkActiveItemInMenu('main')}">
@@ -41,7 +41,7 @@
 
                     </mat-list>
                 </div>
-                <div fxFlex>
+                <div fxFlex="68%" class="right-menu">
                     <div [hidden]="!menu.main" formGroupName="main">
 
                         <div fxLayout="column">

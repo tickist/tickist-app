@@ -1,92 +1,29 @@
-import {Routes, ActivatedRouteSnapshot, RouterStateSnapshot, Resolve} from '@angular/router';
-import {LoginComponent} from './login/login.component';
+import {Routes} from '@angular/router';
+import {LoginComponent} from './login';
 import {LoggedInGuard} from './routing/guards/loggedIn.guard';
 import {AnonymousGuard} from './routing/guards/anonymous.guard';
-import {HomeComponent} from './home/home.component';
+import {HomeComponent} from './home';
 import {SignupComponent} from './signup/signup.component';
-import {DashboardComponent} from './dashboard/dashboard.component';
-import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
+import {DashboardComponent} from './dashboard';
+import {ForgotPasswordComponent} from './forgot-password';
 import {ProjectComponent} from './project-component/project.component';
 import {TagsComponent} from './tags-component/tags.component';
 import {TaskComponent} from './task-component/task.component';
 import {TeamComponent} from './team/team.component';
 import {UserComponent} from './user/user.component';
-import {Injectable} from '@angular/core';
-import {ProjectService} from './services/project-service';
-import {TagService} from './services/tag-service';
-import {UserService} from './services/userService';
-import {Observable} from 'rxjs';
-import {Project} from './models/projects';
-import {Task} from './models/tasks';
-import {TaskService} from './services/task-service';
 import {TasksFromProjectsComponent} from './tasks-from-projects/tasks-from-projects.component';
-import {WeekDaysComponent} from './dashboard/weekdays/weekdays.component';
 import {ProjectsListComponent} from './projects-list/projects-list.component';
 import {TagsListComponent} from './tags-list/tags-list.component';
-import {TasksFiltersService} from './services/tasks-filters.service';
 import {DaysWeeksYearListComponent} from './dashboard/days-weeks-year-list/days-weeks-year-list.component';
 import {FutureTasksComponent} from './dashboard/future-tasks/future-tasks.component';
+import {ProjectsResolver} from './routing/resolvers/project.resolver';
+import {TasksResolver} from './routing/resolvers/tasks.resolver';
+import {TagsResolver} from './routing/resolvers/tags.resolver';
+import {TeamResolver} from './routing/resolvers/team.resolver';
+import {UserResolver} from './routing/resolvers/user.resolver';
+import {SetAllTasksFilterResolver} from './routing/resolvers/set-all-tasks-filter.resolver';
 
 
-@Injectable()
-export class UserResolver implements Resolve<any> {
-    constructor(private userService: UserService) {
-    }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
-        return this.userService.loadUser();
-    }
-}
-
-@Injectable()
-export class TagsResolver implements Resolve<any> {
-    constructor(private tagService: TagService) {
-    }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
-        return this.tagService.loadTags();
-    }
-}
-
-@Injectable()
-export class TasksResolver implements Resolve<Task> {
-    constructor(private taskService: TaskService) {
-    }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
-        return this.taskService.loadTasks();
-    }
-}
-
-@Injectable()
-export class TeamResolver implements Resolve<Task> {
-    constructor(private userService: UserService) {
-    }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
-        return this.userService.loadTeam();
-    }
-}
-
-@Injectable()
-export class ProjectsResolver implements Resolve<Project> {
-    constructor(private projectService: ProjectService) {
-    }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
-        return this.projectService.loadProjects();
-    }
-}
-
-@Injectable()
-export class SetAllTasksFilterResolver implements Resolve<Project> {
-    constructor(protected tasksFiltersService: TasksFiltersService) {
-    }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
-        return this.tasksFiltersService.setAllTasksFilter();
-    }
-}
 
 export const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},

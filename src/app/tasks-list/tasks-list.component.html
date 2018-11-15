@@ -1,15 +1,15 @@
 <!--<div *ngIf="tasks && tasks.length !== 0; else emptyList"  fxLayout="column" fxLayoutAlign="space-around center" class="max" fxFlex>-->
 
     <!--<div *ngIf="taskView === task_extended_view_value" fxFlex fxLayout="column" fxLayoutAlign="space-around center" class="max" fxFlex >-->
-        <!--<cdk-virtual-scroll-viewport *ngIf="virtualScrollEnabled" itemSize="90" class="example-viewport">-->
-            <!--<app-single-task class="example-item" [task]="task" [mediaChange]="mediaChange"-->
+        <!--<cdk-virtual-scroll-viewport *ngIf="virtualScrollEnabled" itemSize="90" class="viewport">-->
+            <!--<app-single-task class="item" [task]="task" [mediaChange]="mediaChange"-->
                              <!--*cdkVirtualFor="let task of tasks;trackBy: trackByFn">-->
 
             <!--</app-single-task>-->
         <!--</cdk-virtual-scroll-viewport>-->
         <!---->
         <!--<ng-container *ngIf="!virtualScrollEnabled" fxFlex fxLayout="column" fxLayoutAlign="space-around center">-->
-            <!--<app-single-task class="example-item" [task]="task" [mediaChange]="mediaChange"-->
+            <!--<app-single-task class="item" [task]="task" [mediaChange]="mediaChange"-->
                              <!--*ngFor="let task of tasks;trackBy: trackByFn">-->
 
             <!--</app-single-task>-->
@@ -29,7 +29,7 @@
     <!--<span>Tasks list is empty</span>-->
 <!--</ng-template>-->
 
-<!--<app-single-task class="example-item" [task]="task" [mediaChange]="mediaChange"-->
+<!--<app-single-task class="item" [task]="task" [mediaChange]="mediaChange"-->
 <!--*cdkVirtualFor="let task of tasks;trackBy: trackByFn">-->
 
 <!--</app-single-task>-->

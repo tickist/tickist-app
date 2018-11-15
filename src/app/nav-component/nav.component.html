@@ -31,8 +31,8 @@
         <i class="fa fa-tags menu_icon"></i>
     </button>
     <span fxFlex></span>
-
-
+    
+    <tickist-search-autocomplete></tickist-search-autocomplete>
     <img class="user-avatar"  [mat-menu-trigger-for]="menu" *ngIf="user" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'">
 
  <mat-menu #menu="matMenu">

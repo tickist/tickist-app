@@ -4,7 +4,7 @@ import {TestBed, async, ComponentFixture} from '@angular/core/testing';
 import {TeamComponent} from './team.component';
 import {MockProjectService} from '../testing/mocks/project-service';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {AvatarSize} from '../pipes/avatarSize';
+import {AvatarSize} from '../shared/pipes/avatarSize';
 import {TickistMaterialModule} from '../material.module';
 
 let comp: TeamComponent;
