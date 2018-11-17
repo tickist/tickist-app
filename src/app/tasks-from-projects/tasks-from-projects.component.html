@@ -26,10 +26,9 @@
              class="project-description">{{ selectedProject.richDescription }}</div>
 
     </div>
-
-    <!--<app-tasks-list [tasks]="tasks" [taskView]="taskView" [fxFlex]="tasksListHeightFlex"></app-tasks-list>-->
+    
     <app-single-task class="item" [task]="task" [mediaChange]="mediaChange"
-                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn">
+                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn; templateCacheSize: 0">
 
     </app-single-task>
 </cdk-virtual-scroll-viewport>

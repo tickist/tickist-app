@@ -6,7 +6,8 @@
     display: flex;
     min-height: 100%;
     flex-direction: row;
-    .viewport {
+    .viewport-dashboard {
         width: 100%;
+        margin-left: 16px;
     }
 }
