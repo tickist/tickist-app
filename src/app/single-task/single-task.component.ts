@@ -79,7 +79,7 @@ class SingleTask {
                 });
                 dialogRef.afterClosed().subscribe(result => {
                     if (result && result.hasOwnProperty('finishDate')) {
-                        this.task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY')
+                        this.task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
                     }
                     this.taskService.updateTask(this.task);
                 });

@@ -1,5 +1,5 @@
 import {
-    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, Renderer2,
+    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
     ViewChild
 } from '@angular/core';
 
@@ -9,7 +9,7 @@ import {
     styleUrls: ['./menu-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MenuButtonComponent implements OnInit, AfterViewInit {
+export class MenuButtonComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() icon: string;
     @Input() color = 'white';
     @Input() isDisabled = false;
@@ -23,6 +23,14 @@ export class MenuButtonComponent implements OnInit, AfterViewInit {
     ngOnInit() {
     }
 
+    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+        if (changes.hasOwnProperty('isDisabled') && changes.isDisabled.currentValue) {
+            // @TODO add class disabled instead of this
+            this.renderer.setStyle(this.elRef.nativeElement, 'pointer-events', 'none');
+            this.renderer.setStyle(this.elRef.nativeElement, 'visibility', 'hidden');
+        }
+    }
+
     ngAfterViewInit() {
         this.renderer.addClass(this.iconElement.nativeElement, 'fa');
         this.renderer.setStyle(this.iconElement.nativeElement, 'color', this.color);
@@ -34,11 +42,7 @@ export class MenuButtonComponent implements OnInit, AfterViewInit {
             this.renderer.setStyle(this.iconElement.nativeElement, 'transform', this.transform);
         }
 
-        if (this.isDisabled) {
-            // @TODO add class disabled instead of this
-            this.renderer.setStyle(this.elRef.nativeElement, 'pointer-events', 'none');
-            this.renderer.setStyle(this.elRef.nativeElement, 'visibility', 'hidden');
-        }
+
     }
 
 }
