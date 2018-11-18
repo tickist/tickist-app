@@ -129,15 +129,16 @@ export class Task extends Api {
     }
 
     moveFinishDateFromPreviousFinishDate(delta: string | number): void {
-        if (!moment.isMoment(this.finishDate)) {
-            if (delta === 'today' || !this.finishDate) {
-                this.finishDate = moment();
-            } else if (delta === 'lastDayOfMonth') {
-                this.finishDate = (<moment.Moment> this.finishDate).date(moment().daysInMonth());
-            } else {
-                this.finishDate = (<moment.Moment> this.finishDate).add(delta, 'day');
-            }
+        if (!moment.isMoment(this.finishDate)) this.finishDate = moment();
+
+        if (delta === 'today' || !this.finishDate) {
+            this.finishDate = moment();
+        } else if (delta === 'lastDayOfMonth') {
+            this.finishDate = moment().date(moment().daysInMonth());
+        } else {
+            this.finishDate = (<moment.Moment> this.finishDate).add(delta, 'day');
         }
+
     }
 
     isRepeated(): boolean {
@@ -153,7 +154,8 @@ export class Task extends Api {
         const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
         let richText;
         if (text) {
-            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>').replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
+            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>')
+                .replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
         } else {
             richText = text;
         }
