@@ -1,19 +1,16 @@
-import {Observable, pipe} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store, State} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {UserService} from './userService';
 import {User} from '../models/user';
 import * as _ from 'lodash';
 import {MatSnackBar} from '@angular/material';
-import {StatisticsService} from './statisticsService';
 import {ConfigurationService} from './configurationService';
 import {TagService} from './tag-service';
-import {ProjectService} from './project-service';
 import * as tasksAction from '../reducers/actions/tasks';
 import {Filter} from '../models/filter';
 import {HttpClient} from '@angular/common/http';
-import {filter, map, take} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 import {Task} from '../models/tasks';
 import {Tag} from '../models/tags';
 
@@ -31,8 +28,8 @@ export class TasksFiltersService {
         tasks = tasks.filter(currentFilters[1].value);
         tasks = tasks.filter(currentFilters[2].value);
         tasks = tasks.filter(currentFilters[3].value);
-        const tags = currentFilters.find(filter => filter.label === 'tags');
-        const sortingBy = currentFilters.find(filter => filter.label === 'sorting');
+        const tags = currentFilters.find(currentFilter => currentFilter.label === 'tags');
+        const sortingBy = currentFilters.find(currentFilter => currentFilter.label === 'sorting');
         if (tags.value instanceof Set) {
             tasks = tasks.filter((task: Task) => {
                 const result = [];
@@ -134,7 +131,7 @@ export class TasksFiltersService {
         let state: any;
         // we need to use 'synchronous' subscribe. It is only options to get current value
         this.currentTasksFilters$.pipe(take(1)).subscribe(s => state = s);
-        return state.find(filter => filter.label === 'tags').value;
+        return state.find(currentFilter => currentFilter.label === 'tags').value;
     }
 
     resetAssignedFilterToAssignedToAll() {

@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../services/userService'
-import {Response} from '@angular/http';
-import {UserLogin} from '../models/user';
 import {Router} from '@angular/router';
-import {FormGroup, FormBuilder, Validators, FormControl, AbstractControl} from '@angular/forms';
+import {FormGroup, Validators, FormControl} from '@angular/forms';
 
 
 @Component({
@@ -46,7 +44,6 @@ export class LoginComponent implements OnInit {
         console.log(values);
         this.userService.login(values).subscribe(
             (response) => { // on sucesss
-                console.log(response);
                 this.router.navigate(['home']);
             },
             (err: any) => { // on error

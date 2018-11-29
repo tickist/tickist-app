@@ -22,7 +22,7 @@ import {TagsResolver} from './routing/resolvers/tags.resolver';
 import {TeamResolver} from './routing/resolvers/team.resolver';
 import {UserResolver} from './routing/resolvers/user.resolver';
 import {SetAllTasksFilterResolver} from './routing/resolvers/set-all-tasks-filter.resolver';
-
+import {CloseMenuInTasksResolver} from './routing/resolvers/close-menu-in-tasks.resolver';
 
 
 export const routes: Routes = [
@@ -31,13 +31,15 @@ export const routes: Routes = [
         path: 'home', component: HomeComponent, canActivate: [LoggedInGuard], children: [
             {
                 path: 'projects/:projectId', component: TasksFromProjectsComponent, resolve: {
-                    setAllTasksFilter: SetAllTasksFilterResolver
+                    setAllTasksFilter: SetAllTasksFilterResolver,
+                    CloseMenuInTasksResolver: CloseMenuInTasksResolver
                 }
             },
             {path: 'projects', component: ProjectsListComponent, outlet: 'leftSideNav'},
             {
                 path: 'projects', component: TasksFromProjectsComponent, resolve: {
-                    setAllTasksFilter: SetAllTasksFilterResolver
+                    setAllTasksFilter: SetAllTasksFilterResolver,
+                    CloseMenuInTasksResolver: CloseMenuInTasksResolver
                 }
             },
             {path: 'project', component: ProjectComponent},
@@ -45,7 +47,11 @@ export const routes: Routes = [
             {path: 'task', component: TaskComponent},
             {path: 'task/:taskId', component: TaskComponent},
             {path: 'tags', component: TagsComponent},
-            {path: 'tags', component: TagsListComponent, outlet: 'leftSideNav'},
+            {
+                path: 'tags', component: TagsListComponent, outlet: 'leftSideNav', resolve: {
+                    CloseMenuInTasksResolver: CloseMenuInTasksResolver
+                }
+            },
             {path: 'team', component: TeamComponent},
             {path: 'user', component: UserComponent},
             {path: '', component: DaysWeeksYearListComponent, outlet: 'leftSideNav'},

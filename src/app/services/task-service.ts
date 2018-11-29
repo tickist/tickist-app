@@ -1,10 +1,9 @@
-import {Observable, pipe} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store, State} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Task} from '../models/tasks';
-import {UserService} from './userService';
 import {MatSnackBar} from '@angular/material';
 import {StatisticsService} from './statisticsService';
 import {ConfigurationService} from './configurationService';
@@ -19,7 +18,7 @@ import {map} from 'rxjs/operators';
 export class TaskService {
     tasks$: Observable<Task[]>;
     
-    constructor(public http: HttpClient, private store: Store<AppStore>, private userService: UserService,
+    constructor(public http: HttpClient, private store: Store<AppStore>,
                 public snackBar: MatSnackBar, protected statisticsService: StatisticsService,
                 protected configurationService: ConfigurationService, protected projectService: ProjectService,
                 protected tagService: TagService) {
@@ -66,9 +65,6 @@ export class TaskService {
         this.configurationService.switchOnProgressBar();
         this.http.put(`${environment['apiUrl']}/tasks/${task.id}/`, task.toApi())
             .subscribe(payload => {
-                // this.snackBar.open('Task has been updated successfully', '', {
-                //   duration: 2000,
-                // });
                 if (!cleanMenuState) {
                     payload['menu_showing'] = menuStateCopy;
                 }
@@ -90,6 +86,10 @@ export class TaskService {
                     duration: 2000,
                 });
             });
+    }
+
+    closeMenuInTasks(): void {
+        return this.store.dispatch(new tasksAction.CloseMenuInTasks());
     }
 
 }

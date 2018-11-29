@@ -73,15 +73,7 @@ export class Task extends Api {
     toApi() {
         const result = super.toApi();
         result['steps'] = this.prepareSteps();
-        // if (this.finishTime) {
-        //   const hour = this.finishTime.getHours();
-        //   const minute = this.finishTime.getMinutes();
-        //   const second = this.finishTime.getSeconds();
-        //   const hourFormatted = hour < 10 ? '0' + hour : hour;
-        //   const minuteFormatted = minute < 10 ? '0' + minute : minute;
-        //   const secondFormatted = second < 10 ? '0' + second : second;
-        //   result['finish_time'] = `${hourFormatted}:${minuteFormatted}:${secondFormatted}`;
-        // }
+
         if (this.finishDate) {
             result['finish_date'] = this.finishDate.format();
         }
@@ -148,7 +140,7 @@ export class Task extends Api {
     isOverdue(): boolean {
         return this.finishDate < moment().hours(0).minutes(0).seconds(0);
     }
-
+    
     private convert(text: string): string {
         const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;

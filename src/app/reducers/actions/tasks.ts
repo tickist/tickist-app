@@ -6,6 +6,7 @@ export const ADD_TASKS = 'ADD_TASKS';
 export const CREATE_TASK = 'CREATE_TASK';
 export const UPDATE_TASK = 'UPDATE_TASK';
 export const DELETE_TASK = 'DELETE_TASK';
+export const CLOSE_MENU_IN_TASKS = 'CLOSE_MENU_IN_TASKS';
 
 export const ADD_CURRENT_FILTERS = 'ADD_CURRENT_FILTERS';
 export const UPDATE_CURRENT_FILTER = 'UPDATE_CURRENT_FILTER';
@@ -48,6 +49,12 @@ export class DeleteTask implements Action {
 
     constructor(public payload: Task) {
     }
+}
+
+export class CloseMenuInTasks implements Action {
+    readonly type = CLOSE_MENU_IN_TASKS;
+
+    constructor() {}
 }
 
 export class AddCurrentFilters implements Action {
@@ -123,6 +130,6 @@ export class AddCurrentFutureTasksFilters implements Action {
 
 export type Actions = AddFilters | AddNewAssignedTo | DeleteNonFixedAssignedTo | UpdateFilters | AddTasks | CreateTask
     | UpdateTask | DeleteTask | AddCurrentFilters | UpdateCurrentFilter | AddFutureTasksFilters | UpdateFutureTasksFilters
-    | UpdateCurrentFutureTasksFilters | AddCurrentFutureTasksFilters;
+    | UpdateCurrentFutureTasksFilters | AddCurrentFutureTasksFilters| CloseMenuInTasks;
 
 

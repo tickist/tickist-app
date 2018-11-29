@@ -17,6 +17,11 @@ export function tasks(state = [], action: tasksActions.Actions) {
             return state.filter(task => {
                 return !(task.id === (<tasksActions.DeleteTask>action).payload.id);
             });
+        case tasksActions.CLOSE_MENU_IN_TASKS:
+            return state.map(task => {
+                task.menuShowing.hideAllMenuElements();
+                return task;
+            });
         default:
             return state;
     }
@@ -29,7 +34,8 @@ export function currentTasksFilters(state = [], action: tasksActions.Actions) {
             return action.payload;
         case tasksActions.UPDATE_CURRENT_FILTER:
             return state.map(elem => {
-                return elem.label === (<tasksActions.UpdateCurrentFilter>action).payload.label ? Object.assign({}, elem, action.payload) : elem;
+                return elem.label === (<tasksActions.UpdateCurrentFilter>action).payload.label
+                    ? Object.assign({}, elem, action.payload) : elem;
             });
         default:
             return state;
@@ -75,7 +81,8 @@ export function futureTasksFilters(state = [], action: tasksActions.Actions) {
             return action.payload;
         case tasksActions.UPDATE_FUTURE_TASKS_FILTERS:
             return state.map(elem => {
-                return elem.label === (<tasksActions.UpdateFutureTasksFilters>action).payload.label ? Object.assign({}, elem, action.payload) : elem;
+                return elem.label === (<tasksActions.UpdateFutureTasksFilters>action).payload.label
+                    ? Object.assign({}, elem, action.payload) : elem;
             });
         default:
             return state;

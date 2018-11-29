@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 
-import {async, ComponentFixture, fakeAsync, inject, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {HomeComponent} from './home.component';
 import {BlankComponent, RootComponent} from '../testing/test.modules';
 import {MockTaskService} from '../testing/mocks/task-service';

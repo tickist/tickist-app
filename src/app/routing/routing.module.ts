@@ -11,6 +11,7 @@ import {ProjectsResolver} from './resolvers/project.resolver';
 import {TagsResolver} from './resolvers/tags.resolver';
 import {UserResolver} from './resolvers/user.resolver';
 import {SetAllTasksFilterResolver} from './resolvers/set-all-tasks-filter.resolver';
+import {CloseMenuInTasksResolver} from './resolvers/close-menu-in-tasks.resolver';
 
 @NgModule({
     imports: [
@@ -28,6 +29,7 @@ import {SetAllTasksFilterResolver} from './resolvers/set-all-tasks-filter.resolv
         FutureTasksFiltersService,
         LoggedInGuard,
         AnonymousGuard,
+        CloseMenuInTasksResolver
         ],
     exports: [
         RouterModule
