@@ -1,8 +1,8 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {TaskService} from '../services/task-service';
+import {TaskService} from '../services/task.service';
 import {ActivatedRoute} from '@angular/router';
-import {UserService} from '../services/userService';
-import {ProjectService} from '../services/project-service';
+import {UserService} from '../services/user.service';
+import {ProjectService} from '../services/project.service';
 import {Observable, Subject, combineLatest } from 'rxjs';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
@@ -57,7 +57,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
             this.projectService.selectedProjectsIds$,
             this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], selectedProjectsIds: Array<number>, currentTasksFilters: any) => {
-                this.t2 = new Timer(`tasksStream$`)
+                this.t2 = new Timer(`tasksStream$`);
                 if (tasks && currentTasksFilters && currentTasksFilters.length > 0) {
                     if (selectedProjectsIds) {
                         tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));

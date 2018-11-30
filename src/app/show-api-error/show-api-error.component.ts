@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ConfigurationService} from '../services/configurationService';
+import {ConfigurationService} from '../services/configuration.service';
 
 @Component({
   selector: 'tickist-show-api-error',
@@ -8,7 +8,7 @@ import {ConfigurationService} from '../services/configurationService';
 })
 export class ShowApiErrorComponent implements OnInit {
     isVisible = false;
-    
+
     constructor(protected configurationService: ConfigurationService) { }
 
     ngOnInit() {

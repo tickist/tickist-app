@@ -1,13 +1,13 @@
 import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
-import {ConfigurationService} from '../../services/configurationService';
+import {ConfigurationService} from '../../services/configuration.service';
 import {Task} from '../../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
-import {TaskService} from '../../services/task-service';
-import {UserService} from '../../services/userService';
+import {TaskService} from '../../services/task.service';
+import {UserService} from '../../services/user.service';
 import {User} from '../../models/user/user';
 import {map} from 'rxjs/operators';
 import {IActiveDateElement} from '../../models/active-data-element.interface';

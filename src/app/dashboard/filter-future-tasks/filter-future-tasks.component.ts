@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FutureTasksFiltersService} from '../../services/future-tasks-filters-service';
+import {FutureTasksFiltersService} from '../../services/future-tasks-filters.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 

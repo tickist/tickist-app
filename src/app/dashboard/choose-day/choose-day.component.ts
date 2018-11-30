@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
-import {ConfigurationService} from '../../services/configurationService';
+import {ConfigurationService} from '../../services/configuration.service';
 import {FormControl} from '@angular/forms';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';

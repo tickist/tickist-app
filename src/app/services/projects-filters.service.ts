@@ -12,7 +12,7 @@ import * as projectsAction from '../reducers/actions/projects';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
-import {UserService} from './userService';
+import {UserService} from './user.service';
 
 
 @Injectable()

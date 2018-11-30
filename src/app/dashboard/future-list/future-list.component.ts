@@ -2,14 +2,14 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {FutureListElement} from './models';
 import * as moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfigurationService} from '../../services/configurationService';
+import {ConfigurationService} from '../../services/configuration.service';
 import {ObservableMedia} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
-import {TaskService} from '../../services/task-service';
+import {TaskService} from '../../services/task.service';
 import {Task} from '../../models/tasks';
-import {UserService} from '../../services/userService';
+import {UserService} from '../../services/user.service';
 import {User} from '../../models/user';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
 

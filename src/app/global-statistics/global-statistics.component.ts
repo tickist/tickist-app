@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {StatisticsService} from '../services/statisticsService';
+import {StatisticsService} from '../services/statistics.service';
 import {ChartStatistics} from '../models/statistics';
 import * as moment from 'moment';
 import {BaseChartDirective} from 'ng2-charts';

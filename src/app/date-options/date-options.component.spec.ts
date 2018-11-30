@@ -4,7 +4,7 @@ import {TickistMaterialModule} from '../material.module';
 import {MockTaskService} from '../testing/mocks/task-service';
 import {FormsModule} from '@angular/forms';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TaskService} from '../services/task-service';
+import {TaskService} from '../services/task.service';
 import {Task} from '../models/tasks';
 import {task1} from '../testing/mocks/api_mocks/tasks';
 import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';

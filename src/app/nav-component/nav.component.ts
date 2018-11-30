@@ -1,12 +1,12 @@
 import {Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, AfterViewInit} from '@angular/core';
-import {UserService} from '../services/userService';
+import {UserService} from '../services/user.service';
 import {User} from '../models/user';
-import {ConfigurationService} from '../services/configurationService';
+import {ConfigurationService} from '../services/configuration.service';
 import {environment} from '../../environments/environment';
 import {ObservableMedia} from '@angular/flex-layout';
 import {NavigationEnd, Router} from '@angular/router';
-import {TaskService} from '../services/task-service';
-import {ProjectService} from '../services/project-service';
+import {TaskService} from '../services/task.service';
+import {ProjectService} from '../services/project.service';
 import {Subject, pipe} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {TasksFiltersService} from "../services/tasks-filters.service";

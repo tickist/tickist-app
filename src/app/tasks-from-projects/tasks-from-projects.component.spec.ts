@@ -33,8 +33,8 @@ import {MockTasksFiltersService} from '../testing/mocks/tasks-filters-service';
 import {BlankComponent, RootComponent} from '../testing/test.modules';
 import {PriorityComponent} from '../shared/priority/priority.component';
 import {TasksListComponent} from '../tasks-list/tasks-list.component';
-import {SortTasksComponent} from '../sort-tasks/sort-tasks.component';
-import {FilterTasksComponent} from '../filter-tasks/filter-tasks.component';
+import {SortTasksComponent} from '../tasks/sort-tasks/sort-tasks.component';
+import {FilterTasksComponent} from '../tasks/filter-tasks/filter-tasks.component';
 
 
 const routes: Routes = [

@@ -1,5 +1,5 @@
 import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
-import {TaskService} from '../services/task-service';
+import {TaskService} from '../services/task.service';
 import {Task} from '../models/tasks';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';

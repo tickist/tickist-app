@@ -1,9 +1,9 @@
 import {Component, OnInit, ElementRef, Renderer2, ViewChild, OnDestroy} from '@angular/core';
 import {User} from '../models/user';
-import {UserService} from '../services/userService';
+import {UserService} from '../services/user.service';
 import {FormBuilder, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
-import {ConfigurationService} from '../services/configurationService';
+import {ConfigurationService} from '../services/configuration.service';
 import {environment} from '../../environments/environment';
 import {MyErrorStateMatcher} from '../shared/error-state-matcher';
 
@@ -103,9 +103,9 @@ export class UserComponent implements OnInit, OnDestroy {
         });
     }
 
-    changeActiveItemInMenu(menu_item) {
+    changeActiveItemInMenu(menu_item: any) {
         // DRY
-        for (let key in this.menu) {
+        for (const key in this.menu) {
             this.menu[key] = false;
         }
         this.menu[menu_item] = true;

@@ -1,7 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Task} from '../../models/tasks';
-import {ConfigurationService} from '../../services/configurationService';
-import {UserService} from '../../services/userService';
+import {ConfigurationService} from '../../services/configuration.service';
+import {UserService} from '../../services/user.service';
 import {User} from '../../models/user';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 

@@ -1,16 +1,16 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {TaskService} from '../../services/task-service';
+import {TaskService} from '../../services/task.service';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfigurationService} from '../../services/configurationService';
+import {ConfigurationService} from '../../services/configuration.service';
 import {Task} from '../../models/tasks';
 import * as _ from 'lodash';
 import {User} from '../../models/user';
-import {UserService} from '../../services/userService';
+import {UserService} from '../../services/user.service';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {Filter} from '../../models/filter';
-import {FutureTasksFiltersService} from '../../services/future-tasks-filters-service';
+import {FutureTasksFiltersService} from '../../services/future-tasks-filters.service';
 
 @Component({
     selector: 'tickist-future-tasks',

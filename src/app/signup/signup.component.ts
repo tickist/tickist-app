@@ -6,7 +6,7 @@ import {
   Validators,
   AbstractControl
  } from '@angular/forms';
-import {UserService} from '../services/userService';
+import {UserService} from '../services/user.service';
 import {Router} from '@angular/router';
 import {Headers, RequestOptions, Response, RequestOptionsArgs} from '@angular/http';
 import {map} from 'rxjs/operators';

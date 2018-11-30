@@ -6,9 +6,9 @@ import {MockConfigurationService} from '../testing/mocks/configurationService';
 import {TickistMaterialModule} from '../material.module';
 import {FormsModule} from '@angular/forms';
 import {fakeAsync} from '@angular/core/testing';
-import {ConfigurationService} from '../services/configurationService';
+import {ConfigurationService} from '../services/configuration.service';
 import {Task} from '../models/tasks';
-import {TaskService} from '../services/task-service';
+import {TaskService} from '../services/task.service';
 import { task1 } from '../testing/mocks/api_mocks/tasks';
 
 let comp: EditRepeatingOptionComponent;

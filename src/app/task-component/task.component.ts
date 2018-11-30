@@ -3,20 +3,20 @@ import {
     ElementRef, HostListener
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {TaskService} from '../services/task-service';
-import {TagService} from '../services/tag-service';
+import {TaskService} from '../services/task.service';
+import {TagService} from '../services/tag.service';
 import {Task} from '../models/tasks';
 import {Observable, Subscription, pipe, combineLatest} from 'rxjs';
 
-import {ProjectService} from '../services/project-service';
-import {UserService} from '../services/userService';
+import {ProjectService} from '../services/project.service';
+import {UserService} from '../services/user.service';
 import {Project} from '../models/projects';
-import {ConfigurationService} from '../services/configurationService';
+import {ConfigurationService} from '../services/configuration.service';
 import {User, SimplyUser} from '../models/user';
 import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../shared/pipes/minutes2hours';
-import {MatDialogRef, MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
+import {MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
 import * as moment from 'moment';
 import {Tag} from '../models/tags';
 import * as _ from 'lodash';

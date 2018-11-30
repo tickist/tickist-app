@@ -13,7 +13,7 @@ import {
 
 
 
-import {ConfigurationService} from "./services/configurationService";
+import {ConfigurationService} from "./services/configuration.service";
 import {Router, RouterState, RouterStateSnapshot} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {catchError} from 'rxjs/operators';

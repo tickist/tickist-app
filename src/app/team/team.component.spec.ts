@@ -15,7 +15,7 @@ describe('Component: Team', () => {
     beforeEach(async(() => {
         const projectService = new MockProjectService();
         const configurationService = new MockConfigurationService();
-        
+
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule],
             declarations: [TeamComponent, AvatarSize],
@@ -26,7 +26,7 @@ describe('Component: Team', () => {
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(TeamComponent);
             comp = fixture.componentInstance;
-            
+
         });
     }));
     it('should create an instance', () => {

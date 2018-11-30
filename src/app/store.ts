@@ -46,8 +46,8 @@ export interface AppStore {
 //       chartsData, selectedProjectsIds, leftSidenavVisibility, rightSidenavVisibility, progressBar}
 
 
-//const developmentReducer: ActionReducer<AppStore> = compose(storeFreeze, combineReducers)(reducers);
-//const productionReducer: ActionReducer<AppStore> = combineReducers(reducers);
+// const developmentReducer: ActionReducer<AppStore> = compose(storeFreeze, combineReducers)(reducers);
+// const productionReducer: ActionReducer<AppStore> = combineReducers(reducers);
 
 export const reducers: ActionReducerMap<any> = {
     projects: projects,

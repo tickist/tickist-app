@@ -1,5 +1,5 @@
 import {SpyObject} from '../test.helpers';
-import {TagService} from '../../services/tag-service';
+import {TagService} from '../../services/tag.service';
 
 
 export class MockTagService extends SpyObject {

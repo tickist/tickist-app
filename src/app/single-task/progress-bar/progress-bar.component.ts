@@ -16,6 +16,7 @@ export class ProgressBarComponent implements OnInit, AfterViewInit, OnChanges {
     @ViewChild('progressBar') progressBar: ElementRef;
     showProgressBar = false;
     showIcon = false;
+    tooltipString: string;
 
     constructor(private elRef: ElementRef, private media: ObservableMedia, private renderer: Renderer2) {
     }
@@ -33,6 +34,9 @@ export class ProgressBarComponent implements OnInit, AfterViewInit, OnChanges {
             // @TODO add class disabled instead of this approach
             this.renderer.setStyle(this.elRef.nativeElement, 'pointer-events', 'none');
             this.renderer.setStyle(this.elRef.nativeElement, 'visibility', 'hidden');
+        }
+        if (changes.hasOwnProperty('percent')) {
+            this.tooltipString = `${changes.percent.currentValue}%`;
         }
     }
 

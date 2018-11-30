@@ -1,5 +1,5 @@
-import {Pipe, PipeTransform} from '@angular/core'
-import {ConfigurationService} from '../../services/configurationService'
+import {Pipe, PipeTransform} from '@angular/core';
+import {ConfigurationService} from '../../services/configuration.service';
 
 @Pipe({
   name: 'repeatstring'
@@ -11,7 +11,7 @@ export class RepeatString implements PipeTransform {
 
   transform(value: any, args: string[]): any {
     if (value) {
-      return this.configrationService.loadConfiguration()['commons']['REPEATING_OPTIONS'][value].name
+      return this.configrationService.loadConfiguration()['commons']['REPEATING_OPTIONS'][value].name;
     }
 
   }

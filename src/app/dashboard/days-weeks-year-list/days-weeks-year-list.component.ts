@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {ConfigurationService} from '../../services/configurationService';
+import {ConfigurationService} from '../../services/configuration.service';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';

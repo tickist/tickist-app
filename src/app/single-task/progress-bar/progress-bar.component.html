@@ -1,4 +1,4 @@
-<span *ngIf="showProgressBar">
+<span *ngIf="showProgressBar" [matTooltip]="tooltipString">
         <mat-progress-bar mode="determinate" [value]="percent" #progressBar></mat-progress-bar>
 </span>
 

@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {TaskService} from '../services/task-service';
-import {UserService} from '../services/userService';
-import {ConfigurationService} from '../services/configurationService';
+import {TaskService} from '../services/task.service';
+import {UserService} from '../services/user.service';
+import {ConfigurationService} from '../services/configuration.service';
 import {Task} from '../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subscription, combineLatest} from 'rxjs';

@@ -8,11 +8,15 @@ export class DateToString implements PipeTransform {
     transform(value: any): any {
         if (value) {
             let result = moment(value, 'DD-MM-YYYY').format('dddd');
-            if (moment(value, 'DD-MM-YYYY').hours(0).minutes(0).seconds(0).format('DD-MM-YYYY') === moment().hours(0).minutes(0).seconds(0).format('DD-MM-YYYY')) {
+            const valueDateFormated: string = moment(value, 'DD-MM-YYYY').hours(0).minutes(0).seconds(0).format('DD-MM-YYYY');
+            const todayDateFormated: string = moment().hours(0).minutes(0).seconds(0).format('DD-MM-YYYY');
+            const tomorrowDateFormated: string =  moment().hours(0).minutes(0).seconds(0).add(1, 'days').format('DD-MM-YYYY');
+            const yesterdayDateFormated: string =  moment().hours(0).minutes(0).seconds(0).add(-1, 'days').format('DD-MM-YYYY');
+            if (valueDateFormated === todayDateFormated) {
                 result = 'today';
-            } else if (moment(value, 'DD-MM-YYYY').format('DD-MM-YYYY') === moment().hours(0).minutes(0).seconds(0).add(1, 'days').format('DD-MM-YYYY')) {
+            } else if (valueDateFormated === tomorrowDateFormated) {
                 result = 'tomorrow';
-            } else if (moment(value, 'DD-MM-YYYY').format('DD-MM-YYYY') === moment().hours(0).minutes(0).seconds(0).add(-1, 'days').format('DD-MM-YYYY')) {
+            } else if (valueDateFormated === yesterdayDateFormated) {
                 result = 'yesterday';
             }
             return result;

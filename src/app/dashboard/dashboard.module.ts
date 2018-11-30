@@ -23,7 +23,7 @@ import {TickistStatisticsModule} from '../statistics/statistics.module';
     ],
     exports: [DashboardComponent, FutureTasksComponent],
     declarations: [DashboardComponent, ChooseDayComponent, FilterFutureTasksComponent, FutureTasksComponent,
-        FutureListComponent, TodayComponent, OverdueComponent, DaysWeeksYearListComponent, WeekDaysComponent,]
+        FutureListComponent, TodayComponent, OverdueComponent, DaysWeeksYearListComponent, WeekDaysComponent]
 })
 export class TickistDashboardModule {
 }

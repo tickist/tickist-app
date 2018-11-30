@@ -2,12 +2,12 @@ import {
     Component, OnInit, Input, OnDestroy, OnChanges, SimpleChange, ChangeDetectionStrategy,
     AfterViewInit, ElementRef, ViewChild, Renderer2, HostListener
 } from '@angular/core';
-import {TaskService} from '../services/task-service';
+import {TaskService} from '../services/task.service';
 import {Task} from '../models/tasks';
-import {ConfigurationService} from '../services/configurationService';
+import {ConfigurationService} from '../services/configuration.service';
 import {TimeDialogComponent} from './time-dialog/time-dialog.component';
 import {MatDialog} from '@angular/material';
-import {ProjectService} from '../services/project-service';
+import {ProjectService} from '../services/project.service';
 import {Project} from '../models/projects';
 import {DeleteTaskDialogComponent} from './delete-task-dialog/delete-task.dialog.component';
 import {Subject} from 'rxjs';

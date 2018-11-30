@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {StatisticsService} from '../services/statisticsService';
-import {ConfigurationService} from '../services/configurationService';
+import {StatisticsService} from '../services/statistics.service';
+import {ConfigurationService} from '../services/configuration.service';
 import * as moment from 'moment';
 import {Subscription} from 'rxjs';
 import * as _ from 'lodash';

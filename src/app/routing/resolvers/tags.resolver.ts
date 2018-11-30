@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
-import {TagService} from '../../services/tag-service';
+import {TagService} from '../../services/tag.service';
 import {Observable} from 'rxjs';
 
 @Injectable()

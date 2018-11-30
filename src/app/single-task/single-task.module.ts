@@ -26,13 +26,13 @@ import {RouterModule} from '@angular/router';
         ProgressBarComponent,
         PinButtonComponent,
         RightMenuComponent,  ToggleButtonComponent,  TaskNameComponent,  DisplayFinishDateComponent, EditRepeatingOptionComponent,
-        DateOptionsComponent,],
+        DateOptionsComponent],
     declarations: [SingleTaskComponent,
         SingleTaskSimplifiedComponent,  UserAvatarComponent,
         ProgressBarComponent,
         PinButtonComponent,
         RightMenuComponent,  ToggleButtonComponent,  TaskNameComponent,  DisplayFinishDateComponent, EditRepeatingOptionComponent,
-        DateOptionsComponent,]
+        DateOptionsComponent]
 })
 export class TickistSingleTaskModule {
 }
