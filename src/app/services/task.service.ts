@@ -12,12 +12,13 @@ import {ProjectService} from './project.service';
 import * as tasksAction from '../reducers/actions/tasks';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
+import {ITaskApi} from '../models/task-api.interface';
 
 
 @Injectable()
 export class TaskService {
     tasks$: Observable<Task[]>;
-    
+
     constructor(public http: HttpClient, private store: Store<AppStore>,
                 public snackBar: MatSnackBar, protected statisticsService: StatisticsService,
                 protected configurationService: ConfigurationService, protected projectService: ProjectService,
@@ -27,10 +28,11 @@ export class TaskService {
     }
 
     loadTasks() {
-        return this.http.get<Task[]>(`${environment['apiUrl']}/tasks/?assign=all&status=0&status=2`)
+        return this.http.get<ITaskApi[]>(`${environment['apiUrl']}/tasks/?assign=all&status=0&status=2`)
             .pipe(
-                map(payload => payload.map(task => new Task(task))),
-                map(payload => this.store.dispatch(new tasksAction.AddTasks(payload)))
+                map(payload => payload.map((task: ITaskApi) => new Task(task))),
+                map(payload => this.store.dispatch(new tasksAction.AddTasks(payload))
+                )
             );
     }
 
@@ -48,7 +50,7 @@ export class TaskService {
 
     createTask(task: Task) {
         this.http.post(`${environment['apiUrl']}/tasks/`, task.toApi())
-            .pipe(map(payload => new Task(payload)))
+            .pipe(map((payload: ITaskApi) => new Task(payload)))
             .subscribe(payload => {
                 this.snackBar.open('Task has been saved successfully', '', {
                     duration: 2000,
@@ -63,7 +65,7 @@ export class TaskService {
             menuStateCopy = task.toApi()['menu_showing'];
         }
         this.configurationService.switchOnProgressBar();
-        this.http.put(`${environment['apiUrl']}/tasks/${task.id}/`, task.toApi())
+        this.http.put<ITaskApi>(`${environment['apiUrl']}/tasks/${task.id}/`, task.toApi())
             .subscribe(payload => {
                 if (!cleanMenuState) {
                     payload['menu_showing'] = menuStateCopy;

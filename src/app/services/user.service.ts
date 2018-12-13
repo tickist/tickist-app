@@ -1,21 +1,24 @@
-import * as _ from "lodash";
+import * as _ from 'lodash';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
-import {User, UserLogin, SimplyUser} from '../models/user';
+import {User, UserLogin, SimpleUser} from '../models/user';
 import {MatSnackBar} from '@angular/material';
 import * as userAction from '../reducers/actions/user';
 import * as teamAction from '../reducers/actions/team';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
-import {TasksFiltersService} from "./tasks-filters.service";
+import {TasksFiltersService} from './tasks-filters.service';
+import {IUserApi} from '../models/user-api.interface';
+import {ISimpleUserApi} from '../models/simple-user-api.interface';
+
 
 @Injectable()
 export class UserService {
     user$: Observable<User>;
-    team$: Observable<SimplyUser[]>;
+    team$: Observable<SimpleUser[]>;
 
     constructor(private http: HttpClient, private store: Store<AppStore>,
                 public snackBar: MatSnackBar, protected tasksFiltersService: TasksFiltersService) {
@@ -35,26 +38,26 @@ export class UserService {
             this.logout();
         } else {
             return this.http.get(`${environment['apiUrl']}/user/${userID}/`)
-                .pipe(map(payload => {
+                .pipe(map((payload: IUserApi) => {
                     const user = new User(payload);
                     this.store.dispatch(new userAction.AddUser(user));
                     this.tasksFiltersService.createDefaultFilters(user);
                     this.tasksFiltersService.loadTasksFilters(user);
                     this.tasksFiltersService.loadCurrentTasksFilters(user);
-                }))
+                }));
         }
     }
 
     updateUser(user: User, withoutSnackBar = false) {
-        this.http.put(`${environment['apiUrl']}/user/${user.id}/`, user.toApi())
-            .subscribe(user => {
+        this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, user.toApi())
+            .subscribe(payload => {
                 if (!withoutSnackBar) {
                     this.snackBar.open('User data has been update successfully', '', {
                         duration: 2000,
                     });
                 }
 
-                this.store.dispatch(new userAction.UpdateUser(new User(user)));
+                this.store.dispatch(new userAction.UpdateUser(new User(payload)));
             });
     }
 
@@ -63,9 +66,11 @@ export class UserService {
         if (userID == null) {
             this.logout();
         } else {
-            return this.http.get<SimplyUser[]>(`${environment['apiUrl']}/user/${userID}/teamlist/`)
+            return this.http.get<ISimpleUserApi[]>(`${environment['apiUrl']}/user/${userID}/teamlist/`)
                 .pipe(
-                    map(payload => (payload.map(user => new SimplyUser(user)))),
+                    map(payload => {
+                        return payload.map(user => new SimpleUser(user));
+                    }),
                     map(payload => this.store.dispatch(new teamAction.AddTeamMembers(payload)))
                 );
         }

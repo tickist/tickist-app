@@ -1,7 +1,7 @@
 import {Task} from './tasks';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import {SimpleProject} from './projects/simply-project';
+import {SimpleProject} from './projects/simple-project';
 import {task1} from '../testing/mocks/api_mocks/tasks';
 import {Step} from './steps';
 

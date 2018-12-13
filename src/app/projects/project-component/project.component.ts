@@ -6,12 +6,11 @@ import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angul
 import {Observable, Subscription, combineLatest} from 'rxjs';
 import {ConfigurationService} from '../../services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {User, SimplyUser, PendingUser} from '../../models/user';
+import {User, SimpleUser, PendingUser} from '../../models/user';
 import {UserService} from '../../services/user.service';
 import {MatDialog} from '@angular/material';
 import {environment} from '../../../environments/environment';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
-import * as _ from 'lodash';
 import {map, startWith} from 'rxjs/operators';
 
 
@@ -27,7 +26,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     projectForm: FormGroup;
     menu: {};
     user: User;
-    team: SimplyUser[];
+    team: SimpleUser[];
     defaultTaskView: any;
     typeFinishDateOptions: any;
     defaultFinishDateOptions: any;
@@ -57,7 +56,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
                 this.userService.user$,
                 this.userService.team$,
-                (projects: Project[], projectId, user: User, team: SimplyUser[]) => {
+                (projects: Project[], projectId, user: User, team: SimpleUser[]) => {
                     let project: Project;
                     this.user = user;
                     this.team = team;
@@ -179,11 +178,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
             'owner': this.user.id,
             'is_active': true,
             'share_with': [],
-            'dialogTimeWhenTaskFinished': this.user.dialogTimeWhenTaskFinishedInProject
+            'tags': [],
+            'dialog_time_when_task_finished': this.user.dialogTimeWhenTaskFinishedInProject,
+            'is_inbox': false
         });
     }
 
-    deleteUserFromShareWithList(user: (SimplyUser | PendingUser), i: number) {
+    deleteUserFromShareWithList(user: (SimpleUser | PendingUser), i: number) {
         const title = 'Confirmatiom';
         const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;
@@ -195,7 +196,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             if (result) {
                 const control = <FormArray>this.projectForm.controls['sharing'];
                 if (control.controls[i].value.hasOwnProperty('id')) {
-                    this.project.shareWith.filter((u: SimplyUser | PendingUser) => {
+                    this.project.shareWith.filter((u: SimpleUser | PendingUser) => {
                         return (u.hasOwnProperty('id') && u['id'] === control.controls[i].value.id);
                     });
                 }
@@ -216,7 +217,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
             if (this.addUserToShareWithListCtrl.hasError('pattern') || this.addUserToShareWithListCtrl.hasError('required')) {
                 return [{'id': '', 'email': 'Please write a valid email'}];
             } else {
-                return [...this.team.filter(u => userIds.indexOf(u['id']) > -1).filter(u => new RegExp(val, 'gi').test(u.email)), {'email': val}];
+                return [...this.team
+                    .filter(u => userIds.indexOf(u['id']) > -1)
+                    .filter(u => new RegExp(val, 'gi').test(u.email)), {'email': val}
+                    ];
             }
         }
         return [];

@@ -1,7 +1,7 @@
 import {TickistDashboard} from './app.po';
 
 describe('tickist App', function () {
-    let page: TickistMain;
+    let page: TickistDashboard;
 
     beforeEach(() => {
         page = new TickistDashboard();

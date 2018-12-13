@@ -1,4 +1,7 @@
 import {Api} from '../commons';
+import {IUserApi} from '../user-api.interface';
+import {ISimpleUserApi} from '../simple-user-api.interface';
+import {SimpleUser} from './simple-user';
 
 
 export class User extends Api {
@@ -33,7 +36,7 @@ export class User extends Api {
     projectsFilterId: number;
     tagsFilterId: number;
 
-    constructor(user) {
+    constructor(user: IUserApi) {
         super();
         this.id = user.id || undefined;
         this.username = user.username;
@@ -89,8 +92,8 @@ export class User extends Api {
         this.tagsFilterId = filter.id;
     }
 
-    toApi() {
-        const result = super.toApi();
+    toApi(): IUserApi {
+        const result: IUserApi = (<IUserApi>super.toApi());
         if (this.dailySummaryHour) {
             const hour = this.dailySummaryHour.getHours();
             const minute = this.dailySummaryHour.getMinutes();
@@ -102,5 +105,18 @@ export class User extends Api {
         }
 
         return result;
+    }
+    
+    convertToSimpleUser(): SimpleUser {
+        const userApi = this.toApi();
+        const simpleUserApi: ISimpleUserApi = {
+            avatar: userApi.avatar,
+            avatar_url: userApi.avatar_url,
+            email: userApi.email,
+            id: userApi.id,
+            username: userApi.username,
+            share_with: userApi.share_with
+        };
+        return new SimpleUser(simpleUserApi);
     }
 }

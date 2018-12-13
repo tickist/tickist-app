@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {SimplyUser} from '../models/user';
+import {SimpleUser} from '../models/user';
 import {environment} from '../../environments/environment';
 
 @Component({
@@ -9,7 +9,7 @@ import {environment} from '../../environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserAvatarComponent implements OnInit {
-  @Input() user: SimplyUser;
+  @Input() user: SimpleUser;
   staticUrl: string;
 
   constructor() { }

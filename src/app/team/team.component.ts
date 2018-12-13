@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProjectService} from '../services/project.service';
-import {SimplyUser} from '../models/user';
+import {SimpleUser} from '../models/user';
 import {ConfigurationService} from '../services/configuration.service';
 import {environment} from '../../environments/environment';
 
@@ -10,7 +10,7 @@ import {environment} from '../../environments/environment';
     styleUrls: ['./team.component.scss']
 })
 export class TeamComponent implements OnInit, OnDestroy {
-    team: SimplyUser[];
+    team: SimpleUser[];
     staticUrl: string;
 
     constructor(protected projectService: ProjectService, protected configurationService: ConfigurationService) {

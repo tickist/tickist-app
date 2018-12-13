@@ -1,14 +1,13 @@
 import * as tagActions from './actions/tags';
-import * as projectsActions from './actions/projects';
+import {Tag} from '../models/tags';
 
 
 export function tags(state = [], action: tagActions.Actions) {
-    let index: number;
     switch (action.type) {
         case tagActions.ADD_TAGS:
             return (<tagActions.AddTags>action).payload;
         case tagActions.CREATE_TAG:
-            return [...state, action.payload];
+            return state.find((tag: Tag) => tag.id === action.payload.id) ?  [...state] : [...state, action.payload];
         case tagActions.UPDATE_TAG:
             return state.map(tag => {
                 return tag.id === (<tagActions.UpdateTag>action).payload.id ? action.payload : tag;

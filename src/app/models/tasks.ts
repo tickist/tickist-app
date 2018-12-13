@@ -1,10 +1,11 @@
-import {SimplyUser} from './user';
+import {SimpleUser} from './user';
 import {Tag} from './tags';
 import {Api} from './commons';
 import * as moment from 'moment';
 import {SimpleProject} from './projects';
 import {Step} from './steps';
 import {Menu} from './menu';
+import {ITaskApi} from './task-api.interface';
 
 
 export class Task extends Api {
@@ -22,13 +23,13 @@ export class Task extends Api {
     status: number;
     typeFinishDate: number;
     taskProject: SimpleProject;
-    owner: SimplyUser;
+    owner: SimpleUser;
     steps: Step[] = [];
     priority: string;
     percent: number;
     repeat: number;
     repeatDelta: number;
-    author: SimplyUser;
+    author: SimpleUser;
     fromRepeating: number;
     tags: Tag[] = [];
     time: number;
@@ -37,7 +38,7 @@ export class Task extends Api {
     menuShowing: Menu;
 
 
-    constructor(task) {
+    constructor(task: ITaskApi) {
         super();
         this.name = task.name;
         this.richName = this.convert(task.name);
@@ -49,8 +50,8 @@ export class Task extends Api {
         this.status = task.status;
         this.typeFinishDate = task.type_finish_date;
         this.taskProject = new SimpleProject(task.task_project);
-        this.owner = new SimplyUser(task.owner);
-        this.author = new SimplyUser(task.author);
+        this.owner = new SimpleUser(task.owner);
+        this.author = new SimpleUser(task.author);
         this.percent = task.percent;
         this.priority = task.priority;
         this.repeat = task.repeat;
@@ -128,7 +129,7 @@ export class Task extends Api {
         } else if (delta === 'lastDayOfMonth') {
             this.finishDate = moment().date(moment().daysInMonth());
         } else {
-            this.finishDate = (<moment.Moment> this.finishDate).add(delta, 'day');
+            this.finishDate = (moment(this.finishDate)).add(delta, 'day');
         }
 
     }
@@ -140,7 +141,7 @@ export class Task extends Api {
     isOverdue(): boolean {
         return this.finishDate < moment().hours(0).minutes(0).seconds(0);
     }
-    
+
     private convert(text: string): string {
         const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
@@ -154,4 +155,5 @@ export class Task extends Api {
         return richText;
     }
 }
+
 

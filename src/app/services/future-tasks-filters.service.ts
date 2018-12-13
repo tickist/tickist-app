@@ -2,7 +2,7 @@ import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {SimplyUser, User} from '../models/user';
+import {SimpleUser, User} from '../models/user';
 import * as tasksAction from '../reducers/actions/tasks';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
@@ -11,7 +11,7 @@ import {UserService} from './user.service';
 
 @Injectable()
 export class FutureTasksFiltersService {
-    team: SimplyUser[];
+    team: SimpleUser[];
     futureTasksFilters$: Observable<any>;
     currentFutureTasksFilters$: Observable<any>;
     filters: Filter[];

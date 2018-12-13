@@ -14,7 +14,6 @@ import {AppComponent} from './app.component';
 import {UserService} from './services/user.service';
 import {ProjectService} from './services/project.service';
 import {HomeComponent} from './home';
-import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TaskService} from './services/task.service';
 import {LoginComponent} from './login';
 import {SignupComponent} from './signup/signup.component';
@@ -22,7 +21,6 @@ import {ForgotPasswordComponent} from './forgot-password';
 import {TagService} from './services/tag.service';
 import {NavComponent} from './nav-component/nav.component';
 import {TaskComponent} from './task-component/task.component';
-import {ProjectComponent} from './projects/project-component/project.component';
 import {TasksListComponent} from './tasks-list/tasks-list.component';
 import {UserComponent} from './user/user.component';
 import {TeamComponent} from './team/team.component';
@@ -32,13 +30,9 @@ import {StatisticsService} from './services/statistics.service';
 import {NavBarLandingPageComponent} from './nav-bar-landing-page/nav-bar-landing-page.component';
 import {SortablejsModule} from 'angular-sortablejs';
 import {AddTaskComponent} from './add-task/add-task.component';
-import {SingleProjectComponent} from './projects/single-project/single-project.component';
 import {CalendarModule} from 'primeng/components/calendar/calendar';
-import {ColorPickerComponent} from './projects/color-picker/color-picker.component';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {ErrorService} from './services/error.service';
-import {RepeatString} from './shared/pipes/repeatString';
-import {RepeatStringExtension} from './shared/pipes/repeatStringExtension';
 import {TypeFinishDateString} from './shared/pipes/typeFinishDateString';
 import {reducers} from './store';
 import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete-task.dialog.component';
@@ -65,6 +59,8 @@ import {TickistStatisticsModule} from './statistics/statistics.module';
 import { SearchAutocompleteComponent } from './search-autocomplete/search-autocomplete.component';
 import {TickistTagsModule} from './tags/tags.module';
 import {TickistProjectsModule} from './projects/projects.module';
+import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
+import {InMemoryDataService} from './testing/mocks/inMemryDb';
 
 export function tokenGetter() {
     return localStorage.getItem('JWT');
@@ -109,10 +105,12 @@ export function tokenGetter() {
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
+        environment.e2eTest ?
+            HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { delay: 100 }) : [],
         StoreModule.forRoot(reducers, {
             initialState: {}
         }),
-        !environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
+        // environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
         SortablejsModule,
         TickistMaterialModule,
         MenuModule,

@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {UserAvatarComponent} from './user-avatar.component';
 import {TickistMaterialModule} from '../material.module';
 import {AvatarSize} from '../shared/pipes/avatarSize';
-import {SimplyUser} from '../models/user';
+import {SimpleUser} from '../models/user';
 
 describe('UserAvatarComponent', () => {
     let component: UserAvatarComponent;
@@ -19,7 +19,7 @@ describe('UserAvatarComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(UserAvatarComponent);
         component = fixture.componentInstance;
-        component.user =  new SimplyUser({id: '1', 'username': 'test'});
+        component.user =  new SimpleUser({id: '1', 'username': 'test'});
         fixture.detectChanges();
     });
 

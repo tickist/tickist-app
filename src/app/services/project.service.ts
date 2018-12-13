@@ -5,7 +5,7 @@ import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Project} from '../models/projects';
 import {Task} from '../models/tasks';
-import {SimplyUser, PendingUser} from '../models/user';
+import {SimpleUser, PendingUser} from '../models/user';
 import {MatSnackBar} from '@angular/material';
 import * as tasksAction from '../reducers/actions/tasks';
 import * as projectsAction from '../reducers/actions/projects';
@@ -14,17 +14,18 @@ import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {TasksFiltersService} from './tasks-filters.service';
 import * as _ from 'lodash';
+import {IProjectApi} from '../models/project-api.interface';
 
 
 @Injectable()
 export class ProjectService {
     projects$: Observable<Project[]>;
-    team$: Observable<SimplyUser[]>;
-    team: SimplyUser[];
+    team$: Observable<SimpleUser[]>;
+    team: SimpleUser[];
     selectedProject$: Observable<Project>;
     selectedProjectsIds$: Observable<Array<number>>;
-    
-    
+
+
     static sortProjectList(projects: Project[]): Project[] {
         projects = _.orderBy(projects,
                     ['isInbox', 'name'],
@@ -85,7 +86,7 @@ export class ProjectService {
     }
 
     loadProjects() {
-        return this.http.get<Project[]>(`${environment['apiUrl']}/project/`)
+        return this.http.get<IProjectApi[]>(`${environment['apiUrl']}/project/`)
             .pipe(
                 map(payload => payload.map(project => new Project(project))),
                 map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)))
@@ -96,7 +97,7 @@ export class ProjectService {
         this.store.dispatch(new projectsAction.SelectProject(project));
         this.store.dispatch(new tasksAction.DeleteNonFixedAssignedTo({}));
         if (project) {
-            project.shareWith.map((user: (SimplyUser | PendingUser)) => {
+            project.shareWith.map((user: (SimpleUser | PendingUser)) => {
                 if (user.hasOwnProperty('id') && user['id'] !== undefined && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
                     this.store.dispatch(new tasksAction.AddNewAssignedTo(
                         {
@@ -131,7 +132,7 @@ export class ProjectService {
 
     createProject(project: Project) {
         this.http.post(`${environment['apiUrl']}/project/`, project.toApi())
-            .subscribe(payload => {
+            .subscribe((payload: IProjectApi) => {
                 this.snackBar.open('Project has been saved successfully', '', {
                     duration: 2000,
                 });
@@ -144,7 +145,7 @@ export class ProjectService {
 
     updateProject(project: Project, withoutSnackBar = false) {
         this.http.put(`${environment['apiUrl']}/project/${project.id}/`, project.toApi())
-            .subscribe(payload => {
+            .subscribe((payload: IProjectApi) => {
                 this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));
                 if (!withoutSnackBar) {
                     this.snackBar.open('Project has been saved successfully', '', {

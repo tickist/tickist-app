@@ -1,5 +1,6 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://app.tickist.com/api',
-  staticUrl: 'https://app.tickist.com'
+    production: true,
+    e2eTest: false,
+    apiUrl: 'https://app.tickist.com/api',
+    staticUrl: 'https://app.tickist.com'
 };

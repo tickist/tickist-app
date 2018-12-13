@@ -8,6 +8,7 @@ import {Tag} from '../models/tags';
 import * as tagsAction from '../reducers/actions/tags';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
+import {ITagApi} from '../models/tag-api.interface';
 
 @Injectable()
 export class TagService {
@@ -20,7 +21,7 @@ export class TagService {
     }
 
     loadTags() {
-        return this.http.get<Tag[]>(`${environment['apiUrl']}/tag/`)
+        return this.http.get<ITagApi[]>(`${environment['apiUrl']}/tag/`)
             .pipe(
                 map(payload => payload.map(tag => new Tag(tag))),
                 map(payload => this.store.dispatch(new tagsAction.AddTags(payload)))
@@ -32,13 +33,13 @@ export class TagService {
     }
 
     createTag(tag: Tag) {
-        this.http.post(`${environment['apiUrl']}/tag/`, tag)
+        this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
             .pipe(map(payload => new Tag(payload)))
             .subscribe(payload => this.store.dispatch(new tagsAction.CreateTag(payload)));
     }
 
     createTagDuringEditingTask(tag: Tag) {
-        return this.http.post(`${environment['apiUrl']}/tag/`, tag)
+        return this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
             .pipe(
                 map(payload => new Tag(payload)),
                 map(payload => {
@@ -47,14 +48,14 @@ export class TagService {
             }));
     }
 
-    updateTag(tag: Tag) {
-        this.http.put(`${environment['apiUrl']}/tag/${tag.id}/`, tag)
+    updateTag(tag: Tag): void {
+        this.http.put<ITagApi>(`${environment['apiUrl']}/tag/${tag.id}/`, tag)
             .subscribe(payload => this.store.dispatch(new tagsAction.UpdateTag(new Tag(payload))));
     }
 
-    deleteTag(tag: Tag) {
+    deleteTag(tag: Tag): void {
         this.http.delete(`${environment['apiUrl']}/tag/${tag.id}/`)
-            .subscribe(payload => this.store.dispatch(new tagsAction.DeleteTag(tag)));
+            .subscribe(() => this.store.dispatch(new tagsAction.DeleteTag(tag)));
     }
 
 }

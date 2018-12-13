@@ -1,6 +1,7 @@
 import {Api} from '../commons';
 import {PendingUser} from '../user';
-import {SimplyUser} from '../user';
+import {SimpleUser} from '../user';
+import {ISimpleProjectApi} from '../simple-project-api.inferface';
 
 
 export class SimpleProject extends Api {
@@ -8,7 +9,7 @@ export class SimpleProject extends Api {
     name: string;
     color: string;
     dialogTimeWhenTaskFinished: boolean;
-    shareWith: (SimplyUser | PendingUser)[] = [];
+    shareWith: (SimpleUser | PendingUser)[] = [];
 
     constructor(project) {
         super();
@@ -24,9 +25,13 @@ export class SimpleProject extends Api {
 
     }
 
+    toApi(): ISimpleProjectApi {
+        return (<ISimpleProjectApi>super.toApi());
+    }
+
     addUserToShareList(user) {
         if (user.hasOwnProperty('id')) {
-            this.shareWith.push(new SimplyUser(user));
+            this.shareWith.push(new SimpleUser(user));
         } else {
             this.shareWith.push(new PendingUser(user));
         }

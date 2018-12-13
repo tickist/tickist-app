@@ -4,7 +4,8 @@
 // The build system defaults to the dev environment.
 
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8000',
-  staticUrl: ''
+    production: false,
+    apiUrl: 'http://localhost:8000',
+    staticUrl: '',
+    e2eTest: false,
 };

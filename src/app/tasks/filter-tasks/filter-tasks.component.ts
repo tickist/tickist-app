@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {TasksFiltersService} from '../../services/tasks-filters.service';
-import {TagsFilterDialog} from '../tags-filter-dialog/tags-filter-dialog.component';
+import {TagsFilterDialogComponent} from '../tags-filter-dialog/tags-filter-dialog.component';
 import {EstimateTimeDialogComponent} from '../estimate-time-dialog/estimate-time-dialog.component';
 import {TasksFilterDialogComponent} from '../tasks-filter-dialog/tasks-filter-dialog.component';
 import {AssignedToDialogComponent} from '../assigned-to-dialog/assigned-to-dialog.component';
@@ -41,7 +41,7 @@ export class FilterTasksComponent implements OnInit {
     }
 
     openTagsFilterDialog() {
-        const dialogRef = this.dialog.open(TagsFilterDialog);
+        const dialogRef = this.dialog.open(TagsFilterDialogComponent);
         dialogRef.afterClosed().subscribe(result => {
             console.log('aaa');
         });

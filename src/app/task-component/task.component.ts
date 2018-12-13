@@ -7,21 +7,18 @@ import {TaskService} from '../services/task.service';
 import {TagService} from '../services/tag.service';
 import {Task} from '../models/tasks';
 import {Observable, Subscription, pipe, combineLatest} from 'rxjs';
-
 import {ProjectService} from '../services/project.service';
 import {UserService} from '../services/user.service';
 import {Project} from '../models/projects';
 import {ConfigurationService} from '../services/configuration.service';
-import {User, SimplyUser} from '../models/user';
+import {User, SimpleUser} from '../models/user';
 import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../shared/pipes/minutes2hours';
 import {MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
 import * as moment from 'moment';
 import {Tag} from '../models/tags';
-import * as _ from 'lodash';
-
-import {MatAutocompleteTrigger, MatInput} from '@angular/material';
+import {MatAutocompleteTrigger} from '@angular/material';
 import {DeleteTaskDialogComponent} from '../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../shared/keymap';
 import { map, startWith } from 'rxjs/operators';
@@ -173,8 +170,12 @@ export class TaskComponent implements OnInit, OnDestroy {
             this.task.tags.forEach((tag: Tag) => {
                 tagsIds.push(tag.id);
             });
-            const aa = [...this.tags.filter(u => tagsIds.indexOf(u['id']) === -1).filter(u => new RegExp(val, 'gi').test(u.name)), {'name': val}];
-            return aa;
+            return [
+                ...this.tags
+                    .filter(u => tagsIds.indexOf(u['id']) === -1)
+                    .filter(u => new RegExp(val, 'gi').test(u.name)), {'name': val}
+                    ];
+
             // val ? this.tags.filter((s) => new RegExp(val, 'gi').test(s.name)) : {'name': val};
         }
         return [];
@@ -277,21 +278,8 @@ export class TaskComponent implements OnInit, OnDestroy {
         });
     }
 
-    private finishTimeWithFinishDate(group: any) {
-        // let oldPassword = group.controls.oldPassword;
-        // let newPassword = group.controls.newPassword;
-        // let confirmNewPassword = group.controls.confirmNewPassword;
+    private finishTimeWithFinishDate(g) {
         const result = null;
-        // if (newPassword.value !== confirmNewPassword.value) {
-        //  result = {
-        //    mismatchedPasswords: true
-        //  };
-        // }
-        // if (oldPassword.value === newPassword.value) {
-        //  result = {
-        //    oldSameNew: true
-        //  };
-        // }
         return result;
     }
 
@@ -329,22 +317,24 @@ export class TaskComponent implements OnInit, OnDestroy {
             'description': '',
             'type_finish_date': defaultTypeFinishDate,
             'finish_date': '',
-            'suspended': false,
-            'suspendedDate': '',
+            'finish_time': '',
+            'suspend_date': '',
             'repeat': 0,
-            'owner': this.user.toApi(),
-            'author': this.user.toApi(),
+            'owner': this.user.convertToSimpleUser().toApi(),
+            'owner_pk': this.user.id,
+            'author': this.user.convertToSimpleUser().toApi(),
             'repeat_delta': 1,
             'from_repeating': 0,
-            'task_project': selectedProject.toApi(),
-            'estimateTime': '',
-            'time': '',
+            'task_project': selectedProject.convertToSimpleProject().toApi(),
+            'estimate_time': 0,
+            'task_list_pk': selectedProject.id,
+            'time': undefined,
             'steps': [],
             'tags': [],
             'status': 0,
             'is_active': true,
-            'percentage': 0,
-            'pinned': false
+            'percent': 0,
+            'pinned': false,
         });
 
         if (finishDateOption) {
@@ -373,7 +363,6 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     addingTag(newTag) {
         if (this.tagsCtrl.valid) {
-
             if (newTag instanceof MatAutocompleteSelectedEvent) {
                 if (newTag.option.value) {
                      this.tagService.createTagDuringEditingTask(new Tag({name: newTag.option.value.name})).subscribe((t) => {
@@ -422,7 +411,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             this.task.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             this.task.typeFinishDate = values['main']['typeFinishDate'];
             this.task.taskProject = this.projects.filter(project => project.id === parseInt(values['main']['taskProjectPk'], 10))[0];
-            this.task.owner = <SimplyUser>this.task.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            this.task.owner = <SimpleUser>this.task.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
 
             if (values['repeat']['repeatDefault'] !== 99) {
                 this.task.repeat = values['repeat']['repeatDefault'];
@@ -525,20 +514,20 @@ export class TaskComponent implements OnInit, OnDestroy {
         control.removeAt(i);
     }
 
-    changeProjectInTask(event) {
+    changeProjectInTask(event): void {
         this.task.taskProject = this.projects.find((project) => project.id === event.value);
         const extra = <FormGroup>this.taskForm.controls['extra'];
         extra.controls['ownerId'].setValue(this.user.id);
     }
 
-    createAndAddMore($event, values) {
+    createAndAddMore($event, values): void {
         this.onSubmit(values, true);
         this.task = this.createNewTask(this.selectedProject);
         this.taskForm.reset();
         this.taskForm = this.createTaskForm(this.task);
     }
 
-    updateImmediately(source, formControlName, values) {
+    updateImmediately(source, formControlName, values): void {
         if (this.task.id) {
             if (this.task[source] !== this.taskForm.get(formControlName).value) {
                 this.onSubmit(values, true);
@@ -546,7 +535,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         }
     }
 
-    deleteTask() {
+    deleteTask(): void {
         const dialogRef = this.dialog.open(DeleteTaskDialogComponent);
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
@@ -557,6 +546,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     isNewTask(): boolean {
-        return Number.isInteger(this.task.id );
+        return !Number.isInteger(this.task.id );
     }
 }

@@ -1,6 +1,11 @@
-import {SimplyUser} from '../user';
+import {SimpleUser} from '../user';
 import {PendingUser} from '../user';
 import {Api} from '../commons';
+import {IProjectApi} from '../project-api.interface';
+import {ISimpleUserApi} from '../simple-user-api.interface';
+import {SimpleProject} from './index';
+import {ISimpleProjectApi} from '../simple-project-api.inferface';
+import {IUserApi} from '../user-api.interface';
 
 
 export class Project extends Api {
@@ -14,7 +19,7 @@ export class Project extends Api {
     color: string;
     tasksCounter: number;
     allDescendants: any;
-    shareWith: (SimplyUser | PendingUser)[] = [];
+    shareWith: (SimpleUser | PendingUser)[] = [];
     level: number;
     owner: number;
     defaultFinishDate: any;
@@ -23,7 +28,7 @@ export class Project extends Api {
     dialogTimeWhenTaskFinished: boolean;
     taskView: string;
 
-    constructor(project) {
+    constructor(project: IProjectApi) {
         super();
         this.name = project.name;
         this.id = project.id || undefined;
@@ -50,12 +55,16 @@ export class Project extends Api {
 
     addUserToShareList(user): void {
         if (user.hasOwnProperty('id')) {
-            this.shareWith.push(new SimplyUser(user));
+            this.shareWith.push(new SimpleUser(user));
         } else {
             this.shareWith.push(new PendingUser(user));
         }
     }
-    
+
+    toApi(): ISimpleProjectApi {
+        return (<ISimpleProjectApi>super.toApi());
+    }
+
     hasDescription(): boolean {
         return this.description && this.description.length > 0;
     }
@@ -69,10 +78,22 @@ export class Project extends Api {
         const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
         let richText;
         if (text) {
-            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>').replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
+            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>')
+                .replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
         } else {
             richText = text;
         }
         return richText;
+    }
+
+    convertToSimpleProject(): SimpleProject {
+        const userApi = this.toApi();
+        const simpleProjectApi: ISimpleProjectApi = {
+            id: this.id,
+            name: this.name,
+            color: this.color,
+            dialog_time_when_task_finished: this.dialogTimeWhenTaskFinished
+        };
+        return new SimpleProject(simpleProjectApi);
     }
 }
