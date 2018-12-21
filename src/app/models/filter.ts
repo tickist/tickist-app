@@ -5,7 +5,7 @@ export class Filter {
   id: number;
   label: string;
   name: string;
-  value: (object: Task | Project) => boolean;
+  value: (object: Task | Project) => boolean | string;
   avatar?: string;
   order?: string;
   fixed?: boolean;
@@ -20,5 +20,9 @@ export class Filter {
     this.order = object.order;
     this.fixed = object.fixed;
     this.sortKeys = object.sortKeys;
+  }
+
+  changeValue(value): void {
+      this.value = value;
   }
 }

@@ -24,12 +24,14 @@ export class TasksFiltersService {
     assignedToMe: Filter;
 
     static useFilters(tasks, currentFilters) {
-        tasks = tasks.filter(currentFilters[0].value);
-        tasks = tasks.filter(currentFilters[1].value);
-        tasks = tasks.filter(currentFilters[2].value);
-        tasks = tasks.filter(currentFilters[3].value);
+        tasks = tasks
+            .filter(currentFilters[0].value)
+            .filter(currentFilters[1].value)
+            .filter(currentFilters[2].value)
+            .filter(currentFilters[3].value);
         const tags = currentFilters.find(currentFilter => currentFilter.label === 'tags');
         const sortingBy = currentFilters.find(currentFilter => currentFilter.label === 'sorting');
+        const searchTasks = currentFilters.find(currentFilter => currentFilter.label === 'searchTasks');
         if (tags.value instanceof Set) {
             tasks = tasks.filter((task: Task) => {
                 const result = [];
@@ -49,6 +51,10 @@ export class TasksFiltersService {
                 return (task.tags.length === 0);
             });
         }
+        if (searchTasks && searchTasks.value) {
+            const re = new RegExp(searchTasks.value, 'i');
+            tasks = tasks.filter((task) => re.test(task.name));
+        }
         tasks = _.orderBy(tasks, sortingBy.sortKeys, sortingBy.order);
         return tasks;
     }
@@ -62,7 +68,7 @@ export class TasksFiltersService {
     }
 
     createDefaultFilters(user) {
-       this.user = user;
+        this.user = user;
 
         this.assignedToMe = new Filter({
             id: user.id,
@@ -117,7 +123,18 @@ export class TasksFiltersService {
                 order: 'asc',
                 name: 'priority <i class="fa fa-arrow-up"></i>'
             }),
-            new Filter({'id': 1, label: 'tags', 'value': 'allTasks', 'name': 'all tasks'})
+            new Filter({
+                'id': 1,
+                label: 'tags',
+                'value': 'allTasks',
+                'name': 'all tasks'
+            }),
+            new Filter({
+                'id': 1,
+                label: 'searchTasks',
+                value: '',
+                name: ''
+            })
         ];
 
         this.store.dispatch(new tasksAction.AddCurrentFilters(filters));
@@ -238,7 +255,13 @@ export class TasksFiltersService {
                 name: 'creation date  <i class="fa fa-arrow-down"></i>'
             },
             {id: 8, label: 'sorting', sortKeys: ['name'], order: ['desc'], name: 'A-Z <i class="fa fa-arrow-down"></i>'},
-            {id: 1, label: 'tags', value: 1}
+            {id: 1, label: 'tags', value: 1},
+            {
+                'id': 1,
+                label: 'searchTasks',
+                value: '',
+                name: ''
+            }
         ].map(filter => new Filter(filter));
 
         this.store.dispatch(new tasksAction.AddFilters(filters));

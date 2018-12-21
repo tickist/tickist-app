@@ -35,7 +35,7 @@ export function currentTasksFilters(state = [], action: tasksActions.Actions) {
         case tasksActions.UPDATE_CURRENT_FILTER:
             return state.map(elem => {
                 return elem.label === (<tasksActions.UpdateCurrentFilter>action).payload.label
-                    ? Object.assign({}, elem, action.payload) : elem;
+                    ? action.payload : elem;
             });
         default:
             return state;
@@ -55,7 +55,7 @@ export function tasksFilters(state = [], action: tasksActions.Actions) {
             return [...state, action.payload];
         case tasksActions.UPDATE_FILTERS:
             return state.map(elem => {
-                return elem.label === (<tasksActions.UpdateFilters>action).payload.label ? Object.assign({}, elem, action.payload) : elem;
+                return elem.label === (<tasksActions.UpdateFilters>action).payload.label ? action.payload : elem;
             });
         default:
             return state;

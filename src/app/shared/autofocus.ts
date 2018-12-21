@@ -103,15 +103,15 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
 
         }
 
-        this.timer = setTimeout(
-            (): void => {
-
-                this.timer = null;
-                this.elementRef.nativeElement.focus();
-
-            },
-            this.timerDelay
-        );
+        // this.timer = setTimeout(
+        //     (): void => {
+        //
+        //         this.timer = null;
+        //         this.elementRef.nativeElement.focus();
+        //
+        //     },
+        //     this.timerDelay
+        // );
 
     }
 

@@ -9,20 +9,20 @@
               fxLayoutAlign="center center" fxLayout="column">
 
             <mat-form-field>
-                <input matInput placeholder="Email" formControlName="email">
+                <input name="email" matInput placeholder="Email" formControlName="email">
                 <mat-error *ngIf="loginForm.controls['email'].invalid">{{getErrorMessage()}}</mat-error>
             </mat-form-field>
 
             <div>
                 <mat-form-field>
-                    <input matInput type="password" placeholder="Password" formControlName="password">
+                    <input name="password" matInput type="password" placeholder="Password" formControlName="password">
                     <mat-error *ngIf="loginForm.controls['password'].hasError('required')">Password is required</mat-error>
                     <mat-error *ngIf="loginForm.controls['password'].hasError('incorrectLoginPassword')">Login or password are incorrect</mat-error>
                 </mat-form-field>
             </div>
 
             <div>
-                <button fxFlex mat-button  type="submit">Login
+                <button id="submit-button" fxFlex mat-button  type="submit">Login
                 </button>
             </div>
 

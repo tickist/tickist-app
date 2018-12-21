@@ -19,7 +19,7 @@ export class AssignedToDialogComponent {
         this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.assignedToValue = filters.filter(filter => filter.label === 'assignedTo')[0];
-                this.assignedToValueId = this.assignedToValue['id'];
+                this.assignedToValueId = this.assignedToValue.id;
             }
         });
 

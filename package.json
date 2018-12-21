@@ -61,6 +61,7 @@
     "@types/jest": "^23.3.5",
     "@types/lodash": "4.14.117",
     "@types/node": "^10.11.7",
+    "blue-harvest": "^0.3.1",
     "codelyzer": "~4.5.0",
     "faker": "^4.1.0",
     "jasmine-core": "~2.99.1",

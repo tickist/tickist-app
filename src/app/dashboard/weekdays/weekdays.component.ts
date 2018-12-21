@@ -40,9 +40,9 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         const today = new Date();
         const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
         const timeToMidnight = (tomorrow.getTime() - today.getTime());
-        this.timer = setTimeout(() => {
-             this.feelWeekData();
-        }, timeToMidnight);
+        // this.timer = setTimeout(() => {
+        //      this.feelWeekData();
+        // }, timeToMidnight);
     }
 
     isToday(date: (moment.Moment | string) = this.activeDateElement.date): boolean {
@@ -80,7 +80,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         if (this.subscriptions) {
             this.subscriptions.unsubscribe();
         }
-        clearTimeout(this.timer);
+        // clearTimeout(this.timer);
     }
 
     isSelected(day): boolean {

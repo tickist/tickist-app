@@ -8,15 +8,15 @@ import {UserService} from '../../services/user.service';
 @Injectable()
 export class LoggedInGuard implements CanActivate {
 
-  constructor(protected router: Router, private userService: UserService) {
+    constructor(protected router: Router, private userService: UserService) {
 
-  }
-
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (state.url !== '/login' && !this.userService.isLoggedIn()) {
-      this.router.navigate(['login']);
-      return false;
     }
-    return true;
-  }
+
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        if (state.url !== '/login' && !this.userService.isLoggedIn()) {
+            this.router.navigate(['login']);
+            return false;
+        }
+        return true;
+    }
 }

@@ -15,6 +15,7 @@ import {map} from 'rxjs/operators';
 import {TasksFiltersService} from './tasks-filters.service';
 import * as _ from 'lodash';
 import {IProjectApi} from '../models/project-api.interface';
+import {Filter} from '../models/filter';
 
 
 @Injectable()
@@ -100,12 +101,12 @@ export class ProjectService {
             project.shareWith.map((user: (SimpleUser | PendingUser)) => {
                 if (user.hasOwnProperty('id') && user['id'] !== undefined && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
                     this.store.dispatch(new tasksAction.AddNewAssignedTo(
-                        {
+                        new Filter({
                             'id': user['id'],
                             'label': 'assignedTo',
                             'value': (task: Task) => task.owner.id === user['id'],
                             'name': user.username
-                        }
+                        })
                     ));
                 }
             });
@@ -113,12 +114,12 @@ export class ProjectService {
         } else {
             this.team.map((user) => {
                 this.store.dispatch(new tasksAction.AddNewAssignedTo(
-                    {
-                        'id': user.id,
-                        'label': 'assignedTo',
-                        'value': (task: Task) => task.owner.id === user.id,
-                        'name': user.username
-                    }
+                        new Filter({
+                            'id': user.id,
+                            'label': 'assignedTo',
+                            'value': (task: Task) => task.owner.id === user.id,
+                            'name': user.username
+                        })
                     )
                 );
             });

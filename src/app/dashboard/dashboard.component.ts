@@ -53,11 +53,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const today = new Date();
         const tommorow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
         const timeToMidnight = (tommorow.getTime() - today.getTime());
-        this.timer = setTimeout(() => {
-            if (this.isTomorrow()) {
-                this.router.navigate(['/home']);
-            }
-        }, timeToMidnight);
+        // this.timer = setTimeout(() => {
+        //     if (this.isTomorrow()) {
+        //         this.router.navigate(['/home']);
+        //     }
+        // }, timeToMidnight);
     }
 
     isToday(activeDateElement = this.activeDateElement) {
@@ -105,7 +105,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (this.subscriptions) {
             this.subscriptions.unsubscribe();
         }
-        clearTimeout(this.timer);
+        // clearTimeout(this.timer);
     }
 
     navigateTo(path, arg) {

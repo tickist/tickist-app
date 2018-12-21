@@ -21,7 +21,7 @@ export class ProjectsApiMockFactory {
 
     constructor() {}
 
-    createProjectsDict(shareWith: ISimpleUserApi[], owner: IUserApi, tags: ITagApi[], howMuch: number = 10) {
+    createProjectsDict(shareWith: ISimpleUserApi[], owner: IUserApi, tags: ITagApi[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createProjectDict(
             shareWith,
             UsersApiMockFactory.createSimpleUserFromUser(owner),

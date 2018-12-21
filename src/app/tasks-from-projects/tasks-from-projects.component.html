@@ -7,6 +7,7 @@
             <app-filter-tasks [showTags]="true"></app-filter-tasks>
             <change-task-view [defaultTaskView]="defaultTaskView"
                               (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+
         </div>
     </div>
     <div *ngIf="selectedProject"  class="project-header">
@@ -26,7 +27,7 @@
              class="project-description">{{ selectedProject.richDescription }}</div>
 
     </div>
-    
+
     <app-single-task class="item" [task]="task" [mediaChange]="mediaChange"
                      *cdkVirtualFor="let task of tasks;trackBy: trackByFn;">
 

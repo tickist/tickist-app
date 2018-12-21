@@ -8,6 +8,9 @@ import {ProjectsApiMockFactory} from './api-mock/projects-api-mock.factory';
 import {ITaskApi} from '../../models/task-api.interface';
 import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
+import * as moment from 'moment';
+import * as _ from 'lodash';
+import {debug} from 'util';
 
 const NUMBERS_OF_USERS = 4;
 const MAIN_USER_ID = 1;
@@ -41,6 +44,25 @@ export class InMemoryDataService implements InMemoryDbService {
         projects.forEach(project => {
             this.tasks.push(...this.tasksApiMockFactory.createTasksDict(loggedUser, loggedUser, project, []));
         });
+        // add finish date to tasks
+        this.tasks.map(task => {
+            _.range(0, 6 + 1).forEach((number) => {
+                if ((task.id % 17)  === number) {
+                    task.finish_date = moment().add(number, 'days').format('DD-MM-YYYY');
+                    task.finish_date_dateformat = moment().add(number, 'days').format('YYYY-MM-DD');
+                }
+            });
+            if ((task.id % 17)  === 8) {
+                task.finish_date = moment().add(-1, 'days').format('DD-MM-YYYY');
+                task.finish_date_dateformat = moment().add(-1, 'days').format('YYYY-MM-DD');
+            }
+        });
+
+        const authTokenApi = {
+            access: 'Access token Api',
+            refresh: 'Refresh token Api',
+            user_id: 1
+        };
         console.log(this.tasks);
         console.log({loggedUser});
         console.log({tags});
@@ -118,7 +140,7 @@ export class InMemoryDataService implements InMemoryDbService {
 
         return {
             global: global, tasks: this.tasks, project: projects, user: [loggedUser], charts: charts, day_statistics: this.dayStatistics,
-            tag: tags, teamlist: this.teamList, 'api-token-auth': {id: 1, name: 'Zero'}, registration: {id: 1, name: 'Zero'},
+            tag: tags, teamlist: this.teamList, 'api-token-auth': authTokenApi, registration: {id: 1, name: 'Zero'},
             checkteammember: {id: 1, name: 'Zero'}
         };
     }
@@ -135,6 +157,21 @@ export class InMemoryDataService implements InMemoryDbService {
         if (reqInfo.url.includes(('day_statistics'))) {
             return this.getDayStatisticsResponse(reqInfo);
         }
+        return undefined;
+    }
+
+    post(reqInfo: RequestInfo) {
+        return reqInfo.utils.createResponse$(() => {
+            console.log('HTTP GET override');
+debugger
+            const dataEncapsulation = reqInfo.utils.getConfig().dataEncapsulation;
+            const data = reqInfo.collection;
+            const options: ResponseOptions = {
+                body: dataEncapsulation ? {data} : data,
+                status: STATUS.OK
+            };
+            return this.finishOptions(options, reqInfo);
+        });
         return undefined;
     }
 

@@ -105,6 +105,7 @@ export function tokenGetter() {
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
+        // HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { delay: 100 }),
         environment.e2eTest ?
             HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { delay: 100 }) : [],
         StoreModule.forRoot(reducers, {

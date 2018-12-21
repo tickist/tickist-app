@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {ConfigurationService} from '../services/configuration.service';
 import {Subject, pipe} from 'rxjs';
 import {Ping} from './ping';
@@ -17,7 +17,7 @@ export class ShowOfflineModeComponent implements OnInit, OnDestroy {
     pingCheck: any;
     ping: any;
 
-    constructor(protected configurationService: ConfigurationService, private cd: ChangeDetectorRef) {
+    constructor(protected configurationService: ConfigurationService, private cd: ChangeDetectorRef, private ngZone: NgZone) {
         this.pingObject = new Ping();
     }
 
@@ -37,13 +37,19 @@ export class ShowOfflineModeComponent implements OnInit, OnDestroy {
             }
         });
         };
-        this.pingCheck = setInterval(this.ping, this.interval );
+        this.ngZone.runOutsideAngular(() => {
+            setInterval(() => {
+                this.ngZone.run(() => {
+                   this.ping();
+                });
+            }, this.interval );
+        });
     }
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-        clearInterval(this.pingCheck);
+        //clearInterval(this.pingCheck);
     }
 
 }

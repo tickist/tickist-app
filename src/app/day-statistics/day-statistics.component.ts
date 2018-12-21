@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {StatisticsService} from '../services/statistics.service';
 import {ConfigurationService} from '../services/configuration.service';
 import * as moment from 'moment';
@@ -43,8 +43,8 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
     subscriptions: Subscription;
     protected interval = 10000;
 
-    constructor(private statisticsService: StatisticsService, private configurationService: ConfigurationService, 
-                private cd: ChangeDetectorRef) {
+    constructor(private statisticsService: StatisticsService, private configurationService: ConfigurationService,
+                private cd: ChangeDetectorRef, private ngZone: NgZone) {
     }
 
     ngOnInit() {
@@ -103,7 +103,14 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
             this.activeChart = this.charts.filter((chart) => chart.id === newActiveChartId)[0];
 
         });
-        this.chartInterval = setInterval(this.nextChart, this.interval);
+        this.ngZone.runOutsideAngular(() => {
+            this.chartInterval = setInterval(() => {
+                this.ngZone.run(() => {
+                    this.nextChart();
+                });
+            }, this.interval );
+        });
+
     }
 
     ngOnDestroy() {
@@ -217,7 +224,7 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
             }
         };
     }
-    
+
     generateLegendProjectsTasksCounterChartData() {
         const legend = [];
         this.dayStatistics.lists.forEach((project) => {
@@ -225,7 +232,7 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
         });
         return legend;
     }
-    
+
 
     generateTagsTasksCounterChartData() {
         const labels = [], data = [], colors = [];
@@ -278,7 +285,7 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
             }
         };
     }
-    
+
     generateLegendTagsTasksCounterChartData() {
         const legend = [];
         this.dayStatistics.tags.forEach((tag) => {
@@ -296,7 +303,7 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
         this.activeChart = this.charts.filter((chart) => chart.id === chartId)[0];
 
     }
-    
+
     isChartEmpty(chart: Chart) {
         const chartData = _.get(chart, 'data.datasets.0.data');
         return (<Array<any>>chartData).length === 0;
