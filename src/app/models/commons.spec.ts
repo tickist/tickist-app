@@ -1,3 +1,5 @@
-/**
- * Created by freeman on 03.06.17.
- */
+describe('Commons', () => {
+   it('should work', () => {
+
+   });
+});

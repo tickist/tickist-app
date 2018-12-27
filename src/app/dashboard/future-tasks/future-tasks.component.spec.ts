@@ -15,21 +15,31 @@ import {MockFutureTasksFiltersService} from '../../testing/mocks/future-tasks-fi
 import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {MockUserService} from '../../testing/mocks/userService';
+import {TickistTasksModule} from '../../tasks/tasks.module';
+import {TickistSingleTaskModule} from '../../single-task/single-task.module';
 
 
 describe('FutureTasksComponent', () => {
     let component: FutureTasksComponent;
     let fixture: ComponentFixture<FutureTasksComponent>;
     const routes: Routes = [];
-    
+
     beforeEach(async(() => {
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
         const futureTasksFiltersService = new MockFutureTasksFiltersService();
         const userService = new MockUserService();
         TestBed.configureTestingModule({
-            imports: [RouterModule.forRoot(routes), TickistMaterialModule, ReactiveFormsModule, FlexLayoutModule, NoopAnimationsModule],
-            declarations: [FutureTasksComponent, MockComponent(FilterFutureTasksComponent), MockComponent(TasksListComponent), 
+            imports: [
+                RouterModule.forRoot(routes),
+                TickistMaterialModule,
+                TickistTasksModule,
+                TickistSingleTaskModule,
+                ReactiveFormsModule,
+                FlexLayoutModule,
+                NoopAnimationsModule
+            ],
+            declarations: [FutureTasksComponent, MockComponent(FilterFutureTasksComponent), MockComponent(TasksListComponent),
                 MockComponent(ChangeTaskViewComponent)],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'},
@@ -44,7 +54,6 @@ describe('FutureTasksComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(FutureTasksComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

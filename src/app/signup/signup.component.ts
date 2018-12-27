@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {
-    FormBuilder,
     FormGroup,
     FormControl,
     Validators,
@@ -24,8 +23,6 @@ class User {
     styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
-
-    model = new User();
     userForm: FormGroup;
 
     constructor( private userService: UserService, protected router: Router) {

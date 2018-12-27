@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 
 export class Api {
@@ -8,7 +8,7 @@ export class Api {
     }
 
     toApi() {
-        let object = {};
+        const object = {};
         _.keys(this).forEach((elem) => {
             if (_.isArray(this[elem])) {
                 object[_.snakeCase(elem)] = [];

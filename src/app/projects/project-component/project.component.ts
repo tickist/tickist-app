@@ -47,10 +47,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.staticUrl = environment['staticUrl'];
         this.addUserToShareWithListCtrl = new FormControl();
         this.menu = this.createMenuDict();
-        this.typeFinishDateOptions = this.configurationService.configuration['commons']['TYPE_FINISH_DATE_OPTIONS'];
-        this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
-        this.defaultTaskView = this.configurationService.configuration['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
-        this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
         this.stream$ = combineLatest(
                 projectService.projects$,
                 this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
@@ -94,6 +90,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.typeFinishDateOptions = this.configurationService.configuration['commons']['TYPE_FINISH_DATE_OPTIONS'];
+        this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
+        this.defaultTaskView = this.configurationService.configuration['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
+        this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         this.configurationService.changeOpenStateRightSidenavVisibility('close');
         this.configurationService.updateAddTaskComponentVisibility(false);

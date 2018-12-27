@@ -7,7 +7,7 @@ import {APP_BASE_HREF} from '@angular/common';
 describe('ShowOfflineModeComponent', () => {
     let component: ShowOfflineModeComponent;
     let fixture: ComponentFixture<ShowOfflineModeComponent>;
-    
+
     beforeEach(async(() => {
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
@@ -17,11 +17,11 @@ describe('ShowOfflineModeComponent', () => {
                 {provide: APP_BASE_HREF, useValue: '/'}
             ]
         }).compileComponents().then(() => {
-             fixture = TestBed.createComponent(ShowOfflineModeComponent);
+            fixture = TestBed.createComponent(ShowOfflineModeComponent);
             component = fixture.componentInstance;
         });
     }));
-    
+
     it('should create', () => {
         expect(component).toBeTruthy();
     });

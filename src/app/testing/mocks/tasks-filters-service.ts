@@ -9,9 +9,10 @@ export class MockTasksFiltersService extends SpyObject {
 
     constructor() {
         super(TasksFiltersService);
+        this.currentTasksFilters$ = of([]);
 
     }
-    
+
     getProviders(): Array<any> {
         return [{provide: TasksFiltersService, useValue: this}];
     }

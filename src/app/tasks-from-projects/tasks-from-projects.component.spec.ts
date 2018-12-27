@@ -7,7 +7,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';
 import {RouterModule, Routes} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {SingleTaskComponent, SingleTaskSimplifiedComponent} from '../single-task/single-task/single-task.component';
+import {SingleTaskComponent} from '../single-task/single-task/single-task.component';
 import {TaskNameComponent} from '../single-task/task-name/task-name.component';
 import {PinButtonComponent} from '../single-task/pin-button/pin-button.component';
 import {DateOptionsComponent} from '../date-options/date-options.component';
@@ -35,6 +35,7 @@ import {PriorityComponent} from '../shared/priority/priority.component';
 import {TasksListComponent} from '../tasks-list/tasks-list.component';
 import {SortTasksComponent} from '../tasks/sort-tasks/sort-tasks.component';
 import {FilterTasksComponent} from '../tasks/filter-tasks/filter-tasks.component';
+import {SingleTaskSimplifiedComponent} from '../single-task/single-task-simplified/single-task-simplified.component';
 
 
 const routes: Routes = [
