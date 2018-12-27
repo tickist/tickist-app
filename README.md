@@ -4,7 +4,7 @@ Official website: [Tickist.com](https://tickist.com)
 
 ## How to run
 
-If you want to run this application, please download docker-compose from here and next run initial script: 
+If you want to run this application, please download docker-compose.yml from [here](https://github.com/tickist/development) and next run initial script: 
 * python initial&#46;py.
 
 Afterwards you can start development using this command: docker-compose up. 

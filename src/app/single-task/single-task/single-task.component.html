@@ -1,0 +1,7 @@
+<ng-container *ngIf="taskView === task_extended_view_value">
+    <tickist-single-task-extended class="item" [task]="task" [mediaChange]="mediaChange"></tickist-single-task-extended>
+</ng-container>
+
+<ng-container *ngIf="taskView === task_simple_view_value">
+    <tickist-single-task-simplified  class="item" [task]="task"></tickist-single-task-simplified>
+</ng-container>

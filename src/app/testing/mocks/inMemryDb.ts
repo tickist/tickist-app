@@ -10,10 +10,11 @@ import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import {debug} from 'util';
+
 
 const NUMBERS_OF_USERS = 4;
 const MAIN_USER_ID = 1;
+const TAKEN_EMAIL = 'bill@tickist.com';
 
 
 export class InMemoryDataService implements InMemoryDbService {
@@ -137,10 +138,11 @@ export class InMemoryDataService implements InMemoryDbService {
             }]
         }];
         // createInbox;
+        // @TODO add function to create inbox
 
         return {
             global: global, tasks: this.tasks, project: projects, user: [loggedUser], charts: charts, day_statistics: this.dayStatistics,
-            tag: tags, teamlist: this.teamList, 'api-token-auth': authTokenApi, registration: {id: 1, name: 'Zero'},
+            tag: tags, teamlist: this.teamList, 'api-token-auth': authTokenApi, registration: authTokenApi,
             checkteammember: {id: 1, name: 'Zero'}
         };
     }
@@ -150,20 +152,30 @@ export class InMemoryDataService implements InMemoryDbService {
         console.log({reqInfo});
         if (reqInfo.url.includes('teamlist')) {
             return this.getTeamListResponse(reqInfo);
-        }
-        if (reqInfo.url.includes('tasks')) {
+        } else if (reqInfo.url.includes('tasks')) {
             return this.getTasksResponse(reqInfo);
-        }
-        if (reqInfo.url.includes(('day_statistics'))) {
+        } else if (reqInfo.url.includes(('day_statistics'))) {
             return this.getDayStatisticsResponse(reqInfo);
         }
+
+
         return undefined;
     }
 
     post(reqInfo: RequestInfo) {
+        if (reqInfo.url.includes('login')) {
+            return this.postLoginUser(reqInfo);
+        } else if (reqInfo.url.includes('check_email')) {
+            return this.postCheckEmail(reqInfo);
+        } else if (reqInfo.url.includes('registration')) {
+            return this.postRegistration(reqInfo);
+        }
+        return undefined;
+    }
+
+    private postLoginUser(reqInfo) {
         return reqInfo.utils.createResponse$(() => {
             console.log('HTTP GET override');
-debugger
             const dataEncapsulation = reqInfo.utils.getConfig().dataEncapsulation;
             const data = reqInfo.collection;
             const options: ResponseOptions = {
@@ -172,7 +184,25 @@ debugger
             };
             return this.finishOptions(options, reqInfo);
         });
-        return undefined;
+    }
+
+    put(reqInfo: RequestInfo) {
+        if (reqInfo.url.includes('tasks')) {
+            return this.putTasksResponse(reqInfo);
+        }
+    }
+
+    putTasksResponse(reqInfo: RequestInfo) {
+        return reqInfo.utils.createResponse$(() => {
+            console.log('HTTP GET override');
+            const dataEncapsulation = reqInfo.utils.getConfig().dataEncapsulation;
+            const data = TasksApiMockFactory.createResponseFromServer((<any> reqInfo.req).body);
+            const options: ResponseOptions = {
+                body: dataEncapsulation ? {data} : data,
+                status: STATUS.OK
+            };
+            return this.finishOptions(options, reqInfo);
+        });
     }
 
     private getDayStatisticsResponse(reqInfo: RequestInfo) {
@@ -209,6 +239,31 @@ debugger
 
             const dataEncapsulation = reqInfo.utils.getConfig().dataEncapsulation;
             const data = JSON.parse(JSON.stringify(this.teamList));
+            const options: ResponseOptions = {
+                body: dataEncapsulation ? {data} : data,
+                status: STATUS.OK
+            };
+            return this.finishOptions(options, reqInfo);
+        });
+    }
+
+    private postCheckEmail(reqInfo: RequestInfo) {
+        return reqInfo.utils.createResponse$(() => {
+            console.log('HTTP GET override');
+            const data = (<any> reqInfo).req.body.email === TAKEN_EMAIL ? {'is_taken': true} : {'is_taken': false};
+            const options: ResponseOptions = {
+                body: {data},
+                status: STATUS.OK
+            };
+            return this.finishOptions(options, reqInfo);
+        });
+    }
+
+    private postRegistration(reqInfo: RequestInfo) {
+        return reqInfo.utils.createResponse$(() => {
+            console.log('HTTP POST override');
+            const dataEncapsulation = reqInfo.utils.getConfig().dataEncapsulation;
+            const data = reqInfo.collection;
             const options: ResponseOptions = {
                 body: dataEncapsulation ? {data} : data,
                 status: STATUS.OK

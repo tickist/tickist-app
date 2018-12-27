@@ -6,7 +6,6 @@ export class TickistStorage {
 
     static clearStorage() {
         browser.executeScript(() => {
-            window.sessionStorage.clear();
             window.localStorage.clear();
         });
     }

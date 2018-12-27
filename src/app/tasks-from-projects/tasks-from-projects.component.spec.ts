@@ -7,7 +7,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';
 import {RouterModule, Routes} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {SingleTaskComponent, SingleTaskSimplifiedComponent} from '../single-task/single-task.component';
+import {SingleTaskComponent, SingleTaskSimplifiedComponent} from '../single-task/single-task/single-task.component';
 import {TaskNameComponent} from '../single-task/task-name/task-name.component';
 import {PinButtonComponent} from '../single-task/pin-button/pin-button.component';
 import {DateOptionsComponent} from '../date-options/date-options.component';

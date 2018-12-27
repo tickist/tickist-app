@@ -1,17 +1,5 @@
 import {browser, by, element} from 'protractor';
 
-
-export class TickistDashboard {
-
-    static getParagraphText() {
-        return element(by.css('span')).getText();
-    }
-
-    navigateTo() {
-        return browser.get('/');
-    }
-}
-
 export class LoginPage {
     navigateTo() {
         return browser.get('/');

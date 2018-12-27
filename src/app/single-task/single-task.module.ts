@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SingleTaskComponent, SingleTaskSimplifiedComponent} from './single-task.component';
 import {TickistMaterialModule} from '../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -15,6 +14,9 @@ import {TickistSharedModule} from '../shared/shared.module';
 import {EditRepeatingOptionComponent} from '../edit-repeating-options/edit-repeating-option.component';
 import {DateOptionsComponent} from '../date-options/date-options.component';
 import {RouterModule} from '@angular/router';
+import {SingleTaskComponent} from './single-task/single-task.component';
+import {SingleTaskSimplifiedComponent} from './single-task-simplified/single-task-simplified.component';
+import {SingleTaskExtendedComponent} from './single-task-extended/single-task-extended.component';
 
 @NgModule({
     imports: [ CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
@@ -32,7 +34,8 @@ import {RouterModule} from '@angular/router';
         ProgressBarComponent,
         PinButtonComponent,
         RightMenuComponent,  ToggleButtonComponent,  TaskNameComponent,  DisplayFinishDateComponent, EditRepeatingOptionComponent,
-        DateOptionsComponent]
+        DateOptionsComponent,
+        SingleTaskExtendedComponent]
 })
 export class TickistSingleTaskModule {
 }

@@ -1,9 +1,13 @@
 //variables
-@import "../shared/variables";
+@import "../../shared/variables";
 
 .task {
-    min-height: 25px;
-    margin-bottom: 5px;
+    min-height: 30px;
+    height: 30px;
+    background: #394264;
+    padding-left: 16px;
+    padding-top: 5px;
+    padding-right: 16px;
     .done {
         margin-right: 5px;
         cursor: pointer;

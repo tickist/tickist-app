@@ -1,22 +1,23 @@
-import {LoginPage, TickistDashboard} from './app.po';
+import {LoginPage, DashboardPage, ProjectsPage, RegistrationPage} from './pages';
 import {browser, by, element, $$, ExpectedConditions} from 'protractor';
 import {TickistStorage} from './helpers';
 
 
 
 describe('Dashboard', function () {
-    let page: TickistDashboard;
+    let page: DashboardPage;
 
     beforeEach(async () => {
-        page = new TickistDashboard();
+        page = new DashboardPage();
         await page.navigateTo();
         TickistStorage.setDummyUserData();
 
     });
 
-afterEach(() => {
-    TickistStorage.clearStorage();
-});
+    afterEach(async () => {
+        await page.navigateTo();
+        TickistStorage.clearStorage();
+    });
 
     it('should check weekdays list members', async () => {
         await page.navigateTo();
@@ -38,7 +39,6 @@ afterEach(() => {
         expect(isPresent).toBeTruthy();
         const futureList = await myElement.all(by.tagName('mat-list-item'));
         expect(futureList.length).toBe(13);
-        
     });
 });
 
@@ -54,7 +54,7 @@ describe('Login Page', () => {
         TickistStorage.clearStorage();
     });
 
-    it('should log in using proper username and password', async () => {
+    it('should log in using proper email and password', async () => {
         await page.navigateTo();
         await page.setEmailValue('bill@tickist.com');
         await page.setPasswordValue('pass');
@@ -64,5 +64,45 @@ describe('Login Page', () => {
                 ExpectedConditions.urlContains('home'), 5000
             ).catch(() => false )
         ).toBeTruthy(`Url match could not succced`);
+    });
+});
+
+
+describe('Registration Page', () => {
+    let page: RegistrationPage;
+    beforeEach(() => {
+        page = new RegistrationPage;
+    });
+
+    afterEach(() => {
+        TickistStorage.clearStorage();
+    });
+
+    it('should sign up using email and password', async () => {
+        await page.navigateTo();
+        await page.setEmailValue('bill@tickist.com');
+        await page.setPasswordValue('pass');
+        await page.setUsernameValue('pass');
+        await page.submit();
+        await expect(
+            browser.wait(
+                ExpectedConditions.urlContains('home'), 5000
+            ).catch(() => false )
+        ).toBeTruthy(`Url match could not succced`);
+    });
+});
+
+
+describe('Tasks list', () => {
+    let page: ProjectsPage;
+
+    beforeEach(async () => {
+        page = new ProjectsPage();
+        await page.navigateTo();
+        TickistStorage.setDummyUserData();
+    });
+
+    it('should click on pin icon and add task to today\'s task list', async () => {
+
     });
 });

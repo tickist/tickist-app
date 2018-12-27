@@ -60,7 +60,7 @@
             </tickist-menu-button>
         </div>
         <div [innerHTML]="task.richDescription"></div>
-        
+
     </div>
 
 
@@ -108,7 +108,8 @@
             </tickist-menu-button>
         </div>
         <mat-form-field>
-            <mat-select placeholder="Project:" [(ngModel)]="task.taskProject.id" (selectionChange)="changeProject($event)">
+            <mat-select placeholder="Project:" [(ngModel)]="task.taskProject.id"
+                        (selectionChange)="changeProject($event)">
                 <mat-option *ngFor="let project of projects" [ngClass]="project.matOptionClass"
                             [value]="project.id"> {{ project.name }}
                 </mat-option>
@@ -123,7 +124,8 @@
             </tickist-menu-button>
         </div>
         <mat-form-field>
-            <mat-select placeholder="Assigned to:" [(ngModel)]="task.owner.id" (selectionChange)="changeAssignedTo($event)">
+            <mat-select placeholder="Assigned to:" [(ngModel)]="task.owner.id"
+                        (selectionChange)="changeAssignedTo($event)">
                 <mat-option *ngFor="let user of task.taskProject.shareWith"
                             [value]="user.id"> {{ user.username }}
                 </mat-option>

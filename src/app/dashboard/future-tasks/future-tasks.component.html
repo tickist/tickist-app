@@ -10,10 +10,10 @@
            
     <tickist-filter-future-tasks></tickist-filter-future-tasks>
 
-    <app-single-task class="item" [task]="task" [mediaChange]="mediaChange"
+    <tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="taskView"
                      *cdkVirtualFor="let task of futureTasks;trackBy: trackByFn">
 
-    </app-single-task>
+    </tickist-single-task>
 
 
 </cdk-virtual-scroll-viewport>

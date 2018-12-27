@@ -7,10 +7,18 @@ import {IUserApi} from '../../../models/user-api.interface';
 import {IProjectApi} from '../../../models/project-api.interface';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import {Menu} from '../../../models/menu';
 
 export class TasksApiMockFactory {
     id = 0;
 
+    static createResponseFromServer(task: ITaskApi) {
+        if (task.steps instanceof Object) {
+            task.steps = [];
+        }
+        return task;
+    }
+    
     constructor() {
 
     }
@@ -18,6 +26,8 @@ export class TasksApiMockFactory {
     createTasksDict(owner: IUserApi, author: IUserApi, project: IProjectApi, tags: ITagApi[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createTaskDict(owner, author, project, tags));
     }
+    
+    
 
     createTaskDict(owner: IUserApi, author: IUserApi, project: IProjectApi, tags: ITagApi[]): ITaskApi {
         this.id += 1;
@@ -50,7 +60,8 @@ export class TasksApiMockFactory {
             task_project: ProjectsApiMockFactory.createSimpleProjectFromProject(project),
             time: 0,
             type_finish_date: 0,
-            when_complete: null
+            when_complete: null,
+            menu_showing: new Menu({})
         };
     }
 }

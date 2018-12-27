@@ -3,7 +3,9 @@
 // you can create your own and use it with the --env flag.
 // The build system defaults to the dev environment.
 
-export const environment = {
+import {IEnvironment} from './environment.interface';
+
+export const environment: IEnvironment = {
     production: false,
     apiUrl: 'http://localhost:8000/api',
     staticUrl: '',

@@ -9,6 +9,7 @@ import {Project} from '../models/projects';
 import {User} from '../models/user';
 import { map, takeUntil } from 'rxjs/operators';
 import {TasksFiltersService} from '../services/tasks-filters.service';
+import {ConfigurationService} from '../services/configuration.service';
 
 class Timer {
     readonly start = performance.now();
@@ -43,28 +44,28 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     user: User;
     defaultTaskView: string;
     selectedProject: Project;
-    t: Timer;
-    t2: Timer;
+    task_simple_view_value: string;
+    task_extended_view_value: string;
 
     constructor(protected taskService: TaskService, private route: ActivatedRoute, protected userService: UserService,
-                private projectService: ProjectService, private cd: ChangeDetectorRef,
+                private projectService: ProjectService, private cd: ChangeDetectorRef, private configurationService: ConfigurationService,
                 protected tasksFiltersService: TasksFiltersService ) {
     }
 
     ngOnInit() {
+        this.task_simple_view_value = this.configurationService.TASK_SIMPLE_VIEW.value;
+        this.task_extended_view_value = this.configurationService.TASK_EXTENDED_VIEW.value;
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
             this.projectService.selectedProjectsIds$,
             this.tasksFiltersService.currentTasksFilters$,
             (tasks: Task[], selectedProjectsIds: Array<number>, currentTasksFilters: any) => {
-                this.t2 = new Timer(`tasksStream$`);
                 if (tasks && currentTasksFilters && currentTasksFilters.length > 0) {
                     if (selectedProjectsIds) {
                         tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));
                     }
                     tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
                 }
-                this.t2.stop();
                 return tasks;
             }
         );

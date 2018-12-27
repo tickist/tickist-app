@@ -62,9 +62,11 @@ export class Task extends Api {
         this.estimateTime = task.estimate_time ? task.estimate_time : null;
         this.time = task.time;
         this.isActive = task.is_active;
-        task.steps.forEach((step) => {
-            this.steps.push(new Step(step));
-        });
+        if (Array.isArray(task.steps)) {
+            task.steps.forEach((step) => {
+                this.steps.push(new Step(step));
+            });
+        }
         task.tags.forEach((tag) => {
             this.tags.push(new Tag(tag));
         });
