@@ -163,7 +163,7 @@ export class InMemoryDataService implements InMemoryDbService {
     }
 
     post(reqInfo: RequestInfo) {
-        if (reqInfo.url.includes('login')) {
+        if (reqInfo.url.includes('api-token-auth')) {
             return this.postLoginUser(reqInfo);
         } else if (reqInfo.url.includes('check_email')) {
             return this.postCheckEmail(reqInfo);

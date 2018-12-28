@@ -1,6 +1,6 @@
 {
   "name": "tickist",
-  "version": "0.5.1",
+  "version": "1.0.0-beta.0",
   "license": "GPLv3",
   "angular-cli": {},
   "scripts": {
@@ -14,7 +14,7 @@
     "ci": "npm run test_ci && npm run e2e",
     "test": "jest",
     "lint": "ng lint",
-    "e2e": "ng e2e --port 4201 --env e2e"
+    "e2e": "ng e2e --port 4201"
   },
   "private": true,
   "dependencies": {

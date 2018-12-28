@@ -1,4 +1,5 @@
 import {Location} from '@angular/common';
+import 'jasmine';
 
 export class MockLocation {
     back: any;

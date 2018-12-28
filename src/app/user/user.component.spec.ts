@@ -7,7 +7,7 @@ import {UserComponent} from './user.component';
 import {TickistSharedModule} from '../shared/shared.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MockUserService} from '../testing/mocks/userService';
-import {locationStub, MockLocation} from '../testing/mocks/location';
+import {MockLocation} from '../testing/mocks/location';
 
 let comp: UserComponent;
 let fixture: ComponentFixture<UserComponent>;
