@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatDialogConfig} from '@angular/material';
 import {SortByDialogComponent} from '../sort-tasks-dialog/sort-tasks.dialog.component';
 import {TasksFiltersService} from '../../services/tasks-filters.service';
 
@@ -17,10 +17,7 @@ export class SortTasksComponent implements OnInit {
 
 
     openSortByDialog() {
-        const dialogRef = this.dialog.open(SortByDialogComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('aaa');
-        });
+        const dialogRef = this.dialog.open(SortByDialogComponent, <MatDialogConfig> {'height': '350px', 'width': '300px'});
     }
 
 

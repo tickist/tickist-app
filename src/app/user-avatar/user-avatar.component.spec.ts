@@ -19,7 +19,14 @@ describe('UserAvatarComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(UserAvatarComponent);
         component = fixture.componentInstance;
-        component.user =  new SimpleUser({id: '1', 'username': 'test'});
+        component.user =  new SimpleUser({
+            id: 1,
+            username: 'test',
+            email: 'test@tickist.com',
+            avatar: 'avatar',
+            avatar_url: '',
+            share_with: []
+        });
         fixture.detectChanges();
     });
 

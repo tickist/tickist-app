@@ -7,7 +7,7 @@ import {TickistSharedModule} from '../shared/shared.module';
 import {SortTasksComponent} from './sort-tasks/sort-tasks.component';
 import {SortByDialogComponent} from './sort-tasks-dialog/sort-tasks.dialog.component';
 import {EstimateTimeDialogComponent} from './estimate-time-dialog/estimate-time-dialog.component';
-import {AssignedToDialogComponent} from './assigned-to-dialog/assigned-to-dialog.component';
+import {AssignedToDialogComponent} from './assigned-to-dialog/assigned-to.dialog.component';
 import {FilterTasksComponent} from './filter-tasks/filter-tasks.component';
 import {TagsFilterDialogComponent} from './tags-filter-dialog/tags-filter-dialog.component';
 import {TasksFilterDialogComponent} from './tasks-filter-dialog/tasks-filter-dialog.component';

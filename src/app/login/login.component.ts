@@ -41,7 +41,6 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit(values: any) {
-        console.log(values);
         this.userService.login(values).subscribe(
             (response) => { // on sucesss
                 this.router.navigate(['home']);

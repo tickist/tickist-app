@@ -1,11 +1,11 @@
 import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {TaskService} from '../../services/task.service';
 import {TasksFiltersService} from '../../services/tasks-filters.service';
 
 
 @Component({
     selector: 'task-estimate-time-filter-dialog',
+    styleUrls: ['./estimate-time-dialog.component.scss'],
     templateUrl: './task-estimate-time-filter-dialog.html'
 })
 export class EstimateTimeDialogComponent {
@@ -18,8 +18,7 @@ export class EstimateTimeDialogComponent {
     estimateTime__gtValue: any = {};
     estimateTime__gtId: number;
 
-    constructor(public dialogRef: MatDialogRef<EstimateTimeDialogComponent>, public taskService: TaskService,
-                private tasksFiltersService: TasksFiltersService) {
+    constructor(public dialogRef: MatDialogRef<EstimateTimeDialogComponent>, private tasksFiltersService: TasksFiltersService) {
         this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
 
             if (filters.length > 0) {

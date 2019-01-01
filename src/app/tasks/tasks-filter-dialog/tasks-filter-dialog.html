@@ -1,7 +1,7 @@
 <h1 mat-dialog-title><span>Filter by status</span></h1>
 <mat-dialog-content>
 
-    <mat-radio-group (change)="changeFilter($event)" [(ngModel)]="filterValueId" fxLayout="column">
+    <mat-radio-group  class="radio-group" (change)="changeFilter($event)" [(ngModel)]="filterValueId" fxLayout="column">
         <mat-radio-button *ngFor="let o of filterValues" [value]="o.id">
             <span>{{ o.name }}</span>
         </mat-radio-button>

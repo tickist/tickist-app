@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {TaskService} from '../../services/task.service';
 import {TasksFiltersService} from '../../services/tasks-filters.service';
 
 
 @Component({
     selector: 'assigned-to-dialog',
-    templateUrl: './assigned-to-dialog.html'
+    styleUrls: ['./assigned-to.dialog.component.scss'],
+    templateUrl: './assigned-to.dialog.component.html'
 })
 export class AssignedToDialogComponent {
 
@@ -14,8 +14,7 @@ export class AssignedToDialogComponent {
     assignedToValue: any = {};
     assignedToValueId: number;
 
-    constructor(public dialogRef: MatDialogRef<AssignedToDialogComponent>, public taskService: TaskService,
-                private tasksFiltersService: TasksFiltersService) {
+    constructor(public dialogRef: MatDialogRef<AssignedToDialogComponent>, private tasksFiltersService: TasksFiltersService) {
         this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
                 this.assignedToValue = filters.filter(filter => filter.label === 'assignedTo')[0];

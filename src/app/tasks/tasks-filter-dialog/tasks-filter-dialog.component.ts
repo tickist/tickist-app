@@ -1,19 +1,18 @@
 import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {TaskService} from '../../services/task.service';
 import {TasksFiltersService} from '../../services/tasks-filters.service';
 
 @Component({
     selector: 'tasks-filter-dialog',
-    templateUrl: '../tasks-filter-dialog/tasks-filter-dialog.html'
+    styleUrls: ['./tasks-filter-dialog.component.scss'],
+    templateUrl: './tasks-filter-dialog.html'
 })
 export class TasksFilterDialogComponent {
-
     filterValues: any = [];
     filterValue: any = {};
     filterValueId: number;
 
-    constructor(public dialogRef: MatDialogRef<TasksFilterDialogComponent>, public taskService: TaskService, private tasksFiltersService: TasksFiltersService) {
+    constructor(public dialogRef: MatDialogRef<TasksFilterDialogComponent>,  private tasksFiltersService: TasksFiltersService) {
         this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
 
             if (filters.length > 0) {

@@ -3,8 +3,8 @@ import {TasksFiltersService} from '../../services/tasks-filters.service';
 import {TagsFilterDialogComponent} from '../tags-filter-dialog/tags-filter-dialog.component';
 import {EstimateTimeDialogComponent} from '../estimate-time-dialog/estimate-time-dialog.component';
 import {TasksFilterDialogComponent} from '../tasks-filter-dialog/tasks-filter-dialog.component';
-import {AssignedToDialogComponent} from '../assigned-to-dialog/assigned-to-dialog.component';
-import {MatDialog} from '@angular/material';
+import {AssignedToDialogComponent} from '../assigned-to-dialog/assigned-to.dialog.component';
+import {MatDialog, MatDialogConfig} from '@angular/material';
 
 
 @Component({
@@ -19,39 +19,26 @@ export class FilterTasksComponent implements OnInit {
     estimateTime__ltValue: any = {};
     estimateTime__gtValue: any = {};
     tagsFilterValue: any = {};
+    matDialogConfig: MatDialogConfig;
 
     constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService) {
+        this.matDialogConfig = {'height': '350px', 'width': '300px'};
     }
 
     openTasksFilterDialog() {
-        const dialogRef = this.dialog.open(TasksFilterDialogComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('aaa');
-        });
+        const dialogRef = this.dialog.open(TasksFilterDialogComponent, this.matDialogConfig);
     }
 
     openAssignedToDialog() {
-        const dialogRef = this.dialog.open(AssignedToDialogComponent, {
-            height: '400px',
-            width: '300px',
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('aaa');
-        });
+        const dialogRef = this.dialog.open(AssignedToDialogComponent, this.matDialogConfig);
     }
 
     openTagsFilterDialog() {
-        const dialogRef = this.dialog.open(TagsFilterDialogComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('aaa');
-        });
+        const dialogRef = this.dialog.open(TagsFilterDialogComponent, this.matDialogConfig);
     }
 
     openEstimateTimeDialog() {
-        const dialogRef = this.dialog.open(EstimateTimeDialogComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('aaa');
-        });
+        const dialogRef = this.dialog.open(EstimateTimeDialogComponent, this.matDialogConfig);
     }
 
     ngOnInit() {

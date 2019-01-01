@@ -15,11 +15,11 @@ export class TagsFilterDialogComponent {
     tagsFilterValueId: any;
     tags: Tag[] = [];
 
-    constructor(public dialogRef: MatDialogRef<TagsFilterDialogComponent>, public taskService: TaskService,
-                public tagService: TagService, private tasksFiltersService: TasksFiltersService) {
+    constructor(public dialogRef: MatDialogRef<TagsFilterDialogComponent>, public tagService: TagService,
+                private tasksFiltersService: TasksFiltersService) {
         this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
             if (filters.length > 0) {
-                this.tagsFilterValue = filters.filter(filter => filter.label == 'tags')[0];
+                this.tagsFilterValue = filters.filter(filter => filter.label === 'tags')[0];
                 this.tagsFilterValueId = this.tagsFilterValue['id'];
             }
         });

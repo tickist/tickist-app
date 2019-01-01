@@ -1,20 +1,19 @@
 import {Component} from '@angular/core';
-import {TaskService} from '../../services/task.service';
 import {MatDialogRef} from '@angular/material';
 import {TasksFiltersService} from '../../services/tasks-filters.service';
 
 
 @Component({
     selector: 'sort-by-dialog',
-    templateUrl: './sort-tasks.dialog.component.html'
+    templateUrl: './sort-tasks.dialog.component.html',
+    styleUrls: ['./sort-tasks.dialog.component.scss']
 })
 export class SortByDialogComponent {
     sortingByValues: any = [];
     sortingByValue: any = {};
     sortingByValueId: number;
 
-    constructor(public dialogRef: MatDialogRef<SortByDialogComponent>,
-                public taskService: TaskService,
+    constructor(private dialogRef: MatDialogRef<SortByDialogComponent>,
                 private tasksFiltersService: TasksFiltersService) {
         this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
 
