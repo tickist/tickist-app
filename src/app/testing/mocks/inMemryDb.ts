@@ -10,11 +10,13 @@ import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import * as moment from 'moment';
 import * as _ from 'lodash';
+import {IProjectApi} from '../../models/project-api.interface';
 
 
 const NUMBERS_OF_USERS = 4;
 const MAIN_USER_ID = 1;
 const TAKEN_EMAIL = 'bill@tickist.com';
+const INBOX_ID = 1;
 
 
 export class InMemoryDataService implements InMemoryDbService {
@@ -138,6 +140,8 @@ export class InMemoryDataService implements InMemoryDbService {
             }]
         }];
         // createInbox;
+        const inbox = projects.find((project: IProjectApi) => project.id === INBOX_ID );
+        inbox.is_inbox = true;
         // @TODO add function to create inbox
 
         return {

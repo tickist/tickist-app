@@ -94,15 +94,25 @@ describe('Registration Page', () => {
 
 
 describe('Tasks list', () => {
-    let page: ProjectsPage;
+    let projects: ProjectsPage;
+    let dashboard: DashboardPage;
 
     beforeEach(async () => {
-        page = new ProjectsPage();
-        await page.navigateTo();
+        projects = new ProjectsPage();
+        dashboard = new DashboardPage();
+        await dashboard.navigateTo();
         TickistStorage.setDummyUserData();
+        await dashboard.navigateTo();
     });
 
     it('should click on pin icon and add task to today\'s task list', async () => {
-
+        await expect(element(by.tagName('tickist-today')).element(by.className('pinned')).isPresent()).toBeFalsy();
+        await dashboard.menuPage.clickOnProjects();
+        const listOfTasks = await projects.tasksPage.getListOfTasks();
+        const task = listOfTasks[0];
+        await browser.actions().mouseMove(task.element(by.tagName('tickist-right-menu'))).perform();
+        await task.element(by.tagName('tickist-pin-button')).click();
+        await projects.menuPage.clickOnDashboard();
+        await expect(element(by.tagName('tickist-today')).element(by.className('pinned')).isPresent()).toBeTruthy();
     });
 });

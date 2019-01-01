@@ -4,5 +4,5 @@ export const environment: IEnvironment = {
     production: false,
     apiUrl: 'http://localhost:8000/api',
     staticUrl: 'http://localhost:8000',
-    e2eTest: false
+    e2eTest: true
 };
