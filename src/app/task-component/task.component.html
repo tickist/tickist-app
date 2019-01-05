@@ -7,10 +7,10 @@
         <form *ngIf="taskForm" (keydown.enter)="$event.preventDefault()" [formGroup]="taskForm" novalidate
               (ngSubmit)="onSubmit(taskForm.value)" fxLayout="column"
               fxLayoutAlign="center none">
-            <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
+            <div fxFlex="30px"><span class="close" (click)="close()"><i class="fa fa-times pointer"
                                                                  aria-hidden="true"></i></span>
             </div>
-            <div fxLayout="row" >
+            <div fxFlex=380px fxLayout="row" >
                 <div fxFlex="30%" class="left-menu">
                     <mat-list>
                         <mat-list-item (click)="changeActiveItemInMenu('main')"
@@ -54,7 +54,7 @@
                             <p [fxHide.xs]="1"><span>Notifications</span></p>
                         </mat-list-item>
                     </mat-list>
-                    
+
                 </div>
                 <div fxFlex="68%" class="right-menu">
                     <div [hidden]="!checkActiveItemInMenu('main')" formGroupName="main">
@@ -223,7 +223,7 @@
                     </div>
 
                     <div [hidden]="!checkActiveItemInMenu('steps')" formArrayName="steps">
-                        <div>
+                        <div fxLayout="column">
                             <ul id="steps" [sortablejs]="taskForm.controls.steps" fxLayout="column">
                                 <li class="step" fxFlex
                                     *ngFor="let step of taskForm.controls.steps.controls; let i=index; let last = last"
@@ -239,9 +239,11 @@
                                 </li>
 
                             </ul>
-                            <button mat-button type="button" (click)="addNewStep()">
-                                Add new step
-                            </button>
+                            <div fxLayout="row" fxLayoutAlign="end center">
+                                <button id="add-step" mat-button type="button" class="button" (click)="addNewStep()">
+                                    Add new step
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -290,7 +292,7 @@
                 </div>
             </div>
 
-            <div fxLayout="row" fxLayoutAlign="end none">
+            <div fxFlex=30px fxLayout="row" fxLayoutAlign="end center">
                 <button type="submit" mat-button class="button">Save</button>
 
                 <button type="button" mat-button class="button" *ngIf="!isNewTask()"

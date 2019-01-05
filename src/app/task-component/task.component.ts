@@ -24,6 +24,7 @@ import {KEY_CODE} from '../shared/keymap';
 import { map, startWith } from 'rxjs/operators';
 import {Step} from '../models/steps';
 import {MyErrorStateMatcher} from '../shared/error-state-matcher';
+import {ITaskApi} from '../models/task-api.interface';
 
 @Component({
     selector: 'app-task-component',
@@ -311,7 +312,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         if (isTypeFinishDateOptionsDefined) {
             defaultTypeFinishDate = selectedProject.defaultTypeFinishDate;
         }
-        const task = new Task({
+        const task = new Task(<ITaskApi> {
             'name': '',
             'priority': selectedProject.defaultPriority,
             'description': '',
@@ -452,9 +453,6 @@ export class TaskComponent implements OnInit, OnDestroy {
             this.taskForm.markAsTouched();
             Object.keys(this.taskForm.controls).forEach((controlName) => {
                 this.taskForm.controls[controlName].markAsTouched();
-                // Object.keys(<FormGroup>this.taskForm.controls[controlName].controls).forEach((cN) => {
-                //   <FormGroup>this.taskForm.controls[controlName].controls[cN].markAsTouched();
-                // })
             });
         }
 
