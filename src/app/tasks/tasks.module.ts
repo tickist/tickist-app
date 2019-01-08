@@ -13,6 +13,7 @@ import {TagsFilterDialogComponent} from './tags-filter-dialog/tags-filter-dialog
 import {TasksFilterDialogComponent} from './tasks-filter-dialog/tasks-filter-dialog.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SliderModule} from 'primeng/primeng';
+import { NoTasksComponent } from './no-tasks/no-tasks.component';
 
 @NgModule({
     imports: [
@@ -25,7 +26,7 @@ import {SliderModule} from 'primeng/primeng';
         SliderModule
     ],
     declarations: [SortTasksComponent, SortByDialogComponent, EstimateTimeDialogComponent, AssignedToDialogComponent, FilterTasksComponent,
-        TagsFilterDialogComponent, TasksFilterDialogComponent ],
+        TagsFilterDialogComponent, TasksFilterDialogComponent, NoTasksComponent ],
     providers: [
 
     ],
@@ -33,7 +34,7 @@ import {SliderModule} from 'primeng/primeng';
         TagsFilterDialogComponent, TasksFilterDialogComponent
     ],
     exports: [
-        SortTasksComponent, FilterTasksComponent
+        SortTasksComponent, FilterTasksComponent, NoTasksComponent
     ]
 })
 export class TickistTasksModule { }

@@ -3,11 +3,11 @@ import {TaskService} from '../services/task.service';
 import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../services/user.service';
 import {ProjectService} from '../services/project.service';
-import {Observable, Subject, combineLatest } from 'rxjs';
+import {Observable, Subject, combineLatest} from 'rxjs';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
 import {User} from '../models/user';
-import { map, takeUntil } from 'rxjs/operators';
+import {map, takeUntil} from 'rxjs/operators';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {ConfigurationService} from '../services/configuration.service';
 
@@ -47,9 +47,9 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     task_simple_view_value: string;
     task_extended_view_value: string;
 
-    constructor(protected taskService: TaskService, private route: ActivatedRoute, protected userService: UserService,
+    constructor(private taskService: TaskService, private route: ActivatedRoute, private userService: UserService,
                 private projectService: ProjectService, private cd: ChangeDetectorRef, private configurationService: ConfigurationService,
-                protected tasksFiltersService: TasksFiltersService ) {
+                private tasksFiltersService: TasksFiltersService) {
     }
 
     ngOnInit() {
@@ -58,17 +58,24 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
             this.projectService.selectedProjectsIds$,
-            this.tasksFiltersService.currentTasksFilters$,
-            (tasks: Task[], selectedProjectsIds: Array<number>, currentTasksFilters: any) => {
-                if (tasks && currentTasksFilters && currentTasksFilters.length > 0) {
-                    if (selectedProjectsIds) {
-                        tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));
-                    }
-                    tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
-                }
-                return tasks;
-            }
+            this.tasksFiltersService.currentTasksFilters$
         );
+        this.tasksStream$.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(([tasks, selectedProjectsIds, currentTasksFilters]) => {
+            if (tasks && currentTasksFilters && currentTasksFilters.length > 0) {
+                if (selectedProjectsIds) {
+                    tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));
+                }
+                tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
+            }
+            if (tasks && tasks.length > 0) {
+                this.tasks = tasks;
+                this.cd.markForCheck(); // marks path
+            } else {
+                this.tasks = [];
+            }
+        });
         this.selectedProjectsStream$ = combineLatest(
             this.route.params.pipe(map(params => params['projectId'])),
             this.projectService.projects$,
@@ -101,14 +108,6 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                     this.tasksListHeightFlex = this.TASKS_LIST_HEIGHT_WITH_PROJECT_DESCRIPTION_FLEX;
                     this.projectHeaderHeightFlex = this.PROJECT_HEADER_WITH_DESCRIPTION_HEIGHT_FLEX;
                 }
-            }
-        });
-        this.tasksStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(tasks => {
-            if (tasks && tasks.length > 0) {
-                this.tasks = tasks;
-                this.cd.markForCheck(); // marks path
-            } else {
-                this.tasks = [];
             }
         });
     }

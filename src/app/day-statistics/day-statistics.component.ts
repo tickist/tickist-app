@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {StatisticsService} from '../services/statistics.service';
 import {ConfigurationService} from '../services/configuration.service';
-import * as moment from 'moment';
 import {Subscription} from 'rxjs';
 import * as _ from 'lodash';
 import {IActiveDateElement} from '../models/active-data-element.interface';
@@ -79,7 +78,7 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
         });
         this.subscriptions.add(this.configurationService.activeDateElement$.subscribe((activeDateElement) => {
             this.activeDateElement = activeDateElement;
-            //this.statisticsService.loadDailyStatistics(this.activeDay);
+            // this.statisticsService.loadDailyStatistics(this.activeDay);
         }));
 
         this.nextChart = (() => {
@@ -153,12 +152,11 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                         }
                     },
                     callbacks: {
-                        'label': function (tooltipItem, data) {
+                        'label': function (tooltipItem, chartData) {
                             const index = tooltipItem.index,
-                                label = data.datasets[0].labels[index],
-                                tasksCounter = data.datasets[0].data[index];
+                                label = chartData.datasets[0].labels[index],
+                                tasksCounter = chartData.datasets[0].data[index];
                             return `Priority ${label} (${tasksCounter} tasks)`;
-
                         }
                     }
                 },
@@ -207,17 +205,16 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                         }
                     },
                     callbacks: {
-                        'label': function (tooltipItem, data) {
+                        'label': function (tooltipItem, chartData) {
                             const index = tooltipItem.index,
-                                label = data.datasets[0].labels[index],
-                                tasksCounter = data.datasets[0].data[index];
+                                label = chartData.datasets[0].labels[index],
+                                tasksCounter = chartData.datasets[0].data[index];
                             return `${label} (${tasksCounter} tasks)`;
                         }
                     }
                 },
                 hover: {
                     onHover: function () {
-                        //debugger;
                     }
                 }
 
@@ -267,10 +264,10 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                         }
                     },
                     callbacks: {
-                        'label': function (tooltipItem, data) {
+                        'label': function (tooltipItem, chartData) {
                             const index = tooltipItem.index,
-                                label = data.datasets[0].labels[index],
-                                tasksCounter = data.datasets[0].data[index];
+                                label = chartData.datasets[0].labels[index],
+                                tasksCounter = chartData.datasets[0].data[index];
                             return `${label} (${tasksCounter} tasks)`;
 
                         }
@@ -278,7 +275,6 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
                 },
                 hover: {
                     onHover: function () {
-                        //debugger;
                     }
                 }
 
@@ -289,7 +285,7 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
     generateLegendTagsTasksCounterChartData() {
         const legend = [];
         this.dayStatistics.tags.forEach((tag) => {
-            legend.push({'name': tag.name, 'color':tag.color});
+            legend.push({'name': tag.name, 'color': tag.color});
         });
         return legend;
     }

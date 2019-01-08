@@ -17,7 +17,7 @@ let task: Task;
 let taskFromApi;
 
 describe('EditDateOptionsComponent', () => {
-    
+
     beforeEach(async(() => {
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
@@ -34,24 +34,24 @@ describe('EditDateOptionsComponent', () => {
             comp = fixture.componentInstance;
         });
     }));
-    
+
     afterEach(() => {
         fixture = null;
         comp = null;
         taskFromApi = null;
     });
-    
+
     it('should be created', () => {
         comp.task = new Task(taskFromApi);
         fixture.detectChanges();
         expect(comp).toBeTruthy();
     });
-    
+
     it('should throw an exception', () => {
         comp.task = null;
         expect(() => comp.ngOnInit()).toThrowError(`Attribute 'task' is required`);
     });
-    
+
     describe('ngOnChanges', () => {
         it('should  set variables correctly depends on task properties (repeatDelta == 1)', () => {
             task = new Task(taskFromApi);

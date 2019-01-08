@@ -1,12 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 
-class Legend {
-    constructor() {
-        
-    }
-}
-
-
 @Component({
     selector: 'tickist-chart-legend',
     templateUrl: './chart-legend.component.html',
@@ -21,7 +14,7 @@ export class ChartLegendComponent implements OnInit {
 
     ngOnInit() {
     }
-    
+
     changeLegendVisibility() {
         this.isLegendVisible = !this.isLegendVisible;
     }

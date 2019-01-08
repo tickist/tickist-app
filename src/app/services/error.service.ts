@@ -6,7 +6,7 @@ import {ConfigurationService} from './configuration.service';
 
 @Injectable()
 export class ErrorService {
-    constructor(private http: HttpClient, protected configurationService: ConfigurationService) {
+    constructor(private http: HttpClient, private configurationService: ConfigurationService) {
     }
 
     logError(error: Error, location, user): void {

@@ -63,7 +63,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
                 this.cd.detectChanges();
             }
         });
-        
+
         this.route.params
             .pipe(map(params => params['date']))
             .pipe(takeUntil(this.ngUnsubscribe))
@@ -78,7 +78,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
     }
 
     changeTaskView(event): void {
-        if (!event) {return};
+        if (!event) return;
         this.taskView = event;
         if (this.user.defaultTaskViewFutureView !== event) {
             this.user.defaultTaskViewFutureView = event;

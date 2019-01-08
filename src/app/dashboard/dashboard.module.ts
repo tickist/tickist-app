@@ -15,10 +15,11 @@ import {DaysWeeksYearListComponent} from './days-weeks-year-list/days-weeks-year
 import {TickistSingleTaskModule} from '../single-task/single-task.module';
 import {WeekDaysComponent} from './weekdays/weekdays.component';
 import {TickistStatisticsModule} from '../statistics/statistics.module';
+import {TickistTasksModule} from '../tasks/tasks.module';
 
 @NgModule({
     imports: [ CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistSharedModule, TickistSingleTaskModule, TickistStatisticsModule],
+        ReactiveFormsModule, TickistSharedModule, TickistSingleTaskModule, TickistStatisticsModule, TickistTasksModule],
     providers: [
     ],
     exports: [DashboardComponent, FutureTasksComponent],

@@ -13,7 +13,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     team: SimpleUser[];
     staticUrl: string;
 
-    constructor(protected projectService: ProjectService, protected configurationService: ConfigurationService) {
+    constructor(private projectService: ProjectService, private configurationService: ConfigurationService) {
     }
 
     ngOnInit() {

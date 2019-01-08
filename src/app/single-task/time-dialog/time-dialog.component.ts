@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {FormGroup, FormBuilder} from '@angular/forms';
+import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
 import {Task} from '../../models/tasks';
 import {MAT_DIALOG_DATA} from '@angular/material';
 
@@ -12,8 +12,7 @@ export class TimeDialogComponent {
     timeForm: FormGroup;
     task: Task;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<TimeDialogComponent>,
-                protected fb: FormBuilder) {
+    constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<TimeDialogComponent>) {
         this.task = data.task;
         this.timeForm = this.createForm();
     }
@@ -24,14 +23,14 @@ export class TimeDialogComponent {
 
     createForm() {
         if (this.task) {
-            return this.fb.group({
-                'estimateTime': [this.task.estimateTime],
-                'realTime': [this.task.time],
+            return  new FormGroup({
+                'estimateTime': new FormControl(this.task.estimateTime),
+                'realTime': new FormControl(this.task.time),
             });
         } else {
-            return this.fb.group({
-                'estimateTime': [],
-                'realTime': [],
+            return new FormGroup({
+                'estimateTime': new FormControl(),
+                'realTime': new FormControl(),
             });
         }
     }

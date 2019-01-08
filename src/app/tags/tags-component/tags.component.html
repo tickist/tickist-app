@@ -17,5 +17,6 @@
                      *cdkVirtualFor="let task of tasks;trackBy: trackByFn">
 
     </tickist-single-task>
+    <tickist-no-tasks [tasksLength]="tasks.length"></tickist-no-tasks>
 
 </cdk-virtual-scroll-viewport>

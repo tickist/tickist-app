@@ -1,4 +1,3 @@
-
 import {throwError as observableThrowError, Observable} from 'rxjs';
 
 import {
@@ -6,16 +5,16 @@ import {
   HttpRequest,
   HttpHandler,
   HttpErrorResponse, HttpEvent
-} from "@angular/common/http";
+} from '@angular/common/http';
 
 
 
 
 
 
-import {ConfigurationService} from "./services/configuration.service";
-import {Router, RouterState, RouterStateSnapshot} from "@angular/router";
-import {Injectable} from "@angular/core";
+import {ConfigurationService} from './services/configuration.service';
+import {Router, RouterState, RouterStateSnapshot} from '@angular/router';
+import {Injectable} from '@angular/core';
 import {catchError} from 'rxjs/operators';
 
 
@@ -40,18 +39,19 @@ export class RequestInterceptorService implements HttpInterceptor {
               if (this.snapshot.url !== '/login') {
                 this.router.navigate(['login']);
               }
-              console.log('The authentication session expires or the user is not authorised. Force remove token and username from localstorage.');
+              console.log('The authentication session expires or the user is not authorised. ' +
+                  'Force remove token and username from localstorage.');
               localStorage.removeItem('JWT');
               localStorage.removeItem('USERNAME');
             }
             if (status === 0) {
                 this.configurationService.updateDetectApiError(true);
             }
-            //if (status >= 401) {
+            // if (status >= 401) {
             //  this.configurationService.updateDetectApiError(true);
-            //} else {
+            // } else {
             //  this.configurationService.updateDetectApiError(false);
-            //}
+            // }
 
             return observableThrowError(error);
           }

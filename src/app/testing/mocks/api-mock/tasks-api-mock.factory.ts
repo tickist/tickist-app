@@ -18,7 +18,7 @@ export class TasksApiMockFactory {
         }
         return task;
     }
-    
+
     constructor() {
 
     }
@@ -26,8 +26,8 @@ export class TasksApiMockFactory {
     createTasksDict(owner: IUserApi, author: IUserApi, project: IProjectApi, tags: ITagApi[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createTaskDict(owner, author, project, tags));
     }
-    
-    
+
+
 
     createTaskDict(owner: IUserApi, author: IUserApi, project: IProjectApi, tags: ITagApi[]): ITaskApi {
         this.id += 1;

@@ -1,0 +1,10 @@
+@import "../../shared/variables";
+
+:host {
+    padding: 16px;
+    display: flex;
+    background: $background_card_color;
+    span {
+        font-size: 14px;
+    }
+}

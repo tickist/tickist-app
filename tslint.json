@@ -2,6 +2,9 @@
     "rulesDirectory": [
         "node_modules/codelyzer"
     ],
+    "extends": [
+        "rxjs-tslint-rules"
+    ],
     "rules": {
         "arrow-return-shorthand": true,
         "callable-types": true,
@@ -127,5 +130,8 @@
         "component-class-suffix": true,
         "directive-class-suffix": true,
         "no-default-export": true
-    }
+    },
+    "rxjs-add": { "severity": "error" },
+    "rxjs-no-unused-add": { "severity": "error" },
+    "rxjs-no-unsafe-switchmap": { "severity": "error" } // https://blog.angularindepth.com/switchmap-bugs-b6de69155524
 }

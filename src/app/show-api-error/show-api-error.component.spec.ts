@@ -6,9 +6,9 @@ import {APP_BASE_HREF} from '@angular/common';
 
 describe('ShowApiErrorComponent', () => {
     let component: ShowApiErrorComponent;
-    let fixture: ComponentFixture<ShowApiErrorComponent>;
+    let fixture: ComponentFixture<ShowApiErrorComponent>;``
     const configurationService = new MockConfigurationService();
-    
+
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ShowApiErrorComponent],
@@ -22,7 +22,7 @@ describe('ShowApiErrorComponent', () => {
         });
     }));
 
-    
+
     it('should create', () => {
         expect(component).toBeTruthy();
     });

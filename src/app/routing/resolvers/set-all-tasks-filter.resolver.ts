@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
 
 @Injectable()
 export class SetAllTasksFilterResolver implements Resolve<Project> {
-    constructor(protected tasksFiltersService: TasksFiltersService) {
+    constructor(private tasksFiltersService: TasksFiltersService) {
     }
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {

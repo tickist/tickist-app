@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subscription, combineLatest} from 'rxjs';
-
 import {TagService} from '../../services/tag.service';
 import {Tag} from '../../models/tags';
 import {Task} from '../../models/tasks';
@@ -28,8 +27,8 @@ export class TagsComponent implements OnInit, OnDestroy {
     rightSidenavVisibility: SideNavVisibility;
     subscriptions: Subscription;
 
-    constructor(private tagService: TagService, private  taskService: TaskService, protected tasksFiltersService: TasksFiltersService,
-                protected userService: UserService, protected configurationService: ConfigurationService) {
+    constructor(private tagService: TagService, private  taskService: TaskService, private tasksFiltersService: TasksFiltersService,
+                private userService: UserService, private configurationService: ConfigurationService) {
 
     }
 

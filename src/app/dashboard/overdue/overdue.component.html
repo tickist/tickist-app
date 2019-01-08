@@ -10,5 +10,5 @@
                  *ngFor="let task of tasks;trackBy: trackByFn">
 
 </tickist-single-task>
+<tickist-no-tasks [tasksLength]="tasks.length"></tickist-no-tasks>
 
-<!--<app-tasks-list [tasks]="tasks" [taskView]="taskView" [virtualScrollEnabled]="false"></app-tasks-list>-->

@@ -8,14 +8,13 @@ export class MockFutureTasksFiltersService extends SpyObject {
     responseSuccess: boolean;
     currentFutureTasksFilters$: any;
     futureTasksFilters$: any;
-    
+
     constructor() {
         super(FutureTasksFiltersService);
         this.fakeResponse = null;
         this.responseSuccess = true;
         this.currentFutureTasksFilters$ = of([]);
         this.futureTasksFilters$ = of([]);
-        
     }
 
     subscribe(success, error) {

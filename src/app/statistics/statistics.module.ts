@@ -14,7 +14,7 @@ import {TickistSharedModule} from '../shared/shared.module';
     providers: [
     ],
     exports: [DayStatisticsComponent, GlobalStatisticsComponent],
-    declarations: [DayStatisticsComponent,  ChartLegendComponent, GlobalStatisticsComponent,]
+    declarations: [DayStatisticsComponent,  ChartLegendComponent, GlobalStatisticsComponent]
 })
 export class TickistStatisticsModule {
 }
