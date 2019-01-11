@@ -14,8 +14,8 @@ export class RightMenuComponent implements OnInit {
     @Output() changeDateClick = new EventEmitter();
     @Output() changePriorityClick = new EventEmitter();
     @Output() togglePinClick = new EventEmitter();
-    @Output() onFastMenuOpen = new EventEmitter();
-    @Output() onFastMenuClose = new EventEmitter();
+    @Output() fastMenuOpen = new EventEmitter();
+    @Output() fastMenuClose = new EventEmitter();
 
     constructor() {
     }
@@ -39,11 +39,11 @@ export class RightMenuComponent implements OnInit {
     }
 
     emitOnMenuClose($event) {
-        this.onFastMenuClose.emit(false);
+        this.fastMenuClose.emit(false);
     }
 
     emitOnMenuOpen() {
-        this.onFastMenuOpen.emit(true);
+        this.fastMenuOpen.emit(true);
     }
 
     emitTogglePinClickEvent() {

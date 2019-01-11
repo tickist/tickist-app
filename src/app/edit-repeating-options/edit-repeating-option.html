@@ -29,7 +29,7 @@
     <div [hidden]="repeatDefault == 0">
         <span>From:</span>
         <mat-radio-group  [ngStyle]="{'margin-top': '5px'}" [value]="fromRepeating" fxLayout="column" (change)="saveTask($event, 'fromRepeating')">
-            <mat-radio-button *ngFor="let option of fromRepetingOptions" [value]="option.id">
+            <mat-radio-button *ngFor="let option of fromRepeatingOptions" [value]="option.id">
                 {{ option.name }}
             </mat-radio-button>
         </mat-radio-group>

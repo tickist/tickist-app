@@ -43,7 +43,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.rightSidenavVisibility = new SideNavVisibility({'open': true, 'mode': '', 'position': 'end'});
 
         this.media.subscribe((change: MediaChange) => {
-            console.log(change)
             this.configurationService.updateLeftSidenavVisibility();
             this.configurationService.updateRightSidenavVisibility();
             this.cd.detectChanges();

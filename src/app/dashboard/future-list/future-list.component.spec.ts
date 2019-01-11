@@ -23,7 +23,7 @@ describe('FutureListComponent', () => {
         const userService = new MockUserService();
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
-        
+
         TestBed.configureTestingModule({
             imports: [ RouterModule.forRoot(routes), FormsModule, FlexLayoutModule, TickistMaterialModule, NoopAnimationsModule],
             declarations: [FutureListComponent],

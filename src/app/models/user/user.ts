@@ -83,11 +83,11 @@ export class User extends Api {
         }
 
     }
-    
+
     updateProjectsFilterId(filter) {
         this.projectsFilterId = filter.id;
     }
-    
+
     updateTagsFilterId(filter) {
         this.tagsFilterId = filter.id;
     }
@@ -106,7 +106,7 @@ export class User extends Api {
 
         return result;
     }
-    
+
     convertToSimpleUser(): SimpleUser {
         const userApi = this.toApi();
         const simpleUserApi: ISimpleUserApi = {

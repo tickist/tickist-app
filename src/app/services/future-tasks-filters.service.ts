@@ -45,7 +45,7 @@ export class FutureTasksFiltersService {
     }
 
     loadCurrentFutureTasksFilters() {
-        //const filter = this.filters.find(elem => elem.id === this.user.tagsFilterId);
+        // const filter = this.filters.find(elem => elem.id === this.user.tagsFilterId);
         // @Todo fix it when the filter will be store in database
         this.store.dispatch(new tasksAction.AddCurrentFutureTasksFilters(this.filters[0]));
     }
@@ -55,9 +55,9 @@ export class FutureTasksFiltersService {
     }
 
     updateCurrentFutureTasksFilter(currentFilter) {
-        // @TODO fix it when the filter will be store in database 
-        //this.user.updateTagsFilterId(currentFilter);
-        //this.userService.updateUser(this.user, false);
+        // @TODO fix it when the filter will be store in database
+        // this.user.updateTagsFilterId(currentFilter);
+        // this.userService.updateUser(this.user, false);
         this.store.dispatch(new tasksAction.UpdateCurrentFutureTasksFilters(currentFilter));
     }
 }

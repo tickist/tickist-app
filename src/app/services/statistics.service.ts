@@ -21,10 +21,10 @@ export class StatisticsService {
     activeDateElement: IActiveDateElement;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, private configurationService: ConfigurationService) {
-        this.global$ = this.store.select(store => store.globalStatistics);
-        this.charts$ = this.store.select(store => store.chartsData);
-        this.globalStatisticsDateRage$ = this.store.select(store => store.globalStatisticsDateRage);
-        this.daily$ = this.store.select(store => store.dailyStatistics);
+        this.global$ = this.store.select(s => s.globalStatistics);
+        this.charts$ = this.store.select(s => s.chartsData);
+        this.globalStatisticsDateRage$ = this.store.select(s => s.globalStatisticsDateRage);
+        this.daily$ = this.store.select(s => s.dailyStatistics);
         configurationService.activeDateElement$.subscribe((activeDateElement: IActiveDateElement) => {
             this.loadDailyStatistics(activeDateElement);
             this.activeDateElement = activeDateElement;

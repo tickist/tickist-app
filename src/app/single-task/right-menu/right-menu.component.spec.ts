@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RightMenuComponent} from './right-menu.component';
 import {TickistMaterialModule} from '../../material.module';
 import {Component, Input} from '@angular/core';
-import { MockComponent } from 'ng-mocks';
+import {MockComponent} from 'ng-mocks';
 import {BlankComponent, RootComponent} from '../../testing/test.modules';
 import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
@@ -37,8 +37,14 @@ describe('RightMenuComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, RouterModule.forRoot(routes)],
-            declarations: [RightMenuComponent, MockComponent(PinButtonComponent), MockComponent(MenuButtonComponent), 
-                MockComponent(PriorityComponent), RootComponent, BlankComponent],
+            declarations: [
+                RightMenuComponent,
+                MockComponent(PinButtonComponent),
+                MockComponent(MenuButtonComponent),
+                MockComponent(PriorityComponent),
+                RootComponent,
+                BlankComponent
+            ],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'}
             ]

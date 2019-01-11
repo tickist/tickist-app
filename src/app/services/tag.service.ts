@@ -13,11 +13,9 @@ import {ITagApi} from '../models/tag-api.interface';
 @Injectable()
 export class TagService {
     tags$: Observable<Tag[]>;
-    headers: Headers;
 
     constructor(public http: HttpClient, private store: Store<AppStore>) {
         this.tags$ = this.store.select(s => s.tags);
-
     }
 
     loadTags() {

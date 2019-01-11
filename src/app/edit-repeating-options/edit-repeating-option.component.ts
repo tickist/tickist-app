@@ -12,9 +12,9 @@ import {TaskService} from '../services/task.service';
 })
 export class EditRepeatingOptionComponent implements OnInit {
 
-    defaultRepeatOptions: any; //Array<{}> = [];
-    customRepeatOptions: any; //Array<{}> = [];
-    fromRepetingOptions: any; //Array<{}> = [];
+    defaultRepeatOptions: any; // Array<{}> = [];
+    customRepeatOptions: any; // Array<{}> = [];
+    fromRepeatingOptions: any; // Array<{}> = [];
     repeatDelta: any;
     repeatDefault: any;
     repeatCustom: any;
@@ -30,7 +30,7 @@ export class EditRepeatingOptionComponent implements OnInit {
         }
         this.defaultRepeatOptions = this.configurationService.loadConfiguration()['commons']['DEFAULT_REPEAT_OPTIONS'];
         this.customRepeatOptions = this.configurationService.loadConfiguration()['commons']['CUSTOM_REPEAT_OPTIONS'];
-        this.fromRepetingOptions = this.configurationService.loadConfiguration()['commons']['FROM_REPEATING_OPTIONS'];
+        this.fromRepeatingOptions = this.configurationService.loadConfiguration()['commons']['FROM_REPEATING_OPTIONS'];
 
         if (this.task.hasOwnProperty('repeatDelta') && this.task.repeatDelta > 1) {
             this.repeatDelta = this.task.repeatDelta;
@@ -44,7 +44,6 @@ export class EditRepeatingOptionComponent implements OnInit {
     }
 
     saveTask($event: any, source: string) {
-
         if (source === 'repeatDefault') {
             if ($event.value !== 99) {
                 this.task.repeat = $event.value;

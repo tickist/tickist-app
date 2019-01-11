@@ -35,27 +35,21 @@ export class TagsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.tagsStream$ = combineLatest(
             this.tagService.tags$,
-            this.tasksFiltersService.currentTasksFilters$,
-            (tags: Tag[], currentTasksFilters: any) => {
-                return tags;
-            }
+            this.tasksFiltersService.currentTasksFilters$
         );
         this.tasksStream$ = combineLatest(
             this.taskService.tasks$,
-            this.tasksFiltersService.currentTasksFilters$,
-            (tasks: Task[], currentTasksFilters: any) => {
-                if (currentTasksFilters.length > 0) {
-                    tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
-                }
-                return tasks;
-            }
+            this.tasksFiltersService.currentTasksFilters$
         );
-        this.subscriptions = this.tagsStream$.subscribe((tags) => {
+        this.subscriptions = this.tagsStream$.subscribe(([tags]) => {
             if (tags) {
                 this.tags = tags;
             }
         });
-        this.subscriptions.add(this.tasksStream$.subscribe(((tasks) => {
+        this.subscriptions.add(this.tasksStream$.subscribe((([tasks, currentTasksFilters]) => {
+            if (currentTasksFilters.length > 0) {
+                tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
+            }
             if (tasks) {
                 this.tasks = tasks;
             }

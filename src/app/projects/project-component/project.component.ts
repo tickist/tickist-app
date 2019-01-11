@@ -47,46 +47,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.staticUrl = environment['staticUrl'];
         this.addUserToShareWithListCtrl = new FormControl();
         this.menu = this.createMenuDict();
-        this.stream$ = combineLatest(
-                projectService.projects$,
-                this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
-                this.userService.user$,
-                this.userService.team$,
-                (projects: Project[], projectId, user: User, team: SimpleUser[]) => {
-                    let project: Project;
-                    this.user = user;
-                    this.team = team;
 
-                    if (projects.length > 0 && user) {
-                        this.projectsAncestors = [{id: '', name: ''},
-                            ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
-                        if (projectId) {
-                            project = projects.find(p => p.id === projectId);
-                            this.projectForm = this.createForm(project);
-                        } else {
-                            project = this.createNewProject();
-                            this.projectForm = this.createForm(project);
-                        }
-                        if (this.user.id === project.owner) {
-                            this.deleteOrLeaveProjectLabel = 'Delete project';
-
-                        } else {
-                            this.deleteOrLeaveProjectLabel = 'Leave project';
-                        }
-                        return project;
-                    }
-                }
-            );
-        this.subscription = this.stream$.subscribe(project => {
-            this.project = project;
-
-        });
-        this.addUserToShareWithListCtrl = new FormControl('',
-            Validators.compose([Validators.required, Validators.email]));
-        this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges.pipe(
-            startWith(null),
-            map(name => this.filterUsers(name))
-        );
     }
 
     ngOnInit() {
@@ -97,6 +58,45 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         this.configurationService.changeOpenStateRightSidenavVisibility('close');
         this.configurationService.updateAddTaskComponentVisibility(false);
+
+        this.stream$ = combineLatest(
+            this.projectService.projects$,
+            this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
+            this.userService.user$,
+            this.userService.team$
+        );
+        this.subscription = this.stream$.subscribe(([projects, projectId, user, team]) => {
+            let project: Project;
+            this.user = user;
+            this.team = team;
+
+            if (projects.length > 0 && user) {
+                this.projectsAncestors = [{id: '', name: ''},
+                    ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
+                if (projectId) {
+                    project = projects.find(p => p.id === projectId);
+                    this.projectForm = this.createForm(project);
+                } else {
+                    project = this.createNewProject();
+                    this.projectForm = this.createForm(project);
+                }
+                if (this.user.id === project.owner) {
+                    this.deleteOrLeaveProjectLabel = 'Delete project';
+
+                } else {
+                    this.deleteOrLeaveProjectLabel = 'Leave project';
+                }
+                this.project = project;
+            }
+
+        });
+        this.addUserToShareWithListCtrl = new FormControl('',
+            Validators.compose([Validators.required, Validators.email]));
+        this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges.pipe(
+            startWith(null),
+            map(name => this.filterUsers(name))
+        );
+
     }
 
     ngOnDestroy() {
@@ -115,7 +115,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
     changeActiveItemInMenu(menu_item) {
         // DRY
         for (const key in this.menu) {
-            this.menu[key] = false;
+            if (this.menu.hasOwnProperty(key)) {
+                this.menu[key] = false;
+            }
         }
         this.menu[menu_item] = true;
     }

@@ -127,7 +127,6 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
             });
             nextDay = nextDay.add(1, 'days');
         }
-        console.log(this.week)
     }
 
 }

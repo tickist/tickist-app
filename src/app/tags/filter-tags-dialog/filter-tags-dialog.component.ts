@@ -4,7 +4,7 @@ import {TagsFiltersService} from '../../services/tags-filters.service';
 
 
 @Component({
-    selector: 'tickst-filter-tags-dialog',
+    selector: 'tickist-filter-tags-dialog',
     templateUrl: './filter-tags-dialog.component.html',
     styleUrls: ['./filter-tags-dialog.component.css']
 })
@@ -12,7 +12,6 @@ export class FilterTagsDialogComponent implements OnInit {
     filtersValues: any = [];
     filterValue: any = {};
     filterValueId: number;
-
 
     constructor(public dialogRef: MatDialogRef<FilterTagsDialogComponent>, protected tagsFiltersService: TagsFiltersService) {
     }

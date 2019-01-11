@@ -24,8 +24,8 @@ export class ProjectsFiltersService {
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router, protected userService: UserService) {
-        this.projectsFilters$ = this.store.select(store => store.projectsFilters);
-        this.currentProjectsFilters$ = this.store.select(store => store.currentProjectsFilters);
+        this.projectsFilters$ = this.store.select(s => s.projectsFilters);
+        this.currentProjectsFilters$ = this.store.select(s => s.currentProjectsFilters);
         this.filters = [
             new Filter({
                 'id': 1, 'label': 'filter', 'name': 'All projects',

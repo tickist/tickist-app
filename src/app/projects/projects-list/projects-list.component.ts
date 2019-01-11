@@ -1,6 +1,5 @@
 import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {Router} from '@angular/router';
-
 import {Subject, pipe} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../../services/task.service';
@@ -41,7 +40,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
         this.projectService.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(projects => {
             if (projects) {
                 this.allProjects = projects;
@@ -57,7 +55,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         });
 
         this.projectService.selectedProjectsIds$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((ids) => {
-            console.log('selectedProjectsIds$');
             if (ids && ids.length > 0) {
                 this.selectedProjectsIds = ids;
             }

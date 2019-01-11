@@ -36,18 +36,15 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
             this.taskService.tasks$,
             this.configurationService.activeDateElement$,
             this.userService.user$,
-            this.futureTasksFiltersService.currentFutureTasksFilters$,
-            (tasks: Task[], activeDateElement: IActiveDateElement, user: User, currentFilter: Filter) => {
-                this.activeDateElement = activeDateElement;
-                this.user = user;
-                this.currentFilter = currentFilter;
-                return tasks;
-            }
+            this.futureTasksFiltersService.currentFutureTasksFilters$
         );
     }
 
     ngOnInit(): void {
-        this.stream$.subscribe((tasks) => {
+        this.stream$.subscribe(([tasks, activeDateElement, user, currentFilter]) => {
+            this.activeDateElement = activeDateElement;
+            this.user = user;
+            this.currentFilter = currentFilter;
             if (tasks && tasks.length > 0 && this.user && this.activeDateElement && this.currentFilter) {
                 this.defaultTaskView = this.user.defaultTaskViewFutureView;
                 this.futureTasks = tasks.filter(task => {

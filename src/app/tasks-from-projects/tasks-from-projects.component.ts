@@ -11,19 +11,6 @@ import {map, takeUntil} from 'rxjs/operators';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {ConfigurationService} from '../services/configuration.service';
 
-class Timer {
-    readonly start = performance.now();
-
-    constructor(private readonly name: string) {
-    }
-
-    stop() {
-        const time = performance.now() - this.start;
-        console.log('Timer:', this.name, 'finished in', Math.round(time), 'ms');
-    }
-}
-
-
 @Component({
     selector: 'tickist-tasks-from-projects',
     templateUrl: './tasks-from-projects.component.html',
@@ -79,24 +66,23 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.selectedProjectsStream$ = combineLatest(
             this.route.params.pipe(map(params => params['projectId'])),
             this.projectService.projects$,
-            this.userService.user$,
-            (projectId: any, projects: Project[], user: User) => {
-                this.user = user;
-                if (projectId && projects && projects.length > 0 && user) {
-                    const project = projects.filter(p => p.id === parseInt(projectId, 10))[0];
-                    if (project.hasOwnProperty('allDescendants')) {
-                        this.projectService.selectProjectsIds(project.allDescendants);
-                    }
-                    this.projectService.selectProject(project);
-                } else {
-                    this.projectService.selectProjectsIds(null);
-                    this.projectService.selectProject(null);
-                    this.defaultTaskView = user.allTasksView;
-                    this.taskView = user.allTasksView;
-                }
-            }
+            this.userService.user$
         );
-        this.selectedProjectsStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe();
+        this.selectedProjectsStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([projectId, projects, user]) => {
+            this.user = user;
+            if (projectId && projects && projects.length > 0 && user) {
+                const project = projects.filter(p => p.id === parseInt(projectId, 10))[0];
+                if (project.hasOwnProperty('allDescendants')) {
+                    this.projectService.selectProjectsIds(project.allDescendants);
+                }
+                this.projectService.selectProject(project);
+            } else {
+                this.projectService.selectProjectsIds(null);
+                this.projectService.selectProject(null);
+                this.defaultTaskView = user.allTasksView;
+                this.taskView = user.allTasksView;
+            }
+        });
         this.projectService.selectedProject$.subscribe(project => {
             this.tasksListHeightFlex = this.TASKS_LIST_HEIGHT_WITHOUT_PROJECT_DESCRIPTION_FLEX;
             this.projectHeaderHeightFlex = this.PROJECT_HEADER_WITHOUT_DESCRIPTION_HEIGHT_FLEX;

@@ -120,3 +120,12 @@ a {
     }
 }
 
+.visible {
+    pointer-events: all;
+    visibility: visible;
+}
+
+.unvisible {
+    pointer-events: none;
+    visibility: hidden;
+}

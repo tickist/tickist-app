@@ -7,7 +7,7 @@ export class MockActivatedRoute extends ActivatedRoute {
         super();
         this.params = of({id: '1'});
     }
-    
+
     getProviders(): Array<any> {
         return [{provide: ActivatedRoute, useValue: this}];
     }

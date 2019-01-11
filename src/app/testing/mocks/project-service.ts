@@ -4,41 +4,41 @@ import {of} from 'rxjs';
 
 
 export class MockProjectService extends SpyObject {
-  fakeResponse;
-  responseSuccess: boolean;
-  team$: any;
-  selectedProjectsIds$: any;
-  projects$: any;
-  selectedProject$: any;
+    fakeResponse;
+    responseSuccess: boolean;
+    team$: any;
+    selectedProjectsIds$: any;
+    projects$: any;
+    selectedProject$: any;
 
-  constructor() {
-    super(ProjectService);
+    constructor() {
+        super(ProjectService);
 
-    this.fakeResponse = null;
-    this.responseSuccess = true;
-    this.team$ = of([]);
-    this.selectedProjectsIds$ = of([]);
-    this.selectedProject$ = of([]);
-    this.projects$ = of([]);
-  }
-
-  subscribe(success, error) {
-    if (this.responseSuccess) {
-      success(this.fakeResponse);
-    } else {
-      error(this.fakeResponse);
+        this.fakeResponse = null;
+        this.responseSuccess = true;
+        this.team$ = of([]);
+        this.selectedProjectsIds$ = of([]);
+        this.selectedProject$ = of([]);
+        this.projects$ = of([]);
     }
-  }
 
-  setErrorResponse() {
-    this.responseSuccess = false;
-  }
+    subscribe(success, error) {
+        if (this.responseSuccess) {
+            success(this.fakeResponse);
+        } else {
+            error(this.fakeResponse);
+        }
+    }
 
-  setResponse(json: any): void {
-    this.fakeResponse = json;
-  }
+    setErrorResponse() {
+        this.responseSuccess = false;
+    }
 
-  getProviders(): Array<any> {
-    return [{provide: ProjectService, useValue: this}];
-  }
+    setResponse(json: any): void {
+        this.fakeResponse = json;
+    }
+
+    getProviders(): Array<any> {
+        return [{provide: ProjectService, useValue: this}];
+    }
 }

@@ -17,7 +17,7 @@ const BASE_TIMER_DELAY = 10;
 export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestroy {
     @Input() shouldFocusElement: any;
     @Input() timerDelay: number;
-    
+
     private elementRef: ElementRef;
     private timer: any;
 

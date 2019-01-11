@@ -1,1 +1,1 @@
-export {SideNavVisibility} from './configurations'
+export {SideNavVisibility} from './configurations';

@@ -22,20 +22,20 @@ export class GlobalStatisticsComponent implements OnInit {
     minutes2Hours: Minutes2hoursPipe;
     @ViewChild('tasksCounterChart', {read: BaseChartDirective}) tasksCounterChart: any;
     @ViewChild('timeChart', {read: BaseChartDirective}) timeChart: any;
-    
+
     constructor(private statisticsService: StatisticsService, private cd: ChangeDetectorRef) {
         this.minutes2Hours = new Minutes2hoursPipe();
     }
-    
+
     public chartClicked(e: any): void {
         console.log(e);
     }
-    
+
     public chartHovered(e: any): void {
         console.log(e);
     }
-    
-    
+
+
     ngOnInit() {
         this.statisticsService.global$.subscribe((global) => {
             if (global) {
@@ -45,7 +45,7 @@ export class GlobalStatisticsComponent implements OnInit {
         this.statisticsService.charts$.subscribe((charts) => {
             const tasksCounterX: string[] = [], tasksCounterY = [], timeChartX: string[] = [], estimateTimeChartY = [],
                 timeChartY = [];
-            
+
             this.charts = charts;
             if (this.charts) {
                 this.charts.tasksChart.forEach((elem) => {
@@ -148,9 +148,9 @@ export class GlobalStatisticsComponent implements OnInit {
                     this.timeChart.chart.update();
                 }
                 this.cd.detectChanges();
-                
+
             }
         });
     }
-    
+
 }

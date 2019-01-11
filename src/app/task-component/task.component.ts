@@ -78,29 +78,26 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.route.params.pipe(map(params => params['taskId'])),
                 this.projectService.selectedProject$,
                 this.projectService.projects$,
-                this.userService.user$,
-                (tasks: Task[], taskId: string, selectedProject: Project, projects: Project[], user: User) => {
-                    let task: Task;
-                    if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
-                        this.user = user;
-                        this.projects = ProjectService.sortProjectList(projects);
-                        if (taskId) {
-                            task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
-                        } else {
-                            if (!selectedProject) {
-                                this.selectedProject = projects.filter(project => project.id === user.inboxPk)[0];
-                            } else {
-                                this.selectedProject = selectedProject;
-                            }
-                            task = this.createNewTask(this.selectedProject);
-                        }
-                    }
-                    return task;
-                }
+                this.userService.user$
             );
         this.menu = this.createMenuDict();
 
-        this.subscriptions = this.stream$.subscribe((task) => {
+        this.subscriptions = this.stream$.subscribe(([tasks, taskId, selectedProject, projects, user]) => {
+            let task: Task;
+            if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
+                this.user = user;
+                this.projects = ProjectService.sortProjectList(projects);
+                if (taskId) {
+                    task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
+                } else {
+                    if (!selectedProject) {
+                        this.selectedProject = projects.filter(project => project.id === user.inboxPk)[0];
+                    } else {
+                        this.selectedProject = selectedProject;
+                    }
+                    task = this.createNewTask(this.selectedProject);
+                }
+            }
             if (task) {
                 this.task = task;
                 this.createFinishDateFilter();

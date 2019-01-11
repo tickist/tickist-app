@@ -1,5 +1,5 @@
-import {Action} from "@ngrx/store";
-import {ChartStatistics, DailyStatistics, GlobalStatistics} from "../../models/statistics";
+import {Action} from '@ngrx/store';
+import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../models/statistics';
 export const UPDATE_GLOBAL_STATISTICS = 'UPDATE_GLOBAL_STATISTICS';
 export const UPDATE_CHARTS_DATA = 'UPDATE_CHARTS_DATA';
 export const UPDATE_DAILY_STATISTICS = 'UPDATE_DAILY_STATISTICS';
@@ -33,4 +33,4 @@ export class UpdateGlobalStatisticsDateRange implements Action {
   }
 }
 
-export type Actions = UpdateGlobalStatistics | UpdateChartsData | UpdateDailyStatistics | UpdateGlobalStatisticsDateRange
+export type Actions = UpdateGlobalStatistics | UpdateChartsData | UpdateDailyStatistics | UpdateGlobalStatisticsDateRange;

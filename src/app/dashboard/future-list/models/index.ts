@@ -1,5 +1,1 @@
-import {FutureListElement} from './future-list-element';
-
-export {
-    FutureListElement
-}
+export {FutureListElement} from './future-list-element';

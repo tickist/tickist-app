@@ -21,14 +21,11 @@ import {IActiveDateElement} from '../models/active-data-element.interface';
 export class DashboardComponent implements OnInit, OnDestroy {
     todayTasks: Task[] = [];
     overdueTasks: Task[] = [];
-    futureTasks: Task[] = [];
     tasks: Task[] = [];
     activeDateElement: IActiveDateElement;
     today: moment.Moment;
     stream$: Observable<any>;
-    week: Array<any> = [];
     user: User;
-    timer: any;
 
     subscriptions: Subscription;
     mediaChange: MediaChange;
@@ -39,12 +36,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.stream$ = combineLatest(
                 this.taskService.tasks$,
                 this.configurationService.activeDateElement$,
-                this.userService.user$,
-                (tasks: Task[], activeDateElement: IActiveDateElement, user: User) => {
-                    this.activeDateElement = activeDateElement;
-                    this.user = user;
-                    return tasks;
-                }
+                this.userService.user$
             );
         this.changeActiveDayAfterMidnight();
     }
@@ -71,7 +63,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscriptions = this.stream$.subscribe((tasks) => {
+        this.subscriptions = this.stream$.subscribe(([tasks, activeDateElement, user]) => {
+            this.activeDateElement = activeDateElement;
+            this.user = user;
             if (tasks && tasks.length > 0 && this.user) {
                 this.tasks = tasks.filter(task => task.owner.id === this.user.id && task.status === 0);
                 this.todayTasks = this.tasks.filter((task: Task) => {

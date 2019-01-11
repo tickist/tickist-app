@@ -32,7 +32,7 @@ export class ColorPickerComponent implements ControlValueAccessor  {
     // get accessor
     get value(): any {
         return this.innerValue;
-    };
+    }
 
     // set accessor including call the onchange callback
     set value(v: any) {

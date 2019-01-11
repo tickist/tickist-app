@@ -20,7 +20,7 @@ class Timer {
 
     stop() {
         const time = performance.now() - this.start;
-        console.log('Timer:', this.name, 'finished in', Math.round(time), 'ms');
+        // console.log('Timer:', this.name, 'finished in', Math.round(time), 'ms');
     }
 }
 
@@ -60,7 +60,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        console.log(this.isActive);
+        // console.log(this.isActive);
         this.isActive = this.selectedProjectsIds && this.selectedProjectsIds.indexOf(this.project.id) > -1;
 
         if (this.selectedProject && this.selectedProject.allDescendants.indexOf(this.project.id) > -1) {

@@ -16,7 +16,7 @@ describe('DaysWeeksYearListComponent', () => {
 
     beforeEach(async(() => {
         const configurationService = new MockConfigurationService();
-        
+
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, ReactiveFormsModule, NoopAnimationsModule],
             declarations: [DaysWeeksYearListComponent, MockComponent(DayStatisticsComponent),

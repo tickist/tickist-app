@@ -25,7 +25,6 @@ describe('Component: Login', () => {
                 userService.getProviders(),
                 configurationService.getProviders(),
                 {provide: APP_BASE_HREF, useValue: '/'}
-                
             ],
             schemas: [ NO_ERRORS_SCHEMA ]
         }).compileComponents().then(() => {

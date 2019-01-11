@@ -1,8 +1,10 @@
 import {
-    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
-    ViewChild
+    AfterViewChecked, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
+    ViewChild,  ChangeDetectorRef
 } from '@angular/core';
 import {ObservableMedia} from '@angular/flex-layout';
+import {Task} from 'app/models/tasks';
+
 
 @Component({
     selector: 'tickist-progress-bar',
@@ -10,7 +12,7 @@ import {ObservableMedia} from '@angular/flex-layout';
     styleUrls: ['./progress-bar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProgressBarComponent implements OnInit, AfterViewInit, OnChanges {
+export class ProgressBarComponent implements OnInit, AfterViewChecked, OnChanges {
     @Input() percent: number;
     @Input() isDisabled = false;
     @ViewChild('progressBar') progressBar: ElementRef;
@@ -18,29 +20,33 @@ export class ProgressBarComponent implements OnInit, AfterViewInit, OnChanges {
     showIcon = false;
     tooltipString: string;
 
-    constructor(private elRef: ElementRef, private media: ObservableMedia, private renderer: Renderer2) {
+    constructor(private elRef: ElementRef, private media: ObservableMedia, private renderer: Renderer2, private cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
+        console.log('Progress bar onInit', this.percent);
+    }
+
+    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (this.media.isActive('xs')) {
             this.showIcon = true;
         } else {
             this.showProgressBar = true;
         }
-    }
-
-    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('isDisabled') && changes.isDisabled.currentValue) {
-            // @TODO add class disabled instead of this approach
-            this.renderer.setStyle(this.elRef.nativeElement, 'pointer-events', 'none');
-            this.renderer.setStyle(this.elRef.nativeElement, 'visibility', 'hidden');
+            this.renderer.addClass(this.elRef.nativeElement, 'unvisible');
+            this.renderer.removeClass(this.elRef.nativeElement, 'visible');
+        } else {
+            this.renderer.removeClass(this.elRef.nativeElement, 'unvisible');
+            this.renderer.addClass(this.elRef.nativeElement, 'visible');
         }
         if (changes.hasOwnProperty('percent')) {
             this.tooltipString = `${changes.percent.currentValue}%`;
         }
+        this.cd.detectChanges();
     }
 
-    ngAfterViewInit() {
+    ngAfterViewChecked() {
         if (this.showProgressBar) {
             this.renderer.setStyle(this.elRef.nativeElement, 'width', '30%');
         }

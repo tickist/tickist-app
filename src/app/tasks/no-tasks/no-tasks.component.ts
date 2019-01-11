@@ -1,5 +1,4 @@
 import {Component, OnInit, ChangeDetectionStrategy, Input} from '@angular/core';
-import {Task} from 'src/app/models/tasks';
 
 @Component({
     selector: 'tickist-no-tasks',
@@ -9,11 +8,8 @@ import {Task} from 'src/app/models/tasks';
 })
 export class NoTasksComponent implements OnInit {
     @Input() tasksLength: number;
-    constructor() {
-    }
+    constructor() {}
 
-    ngOnInit() {
-
-    }
+    ngOnInit() {}
 
 }

@@ -1,5 +1,5 @@
 import {
-    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
+    ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
     ViewChild
 } from '@angular/core';
 
@@ -9,7 +9,7 @@ import {
     styleUrls: ['./menu-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MenuButtonComponent implements OnInit, AfterViewInit, OnChanges {
+export class MenuButtonComponent implements OnInit, OnChanges {
     @Input() icon: string;
     @Input() color = 'white';
     @Input() isDisabled = false;
@@ -24,25 +24,22 @@ export class MenuButtonComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        if (changes.hasOwnProperty('isDisabled') && changes.isDisabled.currentValue) {
-            // @TODO add class disabled instead of this
-            this.renderer.setStyle(this.elRef.nativeElement, 'pointer-events', 'none');
-            this.renderer.setStyle(this.elRef.nativeElement, 'visibility', 'hidden');
-        }
-    }
-
-    ngAfterViewInit() {
         this.renderer.addClass(this.iconElement.nativeElement, 'fa');
         this.renderer.setStyle(this.iconElement.nativeElement, 'color', this.color);
         this.renderer.addClass(this.iconElement.nativeElement, this.icon);
         if (this.fontSize) {
             this.renderer.setStyle(this.iconElement.nativeElement, 'font-size', this.fontSize);
         }
+        if (changes.hasOwnProperty('isDisabled') && changes.isDisabled.currentValue) {
+            this.renderer.addClass(this.elRef.nativeElement, 'unvisible');
+            this.renderer.removeClass(this.elRef.nativeElement, 'visible');
+        } else {
+            this.renderer.removeClass(this.elRef.nativeElement, 'unvisible');
+            this.renderer.addClass(this.elRef.nativeElement, 'visible');
+        }
         if (this.transform) {
             this.renderer.setStyle(this.iconElement.nativeElement, 'transform', this.transform);
         }
-
-
     }
 
 }

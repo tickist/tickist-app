@@ -36,12 +36,12 @@ export const routes: Routes = [
 ];
 
 describe('SingleProjectComponent', () => {
-    
+
     beforeEach(async(() => {
         const projectService = new MockProjectService();
         const configurationService = new MockConfigurationService();
         const userService = new MockUserService();
-        
+
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, ReactiveFormsModule, FormsModule, RouterModule.forRoot(routes), NoopAnimationsModule],
             declarations: [SingleProjectComponent, RootComponent, BlankComponent, MenuButtonComponent],
@@ -58,8 +58,8 @@ describe('SingleProjectComponent', () => {
             comp = fixture.componentInstance;
         });
     }));
-    
-    
+
+
     it('should be created', () => {
         expect(comp).toBeTruthy();
     });

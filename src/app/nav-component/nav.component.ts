@@ -9,7 +9,7 @@ import {TaskService} from '../services/task.service';
 import {ProjectService} from '../services/project.service';
 import {Subject, pipe} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
-import {TasksFiltersService} from "../services/tasks-filters.service";
+import {TasksFiltersService} from '../services/tasks-filters.service';
 
 
 @Component({

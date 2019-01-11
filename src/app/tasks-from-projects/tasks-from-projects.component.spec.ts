@@ -36,6 +36,7 @@ import {TasksListComponent} from '../tasks-list/tasks-list.component';
 import {SortTasksComponent} from '../tasks/sort-tasks/sort-tasks.component';
 import {FilterTasksComponent} from '../tasks/filter-tasks/filter-tasks.component';
 import {SingleTaskSimplifiedComponent} from '../single-task/single-task-simplified/single-task-simplified.component';
+import {NoTasksComponent} from '../tasks/no-tasks/no-tasks.component';
 
 
 const routes: Routes = [
@@ -77,7 +78,7 @@ describe('TasksFromProjectsComponent', () => {
                 MockComponent(DateOptionsComponent), MockComponent(RightMenuComponent),
                 MockComponent(EditRepeatingOptionComponent), MockComponent(ProgressBarComponent),
                 MockComponent(DisplayFinishDateComponent), MockComponent(UserAvatarComponent),
-                MockComponent(PriorityComponent),
+                MockComponent(PriorityComponent), MockComponent(NoTasksComponent),
                 MockComponent(ToggleButtonComponent), TruncatePipe, Minutes2hoursPipe, AvatarSize, RootComponent, BlankComponent],
             providers: [
                 configurationService.getProviders(),
