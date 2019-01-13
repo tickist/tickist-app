@@ -86,7 +86,7 @@
         </div>
         <mat-chip-list>
             <mat-chip *ngFor="let tag of task.tags">
-                <span>{{ tag.name }}</span><span fxFlex></span><i matTooltip="Remove tag" (click)="removeTag(tag)"
+                <span class="chip-name">{{ tag.name }}</span><span fxFlex></span><i matTooltip="Remove tag" (click)="removeTag(tag)"
                                                                   class="fa fa-times"></i>
             </mat-chip>
         </mat-chip-list>

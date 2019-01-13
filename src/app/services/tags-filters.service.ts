@@ -1,6 +1,6 @@
 import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
 import {SimpleUser, User} from '../models/user';
 import {MatSnackBar} from '@angular/material';
@@ -22,8 +22,12 @@ export class TagsFiltersService {
     constructor(private store: Store<AppStore>, protected router: Router,
                 protected userService: UserService) {
 
-        this.tagsFilters$ = this.store.select(s => s.tagsFilters);
-        this.currentTagsFilters$ = this.store.select(s => s.currentTagsFilters);
+        this.tagsFilters$ = this.store.pipe(
+            select(s => s.tagsFilters)
+        );
+        this.currentTagsFilters$ = this.store.pipe(
+            select(s => s.currentTagsFilters)
+        );
         this.filters = [
             new Filter({
                 'id': 1, 'label': 'filter', 'name': 'All tags',

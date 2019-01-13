@@ -1,6 +1,6 @@
 import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Project} from '../models/projects';
@@ -77,10 +77,18 @@ export class ProjectService {
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router, protected tasksFiltersService: TasksFiltersService) {
 
-        this.projects$ = this.store.select(storeElem => storeElem.projects);
-        this.team$ = this.store.select(storeElem => storeElem.team);
-        this.selectedProject$ = this.store.select(storeElem => storeElem.selectedProject);
-        this.selectedProjectsIds$ = this.store.select(storeElem => storeElem.selectedProjectsIds);
+        this.projects$ = this.store.pipe(
+            select(storeElem => storeElem.projects)
+        );
+        this.team$ = this.store.pipe(
+            select(storeElem => storeElem.team)
+        );
+        this.selectedProject$ = this.store.pipe(
+            select(storeElem => storeElem.selectedProject)
+        );
+        this.selectedProjectsIds$ = this.store.pipe(
+            select(storeElem => storeElem.selectedProjectsIds)
+        );
         this.team$.subscribe(team => {
             this.team = team;
         });

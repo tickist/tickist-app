@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store, State} from '@ngrx/store';
+import {Store, State, select} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Task} from '../models/tasks';
@@ -24,7 +24,9 @@ export class TaskService {
                 protected configurationService: ConfigurationService, protected projectService: ProjectService,
                 protected tagService: TagService) {
 
-        this.tasks$ = this.store.select(s => s.tasks);
+        this.tasks$ = this.store.pipe(
+            select(s => s.tasks)
+        );
     }
 
     loadTasks() {

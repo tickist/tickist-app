@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
 
 import * as moment from 'moment';
@@ -26,13 +26,27 @@ export class ConfigurationService {
     TYPE_FINISH_DATE_BY: any;
 
     constructor(private store: Store<AppStore>, protected media: ObservableMedia) {
-        this.activeDateElement$ = this.store.select(s => s.activeDateElement);
-        this.detectApiError$ = this.store.select(s => s.detectApiError);
-        this.offlineModeNotification$ = this.store.select(s => s.offlineModeNotification);
-        this.leftSidenavVisibility$ = this.store.select(s => s.leftSidenavVisibility);
-        this.rightSidenavVisibility$ = this.store.select(s => s.rightSidenavVisibility);
-        this.addTaskComponentVisibility$ = this.store.select(s => s.addTaskComponentVisibility);
-        this.progressBar$ = this.store.select(s => s.progressBar);
+        this.activeDateElement$ = this.store.pipe(
+            select(s => s.activeDateElement)
+        );
+        this.detectApiError$ = this.store.pipe(
+            select(s => s.detectApiError)
+        );
+        this.offlineModeNotification$ = this.store.pipe(
+            select(s => s.offlineModeNotification)
+        );
+        this.leftSidenavVisibility$ = this.store.pipe(
+            select(s => s.leftSidenavVisibility)
+        );
+        this.rightSidenavVisibility$ = this.store.pipe(
+            select(s => s.rightSidenavVisibility)
+        );
+        this.addTaskComponentVisibility$ = this.store.pipe(
+            select(s => s.addTaskComponentVisibility))
+        ;
+        this.progressBar$ = this.store.pipe(
+            select(s => s.progressBar)
+        );
         this.TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};
         this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
         this.TYPE_FINISH_DATE_BY = {'id': 0, 'name': 'by'};

@@ -1,6 +1,6 @@
 import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Project} from '../models/projects';
@@ -24,8 +24,12 @@ export class ProjectsFiltersService {
 
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router, protected userService: UserService) {
-        this.projectsFilters$ = this.store.select(s => s.projectsFilters);
-        this.currentProjectsFilters$ = this.store.select(s => s.currentProjectsFilters);
+        this.projectsFilters$ = this.store.pipe(
+            select(s => s.projectsFilters)
+        );
+        this.currentProjectsFilters$ = this.store.pipe(
+            select(s => s.currentProjectsFilters)
+        );
         this.filters = [
             new Filter({
                 'id': 1, 'label': 'filter', 'name': 'All projects',

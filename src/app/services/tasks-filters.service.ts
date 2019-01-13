@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
 import {User} from '../models/user';
 import * as _ from 'lodash';
@@ -63,8 +63,12 @@ export class TasksFiltersService {
                 public snackBar: MatSnackBar, protected configurationService: ConfigurationService,
                 protected tagService: TagService) {
 
-        this.tasksFilters$ = this.store.select(s => s.tasksFilters);
-        this.currentTasksFilters$ = this.store.select(s => s.currentTasksFilters);
+        this.tasksFilters$ = this.store.pipe(
+            select(s => s.tasksFilters)
+        );
+        this.currentTasksFilters$ = this.store.pipe(
+            select(s => s.currentTasksFilters)
+        );
     }
 
     createDefaultFilters(user) {

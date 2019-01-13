@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {User, UserLogin, SimpleUser} from '../models/user';
@@ -22,10 +22,12 @@ export class UserService {
 
     constructor(private http: HttpClient, private store: Store<AppStore>,
                 public snackBar: MatSnackBar, protected tasksFiltersService: TasksFiltersService) {
-        this.user$ = this.store.select(s => {
-            return s.user;
-        });
-        this.team$ = this.store.select(s => s.team);
+        this.user$ = this.store.pipe(
+            select(s => s.user)
+        );
+        this.team$ = this.store.pipe(
+            select(s => s.team)
+        );
     }
 
     isLoggedIn(): boolean {

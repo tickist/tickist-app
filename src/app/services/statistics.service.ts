@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Headers, RequestOptions, Response} from '@angular/http';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 
@@ -21,10 +21,18 @@ export class StatisticsService {
     activeDateElement: IActiveDateElement;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, private configurationService: ConfigurationService) {
-        this.global$ = this.store.select(s => s.globalStatistics);
-        this.charts$ = this.store.select(s => s.chartsData);
-        this.globalStatisticsDateRage$ = this.store.select(s => s.globalStatisticsDateRage);
-        this.daily$ = this.store.select(s => s.dailyStatistics);
+        this.global$ = this.store.pipe(
+            select(s => s.globalStatistics)
+        );
+        this.charts$ = this.store.pipe(
+            select(s => s.chartsData)
+        );
+        this.globalStatisticsDateRage$ = this.store.pipe(
+            select(s => s.globalStatisticsDateRage)
+        );
+        this.daily$ = this.store.pipe(
+            select(s => s.dailyStatistics)
+        );
         configurationService.activeDateElement$.subscribe((activeDateElement: IActiveDateElement) => {
             this.loadDailyStatistics(activeDateElement);
             this.activeDateElement = activeDateElement;

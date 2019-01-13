@@ -1,6 +1,6 @@
 import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
 import {SimpleUser, User} from '../models/user';
 import * as tasksAction from '../reducers/actions/tasks';
@@ -20,8 +20,12 @@ export class FutureTasksFiltersService {
     constructor(private store: Store<AppStore>, protected router: Router,
                 protected userService: UserService) {
 
-        this.futureTasksFilters$ = this.store.select(s => s.futureTasksFilters);
-        this.currentFutureTasksFilters$ = this.store.select(s => s.currentTasksFutureFilters);
+        this.futureTasksFilters$ = this.store.pipe(
+            select(s => s.futureTasksFilters)
+        );
+        this.currentFutureTasksFilters$ = this.store.pipe(
+            select(s => s.currentTasksFutureFilters)
+        );
         this.filters = [
             new Filter({
                 'id': 1, 'label': 'filter', 'name': 'All',

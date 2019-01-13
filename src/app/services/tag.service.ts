@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Headers} from '@angular/http';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Tag} from '../models/tags';
@@ -15,7 +15,9 @@ export class TagService {
     tags$: Observable<Tag[]>;
 
     constructor(public http: HttpClient, private store: Store<AppStore>) {
-        this.tags$ = this.store.select(s => s.tags);
+        this.tags$ = this.store.pipe(
+            select(s => s.tags)
+        );
     }
 
     loadTags() {
