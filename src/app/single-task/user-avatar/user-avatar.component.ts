@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {SimpleUser} from '../models/user';
-import {environment} from '../../environments/environment';
+import {SimpleUser} from '../../models/user';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'tickist-user-avatar',

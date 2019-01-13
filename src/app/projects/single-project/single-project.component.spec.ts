@@ -12,7 +12,7 @@ import {MockConfigurationService} from '../../testing/mocks/configurationService
 import {MockUserService} from '../../testing/mocks/userService';
 import {BlankComponent, RootComponent} from '../../testing/test.modules';
 import {TickistMaterialModule} from '../../material.module';
-import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
+import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
 import {ObservableMedia} from '@angular/flex-layout';
 
 let comp: SingleProjectComponent;

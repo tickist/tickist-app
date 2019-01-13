@@ -1,9 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {StatisticsService} from '../services/statistics.service';
-import {ChartStatistics} from '../models/statistics';
-import * as moment from 'moment';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {StatisticsService} from '../../services/statistics.service';
+import {ChartStatistics} from '../../models/statistics';
 import {BaseChartDirective} from 'ng2-charts';
-import {Minutes2hoursPipe} from '../shared/pipes/minutes2hours';
+import {Minutes2hoursPipe} from '../../shared/pipes/minutes2hours';
+import * as moment from 'moment';
 
 
 @Component({

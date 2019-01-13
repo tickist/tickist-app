@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {TickistMaterialModule} from '../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {UserAvatarComponent} from '../user-avatar/user-avatar.component';
+import {UserAvatarComponent} from './user-avatar/user-avatar.component';
 import {ProgressBarComponent} from './progress-bar/progress-bar.component';
 import {PinButtonComponent} from './pin-button/pin-button.component';
 import {RightMenuComponent} from './right-menu/right-menu.component';

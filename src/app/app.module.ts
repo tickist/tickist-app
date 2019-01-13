@@ -22,15 +22,13 @@ import {TagService} from './services/tag.service';
 import {NavComponent} from './nav-component/nav.component';
 import {TaskComponent} from './task-component/task.component';
 import {TasksListComponent} from './tasks-list/tasks-list.component';
-import {UserComponent} from './user/user.component';
-import {TeamComponent} from './team/team.component';
 import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configuration.service';
 import {StatisticsService} from './services/statistics.service';
 import {NavBarLandingPageComponent} from './nav-bar-landing-page/nav-bar-landing-page.component';
 import {SortablejsModule} from 'angular-sortablejs';
 import {AddTaskComponent} from './add-task/add-task.component';
-import {CalendarModule} from 'primeng/components/calendar/calendar';
+
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {ErrorService} from './services/error.service';
 import {TypeFinishDateString} from './shared/pipes/typeFinishDateString';
@@ -61,6 +59,7 @@ import {TickistTagsModule} from './tags/tags.module';
 import {TickistProjectsModule} from './projects/projects.module';
 import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
 import {InMemoryDataService} from './testing/mocks/inMemryDb';
+import {TickistUserModule} from './user/user.module';
 
 export function tokenGetter() {
     return localStorage.getItem('JWT');
@@ -77,8 +76,6 @@ export function tokenGetter() {
         NavComponent,
         TaskComponent,
         TasksListComponent,
-        UserComponent,
-        TeamComponent,
         NavBarLandingPageComponent,
         AddTaskComponent,
         DeleteTaskDialogComponent,
@@ -99,6 +96,7 @@ export function tokenGetter() {
         TickistSharedModule,
         TickistSingleTaskModule,
         TickistStatisticsModule,
+        TickistUserModule,
         BrowserModule,
         BrowserAnimationsModule,
         CommonModule,
@@ -116,7 +114,6 @@ export function tokenGetter() {
         MenuModule,
         TieredMenuModule,
         SliderModule,
-        CalendarModule,
         ChartModule,
         FlexLayoutModule,
         SharedModule,

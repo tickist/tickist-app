@@ -1,11 +1,11 @@
 import {TestBed, ComponentFixture, async} from '@angular/core/testing';
-import {MockProjectService} from '../testing/mocks/project-service';
-import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TickistMaterialModule} from '../material.module';
+import {MockProjectService} from '../../testing/mocks/project-service';
+import {MockConfigurationService} from '../../testing/mocks/configurationService';
+import {TickistMaterialModule} from '../../material.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {DayStatisticsComponent} from './day-statistics.component';
-import {TickistSharedModule} from '../shared/shared.module';
-import {MockStatisticsService} from '../testing/mocks/statisticsService';
+import {TickistSharedModule} from '../../shared/shared.module';
+import {MockStatisticsService} from '../../testing/mocks/statisticsService';
 
 let comp: DayStatisticsComponent;
 let fixture: ComponentFixture<DayStatisticsComponent>;

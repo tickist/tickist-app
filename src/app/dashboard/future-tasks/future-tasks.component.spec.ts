@@ -7,7 +7,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {FilterFutureTasksComponent} from '../filter-future-tasks/filter-future-tasks.component';
 import {MockComponent} from 'ng-mocks';
 import {TasksListComponent} from '../../tasks-list/tasks-list.component';
-import {ChangeTaskViewComponent} from '../../shared/change-task-view-component/change-task-view.component';
+import {ChangeTaskViewComponent} from '../../shared/components/change-task-view-component/change-task-view.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MockTaskService} from '../../testing/mocks/task-service';
 import {MockConfigurationService} from '../../testing/mocks/configurationService';

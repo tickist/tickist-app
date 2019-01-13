@@ -1,2 +1,2 @@
-import {PriorityComponent } from './priority/priority.component';
+import {PriorityComponent } from './components/priority/priority.component';
 

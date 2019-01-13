@@ -9,8 +9,8 @@ import {APP_BASE_HREF} from '@angular/common';
 import {Task} from '../../models/tasks';
 import {task1} from '../../testing/mocks/api_mocks/tasks';
 import {PinButtonComponent} from '../pin-button/pin-button.component';
-import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
-import {PriorityComponent} from '../../shared/priority/priority.component';
+import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
+import {PriorityComponent} from '../../shared/components/priority/priority.component';
 
 
 const routes: Routes = [

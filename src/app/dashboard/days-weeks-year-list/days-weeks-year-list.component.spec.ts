@@ -7,7 +7,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MockComponent} from 'ng-mocks';
 import {FutureListComponent} from '../future-list/future-list.component';
 import {WeekDaysComponent} from '../weekdays/weekdays.component';
-import {DayStatisticsComponent} from '../../day-statistics/day-statistics.component';
+import {DayStatisticsComponent} from '../../statistics/day-statistics/day-statistics.component';
 import {MockConfigurationService} from '../../testing/mocks/configurationService';
 
 describe('DaysWeeksYearListComponent', () => {

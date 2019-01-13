@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ProjectsListComponent} from './projects-list.component';
-import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
+import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
 import {TickistMaterialModule} from '../../material.module';
 import {BlankComponent, RootComponent} from '../../testing/test.modules';
 import {RouterModule, Routes} from '@angular/router';

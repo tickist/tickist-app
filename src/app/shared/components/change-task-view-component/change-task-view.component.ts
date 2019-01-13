@@ -2,7 +2,7 @@ import {
     Component, OnInit, Input, EventEmitter, Output,
     OnChanges
 } from '@angular/core';
-import {ConfigurationService} from '../../services/configuration.service';
+import {ConfigurationService} from '../../../services/configuration.service';
 
 
 @Component({

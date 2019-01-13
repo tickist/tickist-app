@@ -1,13 +1,13 @@
 import {TestBed, ComponentFixture, async} from '@angular/core/testing';
-import {MockProjectService} from '../testing/mocks/project-service';
-import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TickistMaterialModule} from '../material.module';
+import {MockProjectService} from '../../testing/mocks/project-service';
+import {MockConfigurationService} from '../../testing/mocks/configurationService';
+import {TickistMaterialModule} from '../../material.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {UserComponent} from './user.component';
-import {TickistSharedModule} from '../shared/shared.module';
+import {TickistSharedModule} from '../../shared/shared.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MockUserService} from '../testing/mocks/userService';
-import {MockLocation} from '../testing/mocks/location';
+import {MockUserService} from '../../testing/mocks/userService';
+import {MockLocation} from '../../testing/mocks/location';
 
 let comp: UserComponent;
 let fixture: ComponentFixture<UserComponent>;

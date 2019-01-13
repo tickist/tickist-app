@@ -1,11 +1,11 @@
 import {Component, OnInit, ElementRef, Renderer2, ViewChild, OnDestroy} from '@angular/core';
-import {User} from '../models/user';
-import {UserService} from '../services/user.service';
+import {User} from '../../models/user';
+import {UserService} from '../../services/user.service';
 import {FormBuilder, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
-import {ConfigurationService} from '../services/configuration.service';
-import {environment} from '../../environments/environment';
-import {MyErrorStateMatcher} from '../shared/error-state-matcher';
+import {ConfigurationService} from '../../services/configuration.service';
+import {environment} from '../../../environments/environment';
+import {MyErrorStateMatcher} from '../../shared/error-state-matcher';
 
 @Component({
     selector: 'app-user',

@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ProjectService} from '../services/project.service';
-import {SimpleUser} from '../models/user';
-import {ConfigurationService} from '../services/configuration.service';
-import {environment} from '../../environments/environment';
+import {ProjectService} from '../../services/project.service';
+import {SimpleUser} from '../../models/user';
+import {ConfigurationService} from '../../services/configuration.service';
+import {environment} from '../../../environments/environment';
 
 @Component({
     selector: 'tickist-team',

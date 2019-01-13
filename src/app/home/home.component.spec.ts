@@ -11,7 +11,7 @@ import {MockProjectService} from '../testing/mocks/project-service';
 import {RouterModule, Routes} from '@angular/router';
 import {AddTaskComponent} from '../add-task/add-task.component';
 import { MockComponent } from 'ng-mocks';
-import {GlobalStatisticsComponent} from '../global-statistics/global-statistics.component';
+import {GlobalStatisticsComponent} from '../statistics/global-statistics/global-statistics.component';
 import {APP_BASE_HREF} from '@angular/common';
 import {TickistMaterialModule} from '../material.module';
 import {FlexLayoutModule} from '@angular/flex-layout';

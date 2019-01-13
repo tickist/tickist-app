@@ -1,11 +1,11 @@
 import {TestBed, ComponentFixture, async} from '@angular/core/testing';
-import {MockProjectService} from '../testing/mocks/project-service';
-import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TickistMaterialModule} from '../material.module';
+import {MockProjectService} from '../../testing/mocks/project-service';
+import {MockConfigurationService} from '../../testing/mocks/configurationService';
+import {TickistMaterialModule} from '../../material.module';
 
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {GlobalStatisticsComponent} from './global-statistics.component';
-import {MockStatisticsService} from '../testing/mocks/statisticsService';
+import {MockStatisticsService} from '../../testing/mocks/statisticsService';
 
 let comp: GlobalStatisticsComponent;
 let fixture: ComponentFixture<GlobalStatisticsComponent>;

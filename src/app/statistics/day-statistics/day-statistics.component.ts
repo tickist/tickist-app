@@ -1,25 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {StatisticsService} from '../services/statistics.service';
-import {ConfigurationService} from '../services/configuration.service';
+import {StatisticsService} from '../../services/statistics.service';
+import {ConfigurationService} from '../../services/configuration.service';
 import {Subscription} from 'rxjs';
 import * as _ from 'lodash';
-import {IActiveDateElement} from '../models/active-data-element.interface';
+import {IActiveDateElement} from '../../models/active-data-element.interface';
+import {Chart} from '../models';
 
 
-class Chart {
-    id: number;
-    name: string;
-    data: any;
-    legend: Array<any>;
-
-
-    constructor(chart) {
-        this.id = chart.id;
-        this.name = chart.name;
-        this.data = chart.data;
-        this.legend = chart.legend;
-    }
-}
 
 @Component({
     selector: 'app-day-statistics',

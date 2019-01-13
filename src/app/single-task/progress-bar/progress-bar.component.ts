@@ -12,7 +12,7 @@ import {Task} from 'app/models/tasks';
     styleUrls: ['./progress-bar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProgressBarComponent implements OnInit, AfterViewChecked, OnChanges {
+export class ProgressBarComponent implements AfterViewChecked, OnChanges {
     @Input() percent: number;
     @Input() isDisabled = false;
     @ViewChild('progressBar') progressBar: ElementRef;
@@ -20,11 +20,7 @@ export class ProgressBarComponent implements OnInit, AfterViewChecked, OnChanges
     showIcon = false;
     tooltipString: string;
 
-    constructor(private elRef: ElementRef, private media: ObservableMedia, private renderer: Renderer2, private cd: ChangeDetectorRef) {
-    }
-
-    ngOnInit() {
-        console.log('Progress bar onInit', this.percent);
+    constructor(private elRef: ElementRef, private media: ObservableMedia, private renderer: Renderer2) {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
@@ -43,7 +39,6 @@ export class ProgressBarComponent implements OnInit, AfterViewChecked, OnChanges
         if (changes.hasOwnProperty('percent')) {
             this.tooltipString = `${changes.percent.currentValue}%`;
         }
-        this.cd.detectChanges();
     }
 
     ngAfterViewChecked() {

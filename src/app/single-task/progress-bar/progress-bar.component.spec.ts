@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import { MockComponent } from 'ng-mocks';
 import {ProgressBarComponent} from './progress-bar.component';
 import {TickistMaterialModule} from '../../material.module';
-import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
+import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
 import {MockObservableMedia} from '../../testing/mocks/observableMedia';
 
 

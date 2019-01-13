@@ -7,7 +7,7 @@ import {MockConfigurationService} from '../testing/mocks/configurationService';
 import {TaskService} from '../services/task.service';
 import {Task} from '../models/tasks';
 import {task1} from '../testing/mocks/api_mocks/tasks';
-import {MenuButtonComponent} from '../shared/menu-button/menu-button.component';
+import {MenuButtonComponent} from '../shared/components/menu-button/menu-button.component';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 
