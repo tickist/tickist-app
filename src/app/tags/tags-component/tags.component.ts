@@ -5,7 +5,7 @@ import {Tag} from '../../models/tags';
 import {Task} from '../../models/tasks';
 import {TaskService} from '../../services/task.service';
 import {UserService} from '../../services/user.service';
-import {User} from '../../models/user';
+import {User} from '../../user/models';
 import {SideNavVisibility} from '../../models';
 import {ConfigurationService} from '../../services/configuration.service';
 import {TasksFiltersService} from '../../services/tasks-filters.service';

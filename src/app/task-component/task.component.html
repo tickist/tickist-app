@@ -295,7 +295,7 @@
             <div fxFlex=30px fxLayout="row" fxLayoutAlign="end center">
                 <button type="submit" mat-button class="button">Save</button>
 
-                <button type="button" mat-button class="button" *ngIf="!isNewTask()"
+                <button type="button" mat-button class="button" *ngIf="isNewTask()"
                         (click)="createAndAddMore($event, taskForm.value)">
                     Create and add more
                 </button>

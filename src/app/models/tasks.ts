@@ -1,4 +1,4 @@
-import {SimpleUser} from './user';
+import {SimpleUser} from '../user/models';
 import {Tag} from './tags';
 import {Api} from './commons';
 import * as moment from 'moment';

@@ -1,6 +1,6 @@
 import {Api} from '../commons';
-import {PendingUser} from '../user';
-import {SimpleUser} from '../user';
+import {PendingUser} from '../../user/models';
+import {SimpleUser} from '../../user/models';
 import {ISimpleProjectApi} from '../simple-project-api.inferface';
 
 

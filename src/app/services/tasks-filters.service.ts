@@ -2,7 +2,7 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {User} from '../models/user';
+import {User} from '../user/models';
 import * as _ from 'lodash';
 import {MatSnackBar} from '@angular/material';
 import {ConfigurationService} from './configuration.service';

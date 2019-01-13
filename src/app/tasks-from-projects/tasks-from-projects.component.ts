@@ -6,7 +6,7 @@ import {ProjectService} from '../services/project.service';
 import {Observable, Subject, combineLatest} from 'rxjs';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
-import {User} from '../models/user';
+import {User} from '../user/models';
 import {map, takeUntil} from 'rxjs/operators';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {ConfigurationService} from '../services/configuration.service';

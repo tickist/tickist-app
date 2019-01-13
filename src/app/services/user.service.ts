@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
-import {User, UserLogin, SimpleUser} from '../models/user';
+import {User, UserLogin, SimpleUser} from '../user/models';
 import {MatSnackBar} from '@angular/material';
 import * as userAction from '../reducers/actions/user';
 import * as teamAction from '../reducers/actions/team';

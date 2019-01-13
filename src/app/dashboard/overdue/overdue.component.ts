@@ -2,7 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Task} from '../../models/tasks';
 import {TaskService} from '../../services/task.service';
 import {UserService} from '../../services/user.service';
-import {User} from '../../models/user';
+import {User} from '../../user/models';
 
 
 @Component({

@@ -1,4 +1,4 @@
-import {SimpleUser} from '../models/user';
+import {SimpleUser} from '../user/models';
 import * as teamActions from './actions/team';
 
 export function team (state = [], action: teamActions.Actions) {

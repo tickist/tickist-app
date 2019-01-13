@@ -11,7 +11,7 @@ import {ProjectService} from '../services/project.service';
 import {UserService} from '../services/user.service';
 import {Project} from '../models/projects';
 import {ConfigurationService} from '../services/configuration.service';
-import {User, SimpleUser} from '../models/user';
+import {User, SimpleUser} from '../user/models';
 import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../shared/pipes/minutes2hours';

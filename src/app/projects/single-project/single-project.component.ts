@@ -10,7 +10,7 @@ import {ObservableMedia} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material';
 import {UserService} from '../../services/user.service';
-import {User} from '../../models/user';
+import {User} from '../../user/models';
 
 class Timer {
     readonly start = performance.now();

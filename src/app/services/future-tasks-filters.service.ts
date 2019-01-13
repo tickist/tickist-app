@@ -2,7 +2,7 @@ import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {SimpleUser, User} from '../models/user';
+import {SimpleUser, User} from '../user/models';
 import * as tasksAction from '../reducers/actions/tasks';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';

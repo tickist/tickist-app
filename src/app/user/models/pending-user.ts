@@ -1,4 +1,4 @@
-import {Api} from '../commons';
+import {Api} from '../../models/commons';
 
 
 export class PendingUser extends Api {

@@ -6,7 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../services/configuration.service';
 import {Task} from '../../models/tasks';
 import * as _ from 'lodash';
-import {User} from '../../models/user';
+import {User} from '../../user/models';
 import {UserService} from '../../services/user.service';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {Filter} from '../../models/filter';

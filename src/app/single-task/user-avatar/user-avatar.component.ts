@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {SimpleUser} from '../../models/user';
+import {SimpleUser} from '../../user/models';
 import {environment} from '../../../environments/environment';
 
 @Component({

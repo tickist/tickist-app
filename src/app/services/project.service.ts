@@ -5,7 +5,7 @@ import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Project} from '../models/projects';
 import {Task} from '../models/tasks';
-import {SimpleUser, PendingUser} from '../models/user';
+import {SimpleUser, PendingUser} from '../user/models';
 import {MatSnackBar} from '@angular/material';
 import * as tasksAction from '../reducers/actions/tasks';
 import * as projectsAction from '../reducers/actions/projects';

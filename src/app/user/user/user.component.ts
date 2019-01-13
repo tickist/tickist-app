@@ -1,5 +1,5 @@
 import {Component, OnInit, ElementRef, Renderer2, ViewChild, OnDestroy} from '@angular/core';
-import {User} from '../../models/user';
+import {User} from '../models';
 import {UserService} from '../../services/user.service';
 import {FormBuilder, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';

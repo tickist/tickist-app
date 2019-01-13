@@ -6,7 +6,7 @@ import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angul
 import {Observable, Subscription, combineLatest} from 'rxjs';
 import {ConfigurationService} from '../../services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {User, SimpleUser, PendingUser} from '../../models/user';
+import {User, SimpleUser, PendingUser} from '../../user/models';
 import {UserService} from '../../services/user.service';
 import {MatDialog} from '@angular/material';
 import {environment} from '../../../environments/environment';

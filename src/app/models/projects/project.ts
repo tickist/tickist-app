@@ -1,5 +1,5 @@
-import {SimpleUser} from '../user';
-import {PendingUser} from '../user';
+import {SimpleUser} from '../../user/models';
+import {PendingUser} from '../../user/models';
 import {Api} from '../commons';
 import {IProjectApi} from '../project-api.interface';
 import {ISimpleUserApi} from '../simple-user-api.interface';

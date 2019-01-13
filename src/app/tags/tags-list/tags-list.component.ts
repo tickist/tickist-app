@@ -6,7 +6,7 @@ import {Task} from '../../models/tasks';
 import {TaskService} from '../../services/task.service';
 import {FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import {UserService} from '../../services/user.service';
-import {User} from '../../models/user';
+import {User} from '../../user/models';
 import {ConfigurationService} from '../../services/configuration.service';
 import {FilterTagsDialogComponent} from '../filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material';

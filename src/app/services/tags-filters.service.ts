@@ -2,7 +2,7 @@ import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {SimpleUser, User} from '../models/user';
+import {SimpleUser, User} from '../user/models';
 import {MatSnackBar} from '@angular/material';
 import * as tagsAction from '../reducers/actions/tags';
 import {HttpClient} from '@angular/common/http';

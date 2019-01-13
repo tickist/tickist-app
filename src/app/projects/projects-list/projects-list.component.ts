@@ -6,7 +6,7 @@ import {TaskService} from '../../services/task.service';
 import {ProjectService} from '../../services/project.service';
 import {Project} from '../../models/projects';
 import {ConfigurationService} from '../../services/configuration.service';
-import {User} from '../../models/user';
+import {User} from '../../user/models';
 import {UserService} from '../../services/user.service';
 import {ObservableMedia} from '@angular/flex-layout';
 import {MatDialog, MatDialogConfig} from '@angular/material';

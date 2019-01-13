@@ -1,6 +1,6 @@
-import {Api} from '../commons';
-import {SimpleProject} from '../projects/simple-project';
-import {ISimpleUserApi} from '../simple-user-api.interface';
+import {Api} from '../../models/commons';
+import {SimpleProject} from '../../models/projects/simple-project';
+import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 
 export class SimpleUser extends Api {
     id: number;

@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {TaskService} from '../../services/task.service';
 import {UserService} from '../../services/user.service';
-import {User} from '../../models/user/user';
+import {User} from '../../user/models/user';
 import {map} from 'rxjs/operators';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 

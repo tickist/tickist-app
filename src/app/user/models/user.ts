@@ -1,6 +1,6 @@
-import {Api} from '../commons';
-import {IUserApi} from '../user-api.interface';
-import {ISimpleUserApi} from '../simple-user-api.interface';
+import {Api} from '../../models/commons';
+import {IUserApi} from '../../models/user-api.interface';
+import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import {SimpleUser} from './simple-user';
 
 

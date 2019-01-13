@@ -6,7 +6,7 @@ import {Task} from '../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subscription, combineLatest} from 'rxjs';
 import * as moment from 'moment';
-import {User} from '../models/user';
+import {User} from '../user/models';
 import * as _ from 'lodash';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {map} from 'rxjs/operators';

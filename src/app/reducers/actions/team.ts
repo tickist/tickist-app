@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {SimpleUser} from '../../models/user';
+import {SimpleUser} from '../../user/models';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 export const ADD_TEAM_MEMBERS = 'ADD_TEAM_MEMBERS';
 export const UPDATE_TEAM_MEMBER = 'UPDATE_TEAM_MEMBER';

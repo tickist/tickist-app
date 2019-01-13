@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, AfterViewInit} from '@angular/core';
 import {UserService} from '../services/user.service';
-import {User} from '../models/user';
+import {User} from '../user/models';
 import {ConfigurationService} from '../services/configuration.service';
 import {environment} from '../../environments/environment';
 import {ObservableMedia} from '@angular/flex-layout';

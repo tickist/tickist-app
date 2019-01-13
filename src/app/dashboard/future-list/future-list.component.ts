@@ -10,7 +10,7 @@ import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {TaskService} from '../../services/task.service';
 import {Task} from '../../models/tasks';
 import {UserService} from '../../services/user.service';
-import {User} from '../../models/user';
+import {User} from '../../user/models';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
 
 @Component({
