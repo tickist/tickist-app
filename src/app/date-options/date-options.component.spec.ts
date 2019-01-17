@@ -6,9 +6,15 @@ import {FormsModule} from '@angular/forms';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
 import {TaskService} from '../services/task.service';
 import {Task} from '../models/tasks';
-import {task1} from '../testing/mocks/api_mocks/tasks';
 import {MenuButtonComponent} from '../shared/components/menu-button/menu-button.component';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {IUserApi} from '../models/user-api.interface';
+import {IProjectApi} from '../models/project-api.interface';
+import {ITaskApi} from '../models/task-api.interface';
+import * as moment from 'moment';
+import {TasksApiMockFactory} from '../testing/mocks/api-mock/tasks-api-mock.factory';
+import {UsersApiMockFactory} from '../testing/mocks/api-mock/users-api-mock.factory';
+import {ProjectsApiMockFactory} from '../testing/mocks/api-mock/projects-api-mock.factory';
 
 
 let comp: DateOptionsComponent;
@@ -17,11 +23,21 @@ let task: Task;
 let taskFromApi;
 
 describe('EditDateOptionsComponent', () => {
+    let user: IUserApi;
+    let project: IProjectApi;
+    let taskFromApi: ITaskApi;
+    const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
+    const userApiMockFactroy: UsersApiMockFactory = new UsersApiMockFactory();
+    const projectApiMockFactory: ProjectsApiMockFactory = new ProjectsApiMockFactory();
 
     beforeEach(async(() => {
+        user = userApiMockFactroy.createUserDict();
+        project = projectApiMockFactory.createProjectDict([], user, []);
+        taskFromApi = taskApiMockFactory.createTaskDict(user, user, project,  []);
+        taskFromApi.finish_date = moment().format('DD-MM-YYYY');
+
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
-        taskFromApi = task1;
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, FormsModule, NoopAnimationsModule],
             declarations: [DateOptionsComponent, MenuButtonComponent],

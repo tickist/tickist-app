@@ -1,22 +1,38 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {DisplayFinishDateComponent} from './display-finish-date.component';
 import {Task} from '../../models/tasks';
-import {task1} from '../../testing/mocks/api_mocks/tasks';
+import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
+import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
+import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
+import {IUserApi} from '../../models/user-api.interface';
+import {IProjectApi} from '../../models/project-api.interface';
+import {ITaskApi} from '../../models/task-api.interface';
+import * as moment from 'moment';
+
 
 
 describe('DisplayFinishDateComponent', () => {
     let component: DisplayFinishDateComponent;
     let fixture: ComponentFixture<DisplayFinishDateComponent>;
-    let task;
+    let user: IUserApi;
+    let project: IProjectApi;
+    let task: ITaskApi;
+    const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
+    const usersApiMockFactory: UsersApiMockFactory = new UsersApiMockFactory();
+    const projectApiMockFactory: ProjectsApiMockFactory = new ProjectsApiMockFactory();
 
     beforeEach(async(() => {
+        user = usersApiMockFactory.createUserDict();
+        project = projectApiMockFactory.createProjectDict([], user, []);
+        task = taskApiMockFactory.createTaskDict(user, user, project,  []);
+        task.finish_date = moment().format('DD-MM-YYYY');
         TestBed.configureTestingModule({
             declarations: [DisplayFinishDateComponent]
         }).compileComponents();
 
         fixture = TestBed.createComponent(DisplayFinishDateComponent);
         component = fixture.componentInstance;
-        task = Object.assign({}, task1);
+        task = Object.assign({}, task);
     }));
 
     afterEach(() => {

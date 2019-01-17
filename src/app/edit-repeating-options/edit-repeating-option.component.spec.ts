@@ -8,19 +8,35 @@ import {fakeAsync} from '@angular/core/testing';
 import {ConfigurationService} from '../services/configuration.service';
 import {Task} from '../models/tasks';
 import {TaskService} from '../services/task.service';
-import {task1} from '../testing/mocks/api_mocks/tasks';
+import {IUserApi} from '../models/user-api.interface';
+import {IProjectApi} from '../models/project-api.interface';
+import {ITaskApi} from '../models/task-api.interface';
+import {TasksApiMockFactory} from '../testing/mocks/api-mock/tasks-api-mock.factory';
+import {UsersApiMockFactory} from '../testing/mocks/api-mock/users-api-mock.factory';
+import {ProjectsApiMockFactory} from '../testing/mocks/api-mock/projects-api-mock.factory';
+import * as moment from 'moment';
+
 
 let comp: EditRepeatingOptionComponent;
 let fixture: ComponentFixture<EditRepeatingOptionComponent>;
 let task: Task;
-let taskFromApi;
+
 
 describe('Edit repeating Component', () => {
+    let user: IUserApi;
+    let project: IProjectApi;
+    let taskFromApi: ITaskApi;
+    const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
+    const userApiMockFactroy: UsersApiMockFactory = new UsersApiMockFactory();
+    const projectApiMockFactory: ProjectsApiMockFactory = new ProjectsApiMockFactory();
 
     beforeEach(async(() => {
+        user = userApiMockFactroy.createUserDict();
+        project = projectApiMockFactory.createProjectDict([], user, []);
+        taskFromApi = taskApiMockFactory.createTaskDict(user, user, project,  []);
+        taskFromApi.finish_date = moment().format('DD-MM-YYYY');
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
-        taskFromApi = task1;
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, FormsModule],
             declarations: [EditRepeatingOptionComponent],
@@ -48,13 +64,13 @@ describe('Edit repeating Component', () => {
             (configurationService: ConfigurationService) => {
                 expect(comp.defaultRepeatOptions).toBeFalsy();
                 expect(comp.customRepeatOptions).toBeFalsy();
-                expect(comp.fromRepetingOptions).toBeFalsy();
+                expect(comp.fromRepeatingOptions).toBeFalsy();
                 task = new Task(taskFromApi);
                 comp.task = task;
                 comp.ngOnInit();
                 expect(comp.defaultRepeatOptions).toBe(configurationService.loadConfiguration()['commons']['DEFAULT_REPEAT_OPTIONS']);
                 expect(comp.customRepeatOptions).toBe(configurationService.loadConfiguration()['commons']['CUSTOM_REPEAT_OPTIONS']);
-                expect(comp.fromRepetingOptions).toBe(configurationService.loadConfiguration()['commons']['FROM_REPEATING_OPTIONS']);
+                expect(comp.fromRepeatingOptions).toBe(configurationService.loadConfiguration()['commons']['FROM_REPEATING_OPTIONS']);
 
             })));
 

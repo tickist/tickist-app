@@ -7,10 +7,17 @@ import {BlankComponent, RootComponent} from '../../testing/test.modules';
 import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {Task} from '../../models/tasks';
-import {task1} from '../../testing/mocks/api_mocks/tasks';
 import {PinButtonComponent} from '../pin-button/pin-button.component';
 import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
 import {PriorityComponent} from '../../shared/components/priority/priority.component';
+import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
+import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
+import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
+import {User} from '../../user/models';
+import {Project} from '../../models/projects';
+import {IUserApi} from '../../models/user-api.interface';
+import {IProjectApi} from '../../models/project-api.interface';
+import {ITaskApi} from '../../models/task-api.interface';
 
 
 const routes: Routes = [
@@ -31,10 +38,19 @@ const routes: Routes = [
 
 
 describe('RightMenuComponent', () => {
+    let user: IUserApi;
+    let project: IProjectApi;
+    let task: ITaskApi;
     let component: RightMenuComponent;
     let fixture: ComponentFixture<RightMenuComponent>;
+    const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
+    const userApiMockFactroy: UsersApiMockFactory = new UsersApiMockFactory();
+    const projectApiMockFactory: ProjectsApiMockFactory = new ProjectsApiMockFactory();
 
     beforeEach(async(() => {
+        user = userApiMockFactroy.createUserDict();
+        project = projectApiMockFactory.createProjectDict([], user, []);
+        task = taskApiMockFactory.createTaskDict(user, user, project,  []);
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, RouterModule.forRoot(routes)],
             declarations: [
@@ -56,7 +72,7 @@ describe('RightMenuComponent', () => {
 
 
     it('should create', () => {
-        component.task = new Task(task1);
+        component.task = new Task(task);
         fixture.detectChanges();
         expect(component).toBeTruthy();
     });

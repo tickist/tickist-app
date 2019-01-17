@@ -21,6 +21,7 @@ export class EditRepeatingOptionComponent implements OnInit {
     fromRepeating: any;
     @Input() task: Task;
 
+
     constructor(protected configurationService: ConfigurationService, protected taskService: TaskService) {
     }
 
