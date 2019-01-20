@@ -1,9 +1,9 @@
 import {
-    AfterViewChecked, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
-    ViewChild,  ChangeDetectorRef
+    AfterViewChecked, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, Renderer2, SimpleChange,
+    ViewChild
 } from '@angular/core';
-import {ObservableMedia} from '@angular/flex-layout';
-import {Task} from 'app/models/tasks';
+import {MediaObserver} from '@angular/flex-layout';
+
 
 
 @Component({
@@ -20,7 +20,7 @@ export class ProgressBarComponent implements AfterViewChecked, OnChanges {
     showIcon = false;
     tooltipString: string;
 
-    constructor(private elRef: ElementRef, private media: ObservableMedia, private renderer: Renderer2) {
+    constructor(private elRef: ElementRef, private media: MediaObserver, private renderer: Renderer2) {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {

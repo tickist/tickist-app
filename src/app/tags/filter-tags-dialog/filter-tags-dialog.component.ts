@@ -1,6 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {TagsFiltersService} from '../../services/tags-filters.service';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -8,7 +10,8 @@ import {TagsFiltersService} from '../../services/tags-filters.service';
     templateUrl: './filter-tags-dialog.component.html',
     styleUrls: ['./filter-tags-dialog.component.css']
 })
-export class FilterTagsDialogComponent implements OnInit {
+export class FilterTagsDialogComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     filtersValues: any = [];
     filterValue: any = {};
     filterValueId: number;
@@ -17,20 +20,24 @@ export class FilterTagsDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.tagsFiltersService.currentTagsFilters$.subscribe((filter) => {
-            if (filter) {
-                this.filterValue = filter;
-                this.filterValueId = this.filterValue['id'];
-            }
+        this.tagsFiltersService.currentTagsFilters$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((filter) => {
+                if (filter) {
+                    this.filterValue = filter;
+                    this.filterValueId = this.filterValue['id'];
+                }
 
-        });
+            });
 
-        this.tagsFiltersService.tagsFilters$.subscribe((filters) => {
-            if (filters.length > 0) {
-                this.filtersValues = filters.filter(filter => filter.label === 'filter');
+        this.tagsFiltersService.tagsFilters$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((filters) => {
+                if (filters.length > 0) {
+                    this.filtersValues = filters.filter(filter => filter.label === 'filter');
 
-            }
-        });
+                }
+            });
     }
 
     close(result) {
@@ -45,6 +52,10 @@ export class FilterTagsDialogComponent implements OnInit {
             this.dialogRef.close();
 
         }
+    }
 
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 }

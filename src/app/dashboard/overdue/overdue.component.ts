@@ -1,8 +1,14 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import {Task} from '../../models/tasks';
-import {TaskService} from '../../services/task.service';
-import {UserService} from '../../services/user.service';
+import {TaskService} from '../../tasks/task.service';
+import {UserService} from '../../user/user.service';
 import {User} from '../../user/models';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {UpdateUser} from '../../user/user.actions';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {selectLoggedInUser} from '../../user/user.selectors';
 
 
 @Component({
@@ -10,16 +16,17 @@ import {User} from '../../user/models';
     templateUrl: './overdue.component.html',
     styleUrls: ['./overdue.component.scss']
 })
-export class OverdueComponent implements OnInit {
+export class OverdueComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     @Input() tasks: Task[];
     @Input() defaultTaskView: string;
     taskView: string;
     user: User;
 
-    constructor(private taskService: TaskService, protected userService: UserService) {}
+    constructor(private taskService: TaskService, private store: Store<AppStore>) {}
 
     ngOnInit() {
-        this.userService.user$.subscribe((user) => {
+        this.store.select(selectLoggedInUser).pipe(takeUntil(this.ngUnsubscribe)).subscribe((user) => {
             if (user) {
                 this.user = user;
             }
@@ -34,11 +41,16 @@ export class OverdueComponent implements OnInit {
         this.taskView = event;
         if (this.user.defaultTaskViewOverdueView !== event) {
             this.user.defaultTaskViewOverdueView = event;
-            this.userService.updateUser(this.user, true);
+            this.store.dispatch(new UpdateUser({user: this.user}));
         }
     }
 
     trackByFn(index, item): number {
         return item.id;
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 }

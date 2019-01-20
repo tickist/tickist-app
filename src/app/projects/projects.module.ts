@@ -14,6 +14,14 @@ import {SingleProjectComponent} from './single-project/single-project.component'
 import {TasksFromProjectsComponent} from '../tasks-from-projects/tasks-from-projects.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {RouterModule} from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { ProjectsEffects } from './projects.effects';
+import { StoreModule } from '@ngrx/store';
+import * as fromProjects from './projects.reducer';
+import * as fromActiveProject from './active-project.reducer';
+import * as fromActiveProjectsId from './active-projects-ids.reducer';
+import { ActiveProjectsIdsEffects } from './active-projects-ids.effects';
+import { ActiveProjectEffects } from './active-project.effects';
 
 
 @NgModule({
@@ -26,7 +34,11 @@ import {RouterModule} from '@angular/router';
         FormsModule,
         ReactiveFormsModule,
         FlexLayoutModule,
-        RouterModule
+        RouterModule,
+        EffectsModule.forFeature([ProjectsEffects, ActiveProjectsIdsEffects, ActiveProjectEffects]),
+        StoreModule.forFeature('projects', fromProjects.reducer),
+        StoreModule.forFeature('activeProject', fromActiveProject.reducer),
+        StoreModule.forFeature('activeProjectsIds', fromActiveProjectsId.reducer)
     ],
     declarations: [ColorPickerComponent, DeleteProjectConfirmationDialogComponent, FilterProjectDialogComponent, ProjectComponent,
         ProjectsListComponent, SingleProjectComponent, TasksFromProjectsComponent],

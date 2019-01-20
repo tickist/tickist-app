@@ -6,7 +6,7 @@ import {SimpleUser, User} from '../user/models';
 import * as tasksAction from '../reducers/actions/tasks';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
-import {UserService} from './user.service';
+import {UserService} from '../user/user.service';
 
 
 @Injectable()

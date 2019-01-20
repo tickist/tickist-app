@@ -1,30 +1,20 @@
-import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Headers} from '@angular/http';
-import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
-import {AppStore} from '../store';
 import {Tag} from '../models/tags';
-import * as tagsAction from '../reducers/actions/tags';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {ITagApi} from '../models/tag-api.interface';
 
+
 @Injectable()
 export class TagService {
-    tags$: Observable<Tag[]>;
 
-    constructor(public http: HttpClient, private store: Store<AppStore>) {
-        this.tags$ = this.store.pipe(
-            select(s => s.tags)
-        );
-    }
+    constructor(public http: HttpClient) {}
 
     loadTags() {
         return this.http.get<ITagApi[]>(`${environment['apiUrl']}/tag/`)
             .pipe(
                 map(payload => payload.map(tag => new Tag(tag))),
-                map(payload => this.store.dispatch(new tagsAction.AddTags(payload)))
             );
     }
 
@@ -33,29 +23,28 @@ export class TagService {
     }
 
     createTag(tag: Tag) {
-        this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
-            .pipe(map(payload => new Tag(payload)))
-            .subscribe(payload => this.store.dispatch(new tagsAction.CreateTag(payload)));
+        return this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
+            .pipe(map(payload => new Tag(payload)));
     }
 
     createTagDuringEditingTask(tag: Tag) {
+        // @Todo do something with that
+
         return this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
             .pipe(
                 map(payload => new Tag(payload)),
                 map(payload => {
-                this.store.dispatch(new tagsAction.CreateTag(payload));
+                // this.store.dispatch(new tagsAction.CreateTag(payload));
                 return payload;
             }));
     }
 
-    updateTag(tag: Tag): void {
-        this.http.put<ITagApi>(`${environment['apiUrl']}/tag/${tag.id}/`, tag)
-            .subscribe(payload => this.store.dispatch(new tagsAction.UpdateTag(new Tag(payload))));
+    updateTag(tag: Tag) {
+        return this.http.put<ITagApi>(`${environment['apiUrl']}/tag/${tag.id}/`, tag);
     }
 
-    deleteTag(tag: Tag): void {
-        this.http.delete(`${environment['apiUrl']}/tag/${tag.id}/`)
-            .subscribe(() => this.store.dispatch(new tagsAction.DeleteTag(tag)));
+    deleteTag(tagId: number) {
+        return this.http.delete(`${environment['apiUrl']}/tag/${tagId}/`);
     }
 
 }

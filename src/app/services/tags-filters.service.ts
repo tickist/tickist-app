@@ -8,7 +8,8 @@ import * as tagsAction from '../reducers/actions/tags';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
-import {UserService} from './user.service';
+import {UserService} from '../user/user.service';
+import {UpdateUser} from '../user/user.actions';
 
 
 @Injectable()
@@ -61,7 +62,7 @@ export class TagsFiltersService {
 
     updateCurrentFilter(currentFilter) {
         this.user.updateTagsFilterId(currentFilter);
-        this.userService.updateUser(this.user, false);
+        this.store.dispatch(new UpdateUser({user: this.user}));
         this.store.dispatch(new tagsAction.UpdateCurrentFilter(currentFilter));
     }
 }

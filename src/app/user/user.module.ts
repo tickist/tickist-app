@@ -7,16 +7,29 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {CalendarModule} from 'primeng/components/calendar/calendar';
 import {TickistSharedModule} from '../shared/shared.module';
+import {EffectsModule} from '@ngrx/effects';
+import {UserEffects} from './user.effects';
+import {StoreModule} from '@ngrx/store';
+import * as fromUser from './user.reducer';
+import * as fromTeam from './team.reducer';
+import { TeamEffects } from './team.effects';
 
 
 @NgModule({
     imports: [
-        CommonModule, TickistMaterialModule, FlexLayoutModule, ReactiveFormsModule, TickistSharedModule, FormsModule, CalendarModule
+        CommonModule,
+        TickistMaterialModule,
+        FlexLayoutModule,
+        ReactiveFormsModule,
+        TickistSharedModule,
+        FormsModule,
+        CalendarModule,
+        EffectsModule.forFeature([UserEffects, TeamEffects]),
+        StoreModule.forFeature('user', fromUser.reducer),
+        StoreModule.forFeature('team', fromTeam.reducer)
     ],
-    providers: [
-    ],
-    exports: [
-    ],
+    providers: [],
+    exports: [],
     declarations: [
         UserComponent, TeamComponent
     ]

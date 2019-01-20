@@ -1,10 +1,15 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {StatisticsService} from '../../services/statistics.service';
 import {ConfigurationService} from '../../services/configuration.service';
-import {Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import * as _ from 'lodash';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {Chart} from '../models';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {selectDailyStatistics} from '../statistics.selectors';
+import {DailyStatistics} from '../../models/statistics';
+import {takeUntil} from 'rxjs/operators';
 
 
 
@@ -15,7 +20,9 @@ import {Chart} from '../models';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DayStatisticsComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     dayStatistics: any;
+    dailyStatistics$: Observable<DailyStatistics>;
     activeDateElement: IActiveDateElement;
     data: any;
     prioritiesTasksCounter: any;
@@ -29,12 +36,13 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
     subscriptions: Subscription;
     protected interval = 10000;
 
-    constructor(private statisticsService: StatisticsService, private configurationService: ConfigurationService,
+    constructor(private store: Store<AppStore>, private configurationService: ConfigurationService,
                 private cd: ChangeDetectorRef, private ngZone: NgZone) {
     }
 
     ngOnInit() {
-        this.subscriptions = this.statisticsService.daily$.subscribe((daily) => {
+        this.dailyStatistics$ = this.store.select(selectDailyStatistics);
+        this.dailyStatistics$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((daily) => {
             if (daily) {
                 this.dayStatistics = daily;
                 this.charts = [
@@ -63,10 +71,10 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
 
             }
         });
-        this.subscriptions.add(this.configurationService.activeDateElement$.subscribe((activeDateElement) => {
+        this.configurationService.activeDateElement$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((activeDateElement) => {
             this.activeDateElement = activeDateElement;
             // this.statisticsService.loadDailyStatistics(this.activeDay);
-        }));
+        });
 
         this.nextChart = (() => {
             if (this.activeChart) {
@@ -100,9 +108,8 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.subscriptions) {
-            this.subscriptions.unsubscribe();
-        }
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
         clearInterval(this.chartInterval);
     }
 

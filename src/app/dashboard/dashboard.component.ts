@@ -1,15 +1,15 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {TaskService} from '../services/task.service';
-import {UserService} from '../services/user.service';
+import {TaskService} from '../tasks/task.service';
+import {UserService} from '../user/user.service';
 import {ConfigurationService} from '../services/configuration.service';
 import {Task} from '../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, Subscription, combineLatest} from 'rxjs';
+import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
 import * as moment from 'moment';
 import {User} from '../user/models';
 import * as _ from 'lodash';
-import {MediaChange, ObservableMedia} from '@angular/flex-layout';
-import {map} from 'rxjs/operators';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
+import {map, takeUntil} from 'rxjs/operators';
 import {IActiveDateElement} from '../models/active-data-element.interface';
 
 
@@ -26,18 +26,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     today: moment.Moment;
     stream$: Observable<any>;
     user: User;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     subscriptions: Subscription;
     mediaChange: MediaChange;
 
     constructor(private taskService: TaskService, protected route: ActivatedRoute, private  userService: UserService,
                 private configurationService: ConfigurationService, protected router: Router,
-                protected media: ObservableMedia) {
+                protected media: MediaObserver) {
         this.stream$ = combineLatest(
-                this.taskService.tasks$,
-                this.configurationService.activeDateElement$,
-                this.userService.user$
-            );
+            this.taskService.tasks$,
+            this.configurationService.activeDateElement$,
+            this.userService.user$
+        );
         this.changeActiveDayAfterMidnight();
     }
 
@@ -63,7 +63,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscriptions = this.stream$.subscribe(([tasks, activeDateElement, user]) => {
+        this.stream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([tasks, activeDateElement, user]) => {
             this.activeDateElement = activeDateElement;
             this.user = user;
             if (tasks && tasks.length > 0 && this.user) {
@@ -71,12 +71,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.todayTasks = this.tasks.filter((task: Task) => {
                     return (
                         (task.finishDate && task.finishDate.format('DD-MM-YYYY') === this.activeDateElement.date.format('DD-MM-YYYY') ||
-                        (task.pinned === true && this.isToday()))
+                            (task.pinned === true && this.isToday()))
                     );
                 });
 
                 this.overdueTasks = this.tasks.filter((task: Task) => {
-                    return ( task.pinned === false && task.finishDate && task.finishDate < this.activeDateElement.date);
+                    return (task.pinned === false && task.finishDate && task.finishDate < this.activeDateElement.date);
                 });
 
                 const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
@@ -87,18 +87,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);
             }
         });
-        this.subscriptions.add(this.route.params.pipe(map(params => params['date'])).subscribe((param) => {
+        this.route.params.pipe(
+            map(params => params['date']),
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((param) => {
             this.configurationService.updateActiveDateElement(param);
-        }));
-        this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {
+        });
+        this.media.media$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((mediaChange: MediaChange) => {
             this.mediaChange = mediaChange;
-        }));
+        });
     }
 
     ngOnDestroy() {
-        if (this.subscriptions) {
-            this.subscriptions.unsubscribe();
-        }
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
         // clearTimeout(this.timer);
     }
 

@@ -1,7 +1,9 @@
 import {ChangeDetectionStrategy, Component, HostListener, Input} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {TaskService} from '../../services/task.service';
+import {TaskService} from '../../tasks/task.service';
 import {SingleTask} from '../shared/single-task';
+import {AppStore} from '../../store';
+import {Store} from '@ngrx/store';
 
 
 @Component({
@@ -31,8 +33,8 @@ export class SingleTaskSimplifiedComponent extends SingleTask {
 
     }
 
-    constructor(public taskService: TaskService, public dialog: MatDialog) {
-        super(taskService, dialog);
+    constructor(public dialog: MatDialog, public store: Store<AppStore>) {
+        super(store, dialog);
     }
 
     changeRightMenuVisiblity(): void {

@@ -5,15 +5,17 @@ import {Router} from '@angular/router';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
 import {ProjectService} from '../services/project.service';
-import {TaskService} from '../services/task.service';
-import {UserService} from '../services/user.service';
+import {TaskService} from '../tasks/task.service';
+import {UserService} from '../user/user.service';
 import {TagService} from '../services/tag.service';
-import {ObservableMedia, MediaChange} from '@angular/flex-layout';
+import {MediaObserver, MediaChange} from '@angular/flex-layout';
 import {ConfigurationService} from '../services/configuration.service';
 import {SideNavVisibility} from '../models';
 import * as _ from 'lodash';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {AddTasks, RequestsAllTasks} from '../tasks/task.actions';
+import {RequestsAllProjects} from '../projects/projects.actions';
 
 
 
@@ -32,7 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     constructor(private store: Store<AppStore>, private taskService: TaskService, private userService: UserService,
                 private router: Router, private projectService: ProjectService, private tagService: TagService,
-                private media: ObservableMedia, private configurationService: ConfigurationService,
+                private media: MediaObserver, private configurationService: ConfigurationService,
                 private cd: ChangeDetectorRef) {
     }
 
@@ -42,7 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             {'open': true, 'mode': '', 'position': 'start'});
         this.rightSidenavVisibility = new SideNavVisibility({'open': true, 'mode': '', 'position': 'end'});
 
-        this.media.subscribe((change: MediaChange) => {
+        this.media.media$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((change: MediaChange) => {
             this.configurationService.updateLeftSidenavVisibility();
             this.configurationService.updateRightSidenavVisibility();
             this.cd.detectChanges();

@@ -1,19 +1,22 @@
 import {MatDialogRef} from '@angular/material';
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {ProjectsFiltersService} from '../../services/projects-filters.service';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 
 @Component({
     selector: 'app-filter-projects',
     templateUrl: './filter-projects.dialog.component.html',
 })
-export class FilterProjectDialogComponent {
+export class FilterProjectDialogComponent implements OnDestroy {
     filtersValues: any = [];
     filterValue: any = {};
     filterValueId: number;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(public dialogRef: MatDialogRef<FilterProjectDialogComponent>, protected projectsFiltersService: ProjectsFiltersService) {
-        this.projectsFiltersService.currentProjectsFilters$.subscribe((filter) => {
+        this.projectsFiltersService.currentProjectsFilters$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((filter) => {
 
             if (filter) {
                 this.filterValue = filter;
@@ -22,7 +25,7 @@ export class FilterProjectDialogComponent {
 
         });
 
-        this.projectsFiltersService.projectsFilters$.subscribe((filters) => {
+        this.projectsFiltersService.projectsFilters$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((filters) => {
             if (filters.length > 0) {
                 this.filtersValues = filters.filter(filter => filter.label === 'filter');
 
@@ -44,6 +47,11 @@ export class FilterProjectDialogComponent {
 
         }
 
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

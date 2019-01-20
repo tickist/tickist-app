@@ -7,10 +7,10 @@ import {AppStore} from '../store';
 
 import {GlobalStatistics, DailyStatistics, ChartStatistics} from '../models/statistics';
 import {ConfigurationService} from './configuration.service';
-import * as statisticsAction from '../reducers/actions/statistics';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {IActiveDateElement} from '../models/active-data-element.interface';
+import * as  moment from 'moment';
 
 @Injectable()
 export class StatisticsService {
@@ -21,50 +21,47 @@ export class StatisticsService {
     activeDateElement: IActiveDateElement;
 
     constructor(public http: HttpClient, private store: Store<AppStore>, private configurationService: ConfigurationService) {
-        this.global$ = this.store.pipe(
-            select(s => s.globalStatistics)
-        );
-        this.charts$ = this.store.pipe(
-            select(s => s.chartsData)
-        );
-        this.globalStatisticsDateRage$ = this.store.pipe(
-            select(s => s.globalStatisticsDateRage)
-        );
-        this.daily$ = this.store.pipe(
-            select(s => s.dailyStatistics)
-        );
         configurationService.activeDateElement$.subscribe((activeDateElement: IActiveDateElement) => {
-            this.loadDailyStatistics(activeDateElement);
+            this.loadDailyStatistics(activeDateElement.date);
             this.activeDateElement = activeDateElement;
         });
-        this.globalStatisticsDateRage$.subscribe((dateRange) => {
-            this.loadGlobalStatistics();
-            this.loadChartsData();
-        });
+        // this.globalStatisticsDateRage$.subscribe((dateRange) => {
+        //     this.loadGlobalStatistics();
+        //     this.loadChartsData();
+        // });
     }
 
-    loadAllStatistics(date) {
-        this.loadDailyStatistics(date);
-        this.loadGlobalStatistics();
-        this.loadChartsData();
+    // loadAllStatistics(date) {
+    //     this.loadDailyStatistics(date);
+    //     this.loadGlobalStatistics();
+    //     this.loadChartsData();
+    // }
+
+    loadDailyStatistics(date: moment.Moment = moment()): Observable<DailyStatistics> {
+        // const formatedDate = activeDateElement ?
+        //     activeDateElement.date.format('YYYY-MM-DD') :
+        //     this.activeDateElement.date.format('YYYY-MM-DD');
+        const formatedDate = date.format('YYYY-MM-DD');
+        return this.http.get(`${environment['apiUrl']}/day_statistics/?date=${formatedDate}`)
+            .pipe(
+                map(payload => new DailyStatistics(payload))
+            );
+            // .subscribe(payload => this.store.dispatch((new statisticsAction.UpdateDailyStatistics(payload))));
     }
 
-    loadDailyStatistics(activeDateElement: IActiveDateElement) {
-        const formatedDate = activeDateElement ? activeDateElement.date.format('YYYY-MM-DD') : this.activeDateElement.date.format('YYYY-MM-DD');
-        this.http.get(`${environment['apiUrl']}/day_statistics/?date=${formatedDate}`)
-            .pipe(map(payload => new DailyStatistics(payload)))
-            .subscribe(payload => this.store.dispatch((new statisticsAction.UpdateDailyStatistics(payload))));
+    loadGlobalStatistics(): Observable<GlobalStatistics> {
+        return this.http.get(`${environment['apiUrl']}/global/`)
+            .pipe(
+                map(payload => new GlobalStatistics(payload))
+            );
+            // .subscribe(payload => this.store.dispatch(new statisticsAction.UpdateGlobalStatistics(payload)));
     }
 
-    loadGlobalStatistics() {
-        this.http.get(`${environment['apiUrl']}/global/`)
-            .pipe(map(payload => new GlobalStatistics(payload)))
-            .subscribe(payload => this.store.dispatch(new statisticsAction.UpdateGlobalStatistics(payload)));
-    }
-
-    loadChartsData() {
-        this.http.get(`${environment['apiUrl']}/charts/`)
-            .pipe(map(payload => new ChartStatistics(payload)))
-            .subscribe(payload => this.store.dispatch(new statisticsAction.UpdateChartsData(payload)));
+    loadChartsData(): Observable<ChartStatistics> {
+        return this.http.get(`${environment['apiUrl']}/charts/`)
+            .pipe(
+                map(payload => new ChartStatistics(payload))
+            );
+            // .subscribe(payload => this.store.dispatch(new statisticsAction.UpdateChartsData(payload)));
     }
 }

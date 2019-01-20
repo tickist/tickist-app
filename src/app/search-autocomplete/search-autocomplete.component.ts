@@ -1,13 +1,14 @@
-import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
-import {TaskService} from '../services/task.service';
+import {Component, OnInit, ChangeDetectionStrategy, OnDestroy} from '@angular/core';
 import {Task} from '../models/tasks';
 import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
+import {map, startWith, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
-import {TasksFiltersService} from '../services/tasks-filters.service';
-import {Filter} from '../models/filter';
+import {AppStore} from '../store';
+import {Store} from '@ngrx/store';
+import {SetCurrrentSearchTasksFilter} from '../tasks/search-tasks.actions';
+import {selectAllUndoneTasks} from '../tasks/task.selectors';
 
 @Component({
     selector: 'tickist-search-autocomplete',
@@ -15,21 +16,17 @@ import {Filter} from '../models/filter';
     styleUrls: ['./search-autocomplete.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchAutocompleteComponent implements OnInit {
+export class SearchAutocompleteComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     tasks: Task[];
-    searchTaskFilter: Filter;
     searchControl = new FormControl();
     filteredOptions: Observable<Task[]>;
-    constructor(private tasksFiltersService: TasksFiltersService, private taskService: TaskService, protected router: Router) {
+    constructor(private store: Store<AppStore>, private router: Router) {
     }
 
     ngOnInit() {
-        this.taskService.tasks$.subscribe(((tasks: Task[]) => this.tasks = tasks));
-        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
-            if (filters.length > 0) {
-                this.searchTaskFilter = filters.filter(filter => filter.label === 'searchTasks')[0];
-            }
-        });
+        this.store.select(selectAllUndoneTasks).pipe(takeUntil(this.ngUnsubscribe)).subscribe(((tasks: Task[]) => this.tasks = tasks));
+
         this.filteredOptions = this.searchControl.valueChanges
             .pipe(
                 startWith(''),
@@ -37,10 +34,11 @@ export class SearchAutocompleteComponent implements OnInit {
             );
 
         this.searchControl.valueChanges.subscribe((value) => {
-            this.searchTaskFilter.changeValue(value);
-            this.tasksFiltersService.updateCurrentFilter(this.searchTaskFilter);
+            this.store.dispatch(new SetCurrrentSearchTasksFilter({searchText: value}));
         });
     }
+
+
 
     goToTask($event: MatAutocompleteSelectedEvent) {
         this.router.navigate(['/home/task', $event.option.value]);
@@ -53,6 +51,11 @@ export class SearchAutocompleteComponent implements OnInit {
            return [];
         }
         return this.tasks.filter(taskName => taskName.name.toLowerCase().includes(filterValue.toString()));
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

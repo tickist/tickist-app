@@ -6,6 +6,7 @@ import {ISimpleUserApi} from '../simple-user-api.interface';
 import {SimpleProject} from './index';
 import {ISimpleProjectApi} from '../simple-project-api.inferface';
 import {IUserApi} from '../user-api.interface';
+import {toSnakeCase} from '../../utils/toSnakeCase';
 
 
 export class Project extends Api {
@@ -61,9 +62,9 @@ export class Project extends Api {
         }
     }
 
-    toApi(): ISimpleProjectApi {
-        return (<ISimpleProjectApi>super.toApi());
-    }
+    // toApi(): ISimpleProjectApi {
+    //     return (<ISimpleProjectApi>super.toApi());
+    // }
 
     hasDescription(): boolean {
         return this.description && this.description.length > 0;
@@ -87,7 +88,6 @@ export class Project extends Api {
     }
 
     convertToSimpleProject(): SimpleProject {
-        const userApi = this.toApi();
         const simpleProjectApi: ISimpleProjectApi = {
             id: this.id,
             name: this.name,

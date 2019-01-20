@@ -2,9 +2,8 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
-
 import * as moment from 'moment';
-import {ObservableMedia} from '@angular/flex-layout';
+import {MediaObserver} from '@angular/flex-layout';
 import * as configurationAction from '../reducers/actions/configuration';
 import {IActiveDateElement} from '../models/active-data-element.interface';
 import {stateActiveDateElement} from '../models/state-active-date-element.enum';
@@ -18,14 +17,13 @@ export class ConfigurationService {
     leftSidenavVisibility$: Observable<any>;
     rightSidenavVisibility$: Observable<any>;
     addTaskComponentVisibility$: Observable<any>;
-    progressBar$: Observable<any>;
     configuration: {};
     TASK_EXTENDED_VIEW: any;
     TASK_SIMPLE_VIEW: any;
     TYPE_FINISH_DATE_ON: any;
     TYPE_FINISH_DATE_BY: any;
 
-    constructor(private store: Store<AppStore>, protected media: ObservableMedia) {
+    constructor(private store: Store<AppStore>, protected media: MediaObserver) {
         this.activeDateElement$ = this.store.pipe(
             select(s => s.activeDateElement)
         );
@@ -44,9 +42,8 @@ export class ConfigurationService {
         this.addTaskComponentVisibility$ = this.store.pipe(
             select(s => s.addTaskComponentVisibility))
         ;
-        this.progressBar$ = this.store.pipe(
-            select(s => s.progressBar)
-        );
+
+
         this.TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};
         this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
         this.TYPE_FINISH_DATE_BY = {'id': 0, 'name': 'by'};
@@ -99,7 +96,7 @@ export class ConfigurationService {
                     this.TASK_SIMPLE_VIEW
                 ],
                 'STATIC_URL': '/site_media/static/',
-                'Google_plus_scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email',
+                'Google_plus_scope': 'https://www.googleapis.com/auth.effects.ts/plus.login https://www.googleapis.com/auth.effects.ts/userinfo.email',
                 'DEFAULT_REPEAT_OPTIONS': [
                     {'name_of_extension': '', 'id': 0, 'name': 'never'},
                     {'name_of_extension': 'day(s)', 'id': 1, 'name': 'daily'},
@@ -226,13 +223,5 @@ export class ConfigurationService {
             'open': open
         }));
     }
-
-    switchOffProgressBar(): void {
-        this.store.dispatch(new configurationAction.SwitchOffProgressBar(false));
-    }
-
-    switchOnProgressBar(): void {
-        this.store.dispatch(new configurationAction.SwitchOnProgressBar(true));
-    }
-
+    
 }

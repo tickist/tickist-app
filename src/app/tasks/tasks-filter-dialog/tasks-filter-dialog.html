@@ -2,7 +2,7 @@
 <mat-dialog-content>
 
     <mat-radio-group  class="radio-group" (change)="changeFilter($event)" [(ngModel)]="filterValueId" fxLayout="column">
-        <mat-radio-button *ngFor="let o of filterValues" [value]="o.id">
+        <mat-radio-button *ngFor="let o of filters$ | async" [value]="o.id">
             <span>{{ o.name }}</span>
         </mat-radio-button>
     </mat-radio-group>

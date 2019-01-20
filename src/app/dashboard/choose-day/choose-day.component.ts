@@ -4,6 +4,8 @@ import {ConfigurationService} from '../../services/configuration.service';
 import {FormControl} from '@angular/forms';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
     selector: 'tickist-choose-day',
@@ -14,13 +16,13 @@ import {stateActiveDateElement} from '../../models/state-active-date-element.enu
 export class ChooseDayComponent implements OnInit {
     @Output() selectedDate = new EventEmitter();
     selectedDateFormControl: FormControl;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(protected configurationService: ConfigurationService) {
-    }
+    constructor(protected configurationService: ConfigurationService) {}
 
     ngOnInit() {
         this.selectedDateFormControl = new FormControl({value: '', disabled: true});
-        this.configurationService.activeDateElement$.subscribe((activeDateElement: IActiveDateElement) => {
+        this.configurationService.activeDateElement$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((activeDateElement: IActiveDateElement) => {
             if (activeDateElement.state === stateActiveDateElement.future) {
                 this.selectedDateFormControl.setValue('');
             } else if (activeDateElement.state === stateActiveDateElement.weekdays) {
@@ -36,6 +38,11 @@ export class ChooseDayComponent implements OnInit {
             }
         });
 
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     emitOnSelectedDate() {

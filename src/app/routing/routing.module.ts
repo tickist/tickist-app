@@ -9,27 +9,27 @@ import {TasksResolver} from './resolvers/tasks.resolver';
 import {TeamResolver} from './resolvers/team.resolver';
 import {ProjectsResolver} from './resolvers/project.resolver';
 import {TagsResolver} from './resolvers/tags.resolver';
-import {UserResolver} from './resolvers/user.resolver';
 import {SetAllTasksFilterResolver} from './resolvers/set-all-tasks-filter.resolver';
-import {CloseMenuInTasksResolver} from './resolvers/close-menu-in-tasks.resolver';
+import {RouterStateSerializer, StoreRouterConnectingModule} from '@ngrx/router-store';
+import {CustomSerializer} from './custom-serializer';
 
 @NgModule({
     imports: [
         CommonModule,
-        RouterModule.forRoot(routes)
+        RouterModule.forRoot(routes),
+        StoreRouterConnectingModule.forRoot({stateKey: 'router'})
     ],
     declarations: [],
     providers: [
         TasksResolver,
         TeamResolver,
-        UserResolver,
         TagsResolver,
         ProjectsResolver,
         SetAllTasksFilterResolver,
         FutureTasksFiltersService,
         LoggedInGuard,
         AnonymousGuard,
-        CloseMenuInTasksResolver
+        { provide: RouterStateSerializer, useClass: CustomSerializer }
         ],
     exports: [
         RouterModule

@@ -5,6 +5,7 @@
         "outDir": "./dist/out-tsc",
         "sourceMap": true,
         "declaration": false,
+        "downlevelIteration": true,
 //        "noImplicitAny": true,
 //        "noImplicitReturns": true,
 //        "strictNullChecks": true,

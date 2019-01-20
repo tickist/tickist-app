@@ -1,9 +1,14 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {StatisticsService} from '../../services/statistics.service';
-import {ChartStatistics} from '../../models/statistics';
+import {ChartStatistics, GlobalStatistics} from '../../models/statistics';
 import {BaseChartDirective} from 'ng2-charts';
 import {Minutes2hoursPipe} from '../../shared/pipes/minutes2hours';
 import * as moment from 'moment';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {selectChartStatistics, selectGlobalStatistics} from '../statistics.selectors';
+import {Observable, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -12,8 +17,11 @@ import * as moment from 'moment';
     styleUrls: ['./global-statistics.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GlobalStatisticsComponent implements OnInit {
-    global: any;
+export class GlobalStatisticsComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    global$: Observable<GlobalStatistics>;
+    charts$: Observable<ChartStatistics>;
+    global: GlobalStatistics;
     charts: ChartStatistics;
     dataTasksCounter: any;
     dataTimeChart: any;
@@ -23,7 +31,7 @@ export class GlobalStatisticsComponent implements OnInit {
     @ViewChild('tasksCounterChart', {read: BaseChartDirective}) tasksCounterChart: any;
     @ViewChild('timeChart', {read: BaseChartDirective}) timeChart: any;
 
-    constructor(private statisticsService: StatisticsService, private cd: ChangeDetectorRef) {
+    constructor(private store: Store<AppStore>, private cd: ChangeDetectorRef) {
         this.minutes2Hours = new Minutes2hoursPipe();
     }
 
@@ -37,12 +45,15 @@ export class GlobalStatisticsComponent implements OnInit {
 
 
     ngOnInit() {
-        this.statisticsService.global$.subscribe((global) => {
+        this.global$ = this.store.select(selectGlobalStatistics);
+        this.global$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((global) => {
             if (global) {
                 this.global = global;
+                this.cd.detectChanges();
             }
         });
-        this.statisticsService.charts$.subscribe((charts) => {
+        this.charts$ = this.store.select(selectChartStatistics);
+        this.charts$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((charts) => {
             const tasksCounterX: string[] = [], tasksCounterY = [], timeChartX: string[] = [], estimateTimeChartY = [],
                 timeChartY = [];
 
@@ -151,6 +162,11 @@ export class GlobalStatisticsComponent implements OnInit {
 
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

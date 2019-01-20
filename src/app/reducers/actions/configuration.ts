@@ -31,19 +31,7 @@ export class UpdateOfflineModeNotification implements Action {
     }
 }
 
-export class SwitchOffProgressBar implements Action {
-    readonly type = SWITCH_OFF_PROGRESS_BAR;
 
-    constructor(public payload: any) {
-    }
-}
-
-export class SwitchOnProgressBar implements Action {
-    readonly type = SWITCH_ON_PROGRESS_BAR;
-
-    constructor(public payload: any) {
-    }
-}
 
 export class UpdateLeftSidenavVisibility implements Action {
     readonly type = UPDATE_LEFT_SIDENAV_VISIBILITY;
@@ -70,8 +58,6 @@ export class UpdateAddTaskComponentVisibility implements Action {
 export type Actions = UpdateDetectApiError
     | UpdateRightSidenavVisibility
     | UpdateLeftSidenavVisibility
-    | SwitchOffProgressBar
-    | SwitchOnProgressBar
     | UpdateActiveDateElement
     | UpdateOfflineModeNotification
     | UpdateAddTaskComponentVisibility;

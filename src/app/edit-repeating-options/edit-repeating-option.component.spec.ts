@@ -7,7 +7,7 @@ import {FormsModule} from '@angular/forms';
 import {fakeAsync} from '@angular/core/testing';
 import {ConfigurationService} from '../services/configuration.service';
 import {Task} from '../models/tasks';
-import {TaskService} from '../services/task.service';
+import {TaskService} from '../tasks/task.service';
 import {IUserApi} from '../models/user-api.interface';
 import {IProjectApi} from '../models/project-api.interface';
 import {ITaskApi} from '../models/task-api.interface';

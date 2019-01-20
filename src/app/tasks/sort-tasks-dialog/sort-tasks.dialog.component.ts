@@ -1,6 +1,12 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {TasksFiltersService} from '../../services/tasks-filters.service';
+import {selectCurrentSortBy, selectSortByOptions} from '../sort-by-tasks.selectors';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {SortBy} from '../models/sortBy';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {SetCurrentSortBy} from '../sort-tasks.actions';
 
 
 @Component({
@@ -8,37 +14,40 @@ import {TasksFiltersService} from '../../services/tasks-filters.service';
     templateUrl: './sort-tasks.dialog.component.html',
     styleUrls: ['./sort-tasks.dialog.component.scss']
 })
-export class SortByDialogComponent {
-    sortingByValues: any = [];
-    sortingByValue: any = {};
-    sortingByValueId: number;
+export class SortByDialogComponent implements  OnInit, OnDestroy {
+    sortByValues: SortBy[] = [];
+    sortByValue: SortBy;
+    sortByValueId: number;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private dialogRef: MatDialogRef<SortByDialogComponent>,
-                private tasksFiltersService: TasksFiltersService) {
-        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
-
-            if (filters.length > 0) {
-                this.sortingByValue = filters.filter(filter => filter.label === 'sorting')[0];
-                this.sortingByValueId = this.sortingByValue['id'];
-            }
-
-        });
-
-        this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
-            if (filters.length > 0) {
-                this.sortingByValues = filters.filter(filter => filter.label === 'sorting');
-
-            }
-        });
+                private store: Store<AppStore>) {
 
     }
 
+    ngOnInit(): void {
+        this.store.select(selectCurrentSortBy).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+            (sortBy: SortBy) => {
+                this.sortByValue = sortBy;
+                this.sortByValueId = sortBy.id;
+            });
+
+        this.store.select(selectSortByOptions).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+            (sortByOptions: SortBy[]) => this.sortByValues = sortByOptions
+        );
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
     changeSortingBy($event) {
-        if (this.sortingByValues.length > 0) {
-            this.sortingByValue = this.sortingByValues
-                .filter(sortingBy => sortingBy.label === 'sorting' && sortingBy.id === $event.value)[0];
-            this.sortingByValueId = this.sortingByValue['id'];
-            this.tasksFiltersService.updateCurrentFilter(this.sortingByValue);
+        if (this.sortByValues.length > 0) {
+            this.sortByValue = this.sortByValues
+                .filter(sortBy => sortBy.id === $event.value)[0];
+            this.sortByValueId = this.sortByValue['id'];
+            this.store.dispatch(new SetCurrentSortBy({currentSortBy: this.sortByValue}));
             this.dialogRef.close();
         }
     }

@@ -1,10 +1,21 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {TasksFiltersService} from '../../services/tasks-filters.service';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {TasksFiltersService} from '../tasks-filters.service';
 import {TagsFilterDialogComponent} from '../tags-filter-dialog/tags-filter-dialog.component';
 import {EstimateTimeDialogComponent} from '../estimate-time-dialog/estimate-time-dialog.component';
 import {TasksFilterDialogComponent} from '../tasks-filter-dialog/tasks-filter-dialog.component';
 import {AssignedToDialogComponent} from '../assigned-to-dialog/assigned-to.dialog.component';
 import {MatDialog, MatDialogConfig} from '@angular/material';
+import {
+    selectCurrentAssignedToFilter,
+    selectCurrentEstimateTimeFilter,
+    selectCurrentMainFilter,
+    selectCurrentTagsFilter
+} from '../filters-tasks.selectors';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {Observable, Subject} from 'rxjs';
+import {Filter} from '../../models/filter';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -12,16 +23,18 @@ import {MatDialog, MatDialogConfig} from '@angular/material';
     templateUrl: './filter-tasks.component.html',
     styleUrls: ['./filter-tasks.component.scss']
 })
-export class FilterTasksComponent implements OnInit {
+export class FilterTasksComponent implements OnInit, OnDestroy {
     @Input() showTags: boolean;
-    filterValue: any = {};
-    assignedToValue: any = {};
-    estimateTime__ltValue: any = {};
-    estimateTime__gtValue: any = {};
+    currentMainFilter$: Observable<Filter>;
+    currentAssignedToFilter$: Observable<Filter>;
+    currentTagsFilter$: Observable<Filter>;
+    currentEstimateTimeFilter$: Observable<{currentFilter_lt: Filter, currentFilter_gt: Filter}>;
+    tagsFilter: Filter;
     tagsFilterValue: any = {};
     matDialogConfig: MatDialogConfig;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService) {
+    constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
         this.matDialogConfig = {'height': '350px', 'width': '300px'};
     }
 
@@ -42,29 +55,31 @@ export class FilterTasksComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
-
-            if (filters.length > 0) {
-                this.filterValue = filters.filter(filter => filter.label === 'filter')[0];
-                this.assignedToValue = filters.filter(filter => filter.label === 'assignedTo')[0];
-                this.estimateTime__ltValue = filters.filter(filter => filter.label === 'estimateTime__lt')[0];
-                this.estimateTime__gtValue = filters.filter(filter => filter.label === 'estimateTime__gt')[0];
-                this.tagsFilterValue = filters.filter(filter => filter.label === 'tags')[0];
-            }
+        this.currentMainFilter$ = this.store.select(selectCurrentMainFilter);
+        this.currentAssignedToFilter$ = this.store.select(selectCurrentAssignedToFilter);
+        this.currentEstimateTimeFilter$ = this.store.select(selectCurrentEstimateTimeFilter);
+        this.currentTagsFilter$ = this.store.select(selectCurrentTagsFilter);
+        this.currentTagsFilter$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(tagsFilter => {
+            this.tagsFilter = tagsFilter;
         });
+
     }
 
     tagsValue() {
-        if (this.tagsFilterValue) {
-            if (this.tagsFilterValue.value instanceof String || typeof this.tagsFilterValue.value === 'string') {
-                return this.tagsFilterValue.value;
-            } else if (this.tagsFilterValue.value instanceof Array) {
-                return `${this.tagsFilterValue.value.length} selected`;
+        if (this.tagsFilter) {
+            if (this.tagsFilter.value instanceof String || typeof this.tagsFilter.value === 'string') {
+                return this.tagsFilter.value;
+            } else if (this.tagsFilter.value instanceof Array) {
+                return `${this.tagsFilter.value.length} selected`;
             }
         } else {
             return '';
         }
 
+    }
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

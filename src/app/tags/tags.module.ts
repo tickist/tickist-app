@@ -10,6 +10,10 @@ import {TickistTasksModule} from '../tasks/tasks.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TickistSingleTaskModule} from '../single-task/single-task.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import { EffectsModule } from '@ngrx/effects';
+import { TagsEffects } from './tags.effects';
+import { StoreModule } from '@ngrx/store';
+import * as fromTags from './tags.reducer';
 
 
 @NgModule({
@@ -21,7 +25,9 @@ import {FlexLayoutModule} from '@angular/flex-layout';
         TickistTasksModule,
         FlexLayoutModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        EffectsModule.forFeature([TagsEffects]),
+        StoreModule.forFeature('tags', fromTags.reducer)
     ],
     declarations: [TagsComponent, TagComponent, FilterTagsDialogComponent, TagsListComponent],
     providers: [],

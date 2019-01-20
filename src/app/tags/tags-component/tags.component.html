@@ -14,7 +14,7 @@
 
 
     <tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="taskView"
-                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn">
+                     *cdkVirtualFor="let task of tasks$ | async; trackBy: trackByFn">
 
     </tickist-single-task>
     <tickist-no-tasks [tasksLength]="tasks.length"></tickist-no-tasks>

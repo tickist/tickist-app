@@ -4,27 +4,25 @@ import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 import {Project} from '../models/projects';
-import {Task} from '../models/tasks';
-import {SimpleUser, PendingUser} from '../user/models';
+
+import {SimpleUser} from '../user/models';
 import {MatSnackBar} from '@angular/material';
-import * as tasksAction from '../reducers/actions/tasks';
-import * as projectsAction from '../reducers/actions/projects';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
-import {TasksFiltersService} from './tasks-filters.service';
+import {TasksFiltersService} from '../tasks/tasks-filters.service';
 import * as _ from 'lodash';
 import {IProjectApi} from '../models/project-api.interface';
-import {Filter} from '../models/filter';
+import {toSnakeCase} from '../utils/toSnakeCase';
+import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../projects/projects.selectors';
 
 
 @Injectable()
 export class ProjectService {
     projects$: Observable<Project[]>;
-    team$: Observable<SimpleUser[]>;
     team: SimpleUser[];
     selectedProject$: Observable<Project>;
-    selectedProjectsIds$: Observable<Array<number>>;
+    selectedProjectsIds$: Observable<Array<Number>>;
 
 
     static sortProjectList(projects: Project[]): Project[] {
@@ -77,60 +75,49 @@ export class ProjectService {
     constructor(public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 protected router: Router, protected tasksFiltersService: TasksFiltersService) {
 
-        this.projects$ = this.store.pipe(
-            select(storeElem => storeElem.projects)
-        );
-        this.team$ = this.store.pipe(
-            select(storeElem => storeElem.team)
-        );
-        this.selectedProject$ = this.store.pipe(
-            select(storeElem => storeElem.selectedProject)
-        );
-        this.selectedProjectsIds$ = this.store.pipe(
-            select(storeElem => storeElem.selectedProjectsIds)
-        );
-        this.team$.subscribe(team => {
-            this.team = team;
-        });
+        this.projects$ = this.store.select(selectAllProjects);
+        this.selectedProject$ = this.store.select(selectActiveProject);
+        this.selectedProjectsIds$ = this.store.select(selectActiveProjectsIds);
     }
 
     loadProjects() {
         return this.http.get<IProjectApi[]>(`${environment['apiUrl']}/project/`)
             .pipe(
                 map(payload => payload.map(project => new Project(project))),
-                map(payload => this.store.dispatch(new projectsAction.AddProjects(payload)))
             );
     }
 
     selectProject(project: Project | null) {
-        this.store.dispatch(new projectsAction.SelectProject(project));
-        this.store.dispatch(new tasksAction.DeleteNonFixedAssignedTo({}));
+        // @TODO move to Efect
+
+        // this.store.dispatch(new projectsAction.SelectProject(project));
+        // this.store.dispatch(new tasksAction.DeleteNonFixedAssignedTo({}));
         if (project) {
-            project.shareWith.map((user: (SimpleUser | PendingUser)) => {
-                if (user.hasOwnProperty('id') && user['id'] !== undefined && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
-                    this.store.dispatch(new tasksAction.AddNewAssignedTo(
-                        new Filter({
-                            'id': user['id'],
-                            'label': 'assignedTo',
-                            'value': (task: Task) => task.owner.id === user['id'],
-                            'name': user.username
-                        })
-                    ));
-                }
-            });
-            this.tasksFiltersService.resetAssignedFilterToAssignedToAll();
+            // project.shareWith.map((user: (SimpleUser | PendingUser)) => {
+            //     if (user.hasOwnProperty('id') && user['id'] !== undefined && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
+            //         // this.store.dispatch(new tasksAction.AddNewAssignedTo(
+            //         //     new Filter({
+            //         //         'id': user['id'],
+            //         //         'label': 'assignedTo',
+            //         //         'value': (task: Task) => task.owner.id === user['id'],
+            //         //         'name': user.username
+            //         //     })
+            //         // ));
+            //     }
+            // });
+            // this.tasksFiltersService.resetAssignedFilterToAssignedToAll();
         } else {
-            this.team.map((user) => {
-                this.store.dispatch(new tasksAction.AddNewAssignedTo(
-                        new Filter({
-                            'id': user.id,
-                            'label': 'assignedTo',
-                            'value': (task: Task) => task.owner.id === user.id,
-                            'name': user.username
-                        })
-                    )
-                );
-            });
+            // this.team.map((user) => {
+            //     this.store.dispatch(new tasksAction.AddNewAssignedTo(
+            //             new Filter({
+            //                 'id': user.id,
+            //                 'label': 'assignedTo',
+            //                 'value': (task: Task) => task.owner.id === user.id,
+            //                 'name': user.username
+            //             })
+            //         )
+            //     );
+            // });
             this.tasksFiltersService.resetAssignedFilterToAssignedToMe();
         }
     }
@@ -140,51 +127,52 @@ export class ProjectService {
     }
 
     createProject(project: Project) {
-        this.http.post(`${environment['apiUrl']}/project/`, project.toApi())
-            .subscribe((payload: IProjectApi) => {
-                this.snackBar.open('Project has been saved successfully', '', {
-                    duration: 2000,
-                });
-                const newProject = new Project(payload);
-                this.store.dispatch(new projectsAction.CreateProject(newProject));
-                this.router.navigate(['/home/projects', newProject.id]);
-                this.loadProjects().subscribe(); // we need to update getAllDescendant set.
-            });
+        return this.http.post(`${environment['apiUrl']}/project/`, toSnakeCase(project))
+            .pipe(map((payload: IProjectApi) => new Project(payload)));
+            // .subscribe((payload: IProjectApi) => {
+            //     this.snackBar.open('Project has been saved successfully', '', {
+            //         duration: 2000,
+            //     });
+            //     const newProject = new Project(payload);
+            //     this.store.dispatch(new projectsAction.CreateProject(newProject));
+            //     this.router.navigate(['/home/projects', newProject.id]);
+            //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
+            // });
     }
 
     updateProject(project: Project, withoutSnackBar = false) {
-        this.http.put(`${environment['apiUrl']}/project/${project.id}/`, project.toApi())
-            .subscribe((payload: IProjectApi) => {
-                this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));
-                if (!withoutSnackBar) {
-                    this.snackBar.open('Project has been saved successfully', '', {
-                    duration: 2000,
-                    });
-                }
-                this.loadProjects().subscribe(); // we need to update getAllDescendant set.
-            });
+        return this.http.put(`${environment['apiUrl']}/project/${project.id}/`, toSnakeCase(project));
+            // .subscribe((payload: IProjectApi) => {
+            //     this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));
+            //     if (!withoutSnackBar) {
+            //         this.snackBar.open('Project has been saved successfully', '', {
+            //         duration: 2000,
+            //         });
+            //     }
+            //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
+            // });
     }
 
 
-    deleteProject(project: Project) {
-        this.http.delete(`${environment['apiUrl']}/project/${project.id}/`)
-            .subscribe(action => {
-                this.store.dispatch(new projectsAction.DeleteProject(project));
-                this.snackBar.open('Project has been deleted successfully', '', {
-                    duration: 2000,
-                });
-            });
+    deleteProject(projectId: number) {
+        return this.http.delete(`${environment['apiUrl']}/project/${projectId}/`);
+            // .subscribe(action => {
+            //     this.store.dispatch(new projectsAction.DeleteProject(project));
+            //     this.snackBar.open('Project has been deleted successfully', '', {
+            //         duration: 2000,
+            //     });
+            // });
     }
 
-    selectProjectsIds(ids: Array<number>) {
-        this.store.dispatch(new projectsAction.NewIds(ids));
-    }
+    // selectProjectsIds(ids: Array<number>) {
+    //     this.store.dispatch(new projectsAction.NewIds(ids));
+    // }
 
-    updateElementFromSelectedProjectsIds(id: number) {
-        this.store.dispatch(new projectsAction.AddNewId(id));
-    }
-
-    deleteElementFromSelectedProjectsIds(id: number) {
-        this.store.dispatch(new projectsAction.DeleteId(id));
-    }
+    // updateElementFromSelectedProjectsIds(id: number) {
+    //     this.store.dispatch(new projectsAction.AddNewId(id));
+    // }
+    //
+    // deleteElementFromSelectedProjectsIds(id: number) {
+    //     this.store.dispatch(new projectsAction.DeleteId(id));
+    // }
 }

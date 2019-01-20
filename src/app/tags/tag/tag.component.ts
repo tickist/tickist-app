@@ -2,8 +2,13 @@ import {Component, OnInit, Input, ViewContainerRef} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {TagService} from '../../services/tag.service';
 import {Tag} from '../../models/tags';
-import {TasksFiltersService} from '../../services/tasks-filters.service';
+import {TasksFiltersService} from '../../tasks/tasks-filters.service';
 import {Filter} from '../../models/filter';
+import {DeleteTag, UpdateTag} from '../tags.actions';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {SetCurrentTagsFilters} from '../../tasks/tags-filters-tasks.actions';
+import {selectCurrentTagsFilter} from '../../tasks/filters-tasks.selectors';
 
 
 @Component({
@@ -16,7 +21,6 @@ export class TagComponent implements OnInit {
     @Input() id: string | number;
     @Input() tasksCounter: number;
     @Input() tag?: Tag;
-    eventStreamDouble: any;
     tagsIds: string | Set<number>;
     isActive: boolean;
     isChecked: boolean;
@@ -24,18 +28,20 @@ export class TagComponent implements OnInit {
     editMode = false;
     isCheckboxModeEnabled = false;
 
-    constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private tagService: TagService) {
+    constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
         this.isActive = false;
     }
 
     ngOnInit() {
-        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
-            if (filters.length > 0) {
-                this.tagsIds = filters.find((myFilter) => myFilter.label === 'tags').value;
-                this.isActive = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
-                this.isChecked = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
-                this.isCheckboxModeEnabled = this.isInt(this.id)  && (this.tagsIds instanceof Set) && this.tagsIds.size > 0;
+        this.store.select(selectCurrentTagsFilter).subscribe((filter) => {
+            if (filter.value instanceof Array) {
+                this.tagsIds = new Set(filter.value);
+            } else {
+                this.tagsIds = filter.value;
             }
+            this.isActive = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
+            this.isChecked = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
+            this.isCheckboxModeEnabled = this.isInt(this.id) && (this.tagsIds instanceof Set) && this.tagsIds.size > 0;
         });
         this.editTagForm = new FormGroup({
             'name': new FormControl(this.label, Validators.required)
@@ -45,11 +51,11 @@ export class TagComponent implements OnInit {
     editTag(values) {
         const tag = JSON.parse(JSON.stringify(this.tag));
         tag.name = values['name'];
-        this.tagService.updateTag(tag);
+        this.store.dispatch(new UpdateTag({tag: {id: tag.id, changes: tag}}));
     }
 
     deleteTag() {
-        this.tagService.deleteTag(this.tag);
+        this.store.dispatch(new DeleteTag({tagId: this.tag.id}));
     }
 
     toggleEditMode() {
@@ -61,23 +67,30 @@ export class TagComponent implements OnInit {
         if (!this.isInt(this.id)) {
             value = this.id;
         } else if (this.isInt(this.id)) {
-            value = new Set([this.id]);
+            const set = new Set([this.id]);
+            value = Array.from(set);
         }
-        this.tasksFiltersService.updateCurrentFilter(new Filter({'id': 1, 'label': 'tags', 'value': value}));
+        this.store.dispatch(new SetCurrentTagsFilters({
+            currentTagsFilter: new Filter({'id': 1, 'label': 'tags', 'value': value})
+        }));
     }
 
     selectTags() {
-        let value = this.tasksFiltersService.getCurrentTagsFilterValue();
+        let result: Array<number> | string;
+        const value = this.tagsIds;
         if (value instanceof String || typeof this.id === 'string') {
-            value = this.id;
+            result = <string> this.id;
         } else if (value instanceof Set) {
             if (value.has(this.id)) {
                 value.delete(this.id);
             } else {
                 value.add(this.id);
             }
+            result = Array.from(value);
         }
-        this.tasksFiltersService.updateCurrentFilter({'id': 1, 'label': 'tags', 'value': value});
+        this.store.dispatch(new SetCurrentTagsFilters({
+            currentTagsFilter: new Filter({'id': 1, 'label': 'tags', 'value': result})
+        }));
     }
 
     private isInt(value: any): boolean {

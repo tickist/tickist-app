@@ -1,15 +1,12 @@
 import {ActionReducerMap} from '@ngrx/store';
-import {projects, selectedProject, selectedProjectsIds, currentProjectsFilters, projectsFilters} from './reducers/projects';
-import {team} from './reducers/team';
-import {user} from './reducers/user';
-import {currentTagsFilters, tags, tagsFilters} from './reducers/tags';
-import {tasks, tasksFilters, currentTasksFilters, futureTasksFilters, currentTasksFutureFilters} from './reducers/tasks';
-import {globalStatistics, dailyStatistics, globalStatisticsDateRange, chartsData} from './reducers/statistics';
+import {currentProjectsFilters, projectsFilters} from './reducers/projects';
+import {currentTagsFilters, tagsFilters} from './reducers/tags';
+import {currentTasksFilters, futureTasksFilters, currentTasksFutureFilters} from './reducers/tasks';
 import {
-    detectApiError, leftSidenavVisibility, rightSidenavVisibility,
-    progressBar, offlineModeNotification, addTaskComponentVisibility, activeDateElement
+    detectApiError, leftSidenavVisibility, rightSidenavVisibility, offlineModeNotification, addTaskComponentVisibility, activeDateElement
 } from './reducers/configuration';
 import {IActiveDateElement} from './models/active-data-element.interface';
+import * as fromProgressBar from './reducers/progress-bar.reducer';
 
 export interface AppStore {
     projects: any;
@@ -35,7 +32,6 @@ export interface AppStore {
     selectedProjectsIds: any;
     leftSidenavVisibility: any;
     rightSidenavVisibility: any;
-    progressBar: boolean;
     dashboardActiveFutureElement: any;
     currentTasksFutureFilters: any;
     futureTasksFilters: any;
@@ -50,36 +46,24 @@ export interface AppStore {
 // const productionReducer: ActionReducer<AppStore> = combineReducers(reducers);
 
 export const reducers: ActionReducerMap<any> = {
-    projects: projects,
-    selectedProject: selectedProject,
-    user: user,
-    tasks: tasks,
     currentTasksFilters: currentTasksFilters,
-    tags: tags,
-    tasksFilters: tasksFilters,
-    globalStatistics: globalStatistics,
-    dailyStatistics: dailyStatistics,
     activeDateElement: activeDateElement,
     detectApiError: detectApiError,
     offlineModeNotification: offlineModeNotification,
     addTaskComponentVisibility: addTaskComponentVisibility,
-    globalStatisticsDateRange: globalStatisticsDateRange,
-    team: team,
-    chartsData: chartsData,
-    selectedProjectsIds: selectedProjectsIds,
     leftSidenavVisibility: leftSidenavVisibility,
     rightSidenavVisibility: rightSidenavVisibility,
-    progressBar: progressBar,
     currentProjectsFilters: currentProjectsFilters,
     projectsFilters: projectsFilters,
     currentTagsFilters: currentTagsFilters,
     tagsFilters: tagsFilters,
     currentTasksFutureFilters: currentTasksFutureFilters,
-    futureTasksFilters: futureTasksFilters
+    futureTasksFilters: futureTasksFilters,
+    progressBar: fromProgressBar.reducer
 };
 
 
-// export function reducer(state: any, action: any) {
+// export function authReducer(state: any, action: any) {
 //   if (environment.production) {
 //     return productionReducer(state, action);
 //   } else {

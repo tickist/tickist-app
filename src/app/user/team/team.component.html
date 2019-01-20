@@ -6,7 +6,7 @@
     <mat-card fxFlex="600px" fxFlex.xs="100" fxFlex.sm="100">
 
         <mat-list>
-            <mat-list-item *ngFor="let user of team">
+            <mat-list-item *ngFor="let user of team$ | async">
                 <div mat-list-icon><img class="round" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'"></div>
                 <h4 mat-line>{{ user.username }}</h4>
                 <p mat-line><span *ngFor="let list of user.shareWith">{{ list.name }}</span></p>

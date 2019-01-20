@@ -31,9 +31,9 @@
         <i class="fa fa-tags menu_icon"></i>
     </button>
     <span fxFlex></span>
-    
+
     <tickist-search-autocomplete></tickist-search-autocomplete>
-    <img class="user-avatar"  [mat-menu-trigger-for]="menu" *ngIf="user" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'">
+    <img class="user-avatar"  [mat-menu-trigger-for]="menu" *ngIf="user$ | async" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'">
 
  <mat-menu #menu="matMenu">
       <button [routerLink]="['/home/team']" mat-menu-item>Team</button>
@@ -43,5 +43,5 @@
     </mat-menu>
 
 </mat-toolbar>
-<div style="height: 5px;width:100%;background-color: #1F253D" *ngIf="!progressBar"></div>
-<mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+<div style="height: 5px;width:100%;background-color: #1F253D" *ngIf="!(progressBarIsEnabled$ | async)"></div>
+<mat-progress-bar *ngIf="progressBarIsEnabled$ | async" mode="indeterminate"></mat-progress-bar>

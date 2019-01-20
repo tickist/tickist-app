@@ -11,21 +11,15 @@ import {MyErrorHandler} from './services/error-handler.service';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChartModule, SharedModule} from 'primeng/primeng';
 import {AppComponent} from './app.component';
-import {UserService} from './services/user.service';
+import {UserService} from './user/user.service';
 import {ProjectService} from './services/project.service';
 import {HomeComponent} from './home';
-import {TaskService} from './services/task.service';
-import {LoginComponent} from './login';
-import {SignupComponent} from './signup/signup.component';
-import {ForgotPasswordComponent} from './forgot-password';
 import {TagService} from './services/tag.service';
 import {NavComponent} from './nav-component/nav.component';
 import {TaskComponent} from './task-component/task.component';
-import {TasksListComponent} from './tasks-list/tasks-list.component';
 import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configuration.service';
 import {StatisticsService} from './services/statistics.service';
-import {NavBarLandingPageComponent} from './nav-bar-landing-page/nav-bar-landing-page.component';
 import {SortablejsModule} from 'angular-sortablejs';
 import {AddTaskComponent} from './add-task/add-task.component';
 
@@ -44,7 +38,7 @@ import {RequestInterceptorService} from './httpInterceptor';
 import { ShowApiErrorComponent } from './show-api-error/show-api-error.component';
 import { ShowOfflineModeComponent } from './show-offline-mode/show-offline-mode.component';
 import { ShowNotificationAboutNewDayComponent } from './show-notification-about-new-day/show-notification-about-new-day.component';
-import {TasksFiltersService} from './services/tasks-filters.service';
+import {TasksFiltersService} from './tasks/tasks-filters.service';
 import {ProjectsFiltersService} from './services/projects-filters.service';
 import {TagsFiltersService} from './services/tags-filters.service';
 import {TickistMaterialModule} from './material.module';
@@ -60,6 +54,11 @@ import {TickistProjectsModule} from './projects/projects.module';
 import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
 import {InMemoryDataService} from './testing/mocks/inMemryDb';
 import {TickistUserModule} from './user/user.module';
+import { EffectsModule } from '@ngrx/effects';
+import {TickistAuthModule} from './auth/auth.module';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {StoreRouterConnectingModule} from '@ngrx/router-store';
+import * as fromProgressBar from './reducers/progress-bar.reducer';
 
 export function tokenGetter() {
     return localStorage.getItem('JWT');
@@ -70,26 +69,21 @@ export function tokenGetter() {
     declarations: [
         AppComponent,
         HomeComponent,
-        LoginComponent,
-        SignupComponent,
-        ForgotPasswordComponent,
         NavComponent,
         TaskComponent,
-        TasksListComponent,
-        NavBarLandingPageComponent,
         AddTaskComponent,
         DeleteTaskDialogComponent,
         TimeDialogComponent,
         ShowApiErrorComponent,
         TypeFinishDateString,
         AutofocusDirective,
-        BlankComponent,
-        RootComponent,
         ShowOfflineModeComponent,
         ShowNotificationAboutNewDayComponent,
         ShowApiErrorComponent,
         ChangeFinishDateDialogComponent,
-        SearchAutocompleteComponent
+        SearchAutocompleteComponent,
+        BlankComponent,
+        RootComponent
     ],
     imports: [
         TickistDashboardModule,
@@ -97,6 +91,7 @@ export function tokenGetter() {
         TickistSingleTaskModule,
         TickistStatisticsModule,
         TickistUserModule,
+        TickistAuthModule,
         BrowserModule,
         BrowserAnimationsModule,
         CommonModule,
@@ -108,6 +103,10 @@ export function tokenGetter() {
         StoreModule.forRoot(reducers, {
             initialState: {}
         }),
+        // StoreDevtoolsModule.instrument({
+        //     maxAge: 25, // Retains last 25 states
+        //     logOnly: environment.production, // Restrict extension to log-only mode
+        // }),
         // environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
         SortablejsModule,
         TickistMaterialModule,
@@ -128,7 +127,9 @@ export function tokenGetter() {
         ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
         TickistRoutingModule,
         TickistTagsModule,
-        TickistProjectsModule
+        TickistProjectsModule,
+        EffectsModule.forRoot([]),
+        // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],
     entryComponents: [TimeDialogComponent, DeleteTaskDialogComponent, ChangeFinishDateDialogComponent
@@ -137,7 +138,6 @@ export function tokenGetter() {
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         {provide: DateAdapter, useClass: MyDateAdapter},
         UserService,
-        TaskService,
         TasksFiltersService,
         ProjectsFiltersService,
         ProjectService,

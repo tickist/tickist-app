@@ -2,15 +2,18 @@ import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy
 import {ConfigurationService} from '../../services/configuration.service';
 import {Task} from '../../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import {MediaChange, ObservableMedia} from '@angular/flex-layout';
-import {TaskService} from '../../services/task.service';
-import {UserService} from '../../services/user.service';
-import {User} from '../../user/models/user';
-import {map} from 'rxjs/operators';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
+import {TaskService} from '../../tasks/task.service';
+import {UserService} from '../../user/user.service';
+import {User} from '../../user/models';
+import {map, takeUntil} from 'rxjs/operators';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {selectAllUndoneTasks} from '../../tasks/task.selectors';
 
 
 @Component({
@@ -20,6 +23,7 @@ import {IActiveDateElement} from '../../models/active-data-element.interface';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeekDaysComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     activeDateElement: IActiveDateElement;
     today: moment.Moment;
     tasks: Task[] = [];
@@ -30,8 +34,8 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     timer: any;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef, protected taskService: TaskService,
-                private configurationService: ConfigurationService, protected router: Router,
-                protected userService: UserService, protected media: ObservableMedia) {
+                private configurationService: ConfigurationService, protected router: Router, private store: Store<AppStore>,
+                protected userService: UserService, protected media: MediaObserver) {
 
         this.regenerateWeekListAfterMidnight();
     }
@@ -50,36 +54,50 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         if (moment.isMoment(date)) {
             date = (<string>(date.format('DD-MM-YYYY')));
         }
-        return today.format('DD-MM-YYYY') ===  date;
+        return today.format('DD-MM-YYYY') === date;
     }
 
     ngOnInit(): void {
-        this.subscriptions = this.route.params.pipe(map(params => params['date'])).subscribe((param) => {
-            this.configurationService.updateActiveDateElement(param);
-        });
-        this.subscriptions.add(this.media.subscribe((mediaChange: MediaChange) => {
-            this.mediaChange = mediaChange;
-        }));
-        this.subscriptions.add(this.configurationService.activeDateElement$.subscribe((activeDateElement) => {
-            this.activeDateElement = activeDateElement;
-            this.cd.detectChanges();
 
-        }));
-        this.subscriptions.add(this.taskService.tasks$.subscribe(tasks => {
-            this.tasks = tasks;
-            this.feelWeekData();
-        }));
+        this.route.params
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(params => params['date'])
+            )
+            .subscribe((param) => {
+                this.configurationService.updateActiveDateElement(param);
+            });
+        this.media.media$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((mediaChange: MediaChange) => {
+                this.mediaChange = mediaChange;
+            });
+        this.configurationService.activeDateElement$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((activeDateElement) => {
+                this.activeDateElement = activeDateElement;
+                this.cd.detectChanges();
 
-        this.subscriptions.add(this.userService.user$.subscribe(user => {
+            });
+        this.store.select(selectAllUndoneTasks)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(tasks => {
+                this.tasks = tasks;
+                this.feelWeekData();
+                this.cd.detectChanges();
+            });
+
+        this.userService.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(user => {
             this.user = user;
             this.feelWeekData();
-        }));
+            this.cd.detectChanges();
+        });
     }
 
-    ngOnDestroy(): void {
-        if (this.subscriptions) {
-            this.subscriptions.unsubscribe();
-        }
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+        this.cd.detach();
         // clearTimeout(this.timer);
     }
 
@@ -118,12 +136,12 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
                     return task.owner.id === userId && task.status === 0;
                 })
                     .filter(task => {
-                    const finishDate = task.finishDate;
-                    const a = ((finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
-                        (this.isToday(nextDay) && task.pinned)
-                    );
-                    return a;
-                }).length
+                        const finishDate = task.finishDate;
+                        const a = ((finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
+                            (this.isToday(nextDay) && task.pinned)
+                        );
+                        return a;
+                    }).length
             });
             nextDay = nextDay.add(1, 'days');
         }

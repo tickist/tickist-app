@@ -1,42 +1,51 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {TasksFiltersService} from '../../services/tasks-filters.service';
+import {AppStore} from '../../store';
+import {Store} from '@ngrx/store';
+import {selectCurrentMainFilter, selectMainFilters} from '../filters-tasks.selectors';
+import {Observable, Subject} from 'rxjs';
+import {Filter} from '../../models/filter';
+import {SetCurrentMainFilter} from '../main-filters-tasks.actions';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'tasks-filter-dialog',
     styleUrls: ['./tasks-filter-dialog.component.scss'],
     templateUrl: './tasks-filter-dialog.html'
 })
-export class TasksFilterDialogComponent {
-    filterValues: any = [];
-    filterValue: any = {};
+export class TasksFilterDialogComponent implements OnInit, OnDestroy {
     filterValueId: number;
+    filters$: Observable<Filter[]>;
+    currentFilter$: Observable<Filter>;
+    filters: Filter[];
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public dialogRef: MatDialogRef<TasksFilterDialogComponent>,  private tasksFiltersService: TasksFiltersService) {
-        this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
+    constructor(public dialogRef: MatDialogRef<TasksFilterDialogComponent>, private store: Store<AppStore>) {}
 
-            if (filters.length > 0) {
-                this.filterValue = filters.filter(filter => filter.label === 'filter')[0];
-                this.filterValueId = this.filterValue['id'];
-            }
+    ngOnInit() {
+        this.filters$ = this.store.select(selectMainFilters);
+        this.currentFilter$ = this.store.select(selectCurrentMainFilter);
 
+        this.filters$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((filters: Filter[]) => {
+            this.filters = filters;
         });
 
-        this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
-            if (filters.length > 0) {
-                this.filterValues = filters.filter(filter => filter.label === 'filter');
-            }
+        this.currentFilter$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((filter: Filter) => {
+            this.filterValueId = filter.id;
         });
     }
 
     changeFilter($event) {
-        if (this.filterValues.length > 0) {
-            this.filterValue = this.filterValues
-                .filter(filter => filter.label === 'filter' && filter.id === $event.value)[0];
-            this.filterValueId = this.filterValue['id'];
-            this.tasksFiltersService.updateCurrentFilter(this.filterValue);
+        if (this.filters.length > 0) {
+            const newCurrentFilter = this.filters.find(filter => filter.id === $event.value);
+            this.store.dispatch(new SetCurrentMainFilter({currentFilter: newCurrentFilter}));
             this.dialogRef.close();
         }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

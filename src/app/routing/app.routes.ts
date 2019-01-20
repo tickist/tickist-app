@@ -1,11 +1,11 @@
 import {Routes} from '@angular/router';
-import {LoginComponent} from '../login';
+import {LoginComponent} from '../auth/login';
 import {LoggedInGuard} from './guards/loggedIn.guard';
 import {AnonymousGuard} from './guards/anonymous.guard';
 import {HomeComponent} from '../home';
-import {SignupComponent} from '../signup/signup.component';
+import {SignupComponent} from '../auth/signup/signup.component';
 import {DashboardComponent} from '../dashboard';
-import {ForgotPasswordComponent} from '../forgot-password';
+import {ForgotPasswordComponent} from '../auth/forgot-password';
 import {ProjectComponent} from '../projects/project-component/project.component';
 import {TagsComponent} from '../tags/tags-component/tags.component';
 import {TaskComponent} from '../task-component/task.component';
@@ -20,9 +20,8 @@ import {ProjectsResolver} from './resolvers/project.resolver';
 import {TasksResolver} from './resolvers/tasks.resolver';
 import {TagsResolver} from './resolvers/tags.resolver';
 import {TeamResolver} from './resolvers/team.resolver';
-import {UserResolver} from './resolvers/user.resolver';
 import {SetAllTasksFilterResolver} from './resolvers/set-all-tasks-filter.resolver';
-import {CloseMenuInTasksResolver} from './resolvers/close-menu-in-tasks.resolver';
+
 
 
 export const routes: Routes = [
@@ -32,14 +31,12 @@ export const routes: Routes = [
             {
                 path: 'projects/:projectId', component: TasksFromProjectsComponent, resolve: {
                     setAllTasksFilter: SetAllTasksFilterResolver,
-                    CloseMenuInTasksResolver: CloseMenuInTasksResolver
                 }
             },
             {path: 'projects', component: ProjectsListComponent, outlet: 'leftSideNav'},
             {
                 path: 'projects', component: TasksFromProjectsComponent, resolve: {
                     setAllTasksFilter: SetAllTasksFilterResolver,
-                    CloseMenuInTasksResolver: CloseMenuInTasksResolver
                 }
             },
             {path: 'project', component: ProjectComponent},
@@ -48,9 +45,7 @@ export const routes: Routes = [
             {path: 'task/:taskId', component: TaskComponent},
             {path: 'tags', component: TagsComponent},
             {
-                path: 'tags', component: TagsListComponent, outlet: 'leftSideNav', resolve: {
-                    CloseMenuInTasksResolver: CloseMenuInTasksResolver
-                }
+                path: 'tags', component: TagsListComponent, outlet: 'leftSideNav'
             },
             {path: 'team', component: TeamComponent},
             {path: 'user', component: UserComponent},
@@ -60,11 +55,10 @@ export const routes: Routes = [
             {path: 'future/:date', component: FutureTasksComponent},
         ],
         resolve: {
-            projects: ProjectsResolver,
-            tasks: TasksResolver,
             tags: TagsResolver,
-            user: UserResolver,
-            team: TeamResolver
+            team: TeamResolver,
+            tasks: TasksResolver,
+            projects: ProjectsResolver,
         }
     },
     {path: 'signup', component: SignupComponent, canActivate: [AnonymousGuard]},

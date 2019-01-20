@@ -6,11 +6,16 @@ import {ProjectService} from '../../services/project.service';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../../services/configuration.service';
 
-import {ObservableMedia} from '@angular/flex-layout';
+import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material';
-import {UserService} from '../../services/user.service';
+import {UserService} from '../../user/user.service';
 import {User} from '../../user/models';
+import {AddNewActiveProjectId, DeleteActiveProjectId} from '../active-projects-ids.actions';
+import {AppStore} from '../../store';
+import {Store} from '@ngrx/store';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 class Timer {
     readonly start = performance.now();
@@ -33,7 +38,7 @@ class Timer {
 })
 export class SingleProjectComponent implements OnInit, OnDestroy, OnChanges {
 
-    private t: Timer;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     @Input() project: Project;
     @Input() isSmallScreen: boolean;
     @Input() selectedProjectsIds: Array<number>;
@@ -48,13 +53,13 @@ export class SingleProjectComponent implements OnInit, OnDestroy, OnChanges {
     user: User;
 
     constructor(private projectService: ProjectService, protected router: Router, public dialog: MatDialog,
-                protected configurationService: ConfigurationService, protected media: ObservableMedia,
-                protected userService: UserService) {
+                protected configurationService: ConfigurationService, protected media: MediaObserver,
+                protected userService: UserService, private store: Store<AppStore>) {
     }
 
     ngOnInit() {
         this.deleteOrLeave = this.project.shareWith.length > 1 ? 'Leave' : 'Delete';
-        this.userService.user$.subscribe(user => {
+        this.userService.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(user => {
             this.user = user;
         });
     }
@@ -109,13 +114,17 @@ export class SingleProjectComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     changeId() {
         if (this.isActive) {
-            this.projectService.updateElementFromSelectedProjectsIds(this.project.id);
+            this.store.dispatch(new AddNewActiveProjectId({projectId: this.project.id}));
+
         } else {
-            this.projectService.deleteElementFromSelectedProjectsIds(this.project.id);
+            this.store.dispatch(new DeleteActiveProjectId({projectId: this.project.id}));
+
         }
     }
 
@@ -140,9 +149,9 @@ export class SingleProjectComponent implements OnInit, OnDestroy, OnChanges {
         const dialogRef = this.dialog.open(DeleteProjectConfirmationDialogComponent);
         dialogRef.componentInstance.setTitle(title);
         dialogRef.componentInstance.setContent(content);
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
-                this.projectService.deleteProject(this.project);
+                this.projectService.deleteProject(this.project.id);
                 this.router.navigate(['/home/projects', this.user.inboxPk]);
             }
         });

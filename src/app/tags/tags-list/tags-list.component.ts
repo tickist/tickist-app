@@ -1,19 +1,25 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, Subscription, combineLatest} from 'rxjs';
+import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
 import {TagService} from '../../services/tag.service';
 import {Tag} from '../../models/tags';
 import {Task} from '../../models/tasks';
-import {TaskService} from '../../services/task.service';
+import {TaskService} from '../../tasks/task.service';
 import {FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
-import {UserService} from '../../services/user.service';
+import {UserService} from '../../user/user.service';
 import {User} from '../../user/models';
 import {ConfigurationService} from '../../services/configuration.service';
 import {FilterTagsDialogComponent} from '../filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material';
 import {TagsFiltersService} from '../../services/tags-filters.service';
 import {Filter} from '../../models/filter';
-import {TasksFiltersService} from '../../services/tasks-filters.service';
+import {TasksFiltersService} from '../../tasks/tasks-filters.service';
 import * as _ from 'lodash';
+import {AppStore} from '../../store';
+import {Store} from '@ngrx/store';
+import {selectAllTags} from '../tags.selectors';
+import {takeUntil} from 'rxjs/operators';
+import {selectLoggedInUser} from '../../user/user.selectors';
+import {RequestCreateTag} from '../tags.actions';
 
 @Component({
     selector: 'app-tags-list',
@@ -21,6 +27,7 @@ import * as _ from 'lodash';
     styleUrls: ['./tags-list.component.scss']
 })
 export class TagsListComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     tags: Tag[];
     tasks: Task[];
     user: User;
@@ -30,18 +37,17 @@ export class TagsListComponent implements OnInit, OnDestroy {
     defaultTaskView: string;
     taskView: string;
     currentTagsFilters: Filter;
-    subscriptions: Subscription;
 
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
                 protected userService: UserService, protected configurationService: ConfigurationService,
                 public dialog: MatDialog, protected tagsFiltersService: TagsFiltersService,
-                protected tasksFiltersService: TasksFiltersService) {
+                protected tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
 
     }
 
     ngOnInit(): void {
         this.tagsStream$ = combineLatest(
-            this.tagService.tags$,
+            this.store.select(selectAllTags),
             this.tasksFiltersService.currentTasksFilters$,
             this.tagsFiltersService.currentTagsFilters$,
             (tags: Tag[], currentTasksFilters: any, currentTagsFilters: any) => {
@@ -59,51 +65,44 @@ export class TagsListComponent implements OnInit, OnDestroy {
                 return tasks;
             }
         );
-        this.subscriptions = this.tagsStream$.subscribe((tags) => {
-            if (tags) {
+        this.tagsStream$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((tags) => {
                 if (this.currentTagsFilters) {
                     tags = tags.filter(this.currentTagsFilters.value);
                 }
                 this.tags = _.orderBy(tags, 'name', 'asc');
-            }
-        });
-        this.subscriptions.add(this.tasksStream$.subscribe(((tasks) => {
-            if (tasks) {
+            });
+
+        this.tasksStream$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(((tasks) => {
                 this.tasks = tasks;
-            }
-        })));
+            }));
         this.createTagForm = new FormGroup({
             'name': new FormControl('', Validators.required)
         });
-        this.subscriptions.add(this.userService.user$.subscribe((user) => {
-            this.user = user;
-        }));
+        this.store.select(selectLoggedInUser)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((user) => {
+                this.user = user;
+            });
+
     }
 
-    ngOnDestroy(): void {
-        if (this.subscriptions) {
-            this.subscriptions.unsubscribe();
-        }
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+        // clearTimeout(this.timer);
     }
 
     createTag(values): void {
         if (this.createTagForm.valid) {
-            this.tagService.createTag(new Tag({name: values['name']}));
+            const newTag = new Tag({name: values['name']});
+            this.store.dispatch(new RequestCreateTag({tag: newTag}));
             this.createTagForm.reset();
         }
 
-    }
-
-    private isInt(value): boolean {
-        // @TODO DRY
-        return !isNaN(value) && (function (x) {
-            return (x | 0) === x;
-        })(parseFloat(value));
-    }
-    
-    changeTaskView(event): void {
-        console.log(event);
-        this.taskView = event;
     }
 
     trackByFn(index, item): number {
@@ -112,11 +111,13 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     openFilterDialog(): void {
         const dialogRef = this.dialog.open(FilterTagsDialogComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
+        dialogRef.afterClosed()
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(result => {
+                if (result) {
 
-            }
-        });
+                }
+            });
     }
 
 }

@@ -2,7 +2,7 @@ import {
     Component, OnInit, Input, OnDestroy, OnChanges, SimpleChange, ChangeDetectionStrategy,
     AfterViewInit, ElementRef, ViewChild, Renderer2, HostListener
 } from '@angular/core';
-import {TaskService} from '../../services/task.service';
+import {TaskService} from '../../tasks/task.service';
 import {ConfigurationService} from '../../services/configuration.service';
 import {MatDialog} from '@angular/material';
 import {ProjectService} from '../../services/project.service';
@@ -11,6 +11,9 @@ import {Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
+import {UpdateTask} from '../../tasks/task.actions';
+import {AppStore} from '../../store';
+import {Store} from '@ngrx/store';
 
 
 
@@ -27,7 +30,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     dateFormat = 'DD-MM-YYYY';
     projects: Project[];
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    ngUnsubscribe: Subject<void> = new Subject<void>();
     typeFinishDateOptions: {};
     repeatString = '';
     repeatStringExtension;
@@ -63,9 +66,10 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         }
     }
 
-    constructor(public taskService: TaskService, private configurationService: ConfigurationService,
-                public dialog: MatDialog, private projectService: ProjectService, private renderer: Renderer2) {
-        super(taskService, dialog);
+    constructor(private taskService: TaskService, private configurationService: ConfigurationService,
+                public dialog: MatDialog, private projectService: ProjectService, private renderer: Renderer2,
+                public store: Store<AppStore>) {
+        super(store, dialog);
         this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
     }
 
@@ -95,17 +99,20 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     changeAssignedTo(event) {
         this.task.owner = this.task.taskProject.shareWith.find(user => user.id === event.value);
-        this.taskService.updateTask(this.task, true, true);
+        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        // this.taskService.updateTask(this.task, true, true);
     }
 
     changeProject(event) {
         this.task.taskProject = this.projects.find(project => project.id === event.value);
-        this.taskService.updateTask(this.task, true, true);
+        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        // this.taskService.updateTask(this.task, true, true);
     }
 
     removeTag(tag) {
         this.task.removeTag(tag);
-        this.taskService.updateTask(this.task);
+        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        // this.taskService.updateTask(this.task);
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {

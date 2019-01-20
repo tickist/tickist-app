@@ -24,11 +24,7 @@ export class SimpleProject extends Api {
         }
 
     }
-
-    toApi(): ISimpleProjectApi {
-        return (<ISimpleProjectApi>super.toApi());
-    }
-
+    
     addUserToShareList(user) {
         if (user.hasOwnProperty('id')) {
             this.shareWith.push(new SimpleUser(user));

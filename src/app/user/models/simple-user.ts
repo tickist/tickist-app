@@ -23,11 +23,6 @@ export class SimpleUser extends Api {
             });
         }
     }
-
-    toApi(): ISimpleUserApi {
-        return <ISimpleUserApi> super.toApi();
-    }
-
 }
 
 

@@ -3,13 +3,13 @@ import {FutureListElement} from './models';
 import * as moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../services/configuration.service';
-import {ObservableMedia} from '@angular/flex-layout';
+import {MediaObserver} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {IActiveDateElement} from '../../models/active-data-element.interface';
-import {TaskService} from '../../services/task.service';
+import {TaskService} from '../../tasks/task.service';
 import {Task} from '../../models/tasks';
-import {UserService} from '../../services/user.service';
+import {UserService} from '../../user/user.service';
 import {User} from '../../user/models';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
 
@@ -29,7 +29,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private route: ActivatedRoute, private router: Router, private configurationService: ConfigurationService,
-                private media: ObservableMedia, private taskService: TaskService, private userService: UserService,
+                private media: MediaObserver, private taskService: TaskService, private userService: UserService,
                 private cd: ChangeDetectorRef) {
     }
 

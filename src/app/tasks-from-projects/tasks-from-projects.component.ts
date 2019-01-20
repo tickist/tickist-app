@@ -1,15 +1,22 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {TaskService} from '../services/task.service';
+import {TaskService} from '../tasks/task.service';
 import {ActivatedRoute} from '@angular/router';
-import {UserService} from '../services/user.service';
+import {UserService} from '../user/user.service';
 import {ProjectService} from '../services/project.service';
 import {Observable, Subject, combineLatest} from 'rxjs';
 import {Task} from '../models/tasks';
 import {Project} from '../models/projects';
 import {User} from '../user/models';
 import {map, takeUntil} from 'rxjs/operators';
-import {TasksFiltersService} from '../services/tasks-filters.service';
+import {TasksFiltersService} from '../tasks/tasks-filters.service';
 import {ConfigurationService} from '../services/configuration.service';
+import {NewActiveProjectsIds} from '../projects/active-projects-ids.actions';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../store';
+import {SetActiveProject} from '../projects/active-project.actions';
+import {selectActiveProject, selectAllProjects} from '../projects/projects.selectors';
+import {selectTasksStreamInProjectsView} from '../tasks/task.selectors';
+import {UpdateUser} from '../user/user.actions';
 
 @Component({
     selector: 'tickist-tasks-from-projects',
@@ -27,7 +34,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     tasksStream$: Observable<any>;
     selectedProjectsStream$: Observable<any>;
     taskView: string;
-    tasks: Task[];
+    tasks: Task[] = [];
     user: User;
     defaultTaskView: string;
     selectedProject: Project;
@@ -36,54 +43,42 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private userService: UserService,
                 private projectService: ProjectService, private cd: ChangeDetectorRef, private configurationService: ConfigurationService,
-                private tasksFiltersService: TasksFiltersService) {
+                private tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
     }
 
     ngOnInit() {
+        this.store.select(selectTasksStreamInProjectsView)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(tasks => {
+                this.tasks = tasks;
+                this.cd.detectChanges();
+            });
         this.task_simple_view_value = this.configurationService.TASK_SIMPLE_VIEW.value;
         this.task_extended_view_value = this.configurationService.TASK_EXTENDED_VIEW.value;
-        this.tasksStream$ = combineLatest(
-            this.taskService.tasks$,
-            this.projectService.selectedProjectsIds$,
-            this.tasksFiltersService.currentTasksFilters$
-        );
-        this.tasksStream$.pipe(
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe(([tasks, selectedProjectsIds, currentTasksFilters]) => {
-            if (tasks && currentTasksFilters && currentTasksFilters.length > 0) {
-                if (selectedProjectsIds) {
-                    tasks = tasks.filter((task => selectedProjectsIds.indexOf(task.taskProject.id) > -1));
-                }
-                tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
-            }
-            if (tasks && tasks.length > 0) {
-                this.tasks = tasks;
-                this.cd.markForCheck(); // marks path
-            } else {
-                this.tasks = [];
-            }
-        });
+        this.defaultTaskView = this.configurationService.TASK_EXTENDED_VIEW.value;
         this.selectedProjectsStream$ = combineLatest(
             this.route.params.pipe(map(params => params['projectId'])),
-            this.projectService.projects$,
+            this.store.select(selectAllProjects),
             this.userService.user$
         );
-        this.selectedProjectsStream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([projectId, projects, user]) => {
-            this.user = user;
-            if (projectId && projects && projects.length > 0 && user) {
-                const project = projects.filter(p => p.id === parseInt(projectId, 10))[0];
-                if (project.hasOwnProperty('allDescendants')) {
-                    this.projectService.selectProjectsIds(project.allDescendants);
+        this.selectedProjectsStream$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(([projectId, projects, user]) => {
+                this.user = user;
+                if (projectId && projects && projects.length > 0 && user) {
+                    const project = projects.find(p => p.id === parseInt(projectId, 10));
+                    if (project.hasOwnProperty('allDescendants')) {
+                        this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));
+                    }
+                    this.store.dispatch(new SetActiveProject({project: project}));
+                } else {
+                    this.store.dispatch(new NewActiveProjectsIds({projectsIds: []}));
+                    this.store.dispatch(new SetActiveProject({project: undefined}));
+                    this.defaultTaskView = user.allTasksView;
+                    this.taskView = user.allTasksView;
                 }
-                this.projectService.selectProject(project);
-            } else {
-                this.projectService.selectProjectsIds(null);
-                this.projectService.selectProject(null);
-                this.defaultTaskView = user.allTasksView;
-                this.taskView = user.allTasksView;
-            }
-        });
-        this.projectService.selectedProject$.subscribe(project => {
+            });
+        this.store.select(selectActiveProject).subscribe(project => {
             this.tasksListHeightFlex = this.TASKS_LIST_HEIGHT_WITHOUT_PROJECT_DESCRIPTION_FLEX;
             this.projectHeaderHeightFlex = this.PROJECT_HEADER_WITHOUT_DESCRIPTION_HEIGHT_FLEX;
             if (project) {
@@ -99,20 +94,21 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     }
 
     changeTaskView(event) {
-        this.taskView = event;
-        if (this.selectedProject && this.selectedProject.taskView !== event) {
+        if (event) this.taskView = event;
+        if (this.selectedProject && this.selectedProject.taskView !== event && event) {
             this.selectedProject.taskView = event;
             this.projectService.updateProject(this.selectedProject, true);
         }
-        if (!this.selectedProject && this.user.allTasksView !== event) {
+        if (!this.selectedProject && this.user && this.user.allTasksView !== event && event) {
             this.user.allTasksView = event;
-            this.userService.updateUser(this.user, true);
+            this.store.dispatch(new UpdateUser({user: this.user}));
         }
     }
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+        this.cd.detach();
     }
 
     trackByFn(index, item): number {

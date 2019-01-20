@@ -12,7 +12,7 @@ import {MockTaskService} from '../../testing/mocks/task-service';
 import {MockProjectService} from '../../testing/mocks/project-service';
 import {MockUserService} from '../../testing/mocks/userService';
 import {MockConfigurationService} from '../../testing/mocks/configurationService';
-import {MockObservableMedia} from '../../testing/mocks/observableMedia';
+import {MockObservableMedia} from '../../testing/mocks/mediaObserver';
 import {MockProjectsFiltersService} from '../../testing/mocks/projects-filters-service';
 
 export const routes: Routes = [

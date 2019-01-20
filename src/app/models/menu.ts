@@ -84,14 +84,6 @@ export class Menu {
         return result;
     }
 
-    hideAllMenuElements(): void {
-        this.isFinishDate = false;
-        this.isTaskProject = false;
-        this.isAssignedTo = false;
-        this.isRepeat = false;
-        this.isTags = false;
-        this.isSteps = false;
-        this.isDescription = false;
-    }
+   
 
 }

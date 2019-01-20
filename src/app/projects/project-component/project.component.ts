@@ -3,15 +3,21 @@ import {Project} from '../../models/projects';
 import {ProjectService} from '../../services/project.service';
 import {Location} from '@angular/common';
 import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angular/forms';
-import {Observable, Subscription, combineLatest} from 'rxjs';
+import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
 import {ConfigurationService} from '../../services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User, SimpleUser, PendingUser} from '../../user/models';
-import {UserService} from '../../services/user.service';
+import {UserService} from '../../user/user.service';
 import {MatDialog} from '@angular/material';
 import {environment} from '../../../environments/environment';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
-import {map, startWith} from 'rxjs/operators';
+import {map, startWith, takeUntil} from 'rxjs/operators';
+import {RequestCreateProject, UpdateProject} from '../projects.actions';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {selectAllProjects, selectAllProjectsL0L1} from '../projects.selectors';
+import {selectLoggedInUser} from '../../user/user.selectors';
+import {selectTeam} from '../../user/team.selectors';
 
 
 @Component({
@@ -36,12 +42,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
     filteredUsers: any;
     addUserToShareWithListCtrl: FormControl;
     subscription: Subscription;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('auto') auto: any;
     @ViewChild('matAutocomplete') matAutocomplete: any;
 
     constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
-                private projectService: ProjectService, private location: Location, public dialog: MatDialog,
+                private store: Store<AppStore>, private location: Location, public dialog: MatDialog,
                 private configurationService: ConfigurationService, protected router: Router) {
 
         this.staticUrl = environment['staticUrl'];
@@ -60,16 +67,15 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.configurationService.updateAddTaskComponentVisibility(false);
 
         this.stream$ = combineLatest(
-            this.projectService.projects$,
+            this.store.select(selectAllProjects),
             this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
-            this.userService.user$,
-            this.userService.team$
+            this.store.select(selectLoggedInUser),
+            this.store.select(selectTeam)
         );
-        this.subscription = this.stream$.subscribe(([projects, projectId, user, team]) => {
+        this.subscription = this.stream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([projects, projectId, user, team]) => {
             let project: Project;
             this.user = user;
             this.team = team;
-
             if (projects.length > 0 && user) {
                 this.projectsAncestors = [{id: '', name: ''},
                     ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
@@ -100,10 +106,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.subscription.unsubscribe();
         this.configurationService.updateLeftSidenavVisibility();
         this.configurationService.updateRightSidenavVisibility();
         this.configurationService.updateAddTaskComponentVisibility(true);
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     createMenuDict() {
@@ -140,7 +147,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
 
         // List share with is added directly
-        this.projectService.saveProject(this.project);
+        if (this.isNewProject()) {
+            this.store.dispatch(new RequestCreateProject({project: this.project}));
+        } else {
+            this.store.dispatch(new UpdateProject({project: {id: this.project.id, changes: this.project}}));
+        }
+
+        // this.projectService.saveProject(this.project);
         this.close();
     }
 
@@ -194,7 +207,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         const dialogRef = this.dialog.open(DeleteProjectConfirmationDialogComponent);
         dialogRef.componentInstance.setTitle(title);
         dialogRef.componentInstance.setContent(content);
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
                 const control = <FormArray>this.projectForm.controls['sharing'];
                 if (control.controls[i].value.hasOwnProperty('id')) {
@@ -222,7 +235,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 return [...this.team
                     .filter(u => userIds.indexOf(u['id']) > -1)
                     .filter(u => new RegExp(val, 'gi').test(u.email)), {'email': val}
-                    ];
+                ];
             }
         }
         return [];
@@ -231,13 +244,19 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     inviteUser() {
         if (this.addUserToShareWithListCtrl.valid) {
-            this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value).subscribe((user) => {
-                this.project.addUserToShareList(user);
-            });
+            this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value)
+                .pipe(takeUntil(this.ngUnsubscribe))
+                .subscribe((user) => {
+                    this.project.addUserToShareList(user);
+                });
         } else {
             this.addUserToShareWithListCtrl.markAsDirty();
         }
 
+    }
+
+    isNewProject(): boolean {
+        return !Number.isInteger(this.project.id);
     }
 
 }

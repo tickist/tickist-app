@@ -68,7 +68,7 @@ export class MockConfigurationService extends SpyObject {
                     this.TASK_SIMPLE_VIEW
                 ],
                 'STATIC_URL': '/site_media/static/',
-                'Google_plus_scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email',
+                'Google_plus_scope': 'https://www.googleapis.com/auth.effects.ts/plus.login https://www.googleapis.com/auth.effects.ts/userinfo.email',
                 'DEFAULT_REPEAT_OPTIONS': [
                     {'name_of_extension': '', 'id': 0, 'name': 'never'},
                     {'name_of_extension': 'day(s)', 'id': 1, 'name': 'daily'},

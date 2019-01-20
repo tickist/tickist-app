@@ -3,7 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import {ProgressBarComponent} from './progress-bar.component';
 import {TickistMaterialModule} from '../../material.module';
 import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
-import {MockObservableMedia} from '../../testing/mocks/observableMedia';
+import {MockObservableMedia} from '../../testing/mocks/mediaObserver';
 
 
 describe('ProgressBarComponent', () => {

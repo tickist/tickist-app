@@ -34,7 +34,6 @@ export class Task extends Api {
     tags: Tag[] = [];
     time: number;
     estimateTime: number;
-    prefix_formset = 'steps';
     menuShowing: Menu;
 
 
@@ -73,76 +72,19 @@ export class Task extends Api {
         this.menuShowing = new Menu(task.menu_showing);
     }
 
-    toApi() {
-        const result = super.toApi();
-        result['steps'] = this.prepareSteps();
+    // toApi() {
+    //     const result = super.toApi();
+    //     result['steps'] = this.prepareSteps();
+    //
+    //     if (this.finishDate) {
+    //         result['finish_date'] = this.finishDate.format();
+    //     }
+    //     return result;
+    // }
 
-        if (this.finishDate) {
-            result['finish_date'] = this.finishDate.format();
-        }
-        return result;
-    }
 
-    prepareSteps() {
-        const formset_step = {};
-        let index, i = 0,
-            initial_forms_count = 0, reverse_index = this.steps.length - 1;
-        if (this.steps.length > 0) {
-            while (i < this.steps.length) {
-                if (this.steps[i].id && !isNaN(this.steps[i].id)) {
-                    index = initial_forms_count;
-                    formset_step[this.prefix_formset + '-' + index + '-id'] = this.steps[i].id;
-                    initial_forms_count += 1;
-                } else {
-                    index = reverse_index;
-                    reverse_index -= 1;
-                }
 
-                formset_step[this.prefix_formset + '-' + index + '-name'] = this.steps[i].name;
-                formset_step[this.prefix_formset + '-' + index + '-status'] = this.steps[i].status;
 
-                formset_step[this.prefix_formset + '-' + index + '-task'] = this.steps[i].taskId;
-                formset_step[this.prefix_formset + '-' + index + '-order'] = i;
-
-                if (this.steps[i].delete) {
-                    formset_step[this.prefix_formset + '-' + index + '-DELETE'] = this.steps[i].delete;
-                }
-                i += 1;
-            }
-            formset_step[this.prefix_formset + '-TOTAL_FORMS'] = this.steps.length;
-            formset_step[this.prefix_formset + '-INITIAL_FORMS'] = initial_forms_count;
-            formset_step[this.prefix_formset + '-MAX_NUM_FORMS'] = '';
-        }
-        return formset_step;
-    }
-
-    removeTag(tag: Tag) {
-        const index: number = this.tags.indexOf(tag, 0);
-        if (index > -1) {
-            this.tags.splice(index, 1);
-        }
-    }
-
-    moveFinishDateFromPreviousFinishDate(delta: string | number): void {
-        if (!moment.isMoment(this.finishDate)) this.finishDate = moment();
-
-        if (delta === 'today' || !this.finishDate) {
-            this.finishDate = moment();
-        } else if (delta === 'lastDayOfMonth') {
-            this.finishDate = moment().date(moment().daysInMonth());
-        } else {
-            this.finishDate = (moment(this.finishDate)).add(delta, 'day');
-        }
-
-    }
-
-    isRepeated(): boolean {
-        return this.repeat > 0;
-    }
-
-    isOverdue(): boolean {
-        return this.finishDate < moment().hours(0).minutes(0).seconds(0);
-    }
 
     private convert(text: string): string {
         const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;

@@ -1,11 +1,17 @@
 import {Component, OnInit, ElementRef, Renderer2, ViewChild, OnDestroy} from '@angular/core';
 import {User} from '../models';
-import {UserService} from '../../services/user.service';
+import {UserService} from '../user.service';
 import {FormBuilder, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {ConfigurationService} from '../../services/configuration.service';
 import {environment} from '../../../environments/environment';
 import {MyErrorStateMatcher} from '../../shared/error-state-matcher';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../../store';
+import {selectLoggedInUser} from '../user.selectors';
+import {UpdateUser} from '../user.actions';
 
 @Component({
     selector: 'app-user',
@@ -24,10 +30,12 @@ export class UserComponent implements OnInit, OnDestroy {
     overdueTasksSortByOptions: Array<any>;
     futureTasksSortByOptions: Array<any>;
     matcher = new MyErrorStateMatcher();
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
 
-    constructor(private fb: FormBuilder, private userService: UserService, private location: Location,
-                protected configurationService: ConfigurationService, private renderer: Renderer2) {
+    constructor(private fb: FormBuilder, private store: Store<AppStore>, private location: Location,
+                protected configurationService: ConfigurationService, private userService: UserService) {
 
         this.staticUrl = environment['staticUrl'];
         this.tasksOrderOptions = this.configurationService.loadConfiguration()['commons']['TASKS_ORDER_OPTIONS'];
@@ -42,23 +50,25 @@ export class UserComponent implements OnInit, OnDestroy {
 
 
     ngOnInit(): void {
-        this.userService.user$.subscribe((user) => {
-            if (user) {
-                this.user = user;
-                this.dailySummaryCheckbox = !!user.dailySummaryHour;
-                this.userData = new FormGroup({
-                    'username': new FormControl(user.username,
-                        {validators: [Validators.required, Validators.minLength(4)]}),
-                    'email': new FormControl({value: user.email, disabled: true},
-                        {validators: [Validators.required, Validators.email]}),
-                }, { updateOn: 'blur' });
+        this.store.select(selectLoggedInUser)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((user) => {
+                if (user) {
+                    this.user = user;
+                    this.dailySummaryCheckbox = !!user.dailySummaryHour;
+                    this.userData = new FormGroup({
+                        'username': new FormControl(user.username,
+                            {validators: [Validators.required, Validators.minLength(4)]}),
+                        'email': new FormControl({value: user.email, disabled: true},
+                            {validators: [Validators.required, Validators.email]}),
+                    }, {updateOn: 'blur'});
 
-                this.userData.get('username').valueChanges.subscribe(newValue => {
-                    this.user.username = newValue;
-                    this.changeUserDetails();
-                });
-            }
-        });
+                    this.userData.get('username').valueChanges.subscribe(newValue => {
+                        this.user.username = newValue;
+                        this.changeUserDetails();
+                    });
+                }
+            });
 
         this.changePasswordForm = new FormGroup({
             'password': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)])),
@@ -73,6 +83,8 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
         this.configurationService.updateLeftSidenavVisibility();
         this.configurationService.updateRightSidenavVisibility();
         this.configurationService.updateAddTaskComponentVisibility(true);
@@ -96,12 +108,12 @@ export class UserComponent implements OnInit, OnDestroy {
         this.changeAvatarInput.nativeElement.dispatchEvent(clickEvent);
     }
 
-    changeAvatar(event: any) {
-        const file = event.target.files[0];
-        this.userService.changeAvatar(file).then((data) => {
-            this.userService.loadUser();
-        });
-    }
+    // changeAvatar(event: any) {
+    //     const file = event.target.files[0];
+    //     this.userService.changeAvatar(file).then((data) => {
+    //         this.userService.loadUser();
+    //     });
+    // }
 
     changeActiveItemInMenu(menu_item: any) {
         // DRY
@@ -117,17 +129,17 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     changeUserDetails() {
-        this.userService.updateUser(this.user);
+        this.store.dispatch(new UpdateUser({user: this.user}));
     }
 
     getErrorMessage(field: AbstractControl): string {
         return field.hasError('minLength') ? 'Field is too short.' :
             field.hasError('required') ? 'This field is required.' :
-            field.hasError('email') ? 'This email is invalid.' : '';
+                field.hasError('email') ? 'This email is invalid.' : '';
     }
 
     hasErrorMessage(field: AbstractControl): boolean {
-        return field.hasError('minLength') || field.hasError('email') ||  field.hasError('required');
+        return field.hasError('minLength') || field.hasError('email') || field.hasError('required');
     }
 
     private matchingPasswords(group: any) {

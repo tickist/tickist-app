@@ -12,7 +12,8 @@ import * as projectsAction from '../reducers/actions/projects';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Filter} from '../models/filter';
-import {UserService} from './user.service';
+import {UserService} from '../user/user.service';
+import {UpdateUser} from '../user/user.actions';
 
 
 @Injectable()
@@ -46,7 +47,7 @@ export class ProjectsFiltersService {
         ];
         this.userService.user$.subscribe(user => {
             if (user) {
-                 this.user = user;
+                this.user = user;
                 this.loadCurrentProjectsFilters();
             }
         });
@@ -65,7 +66,7 @@ export class ProjectsFiltersService {
 
     updateCurrentFilter(currentFilter) {
         this.user.updateProjectsFilterId(currentFilter);
-        this.userService.updateUser(this.user, false);
+        this.store.dispatch(new UpdateUser({user: this.user}));
         this.store.dispatch(new projectsAction.UpdateCurrentFilter(currentFilter));
     }
 }

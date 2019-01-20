@@ -19,7 +19,7 @@ import {NavComponent} from '../nav-component/nav.component';
 import {ActionReducerMap, StoreModule} from '@ngrx/store';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ConfigurationService} from '../services/configuration.service';
-import {MockObservableMedia} from '../testing/mocks/observableMedia';
+import {MockObservableMedia} from '../testing/mocks/mediaObserver';
 
 const routes: Routes = [
     {

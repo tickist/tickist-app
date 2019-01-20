@@ -2,6 +2,7 @@ import {Api} from '../../models/commons';
 import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import {SimpleUser} from './simple-user';
+import {userToSnakeCase} from '../utils/userToSnakeCase';
 
 
 export class User extends Api {
@@ -92,23 +93,8 @@ export class User extends Api {
         this.tagsFilterId = filter.id;
     }
 
-    toApi(): IUserApi {
-        const result: IUserApi = (<IUserApi>super.toApi());
-        if (this.dailySummaryHour) {
-            const hour = this.dailySummaryHour.getHours();
-            const minute = this.dailySummaryHour.getMinutes();
-            const second = this.dailySummaryHour.getSeconds();
-            const hourFormatted = hour < 10 ? '0' + hour : hour;
-            const minuteFormatted = minute < 10 ? '0' + minute : minute;
-            const secondFormatted = second < 10 ? '0' + second : second;
-            result['daily_summary_hour'] = `${hourFormatted}:${minuteFormatted}:${secondFormatted}`;
-        }
-
-        return result;
-    }
-
     convertToSimpleUser(): SimpleUser {
-        const userApi = this.toApi();
+        const userApi = userToSnakeCase(this);
         const simpleUserApi: ISimpleUserApi = {
             avatar: userApi.avatar,
             avatar_url: userApi.avatar_url,

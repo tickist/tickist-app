@@ -3,10 +3,9 @@ import * as configurationActions from './actions/configuration';
 import {stateActiveDateElement} from '../models/state-active-date-element.enum';
 import {IActiveDateElement} from '../models/active-data-element.interface';
 
-
-export function activeDateElement(state: IActiveDateElement = 
-                                      { date: moment(new Date(), 'DD-MM-YYYY'), 
-                                        state: stateActiveDateElement.weekdays}, 
+export function activeDateElement(state: IActiveDateElement =
+                                      { date: moment(new Date(), 'DD-MM-YYYY'),
+                                        state: stateActiveDateElement.weekdays},
                                   action: configurationActions.Actions) {
     switch (action.type) {
         case configurationActions.UPDATE_ACTIVE_DATA_ELEMENT:
@@ -43,14 +42,7 @@ export function addTaskComponentVisibility(state: any = true, action: configurat
     }
 }
 
-export function progressBar(state: any = false, action: configurationActions.Actions) {
-    switch (action.type) {
-        case configurationActions.SWITCH_OFF_PROGRESS_BAR:
-            return false;
-        case configurationActions.SWITCH_ON_PROGRESS_BAR:
-            return true;
-    }
-}
+
 
 export function leftSidenavVisibility(state: any = {
     'position': 'start',

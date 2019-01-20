@@ -1,25 +1,31 @@
 import {Task} from '../../models/tasks';
-import {TaskService} from '../../services/task.service';
+import {TaskService} from '../../tasks/task.service';
 import {MatDialog} from '@angular/material';
 import {Step} from '../../models/steps';
 import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
 import * as moment from 'moment';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
+import {DeleteTask, UpdateTask} from '../../tasks/task.actions';
+import {AppStore} from '../../store';
+import {Store} from '@ngrx/store';
+import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 export class SingleTask {
     task: Task;
     isRightMenuVisible = false;
     isFastMenuVisible = false;
     isMouseOver = false;
-
-    constructor(public taskService: TaskService, public dialog: MatDialog) {
+    ngUnsubscribe: Subject<void> = new Subject<void>();
+    constructor(public store: Store<AppStore>, public dialog: MatDialog) {
 
     }
 
     changeShowing(show) {
         const oldValue = this.task.menuShowing[show];
-        this.task.menuShowing.hideAllMenuElements();
+        this.task = hideAllMenuElements(this.task);
         if (show !== undefined) {
             this.task.menuShowing[show] = !oldValue;
         }
@@ -30,7 +36,7 @@ export class SingleTask {
     }
 
     hideAllMenuElements(): void {
-        this.task.menuShowing.hideAllMenuElements();
+        this.task = hideAllMenuElements(this.task);
     }
 
     toggleDoneStep(step) {
@@ -43,7 +49,8 @@ export class SingleTask {
                 }
             }
         });
-        this.taskService.updateTask(this.task);
+        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        // this.taskService.updateTask(this.task);
     }
 
     toggleDone() {
@@ -53,45 +60,55 @@ export class SingleTask {
                 const dialogRef = this.dialog.open(TimeDialogComponent, {
                     data: {'task': this.task}
                 });
-                dialogRef.afterClosed().subscribe(result => {
-                    if (result) {
-                        this.task.estimateTime = result['estimateTime'];
-                        this.task.time = result['realTime'];
-                    }
-                    this.taskService.updateTask(this.task);
-                });
-            } else if (this.task.isRepeated() && this.task.isOverdue() && this.task.fromRepeating === 1) {
+                dialogRef.afterClosed()
+                    .pipe(takeUntil(this.ngUnsubscribe))
+                    .subscribe(result => {
+                        if (result) {
+                            this.task.estimateTime = result['estimateTime'];
+                            this.task.time = result['realTime'];
+                        }
+                        // this.taskService.updateTask(this.task);
+                        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                    });
+            } else if (isRepeated(this.task) && isOverdue(this.task) && this.task.fromRepeating === 1) {
                 const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
                     data: {'task': this.task}
                 });
-                dialogRef.afterClosed().subscribe(result => {
-                    if (result && result.hasOwnProperty('finishDate')) {
-                        this.task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
-                    }
-                    this.taskService.updateTask(this.task);
-                });
+                dialogRef.afterClosed()
+                    .pipe(takeUntil(this.ngUnsubscribe))
+                    .subscribe(result => {
+                        if (result && result.hasOwnProperty('finishDate')) {
+                            this.task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
+                        }
+                        // this.taskService.updateTask(this.task);
+                        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                    });
             } else {
-                this.taskService.updateTask(this.task);
+                // this.taskService.updateTask(this.task);
+                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
             }
         } else if (this.task.status === 1) {
             this.task.status = 0;
-            this.taskService.updateTask(this.task);
+            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+            // this.taskService.updateTask(this.task);
         } else if (this.task.status === 2) {
             this.task.status = 0;
-            this.taskService.updateTask(this.task);
+            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+            // this.taskService.updateTask(this.task);
         }
 
     }
 
     togglePin(): void {
         this.task.pinned = !this.task.pinned;
-        this.taskService.updateTask(this.task);
+        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
     }
 
     changePriority(priority: string) {
         if (this.task.priority !== priority) {
             this.task.priority = priority;
-            this.taskService.updateTask(this.task);
+            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+            // this.taskService.updateTask(this.task);
         }
     }
 
@@ -108,18 +125,22 @@ export class SingleTask {
         } else if (date === 'next_month') {
             delta = 30;
         }
-        this.task.moveFinishDateFromPreviousFinishDate(delta);
-        this.taskService.updateTask(this.task);
+        this.task = moveFinishDateFromPreviousFinishDate(this.task, delta);
+        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        // this.taskService.updateTask(this.task);
     }
 
 
     deleteTask() {
         const dialogRef = this.dialog.open(DeleteTaskDialogComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.taskService.deleteTask(this.task);
-            }
-        });
+        dialogRef.afterClosed()
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(result => {
+                if (result) {
+                    this.store.dispatch(new DeleteTask({taskId: this.task.id}));
+                    // this.taskService.deleteTask(this.task);
+                }
+            });
     }
 
     saveTimeValues(time) {

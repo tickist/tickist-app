@@ -1,4 +1,4 @@
-import {UserService} from '../../services/user.service';
+import {UserService} from '../../user/user.service';
 import {SpyObject} from '../test.helpers';
 import {User} from '../../user/models';
 import {Observable, of} from 'rxjs';

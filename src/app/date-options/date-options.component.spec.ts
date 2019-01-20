@@ -4,7 +4,7 @@ import {TickistMaterialModule} from '../material.module';
 import {MockTaskService} from '../testing/mocks/task-service';
 import {FormsModule} from '@angular/forms';
 import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TaskService} from '../services/task.service';
+import {TaskService} from '../tasks/task.service';
 import {Task} from '../models/tasks';
 import {MenuButtonComponent} from '../shared/components/menu-button/menu-button.component';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';

@@ -29,12 +29,13 @@ export class ShowOfflineModeComponent implements OnInit, OnDestroy {
         });
 
         this.ping = () => {
+            // @TODO naprawic dodajac odpowiedniej reducery 
             this.pingObject.ping('https://app.tickist.com', (err, data) => {
-            if (err) {
-                this.configurationService.updateOfflineModeNotification(true);
-            } else {
-                this.configurationService.updateOfflineModeNotification(false);
-            }
+            // if (err) {
+            //     this.configurationService.updateOfflineModeNotification(true);
+            // } else {
+            //     this.configurationService.updateOfflineModeNotification(false);
+            // }
         });
         };
         this.ngZone.runOutsideAngular(() => {
