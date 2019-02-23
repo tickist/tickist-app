@@ -57,8 +57,7 @@ import {TickistUserModule} from './user/user.module';
 import { EffectsModule } from '@ngrx/effects';
 import {TickistAuthModule} from './auth/auth.module';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {StoreRouterConnectingModule} from '@ngrx/router-store';
-import * as fromProgressBar from './reducers/progress-bar.reducer';
+
 
 export function tokenGetter() {
     return localStorage.getItem('JWT');
@@ -103,11 +102,11 @@ export function tokenGetter() {
         StoreModule.forRoot(reducers, {
             initialState: {}
         }),
-        // StoreDevtoolsModule.instrument({
-        //     maxAge: 25, // Retains last 25 states
-        //     logOnly: environment.production, // Restrict extension to log-only mode
-        // }),
-        // environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
+        StoreDevtoolsModule.instrument({
+            maxAge: 25, // Retains last 25 states
+            logOnly: environment.production, // Restrict extension to log-only mode
+        }),
+        environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
         SortablejsModule,
         TickistMaterialModule,
         MenuModule,
