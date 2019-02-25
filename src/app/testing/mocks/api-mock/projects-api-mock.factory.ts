@@ -15,7 +15,8 @@ export class ProjectsApiMockFactory {
             id: project.id,
             name: project.name,
             color: project.color,
-            dialog_time_when_task_finished: project.dialog_time_when_task_finished
+            dialog_time_when_task_finished: project.dialog_time_when_task_finished,
+            share_with: []
         };
     }
 
