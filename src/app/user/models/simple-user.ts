@@ -1,8 +1,7 @@
-import {Api} from '../../models/commons';
 import {SimpleProject} from '../../models/projects/simple-project';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 
-export class SimpleUser extends Api {
+export class SimpleUser {
     id: number;
     username: string;
     email: string;
@@ -11,7 +10,6 @@ export class SimpleUser extends Api {
     shareWith: SimpleProject[] = [];
 
     constructor(user: ISimpleUserApi) {
-        super();
         this.id = user.id;
         this.username = user.username;
         this.email = user.email;

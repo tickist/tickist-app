@@ -8,7 +8,7 @@ import {Menu} from './menu';
 import {ITaskApi} from './task-api.interface';
 
 
-export class Task extends Api {
+export class Task {
     id: number;
     name: string;
     description: string;
@@ -38,7 +38,6 @@ export class Task extends Api {
 
 
     constructor(task: ITaskApi) {
-        super();
         this.name = task.name;
         this.richName = this.convert(task.name);
         this.id = task.id || undefined;
@@ -81,10 +80,6 @@ export class Task extends Api {
     //     }
     //     return result;
     // }
-
-
-
-
 
     private convert(text: string): string {
         const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;

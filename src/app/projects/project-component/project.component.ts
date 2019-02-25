@@ -18,6 +18,7 @@ import {AppStore} from '../../store';
 import {selectAllProjects, selectAllProjectsL0L1} from '../projects.selectors';
 import {selectLoggedInUser} from '../../user/user.selectors';
 import {selectTeam} from '../../user/team.selectors';
+import {addUserToShareList} from '../projects-utils';
 
 
 @Component({
@@ -247,7 +248,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value)
                 .pipe(takeUntil(this.ngUnsubscribe))
                 .subscribe((user) => {
-                    this.project.addUserToShareList(user);
+                    addUserToShareList(this.project, user);
                 });
         } else {
             this.addUserToShareWithListCtrl.markAsDirty();

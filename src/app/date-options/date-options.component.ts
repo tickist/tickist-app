@@ -1,8 +1,11 @@
-import {Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, OnInit, Input, ChangeDetectionStrategy, ViewChild} from '@angular/core';
 import {ConfigurationService} from '../services/configuration.service';
 import {Task} from '../models/tasks';
-import {TaskService} from '../tasks/task.service';
 import * as moment from 'moment';
+import {UpdateTask} from '../tasks/task.actions';
+import {Store} from '@ngrx/store';
+import {AppStore} from '../store';
+
 
 @Component({
     selector: 'app-date-options',
@@ -22,7 +25,7 @@ export class DateOptionsComponent implements OnInit {
     @ViewChild('finishDateInputViewChild') finishDateInputViewChild;
     @ViewChild('finishTimeInputViewChild') finishTimeInputViewChild;
 
-    constructor(protected configurationService: ConfigurationService, protected taskService: TaskService) {
+    constructor(protected configurationService: ConfigurationService, private store: Store<AppStore>) {
         this.minDate = new Date();
     }
 
@@ -49,7 +52,7 @@ export class DateOptionsComponent implements OnInit {
 
             this.task.finishDate = this.finishDate ? moment(this.finishDate, 'DD-MM-YYYY') : '';
             this.task.finishTime = this.finishTime;
-            this.taskService.updateTask(this.task, true);
+            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
         }
 
     }

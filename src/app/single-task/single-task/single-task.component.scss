@@ -3,7 +3,7 @@
 
 :host {
     height: 82px;
-   
+
 
     span {
         color: $white;
@@ -85,10 +85,6 @@ i {
     @extend .additional-info;
 }
 
-#finish-date-options {
-    margin-bottom: 15px;
-}
-
 .task-tags {
     @extend .additional-info;
 }
@@ -145,7 +141,7 @@ i {
     -webkit-box-direction: normal;
     background: #394264;
     padding: 16px;
-    
+
     .row {
         flex-direction: row;
         -webkit-box-orient: horizontal;

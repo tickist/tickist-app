@@ -1,5 +1,5 @@
 <div *ngIf="typeFinishDateOptions && task" fxLayout="column">
-    Complete:
+    <span>Complete:</span>
     <mat-radio-group [value]="typeFinishDate" (change)="saveTask($event, 'typeFinishDate')">
         <mat-radio-button [ngStyle]="{'margin-right': '10px'}" *ngFor="let option of typeFinishDateOptions"
                           [value]="option.id">

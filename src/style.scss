@@ -346,10 +346,6 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
     color: $white;
 }
 
-mat-radio-group {
-    overflow: hidden;
-}
-
 .level_1 {
     .mat-option-text {
         padding-left: 20px
@@ -363,12 +359,12 @@ mat-radio-group {
 }
 
 
-// expansion-panel 
+// expansion-panel
 .mat-expansion-panel:not([class*=mat-elevation-z]) {
     -webkit-box-shadow: none !important;
     -moz-box-shadow:  none !important;
     box-shadow:  none !important;
-    
+
 }
 .mat-expansion-panel-header {
     padding: 0 !important;

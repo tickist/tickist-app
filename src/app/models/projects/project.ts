@@ -7,6 +7,7 @@ import {SimpleProject} from './index';
 import {ISimpleProjectApi} from '../simple-project-api.inferface';
 import {IUserApi} from '../user-api.interface';
 import {toSnakeCase} from '../../utils/toSnakeCase';
+import {IPendingUser} from '../pending-user-api.interface';
 
 
 export class Project extends Api {
@@ -49,25 +50,13 @@ export class Project extends Api {
         this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
         this.isInbox = project.is_inbox;
         project.share_with.forEach((user) => {
-            this.addUserToShareList(user);
+            if (user.hasOwnProperty('id')) {
+                this.shareWith.push(new SimpleUser(user));
+            } else {
+                this.shareWith.push(new PendingUser(user));
+            }
 
         });
-    }
-
-    addUserToShareList(user): void {
-        if (user.hasOwnProperty('id')) {
-            this.shareWith.push(new SimpleUser(user));
-        } else {
-            this.shareWith.push(new PendingUser(user));
-        }
-    }
-
-    // toApi(): ISimpleProjectApi {
-    //     return (<ISimpleProjectApi>super.toApi());
-    // }
-
-    hasDescription(): boolean {
-        return this.description && this.description.length > 0;
     }
 
     get matOptionClass(): string {
@@ -85,15 +74,5 @@ export class Project extends Api {
             richText = text;
         }
         return richText;
-    }
-
-    convertToSimpleProject(): SimpleProject {
-        const simpleProjectApi: ISimpleProjectApi = {
-            id: this.id,
-            name: this.name,
-            color: this.color,
-            dialog_time_when_task_finished: this.dialogTimeWhenTaskFinished
-        };
-        return new SimpleProject(simpleProjectApi);
     }
 }

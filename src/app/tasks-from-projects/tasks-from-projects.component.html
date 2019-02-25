@@ -23,7 +23,7 @@
                               (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
         </div>
 
-        <div *ngIf=selectedProject.hasDescription()
+        <div *ngIf=projectHasDescription(selectedProject)
              class="project-description">{{ selectedProject.richDescription }}</div>
 
     </div>

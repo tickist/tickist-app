@@ -32,6 +32,7 @@ import {CreateTask, DeleteTask, RequestCreateTask, UpdateTask} from '../tasks/ta
 import {selectAllTags} from '../tags/tags.selectors';
 import {selectAllTasks} from '../tasks/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../single-task/utils/task-utils';
+import {convertToSimpleProject} from '../projects/projects-utils';
 
 @Component({
     selector: 'app-task-component',
@@ -55,7 +56,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     minutes2Hours: Minutes2hoursPipe;
     steps: any;
     minDate: Date;
-    subscriptions: Subscription;
     tagsCtrl: FormControl;
     filteredTags: Observable<any>;
     tags: Tag[] = [];
@@ -336,7 +336,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             'author': toSnakeCase(this.user.convertToSimpleUser()),
             'repeat_delta': 1,
             'from_repeating': 0,
-            'task_project': toSnakeCase(selectedProject.convertToSimpleProject()),
+            'task_project': toSnakeCase(convertToSimpleProject(selectedProject)),
             'estimate_time': 0,
             'task_list_pk': selectedProject.id,
             'time': undefined,
@@ -428,9 +428,8 @@ export class TaskComponent implements OnInit, OnDestroy {
             this.task.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
             this.task.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             this.task.typeFinishDate = values['main']['typeFinishDate'];
-            this.task.taskProject = this.projects
-                .find(project => project.id === parseInt(values['main']['taskProjectPk'], 10))
-                .convertToSimpleProject();
+            this.task.taskProject = convertToSimpleProject(this.projects
+                .find(project => project.id === parseInt(values['main']['taskProjectPk'], 10)));
             this.task.owner = <SimpleUser>this.task.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
 
             if (values['repeat']['repeatDefault'] !== 99) {
@@ -535,7 +534,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     changeProjectInTask(event): void {
-        this.task.taskProject = this.projects.find((project) => project.id === event.value).convertToSimpleProject();
+        this.task.taskProject = convertToSimpleProject(this.projects.find((project) => project.id === event.value));
         const extra = <FormGroup>this.taskForm.controls['extra'];
         extra.controls['ownerId'].setValue(this.user.id);
     }

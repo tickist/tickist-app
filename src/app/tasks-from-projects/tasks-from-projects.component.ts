@@ -31,7 +31,6 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     readonly PROJECT_HEADER_WITHOUT_DESCRIPTION_HEIGHT_FLEX = 'auto';
     tasksListHeightFlex: number | string;
     projectHeaderHeightFlex: number | string;
-    tasksStream$: Observable<any>;
     selectedProjectsStream$: Observable<any>;
     taskView: string;
     tasks: Task[] = [];
@@ -85,7 +84,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 this.selectedProject = project;
                 this.defaultTaskView = project.taskView;
                 this.taskView = project.taskView;
-                if (project.hasDescription()) {
+                if (this.projectHasDescription(project)) {
                     this.tasksListHeightFlex = this.TASKS_LIST_HEIGHT_WITH_PROJECT_DESCRIPTION_FLEX;
                     this.projectHeaderHeightFlex = this.PROJECT_HEADER_WITH_DESCRIPTION_HEIGHT_FLEX;
                 }
@@ -103,6 +102,10 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
             this.user.allTasksView = event;
             this.store.dispatch(new UpdateUser({user: this.user}));
         }
+    }
+
+    projectHasDescription(project) {
+        return project.description && project.description.length > 0;
     }
 
     ngOnDestroy() {
