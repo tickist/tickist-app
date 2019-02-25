@@ -13,7 +13,7 @@ import * as tasksAction from '../reducers/actions/tasks';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {ITaskApi} from '../models/task-api.interface';
-import {selectAllTasks} from './task.selectors';
+import {selectAllTasks} from '../core/selectors/task.selectors';
 import {taskToSnakeCase} from '../single-task/utils/taskToSnakeCase';
 
 
@@ -52,7 +52,6 @@ export class TaskService {
 
     updateTask(task: Task, isSilenceUpdate = false, cleanMenuState = false) {
         let menuStateCopy;
-
         if (!cleanMenuState) {
             menuStateCopy = taskToSnakeCase(task)['menu_showing'];
         }

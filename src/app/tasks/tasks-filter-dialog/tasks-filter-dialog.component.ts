@@ -5,7 +5,7 @@ import {Store} from '@ngrx/store';
 import {selectCurrentMainFilter, selectMainFilters} from '../filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
 import {Filter} from '../../models/filter';
-import {SetCurrentMainFilter} from '../main-filters-tasks.actions';
+import {SetCurrentMainFilter} from '../../core/actions/main-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({

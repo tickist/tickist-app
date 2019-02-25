@@ -11,7 +11,7 @@ import {Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
-import {UpdateTask} from '../../tasks/task.actions';
+import {UpdateTask} from '../../core/actions/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 
@@ -85,6 +85,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         const repeatDelta = this.task.repeatDelta;
         const repeatDeltaExtension = this.repeatStringExtension.transform(this.task.repeat);
         this.repeatString = `every ${repeatDelta} ${repeatDeltaExtension}`;
+        this.amountOfStepsDoneInPercent = this.task.steps.filter(step => step.status === 1).length * 100 / this.task.steps.length;
     }
 
     ngAfterViewInit() {

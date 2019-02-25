@@ -11,6 +11,7 @@ import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {IActiveDateElement} from '../models/active-data-element.interface';
 import * as  moment from 'moment';
+import {selectActiveDate} from '../core/selectors/active-date.selectors';
 
 @Injectable()
 export class StatisticsService {
@@ -20,8 +21,8 @@ export class StatisticsService {
     globalStatisticsDateRage$: Observable<any>;
     activeDateElement: IActiveDateElement;
 
-    constructor(public http: HttpClient, private store: Store<AppStore>, private configurationService: ConfigurationService) {
-        configurationService.activeDateElement$.subscribe((activeDateElement: IActiveDateElement) => {
+    constructor(public http: HttpClient, private store: Store<AppStore>) {
+        this.store.select(selectActiveDate).subscribe((activeDateElement: IActiveDateElement) => {
             this.loadDailyStatistics(activeDateElement.date);
             this.activeDateElement = activeDateElement;
         });

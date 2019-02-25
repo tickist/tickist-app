@@ -1,0 +1,70 @@
+@import "../../../../shared/variables";
+@import "../../../../shared/commons";
+
+mat-list-item {
+    cursor: pointer;
+    p {
+        margin: 0 5px 0 5px;
+    }
+    &:hover {
+        background: gray;
+        margin-right: 10px;
+        border-radius: 2px;
+    }
+}
+
+.fa {
+    cursor: pointer;
+}
+
+.fa-question {
+    cursor: help !important;
+}
+
+.close {
+    float: right;
+}
+
+
+
+#steps {
+    // position:fixed;
+    padding-left: 0;
+    list-style: none;
+}
+
+.step {
+    .hover-visible {
+        visibility: hidden;
+        margin-right: 5px;
+    }
+    &:hover {
+        .hover-visible {
+            visibility: visible;
+        }
+    }
+}
+
+#add-step {
+    margin-right: 40px;
+}
+
+.active {
+    background: gray;
+    margin-right: 10px;
+    border-bottom: solid 5px #11a8ab;
+    border-radius: 2px;
+}
+
+.from-repeating-wrapper {
+    margin-top: 5px;
+}
+
+.radio-button-active-task {
+    font-weight: 400;
+}
+
+.button {
+    background-color: $orange;
+    margin-left: 20px;
+}

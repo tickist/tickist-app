@@ -4,7 +4,7 @@ import {TasksFiltersService} from '../tasks-filters.service';
 import {Observable, Subject} from 'rxjs';
 import {Filter} from '../../models/filter';
 import {selectCurrentEstimateTimeFilter, selectEstimateTimeFilters} from '../filters-tasks.selectors';
-import {SetCurrentEstimateTimeFiltersTasks} from '../estimate-time-filters-tasks.actions';
+import {SetCurrentEstimateTimeFiltersTasks} from '../../core/actions/estimate-time-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {takeUntil} from 'rxjs/operators';

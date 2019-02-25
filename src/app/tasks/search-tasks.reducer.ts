@@ -1,4 +1,4 @@
-import {SearchTasksActions, SearchTasksActionTypes} from './search-tasks.actions';
+import {SearchTasksActions, SearchTasksActionTypes} from '../core/actions/search-tasks.actions';
 
 
 export interface SearchTaskState {

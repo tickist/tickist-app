@@ -1,6 +1,6 @@
-import {UserService} from '../../user/user.service';
+import {UserService} from '../../core/services/user.service';
 import {SpyObject} from '../test.helpers';
-import {User} from '../../user/models';
+import {User} from '../../core/models';
 import {Observable, of} from 'rxjs';
 import {UsersApiMockFactory} from './api-mock/users-api-mock.factory';
 

@@ -6,7 +6,7 @@ import {AppStore} from '../../store';
 import {SortBy} from '../models/sortBy';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {SetCurrentSortBy} from '../sort-tasks.actions';
+import {SetCurrentSortBy} from '../../core/actions/sort-tasks.actions';
 
 
 @Component({

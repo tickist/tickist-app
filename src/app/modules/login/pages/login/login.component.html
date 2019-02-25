@@ -1,0 +1,36 @@
+<div id="login-container" class="flex-container" fxLayoutAlign="center center" fxLayout="row">
+
+    <mat-card>
+
+        <form novalidate autocomplete="off"  [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)"
+              fxLayoutAlign="center center" fxLayout="column">
+
+            <mat-form-field>
+                <input name="email" matInput placeholder="Email" formControlName="email">
+                <mat-error *ngIf="loginForm.controls['email'].invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+
+            <div>
+                <mat-form-field>
+                    <input name="password" matInput type="password" placeholder="Password" formControlName="password">
+                    <mat-error *ngIf="loginForm.controls['password'].hasError('required')">Password is required</mat-error>
+                    <mat-error *ngIf="loginForm.controls['password'].hasError('incorrectLoginPassword')">Login or password are incorrect</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div>
+                <button id="submit-button" fxFlex mat-button  type="submit">Login
+                </button>
+            </div>
+
+            <!--<div fxLayout="row">-->
+                <!--<button mat-button type="button">Google</button>-->
+                <!--<button mat-button type="button">Facebook</button>-->
+            <!--</div>-->
+
+
+            <!--<span [routerLink]="['/forgot-password']">Forgot password?</span>-->
+            <span class="sign-up-text" [routerLink]="['/signup']"> Don't have an account? Sign up</span>
+        </form>
+    </mat-card>
+</div>

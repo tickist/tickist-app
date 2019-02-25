@@ -1,0 +1,18 @@
+<mat-tree class="tree-viewport" [dataSource]="dataSource" [treeControl]="treeControl">
+    <!-- This is the tree node template for leaf nodes -->
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <tickist-project-tree *ngIf="node.isProject" [isExpanded]="treeControl.isExpanded(node)" [project]="node.project" [tasksCounter]="node.tasksCounter" (toggleNode)="toggle($event)" [node]="node"></tickist-project-tree>
+        <tickist-single-task *ngIf="node.isTask"   [task]="node.task" [taskView]="'extended'"></tickist-single-task>
+    </mat-tree-node>
+    <!-- This is the tree node template for expandable nodes -->
+    <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
+        <tickist-project-tree *ngIf="node.isProject" [isExpanded]="treeControl.isExpanded(node)" [project]="node.project" [tasksCounter]="node.tasksCounter"  (toggleNode)="toggle($event)" [node]="node"></tickist-project-tree>
+        <tickist-single-task *ngIf="node.isTask"  [task]="node.task" [taskView]="'extended'"></tickist-single-task>
+    </mat-tree-node>
+
+    <mat-tree-node *matTreeNodeDef="let node;when: hasAddTask" matTreeNodePadding>
+        <tickist-add-task-tree-view [project]="node.project"></tickist-add-task-tree-view>
+    </mat-tree-node>
+</mat-tree>
+

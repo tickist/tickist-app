@@ -1,5 +1,5 @@
 import {Filter} from '../models/filter';
-import {MainFiltersTasksActions, MainFiltersTasksActionTypes} from './main-filters-tasks.actions';
+import {MainFiltersTasksActions, MainFiltersTasksActionTypes} from '../core/actions/main-filters-tasks.actions';
 
 
 export interface TasksMainFiltersState {

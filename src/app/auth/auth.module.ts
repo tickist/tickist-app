@@ -1,18 +1,18 @@
 import {NgModule} from '@angular/core';
 import {StoreModule} from '@ngrx/store';
 
-import * as from from './auth.reducer';
+import * as from from '../core/reducers/auth.reducer';
 import {EffectsModule} from '@ngrx/effects';
-import {AuthEffects} from './auth.effects';
-import {AuthService} from './auth.service';
-import {LoginComponent} from './login';
-import {SignupComponent} from './signup/signup.component';
-import {ForgotPasswordComponent} from './forgot-password';
+import {AuthEffects} from '../core/effects/auth.effects';
+import {AuthService} from '../core/services/auth.service';
+import {LoginComponent} from '../modules/login/pages/login';
+import {SignupComponent} from '../modules/signup/pages/signup/signup.component';
+import {ForgotPasswordComponent} from '../modules/forgot-password/pages/forgot-password';
 import {CommonModule} from '@angular/common';
 import {TickistMaterialModule} from '../material.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ReactiveFormsModule} from '@angular/forms';
-import {NavBarLandingPageComponent} from './nav-bar-landing-page/nav-bar-landing-page.component';
+import {NavBarAuthPageComponent} from '../core/header/nav-bar-auth-page/nav-bar-auth-page.component';
 import {RouterModule} from '@angular/router';
 
 @NgModule({
@@ -21,13 +21,11 @@ import {RouterModule} from '@angular/router';
         TickistMaterialModule,
         FlexLayoutModule,
         ReactiveFormsModule,
-        RouterModule,
-        StoreModule.forFeature('auth', from.authReducer),
-        EffectsModule.forFeature([AuthEffects])],
-    declarations: [NavBarLandingPageComponent, LoginComponent, SignupComponent, ForgotPasswordComponent],
-    providers: [AuthService],
+        RouterModule],
+    declarations: [],
+    providers: [],
     entryComponents: [],
-    exports: [NavBarLandingPageComponent, LoginComponent, SignupComponent, ForgotPasswordComponent]
+    exports: []
 })
 export class TickistAuthModule {
 }

@@ -338,6 +338,13 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
      margin-top: 10px;
 }
 
+// mat-badge
+.mat-badge-content {
+    color: $white;
+    background-color: $background_card_color;
+    transition: none;
+}
+
 .mat-input-element {
     caret-color: $white;
 }

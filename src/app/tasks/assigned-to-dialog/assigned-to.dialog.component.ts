@@ -6,7 +6,7 @@ import {Filter} from '../../models/filter';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {selectAssignedToFilters, selectCurrentAssignedToFilter} from '../filters-tasks.selectors';
-import {SetCurrentAssignedToFilter} from '../assigned-to-filters-tasks.actions';
+import {SetCurrentAssignedToFilter} from '../../core/actions/assigned-to-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
 
 

@@ -1,0 +1,24 @@
+<div id="all-projects" fxLayout="row" fxLayoutAlign="center center">
+    <span fxFlex (click)="navigateTo(tasksProjectsViewRoutingName)">All projects</span>
+    <span fxFlex (click)="navigateTo(tasksProjectsViewRoutingName)"></span>
+    <tickist-menu-button [icon]="'fa-filter'" (click)="openFilterDialog()">
+    </tickist-menu-button>
+    <mat-menu #projectsMenu="matMenu">
+        <button mat-menu-item [routerLink]="['/home/project']">Create new project</button>
+        <button mat-menu-item (click)="toggleProjectView()" *ngIf="!showOnlyProjectsWithTasks">Only projects
+            with tasks
+        </button>
+        <button mat-menu-item (click)="toggleProjectView()" *ngIf="showOnlyProjectsWithTasks">All projects
+        </button>
+    </mat-menu>
+</div>
+
+<single-project [project]="project" [isSmallScreen]="isSmallScreen"
+                *ngFor="let project of (projectsList$ | async);trackBy: trackByFn">
+</single-project>
+<div id="add-project" fxLayout="row" fxLayoutAlign="start center" (click)="navigateToCreateProjectView()">
+    <tickist-menu-button [icon]="'fa-plus'" [color]="'#fcb150'">
+    </tickist-menu-button>
+    <span>Create new project</span>
+</div>
+

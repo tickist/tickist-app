@@ -1,12 +1,12 @@
-import {SimpleUser} from '../../user/models';
-import {PendingUser} from '../../user/models';
+import {SimpleUser} from '../../core/models';
+import {PendingUser} from '../../core/models';
 import {Api} from '../commons';
 import {IProjectApi} from '../project-api.interface';
 import {ISimpleUserApi} from '../simple-user-api.interface';
 import {SimpleProject} from './index';
 import {ISimpleProjectApi} from '../simple-project-api.inferface';
 import {IUserApi} from '../user-api.interface';
-import {toSnakeCase} from '../../utils/toSnakeCase';
+import {toSnakeCase} from '../../core/utils/toSnakeCase';
 import {IPendingUser} from '../pending-user-api.interface';
 
 

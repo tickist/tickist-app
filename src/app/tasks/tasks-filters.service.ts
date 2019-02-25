@@ -2,7 +2,7 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {User} from '../user/models';
+import {User} from '../core/models';
 import * as _ from 'lodash';
 import {ConfigurationService} from '../services/configuration.service';
 import * as tasksAction from '../reducers/actions/tasks';
@@ -11,14 +11,12 @@ import {HttpClient} from '@angular/common/http';
 import {take} from 'rxjs/operators';
 import {Task} from '../models/tasks';
 import {Tag} from '../models/tags';
-import {AddUser} from '../user/user.actions';
+import {AddUser} from '../core/actions/user.actions';
 import {SortBy} from './models/sortBy';
 
 
 @Injectable()
 export class TasksFiltersService {
-    tasksFilters$: Observable<any>;
-    currentTasksFilters$: Observable<any>;
     user: User;
     assignedToAll: Filter;
     assignedToMe: Filter;
@@ -59,15 +57,7 @@ export class TasksFiltersService {
         return tasks;
     }
 
-    constructor(public http: HttpClient, private store: Store<AppStore>,
-                private configurationService: ConfigurationService) {
-
-        this.tasksFilters$ = this.store.pipe(
-            select(s => s.tasksFilters)
-        );
-        this.currentTasksFilters$ = this.store.pipe(
-            select(s => s.currentTasksFilters)
-        );
+    constructor(public http: HttpClient, private store: Store<AppStore>) {
     }
 
     static getDefaultEstimateTimeFilters() {

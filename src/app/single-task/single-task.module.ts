@@ -17,6 +17,7 @@ import {RouterModule} from '@angular/router';
 import {SingleTaskComponent} from './single-task/single-task.component';
 import {SingleTaskSimplifiedComponent} from './single-task-simplified/single-task-simplified.component';
 import {SingleTaskExtendedComponent} from './single-task-extended/single-task-extended.component';
+import {NoTasksComponent} from './no-tasks/no-tasks.component';
 
 @NgModule({
     imports: [ CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
@@ -28,14 +29,14 @@ import {SingleTaskExtendedComponent} from './single-task-extended/single-task-ex
         ProgressBarComponent,
         PinButtonComponent,
         RightMenuComponent,  ToggleButtonComponent,  TaskNameComponent,  DisplayFinishDateComponent, EditRepeatingOptionComponent,
-        DateOptionsComponent],
+        DateOptionsComponent, NoTasksComponent],
     declarations: [SingleTaskComponent,
         SingleTaskSimplifiedComponent,  UserAvatarComponent,
         ProgressBarComponent,
         PinButtonComponent,
         RightMenuComponent,  ToggleButtonComponent,  TaskNameComponent,  DisplayFinishDateComponent, EditRepeatingOptionComponent,
         DateOptionsComponent,
-        SingleTaskExtendedComponent]
+        SingleTaskExtendedComponent, NoTasksComponent]
 })
 export class TickistSingleTaskModule {
 }

@@ -1,4 +1,4 @@
-import {toSnakeCase} from '../../utils/toSnakeCase';
+import {toSnakeCase} from '../../core/utils/toSnakeCase';
 import {Task} from '../../models/tasks';
 
 
@@ -43,4 +43,5 @@ function prepareSteps(steps) {
         formset_step[prefix_formset + '-INITIAL_FORMS'] = initial_forms_count;
         formset_step[prefix_formset + '-MAX_NUM_FORMS'] = '';
     }
+    return formset_step;
 }

@@ -2,7 +2,7 @@ import {Component, OnInit, Input, ChangeDetectionStrategy, ViewChild} from '@ang
 import {ConfigurationService} from '../services/configuration.service';
 import {Task} from '../models/tasks';
 import * as moment from 'moment';
-import {UpdateTask} from '../tasks/task.actions';
+import {UpdateTask} from '../core/actions/task.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../store';
 

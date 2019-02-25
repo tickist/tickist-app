@@ -1,0 +1,8 @@
+<div class="container">
+<mat-radio-group (change)="changeFilter($event)" [(ngModel)]="filterValueId">
+    <mat-radio-button *ngFor="let filter of filters" [value]="filter.id">
+        <span [innerHTML]=filter.name></span>
+    </mat-radio-button>
+
+</mat-radio-group>
+</div>

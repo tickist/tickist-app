@@ -1,12 +1,8 @@
 import {ActionReducerMap} from '@ngrx/store';
-import {currentProjectsFilters, projectsFilters} from './reducers/projects';
-import {currentTagsFilters, tagsFilters} from './reducers/tags';
-import {currentTasksFilters, futureTasksFilters, currentTasksFutureFilters} from './reducers/tasks';
-import {
-    detectApiError, leftSidenavVisibility, rightSidenavVisibility, offlineModeNotification, addTaskComponentVisibility, activeDateElement
+import {leftSidenavVisibility, rightSidenavVisibility, addTaskComponentVisibility
 } from './reducers/configuration';
 import {IActiveDateElement} from './models/active-data-element.interface';
-import * as fromProgressBar from './reducers/progress-bar.reducer';
+
 
 export interface AppStore {
     projects: any;
@@ -19,7 +15,6 @@ export interface AppStore {
     tags: any;
     tasksFilters: any;
     projectsFilters: any;
-    tagsFilters: any;
     globalStatistics: any;
     dailyStatistics: any;
     activeDateElement: IActiveDateElement;
@@ -46,20 +41,9 @@ export interface AppStore {
 // const productionReducer: ActionReducer<AppStore> = combineReducers(reducers);
 
 export const reducers: ActionReducerMap<any> = {
-    currentTasksFilters: currentTasksFilters,
-    activeDateElement: activeDateElement,
-    detectApiError: detectApiError,
-    offlineModeNotification: offlineModeNotification,
     addTaskComponentVisibility: addTaskComponentVisibility,
     leftSidenavVisibility: leftSidenavVisibility,
-    rightSidenavVisibility: rightSidenavVisibility,
-    currentProjectsFilters: currentProjectsFilters,
-    projectsFilters: projectsFilters,
-    currentTagsFilters: currentTagsFilters,
-    tagsFilters: tagsFilters,
-    currentTasksFutureFilters: currentTasksFutureFilters,
-    futureTasksFilters: futureTasksFilters,
-    progressBar: fromProgressBar.reducer
+    rightSidenavVisibility: rightSidenavVisibility
 };
 
 

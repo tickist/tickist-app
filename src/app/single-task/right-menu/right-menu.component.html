@@ -2,7 +2,7 @@
 
 </tickist-pin-button>
 <tickist-menu-button [icon]="'fa-edit'"
-                     [routerLink]="['/home/task', task.id]"
+                     (click)="navigateToEditTaskView(task.id)"
                      [matTooltip]="'edit task'"
                      *ngIf="isRightMenuVisible">
 </tickist-menu-button>

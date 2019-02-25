@@ -3,35 +3,25 @@ import * as configurationActions from './actions/configuration';
 import {stateActiveDateElement} from '../models/state-active-date-element.enum';
 import {IActiveDateElement} from '../models/active-data-element.interface';
 
-export function activeDateElement(state: IActiveDateElement =
-                                      { date: moment(new Date(), 'DD-MM-YYYY'),
-                                        state: stateActiveDateElement.weekdays},
-                                  action: configurationActions.Actions) {
-    switch (action.type) {
-        case configurationActions.UPDATE_ACTIVE_DATA_ELEMENT:
-            return action.payload;
-        default:
-            return state;
-    }
-}
 
-export function detectApiError(state: any = false, action: configurationActions.Actions) {
-    switch (action.type) {
-        case configurationActions.UPDATE_DETECT_API_ERROR:
-            return action.payload;
-        default:
-            return state;
-    }
-}
+//
+// export function detectApiError(state: any = false, action: configurationActions.Actions) {
+//     switch (action.type) {
+//         case configurationActions.UPDATE_DETECT_API_ERROR:
+//             return action.payload;
+//         default:
+//             return state;
+//     }
+// }
 
-export function offlineModeNotification(state: any = false, action: configurationActions.Actions) {
-    switch (action.type) {
-        case configurationActions.UPDATE_OFFLINE_MODE_NOTIFICATION:
-            return action.payload;
-        default:
-            return state;
-    }
-}
+// export function offlineModeNotification(state: any = false, action: configurationActions.Actions) {
+//     switch (action.type) {
+//         case configurationActions.UPDATE_OFFLINE_MODE_NOTIFICATION:
+//             return action.payload;
+//         default:
+//             return state;
+//     }
+// }
 
 export function addTaskComponentVisibility(state: any = true, action: configurationActions.Actions) {
     switch (action.type) {

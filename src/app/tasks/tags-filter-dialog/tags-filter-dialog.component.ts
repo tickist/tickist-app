@@ -4,13 +4,13 @@ import {MatDialogRef} from '@angular/material';
 import {TaskService} from '../task.service';
 import {TagService} from '../../services/tag.service';
 import {TasksFiltersService} from '../tasks-filters.service';
-import {SetCurrentTagsFilters} from '../tags-filters-tasks.actions';
+import {SetCurrentTagsFilters} from '../../core/actions/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Filter} from '../../models/filter';
 import {selectCurrentTagsFilter} from '../filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
-import {selectAllTags} from '../../tags/tags.selectors';
+import {selectAllTags} from '../../core/selectors/tags.selectors';
 
 @Component({
     selector: 'tags-filter-dialog',

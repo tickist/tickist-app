@@ -4,12 +4,12 @@ import {ROUTER_NAVIGATED, ROUTER_NAVIGATION, RouterNavigationAction} from '@ngrx
 import {concatMap, concatMapTo, filter, map, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import {SetCurrentAssignedToFilter} from './assigned-to-filters-tasks.actions';
+import {SetCurrentAssignedToFilter} from '../core/actions/assigned-to-filters-tasks.actions';
 import {TasksFiltersService} from './tasks-filters.service';
-import {selectLoggedInUser} from '../user/user.selectors';
-import {SetCurrentMainFilter} from './main-filters-tasks.actions';
-import {SetCurrentTagsFilters} from './tags-filters-tasks.actions';
-import {SetCurrentEstimateTimeFiltersTasks} from './estimate-time-filters-tasks.actions';
+import {selectLoggedInUser} from '../core/selectors/user.selectors';
+import {SetCurrentMainFilter} from '../core/actions/main-filters-tasks.actions';
+import {SetCurrentTagsFilters} from '../core/actions/tags-filters-tasks.actions';
+import {SetCurrentEstimateTimeFiltersTasks} from '../core/actions/estimate-time-filters-tasks.actions';
 
 
 @Injectable()

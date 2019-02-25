@@ -1,0 +1,8 @@
+<form [formGroup]="createTaskForm" (ngSubmit)="createTask(createTaskForm.value)" fxLayout="row" fxLayoutAlign="space-around center" >
+    <mat-form-field [ngStyle]="{'margin-left':'20px'}" fxFlex>
+        <input matInput name="task-name" formControlName="name" placeholder="Task name">
+        <mat-error *ngIf="createTaskForm.controls['name'].hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+    <div fxFlex></div>
+    <button fxFlex mat-button>Create task</button>
+</form>

@@ -2,16 +2,14 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
-import * as moment from 'moment';
 import {MediaObserver} from '@angular/flex-layout';
 import * as configurationAction from '../reducers/actions/configuration';
 import {IActiveDateElement} from '../models/active-data-element.interface';
-import {stateActiveDateElement} from '../models/state-active-date-element.enum';
+import {ShowApiErrorBar} from '../core/actions/detect-api-error.actions';
 
 
 @Injectable()
 export class ConfigurationService {
-    activeDateElement$: Observable<IActiveDateElement>;
     detectApiError$: Observable<any>;
     offlineModeNotification$: Observable<any>;
     leftSidenavVisibility$: Observable<any>;
@@ -24,9 +22,6 @@ export class ConfigurationService {
     TYPE_FINISH_DATE_BY: any;
 
     constructor(private store: Store<AppStore>, protected media: MediaObserver) {
-        this.activeDateElement$ = this.store.pipe(
-            select(s => s.activeDateElement)
-        );
         this.detectApiError$ = this.store.pipe(
             select(s => s.detectApiError)
         );
@@ -134,39 +129,39 @@ export class ConfigurationService {
         return this.configuration;
     }
 
-    updateActiveDateElement(date?: string) {
-        let toStore: moment.Moment;
-        let state: stateActiveDateElement;
-        if (!date) {
-            date = moment().format('DD-MM-YYYY');
-        }
-        const splittedDate: string[] = date.split('-');
-        if (splittedDate.length === 2) {
-            toStore = moment().month(splittedDate[0]).year(parseInt(splittedDate[1], 10)).date(1);
-            state = stateActiveDateElement.future;
-        } else if (date.split('-').length === 3) {
-            toStore = moment()
-                .month(parseInt(splittedDate[1], 10) - 1)
-                .year(parseInt(splittedDate[2], 10))
-                .date(parseInt(splittedDate[0], 10));
-            state = stateActiveDateElement.weekdays;
-        }
-        this.store.dispatch(new configurationAction.UpdateActiveDateElement({
-            date: toStore.set({hour: 0, minute: 0, second: 0, millisecond: 0}),
-            state: state
-        }));
-    }
+    // updateActiveDateElement(date?: string) {
+    //     let toStore: moment.Moment;
+    //     let state: stateActiveDateElement;
+    //     if (!date) {
+    //         date = moment().format('DD-MM-YYYY');
+    //     }
+    //     const splittedDate: string[] = date.split('-');
+    //     if (splittedDate.length === 2) {
+    //         toStore = moment().month(splittedDate[0]).year(parseInt(splittedDate[1], 10)).date(1);
+    //         state = stateActiveDateElement.future;
+    //     } else if (date.split('-').length === 3) {
+    //         toStore = moment()
+    //             .month(parseInt(splittedDate[1], 10) - 1)
+    //             .year(parseInt(splittedDate[2], 10))
+    //             .date(parseInt(splittedDate[0], 10));
+    //         state = stateActiveDateElement.weekdays;
+    //     }
+    //     this.store.dispatch(new configurationAction.UpdateActiveDateElement({
+    //         date: toStore.set({hour: 0, minute: 0, second: 0, millisecond: 0}),
+    //         state: state
+    //     }));
+    // }
 
     updateDetectApiError(isVisible: boolean): void {
-        this.store.dispatch(new configurationAction.UpdateDetectApiError(isVisible));
+        this.store.dispatch(new ShowApiErrorBar());
     }
 
     updateOfflineModeNotification(isActive: boolean): void {
-        this.store.dispatch(new configurationAction.UpdateOfflineModeNotification(isActive));
+        // this.store.dispatch(new configurationAction.UpdateOfflineModeNotification(isActive));
     }
 
     updateAddTaskComponentVisibility(isVisible: boolean): void {
-        this.store.dispatch(new configurationAction.UpdateAddTaskComponentVisibility(isVisible));
+        // this.store.dispatch(new configurationAction.UpdateAddTaskComponentVisibility(isVisible));
     }
 
     changeOpenStateLeftSidenavVisibility(state): void {
@@ -223,5 +218,5 @@ export class ConfigurationService {
             'open': open
         }));
     }
-    
+
 }

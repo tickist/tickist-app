@@ -35,7 +35,11 @@ export const selectAssignedToFilters = createSelector(
 
 export const selectCurrentTagsFilter = createSelector(
     selectTagsFiltersState,
-    tagsFiltersState => tagsFiltersState.currentTagsFilter
+    tagsFiltersState => {
+        if (!tagsFiltersState) return;
+          else   
+              return tagsFiltersState.currentTagsFilter;
+    }
 );
 
 export const selectSearchTasksText = createSelector(

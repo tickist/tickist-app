@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 import {Filter} from '../models/filter';
-import {TagsFiltersTasksActions, TagsFiltersTasksActionTypes} from './tags-filters-tasks.actions';
+import {TagsFiltersTasksActions, TagsFiltersTasksActionTypes} from '../core/actions/tags-filters-tasks.actions';
 
 
 export interface TagsFiltersTasksState {
@@ -8,7 +8,7 @@ export interface TagsFiltersTasksState {
 }
 
 export const initialState: TagsFiltersTasksState = {
-    currentTagsFilter: undefined
+    currentTagsFilter: null
 };
 
 export function reducer(state = initialState, action: TagsFiltersTasksActions): TagsFiltersTasksState {

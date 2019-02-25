@@ -1,4 +1,3 @@
-import {Task} from '../../models/tasks';
 import {Filter} from '../../models/filter';
 import {Action} from '@ngrx/store';
 

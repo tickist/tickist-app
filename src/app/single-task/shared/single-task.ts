@@ -6,7 +6,7 @@ import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
 import * as moment from 'moment';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
-import {DeleteTask, UpdateTask} from '../../tasks/task.actions';
+import {DeleteTask, UpdateTask} from '../../core/actions/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
@@ -19,6 +19,7 @@ export class SingleTask {
     isFastMenuVisible = false;
     isMouseOver = false;
     ngUnsubscribe: Subject<void> = new Subject<void>();
+    amountOfStepsDoneInPercent: number;
     constructor(public store: Store<AppStore>, public dialog: MatDialog) {
 
     }
@@ -39,16 +40,17 @@ export class SingleTask {
         this.task = hideAllMenuElements(this.task);
     }
 
-    toggleDoneStep(step) {
-        this.task.steps.forEach((s: Step) => {
-            if (s.id === step.id) {
-                if (s.status === 1) {
-                    s.status = 0;
+    toggleDoneStep(toggledStep) {
+        this.task.steps.forEach((step: Step) => {
+            if (step.id === toggledStep.id) {
+                if (step.status === 1) {
+                    step.status = 0;
                 } else {
-                    s.status = 1;
+                    step.status = 1;
                 }
             }
         });
+        this.amountOfStepsDoneInPercent = this.task.steps.filter(step => step.status === 1).length * 100 / this.task.steps.length;
         this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task);
     }

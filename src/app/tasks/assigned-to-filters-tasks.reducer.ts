@@ -1,5 +1,5 @@
 import {Filter} from '../models/filter';
-import {AssignedToFiltersTasksActions, AssignedToFiltersTasksActionTypes} from './assigned-to-filters-tasks.actions';
+import {AssignedToFiltersTasksActions, AssignedToFiltersTasksActionTypes} from '../core/actions/assigned-to-filters-tasks.actions';
 
 
 export interface AssignedToFiltersTasks {

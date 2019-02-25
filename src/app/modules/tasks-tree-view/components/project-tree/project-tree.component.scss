@@ -1,0 +1,36 @@
+
+
+
+
+:host {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+
+    #first-row {
+        width: 100%;
+        display: flex;
+        font-size: 20px;
+        .project-name {
+            width: 100%;
+            cursor: pointer;
+        }
+    }
+    .project-description {
+        margin-top: 10px;
+    }
+}
+
+mat-icon {
+    margin-right: 30px;
+    cursor: pointer;
+}
+
+.visibility-visible {
+    visibility: visible;
+}
+
+.visibility-hidden {
+    visibility: hidden; 
+}
