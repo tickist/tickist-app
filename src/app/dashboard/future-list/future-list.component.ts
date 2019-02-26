@@ -44,10 +44,12 @@ export class FutureListComponent implements OnInit, OnDestroy {
         this.taskService.tasks$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((tasks: Task[]) => {
             this.tasks = tasks;
             this.futureList = this.createFutureList();
+            this.cd.detectChanges();
         });
         this.userService.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((user: User) => {
             this.user = user;
             this.futureList = this.createFutureList();
+            this.cd.detectChanges();
         });
     }
 
