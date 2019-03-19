@@ -1,25 +1,27 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable } from 'rxjs';
+import {TestBed, inject} from '@angular/core/testing';
+import {provideMockActions} from '@ngrx/effects/testing';
+import {Observable} from 'rxjs';
 
-import { ProjectsEffects } from './projects.effects';
+import {ProjectsEffects} from './projects.effects';
+import {StoreModule} from '@ngrx/store';
 
 describe('ProjectsEffects', () => {
-  let actions$: Observable<any>;
-  let effects: ProjectsEffects;
+    let actions$: Observable<any>;
+    let effects: ProjectsEffects;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        ProjectsEffects,
-        provideMockActions(() => actions$)
-      ]
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [StoreModule.forRoot({})],
+            providers: [
+                ProjectsEffects,
+                provideMockActions(() => actions$)
+            ]
+        });
+
+        effects = TestBed.get(ProjectsEffects);
     });
 
-    effects = TestBed.get(ProjectsEffects);
-  });
-
-  it('should be created', () => {
-    expect(effects).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(effects).toBeTruthy();
+    });
 });

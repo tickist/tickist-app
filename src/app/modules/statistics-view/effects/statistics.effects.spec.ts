@@ -1,25 +1,27 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable } from 'rxjs';
+import {TestBed, inject} from '@angular/core/testing';
+import {provideMockActions} from '@ngrx/effects/testing';
+import {Observable} from 'rxjs';
+import {StatisticsEffects} from './statistics.effects';
+import {StoreModule} from '@ngrx/store';
 
-import { Statistics.EffectEffects } from './statistics-view.effect.effects';
 
 describe('Statistics.EffectEffects', () => {
-  let actions$: Observable<any>;
-  let effects: Statistics.EffectEffects;
+    let actions$: Observable<any>;
+    let effects: StatisticsEffects;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        Statistics.EffectEffects,
-        provideMockActions(() => actions$)
-      ]
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [StoreModule.forRoot({})],
+            providers: [
+                StatisticsEffects,
+                provideMockActions(() => actions$)
+            ]
+        });
+
+        effects = TestBed.get(StatisticsEffects);
     });
 
-    effects = TestBed.get(Statistics.EffectEffects);
-  });
-
-  it('should be created', () => {
-    expect(effects).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(effects).toBeTruthy();
+    });
 });

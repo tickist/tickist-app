@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {AddUser, UserActionTypes} from '../../../../core/actions/user.actions';
-import {concatMap, mapTo} from 'rxjs/operators';
+import {concatMap} from 'rxjs/operators';
 import {SetCurrentTagsFilters} from '../../../../core/actions/tags-filters-tasks.actions';
-import {TasksFiltersService} from '../../../../tasks/tasks-filters.service';
 import {TagsFiltersService} from '../../../../services/tags-filters.service';
 import {AddTagsFilters, SetCurrentTagsListFilter} from './tags-filters.actions';
 import {defer, of} from 'rxjs';

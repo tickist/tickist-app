@@ -1,13 +1,13 @@
-import { reducer, initialState } from './tags.reducer';
+import { reducer, initialTagsState } from './tags.reducer';
 
 describe('Tags Reducer', () => {
   describe('an unknown action', () => {
     it('should return the previous state', () => {
       const action = {} as any;
 
-      const result = reducer(initialState, action);
+      const result = reducer(initialTagsState, action);
 
-      expect(result).toBe(initialState);
+      expect(result).toBe(initialTagsState);
     });
   });
 });

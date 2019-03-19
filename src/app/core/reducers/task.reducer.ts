@@ -1,7 +1,6 @@
 import {Task} from 'app/models/tasks';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {TaskActions, TaskActionTypes} from '../actions/task.actions';
-import {hideAllMenuElements} from '../../single-task/utils/task-utils';
 import {TickistActions, TickistActionTypes} from '../../tickist.actions';
 
 export interface TasksState extends EntityState<Task> {
