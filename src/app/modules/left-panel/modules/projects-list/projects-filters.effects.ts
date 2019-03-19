@@ -20,7 +20,9 @@ export class ProjectsFiltersEffects {
             concatMap(action => {
                 return [
                     new AddProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}),
-                    new SetCurrentProjectFilter({currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(action.payload.user.id)})
+                    new SetCurrentProjectFilter({
+                        currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(action.payload.user.projectsFilterId)
+                    })
                 ];
             })
         );
@@ -31,7 +33,9 @@ export class ProjectsFiltersEffects {
             concatMap(user => {
                 return [
                     new AddProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}),
-                    new SetCurrentProjectFilter({currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(user.id)})
+                    new SetCurrentProjectFilter({
+                        currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(user.projectsFilterId)
+                    })
                 ];
             })
         );

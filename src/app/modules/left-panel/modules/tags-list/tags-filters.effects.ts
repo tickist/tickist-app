@@ -22,7 +22,9 @@ export class TagsFiltersEffects {
             concatMap(action => {
                 return [
                     new AddTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}),
-                    new SetCurrentTagsFilters({currentTagsFilter: TagsFiltersService.getDefaultCurrentTagsFilter(action.payload.user.id)})
+                    new SetCurrentTagsFilters({
+                        currentTagsFilter: TagsFiltersService.getDefaultCurrentTagsFilter(action.payload.user.tagsFilterId)
+                    })
                 ];
             })
         );
@@ -33,7 +35,7 @@ export class TagsFiltersEffects {
             concatMap(user => {
             return [
                 new AddTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}),
-                new SetCurrentTagsListFilter({currentFilter: TagsFiltersService.getDefaultCurrentTagsFilter(user.id)})
+                new SetCurrentTagsListFilter({currentFilter: TagsFiltersService.getDefaultCurrentTagsFilter(user.tagsFilterId)})
             ];
         })
         );
