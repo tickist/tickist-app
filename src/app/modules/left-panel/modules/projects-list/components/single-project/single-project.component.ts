@@ -22,6 +22,7 @@ import {homeRoutesName} from '../../../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
 import {selectActiveProject, selectActiveProjectsIds} from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
+import {DeleteProject} from '../../../../../../core/actions/projects.actions';
 
 class Timer {
     readonly start = performance.now();
@@ -167,9 +168,8 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         dialogRef.componentInstance.setContent(content);
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
-                // @TODO add action instead of deleteProject
-                this.projectService.deleteProject(this.project.id);
-                this.router.navigate(['/home/projects', this.user.inboxPk]);
+                this.store.dispatch(new DeleteProject({projectId: this.project.id}));
+                this.router.navigate(['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, this.user.inboxPk]}}]);
             }
         });
 
@@ -184,7 +184,6 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         const mdCheckbox = elementClickPath.find(elem => elem.localName === 'mat-checkbox');
         if (!mdCheckbox) {
             this.router.navigate(['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]}}]);
-            // this.router.navigate([path, projectId]);
             if (this.media.isActive('sm') || this.media.isActive('xs')) {
                 this.configurationService.changeOpenStateLeftSidenavVisibility('close');
             }

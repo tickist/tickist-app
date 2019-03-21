@@ -7,7 +7,6 @@ export class LoginPage {
 
     setEmailValue(value: string) {
         // await element(by.name('email')).clear();
-        // console.log("1")
         return element(by.name('email')).sendKeys(value);
     }
 

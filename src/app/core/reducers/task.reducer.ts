@@ -27,7 +27,6 @@ export function reducer(state = initialTasksState, action: (TaskActions | Tickis
             return adapter.addAll(action.payload.tasks, {...state, allTasksLoaded: true});
 
         case TaskActionTypes.UPDATE_TASK:
-            console.log("TaskActionTypes.UPDATE_TAS")
             return adapter.updateOne(action.payload.task, state);
 
         case TaskActionTypes.DELETE_TASK:

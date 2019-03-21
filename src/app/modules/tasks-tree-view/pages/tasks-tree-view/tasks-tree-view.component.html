@@ -1,3 +1,8 @@
+<div class="buttons"  fxLayout="row" fxLayoutAlign="end center" >
+    <i [matTooltip]="'Expand all'" class="fa fa-expand" aria-hidden="true" (click)="expandAll()"></i>
+    <i [matTooltip]="'Collapse all'" class="fa fa-compress" aria-hidden="true" (click)="collapseAll()"></i>
+</div>
+
 <mat-tree class="tree-viewport" [dataSource]="dataSource" [treeControl]="treeControl">
     <!-- This is the tree node template for leaf nodes -->
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>

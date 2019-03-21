@@ -28,7 +28,7 @@ import {environment} from '../environments/environment';
 import {JwtModule} from '@auth0/angular-jwt';
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {RequestInterceptorService} from './httpInterceptor';
-import {ShowNotificationAboutNewDayComponent} from './show-notification-about-new-day/show-notification-about-new-day.component';
+import {ShowNotificationAboutNewDayComponent} from './core/header/show-notification-about-new-day/show-notification-about-new-day.component';
 import {TasksFiltersService} from './tasks/tasks-filters.service';
 import {ProjectsFiltersService} from './modules/left-panel/modules/projects-list/projects-filters.service';
 import {TagsFiltersService} from './services/tags-filters.service';
@@ -40,7 +40,6 @@ import {TickistSingleTaskModule} from './single-task/single-task.module';
 import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
 import {InMemoryDataService} from './testing/mocks/inMemryDb';
 import {EffectsModule} from '@ngrx/effects';
-import {TickistAuthModule} from './auth/auth.module';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TickistCoreModule} from './core/core.module';
 
@@ -56,7 +55,6 @@ export function tokenGetter() {
         DeleteTaskDialogComponent,
         TimeDialogComponent,
         TypeFinishDateString,
-        ShowNotificationAboutNewDayComponent,
         ChangeFinishDateDialogComponent,
         BlankComponent,
         RootComponent
@@ -64,7 +62,6 @@ export function tokenGetter() {
     imports: [
         TickistSharedModule,
         TickistSingleTaskModule,
-        TickistAuthModule,
         BrowserModule,
         BrowserAnimationsModule,
         CommonModule,

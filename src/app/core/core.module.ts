@@ -46,6 +46,7 @@ import * as fromTagsFiltersTasks from '../tasks/tags-filters-tasks.reducer';
 import * as fromSearchTasks from '../tasks/search-tasks.reducer';
 import {AssignedToFiltersTasksEffects} from '../tasks/assigned-to-filters-tasks.effects';
 import {TasksFiltersEffects} from '../tasks/tasks-filters.effects';
+import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
 
 
 
@@ -105,7 +106,8 @@ import {TasksFiltersEffects} from '../tasks/tasks-filters.effects';
         NavBarAuthPageComponent,
         AuthLayoutComponent,
         HomeComponent,
-        AddTaskComponent
+        AddTaskComponent,
+        ShowNotificationAboutNewDayComponent
     ]
 })
 

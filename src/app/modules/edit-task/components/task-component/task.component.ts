@@ -1,6 +1,5 @@
 import {
-    Component, OnInit, OnDestroy, ViewChild, Renderer2,
-    ElementRef, HostListener
+    Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../../../../tasks/task.service';

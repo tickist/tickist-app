@@ -98,25 +98,6 @@ export class TagComponent implements OnInit {
         return Number.isInteger(value);
     }
 
-    // ngAfterViewInit() {
-    //     this.eventStreamDouble = fromEvent(this.viewContainerRef.element.nativeElement.querySelector('div.tag-name'), 'click');
-    //     this.eventStreamDouble.pipe(
-    //         bufferWhen(() => interval(500)),
-    //         map((list: any) => {
-    //             return list.hasOwnProperty(length) ? (<Array<number>>list).length : 0;
-    //         }),
-    //         filter(x => x >= 1)
-    //     ).subscribe((v) => {
-    //         if (v === 1) {
-    //             this.singleClick.emit(this.id);
-    //             console.log('single click');
-    //         } else {
-    //             this.doubleClick.emit(this.id);
-    //             console.log('double click');
-    //         }
-    //     }, (a) => console.log(a));
-    // }
-
 }
 
 

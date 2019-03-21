@@ -6,7 +6,7 @@
     <span class="project-name" matTreeNodeToggle>{{ project.name }}</span>
     <div fxFlex></div>
     <tickist-menu-button [ngClass]="{'visibility-hidden': !showEditProjectButton}" [icon]="'fa-pencil-square-o'" [fontSize]="'18px'"
-                         [routerLink]="['/home/project/', project?.id]" [matTooltip]="'Edit project'">
+                         (click)="navigateToEditProjectView(project?.id)" [matTooltip]="'Edit project'">
     </tickist-menu-button>
 </div>
 

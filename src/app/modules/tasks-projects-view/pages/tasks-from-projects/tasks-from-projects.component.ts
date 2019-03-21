@@ -17,7 +17,6 @@ import {SetActiveProject} from '../../../../core/actions/active-project.actions'
 import {selectActiveProject, selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectTasksStreamInProjectsView} from '../../../../core/selectors/task.selectors';
 import {UpdateUser} from '../../../../core/actions/user.actions';
-import {selectAllTasksTreeView} from '../../../tasks-tree-view/tasks-tree-view.selectors';
 import {homeRoutesName} from '../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
 
@@ -69,10 +68,12 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 this.user = user;
                 if (projectId && projects && projects.length > 0 && user) {
                     const project = projects.find(p => p.id === parseInt(projectId, 10));
-                    if (project.hasOwnProperty('allDescendants')) {
-                        this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));
+                    if (project) {
+                        if (project.hasOwnProperty('allDescendants')) {
+                            this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));
+                        }
+                        this.store.dispatch(new SetActiveProject({project: project}));
                     }
-                    this.store.dispatch(new SetActiveProject({project: project}));
                 } else {
                     this.store.dispatch(new NewActiveProjectsIds({projectsIds: []}));
                     this.store.dispatch(new SetActiveProject({project: undefined}));

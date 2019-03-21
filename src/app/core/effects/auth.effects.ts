@@ -9,7 +9,7 @@ import {AppStore} from '../../store';
 import {UserService} from '../services/user.service';
 import {AddUser} from '../actions/user.actions';
 import {User} from '../models';
-import {IToken, Token} from '../../auth/models';
+import {IToken, Token} from '../models/auth';
 import {debug} from 'util';
 import {ResetStore} from '../../tickist.actions';
 

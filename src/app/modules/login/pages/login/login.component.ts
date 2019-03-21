@@ -6,7 +6,7 @@ import {tap} from 'rxjs/operators';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {Login} from '../../../../core/actions/auth.actions';
-import {IToken, Token} from '../../../../auth/models';
+import {IToken, Token} from '../../../../core/models/auth';
 import {AuthService} from '../../../../core/services/auth.service';
 
 

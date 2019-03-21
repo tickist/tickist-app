@@ -9,7 +9,7 @@ import {UserService} from '../../../../core/services/user.service';
 import {Router} from '@angular/router';
 import {map, tap} from 'rxjs/operators';
 import {noop, pipe} from 'rxjs';
-import {IToken, Token} from '../../../../auth/models';
+import {IToken, Token} from '../../../../core/models/auth';
 import {Login} from '../../../../core/actions/auth.actions';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';

@@ -76,8 +76,6 @@ export class UserComponent implements OnInit, OnDestroy {
             'repeatNewPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)]))
         }, {validators: this.matchingPasswords});
 
-        this.configurationService.changeOpenStateLeftSidenavVisibility('close');
-        this.configurationService.changeOpenStateRightSidenavVisibility('close');
         this.configurationService.updateAddTaskComponentVisibility(false);
 
     }
@@ -85,8 +83,6 @@ export class UserComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-        this.configurationService.updateLeftSidenavVisibility();
-        this.configurationService.updateRightSidenavVisibility();
         this.configurationService.updateAddTaskComponentVisibility(true);
     }
 

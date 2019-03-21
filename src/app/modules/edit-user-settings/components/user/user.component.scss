@@ -1,5 +1,8 @@
 @import "../../../../shared/commons";
 
+:host {
+    margin-left: 16px;
+}
 
 mat-list-item {
     cursor: pointer;

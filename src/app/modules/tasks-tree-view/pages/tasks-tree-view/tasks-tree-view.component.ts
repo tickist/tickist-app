@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Project} from '../../../../models/projects';
 
 import {AppStore} from '../../../../store';
@@ -87,7 +87,7 @@ export class TasksTreeViewComponent implements OnInit {
         });
 
     }
-    
+
     getLevel(node: any) {
         return node.level;
     }
@@ -112,6 +112,14 @@ export class TasksTreeViewComponent implements OnInit {
             this.expandedProjectsNode.add(node.project.id);
         }
 
+    }
+
+    collapseAll(): void {
+        this.treeControl.collapseAll();
+    }
+
+    expandAll() {
+        this.treeControl.expandAll();
     }
 
 }

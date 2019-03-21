@@ -14,6 +14,7 @@ import {SingleTask} from '../shared/single-task';
 import {UpdateTask} from '../../core/actions/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
+import {removeTag} from '../utils/task-utils';
 
 
 
@@ -111,7 +112,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     }
 
     removeTag(tag) {
-        this.task.removeTag(tag);
+        this.task = removeTag(this.task,  tag);
         this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task);
     }

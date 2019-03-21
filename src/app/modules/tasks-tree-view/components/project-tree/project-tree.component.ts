@@ -1,6 +1,9 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Project} from '../../../../models/projects';
 import {SelectionModel} from '@angular/cdk/collections';
+import {homeRoutesName} from '../../../../routing.module';
+import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'tickist-project-tree',
@@ -26,7 +29,7 @@ export class ProjectTreeComponent implements OnInit {
         this.showEditProjectButton = false;
     }
 
-    constructor() {
+    constructor(private router: Router) {
     }
 
     ngOnInit() {
@@ -34,5 +37,9 @@ export class ProjectTreeComponent implements OnInit {
 
     toggle() {
         this.toggleNode.emit(this.node);
+    }
+
+    navigateToEditProjectView(projectId: number) {
+        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
     }
 }

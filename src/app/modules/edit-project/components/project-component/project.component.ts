@@ -63,8 +63,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
         this.defaultTaskView = this.configurationService.configuration['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
         this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
-        // this.configurationService.changeOpenStateLeftSidenavVisibility('close');
-        // this.configurationService.changeOpenStateRightSidenavVisibility('close');
         this.configurationService.updateAddTaskComponentVisibility(false);
 
         this.stream$ = combineLatest(

@@ -8,6 +8,7 @@ import {ISimpleProjectApi} from '../simple-project-api.inferface';
 import {IUserApi} from '../user-api.interface';
 import {toSnakeCase} from '../../core/utils/toSnakeCase';
 import {IPendingUser} from '../pending-user-api.interface';
+import {convert} from '../../core/utils/addClickableLinksToString';
 
 
 export class Project extends Api {
@@ -39,7 +40,7 @@ export class Project extends Api {
         this.tasksCounter = !(isNaN(project.tasks_counter)) ? project.tasks_counter : undefined;
         this.allDescendants = project.get_all_descendants;
         this.description = project.description;
-        this.richDescription = this.convert(project.description);
+        this.richDescription = convert(project.description);
         this.defaultFinishDate = project.default_finish_date;
         this.defaultPriority = project.default_priority;
         this.defaultTypeFinishDate = project.default_type_finish_date;
@@ -63,16 +64,5 @@ export class Project extends Api {
         return `level_${this.level}`;
     }
 
-    private convert(text: string): string {
-        const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-        const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        let richText;
-        if (text) {
-            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>')
-                .replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
-        } else {
-            richText = text;
-        }
-        return richText;
-    }
+
 }

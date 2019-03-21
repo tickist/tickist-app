@@ -21,15 +21,11 @@ export class TeamComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.configurationService.changeOpenStateLeftSidenavVisibility('close');
-        this.configurationService.changeOpenStateRightSidenavVisibility('close');
         this.staticUrl = environment['staticUrl'];
         this.team$ = this.store.select(selectTeam);
     }
 
     ngOnDestroy(): void {
-        this.configurationService.updateLeftSidenavVisibility();
-        this.configurationService.updateRightSidenavVisibility();
         this.configurationService.updateAddTaskComponentVisibility(true);
     }
 

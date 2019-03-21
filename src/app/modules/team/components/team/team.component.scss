@@ -1,5 +1,12 @@
 :host {
+    margin-left: 16px;
     .round {
         border-radius: 40px;
+    }
+    mat-list {
+        margin: 0 16px;
+    }
+    .header {
+        font-size: 16px;
     }
 }

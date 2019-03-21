@@ -10,7 +10,7 @@ import {StatisticsService} from '../../../services/statistics.service';
 import {concatMap, concatMapTo, map, mergeMap} from 'rxjs/operators';
 import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../../models/statistics';
 import {defer, of} from 'rxjs';
-import {IToken, Token} from '../../../auth/models';
+import {IToken, Token} from '../../../core/models/auth';
 import {FetchedLoginUser, Logout} from '../../../core/actions/auth.actions';
 import {AddUser, UserActionTypes} from '../../../core/actions/user.actions';
 import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
