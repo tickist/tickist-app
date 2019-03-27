@@ -26,7 +26,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     tasks: Task[];
     projects: Project[];
     leftSidenavVisibility: SideNavVisibility;
-    rightSidenavVisibility: SideNavVisibility;
     addTaskComponentVisibility: boolean;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -41,7 +40,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.leftSidenavVisibility = new SideNavVisibility(
             {'open': true, 'mode': '', 'position': 'start'});
-        this.rightSidenavVisibility = new SideNavVisibility({'open': true, 'mode': '', 'position': 'end'});
 
         this.media.media$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((change: MediaChange) => {
             this.configurationService.updateLeftSidenavVisibility();
@@ -52,12 +50,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.configurationService.leftSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((visibility: SideNavVisibility) => {
             if (!_.isEmpty(visibility)) {
                 this.leftSidenavVisibility = visibility;
-                this.cd.detectChanges();
-            }
-        });
-        this.configurationService.rightSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((visibility) => {
-            if (!_.isEmpty(visibility)) {
-                this.rightSidenavVisibility = visibility;
                 this.cd.detectChanges();
             }
         });
@@ -77,9 +69,4 @@ export class HomeComponent implements OnInit, OnDestroy {
     closeLeftSidenavVisiblity() {
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
     }
-
-    closeRightSidenavVisiblity() {
-        this.configurationService.changeOpenStateRightSidenavVisibility('close');
-    }
-
 }

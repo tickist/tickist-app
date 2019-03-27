@@ -19,11 +19,8 @@ export class TasksFiltersEffects {
         .pipe(
             ofType<RouterNavigationAction>(ROUTER_NAVIGATION),
             filter(action => {
-                if (action.payload.event.urlAfterRedirects.indexOf('tasks') > 0
-                    || action.payload.event.urlAfterRedirects.indexOf('tags') > 0) {
-                    return true;
-                }
-                return false;
+                return action.payload.event.urlAfterRedirects.indexOf('tasks') > 0
+                    || action.payload.event.urlAfterRedirects.indexOf('tags') > 0;
             }),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             concatMap(([action, user]) => {

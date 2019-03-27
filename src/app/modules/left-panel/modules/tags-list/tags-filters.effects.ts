@@ -32,10 +32,14 @@ export class TagsFiltersEffects {
     init$ = defer(() => {
         return this.store.select(selectLoggedInUser).pipe(
             concatMap(user => {
-            return [
-                new AddTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}),
-                new SetCurrentTagsListFilter({currentFilter: TagsFiltersService.getDefaultCurrentTagsFilter(user.tagsFilterId)})
-            ];
+                const actions = [];
+                if (user) {
+                    actions.push(new AddTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}));
+                    actions.push(new SetCurrentTagsListFilter(
+                        {currentFilter: TagsFiltersService.getDefaultCurrentTagsFilter(user.tagsFilterId)}
+                        ));
+                }
+                return actions;
         })
         );
     });

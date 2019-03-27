@@ -1,6 +1,6 @@
 <tickist-nav></tickist-nav>
 
-<mat-sidenav-container *ngIf="leftSidenavVisibility && rightSidenavVisibility" style="flex: 1">
+<mat-sidenav-container *ngIf="leftSidenavVisibility" style="flex: 1">
     <mat-sidenav [mode]="leftSidenavVisibility.mode"
                  [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisiblity()"
                  [fixedInViewport]="'fixed'" [fixedTopGap]="79">

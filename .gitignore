@@ -83,3 +83,5 @@ code/static
 
 .DS_Store
 debug.log
+
+git-version.json
