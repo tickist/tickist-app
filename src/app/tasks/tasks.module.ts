@@ -15,17 +15,17 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SliderModule} from 'primeng/primeng';
 import { NoTasksComponent } from '../single-task/no-tasks/no-tasks.component';
 import { StoreModule } from '@ngrx/store';
-import * as fromTask from '../core/reducers/task.reducer';
+import * as fromTask from '../core/reducers/tasks/task.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { TaskEffects } from '../core/effects/task.effects';
-import {TaskService} from './task.service';
-import * as fromFilterTasks from './main-filters-tasks.reducer';
-import * as fromAssignedToFiltersTasks from './assigned-to-filters-tasks.reducer';
-import * as fromEstimateTimeFiltersTasks from './estimate-time-filters-tasks.reducer';
-import * as fromTagsFiltersTasks from './tags-filters-tasks.reducer';
-import { AssignedToFiltersTasksEffects } from './assigned-to-filters-tasks.effects';
-import * as fromSearchTasks from './search-tasks.reducer';
-import { TasksFiltersEffects } from './tasks-filters.effects';
+import {TaskService} from '../core/services/task.service';
+import * as fromFilterTasks from '../core/reducers/tasks/main-filters-tasks.reducer';
+import * as fromAssignedToFiltersTasks from '../core/reducers/tasks/assigned-to-filters-tasks.reducer';
+import * as fromEstimateTimeFiltersTasks from '../core/reducers/tasks/estimate-time-filters-tasks.reducer';
+import * as fromTagsFiltersTasks from '../core/reducers/tasks/tags-filters-tasks.reducer';
+import { AssignedToFiltersTasksEffects } from '../core/effects/assigned-to-filters-tasks.effects';
+import * as fromSearchTasks from '../core/reducers/tasks/search-tasks.reducer';
+import { TasksFiltersEffects } from '../core/effects/tasks-filters.effects';
 
 
 @NgModule({

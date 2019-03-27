@@ -1,5 +1,5 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {TasksState} from '../../core/reducers/task.reducer';
+import {TasksState} from '../../core/reducers/tasks/task.reducer';
 import {ChartStatisticsState} from './reducers/chart-data.reducer';
 import {selectTasksState} from '../../core/selectors/task.selectors';
 import {GlobalStatisticsDateRangeState} from './reducers/global-statistics-date-range.reducer';

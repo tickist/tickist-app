@@ -2,7 +2,7 @@ import {
     Component, OnInit, Input, OnDestroy, OnChanges, SimpleChange, ChangeDetectionStrategy,
     AfterViewInit, ElementRef, ViewChild, Renderer2, HostListener
 } from '@angular/core';
-import {TaskService} from '../../tasks/task.service';
+import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../services/configuration.service';
 import {MatDialog} from '@angular/material';
 import {ProjectService} from '../../services/project.service';
@@ -11,7 +11,7 @@ import {Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
-import {UpdateTask} from '../../core/actions/task.actions';
+import {UpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';

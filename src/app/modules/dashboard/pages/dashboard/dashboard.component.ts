@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {TaskService} from '../../../../tasks/task.service';
+import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {Task} from '../../../../models/tasks';

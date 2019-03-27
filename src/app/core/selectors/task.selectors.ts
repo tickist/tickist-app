@@ -1,18 +1,18 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {TasksState} from '../reducers/task.reducer';
-import * as fromCourse from '../reducers/task.reducer';
+import {TasksState} from '../reducers/tasks/task.reducer';
+import * as fromCourse from '../reducers/tasks/task.reducer';
 import {
     selectCurrentAssignedToFilter, selectCurrentEstimateTimeFilter,
     selectCurrentMainFilter,
     selectCurrentTagsFilter,
     selectSearchTasksText
-} from '../../tasks/filters-tasks.selectors';
+} from './filters-tasks.selectors';
 import {Task} from '../../models/tasks';
 import {Tag} from '../../models/tags';
 import {orderBy} from 'lodash';
 
 import {selectActiveProjectsIds} from './projects.selectors';
-import {selectCurrentSortBy} from '../../tasks/sort-by-tasks.selectors';
+import {selectCurrentSortBy} from './sort-by-tasks.selectors';
 import {selectLoggedInUser} from './user.selectors';
 export const selectTasksState = createFeatureSelector<TasksState>('task');
 

@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
-import {Project} from '../../models/projects';
+import {Project} from '../../../models/projects';
 
 export enum ProjectActionTypes {
     REQUEST_ALL_PROJECTS = '[] REQUEST_ALL_PROJECTS',

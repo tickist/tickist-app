@@ -1,7 +1,7 @@
-import {Task} from 'app/models/tasks';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {TaskActions, TaskActionTypes} from '../actions/task.actions';
-import {TickistActions, TickistActionTypes} from '../../tickist.actions';
+import {TaskActions, TaskActionTypes} from '../../actions/tasks/task.actions';
+import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
+import {Task} from '../../../models/tasks';
 
 export interface TasksState extends EntityState<Task> {
 

@@ -1,5 +1,5 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {SortByState} from '../core/reducers/sort-tasks.reducer';
+import {SortByState} from '../reducers/tasks/sort-tasks.reducer';
 
 
 export const selectSortByState = createFeatureSelector<SortByState>('sortTasks');

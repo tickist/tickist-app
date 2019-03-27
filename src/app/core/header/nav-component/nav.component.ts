@@ -10,7 +10,7 @@ import {filter, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../selectors/user.selectors';
 import {AppStore} from '../../../store';
-import {SetActiveProject} from '../../actions/active-project.actions';
+import {SetActiveProject} from '../../actions/projects/active-project.actions';
 import {selectProgressBarIsEnabled} from '../../../reducers/core.selectors';
 import {editUserSettingsRoutesName} from '../../../modules/edit-user-settings/routes-names';
 import {Logout} from '../../actions/auth.actions';

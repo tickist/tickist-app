@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import {Task} from '../../../../models/tasks';
-import {TaskService} from '../../../../tasks/task.service';
+import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {User} from '../../../../core/models';
 import {Subject} from 'rxjs';

@@ -1,7 +1,7 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import {TagsFiltersState} from './tags-filters.reducers';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
-import {selectSortByState} from '../../../../tasks/sort-by-tasks.selectors';
+import {selectSortByState} from '../../../../core/selectors/sort-by-tasks.selectors';
 import * as _ from 'lodash';
 
 

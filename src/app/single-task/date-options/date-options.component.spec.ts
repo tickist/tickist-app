@@ -1,20 +1,20 @@
 import {async, ComponentFixture, fakeAsync, inject, TestBed} from '@angular/core/testing';
 import {DateOptionsComponent} from './date-options.component';
-import {TickistMaterialModule} from '../material.module';
-import {MockTaskService} from '../testing/mocks/task-service';
+import {TickistMaterialModule} from '../../material.module';
+import {MockTaskService} from '../../testing/mocks/task-service';
 import {FormsModule} from '@angular/forms';
-import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TaskService} from '../tasks/task.service';
-import {Task} from '../models/tasks';
-import {MenuButtonComponent} from '../shared/components/menu-button/menu-button.component';
+import {MockConfigurationService} from '../../testing/mocks/configurationService';
+import {TaskService} from '../../core/services/task.service';
+import {Task} from '../../models/tasks';
+import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {IUserApi} from '../models/user-api.interface';
-import {IProjectApi} from '../models/project-api.interface';
-import {ITaskApi} from '../models/task-api.interface';
+import {IUserApi} from '../../models/user-api.interface';
+import {IProjectApi} from '../../models/project-api.interface';
+import {ITaskApi} from '../../models/task-api.interface';
 import * as moment from 'moment';
-import {TasksApiMockFactory} from '../testing/mocks/api-mock/tasks-api-mock.factory';
-import {UsersApiMockFactory} from '../testing/mocks/api-mock/users-api-mock.factory';
-import {ProjectsApiMockFactory} from '../testing/mocks/api-mock/projects-api-mock.factory';
+import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
+import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
+import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
 
 
 let comp: DateOptionsComponent;

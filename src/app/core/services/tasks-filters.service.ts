@@ -1,18 +1,18 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
-import {AppStore} from '../store';
-import {User} from '../core/models';
+import {AppStore} from '../../store';
+import {User} from '../models';
 import * as _ from 'lodash';
-import {ConfigurationService} from '../services/configuration.service';
-import * as tasksAction from '../reducers/actions/tasks';
-import {Filter} from '../models/filter';
+import {ConfigurationService} from '../../services/configuration.service';
+import * as tasksAction from '../../reducers/actions/tasks';
+import {Filter} from '../../models/filter';
 import {HttpClient} from '@angular/common/http';
 import {take} from 'rxjs/operators';
-import {Task} from '../models/tasks';
-import {Tag} from '../models/tags';
-import {AddUser} from '../core/actions/user.actions';
-import {SortBy} from './models/sortBy';
+import {Task} from '../../models/tasks';
+import {Tag} from '../../models/tags';
+import {AddUser} from '../actions/user.actions';
+import {SortBy} from '../../tasks/models/sortBy';
 
 
 @Injectable()

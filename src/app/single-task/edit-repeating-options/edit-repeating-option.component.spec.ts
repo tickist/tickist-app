@@ -1,19 +1,19 @@
 import {EditRepeatingOptionComponent} from './edit-repeating-option.component';
 import {async, ComponentFixture, inject, TestBed} from '@angular/core/testing';
-import {MockTaskService} from '../testing/mocks/task-service';
-import {MockConfigurationService} from '../testing/mocks/configurationService';
-import {TickistMaterialModule} from '../material.module';
+import {MockTaskService} from '../../testing/mocks/task-service';
+import {MockConfigurationService} from '../../testing/mocks/configurationService';
+import {TickistMaterialModule} from '../../material.module';
 import {FormsModule} from '@angular/forms';
 import {fakeAsync} from '@angular/core/testing';
-import {ConfigurationService} from '../services/configuration.service';
-import {Task} from '../models/tasks';
-import {TaskService} from '../tasks/task.service';
-import {IUserApi} from '../models/user-api.interface';
-import {IProjectApi} from '../models/project-api.interface';
-import {ITaskApi} from '../models/task-api.interface';
-import {TasksApiMockFactory} from '../testing/mocks/api-mock/tasks-api-mock.factory';
-import {UsersApiMockFactory} from '../testing/mocks/api-mock/users-api-mock.factory';
-import {ProjectsApiMockFactory} from '../testing/mocks/api-mock/projects-api-mock.factory';
+import {ConfigurationService} from '../../services/configuration.service';
+import {Task} from '../../models/tasks';
+import {TaskService} from '../../core/services/task.service';
+import {IUserApi} from '../../models/user-api.interface';
+import {IProjectApi} from '../../models/project-api.interface';
+import {ITaskApi} from '../../models/task-api.interface';
+import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
+import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
+import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
 import * as moment from 'moment';
 
 

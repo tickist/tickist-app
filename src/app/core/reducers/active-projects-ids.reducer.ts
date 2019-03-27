@@ -1,4 +1,4 @@
-import {ActiveProjectsIdActionTypes, ActiveProjectsIdsActions} from '../actions/active-projects-ids.actions';
+import {ActiveProjectsIdActionTypes, ActiveProjectsIdsActions} from '../actions/projects/active-projects-ids.actions';
 
 
 export interface ActiveProjectsIdsState {

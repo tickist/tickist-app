@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
 import {Project} from '../../models/projects';
-import {ActiveProjectActions, ActiveProjectActionTypes} from '../actions/active-project.actions';
+import {ActiveProjectActions, ActiveProjectActionTypes} from '../actions/projects/active-project.actions';
 
 
 export interface ActiveProjectState {

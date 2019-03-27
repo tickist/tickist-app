@@ -11,8 +11,8 @@ import {
     RequestsAllTasks,
     TaskActionTypes,
     UpdateTask
-} from '../actions/task.actions';
-import {TaskService} from '../../tasks/task.service';
+} from '../actions/tasks/task.actions';
+import {TaskService} from '../services/task.service';
 import {AppStore} from '../../store';
 import {allTasksLoaded, selectAllTasks, selectTaskById} from '../selectors/task.selectors';
 import {Task} from '../../models/tasks';

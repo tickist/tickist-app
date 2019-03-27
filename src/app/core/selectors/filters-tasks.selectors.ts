@@ -1,9 +1,9 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {TasksMainFiltersState} from './main-filters-tasks.reducer';
-import {AssignedToFiltersTasks} from './assigned-to-filters-tasks.reducer';
-import {EstimateTimeFiltersState} from './estimate-time-filters-tasks.reducer';
-import {SearchTaskState} from './search-tasks.reducer';
-import {TagsFiltersTasksState} from './tags-filters-tasks.reducer';
+import {TasksMainFiltersState} from '../reducers/tasks/main-filters-tasks.reducer';
+import {AssignedToFiltersTasks} from '../reducers/tasks/assigned-to-filters-tasks.reducer';
+import {EstimateTimeFiltersState} from '../reducers/tasks/estimate-time-filters-tasks.reducer';
+import {SearchTaskState} from '../reducers/tasks/search-tasks.reducer';
+import {TagsFiltersTasksState} from '../reducers/tasks/tags-filters-tasks.reducer';
 
 
 export const selectTasksMainFiltersState = createFeatureSelector<TasksMainFiltersState>('mainFiltersTasks');
@@ -37,8 +37,7 @@ export const selectCurrentTagsFilter = createSelector(
     selectTagsFiltersState,
     tagsFiltersState => {
         if (!tagsFiltersState) return;
-          else   
-              return tagsFiltersState.currentTagsFilter;
+        return tagsFiltersState.currentTagsFilter;
     }
 );
 

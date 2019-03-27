@@ -2,7 +2,7 @@ import {
     Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {TaskService} from '../../../../tasks/task.service';
+import {TaskService} from '../../../../core/services/task.service';
 import {TagService} from '../../../../services/tag.service';
 import {Task} from '../../../../models/tasks';
 import {Observable, combineLatest, Subject} from 'rxjs';
@@ -27,7 +27,7 @@ import {ITaskApi} from '../../../../models/task-api.interface';
 import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
-import {DeleteTask, RequestCreateTask, UpdateTask} from '../../../../core/actions/task.actions';
+import {DeleteTask, RequestCreateTask, UpdateTask} from '../../../../core/actions/tasks/task.actions';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
@@ -202,7 +202,6 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
         this.configurationService.updateLeftSidenavVisibility();
-        this.configurationService.updateRightSidenavVisibility();
         this.configurationService.updateAddTaskComponentVisibility(true);
     }
 

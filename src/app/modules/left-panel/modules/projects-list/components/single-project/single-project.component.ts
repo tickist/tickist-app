@@ -11,7 +11,7 @@ import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog
 import {MatDialog} from '@angular/material';
 import {UserService} from '../../../../../../core/services/user.service';
 import {User} from '../../../../../../core/models';
-import {AddNewActiveProjectId, DeleteActiveProjectId} from '../../../../../../core/actions/active-projects-ids.actions';
+import {AddNewActiveProjectId, DeleteActiveProjectId} from '../../../../../../core/actions/projects/active-projects-ids.actions';
 import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';
 import {Observable, Subject} from 'rxjs';
@@ -22,7 +22,7 @@ import {homeRoutesName} from '../../../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
 import {selectActiveProject, selectActiveProjectsIds} from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
-import {DeleteProject} from '../../../../../../core/actions/projects.actions';
+import {DeleteProject} from '../../../../../../core/actions/projects/projects.actions';
 
 class Timer {
     readonly start = performance.now();

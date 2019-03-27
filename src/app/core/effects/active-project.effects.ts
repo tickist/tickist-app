@@ -1,16 +1,14 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {ActiveProjectActionTypes, SetActiveProject} from '../actions/active-project.actions';
+import {ActiveProjectActionTypes, SetActiveProject} from '../actions/projects/active-project.actions';
 import {concatMap, withLatestFrom} from 'rxjs/operators';
 import {PendingUser, SimpleUser} from '../models';
-import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/assigned-to-filters-tasks.actions';
+import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
 import {Filter} from '../../models/filter';
-import {Task} from '../../models/tasks';
-import {withIdentifier} from 'codelyzer/util/astQuery';
 import {selectTeam} from '../selectors/team.selectors';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
-import {TasksFiltersService} from '../../tasks/tasks-filters.service';
+import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 
 @Injectable()

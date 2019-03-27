@@ -14,7 +14,7 @@ import {
     RequestCreateProject,
     RequestsAllProjects,
     UpdateProject
-} from '../actions/projects.actions';
+} from '../actions/projects/projects.actions';
 import {allProjectsLoaded, selectProjectById} from '../selectors/projects.selectors';
 import {ProjectService} from '../../services/project.service';
 import {Project} from '../../models/projects';

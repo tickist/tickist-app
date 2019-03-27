@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {SortBy} from '../../tasks/models/sortBy';
+import {SortBy} from '../../../tasks/models/sortBy';
 
 export enum SortTasksActionTypes {
     AddSortByOptions = '[SortTasks] Add sort by options',

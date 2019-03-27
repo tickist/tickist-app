@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
-import {Filter} from '../models/filter';
-import {TagsFiltersTasksActions, TagsFiltersTasksActionTypes} from '../core/actions/tags-filters-tasks.actions';
+import {Filter} from '../../../models/filter';
+import {TagsFiltersTasksActions, TagsFiltersTasksActionTypes} from '../../actions/tasks/tags-filters-tasks.actions';
 
 
 export interface TagsFiltersTasksState {

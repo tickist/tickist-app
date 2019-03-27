@@ -20,7 +20,7 @@ import {SortablejsModule} from 'angular-sortablejs';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {ErrorService} from './services/error.service';
 import {TypeFinishDateString} from './shared/pipes/typeFinishDateString';
-import {reducers} from './store';
+import {metaReducers, reducers} from './store';
 import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete-task.dialog.component';
 import {BlankComponent, RootComponent} from './testing/test.modules';
 import {MyDateAdapter} from './shared/data-adapter';
@@ -28,8 +28,7 @@ import {environment} from '../environments/environment';
 import {JwtModule} from '@auth0/angular-jwt';
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {RequestInterceptorService} from './httpInterceptor';
-import {ShowNotificationAboutNewDayComponent} from './core/header/show-notification-about-new-day/show-notification-about-new-day.component';
-import {TasksFiltersService} from './tasks/tasks-filters.service';
+import {TasksFiltersService} from './core/services/tasks-filters.service';
 import {ProjectsFiltersService} from './modules/left-panel/modules/projects-list/projects-filters.service';
 import {TagsFiltersService} from './services/tags-filters.service';
 import {TickistMaterialModule} from './material.module';
@@ -71,7 +70,8 @@ export function tokenGetter() {
         environment.e2eTest ?
             HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, {delay: 100}) : [],
         StoreModule.forRoot(reducers, {
-            initialState: {}
+            initialState: {},
+            metaReducers
         }),
         StoreDevtoolsModule.instrument({
             maxAge: 25, // Retains last 25 states

@@ -7,12 +7,10 @@ const routes: Routes = [
     {
         path: '',
         component: DashboardComponent,
-        
     },
     {
         path: ':date',
         component: DashboardComponent,
-        //outlet: 'content'
     }
 ];
 

@@ -3,13 +3,13 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ROUTER_NAVIGATED, ROUTER_NAVIGATION, RouterNavigationAction} from '@ngrx/router-store';
 import {concatMap, concatMapTo, filter, map, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
-import {AppStore} from '../store';
-import {SetCurrentAssignedToFilter} from '../core/actions/assigned-to-filters-tasks.actions';
-import {TasksFiltersService} from './tasks-filters.service';
-import {selectLoggedInUser} from '../core/selectors/user.selectors';
-import {SetCurrentMainFilter} from '../core/actions/main-filters-tasks.actions';
-import {SetCurrentTagsFilters} from '../core/actions/tags-filters-tasks.actions';
-import {SetCurrentEstimateTimeFiltersTasks} from '../core/actions/estimate-time-filters-tasks.actions';
+import {AppStore} from '../../store';
+import {SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
+import {TasksFiltersService} from '../services/tasks-filters.service';
+import {selectLoggedInUser} from '../selectors/user.selectors';
+import {SetCurrentMainFilter} from '../actions/tasks/main-filters-tasks.actions';
+import {SetCurrentTagsFilters} from '../actions/tasks/tags-filters-tasks.actions';
+import {SetCurrentEstimateTimeFiltersTasks} from '../actions/tasks/estimate-time-filters-tasks.actions';
 
 
 @Injectable()

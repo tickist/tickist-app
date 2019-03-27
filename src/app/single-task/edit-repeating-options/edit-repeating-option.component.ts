@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges} from '@angular/core';
-import {ConfigurationService} from '../services/configuration.service';
-import {Task} from '../models/tasks';
-import {TaskService} from '../tasks/task.service';
+import {ConfigurationService} from '../../services/configuration.service';
+import {Task} from '../../models/tasks';
+import {TaskService} from '../../core/services/task.service';
 
 
 @Component({

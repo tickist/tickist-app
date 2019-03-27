@@ -1,6 +1,5 @@
 import {Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import {Project} from '../../../../models/projects';
-import {ProjectService} from '../../../../services/project.service';
 import {Location} from '@angular/common';
 import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angular/forms';
 import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
@@ -12,7 +11,7 @@ import {MatDialog} from '@angular/material';
 import {environment} from '../../../../../environments/environment';
 import {DeleteProjectConfirmationDialogComponent} from '../../../left-panel/modules/projects-list/components/delete-project-dialog/delete-project-dialog.component';
 import {map, startWith, takeUntil} from 'rxjs/operators';
-import {RequestCreateProject, UpdateProject} from '../../../../core/actions/projects.actions';
+import {RequestCreateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectAllProjects, selectAllProjectsL0L1} from '../../../../core/selectors/projects.selectors';
@@ -106,7 +105,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         // this.configurationService.updateLeftSidenavVisibility();
-        // this.configurationService.updateRightSidenavVisibility();
         this.configurationService.updateAddTaskComponentVisibility(true);
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();

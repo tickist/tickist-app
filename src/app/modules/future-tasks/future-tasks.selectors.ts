@@ -4,7 +4,7 @@ import {selectAllTasks, selectAllUndoneTasks} from '../../core/selectors/task.se
 import {FutureTasksFiltersState} from './future-tasks-filters.reducers';
 import {selectLoggedInUser} from '../../core/selectors/user.selectors';
 import {selectActiveDate} from '../../core/selectors/active-date.selectors';
-
+import {Task} from '../../models/tasks';
 
 
 export const selectFutureTasksFilters = createFeatureSelector<FutureTasksFiltersState>('futureTasks');
@@ -27,7 +27,7 @@ export const selectFutureTasksList = createSelector(
     (tasks, user, filter, activeDate) => {
         if (!filter || !user) return [];
         const filteredTasks = tasks.filter(Function(`return ${filter.value}`)())
-            .filter(task => {
+            .filter((task: Task) => {
                 return task.owner.id === user.id
                     && task.status === 0
                     && task.finishDate

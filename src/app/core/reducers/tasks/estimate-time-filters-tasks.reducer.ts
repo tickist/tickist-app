@@ -1,5 +1,5 @@
-import {Filter} from '../models/filter';
-import {EstimateTimeFiltersTasksActions, EstimateTimeFiltersTasksActionTypes} from '../core/actions/estimate-time-filters-tasks.actions';
+import {Filter} from '../../../models/filter';
+import {EstimateTimeFiltersTasksActions, EstimateTimeFiltersTasksActionTypes} from '../../actions/tasks/estimate-time-filters-tasks.actions';
 
 
 export interface EstimateTimeFiltersState {

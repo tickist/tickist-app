@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, HostListener, Input} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {TaskService} from '../../tasks/task.service';
+import {TaskService} from '../../core/services/task.service';
 import {SingleTask} from '../shared/single-task';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';

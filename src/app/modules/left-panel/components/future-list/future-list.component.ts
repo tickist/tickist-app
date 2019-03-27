@@ -7,7 +7,7 @@ import {MediaObserver} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {IActiveDateElement} from '../../../../models/active-data-element.interface';
-import {TaskService} from '../../../../tasks/task.service';
+import {TaskService} from '../../../../core/services/task.service';
 import {Task} from '../../../../models/tasks';
 import {UserService} from '../../../../core/services/user.service';
 import {User} from '../../../../core/models';

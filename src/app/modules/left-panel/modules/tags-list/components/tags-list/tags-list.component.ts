@@ -3,7 +3,7 @@ import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
 import {TagService} from '../../../../../../services/tag.service';
 import {Tag} from '../../../../../../models/tags';
 import {Task} from '../../../../../../models/tasks';
-import {TaskService} from '../../../../../../tasks/task.service';
+import {TaskService} from '../../../../../../core/services/task.service';
 import {FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import {UserService} from '../../../../../../core/services/user.service';
 import {User} from '../../../../../../core/models';
@@ -12,7 +12,7 @@ import {FilterTagsDialogComponent} from '../filter-tags-dialog/filter-tags-dialo
 import {MatDialog} from '@angular/material';
 import {TagsFiltersService} from '../../../../../../services/tags-filters.service';
 import {Filter} from '../../../../../../models/filter';
-import {TasksFiltersService} from '../../../../../../tasks/tasks-filters.service';
+import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import * as _ from 'lodash';
 import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';

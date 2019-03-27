@@ -2,24 +2,18 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {AddUser, UpdateUser, UserActionTypes} from '../actions/user.actions';
 import {concatMap, concatMapTo, filter, mapTo, mergeMap} from 'rxjs/operators';
-import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/assigned-to-filters-tasks.actions';
-import {AddEstimateTimeFiltersTasks, SetCurrentEstimateTimeFiltersTasks} from '../actions/estimate-time-filters-tasks.actions';
-import {TasksFiltersService} from '../../tasks/tasks-filters.service';
-import {AddMainFilters, SetCurrentMainFilter} from '../actions/main-filters-tasks.actions';
-import {SetCurrentTagsFilters} from '../actions/tags-filters-tasks.actions';
-import {
-    LoadChartStatistics,
-    LoadDailyStatistics,
-    LoadGlobalStatistics,
-    LoadGlobalStatisticsDateRange
-} from '../../modules/statistics-view/actions/statistics.actions';
+import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
+import {AddEstimateTimeFiltersTasks, SetCurrentEstimateTimeFiltersTasks} from '../actions/tasks/estimate-time-filters-tasks.actions';
+import {TasksFiltersService} from '../services/tasks-filters.service';
+import {AddMainFilters, SetCurrentMainFilter} from '../actions/tasks/main-filters-tasks.actions';
+import {SetCurrentTagsFilters} from '../actions/tasks/tags-filters-tasks.actions';
 import {LoadTeams} from '../actions/team.actions';
 import {UserService} from '../services/user.service';
-import {RequestsAllTasks, TaskActionTypes, UpdateTask} from '../actions/task.actions';
+import {RequestsAllTasks, TaskActionTypes, UpdateTask} from '../actions/tasks/task.actions';
 import {SwitchOffProgressBar, SwitchOnProgressBar} from '../actions/progress-bar.actions';
-import {AddSortByOptions, SetCurrentSortBy} from '../actions/sort-tasks.actions';
+import {AddSortByOptions, SetCurrentSortBy} from '../actions/tasks/sort-tasks.actions';
 import {RequestsAllTags} from '../actions/tags.actions';
-import {RequestsAllProjects} from '../actions/projects.actions';
+import {RequestsAllProjects} from '../actions/projects/projects.actions';
 
 
 
@@ -79,8 +73,6 @@ export class UserEffects {
             ofType<AddUser>(UserActionTypes.AddUser),
             mapTo(new SetCurrentTagsFilters({currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters()}))
         );
-
-    
 
     @Effect()
     loadUserData$ = this.actions$

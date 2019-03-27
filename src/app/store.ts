@@ -1,7 +1,8 @@
-import {ActionReducerMap} from '@ngrx/store';
-import {leftSidenavVisibility, rightSidenavVisibility, addTaskComponentVisibility
-} from './reducers/configuration';
+import {ActionReducerMap, MetaReducer} from '@ngrx/store';
+import {leftSidenavVisibility, addTaskComponentVisibility} from './reducers/configuration';
 import {IActiveDateElement} from './models/active-data-element.interface';
+import {environment} from '../environments/environment';
+import {storeFreeze} from 'ngrx-store-freeze';
 
 
 export interface AppStore {
@@ -42,15 +43,9 @@ export interface AppStore {
 
 export const reducers: ActionReducerMap<any> = {
     addTaskComponentVisibility: addTaskComponentVisibility,
-    leftSidenavVisibility: leftSidenavVisibility,
-    rightSidenavVisibility: rightSidenavVisibility
+    leftSidenavVisibility: leftSidenavVisibility
 };
 
 
-// export function authReducer(state: any, action: any) {
-//   if (environment.production) {
-//     return productionReducer(state, action);
-//   } else {
-//     return productionReducer(state, action);
-//   }
-// }
+export const metaReducers: MetaReducer<AppStore>[] =
+    !environment.production ? [storeFreeze] : [];

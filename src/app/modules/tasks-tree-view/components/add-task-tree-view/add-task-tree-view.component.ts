@@ -8,7 +8,7 @@ import {ITaskApi} from '../../../../models/task-api.interface';
 import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
 import {User} from '../../../../core/models';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {RequestCreateTask} from '../../../../core/actions/task.actions';
+import {RequestCreateTask} from '../../../../core/actions/tasks/task.actions';
 import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
 
 @Component({

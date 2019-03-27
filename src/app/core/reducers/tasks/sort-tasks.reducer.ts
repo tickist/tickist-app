@@ -1,6 +1,6 @@
-import {SortTasksActions, SortTasksActionTypes} from '../actions/sort-tasks.actions';
-import {SortBy} from '../../tasks/models/sortBy';
-import {TickistActions, TickistActionTypes} from '../../tickist.actions';
+import {SortTasksActions, SortTasksActionTypes} from '../../actions/tasks/sort-tasks.actions';
+import {SortBy} from '../../../tasks/models/sortBy';
+import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
 
 
 export interface SortByState {

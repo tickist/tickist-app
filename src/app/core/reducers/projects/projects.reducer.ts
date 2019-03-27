@@ -1,7 +1,7 @@
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {ProjectActions, ProjectActionTypes} from '../actions/projects.actions';
-import {Project} from '../../models/projects';
-import {TickistActions, TickistActionTypes} from '../../tickist.actions';
+import {ProjectActions, ProjectActionTypes} from '../../actions/projects/projects.actions';
+import {Project} from '../../../models/projects';
+import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
 
 export interface ProjectsState extends EntityState<Project> {
     allProjectsLoaded: boolean;

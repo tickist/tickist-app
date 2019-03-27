@@ -8,7 +8,7 @@ import {User, UserLogin, SimpleUser} from '../models';
 import {MatSnackBar} from '@angular/material';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
-import {TasksFiltersService} from '../../tasks/tasks-filters.service';
+import {TasksFiltersService} from './tasks-filters.service';
 import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import {selectLoggedInUser} from '../selectors/user.selectors';

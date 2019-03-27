@@ -1,20 +1,20 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store, State, select} from '@ngrx/store';
-import {environment} from '../../environments/environment';
-import {AppStore} from '../store';
-import {Task} from '../models/tasks';
+import {environment} from '../../../environments/environment';
+import {AppStore} from '../../store';
+import {Task} from '../../models/tasks';
 import {MatSnackBar} from '@angular/material';
-import {StatisticsService} from '../services/statistics.service';
-import {ConfigurationService} from '../services/configuration.service';
-import {TagService} from '../services/tag.service';
-import {ProjectService} from '../services/project.service';
-import * as tasksAction from '../reducers/actions/tasks';
+import {StatisticsService} from '../../services/statistics.service';
+import {ConfigurationService} from '../../services/configuration.service';
+import {TagService} from '../../services/tag.service';
+import {ProjectService} from '../../services/project.service';
+import * as tasksAction from '../../reducers/actions/tasks';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
-import {ITaskApi} from '../models/task-api.interface';
-import {selectAllTasks} from '../core/selectors/task.selectors';
-import {taskToSnakeCase} from '../single-task/utils/taskToSnakeCase';
+import {ITaskApi} from '../../models/task-api.interface';
+import {selectAllTasks} from '../selectors/task.selectors';
+import {taskToSnakeCase} from '../../single-task/utils/taskToSnakeCase';
 
 
 @Injectable()

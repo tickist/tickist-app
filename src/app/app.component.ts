@@ -10,7 +10,5 @@ import gitInfo from '../git-version.json';
 })
 export class AppComponent {
 
-    constructor() {
-        console.log(gitInfo)
-    }
+    constructor() {}
 }

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {TaskService} from '../../../../tasks/task.service';
+import {TaskService} from '../../../../core/services/task.service';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';

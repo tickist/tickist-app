@@ -1,10 +1,10 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, ViewChild} from '@angular/core';
-import {ConfigurationService} from '../services/configuration.service';
-import {Task} from '../models/tasks';
+import {ConfigurationService} from '../../services/configuration.service';
+import {Task} from '../../models/tasks';
 import * as moment from 'moment';
-import {UpdateTask} from '../core/actions/task.actions';
+import {UpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../store';
+import {AppStore} from '../../store';
 
 
 @Component({

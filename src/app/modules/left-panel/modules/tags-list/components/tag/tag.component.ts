@@ -2,13 +2,13 @@ import {Component, OnInit, Input, ViewContainerRef} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {TagService} from '../../../../../../services/tag.service';
 import {Tag} from '../../../../../../models/tags';
-import {TasksFiltersService} from '../../../../../../tasks/tasks-filters.service';
+import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {Filter} from '../../../../../../models/filter';
 import {DeleteTag, UpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../../../store';
-import {SetCurrentTagsFilters} from '../../../../../../core/actions/tags-filters-tasks.actions';
-import {selectCurrentTagsFilter} from '../../../../../../tasks/filters-tasks.selectors';
+import {SetCurrentTagsFilters} from '../../../../../../core/actions/tasks/tags-filters-tasks.actions';
+import {selectCurrentTagsFilter} from '../../../../../../core/selectors/filters-tasks.selectors';
 
 
 @Component({

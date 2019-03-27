@@ -1,5 +1,5 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {TasksState} from '../reducers/task.reducer';
+import {TasksState} from '../reducers/tasks/task.reducer';
 import {ActiveDateState} from '../reducers/active-date.reducer';
 import {selectTasksState} from './task.selectors';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';

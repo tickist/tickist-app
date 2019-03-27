@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import {Task} from '../../../models/tasks';
 import {Project} from '../../../models/projects';
 import {ProjectService} from '../../../services/project.service';
-import {TaskService} from '../../../tasks/task.service';
+import {TaskService} from '../../services/task.service';
 import {UserService} from '../../services/user.service';
 import {TagService} from '../../../services/tag.service';
 import {MediaObserver, MediaChange} from '@angular/flex-layout';
@@ -43,7 +43,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.media.media$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((change: MediaChange) => {
             this.configurationService.updateLeftSidenavVisibility();
-            this.configurationService.updateRightSidenavVisibility();
             this.cd.detectChanges();
         });
 

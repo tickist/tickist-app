@@ -1,8 +1,8 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import {ActiveProjectsIdsState} from '../reducers/active-projects-ids.reducer';
 import {ActiveProjectState} from '../reducers/active-project.reducer';
-import * as fromCourse from '../reducers/projects.reducer';
-import {ProjectsState} from '../reducers/projects.reducer';
+import * as fromCourse from '../reducers/projects/projects.reducer';
+import {ProjectsState} from '../reducers/projects/projects.reducer';
 
 export const selectActiveProjectsIdsState = createFeatureSelector<ActiveProjectsIdsState>('activeProjectsIds');
 export const selectActiveProjectState = createFeatureSelector<ActiveProjectState>('activeProject');

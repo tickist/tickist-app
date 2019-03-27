@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {TasksFiltersService} from '../tasks-filters.service';
+import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {TagsFilterDialogComponent} from '../tags-filter-dialog/tags-filter-dialog.component';
 import {EstimateTimeDialogComponent} from '../estimate-time-dialog/estimate-time-dialog.component';
 import {TasksFilterDialogComponent} from '../tasks-filter-dialog/tasks-filter-dialog.component';
@@ -10,7 +10,7 @@ import {
     selectCurrentEstimateTimeFilter,
     selectCurrentMainFilter,
     selectCurrentTagsFilter
-} from '../filters-tasks.selectors';
+} from '../../core/selectors/filters-tasks.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Observable, Subject} from 'rxjs';

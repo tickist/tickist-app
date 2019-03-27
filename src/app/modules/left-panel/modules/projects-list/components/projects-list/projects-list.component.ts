@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subject, pipe, Observable} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
-import {TaskService} from '../../../../../../tasks/task.service';
+import {TaskService} from '../../../../../../core/services/task.service';
 import {ProjectService} from '../../../../../../services/project.service';
 import {Project} from '../../../../../../models/projects';
 import {ConfigurationService} from '../../../../../../services/configuration.service';

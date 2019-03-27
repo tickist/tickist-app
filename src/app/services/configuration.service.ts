@@ -4,7 +4,6 @@ import {select, Store} from '@ngrx/store';
 import {AppStore} from '../store';
 import {MediaObserver} from '@angular/flex-layout';
 import * as configurationAction from '../reducers/actions/configuration';
-import {IActiveDateElement} from '../models/active-data-element.interface';
 import {ShowApiErrorBar} from '../core/actions/detect-api-error.actions';
 
 
@@ -30,9 +29,6 @@ export class ConfigurationService {
         );
         this.leftSidenavVisibility$ = this.store.pipe(
             select(s => s.leftSidenavVisibility)
-        );
-        this.rightSidenavVisibility$ = this.store.pipe(
-            select(s => s.rightSidenavVisibility)
         );
         this.addTaskComponentVisibility$ = this.store.pipe(
             select(s => s.addTaskComponentVisibility))
@@ -174,16 +170,6 @@ export class ConfigurationService {
         this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({'open': open}));
     }
 
-    changeOpenStateRightSidenavVisibility(state): void {
-        let open;
-        if (state === 'close') {
-            open = false;
-        } else if (state === 'open') {
-            open = true;
-        }
-        this.store.dispatch(new configurationAction.UpdateRightSidenavVisibility({'open': open}));
-    }
-
     updateLeftSidenavVisibility(): void {
         let open, position, mode;
         position = 'start';
@@ -196,23 +182,6 @@ export class ConfigurationService {
             open = true;
         }
         this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({
-            'position': position,
-            'mode': mode,
-            'open': open
-        }));
-    }
-
-    updateRightSidenavVisibility(): void {
-        let open, position, mode;
-        position = 'end';
-        if (this.media.isActive('lg') || this.media.isActive('xl')) {
-            open = false;
-            mode = 'over';
-        } else {
-            mode = 'over';
-            open = false;
-        }
-        this.store.dispatch(new configurationAction.UpdateRightSidenavVisibility({
             'position': position,
             'mode': mode,
             'open': open

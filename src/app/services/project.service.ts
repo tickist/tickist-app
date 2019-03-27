@@ -10,7 +10,7 @@ import {MatSnackBar} from '@angular/material';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
-import {TasksFiltersService} from '../tasks/tasks-filters.service';
+import {TasksFiltersService} from '../core/services/tasks-filters.service';
 import * as _ from 'lodash';
 import {IProjectApi} from '../models/project-api.interface';
 import {toSnakeCase} from '../core/utils/toSnakeCase';

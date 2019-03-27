@@ -1,7 +1,7 @@
 import {Action} from '@ngrx/store';
-import {Task} from '../../models/tasks';
+import {Task} from '../../../models/tasks';
 import {Update} from '@ngrx/entity';
-import {CLOSE_MENU_IN_TASKS} from '../../reducers/actions/tasks';
+import {CLOSE_MENU_IN_TASKS} from '../../../reducers/actions/tasks';
 
 export enum TaskActionTypes {
     REQUEST_ALL_TASKS = '[] REQUEST_ALL_TASKS',
