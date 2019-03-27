@@ -20,7 +20,9 @@ export class FutureTasksEffects {
             concatMap(action => {
                 return [
                     new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}),
-                    new SetCurrentFutureTaskFilter({currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(action.payload.user.id)})
+                    new SetCurrentFutureTaskFilter({
+                        currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(action.payload.user.projectsFilterId)
+                    })
                 ];
             })
         );
@@ -31,7 +33,9 @@ export class FutureTasksEffects {
             concatMap(user => {
                 return [
                     new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}),
-                    new SetCurrentFutureTaskFilter({currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(user.id)})
+                    new SetCurrentFutureTaskFilter({
+                        currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(user.projectsFilterId)
+                    })
                 ];
             })
         );
