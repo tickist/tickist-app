@@ -14,6 +14,7 @@ export class SingleTaskComponent implements OnInit {
     @Input() task;
     @Input() mediaChange;
     @Input() taskView;
+    @Input() last;
     task_simple_view_value: string;
     task_extended_view_value: string;
     constructor(public taskService: TaskService, private configurationService: ConfigurationService,

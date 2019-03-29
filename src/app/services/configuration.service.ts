@@ -12,7 +12,6 @@ export class ConfigurationService {
     detectApiError$: Observable<any>;
     offlineModeNotification$: Observable<any>;
     leftSidenavVisibility$: Observable<any>;
-    rightSidenavVisibility$: Observable<any>;
     addTaskComponentVisibility$: Observable<any>;
     configuration: {};
     TASK_EXTENDED_VIEW: any;
@@ -30,10 +29,6 @@ export class ConfigurationService {
         this.leftSidenavVisibility$ = this.store.pipe(
             select(s => s.leftSidenavVisibility)
         );
-        this.addTaskComponentVisibility$ = this.store.pipe(
-            select(s => s.addTaskComponentVisibility))
-        ;
-
 
         this.TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};
         this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
@@ -154,10 +149,6 @@ export class ConfigurationService {
 
     updateOfflineModeNotification(isActive: boolean): void {
         // this.store.dispatch(new configurationAction.UpdateOfflineModeNotification(isActive));
-    }
-
-    updateAddTaskComponentVisibility(isVisible: boolean): void {
-        // this.store.dispatch(new configurationAction.UpdateAddTaskComponentVisibility(isVisible));
     }
 
     changeOpenStateLeftSidenavVisibility(state): void {

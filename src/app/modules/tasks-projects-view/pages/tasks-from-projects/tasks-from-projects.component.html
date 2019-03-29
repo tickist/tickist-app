@@ -29,8 +29,7 @@
     </div>
 
     <tickist-single-task  [task]="task" [mediaChange]="mediaChange" [taskView]="taskView"
-                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn;">
-
+                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn; let last = last" [last]="last">
     </tickist-single-task>
     <tickist-no-tasks [tasksLength]="tasks.length"></tickist-no-tasks>
 

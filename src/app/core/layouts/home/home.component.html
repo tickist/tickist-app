@@ -15,7 +15,7 @@
 
 
 </mat-sidenav-container>
-<tickist-add-task *ngIf="addTaskComponentVisibility"></tickist-add-task>
+<tickist-add-task *ngIf="addTaskButtonVisibility$ | async"></tickist-add-task>
 
 
 

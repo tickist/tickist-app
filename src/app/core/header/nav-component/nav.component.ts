@@ -64,9 +64,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.configurationService.leftSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((state) => {
             this.leftSideNavVisibility = state;
         });
-        this.configurationService.rightSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((state) => {
-            this.rightSideNavVisibility = state;
-        });
+        
         this.configurationService.offlineModeNotification$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
             this.isOffline = value;
         });

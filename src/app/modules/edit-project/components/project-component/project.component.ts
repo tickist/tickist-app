@@ -18,6 +18,8 @@ import {selectAllProjects, selectAllProjectsL0L1} from '../../../../core/selecto
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {addUserToShareList} from '../../../../core/utils/projects-utils';
+import {convert} from '../../../../core/utils/addClickableLinksToString';
+import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 
 
 @Component({
@@ -62,7 +64,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
         this.defaultTaskView = this.configurationService.configuration['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
         this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
-        this.configurationService.updateAddTaskComponentVisibility(false);
 
         this.stream$ = combineLatest(
             this.store.select(selectAllProjects),
@@ -100,12 +101,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
             startWith(null),
             map(name => this.filterUsers(name))
         );
+        this.store.dispatch(new HideAddTaskButton());
 
     }
 
     ngOnDestroy() {
-        // this.configurationService.updateLeftSidenavVisibility();
-        this.configurationService.updateAddTaskComponentVisibility(true);
+        this.store.dispatch(new ShowAddTaskButton());
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
@@ -132,26 +133,30 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(values) {
-        this.project.name = values['main']['name'];
-        this.project.description = values['main']['description'];
-        this.project.ancestor = values['main']['ancestor'];
-        this.project.color = values['main']['color'];
-        this.project.defaultFinishDate = values['extra']['defaultFinishDate'];
-        this.project.defaultPriority = values['extra']['defaultPriority'];
-        this.project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
-        this.project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
-        this.project.taskView = values['extra']['taskView'];
-        this.project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
+        if (this.projectForm.valid) {
+            const project = Object.assign({}, this.project);
+            project.name = values['main']['name'];
+            project.description = values['main']['description'];
+            project.richDescription = convert(values['main']['description']);
+            project.ancestor = values['main']['ancestor'];
+            project.color = values['main']['color'];
+            project.defaultFinishDate = values['extra']['defaultFinishDate'];
+            project.defaultPriority = values['extra']['defaultPriority'];
+            project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
+            project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
+            project.taskView = values['extra']['taskView'];
+            project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
 
-        // List share with is added directly
-        if (this.isNewProject()) {
-            this.store.dispatch(new RequestCreateProject({project: this.project}));
-        } else {
-            this.store.dispatch(new UpdateProject({project: {id: this.project.id, changes: this.project}}));
+            // List share with is added directly
+            if (this.isNewProject()) {
+                this.store.dispatch(new RequestCreateProject({project: project}));
+            } else {
+                this.store.dispatch(new UpdateProject({project: {id: project.id, changes: project}}));
+            }
+
+            // this.projectService.saveProject(this.project);
+            this.close();
         }
-
-        // this.projectService.saveProject(this.project);
-        this.close();
     }
 
     close() {
@@ -196,7 +201,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         });
     }
 
-    deleteUserFromShareWithList(user: (SimpleUser | PendingUser), i: number) {
+    deleteUserFromShareWithList(user: (SimpleUser | PendingUser| User), i: number) {
         const title = 'Confirmatiom';
         const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;

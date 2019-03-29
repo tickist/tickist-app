@@ -32,6 +32,7 @@ import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
 import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
+import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 
 @Component({
     selector: 'app-task-component',
@@ -129,7 +130,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 map(name => this.filterTags(name))
             );
 
-        this.configurationService.updateAddTaskComponentVisibility(false);
+        this.store.dispatch(new HideAddTaskButton());
     }
 
     @HostListener('window:keyup', ['$event'])
@@ -202,7 +203,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
         this.configurationService.updateLeftSidenavVisibility();
-        this.configurationService.updateAddTaskComponentVisibility(true);
+        this.store.dispatch(new ShowAddTaskButton());
     }
 
     createMenuDict() {

@@ -15,6 +15,7 @@ import {TeamEffects} from './effects/team.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromUser from './reducers/user.reducer';
 import * as fromTeam from './reducers/team.reducer';
+import * as fromAddTaskButtonVisibility from './reducers/add-task-button-visibility.reducer';
 import {UserService} from './services/user.service';
 import {TagsEffects} from './effects/tags.effects';
 import * as fromTags from './reducers/tags.reducer';
@@ -77,6 +78,7 @@ import {ShowNotificationAboutNewDayComponent} from './header/show-notification-a
         StoreModule.forFeature('estimateTimeFiltersTasks', fromEstimateTimeFiltersTasks.reducer),
         StoreModule.forFeature('tagsFiltersTasks', fromTagsFiltersTasks.reducer),
         StoreModule.forFeature('searchTasks', fromSearchTasks.reducer),
+        StoreModule.forFeature('addTaskButtonVisibility', fromAddTaskButtonVisibility.reducer),
         EffectsModule.forFeature([TaskEffects]),
         EffectsModule.forFeature([ProjectsEffects, ActiveProjectsIdsEffects, ActiveProjectEffects]),
         EffectsModule.forFeature([AuthEffects]),

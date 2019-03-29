@@ -12,6 +12,7 @@ import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {UpdateUser} from '../../../../core/actions/user.actions';
+import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 
 @Component({
     selector: 'app-user',
@@ -75,15 +76,14 @@ export class UserComponent implements OnInit, OnDestroy {
             'newPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)])),
             'repeatNewPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)]))
         }, {validators: this.matchingPasswords});
-
-        this.configurationService.updateAddTaskComponentVisibility(false);
+        this.store.dispatch(new HideAddTaskButton());
 
     }
 
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-        this.configurationService.updateAddTaskComponentVisibility(true);
+        this.store.dispatch(new ShowAddTaskButton())
     }
 
     toggleDailySumary() {

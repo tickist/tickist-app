@@ -12,8 +12,9 @@ import {MediaObserver, MediaChange} from '@angular/flex-layout';
 import {ConfigurationService} from '../../../services/configuration.service';
 import {SideNavVisibility} from '../../../models';
 import * as _ from 'lodash';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {selectAddTaskButtonVisibility} from '../../../reducers/core.selectors';
 
 
 
@@ -26,7 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     tasks: Task[];
     projects: Project[];
     leftSidenavVisibility: SideNavVisibility;
-    addTaskComponentVisibility: boolean;
+    addTaskButtonVisibility$: Observable<boolean>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private store: Store<AppStore>, private taskService: TaskService, private userService: UserService,
@@ -52,11 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.cd.detectChanges();
             }
         });
-
-        this.configurationService.addTaskComponentVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(visibility => {
-            this.addTaskComponentVisibility = visibility;
-            this.cd.detectChanges();
-        });
+        this.addTaskButtonVisibility$ = this.store.select(selectAddTaskButtonVisibility);
 
     }
 

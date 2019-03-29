@@ -11,7 +11,7 @@
     <tickist-filter-future-tasks></tickist-filter-future-tasks>
 
     <tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="taskView"
-                     *cdkVirtualFor="let task of tasks$ | async;trackBy: trackByFn">
+                     *cdkVirtualFor="let task of tasks$ | async;trackBy: trackByFn let last = last" [last]="last">
 
     </tickist-single-task>
     <tickist-no-tasks [tasksLength]="(tasks$ | async)?.length"></tickist-no-tasks>

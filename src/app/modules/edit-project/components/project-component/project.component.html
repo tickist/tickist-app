@@ -7,7 +7,10 @@
             <div fxFlex.gt-md="230px" fxFlex.lt-md="30%" class="left-menu">
                 <mat-list>
                     <mat-list-item (click)="changeActiveItemInMenu('main')"
-                                   [ngClass]="{'active': checkActiveItemInMenu('main')}">
+                                   [ngClass]="{
+                                    'active': checkActiveItemInMenu('main'),
+                                    'invalid': !projectForm.controls['main'].valid && projectForm.controls['main'].touched
+                                   }">
 
                         <i class="fa fa-pencil-square-o menu_icon"></i>
 
@@ -17,7 +20,10 @@
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('extra')"
-                                   [ngClass]="{'active': checkActiveItemInMenu('extra')}">
+                                   [ngClass]="{
+                                   'active': checkActiveItemInMenu('extra'),
+                                   'invalid': !projectForm.controls['extra'].valid && projectForm.controls['extra'].touched
+                                   }">
                         <i class="fa fa-wrench menu_iconn"></i>
 
                         <p [fxHide.xs]="1"><span>Extra</span></p>
@@ -25,7 +31,9 @@
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('sharing')"
-                                   [ngClass]="{'active': checkActiveItemInMenu('sharing')}">
+                                   [ngClass]="{
+                                   'active': checkActiveItemInMenu('sharing')
+                                   }">
                         <i class="fa fa-tags menu_icon"></i>
 
 
@@ -120,7 +128,7 @@
                             <input matInput placeholder="Write an email to invite new user to this list"
                                    [matAutocomplete]="auto" [formControl]="addUserToShareWithListCtrl">
                         </mat-form-field>
-                        <button (click)="inviteUser()" type="button"> Invite</button>
+                        <button mat-button (click)="inviteUser()" type="button"> Invite</button>
 
                         <mat-autocomplete #auto="matAutocomplete">
                             <mat-option *ngFor="let u of filteredUsers | async" [value]="u.email">

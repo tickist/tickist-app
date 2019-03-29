@@ -1,5 +1,4 @@
 import {Action} from '@ngrx/store';
-import {IActiveDateElement} from '../../models/active-data-element.interface';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
 
 

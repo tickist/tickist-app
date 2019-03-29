@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
+import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 
 @Component({
     selector: 'tickist-team',
@@ -17,16 +18,17 @@ export class TeamComponent implements OnInit, OnDestroy {
     team$: Observable<SimpleUser[]>;
     staticUrl: string;
 
-    constructor(private store: Store<AppStore>, private configurationService: ConfigurationService) {
+    constructor(private store: Store<AppStore>) {
     }
 
     ngOnInit() {
         this.staticUrl = environment['staticUrl'];
         this.team$ = this.store.select(selectTeam);
+        this.store.dispatch(new HideAddTaskButton());
     }
 
     ngOnDestroy(): void {
-        this.configurationService.updateAddTaskComponentVisibility(true);
+        this.store.dispatch(new ShowAddTaskButton());
     }
 
 }
