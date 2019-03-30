@@ -71,7 +71,7 @@ export function tokenGetter() {
             HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, {delay: 100}) : [],
         StoreModule.forRoot(reducers, {
             initialState: {},
-            // metaReducers
+            metaReducers
         }),
         StoreDevtoolsModule.instrument({
             maxAge: 25, // Retains last 25 states

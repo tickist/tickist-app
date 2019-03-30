@@ -46,6 +46,13 @@ export const reducers: ActionReducerMap<any> = {
     leftSidenavVisibility: leftSidenavVisibility
 };
 
+import createNgrxMiddleware from 'logrocket-ngrx';
+import * as LogRocket from 'logrocket';
+
+
+const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});
+
 
 export const metaReducers: MetaReducer<AppStore>[] =
-    !environment.production ? [storeFreeze] : [];
+    // @TODO add store freeze in the future
+    !environment.production ? [] : [logrocketMiddleware];
