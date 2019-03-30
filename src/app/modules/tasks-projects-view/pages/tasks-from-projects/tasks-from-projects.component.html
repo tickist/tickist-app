@@ -24,7 +24,7 @@
         </div>
 
         <div *ngIf=projectHasDescription(selectedProject)
-             class="project-description">{{ selectedProject.richDescription }}</div>
+             class="project-description" [innerHTML]="selectedProject.richDescription"></div>
 
     </div>
 

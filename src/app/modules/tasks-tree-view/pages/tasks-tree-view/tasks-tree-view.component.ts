@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Project} from '../../../../models/projects';
 
 import {AppStore} from '../../../../store';
@@ -33,7 +33,8 @@ interface FlatNode {
 @Component({
     selector: 'tickist-tasks-tree-view',
     templateUrl: './tasks-tree-view.component.html',
-    styleUrls: ['./tasks-tree-view.component.scss']
+    styleUrls: ['./tasks-tree-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TasksTreeViewComponent implements OnInit {
     transformer: any;
@@ -46,7 +47,7 @@ export class TasksTreeViewComponent implements OnInit {
     tasksTreeView$: Observable<any>;
     tasksFormCounter = 1;
 
-    constructor(private store: Store<AppStore>) {
+    constructor(private store: Store<AppStore>, private cd: ChangeDetectorRef) {
         this.transformer = (node: TaskTreeViewNode, level: number) => {
             const isProject = !!node.project;
             const isTask = !!node.task;
@@ -75,7 +76,6 @@ export class TasksTreeViewComponent implements OnInit {
         // this.dataSource.data = [];
         this.tasksTreeView$ = this.store.select(selectAllTasksTreeView);
         this.tasksTreeView$.subscribe(data => {
-            console.log(data);
             if (data.length > 0) {
                 this.dataSource.data = data;
                 this.treeControl.dataNodes.forEach(node => {
@@ -84,6 +84,7 @@ export class TasksTreeViewComponent implements OnInit {
                     }
                 });
             }
+            this.cd.detectChanges();
         });
 
     }
