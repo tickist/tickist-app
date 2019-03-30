@@ -28,12 +28,8 @@ export class TagsComponent implements OnInit, OnDestroy {
     tasks: Task[];
     tasks$: Observable<Task[]>;
     user: User;
-    tasksStream$: Observable<any>;
-    tagsStream$: Observable<any>;
     defaultTaskView: string;
     taskView: string;
-    leftSidenavVisibility: SideNavVisibility;
-    rightSidenavVisibility: SideNavVisibility;
 
     constructor(private tagService: TagService, private  taskService: TaskService, private tasksFiltersService: TasksFiltersService,
                 private userService: UserService, private store: Store<AppStore>, private configurationService: ConfigurationService) {

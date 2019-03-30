@@ -1,13 +1,14 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Project} from '../../../../models/projects';
 
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {Task} from '../../../../models/tasks';
 import {selectAllTasksTreeView} from '../../tasks-tree-view.selectors';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material';
 import {FlatTreeControl} from '@angular/cdk/tree';
+import {takeUntil} from 'rxjs/operators';
 
 
 interface TaskTreeViewNode {
@@ -36,7 +37,7 @@ interface FlatNode {
     styleUrls: ['./tasks-tree-view.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TasksTreeViewComponent implements OnInit {
+export class TasksTreeViewComponent implements OnInit, OnDestroy {
     transformer: any;
     expandedProjectsNode = new Set<number>();
     treeControl = new FlatTreeControl<FlatNode>(
@@ -46,6 +47,7 @@ export class TasksTreeViewComponent implements OnInit {
     dataSource: MatTreeFlatDataSource<any, any>;
     tasksTreeView$: Observable<any>;
     tasksFormCounter = 1;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private store: Store<AppStore>, private cd: ChangeDetectorRef) {
         this.transformer = (node: TaskTreeViewNode, level: number) => {
@@ -53,6 +55,11 @@ export class TasksTreeViewComponent implements OnInit {
             const isTask = !!node.task;
             const addTask = !!node.addTask;
             const tasksCounter = node.children ? node.children.length - this.tasksFormCounter : 0;
+            console.log({isProject})
+            console.log({isTask})
+            console.log({addTask})
+            console.log({tasksCounter})
+            console.log((!!node.children && node.children.length > 0))
             return {
                 expandable: (!!node.children && node.children.length > 0),
                 isTask,
@@ -67,7 +74,8 @@ export class TasksTreeViewComponent implements OnInit {
         };
 
         this.treeFlattener = new MatTreeFlattener(
-            this.transformer, this.getLevel, this.isExpandable, this.getChildren);
+            this.transformer, this.getLevel, this.isExpandable, this.getChildren
+        );
 
         this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     }
@@ -75,17 +83,20 @@ export class TasksTreeViewComponent implements OnInit {
     ngOnInit() {
         // this.dataSource.data = [];
         this.tasksTreeView$ = this.store.select(selectAllTasksTreeView);
-        this.tasksTreeView$.subscribe(data => {
-            if (data.length > 0) {
-                this.dataSource.data = data;
-                this.treeControl.dataNodes.forEach(node => {
-                    if (node.isProject && this.expandedProjectsNode.has(node.project.id)) {
-                        this.treeControl.expand(node);
-                    }
-                });
-            }
-            this.cd.detectChanges();
-        });
+        this.tasksTreeView$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(data => {
+                console.log("array", data);
+                if (data.length > 0) {
+                    this.dataSource.data = data;
+                    this.treeControl.dataNodes.forEach(node => {
+                        if (node.isProject && this.expandedProjectsNode.has(node.project.id)) {
+                            this.treeControl.expand(node);
+                        }
+                    });
+                }
+                this.cd.detectChanges();
+            });
 
     }
 
@@ -121,6 +132,12 @@ export class TasksTreeViewComponent implements OnInit {
 
     expandAll() {
         this.treeControl.expandAll();
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+        // clearTimeout(this.timer);
     }
 
 }
