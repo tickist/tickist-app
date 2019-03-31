@@ -4,7 +4,7 @@ import {MenuButtonComponent} from '../../../../../../shared/components/menu-butt
 import {TickistMaterialModule} from '../../../../../../material.module';
 import {BlankComponent, RootComponent} from '../../../../../../testing/test.modules';
 import {RouterModule, Routes} from '@angular/router';
-import {SingleProjectComponent} from '../single-project/single-project.component';
+import {SingleProjectComponent} from '../../components/single-project/single-project.component';
 import { MockComponent } from 'ng-mocks';
 import {FormsModule} from '@angular/forms';
 import {APP_BASE_HREF} from '@angular/common';

@@ -6,6 +6,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import {AddTaskComponent} from './add-task.component';
 import {RouterModule, Routes} from '@angular/router';
 import {RootComponent, BlankComponent} from '../../../testing/test.modules';
+import {StoreModule} from '@ngrx/store';
 
 const routes: Routes = [
     {
@@ -29,7 +30,7 @@ describe('AddTaskComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [RouterModule.forRoot(routes)],
+            imports: [RouterModule.forRoot(routes), StoreModule.forRoot({})],
             declarations: [AddTaskComponent, RootComponent, BlankComponent],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'}

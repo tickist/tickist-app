@@ -4,7 +4,7 @@ import {TickistMaterialModule} from '../../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ColorPickerComponent} from './components/color-picker/color-picker.component';
-import {ProjectComponent} from './components/project-component/project.component';
+import {ProjectComponent} from './pages/project-component/project.component';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {TickistEditProjectRoutingModule} from './edit-project-routing.module';
 

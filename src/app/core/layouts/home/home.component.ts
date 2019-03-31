@@ -14,8 +14,6 @@ import {SideNavVisibility} from '../../../models';
 import * as _ from 'lodash';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {selectAddTaskButtonVisibility} from '../../../reducers/core.selectors';
-
 
 
 @Component({
@@ -27,7 +25,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     tasks: Task[];
     projects: Project[];
     leftSidenavVisibility: SideNavVisibility;
-    addTaskButtonVisibility$: Observable<boolean>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private store: Store<AppStore>, private taskService: TaskService, private userService: UserService,
@@ -38,7 +35,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
-
         this.leftSidenavVisibility = new SideNavVisibility(
             {'open': true, 'mode': '', 'position': 'start'});
 
@@ -47,14 +43,14 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.cd.detectChanges();
         });
 
-        this.configurationService.leftSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((visibility: SideNavVisibility) => {
-            if (!_.isEmpty(visibility)) {
-                this.leftSidenavVisibility = visibility;
-                this.cd.detectChanges();
-            }
-        });
-        this.addTaskButtonVisibility$ = this.store.select(selectAddTaskButtonVisibility);
-
+        this.configurationService.leftSidenavVisibility$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((visibility: SideNavVisibility) => {
+                if (!_.isEmpty(visibility)) {
+                    this.leftSidenavVisibility = visibility;
+                    this.cd.detectChanges();
+                }
+            });
     }
 
     ngOnDestroy() {

@@ -68,24 +68,26 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.deleteOrLeave = this.project.shareWith.length > 1 ? 'Leave' : 'Delete';
-        this.store.select(selectLoggedInUser).pipe(takeUntil(this.ngUnsubscribe)).subscribe(user => {
-            this.user = user;
-        });
+        this.store.select(selectLoggedInUser)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(user => {
+                this.user = user;
+            });
         this.selectedProject$ = this.store.select(selectActiveProject);
         this.selectedProject$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(project => {
-            if (project && project.allDescendants.indexOf(this.project.id) > -1) {
-                this.isSelected = true;
-                if (project.allDescendants.length > 1) {
-                    this.activeCheckboxMode = true;
+                if (project && project.allDescendants.indexOf(this.project.id) > -1) {
+                    this.isSelected = true;
+                    if (project.allDescendants.length > 1) {
+                        this.activeCheckboxMode = true;
+                    }
+                } else {
+                    this.isSelected = false;
+                    this.activeCheckboxMode = false;
                 }
-            } else {
-                this.isSelected = false;
-                this.activeCheckboxMode = false;
-            }
-            this.cd.detectChanges();
-        });
+                this.cd.detectChanges();
+            });
         this.selectedProjectsIds$ = this.store.select(selectActiveProjectsIds);
         this.selectedProjectsIds$
             .pipe(takeUntil(this.ngUnsubscribe))

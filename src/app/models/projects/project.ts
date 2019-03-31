@@ -11,17 +11,17 @@ import {IPendingUser} from '../pending-user-api.interface';
 import {convert} from '../../core/utils/addClickableLinksToString';
 
 
-export class Project extends Api {
+export class Project {
     id: number;
     name: string;
     isActive: boolean;
     isInbox: boolean;
     description: string;
     richDescription: string;
-    ancestor: Project;
+    ancestor: number;
     color: string;
     tasksCounter: number;
-    allDescendants: any;
+    allDescendants: Array<number>;
     shareWith: (SimpleUser | PendingUser)[] = [];
     level: number;
     owner: number;
@@ -30,9 +30,9 @@ export class Project extends Api {
     defaultTypeFinishDate: any;
     dialogTimeWhenTaskFinished: boolean;
     taskView: string;
+    matOptionClass: string;
 
     constructor(project: IProjectApi) {
-        super();
         this.name = project.name;
         this.id = project.id || undefined;
         this.ancestor = project.ancestor || undefined;
@@ -50,6 +50,7 @@ export class Project extends Api {
         this.taskView = project.task_view;
         this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
         this.isInbox = project.is_inbox;
+        this.matOptionClass = `level_${this.level}`;
         project.share_with.forEach((user) => {
             if (user.hasOwnProperty('id')) {
                 this.shareWith.push(new SimpleUser(user));
@@ -59,10 +60,4 @@ export class Project extends Api {
 
         });
     }
-
-    get matOptionClass(): string {
-        return `level_${this.level}`;
-    }
-
-
 }

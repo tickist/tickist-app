@@ -34,6 +34,7 @@ function generateDifferentLevelsOfProjects(projects: Project[]) {
     // if (this.selectedProject && !projects.find(project => project.id === this.selectedProject.id)) {
     //     projects.push(this.allProjects.find(project => project.id === this.selectedProject.id));
     // }
+
     projects = _.orderBy(projects,
         ['isInbox', 'name'],
         ['desc', 'asc']
@@ -46,26 +47,36 @@ function generateDifferentLevelsOfProjects(projects: Project[]) {
     the_first_level.forEach((item_0) => {
         list_of_list.push(item_0);
         the_second_level.forEach((item_1) => {
-            if (item_0.allDescendants.indexOf(item_1.id) > -1) {
+            if (item_1.ancestor === item_0.id) {
                 list_of_list.push(item_1);
                 the_third_level.forEach((item_2) => {
-                    if (item_1.allDescendants.indexOf(item_2.id) > -1) {
+                    if (item_2.ancestor === item_1.id) {
                         list_of_list.push(item_2);
                     }
                 });
             }
+
+
+            // if (item_0.allDescendants.indexOf(item_1.id) > -1) {
+            //     list_of_list.push(item_1);
+            //     the_third_level.forEach((item_2) => {
+            //         if (item_1.allDescendants.indexOf(item_2.id) > -1) {
+            //             list_of_list.push(item_2);
+            //         }
+            //     });
+            // }
         });
 
     });
     // if we have a shared list on the second level
     the_second_level.forEach((item_1) => {
         if (list_of_list.indexOf(item_1) === -1) {
+            debugger
             item_1.level = 0;
             list_of_list.push(item_1);
             the_third_level.forEach((item_2) => {
-                if (item_1.allDescendants.indexOf(item_2.id) > -1) {
+                if (item_2.ancestor === item_1.id) {
                     list_of_list.push(item_2);
-
                 }
             });
         }
@@ -77,5 +88,7 @@ function generateDifferentLevelsOfProjects(projects: Project[]) {
             list_of_list.push(item_2);
         }
     });
+    console.log(projects);
+    console.log(list_of_list);
     return list_of_list;
 }

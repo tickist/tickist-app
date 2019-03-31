@@ -4,7 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {ChartsModule} from 'ng2-charts';
 import {TickistSharedModule} from '../../../../shared/shared.module';
 import {TickistMaterialModule} from '../../../../material.module';
-import {ProjectsListComponent} from './components/projects-list/projects-list.component';
+import {ProjectsListComponent} from './pages/projects-list/projects-list.component';
 import {DeleteProjectConfirmationDialogComponent} from './components/delete-project-dialog/delete-project-dialog.component';
 import {FilterProjectDialogComponent} from './components/filter-projects-dialog/filter-projects.dialog.component';
 import {SingleProjectComponent} from './components/single-project/single-project.component';

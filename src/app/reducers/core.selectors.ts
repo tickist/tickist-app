@@ -7,8 +7,8 @@ import {AddTaskButtonVisibilityState} from '../core/reducers/add-task-button-vis
 
 
 export const selectProgressBarState = createFeatureSelector<ProgressBarState>('progressBar');
-export const selectApiErrorrState = createFeatureSelector<ApiErrorState>('detectApiError');
-export const selectOfflineModedeState = createFeatureSelector<OfflineModeBarState>('offlineMode');
+export const selectApiErrorState = createFeatureSelector<ApiErrorState>('detectApiError');
+export const selectOfflineModeState = createFeatureSelector<OfflineModeBarState>('offlineMode');
 export const selectAddTaskButtonVisibilityState = createFeatureSelector<AddTaskButtonVisibilityState>('addTaskButtonVisibility');
 
 
@@ -17,11 +17,11 @@ export const selectProgressBarIsEnabled = createSelector(
     progressBar => progressBar.progressBar.isEnabled
 );
 export const selectApiErrorBarIsVisible = createSelector(
-    selectApiErrorrState,
+    selectApiErrorState,
     apiError => apiError.apiError.showApiErrorBar
 );
 export const selectOfflineModeBarIsVisible = createSelector(
-    selectOfflineModedeState,
+    selectOfflineModeState,
     offlineMode => offlineMode.offlineModeBar.isEnabled
 );
 

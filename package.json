@@ -5,7 +5,7 @@
   "angular-cli": {},
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --prod -c dev  --host 0.0.0.0",
+    "start": "ng serve -c dev  --host 0.0.0.0",
     "build": "ng build --prod",
     "test_once": "ng test --watch=false",
     "test_watch": "jest --watch",

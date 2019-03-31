@@ -55,11 +55,6 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
             const isTask = !!node.task;
             const addTask = !!node.addTask;
             const tasksCounter = node.children ? node.children.length - this.tasksFormCounter : 0;
-            console.log({isProject})
-            console.log({isTask})
-            console.log({addTask})
-            console.log({tasksCounter})
-            console.log((!!node.children && node.children.length > 0))
             return {
                 expandable: (!!node.children && node.children.length > 0),
                 isTask,
@@ -86,7 +81,6 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
         this.tasksTreeView$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(data => {
-                console.log("array", data);
                 if (data.length > 0) {
                     this.dataSource.data = data;
                     this.treeControl.dataNodes.forEach(node => {

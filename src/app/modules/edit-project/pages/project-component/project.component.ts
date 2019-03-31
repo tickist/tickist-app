@@ -146,7 +146,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
             project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
             project.taskView = values['extra']['taskView'];
             project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
-
+            
+            if (project.ancestor) {
+                this.updateAncestorProject(project.ancestor)
+            }
             // List share with is added directly
             if (this.isNewProject()) {
                 this.store.dispatch(new RequestCreateProject({project: project}));
@@ -154,7 +157,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 this.store.dispatch(new UpdateProject({project: {id: project.id, changes: project}}));
             }
 
-            // this.projectService.saveProject(this.project);
             this.close();
         }
     }
@@ -162,6 +164,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
     close() {
         // DRY
         this.location.back();
+    }
+    
+    updateAncestorProject(ancestorProjectId) {
+        const ancestorProject = this.projectsAncestors.find(project => project.id === ancestorProjectId);
+        
     }
 
     createForm(project: Project) {

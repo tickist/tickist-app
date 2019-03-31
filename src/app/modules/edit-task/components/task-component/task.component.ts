@@ -33,6 +33,7 @@ import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
 import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
+import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-list/projects-filters.selectors';
 
 @Component({
     selector: 'app-task-component',
@@ -87,7 +88,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             this.tasks$,
             this.route.params.pipe(map(params => params['taskId'])),
             this.projectService.selectedProject$,
-            this.projectService.projects$,
+            this.store.select(selectFilteredProjectsList),
             this.userService.user$
         );
         this.menu = this.createMenuDict();
@@ -96,7 +97,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             let task: Task;
             if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
                 this.user = user;
-                this.projects = ProjectService.sortProjectList(projects);
+                this.projects = projects;
                 if (taskId) {
                     task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
                 } else {
