@@ -17,6 +17,6 @@
                      *cdkVirtualFor="let task of tasks$ | async; trackBy: trackByFn, let last = last" [last]="last">
 
     </tickist-single-task>
-    <tickist-no-tasks [tasksLength]="tasks?.length"></tickist-no-tasks>
+    <tickist-no-tasks [tasksLength]="(tasks$ | async)?.length"></tickist-no-tasks>
 
 </cdk-virtual-scroll-viewport>

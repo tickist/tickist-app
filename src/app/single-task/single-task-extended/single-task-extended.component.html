@@ -108,7 +108,7 @@
             </tickist-menu-button>
         </div>
         <mat-form-field>
-            <mat-select #selectTaskProject placeholder="Project:" [(ngModel)]="task.taskProject.id"
+            <mat-select placeholder="Project:" [formControl]="selectTaskProject"
                         (selectionChange)="changeProject($event)">
                 <mat-option *ngFor="let project of projects$ | async" [ngClass]="project.matOptionClass"
                             [value]="project.id"> {{ project.name }}

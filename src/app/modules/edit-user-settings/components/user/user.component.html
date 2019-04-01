@@ -212,7 +212,7 @@
                             </mat-select>
                         </mat-form-field>
 
-                        <div class="form-field">
+                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
                             <span>Default task view:</span>
                             <mat-radio-group [(ngModel)]="user.defaultTaskView" (change)="changeUserDetails()"
                                              fxLayout.xs="column">
@@ -223,7 +223,7 @@
                             </mat-radio-group>
                         </div>
 
-                        <div class="form-field">
+                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
                             <span>Default task view on todays tasks:</span>
                             <mat-radio-group [(ngModel)]="user.defaultTaskViewTodayView" (change)="changeUserDetails()"
                                              fxLayout.xs="column">
@@ -235,7 +235,7 @@
                         </div>
 
 
-                        <div class="form-field">
+                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
                             <span>Default task view on overdue tasks:</span>
                             <mat-radio-group [(ngModel)]="user.defaultTaskViewOverdueView"
                                              (change)="changeUserDetails()" fxLayout.xs="column">
@@ -247,7 +247,7 @@
                         </div>
 
 
-                        <div class="form-field">
+                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
                             <span>Default task view on future tasks:</span>
                             <mat-radio-group [(ngModel)]="user.defaultTaskViewFutureView" (change)="changeUserDetails()"
                                              fxLayout.xs="column">
@@ -258,7 +258,7 @@
                             </mat-radio-group>
                         </div>
 
-                        <div class="form-field">
+                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
                             <span>Default task view on tags:</span>
                             <mat-radio-group [(ngModel)]="user.defaultTaskViewTagsView" (change)="changeUserDetails()"
                                              fxLayout.xs="column">

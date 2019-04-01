@@ -20,6 +20,7 @@ import {Task} from '../../models/tasks';
 import {SimpleUser} from '../../core/models';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {convertToSimpleProject} from '../../core/utils/projects-utils';
+import {FormControl} from '@angular/forms';
 
 
 @Component({
@@ -32,7 +33,6 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     @Input() task: Task;
     @Input() mediaChange;
     @ViewChild('container') container: ElementRef;
-    @ViewChild('selectTaskProject') selectTaskProject: MatSelect;
 
     dateFormat = 'DD-MM-YYYY';
     projects$: Observable<Project[]>;
@@ -42,6 +42,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     repeatStringExtension;
     task_simple_view_value: string;
     task_extended_view_value: string;
+    selectTaskProject: FormControl;
 
     @HostListener('mouseenter')
     onMouseEnter() {
@@ -80,6 +81,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     }
 
     ngOnInit() {
+        this.selectTaskProject = new FormControl(this.task.taskProject.id);
         this.task_simple_view_value = this.configurationService.TASK_SIMPLE_VIEW.value;
         this.task_extended_view_value = this.configurationService.TASK_EXTENDED_VIEW.value;
         this.projects$ = this.store.select(selectFilteredProjectsList);
@@ -91,6 +93,13 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         const repeatDeltaExtension = this.repeatStringExtension.transform(this.task.repeat);
         this.repeatString = `every ${repeatDelta} ${repeatDeltaExtension}`;
         this.amountOfStepsDoneInPercent = this.task.steps.filter(step => step.status === 1).length * 100 / this.task.steps.length;
+        this.selectTaskProject.valueChanges.subscribe(value => {
+            console.log(value);
+            this.store.select(selectProjectById(value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
+                const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
+                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: task}}));
+            });
+        });
     }
 
     ngAfterViewInit() {
@@ -99,7 +108,6 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     }
 
     ngOnDestroy() {
-        this.selectTaskProject.close();
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
@@ -112,14 +120,14 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     }
 
     changeProject(event) {
-        this.selectTaskProject.close();
-        this.selectTaskProject.panel.nativeElement.blur();
-        
-        this.hideAllMenuElements();
-        this.store.select(selectProjectById(event.value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
-            const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
-            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: task}}));
-        });
+        // this.selectTaskProject.close();
+        // this.selectTaskProject.toggle();
+        // this.selectTaskProject.panel.nativeElement.blur();
+        // this.hideAllMenuElements();
+        // this.store.select(selectProjectById(event.value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
+        //     const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
+        //     this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: task}}));
+        // });
     }
 
     removeTag(tag) {

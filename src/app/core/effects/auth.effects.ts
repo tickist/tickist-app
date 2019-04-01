@@ -10,8 +10,9 @@ import {UserService} from '../services/user.service';
 import {AddUser} from '../actions/user.actions';
 import {User} from '../models';
 import {IToken, Token} from '../models/auth';
-import {debug} from 'util';
 import {ResetStore} from '../../tickist.actions';
+import * as LogRocket from 'logrocket';
+import {environment} from '../../../environments/environment';
 
 
 
@@ -39,6 +40,14 @@ export class AuthEffects {
         .pipe(
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
             mergeMap(action => this.userService.loadUser(action.payload.token.userId)),
+            tap((user: User) => {
+                if (environment.production) {
+                    LogRocket.identify(user.id.toString(), {
+                        name: user.username,
+                        email: user.email,
+                    });
+                }
+            }),
             map((user: User) => {
                 return new AddUser({user: user});
             })

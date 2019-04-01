@@ -32,12 +32,9 @@ export class TagsListComponent implements OnInit, OnDestroy {
     tags: Tag[];
     tasks: Task[];
     user: User;
-    tasksStream$: Observable<any>;
-    tagsStream$: Observable<any>;
     createTagForm: FormGroup;
     defaultTaskView: string;
     taskView: string;
-    currentTagsFilters: Filter;
     filteredTagsList$: Observable<Tag[]>;
 
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
@@ -48,49 +45,10 @@ export class TagsListComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        // this.tagsStream$ = combineLatest(
-        //     this.store.select(selectAllTags),
-        //     this.tasksFiltersService.currentTasksFilters$,
-        //     this.tagsFiltersService.currentTagsFilters$,
-        //     (tags: Tag[], currentTasksFilters: any, currentTagsFilters: any) => {
-        //         this.currentTagsFilters = currentTagsFilters;
-        //         return tags;
-        //     }
-        // );
-        // this.tasksStream$ = combineLatest(
-        //     this.taskService.tasks$,
-        //     this.tasksFiltersService.currentTasksFilters$,
-        //     (tasks: Task[], currentTasksFilters: any) => {
-        //         if (currentTasksFilters.length > 0) {
-        //             tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
-        //         }
-        //         return tasks;
-        //     }
-        // );
         this.filteredTagsList$ = this.store.select(selectFilteredTagsList);
-        // this.tagsStream$
-        //     .pipe(takeUntil(this.ngUnsubscribe))
-        //     .subscribe((tags) => {
-        //         if (this.currentTagsFilters) {
-        //             tags = tags.filter(this.currentTagsFilters.value);
-        //         }
-        //         this.tags = _.orderBy(tags, 'name', 'asc');
-        //     });
-
-        // this.tasksStream$
-        //     .pipe(takeUntil(this.ngUnsubscribe))
-        //     .subscribe(((tasks) => {
-        //         this.tasks = tasks;
-        //     }));
         this.createTagForm = new FormGroup({
             'name': new FormControl('', Validators.required)
         });
-        // this.store.select(selectLoggedInUser)
-        //     .pipe(takeUntil(this.ngUnsubscribe))
-        //     .subscribe((user) => {
-        //         this.user = user;
-        //     });
-
     }
 
     ngOnDestroy() {
