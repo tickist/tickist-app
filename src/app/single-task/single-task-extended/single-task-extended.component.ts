@@ -94,7 +94,6 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.repeatString = `every ${repeatDelta} ${repeatDeltaExtension}`;
         this.amountOfStepsDoneInPercent = this.task.steps.filter(step => step.status === 1).length * 100 / this.task.steps.length;
         this.selectTaskProject.valueChanges.subscribe(value => {
-            console.log(value);
             this.store.select(selectProjectById(value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
                 const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
                 this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: task}}));
@@ -141,6 +140,9 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
             this.dateFormat = 'DD-MM';
         } else {
             this.dateFormat = 'DD-MM-YYYY';
+        }
+        if (changes.hasOwnProperty('task') && changes.task.currentValue && this.selectTaskProject) {
+            this.selectTaskProject.setValue(changes.task.currentValue.taskProject.id, {emitEvent: false});
         }
     }
 

@@ -88,7 +88,6 @@ function generateDifferentLevelsOfProjects(projects: Project[]) {
             list_of_list.push(item_2);
         }
     });
-    console.log(projects);
-    console.log(list_of_list);
+
     return list_of_list;
 }

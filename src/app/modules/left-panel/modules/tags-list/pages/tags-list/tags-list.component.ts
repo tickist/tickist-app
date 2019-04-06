@@ -8,7 +8,7 @@ import {FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import {UserService} from '../../../../../../core/services/user.service';
 import {User} from '../../../../../../core/models';
 import {ConfigurationService} from '../../../../../../services/configuration.service';
-import {FilterTagsDialogComponent} from '../filter-tags-dialog/filter-tags-dialog.component';
+import {FilterTagsDialogComponent} from '../../components/filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material';
 import {TagsFiltersService} from '../../../../../../services/tags-filters.service';
 import {Filter} from '../../../../../../models/filter';

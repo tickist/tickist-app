@@ -54,5 +54,4 @@ const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});
 
 
 export const metaReducers: MetaReducer<AppStore>[] =
-    // @TODO add store freeze in the future
-    !environment.production ? [] : [logrocketMiddleware];
+    !environment.production ? [storeFreeze] : [logrocketMiddleware];

@@ -6,7 +6,7 @@ import {TickistMaterialModule} from '../../../../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TagComponent} from './components/tag/tag.component';
 import {FilterTagsDialogComponent} from './components/filter-tags-dialog/filter-tags-dialog.component';
-import {TagsListComponent} from './components/tags-list/tags-list.component';
+import {TagsListComponent} from './pages/tags-list/tags-list.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { TagsFiltersEffects } from './tags-filters.effects';

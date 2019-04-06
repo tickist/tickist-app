@@ -56,61 +56,57 @@ export class SingleTask {
     }
 
     toggleDone() {
+       let task;
         if (this.task.status === 0) {
-            this.task.status = 1;
-            if (this.task.taskProject.dialogTimeWhenTaskFinished) {
+            task = Object.assign({}, this.task, {status: 1});
+            if (task.taskProject.dialogTimeWhenTaskFinished) {
                 const dialogRef = this.dialog.open(TimeDialogComponent, {
-                    data: {'task': this.task}
+                    data: {'task': task}
                 });
                 dialogRef.afterClosed()
                     .pipe(takeUntil(this.ngUnsubscribe))
                     .subscribe(result => {
                         if (result) {
-                            this.task.estimateTime = result['estimateTime'];
-                            this.task.time = result['realTime'];
+                            task.estimateTime = result['estimateTime'];
+                            task.time = result['realTime'];
                         }
-                        // this.taskService.updateTask(this.task);
-                        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                        this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
                     });
             } else if (isRepeated(this.task) && isOverdue(this.task) && this.task.fromRepeating === 1) {
+                task = Object.assign({}, this.task);
                 const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
-                    data: {'task': this.task}
+                    data: {'task': task}
                 });
                 dialogRef.afterClosed()
                     .pipe(takeUntil(this.ngUnsubscribe))
                     .subscribe(result => {
                         if (result && result.hasOwnProperty('finishDate')) {
-                            this.task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
+                            task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
                         }
-                        // this.taskService.updateTask(this.task);
-                        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                        this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
                     });
             } else {
-                // this.taskService.updateTask(this.task);
-                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
             }
         } else if (this.task.status === 1) {
-            this.task.status = 0;
-            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
-            // this.taskService.updateTask(this.task);
+            task = Object.assign({}, this.task, {status: 0});
+            this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
         } else if (this.task.status === 2) {
-            this.task.status = 0;
-            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
-            // this.taskService.updateTask(this.task);
+            task = Object.assign({}, this.task, {status: 0});
+            this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
         }
 
     }
 
     togglePin(): void {
-        this.task.pinned = !this.task.pinned;
-        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        const task = Object.assign({}, this.task, {pinned: !this.task.pinned});
+        this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
     }
 
     changePriority(priority: string) {
         if (this.task.priority !== priority) {
-            this.task.priority = priority;
-            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
-            // this.taskService.updateTask(this.task);
+            const task = Object.assign({}, this.task, {priority: priority});
+            this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
         }
     }
 
@@ -127,7 +123,7 @@ export class SingleTask {
         } else if (date === 'next_month') {
             delta = 30;
         }
-        this.task = moveFinishDateFromPreviousFinishDate(this.task, delta);
+        const task = moveFinishDateFromPreviousFinishDate(this.task, delta);
         this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task);
     }

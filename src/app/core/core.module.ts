@@ -48,7 +48,6 @@ import * as fromSearchTasks from './reducers/tasks/search-tasks.reducer';
 import {AssignedToFiltersTasksEffects} from './effects/assigned-to-filters-tasks.effects';
 import {TasksFiltersEffects} from './effects/tasks-filters.effects';
 import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
-import {SeoService} from './services/seo.service';
 
 
 
@@ -81,6 +80,7 @@ import {SeoService} from './services/seo.service';
         StoreModule.forFeature('searchTasks', fromSearchTasks.reducer),
         StoreModule.forFeature('addTaskButtonVisibility', fromAddTaskButtonVisibility.reducer),
         EffectsModule.forFeature([TaskEffects]),
+        EffectsModule.forFeature([TaskEffects]),
         EffectsModule.forFeature([ProjectsEffects, ActiveProjectsIdsEffects, ActiveProjectEffects]),
         EffectsModule.forFeature([AuthEffects]),
         EffectsModule.forFeature([TagsEffects]),
@@ -91,7 +91,7 @@ import {SeoService} from './services/seo.service';
         TaskService,
         UserService,
         AuthService,
-        SeoService
+
     ],
     entryComponents: [],
     exports: [

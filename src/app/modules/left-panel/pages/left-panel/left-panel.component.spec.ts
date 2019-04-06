@@ -9,7 +9,7 @@ import {TickistProjectListModule} from '../../modules/projects-list/projects-lis
 import {TickistTagsListModule} from '../../modules/tags-list/tags-list.module';
 import {StoreModule} from '@ngrx/store';
 import {ProjectsListComponent} from '../../modules/projects-list/pages/projects-list/projects-list.component';
-import {TagsListComponent} from '../../modules/tags-list/components/tags-list/tags-list.component';
+import {TagsListComponent} from '../../modules/tags-list/pages/tags-list/tags-list.component';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';

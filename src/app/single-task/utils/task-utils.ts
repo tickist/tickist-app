@@ -1,17 +1,19 @@
-import {Task} from 'app/models/tasks';
 import {Tag} from '../../models/tags';
 import * as moment from 'moment';
+import { Task } from '../../models/tasks';
 
 export function hideAllMenuElements(task: Task): Task {
-    task.menuShowing.isFinishDate = false;
-    task.menuShowing.isTaskProject = false;
-    task.menuShowing.isAssignedTo = false;
-    task.menuShowing.isRepeat = false;
-    task.menuShowing.isTags = false;
-    task.menuShowing.isSteps = false;
-    task.menuShowing.isDescription = false;
-
-    return task;
+    return Object.assign({}, task, {
+        menuShowing: {
+            isFinishDate: false,
+            isTaskProject: false,
+            isAssignedTo: false,
+            isRepeat: false,
+            isTags: false,
+            isSteps: false,
+            isDescription: false
+        }
+    });
 }
 
 
@@ -25,16 +27,17 @@ export function removeTag(task: Task, tag: Tag): Task {
 }
 
 export function moveFinishDateFromPreviousFinishDate(task, delta: string | number): Task {
-    if (!moment.isMoment(task.finishDate)) task.finishDate = moment();
+    const newTask = Object.assign({}, task);
+    if (!moment.isMoment(task.finishDate)) newTask.finishDate = moment();
 
     if (delta === 'today' || !task.finishDate) {
-        task.finishDate = moment();
+        newTask.finishDate = moment();
     } else if (delta === 'lastDayOfMonth') {
-        task.finishDate = moment().date(moment().daysInMonth());
+        newTask.finishDate = moment().date(moment().daysInMonth());
     } else {
-        task.finishDate = (moment(task.finishDate)).add(delta, 'day');
+        newTask.finishDate = (moment(task.finishDate)).add(delta, 'day');
     }
-    return task;
+    return newTask;
 }
 
 
