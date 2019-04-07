@@ -399,4 +399,12 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
     border-left: none;
 }
 
-
+.tickist-snack-bar {
+    background-color: $background_card_color;
+    span {
+        color: $white;
+    }
+    .mat-button-wrapper {
+        color: $orange;
+    }
+}

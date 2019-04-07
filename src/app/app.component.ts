@@ -3,6 +3,7 @@ import 'hammerjs'; // Recommended
 import gitInfo from '../git-version.json';
 import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
+import {MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material';
 
 
 @Component({
@@ -11,15 +12,20 @@ import {Meta} from '@angular/platform-browser';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+    snackBarRef: MatSnackBarRef<any>;
 
-    constructor(private swUpdate: SwUpdate, private meta: Meta) {}
+    constructor(private swUpdate: SwUpdate, private meta: Meta, private snackBar: MatSnackBar) {
+        const config = new MatSnackBarConfig();
+        config.panelClass = ['tickist-snack-bar'];
+    }
 
     ngOnInit(): void {
         if (this.swUpdate.isEnabled) {
             this.swUpdate.available.subscribe(() => {
-                if (confirm('New version available. Load New Version?')) {
+                this.snackBarRef = this.snackBar.open('New version available. Load New Version?', 'Yes', config);
+                this.snackBarRef.onAction().subscribe(() => {
                     window.location.reload();
-                }
+                });
             });
         }
 
@@ -29,8 +35,7 @@ export class AppComponent implements OnInit {
             {name: 'viewport', content: 'width=device-width, initial-scale=1'},
             {name: 'robots', content: 'INDEX, FOLLOW'},
             {name: 'author', content: 'Tickist'},
-            {name: 'keywords', content: 'Todo list, Todolist, GTD, tickist, task, project'},
-            {name: 'date', content: '2018-06-02', scheme: 'YYYY-MM-DD'},
+            {name: 'keywords', content: 'Todo list, Todo-list, GTD, tickist, task, project'},
             {httpEquiv: 'Content-Type', content: 'text/html'},
             {property: 'og:title', content: 'Tickist - Enjoy the Ticking'},
             {property: 'og:type', content: 'website'},

@@ -41,7 +41,9 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     transformer: any;
     expandedProjectsNode = new Set<number>();
     treeControl = new FlatTreeControl<FlatNode>(
-        node => node.level, node => node.expandable);
+        node => node.level,
+        node => node.expandable
+    );
 
     treeFlattener: MatTreeFlattener<any, any>;
     dataSource: MatTreeFlatDataSource<any, any>;
@@ -76,7 +78,6 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // this.dataSource.data = [];
         this.tasksTreeView$ = this.store.select(selectAllTasksTreeView);
         this.tasksTreeView$
             .pipe(takeUntil(this.ngUnsubscribe))
@@ -117,7 +118,7 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
         } else {
             this.expandedProjectsNode.add(node.project.id);
         }
-
+        console.log(this.expandedProjectsNode);
     }
 
     collapseAll(): void {

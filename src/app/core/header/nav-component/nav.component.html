@@ -5,14 +5,14 @@
         <i class="fa fa-bars"></i>
     </button>
 
-     <a (click)='navigateTo("/")' layout="row" class="logo" [fxHide.xs]="1" [fxHide.sm]="1">
-                <div class="docs-logotype"><img [src]="'/assets/images/logo_32.png'"></div>
+     <a (click)='navigateToWeekdays()' layout="row" class="logo" [fxHide.xs]="1" [fxHide.sm]="1">
+                <div class="docs-logotype"><img src="/assets/images/logo_32.png" alt="Tickist logo"></div>
      </a>
 
     <span fxFlex></span>
 
     <tickist-search-autocomplete></tickist-search-autocomplete>
-    <img class="user-avatar"  [mat-menu-trigger-for]="menu" *ngIf="user$ | async" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'">
+    <img class="user-avatar" alt="user avatar"  [mat-menu-trigger-for]="menu" *ngIf="user$ | async" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'">
 
  <mat-menu #menu="matMenu">
       <button (click)="navigateToTeam()" mat-menu-item>Team</button>

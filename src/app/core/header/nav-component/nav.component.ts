@@ -15,6 +15,7 @@ import {selectProgressBarIsEnabled} from '../../../reducers/core.selectors';
 import {editUserSettingsRoutesName} from '../../../modules/edit-user-settings/routes-names';
 import {Logout} from '../../actions/auth.actions';
 import {teamRoutesName} from '../../../modules/team/routes-names';
+import {dashboardRoutesName} from '../../../modules/dashboard/routes.names';
 
 
 @Component({
@@ -113,7 +114,10 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     navigateToUserSettings() {
         this.router.navigate(['home', {outlets: {content: [editUserSettingsRoutesName.EDIT_USER_SETTINGS]}}]);
     }
-
+    
+    navigateToWeekdays() {
+        this.router.navigate(['home', {outlets: {content: [dashboardRoutesName.DASHBOARD]}}]);
+    }
     logout() {
         this.store.dispatch(new Logout());
     }
