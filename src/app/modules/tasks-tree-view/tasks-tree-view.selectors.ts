@@ -7,21 +7,32 @@ export const selectAllTasksTreeView = createSelector(
     selectAllProjects,
     (tasks, projects) => {
         if (tasks.length === 0 || projects.length === 0) return [];
+        const projectsLevel0 = projects.filter(project => project.level === 0);
         const tasksTreeView = [];
-        projects.forEach(project => {
-            tasksTreeView.push({
-                project,
-                children: tasks
-                    .filter(task => task.taskProject.id === project.id)
-                    .map(task => {
-                        return {
-                            task: task
-                        };
-                    })
-                    .concat(<any> [{addTask: true, project: project}])
-            });
+        projectsLevel0.forEach(project => {
+            tasksTreeView.push(createTreeViewNode(project));
         });
 
+        function createTreeViewNode(currentProject) {
+            const filteredTasks = tasks.filter(task => task.taskProject.id === currentProject.id)
+                .map(task => {
+                    return {
+                        task: task
+                    };
+                });
+            const filteredProjects = projects.filter(project => project.ancestor === currentProject.id);
+
+            return {
+                project: currentProject,
+                children: [
+                    ...filteredProjects.map(project => {
+                        return createTreeViewNode(project);
+                    }),
+                    ...filteredTasks,
+                    {addTask: true, project: currentProject}
+                ]
+            };
+        }
         return tasksTreeView;
     }
 );

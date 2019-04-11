@@ -13,16 +13,18 @@ import {MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material
 })
 export class AppComponent implements OnInit {
     snackBarRef: MatSnackBarRef<any>;
+    config: MatSnackBarConfig;
 
     constructor(private swUpdate: SwUpdate, private meta: Meta, private snackBar: MatSnackBar) {
-        const config = new MatSnackBarConfig();
-        config.panelClass = ['tickist-snack-bar'];
+        this.config = new MatSnackBarConfig();
+        this.config.panelClass = ['tickist-snack-bar'];
+        console.log(gitInfo);
     }
 
     ngOnInit(): void {
         if (this.swUpdate.isEnabled) {
             this.swUpdate.available.subscribe(() => {
-                this.snackBarRef = this.snackBar.open('New version available. Load New Version?', 'Yes', config);
+                this.snackBarRef = this.snackBar.open('New version available. Load New Version?', 'Yes', this.config);
                 this.snackBarRef.onAction().subscribe(() => {
                     window.location.reload();
                 });
