@@ -6,7 +6,7 @@ import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
 import * as moment from 'moment';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
-import {DeleteTask, UpdateTask} from '../../core/actions/tasks/task.actions';
+import {DeleteTask, SetTaskStatusToDone, UpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
@@ -20,6 +20,7 @@ export class SingleTask {
     isMouseOver = false;
     ngUnsubscribe: Subject<void> = new Subject<void>();
     amountOfStepsDoneInPercent: number;
+
     constructor(public store: Store<AppStore>, public dialog: MatDialog) {
 
     }
@@ -56,9 +57,9 @@ export class SingleTask {
     }
 
     toggleDone() {
-       let task;
+        let task;
         if (this.task.status === 0) {
-            task = Object.assign({}, this.task, {status: 1});
+            task = Object.assign({}, this.task);
             if (task.taskProject.dialogTimeWhenTaskFinished) {
                 const dialogRef = this.dialog.open(TimeDialogComponent, {
                     data: {'task': task}
@@ -70,7 +71,7 @@ export class SingleTask {
                             task.estimateTime = result['estimateTime'];
                             task.time = result['realTime'];
                         }
-                        this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
+                        this.store.dispatch(new SetTaskStatusToDone({task: {id: task.id, changes: task}}));
                     });
             } else if (isRepeated(this.task) && isOverdue(this.task) && this.task.fromRepeating === 1) {
                 task = Object.assign({}, this.task);
@@ -83,10 +84,10 @@ export class SingleTask {
                         if (result && result.hasOwnProperty('finishDate')) {
                             task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
                         }
-                        this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
+                        this.store.dispatch(new SetTaskStatusToDone({task: {id: task.id, changes: task}}));
                     });
             } else {
-                this.store.dispatch(new UpdateTask({task: {id: task.id, changes: task}}));
+                this.store.dispatch(new SetTaskStatusToDone({task: {id: task.id, changes: task}}));
             }
         } else if (this.task.status === 1) {
             task = Object.assign({}, this.task, {status: 0});

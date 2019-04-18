@@ -12,6 +12,7 @@ export enum TaskActionTypes {
     CREATE_TASK = '[] CREATE_TASK',
     UPDATE_TASK = '[] UPDATE_TASK',
     DELETE_TASK = '[] DELETE_TASK',
+    SET_TASK_STATUS_TO_DONE = '[TASKS] SET TASKS STATUS TO DONE',
     CLOSE_MENU_IN_ALL_TASKS = '[] CLOSE MENU IN ALL TASKS'
 }
 
@@ -38,6 +39,13 @@ export class CreateTask implements Action {
     readonly type = TaskActionTypes.CREATE_TASK;
 
     constructor(public payload: { task: Task, progressBar?: true, snackBar?: true}) {
+    }
+}
+
+export class SetTaskStatusToDone implements Action {
+    readonly type = TaskActionTypes.SET_TASK_STATUS_TO_DONE;
+
+    constructor(public payload: { task: Update<Task>}) {
     }
 }
 
@@ -70,4 +78,5 @@ export type TaskActions = AddTasks
     | CreateTask
     | RequestsAllTasks
     | RequestCreateTask
+    | SetTaskStatusToDone
     | CloseMenuInAllTasks;

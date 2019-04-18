@@ -1,6 +1,7 @@
 import {Tag} from '../../models/tags';
 import * as moment from 'moment';
 import { Task } from '../../models/tasks';
+import {Step} from '../../models/steps';
 
 export function hideAllMenuElements(task: Task): Task {
     return Object.assign({}, task, {
@@ -47,5 +48,17 @@ export function isRepeated(task: Task): boolean {
 
 export function isOverdue(task: Task): boolean {
     return task.finishDate < moment().hours(0).minutes(0).seconds(0);
+}
+
+export function setAllStepsToDone(taskSteps: Step[]): Step[] {
+    return taskSteps.map(step => {
+        return {...step, status: 1};
+    });
+}
+
+export function setAllStepsToUndone(taskSteps: Step[]): Step[] {
+    return taskSteps.map(step => {
+        return {...step, status: 0};
+    });
 }
 

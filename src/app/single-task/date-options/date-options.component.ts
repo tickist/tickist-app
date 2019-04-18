@@ -30,7 +30,7 @@ export class DateOptionsComponent implements OnInit {
     }
 
     ngOnInit() {
-         if (this.task === null) {
+        if (this.task === null) {
             throw new Error(`Attribute 'task' is required`);
         }
         this.typeFinishDateOptions = this.configurationService.loadConfiguration()['commons']['TYPE_FINISH_DATE_OPTIONS'];
@@ -49,10 +49,16 @@ export class DateOptionsComponent implements OnInit {
             } else if (source === 'finishTime') {
 
             }
-
-            this.task.finishDate = this.finishDate ? moment(this.finishDate, 'DD-MM-YYYY') : '';
-            this.task.finishTime = this.finishTime;
-            this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+            this.store.dispatch(new UpdateTask({
+                task: {
+                    id: this.task.id,
+                    changes: Object.assign({}, this.task, {
+                        finishDate: this.finishDate ? moment(this.finishDate, 'DD-MM-YYYY') : '',
+                        finishTime: this.finishTime,
+                        typeFinishDate: $event.value ? $event.value : this.task.typeFinishDate
+                    })
+                }
+            }));
         }
 
     }

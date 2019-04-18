@@ -413,40 +413,41 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(values, withoutClose = false): void {
+        const updatedTask = Object.assign({}, this.task);
         if (this.taskForm.valid) {
-            this.task.name = values['main']['name'];
-            this.task.priority = values['main']['priority'];
-            this.task.description = values['extra']['description'];
-            this.task.finishDate = values['main']['finishDate'] ? moment(values['main']['finishDate'], 'DD-MM-YYYY') : '';
-            this.task.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
-            this.task.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
-            this.task.typeFinishDate = values['main']['typeFinishDate'];
-            this.task.taskProject = convertToSimpleProject(this.projects
+            updatedTask.name = values['main']['name'];
+            updatedTask.priority = values['main']['priority'];
+            updatedTask.description = values['extra']['description'];
+            updatedTask.finishDate = values['main']['finishDate'] ? moment(values['main']['finishDate'], 'DD-MM-YYYY') : '';
+            updatedTask.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
+            updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
+            updatedTask.typeFinishDate = values['main']['typeFinishDate'];
+            updatedTask.taskProject = convertToSimpleProject(this.projects
                 .find(project => project.id === parseInt(values['main']['taskProjectPk'], 10)));
-            this.task.owner = <SimpleUser>this.task.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            updatedTask.owner = <SimpleUser>updatedTask.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
 
             if (values['repeat']['repeatDefault'] !== 99) {
-                this.task.repeat = values['repeat']['repeatDefault'];
-                this.task.repeatDelta = 1;
+                updatedTask.repeat = values['repeat']['repeatDefault'];
+                updatedTask.repeatDelta = 1;
             } else {
-                this.task.repeatDelta = values['repeat']['repeatDelta'];
-                this.task.repeat = values['repeat']['repeatCustom'];
+                updatedTask.repeatDelta = values['repeat']['repeatDelta'];
+                updatedTask.repeat = values['repeat']['repeatCustom'];
             }
             if (values['extra']['suspended']) {
-                this.task.status = 2;
+                updatedTask.status = 2;
             }
-            if (!values['extra']['suspended'] && this.task.status === 2) {
-                this.task.status = 0;
+            if (!values['extra']['suspended'] && updatedTask.status === 2) {
+                updatedTask.status = 0;
             }
 
-            this.task.fromRepeating = values['repeat']['fromRepeating'];
-            this.task.estimateTime = values['extra']['estimateTime'];
-            this.task.time = values['extra']['time'];
+            updatedTask.fromRepeating = values['repeat']['fromRepeating'];
+            updatedTask.estimateTime = values['extra']['estimateTime'];
+            updatedTask.time = values['extra']['time'];
             // We need to know which step will be deleted in the backend
-            this.task.steps = this.task.steps.filter(step => step.delete);
+            updatedTask.steps = this.task.steps.filter(step => step.delete);
             values['steps'].forEach((step, index) => {
                 if (step.name !== '') {
-                    this.task.steps.push(new Step({
+                    updatedTask.steps.push(new Step({
                         'id': step.id,
                         'name': step.name,
                         'order': index,
@@ -455,9 +456,9 @@ export class TaskComponent implements OnInit, OnDestroy {
                 }
             });
             if (this.isNewTask()) {
-                this.store.dispatch(new RequestCreateTask({task: this.task}));
+                this.store.dispatch(new RequestCreateTask({task: updatedTask}));
             } else {
-                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                this.store.dispatch(new UpdateTask({task: {id: updatedTask.id, changes: updatedTask}}));
             }
 
             if (!withoutClose) {

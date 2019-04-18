@@ -85,7 +85,7 @@
                              *ngIf="changePasswordForm.hasError('oldSameNew') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['password'].touched">
                             New Password should not be same as old password.
                         </div>
-                        <div class="errror"
+                        <div class="error"
                              *ngIf="changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['repeatNewPassword'].touched">
                             Password and conform password should be the same.
                         </div>
@@ -203,96 +203,101 @@
 
                 <div [hidden]="!menu.settings">
                     <div fxLayout="column" fxLayoutAlign="space-between none">
-                        <mat-form-field>
-                            <mat-select (selectionChange)="changeUserDetails()" placeholder="Tasks order in dashboard"
-                                        [(ngModel)]="user.orderTasksDashboard" name="orderTasksDashboard">
-                                <mat-option *ngFor="let option of tasksOrderOptions" [value]="option">
-                                    {{ option }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                        <form [formGroup]="userSettings">
+                            <mat-form-field>
+                                <mat-select formControlName="orderTasksDashboard"
+                                            placeholder="Tasks order in dashboard"
+                                            name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of tasksOrderOptions" [value]="option">
+                                        {{ option }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
 
-                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
-                            <span>Default task view:</span>
-                            <mat-radio-group [(ngModel)]="user.defaultTaskView" (change)="changeUserDetails()"
-                                             fxLayout.xs="column">
-                                <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
-                                                  *ngFor="let option of defaultTaskViewOptions" [value]="option.value">
-                                    {{ option.name }}
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </div>
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view:</span>
+                                <mat-radio-group formControlName="defaultTaskView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
 
-                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
-                            <span>Default task view on todays tasks:</span>
-                            <mat-radio-group [(ngModel)]="user.defaultTaskViewTodayView" (change)="changeUserDetails()"
-                                             fxLayout.xs="column">
-                                <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
-                                                  *ngFor="let option of defaultTaskViewOptions" [value]="option.value">
-                                    {{ option.name }}
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </div>
-
-
-                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
-                            <span>Default task view on overdue tasks:</span>
-                            <mat-radio-group [(ngModel)]="user.defaultTaskViewOverdueView"
-                                             (change)="changeUserDetails()" fxLayout.xs="column">
-                                <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
-                                                  *ngFor="let option of defaultTaskViewOptions" [value]="option.value">
-                                    {{ option.name }}
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </div>
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on todays tasks:</span>
+                                <mat-radio-group formControlName="defaultTaskViewTodayView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
 
 
-                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
-                            <span>Default task view on future tasks:</span>
-                            <mat-radio-group [(ngModel)]="user.defaultTaskViewFutureView" (change)="changeUserDetails()"
-                                             fxLayout.xs="column">
-                                <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
-                                                  *ngFor="let option of defaultTaskViewOptions" [value]="option.value">
-                                    {{ option.name }}
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </div>
-
-                        <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
-                            <span>Default task view on tags:</span>
-                            <mat-radio-group [(ngModel)]="user.defaultTaskViewTagsView" (change)="changeUserDetails()"
-                                             fxLayout.xs="column">
-                                <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
-                                                  *ngFor="let option of defaultTaskViewOptions" [value]="option.value">
-                                    {{ option.name }}
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </div>
-
-                        <mat-form-field>
-                            <mat-select placeholder="Overdue tasks sort by:" [(ngModel)]="user.overdueTasksSortBy"
-                                        (selectionChange)="changeUserDetails()">
-                                <mat-option *ngFor="let option of overdueTasksSortByOptions"
-                                            [value]="option.value"> {{ option.name }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-
-                        <mat-form-field>
-                            <mat-select placeholder="Future tasks sort by:" [(ngModel)]="user.futureTasksSortBy"
-                                        (selectionChange)="changeUserDetails()">
-                                <mat-option *ngFor="let option of futureTasksSortByOptions"
-                                            [value]="option.value"> {{ option.name }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on overdue tasks:</span>
+                                <mat-radio-group formControlName="defaultTaskViewOverdueView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
 
 
-                        <mat-checkbox [(ngModel)]="user.dialogTimeWhenTaskFinishedInProject"
-                                      aria-label="Switch 9"
-                                      (change)="changeUserDetails()">
-                            Dialog with real time and estimation time after finish task
-                        </mat-checkbox>
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on future tasks:</span>
+                                <mat-radio-group formControlName="defaultTaskViewFutureView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on tags:</span>
+                                <mat-radio-group formControlName="defaultTaskViewTagsView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+                            <mat-form-field>
+                                <mat-select placeholder="Overdue tasks sort by:" formControlName="overdueTasksSortBy">
+                                    <mat-option *ngFor="let option of overdueTasksSortByOptions"
+                                                [value]="option.value"> {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-select placeholder="Future tasks sort by:" formControlName="futureTasksSortBy">
+                                    <mat-option *ngFor="let option of futureTasksSortByOptions"
+                                                [value]="option.value"> {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+
+                            <mat-checkbox formControlName="dialogTimeWhenTaskFinishedInProject"
+                                          aria-label="Switch 9">
+                                Dialog with real time and estimation time after finish task
+                            </mat-checkbox>
+                        </form>
                     </div>
                 </div>
 

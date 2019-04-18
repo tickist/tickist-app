@@ -45,7 +45,7 @@ export class UserService {
     }
 
     updateUser(user: User) {
-        return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user))
+        return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user));
             // .subscribe(payload => {
             //     if (!withoutSnackBar) {
             //         this.snackBar.open('User data has been update successfully', '', {

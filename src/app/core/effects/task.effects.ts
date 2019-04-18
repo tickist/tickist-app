@@ -8,7 +8,7 @@ import {
     CreateTask,
     DeleteTask,
     RequestCreateTask,
-    RequestsAllTasks,
+    RequestsAllTasks, SetTaskStatusToDone,
     TaskActionTypes,
     UpdateTask
 } from '../actions/tasks/task.actions';
@@ -18,6 +18,7 @@ import {allTasksLoaded, selectAllTasks, selectTaskById} from '../selectors/task.
 import {Task} from '../../models/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOffProgressBar, SwitchOnProgressBar} from '../actions/progress-bar.actions';
+import {repeatTaskLogic} from '../../single-task/utils/set-status-to-done-logic';
 
 
 
@@ -45,7 +46,7 @@ export class TaskEffects {
     @Effect()
     updateTask$ = this.actions$
         .pipe(
-            ofType<UpdateTask>(TaskActionTypes.UPDATE_TASK),
+            ofType<UpdateTask | SetTaskStatusToDone>(TaskActionTypes.UPDATE_TASK, TaskActionTypes.SET_TASK_STATUS_TO_DONE),
             mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes)),
             mapTo(new SwitchOffProgressBar())
         );

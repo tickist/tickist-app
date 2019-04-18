@@ -23,6 +23,7 @@ export class UserComponent implements OnInit, OnDestroy {
     menu = {};
     changePasswordForm: FormGroup;
     userData: FormGroup;
+    userSettings: FormGroup;
     user: User = null;
     dailySummaryCheckbox: boolean;
     staticUrl: string;
@@ -36,7 +37,7 @@ export class UserComponent implements OnInit, OnDestroy {
     @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
 
     constructor(private fb: FormBuilder, private store: Store<AppStore>, private location: Location,
-                protected configurationService: ConfigurationService, private userService: UserService) {
+                private configurationService: ConfigurationService, private userService: UserService) {
 
         this.staticUrl = environment['staticUrl'];
         this.tasksOrderOptions = this.configurationService.loadConfiguration()['commons']['TASKS_ORDER_OPTIONS'];
@@ -68,6 +69,67 @@ export class UserComponent implements OnInit, OnDestroy {
                         this.user.username = newValue;
                         this.changeUserDetails();
                     });
+                    this.userSettings = new FormGroup({
+                        'orderTasksDashboard': new FormControl(user.orderTasksDashboard, {validators: [Validators.required]}),
+                        'defaultTaskView': new FormControl(user.defaultTaskView, {validators: [Validators.required]}),
+                        'defaultTaskViewTodayView': new FormControl(user.defaultTaskViewTodayView, {validators: [Validators.required]}),
+                        'defaultTaskViewOverdueView': new FormControl(user.defaultTaskViewOverdueView, {validators: [Validators.required]}),
+                        'defaultTaskViewFutureView': new FormControl(user.defaultTaskViewFutureView, {validators: [Validators.required]}),
+                        'defaultTaskViewTagsView': new FormControl(user.defaultTaskViewTagsView, {validators: [Validators.required]}),
+                        'overdueTasksSortBy': new FormControl(user.overdueTasksSortBy, {validators: [Validators.required]}),
+                        'futureTasksSortBy': new FormControl(user.futureTasksSortBy, {validators: [Validators.required]}),
+                        'dialogTimeWhenTaskFinishedInProject': new FormControl(
+                            user.dialogTimeWhenTaskFinishedInProject, {validators: [Validators.required]}
+                        )
+                    });
+                    this.userSettings.get('orderTasksDashboard').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {orderTasksDashboard: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userSettings.get('defaultTaskView').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {defaultTaskView: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+
+                    this.userSettings.get('defaultTaskViewTodayView').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewTodayView: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userSettings.get('defaultTaskViewOverdueView').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewOverdueView: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userSettings.get('defaultTaskViewFutureView').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewFutureView: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userSettings.get('defaultTaskViewTagsView').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewTagsView: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+
+                    this.userSettings.get('overdueTasksSortBy').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {overdueTasksSortBy: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userSettings.get('futureTasksSortBy').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {futureTasksSortBy: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
+
+                    this.userSettings.get('dialogTimeWhenTaskFinishedInProject').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {dialogTimeWhenTaskFinishedInProject: newValue});
+                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        );
+                    });
                 }
             });
 
@@ -83,7 +145,7 @@ export class UserComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-        this.store.dispatch(new ShowAddTaskButton())
+        this.store.dispatch(new ShowAddTaskButton());
     }
 
     toggleDailySumary() {
@@ -125,6 +187,7 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     changeUserDetails() {
+        debugger;
         this.store.dispatch(new UpdateUser({user: this.user}));
     }
 
