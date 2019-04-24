@@ -1,4 +1,4 @@
-import {SimpleUser} from '../user/models';
+import {SimpleUser} from '../core/models';
 import {Tag} from './tags';
 import {Api} from './commons';
 import * as moment from 'moment';
@@ -6,6 +6,7 @@ import {SimpleProject} from './projects';
 import {Step} from './steps';
 import {Menu} from './menu';
 import {ITaskApi} from './task-api.interface';
+import {convert} from '../core/utils/addClickableLinksToString';
 
 
 export class Task {
@@ -39,7 +40,7 @@ export class Task {
 
     constructor(task: ITaskApi) {
         this.name = task.name;
-        this.richName = this.convert(task.name);
+        this.richName = convert(task.name);
         this.id = task.id || undefined;
         this.finishDate = task.finish_date ? moment(task.finish_date, 'DD-MM-YYYY') : '';
         this.finishTime = task.finish_time ? task.finish_time : '';
@@ -56,7 +57,7 @@ export class Task {
         this.fromRepeating = task.from_repeating;
         this.repeatDelta = task.repeat_delta;
         this.description = task.description;
-        this.richDescription = this.convert(task.description);
+        this.richDescription = convert(task.description);
         this.estimateTime = task.estimate_time ? task.estimate_time : null;
         this.time = task.time;
         this.isActive = task.is_active;
@@ -71,28 +72,6 @@ export class Task {
         this.menuShowing = new Menu(task.menu_showing);
     }
 
-    // toApi() {
-    //     const result = super.toApi();
-    //     result['steps'] = this.prepareSteps();
-    //
-    //     if (this.finishDate) {
-    //         result['finish_date'] = this.finishDate.format();
-    //     }
-    //     return result;
-    // }
-
-    private convert(text: string): string {
-        const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-        const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        let richText;
-        if (text) {
-            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>')
-                .replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
-        } else {
-            richText = text;
-        }
-        return richText;
-    }
 }
 
 

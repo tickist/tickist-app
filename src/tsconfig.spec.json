@@ -10,7 +10,8 @@
     },
     "files": [
         "test.ts",
-        "polyfills.ts"
+        "polyfills.ts",
+        "../node_modules/zone.js/lib/zone.ts"
     ],
     "include": [
         "**/*.spec.ts",

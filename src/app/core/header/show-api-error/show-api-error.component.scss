@@ -1,0 +1,9 @@
+@import "../../../shared/variables";
+
+:host {
+    div {
+        padding: 0 16px 0 16px;
+        color: $white;
+        background-color: red;
+    }
+}

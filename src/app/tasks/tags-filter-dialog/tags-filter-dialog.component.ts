@@ -1,16 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {Tag} from '../../models/tags';
 import {MatDialogRef} from '@angular/material';
-import {TaskService} from '../task.service';
+import {TaskService} from '../../core/services/task.service';
 import {TagService} from '../../services/tag.service';
-import {TasksFiltersService} from '../tasks-filters.service';
-import {SetCurrentTagsFilters} from '../tags-filters-tasks.actions';
+import {TasksFiltersService} from '../../core/services/tasks-filters.service';
+import {SetCurrentTagsFilters} from '../../core/actions/tasks/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Filter} from '../../models/filter';
-import {selectCurrentTagsFilter} from '../filters-tasks.selectors';
+import {selectCurrentTagsFilter} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
-import {selectAllTags} from '../../tags/tags.selectors';
+import {selectAllTags} from '../../core/selectors/tags.selectors';
 
 @Component({
     selector: 'tags-filter-dialog',

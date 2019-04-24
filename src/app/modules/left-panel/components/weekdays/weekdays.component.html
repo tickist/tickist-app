@@ -1,0 +1,11 @@
+<mat-list class="remove-left-right-padding">
+    <mat-list-item *ngFor="let day of week" (click)="navigateTo(day.date)">
+        <a class="date-row" mat-line fxLayout="row" fxLayoutAlign="center center"
+           [ngClass]="{'active': isSelected(day)}">
+            <span class="date">{{ day.date|datetostring }} </span>
+            <span fxFlex> </span>
+            <span class="tasks-counter">{{ day.tasksCounter }}</span>
+        </a>
+    </mat-list-item>
+</mat-list>
+<tickist-choose-day  (selectedDate)="chooseDay($event)"></tickist-choose-day>

@@ -1,0 +1,22 @@
+<tickist-nav></tickist-nav>
+
+<mat-sidenav-container *ngIf="leftSidenavVisibility" style="flex: 1">
+    <mat-sidenav [mode]="leftSidenavVisibility.mode"
+                 [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisiblity()"
+                 [fixedInViewport]="'fixed'" [fixedTopGap]="79">
+        <router-outlet name="left"></router-outlet>
+
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+
+        <router-outlet name="content"></router-outlet>
+    </mat-sidenav-content>
+
+
+</mat-sidenav-container>
+<tickist-add-task ></tickist-add-task>
+
+
+
+

@@ -40,7 +40,7 @@
             <tickist-user-avatar (click)="changeShowing('isAssignedTo')" [user]="task.owner"
                                  *ngIf="isSharedList()">
             </tickist-user-avatar>
-            <tickist-progress-bar (click)="changeShowing('isSteps')" [percent]="task.percent"
+            <tickist-progress-bar (click)="changeShowing('isSteps')" [percent]="amountOfStepsDoneInPercent"
                                   [isDisabled]="task.steps.length === 0"></tickist-progress-bar>
             <span style="flex: 1 1 1e-09px;"></span>
             <tickist-display-finish-date [task]="task" *ngIf="task.finishDate"
@@ -108,9 +108,9 @@
             </tickist-menu-button>
         </div>
         <mat-form-field>
-            <mat-select placeholder="Project:" [(ngModel)]="task.taskProject.id"
+            <mat-select placeholder="Project:" [formControl]="selectTaskProject"
                         (selectionChange)="changeProject($event)">
-                <mat-option *ngFor="let project of projects" [ngClass]="project.matOptionClass"
+                <mat-option *ngFor="let project of projects$ | async" [ngClass]="project.matOptionClass"
                             [value]="project.id"> {{ project.name }}
                 </mat-option>
             </mat-select>

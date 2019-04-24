@@ -1,0 +1,61 @@
+<div style="min-height: 100%; height: 100%;">
+    <mat-card>
+        <mat-accordion displayMode="flat">
+            <mat-expansion-panel >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-calendar-o"></i>Weekdays
+                    </mat-panel-title>
+
+                </mat-expansion-panel-header>
+                <tickist-weekdays-list></tickist-weekdays-list>
+            </mat-expansion-panel>
+            <mat-expansion-panel >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-calendar"></i> Future
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <tickist-future-list></tickist-future-list>
+            </mat-expansion-panel>
+            <mat-expansion-panel >
+                <mat-expansion-panel-header >
+                    <mat-panel-title>
+                        <i class="fa fa-folder"></i>Projects
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <tickist-projects-list></tickist-projects-list>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel (click)="navigateToTasksTreeView()" hideToggle="true" [expanded]="'false'" class="always-collapsed">
+                <mat-expansion-panel-header expandedHeight="48px">
+                    <mat-panel-title>
+                        <i class="fa fa-sitemap"></i>Tasks tree view
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+            </mat-expansion-panel>
+
+            <mat-expansion-panel (afterExpand)="navigateToTags()">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      <i class="fa fa-tags"></i> Tags
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <tickist-tags-list></tickist-tags-list>
+            </mat-expansion-panel>
+
+<!--            <mat-expansion-panel (click)="navigateToStatisticsView()"  hideToggle="true"  [expanded]="'false'"  class="always-collapsed">-->
+<!--                <mat-expansion-panel-header expandedHeight="48px">-->
+<!--                    <mat-panel-title>-->
+<!--                       <i class="fa fa-line-chart"></i> Statistics-->
+<!--                    </mat-panel-title>-->
+<!--                </mat-expansion-panel-header>-->
+
+<!--            </mat-expansion-panel>-->
+        </mat-accordion>
+
+    </mat-card>
+
+
+</div>

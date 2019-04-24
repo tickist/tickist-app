@@ -3,6 +3,7 @@ import {
     ViewChild
 } from '@angular/core';
 import {MediaObserver} from '@angular/flex-layout';
+import {Step} from '../../models/steps';
 
 
 
@@ -24,9 +25,9 @@ export class ProgressBarComponent implements AfterViewChecked, OnChanges {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        if (this.media.isActive('xs')) {
+        if (this.media.isActive('xs') && !changes.isDisabled.currentValue) {
             this.showIcon = true;
-        } else {
+        } else if (!this.media.isActive('xs')) {
             this.showProgressBar = true;
         }
         if (changes.hasOwnProperty('isDisabled') && changes.isDisabled.currentValue) {
@@ -39,6 +40,8 @@ export class ProgressBarComponent implements AfterViewChecked, OnChanges {
         if (changes.hasOwnProperty('percent')) {
             this.tooltipString = `${changes.percent.currentValue}%`;
         }
+
+
     }
 
     ngAfterViewChecked() {

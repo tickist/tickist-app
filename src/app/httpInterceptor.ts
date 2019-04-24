@@ -12,7 +12,7 @@ import {ConfigurationService} from './services/configuration.service';
 import {Router, RouterState, RouterStateSnapshot} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {catchError} from 'rxjs/operators';
-import {Logout} from './auth/auth.actions';
+import {Logout} from './core/actions/auth.actions';
 import {AppStore} from './store';
 import {Store} from '@ngrx/store';
 

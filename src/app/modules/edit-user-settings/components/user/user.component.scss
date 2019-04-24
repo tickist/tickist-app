@@ -1,0 +1,47 @@
+@import "../../../../shared/commons";
+
+:host {
+    margin-left: 16px;
+}
+
+mat-list-item {
+    cursor: pointer;
+    p {
+        margin: 0 5px 0 5px;
+    }
+    &:hover {
+        background: gray;
+        margin-right: 10px;
+        border-bottom-left-radius: 2px;
+        border-bottom-right-radius: 2px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px
+    }
+}
+
+input[type=file] {
+    display: none;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+}
+
+.active {
+    background: gray;
+    margin-right: 10px;
+    border-bottom: solid 5px #11a8ab;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.form-field {
+    margin-bottom: 10px;
+    mat-radio-group {
+        margin-top: 5px;
+    }
+}
+

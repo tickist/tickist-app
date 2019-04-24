@@ -13,7 +13,7 @@ import {PriorityComponent} from '../../shared/components/priority/priority.compo
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
-import {User} from '../../user/models';
+import {User} from '../../core/models';
 import {Project} from '../../models/projects';
 import {IUserApi} from '../../models/user-api.interface';
 import {IProjectApi} from '../../models/project-api.interface';

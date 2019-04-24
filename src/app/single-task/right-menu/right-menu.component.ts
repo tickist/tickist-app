@@ -1,5 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {Task} from '../../models/tasks';
+import {homeRoutesName} from '../../routing.module';
+import {editTaskRoutesName} from '../../modules/edit-task/routes-names';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'tickist-right-menu',
@@ -17,7 +20,7 @@ export class RightMenuComponent implements OnInit {
     @Output() fastMenuOpen = new EventEmitter();
     @Output() fastMenuClose = new EventEmitter();
 
-    constructor() {
+    constructor(private router: Router) {
     }
 
     ngOnInit() {
@@ -49,6 +52,10 @@ export class RightMenuComponent implements OnInit {
     emitTogglePinClickEvent() {
         this.togglePinClick.emit();
 
+    }
+
+    navigateToEditTaskView(taskId: number) {
+        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editTaskRoutesName.EDIT_TASK, taskId]}}]);
     }
 
 }

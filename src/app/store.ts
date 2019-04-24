@@ -1,12 +1,9 @@
-import {ActionReducerMap} from '@ngrx/store';
-import {currentProjectsFilters, projectsFilters} from './reducers/projects';
-import {currentTagsFilters, tagsFilters} from './reducers/tags';
-import {currentTasksFilters, futureTasksFilters, currentTasksFutureFilters} from './reducers/tasks';
-import {
-    detectApiError, leftSidenavVisibility, rightSidenavVisibility, offlineModeNotification, addTaskComponentVisibility, activeDateElement
-} from './reducers/configuration';
+import {ActionReducerMap, MetaReducer} from '@ngrx/store';
+import {leftSidenavVisibility, addTaskComponentVisibility} from './reducers/configuration';
 import {IActiveDateElement} from './models/active-data-element.interface';
-import * as fromProgressBar from './reducers/progress-bar.reducer';
+import {environment} from '../environments/environment';
+import {storeFreeze} from 'ngrx-store-freeze';
+
 
 export interface AppStore {
     projects: any;
@@ -19,7 +16,6 @@ export interface AppStore {
     tags: any;
     tasksFilters: any;
     projectsFilters: any;
-    tagsFilters: any;
     globalStatistics: any;
     dailyStatistics: any;
     activeDateElement: IActiveDateElement;
@@ -46,27 +42,16 @@ export interface AppStore {
 // const productionReducer: ActionReducer<AppStore> = combineReducers(reducers);
 
 export const reducers: ActionReducerMap<any> = {
-    currentTasksFilters: currentTasksFilters,
-    activeDateElement: activeDateElement,
-    detectApiError: detectApiError,
-    offlineModeNotification: offlineModeNotification,
     addTaskComponentVisibility: addTaskComponentVisibility,
-    leftSidenavVisibility: leftSidenavVisibility,
-    rightSidenavVisibility: rightSidenavVisibility,
-    currentProjectsFilters: currentProjectsFilters,
-    projectsFilters: projectsFilters,
-    currentTagsFilters: currentTagsFilters,
-    tagsFilters: tagsFilters,
-    currentTasksFutureFilters: currentTasksFutureFilters,
-    futureTasksFilters: futureTasksFilters,
-    progressBar: fromProgressBar.reducer
+    leftSidenavVisibility: leftSidenavVisibility
 };
 
+import createNgrxMiddleware from 'logrocket-ngrx';
+import * as LogRocket from 'logrocket';
 
-// export function authReducer(state: any, action: any) {
-//   if (environment.production) {
-//     return productionReducer(state, action);
-//   } else {
-//     return productionReducer(state, action);
-//   }
-// }
+
+const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});
+
+
+export const metaReducers: MetaReducer<AppStore>[] =
+    !environment.production ? [storeFreeze] : [logrocketMiddleware];

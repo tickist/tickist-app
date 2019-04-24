@@ -1,0 +1,25 @@
+<tickist-show-api-error></tickist-show-api-error>
+<tickist-show-offline-mode></tickist-show-offline-mode>
+<mat-toolbar [ngClass]="{'add-margin': isOffline}">
+    <button class="fab-button" mat-mini-fab color="primary"  [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
+        <i class="fa fa-bars"></i>
+    </button>
+
+     <a (click)='navigateToWeekdays()' layout="row" class="logo" [fxHide.xs]="1" [fxHide.sm]="1">
+                <div class="docs-logotype"><img src="/assets/images/logo_32.png" alt="Tickist logo"></div>
+     </a>
+
+    <span fxFlex></span>
+
+    <tickist-search-autocomplete></tickist-search-autocomplete>
+    <img class="user-avatar" alt="user avatar"  [mat-menu-trigger-for]="menu" *ngIf="user$ | async" [src]="staticUrl + user.avatarUrl | avatarsize: '32x32'">
+
+ <mat-menu #menu="matMenu">
+      <button (click)="navigateToTeam()" mat-menu-item>Team</button>
+      <button (click)="navigateToUserSettings()" mat-menu-item>Settings</button>
+      <button (click)="logout()" mat-menu-item>Logout</button>
+    </mat-menu>
+
+</mat-toolbar>
+<div style="height: 5px;width:100%;background-color: #1F253D" *ngIf="!(progressBarIsEnabled$ | async)"></div>
+<mat-progress-bar *ngIf="progressBarIsEnabled$ | async" mode="indeterminate"></mat-progress-bar>

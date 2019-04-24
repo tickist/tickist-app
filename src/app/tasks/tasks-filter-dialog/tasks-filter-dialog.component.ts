@@ -2,10 +2,10 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
-import {selectCurrentMainFilter, selectMainFilters} from '../filters-tasks.selectors';
+import {selectCurrentMainFilter, selectMainFilters} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
 import {Filter} from '../../models/filter';
-import {SetCurrentMainFilter} from '../main-filters-tasks.actions';
+import {SetCurrentMainFilter} from '../../core/actions/tasks/main-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({

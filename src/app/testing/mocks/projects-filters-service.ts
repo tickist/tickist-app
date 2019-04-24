@@ -1,5 +1,5 @@
 import {SpyObject} from '../test.helpers';
-import {ProjectsFiltersService} from '../../services/projects-filters.service';
+import {ProjectsFiltersService} from '../../modules/left-panel/modules/projects-list/projects-filters.service';
 import {of} from 'rxjs';
 
 

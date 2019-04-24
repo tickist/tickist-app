@@ -1,5 +1,5 @@
 import {SpyObject} from '../test.helpers';
-import {TasksFiltersService} from '../../tasks/tasks-filters.service';
+import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {of} from 'rxjs';
 
 

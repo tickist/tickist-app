@@ -12,6 +12,7 @@ import {Minutes2hoursPipe} from './pipes/minutes2hours';
 import {DateToString} from './pipes/datetostring';
 import {RepeatString} from './pipes/repeatString';
 import {RepeatStringExtension} from './pipes/repeatStringExtension';
+import {AutofocusDirective} from './autofocus';
 
 
 @NgModule({
@@ -20,9 +21,9 @@ import {RepeatStringExtension} from './pipes/repeatStringExtension';
         ConfigurationService
     ],
     declarations: [ChangeTaskViewComponent, MenuButtonComponent,  AvatarSize, PriorityComponent, TruncatePipe,
-        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension],
+        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective],
     exports: [ChangeTaskViewComponent, MenuButtonComponent,  AvatarSize, PriorityComponent, TruncatePipe,
-        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension]
+        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective]
 })
 export class TickistSharedModule {
 }

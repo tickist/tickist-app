@@ -2,9 +2,7 @@
 @import "../../shared/commons";
 
 :host {
-    height: 82px;
-
-
+    width: 100%;
     span {
         color: $white;
     }
@@ -153,4 +151,10 @@ i {
         height: 100px; /*  important for sizing of row heights */
         margin-bottom: 20px;
     }
+}
+
+.last-element {
+    height: 83px;
+    width: 100%;
+    background: $background_color;
 }

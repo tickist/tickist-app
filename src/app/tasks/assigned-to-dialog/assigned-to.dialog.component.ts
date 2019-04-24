@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {TasksFiltersService} from '../tasks-filters.service';
+import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {Observable, Subject} from 'rxjs';
 import {Filter} from '../../models/filter';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
-import {selectAssignedToFilters, selectCurrentAssignedToFilter} from '../filters-tasks.selectors';
-import {SetCurrentAssignedToFilter} from '../assigned-to-filters-tasks.actions';
+import {selectAssignedToFilters, selectCurrentAssignedToFilter} from '../../core/selectors/filters-tasks.selectors';
+import {SetCurrentAssignedToFilter} from '../../core/actions/tasks/assigned-to-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
 
 

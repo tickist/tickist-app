@@ -109,25 +109,4 @@ describe('Project service', () => {
     it('should be defined', () => {
         expect(service).toBeTruthy();
     });
-
-    describe('sorting the list of projects', () => {
-        let projects: Project[];
-        
-        beforeEach(() => {
-            projects = [
-                new Project(project1FromApi),
-                new Project(project2FromApi),
-                new Project(project3FromApi),
-                new Project(project4FromApi),
-                new Project(project5FromApi),
-                new Project(project6FromApi),
-                new Project(project7FromApi)
-            ];
-        });
-        it('should sort the list of projects in proper way', () => {
-            const projectsIDsWithSpecificOrder = ProjectService.sortProjectList(projects).map(project => project.id);
-            expect(projectsIDsWithSpecificOrder).toEqual([2, 1, 3, 4, 6, 5, 7]);
-        });
-    });
-
 });

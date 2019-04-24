@@ -1,0 +1,24 @@
+<cdk-virtual-scroll-viewport itemSize="90" class="viewport">
+
+            <div class="header"  fxLayout="row" fxLayoutAlign="start center">
+
+                <div fxFlex>Future tasks from {{ (activeDateElement$ | async).date.format("MMMM YYYY") }}</div>
+                <div fxFlex></div>
+                <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+            </div>
+
+
+    <tickist-filter-future-tasks></tickist-filter-future-tasks>
+
+    <tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="taskView"
+                     *cdkVirtualFor="let task of tasks$ | async;trackBy: trackByFn let last = last" [last]="last">
+
+    </tickist-single-task>
+    <tickist-no-tasks [tasksLength]="(tasks$ | async)?.length"></tickist-no-tasks>
+
+</cdk-virtual-scroll-viewport>
+
+
+
+
+

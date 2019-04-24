@@ -1,5 +1,5 @@
-import {PendingUser} from '../../user/models';
-import {SimpleUser} from '../../user/models';
+import {PendingUser} from '../../core/models';
+import {SimpleUser} from '../../core/models';
 
 
 export class SimpleProject  {

@@ -1,0 +1,57 @@
+:host {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    
+    margin-bottom: 10px;
+    .add-margin {
+        margin-top: 30px;
+    }
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    span {
+        margin-left: 5px;
+    }
+    .fab-button {
+        margin-right: 10px;
+    }
+    .logo {
+        margin-right: 10px;
+        cursor: pointer;
+    }
+    .mat-button {
+        &:hover {
+            .mat-button-focus-overla {
+                opacity: 0 !important;
+            }
+            
+        }
+    }
+    .navigation-button {
+        height: 100%;
+        border-radius: 2px;
+        &.mat-button:hover .mat-button-focus-overlay {
+            opacity: 0 !important;
+        }
+        &:hover {
+           background: gray; 
+            div {
+               opacity: 0 !important;  
+            }
+        }
+        &.active {
+            background: gray;
+            border-bottom: 5px solid rgb(17, 168, 171);
+            
+        }
+    }
+}
+
+img.user-avatar {
+    cursor: pointer;
+    border-radius: 20px;
+}
+

@@ -1,0 +1,10 @@
+<mat-list class="remove-left-right-padding">
+    <mat-list-item *ngFor="let elem of futureList" (click)="navigateTo('/future-tasks/', elem.url)">
+        <a class="date-row" mat-line fxLayout="row" fxLayoutAlign="center center"
+           [ngClass]="{'active': isSelected(elem)}">
+            <span class="date">{{ elem.label }} </span>
+            <span fxFlex> </span>
+            <span class="tasks-counter">{{ elem.tasksCounter }}</span>
+        </a>
+    </mat-list-item>
+</mat-list>

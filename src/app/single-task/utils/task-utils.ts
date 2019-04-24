@@ -1,39 +1,44 @@
-import {Task} from 'app/models/tasks';
 import {Tag} from '../../models/tags';
 import * as moment from 'moment';
+import { Task } from '../../models/tasks';
+import {Step} from '../../models/steps';
 
 export function hideAllMenuElements(task: Task): Task {
-    task.menuShowing.isFinishDate = false;
-    task.menuShowing.isTaskProject = false;
-    task.menuShowing.isAssignedTo = false;
-    task.menuShowing.isRepeat = false;
-    task.menuShowing.isTags = false;
-    task.menuShowing.isSteps = false;
-    task.menuShowing.isDescription = false;
-
-    return task;
+    return Object.assign({}, task, {
+        menuShowing: {
+            isFinishDate: false,
+            isTaskProject: false,
+            isAssignedTo: false,
+            isRepeat: false,
+            isTags: false,
+            isSteps: false,
+            isDescription: false
+        }
+    });
 }
 
 
 export function removeTag(task: Task, tag: Tag): Task {
-    const index: number = task.tags.indexOf(tag, 0);
+    const newTask = Object.assign({}, task);
+    const index: number = newTask.tags.indexOf(tag, 0);
     if (index > -1) {
-        task.tags.splice(index, 1);
+        newTask.tags.splice(index, 1);
     }
-    return task;
+    return newTask;
 }
 
 export function moveFinishDateFromPreviousFinishDate(task, delta: string | number): Task {
-    if (!moment.isMoment(task.finishDate)) task.finishDate = moment();
+    const newTask = Object.assign({}, task);
+    if (!moment.isMoment(task.finishDate)) newTask.finishDate = moment();
 
     if (delta === 'today' || !task.finishDate) {
-        task.finishDate = moment();
+        newTask.finishDate = moment();
     } else if (delta === 'lastDayOfMonth') {
-        task.finishDate = moment().date(moment().daysInMonth());
+        newTask.finishDate = moment().date(moment().daysInMonth());
     } else {
-        task.finishDate = (moment(task.finishDate)).add(delta, 'day');
+        newTask.finishDate = (moment(task.finishDate)).add(delta, 'day');
     }
-    return task;
+    return newTask;
 }
 
 
@@ -43,5 +48,17 @@ export function isRepeated(task: Task): boolean {
 
 export function isOverdue(task: Task): boolean {
     return task.finishDate < moment().hours(0).minutes(0).seconds(0);
+}
+
+export function setAllStepsToDone(taskSteps: Step[]): Step[] {
+    return taskSteps.map(step => {
+        return {...step, status: 1};
+    });
+}
+
+export function setAllStepsToUndone(taskSteps: Step[]): Step[] {
+    return taskSteps.map(step => {
+        return {...step, status: 0};
+    });
 }
 

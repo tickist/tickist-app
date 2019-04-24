@@ -1,0 +1,13 @@
+@import "../../../../shared/variables";
+@import "style";
+
+:host {
+    flex: 1;
+    display: flex;
+    min-height: 100%;
+    flex-direction: row;
+    .viewport-dashboard {
+        width: 100%;
+        margin-left: 16px;
+    }
+}

@@ -1,0 +1,9 @@
+.always-collapsed {
+    ::ng-deep.mat-expansion-panel-body {
+        padding-bottom: 0 !important;
+    }
+}
+
+i {
+    margin-right: 10px;
+}

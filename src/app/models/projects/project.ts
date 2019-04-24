@@ -1,26 +1,27 @@
-import {SimpleUser} from '../../user/models';
-import {PendingUser} from '../../user/models';
+import {SimpleUser} from '../../core/models';
+import {PendingUser} from '../../core/models';
 import {Api} from '../commons';
 import {IProjectApi} from '../project-api.interface';
 import {ISimpleUserApi} from '../simple-user-api.interface';
 import {SimpleProject} from './index';
 import {ISimpleProjectApi} from '../simple-project-api.inferface';
 import {IUserApi} from '../user-api.interface';
-import {toSnakeCase} from '../../utils/toSnakeCase';
+import {toSnakeCase} from '../../core/utils/toSnakeCase';
 import {IPendingUser} from '../pending-user-api.interface';
+import {convert} from '../../core/utils/addClickableLinksToString';
 
 
-export class Project extends Api {
+export class Project {
     id: number;
     name: string;
     isActive: boolean;
     isInbox: boolean;
     description: string;
     richDescription: string;
-    ancestor: Project;
+    ancestor: number;
     color: string;
     tasksCounter: number;
-    allDescendants: any;
+    allDescendants: Array<number>;
     shareWith: (SimpleUser | PendingUser)[] = [];
     level: number;
     owner: number;
@@ -29,9 +30,9 @@ export class Project extends Api {
     defaultTypeFinishDate: any;
     dialogTimeWhenTaskFinished: boolean;
     taskView: string;
+    matOptionClass: string;
 
     constructor(project: IProjectApi) {
-        super();
         this.name = project.name;
         this.id = project.id || undefined;
         this.ancestor = project.ancestor || undefined;
@@ -39,7 +40,7 @@ export class Project extends Api {
         this.tasksCounter = !(isNaN(project.tasks_counter)) ? project.tasks_counter : undefined;
         this.allDescendants = project.get_all_descendants;
         this.description = project.description;
-        this.richDescription = this.convert(project.description);
+        this.richDescription = convert(project.description);
         this.defaultFinishDate = project.default_finish_date;
         this.defaultPriority = project.default_priority;
         this.defaultTypeFinishDate = project.default_type_finish_date;
@@ -49,6 +50,7 @@ export class Project extends Api {
         this.taskView = project.task_view;
         this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
         this.isInbox = project.is_inbox;
+        this.matOptionClass = `level_${this.level}`;
         project.share_with.forEach((user) => {
             if (user.hasOwnProperty('id')) {
                 this.shareWith.push(new SimpleUser(user));
@@ -57,22 +59,5 @@ export class Project extends Api {
             }
 
         });
-    }
-
-    get matOptionClass(): string {
-        return `level_${this.level}`;
-    }
-
-    private convert(text: string): string {
-        const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-        const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        let richText;
-        if (text) {
-            richText = text.replace(exp, '<a target="_blank" href=\'$1\'>$1</a>')
-                .replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
-        } else {
-            richText = text;
-        }
-        return richText;
     }
 }

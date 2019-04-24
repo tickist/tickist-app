@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {selectCurrentSortBy, selectSortByOptions} from '../sort-by-tasks.selectors';
+import {selectCurrentSortBy, selectSortByOptions} from '../../core/selectors/sort-by-tasks.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {SortBy} from '../models/sortBy';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {SetCurrentSortBy} from '../sort-tasks.actions';
+import {SetCurrentSortBy} from '../../core/actions/tasks/sort-tasks.actions';
 
 
 @Component({

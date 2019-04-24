@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {UserAvatarComponent} from './user-avatar.component';
 import {TickistMaterialModule} from '../../material.module';
 import {AvatarSize} from '../../shared/pipes/avatarSize';
-import {SimpleUser} from '../../user/models';
+import {SimpleUser} from '../../core/models';
 
 describe('UserAvatarComponent', () => {
     let component: UserAvatarComponent;

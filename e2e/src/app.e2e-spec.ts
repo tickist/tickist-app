@@ -32,9 +32,9 @@ describe('Dashboard', function () {
         expect(daysList.length).toBe(7);
     });
 
-    it('should check future list members', async () => {
+    it('should check future-tasks list members', async () => {
         await page.navigateTo();
-        const myElement = element(by.tagName('tickist-future-list'));
+        const myElement = element(by.tagName('tickist-future-tasks-list'));
         const isPresent = await myElement.isPresent();
         expect(isPresent).toBeTruthy();
         const futureList = await myElement.all(by.tagName('mat-list-item'));

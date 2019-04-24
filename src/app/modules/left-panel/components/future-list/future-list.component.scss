@@ -1,0 +1,30 @@
+@import "../../../../shared/variables";
+
+.date-row {
+    height: 40px;
+    cursor: pointer;
+    color: $white;
+    &:hover {
+        background-color: grey;
+    }
+    &.active {
+        background-color: grey;
+    }
+    .date {
+        margin-left: 5px;
+        font-size: 14px;
+        &:first-letter {
+            text-transform: uppercase;
+        }
+    }
+    .tasks-counter {
+        margin-right: 10px;
+    }
+}
+.remove-left-right-padding {
+    ::ng-deep.mat-list-item-content {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+
