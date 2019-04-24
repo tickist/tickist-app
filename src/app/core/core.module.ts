@@ -48,7 +48,6 @@ import * as fromSearchTasks from './reducers/tasks/search-tasks.reducer';
 import {AssignedToFiltersTasksEffects} from './effects/assigned-to-filters-tasks.effects';
 import {TasksFiltersEffects} from './effects/tasks-filters.effects';
 import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
-import { NewVersionAvailableComponent } from './new-version-available/new-version-available.component';
 
 
 
