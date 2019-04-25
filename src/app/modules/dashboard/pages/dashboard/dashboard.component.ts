@@ -32,7 +32,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     stream$: Observable<any>;
     user: User;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    subscriptions: Subscription;
     mediaChange: MediaChange;
 
     constructor(private taskService: TaskService, protected route: ActivatedRoute, private  userService: UserService,

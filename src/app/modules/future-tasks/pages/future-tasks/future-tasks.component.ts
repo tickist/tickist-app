@@ -78,8 +78,8 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         if (!event) return;
         this.taskView = event;
         if (this.user && this.user.defaultTaskViewFutureView !== event) {
-            this.user.defaultTaskViewFutureView = event;
-            this.store.dispatch(new UpdateUser({user: this.user}));
+            const user = Object.assign({}, this.user, {defaultTaskViewTodayView: event});
+            this.store.dispatch(new UpdateUser({user}));
         }
 
     }

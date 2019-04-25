@@ -1,10 +1,10 @@
 import {Task} from '../../models/tasks';
-import {setStatusDoneLogin} from './set-status-to-done-logic';
+import {setStatusDoneLogic} from './set-status-to-done-logic';
 import {Step} from '../../models/steps';
 import * as moment from 'moment';
 import 'jest';
 
-describe('setStatusDoneLogin', () => {
+describe('setStatusDoneLogic', () => {
     describe('task without repeating options', () => {
         it('should return task with done status', () => {
             const task: Partial<Task> = {
@@ -12,7 +12,7 @@ describe('setStatusDoneLogin', () => {
                 'status': 0,
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(1);
             expect(newTask.name).toBe('Task');
             expect(task.status).toBe(0);
@@ -27,7 +27,7 @@ describe('setStatusDoneLogin', () => {
                     {name: 'step 2', status: 0},
                 ] as Partial<Step[]>
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(1);
             expect(newTask.name).toBe('Task');
             expect(task.status).toBe(0);
@@ -50,7 +50,7 @@ describe('setStatusDoneLogin', () => {
                 'repeatDelta': 1,
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(task.status).toBe(0);
             expect(newTask.status).toBe(0);
         });
@@ -67,7 +67,7 @@ describe('setStatusDoneLogin', () => {
                     {name: 'step 3', status: 0},
                 ] as Partial<Step[]>
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(task.status).toBe(0);
             expect(newTask.status).toBe(0);
             expect(newTask.steps.filter(step => step.status === 1)).toEqual([]);
@@ -83,7 +83,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(1, 'd'));
         });
@@ -98,7 +98,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(2, 'd'));
         });
@@ -114,7 +114,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(friday),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(friday).add(3, 'd'));
         });
@@ -130,7 +130,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(friday),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(friday).add(14, 'd'));
         });
@@ -145,7 +145,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(1, 'w'));
         });
@@ -160,7 +160,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(2, 'w'));
         });
@@ -175,7 +175,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(1, 'months'));
         });
@@ -190,7 +190,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(2, 'months'));
         });
@@ -205,7 +205,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(1, 'y'));
         });
@@ -220,7 +220,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(date),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(date).add(2, 'y'));
         });
@@ -236,7 +236,7 @@ describe('setStatusDoneLogin', () => {
                 'finishDate': moment(oldFinishDate),
                 'steps': []
             };
-            const newTask = setStatusDoneLogin(task);
+            const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(oldFinishDate).add(2, 'd'));
         })

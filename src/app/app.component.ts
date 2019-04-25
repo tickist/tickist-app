@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import 'hammerjs'; // Recommended
-import gitInfo from '../git-version.json';
+// import gitInfo from '../git-version.json';
 import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
 import {MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material';
@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     constructor(private swUpdate: SwUpdate, private meta: Meta, private snackBar: MatSnackBar) {
         this.config = new MatSnackBarConfig();
         this.config.panelClass = ['tickist-snack-bar'];
-        console.log(gitInfo);
+        // console.log(gitInfo);
     }
 
     ngOnInit(): void {

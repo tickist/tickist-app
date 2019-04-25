@@ -31,12 +31,14 @@ export class FutureTasksEffects {
     init$ = defer(() => {
         return this.store.select(selectLoggedInUser).pipe(
             concatMap(user => {
-                return [
-                    new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}),
-                    new SetCurrentFutureTaskFilter({
+                const actions = [];
+                if (user) {
+                    actions.push(new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}));
+                    actions.push(new SetCurrentFutureTaskFilter({
                         currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(user.projectsFilterId)
-                    })
-                ];
+                    }));
+                }
+                return actions;
             })
         );
     });

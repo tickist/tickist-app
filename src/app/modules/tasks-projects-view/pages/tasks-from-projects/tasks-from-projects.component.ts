@@ -19,6 +19,7 @@ import {selectTasksStreamInProjectsView} from '../../../../core/selectors/task.s
 import {UpdateUser} from '../../../../core/actions/user.actions';
 import {homeRoutesName} from '../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
+import {UpdateProject} from '../../../../core/actions/projects/projects.actions';
 
 @Component({
     selector: 'tickist-tasks-from-projects',
@@ -65,20 +66,22 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.selectedProjectsStream$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(([projectId, projects, user]) => {
-                this.user = user;
-                if (projectId && projects && projects.length > 0 && user) {
-                    const project = projects.find(p => p.id === parseInt(projectId, 10));
-                    if (project) {
-                        if (project.hasOwnProperty('allDescendants')) {
-                            this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));
+                if (user) {
+                    this.user = user;
+                    if (projectId && projects && projects.length > 0 && user) {
+                        const project = projects.find(p => p.id === parseInt(projectId, 10));
+                        if (project) {
+                            if (project.hasOwnProperty('allDescendants')) {
+                                this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));
+                            }
+                            this.store.dispatch(new SetActiveProject({project: project}));
                         }
-                        this.store.dispatch(new SetActiveProject({project: project}));
+                    } else {
+                        this.store.dispatch(new NewActiveProjectsIds({projectsIds: []}));
+                        this.store.dispatch(new SetActiveProject({project: undefined}));
+                        this.defaultTaskView = user.allTasksView;
+                        this.taskView = user.allTasksView;
                     }
-                } else {
-                    this.store.dispatch(new NewActiveProjectsIds({projectsIds: []}));
-                    this.store.dispatch(new SetActiveProject({project: undefined}));
-                    this.defaultTaskView = user.allTasksView;
-                    this.taskView = user.allTasksView;
                 }
             });
         this.store.select(selectActiveProject).subscribe(project => {
@@ -99,12 +102,12 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     changeTaskView(event) {
         if (event) this.taskView = event;
         if (this.selectedProject && this.selectedProject.taskView !== event && event) {
-            this.selectedProject.taskView = event;
-            this.projectService.updateProject(this.selectedProject, true);
+            const project = Object.assign({}, this.selectedProject, {taskView: event});
+            this.store.dispatch(new UpdateProject({project: {id: project.id, changes: project}}));
         }
         if (!this.selectedProject && this.user && this.user.allTasksView !== event && event) {
-            this.user.allTasksView = event;
-            this.store.dispatch(new UpdateUser({user: this.user}));
+            const user = Object.assign({}, this.user, {allTasksView: event});
+            this.store.dispatch(new UpdateUser({user}));
         }
     }
 

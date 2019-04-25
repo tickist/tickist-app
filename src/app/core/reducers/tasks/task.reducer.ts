@@ -2,7 +2,7 @@ import {createEntityAdapter, EntityAdapter, EntityState, Update} from '@ngrx/ent
 import {TaskActions, TaskActionTypes} from '../../actions/tasks/task.actions';
 import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
 import {Task} from '../../../models/tasks';
-import {setStatusDoneLogin} from '../../../single-task/utils/set-status-to-done-logic';
+import {setStatusDoneLogic} from '../../../single-task/utils/set-status-to-done-logic';
 
 export interface TasksState extends EntityState<Task> {
 
@@ -31,7 +31,7 @@ export function reducer(state = initialTasksState, action: (TaskActions | Tickis
             return adapter.updateOne(action.payload.task, state);
 
         case TaskActionTypes.SET_TASK_STATUS_TO_DONE:
-            const task = setStatusDoneLogin(action.payload.task.changes);
+            const task = setStatusDoneLogic(action.payload.task.changes);
             return adapter.updateOne({id: task.id, changes: task}, state);
 
         case TaskActionTypes.DELETE_TASK:

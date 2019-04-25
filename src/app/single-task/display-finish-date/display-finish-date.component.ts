@@ -29,6 +29,7 @@ export class DisplayFinishDateComponent implements OnInit, OnChanges, AfterViewI
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+        console.log(changes)
         if (changes.hasOwnProperty('task')) {
             this.addTypeFinishDateIcon();
         }

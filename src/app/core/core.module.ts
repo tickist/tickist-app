@@ -50,7 +50,6 @@ import {TasksFiltersEffects} from './effects/tasks-filters.effects';
 import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
 
 
-
 @NgModule({
     imports: [
         CommonModule,

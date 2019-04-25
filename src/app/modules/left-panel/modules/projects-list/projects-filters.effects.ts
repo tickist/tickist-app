@@ -31,12 +31,14 @@ export class ProjectsFiltersEffects {
     init$ = defer(() => {
         return this.store.select(selectLoggedInUser).pipe(
             concatMap(user => {
-                return [
-                    new AddProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}),
-                    new SetCurrentProjectFilter({
+                const actions = [];
+                if (user) {
+                    actions.push(new AddProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}));
+                    actions.push(new SetCurrentProjectFilter({
                         currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(user.projectsFilterId)
-                    })
-                ];
+                    }));
+                }
+                return actions;
             })
         );
     });

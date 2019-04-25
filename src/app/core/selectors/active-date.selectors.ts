@@ -16,7 +16,10 @@ export const selectActiveDate = createSelector(
         let date: moment.Moment;
         const splittedDate: string[] = activeDateState.active.date.split('-');
         if (activeDateState.active.state === stateActiveDateElement.future) {
-            date = moment().month(splittedDate[0]).year(parseInt(splittedDate[1], 10)).date(1);
+            const year = splittedDate[1];
+            const month = splittedDate[0];
+            date = moment(new Date(`1 ${month} ${year}`));
+            //date = moment().month(splittedDate[0]).year(parseInt(splittedDate[1], 10)).date(1);
         } else if (activeDateState.active.state === stateActiveDateElement.weekdays) {
             date = moment()
                 .month(parseInt(splittedDate[1], 10) - 1)

@@ -127,7 +127,10 @@ export const selectTasksStreamInProjectsView = createSelector(
             const re = new RegExp(searchFilter, 'i');
             tasks = tasks.filter((task) => re.test(task.name));
         }
-        tasks = orderBy(tasks, currentSortBy.sortKeys, currentSortBy.order);
+        if (currentSortBy) {
+            tasks = orderBy(tasks, currentSortBy.sortKeys, currentSortBy.order);
+        }
+
         return tasks;
     }
 );

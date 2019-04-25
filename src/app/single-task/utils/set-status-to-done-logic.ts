@@ -2,7 +2,7 @@ import {isRepeated, setAllStepsToDone, setAllStepsToUndone} from './task-utils';
 import {Task} from '../../models/tasks';
 import * as moment from 'moment';
 
-export function setStatusDoneLogin(task): Task {
+export function setStatusDoneLogic(task): Task {
     if (isRepeated(task)) {
         return repeatTaskLogic(task);
     } else {

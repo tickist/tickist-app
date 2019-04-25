@@ -125,7 +125,7 @@ export class SingleTask {
             delta = 30;
         }
         const task = moveFinishDateFromPreviousFinishDate(this.task, delta);
-        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: task}}));
         // this.taskService.updateTask(this.task);
     }
 
