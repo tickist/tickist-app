@@ -1,6 +1,6 @@
 import {TestBed, inject} from '@angular/core/testing';
 import {provideMockActions} from '@ngrx/effects/testing';
-import {Observable} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 
 import {GaEffects} from './ga.effects';
 
@@ -17,6 +17,7 @@ describe('GaEffectsEffects', () => {
         });
 
         effects = TestBed.get(GaEffects);
+        actions$ = new ReplaySubject(1);
     });
 
     it('should be created', () => {

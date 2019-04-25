@@ -1,6 +1,6 @@
 import {TestBed, inject} from '@angular/core/testing';
 import {provideMockActions} from '@ngrx/effects/testing';
-import {Observable} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 
 import {ActiveProjectsIdsEffects} from './active-projects-ids.effects';
 import {StoreModule} from '@ngrx/store';
@@ -19,6 +19,7 @@ describe('ActiveProjectsIdsEffects', () => {
         });
 
         effects = TestBed.get(ActiveProjectsIdsEffects);
+        actions$ = new ReplaySubject(1);
     });
 
     it('should be created', () => {

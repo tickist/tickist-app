@@ -65,7 +65,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.configurationService.leftSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((state) => {
             this.leftSideNavVisibility = state;
         });
-        
+
         this.configurationService.offlineModeNotification$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
             this.isOffline = value;
         });
@@ -114,10 +114,11 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     navigateToUserSettings() {
         this.router.navigate(['home', {outlets: {content: [editUserSettingsRoutesName.EDIT_USER_SETTINGS]}}]);
     }
-    
+
     navigateToWeekdays() {
         this.router.navigate(['home', {outlets: {content: [dashboardRoutesName.DASHBOARD]}}]);
     }
+
     logout() {
         this.store.dispatch(new Logout());
     }

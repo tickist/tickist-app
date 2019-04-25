@@ -146,10 +146,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
             project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
             project.taskView = values['extra']['taskView'];
             project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
-            
-            if (project.ancestor) {
-                this.updateAncestorProject(project.ancestor)
-            }
+
+            // if (project.ancestor) {
+            //     this.updateAncestorProject(project.ancestor);
+            // }
             // List share with is added directly
             if (this.isNewProject()) {
                 this.store.dispatch(new RequestCreateProject({project: project}));
@@ -165,11 +165,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
         // DRY
         this.location.back();
     }
-    
-    updateAncestorProject(ancestorProjectId) {
-        const ancestorProject = this.projectsAncestors.find(project => project.id === ancestorProjectId);
-        
-    }
+
+    // updateAncestorProject(ancestorProjectId) {
+    //     const ancestorProject = this.projectsAncestors.find(project => project.id === ancestorProjectId);
+    //
+    // }
 
     createForm(project: Project) {
         return new FormGroup({
@@ -208,7 +208,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         });
     }
 
-    deleteUserFromShareWithList(user: (SimpleUser | PendingUser| User), i: number) {
+    deleteUserFromShareWithList(user: (SimpleUser | PendingUser | User), i: number) {
         const title = 'Confirmatiom';
         const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;
