@@ -59,7 +59,7 @@ export class SingleTask {
     toggleDone() {
         let task;
         if (this.task.status === 0) {
-            task = Object.assign({}, this.task);
+            task = Object.assign({}, this.task, {status: 1});
             if (task.taskProject.dialogTimeWhenTaskFinished) {
                 const dialogRef = this.dialog.open(TimeDialogComponent, {
                     data: {'task': task}

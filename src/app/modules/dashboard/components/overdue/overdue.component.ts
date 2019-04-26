@@ -40,7 +40,7 @@ export class OverdueComponent implements OnInit, OnDestroy {
     changeTaskView(event) {
         this.taskView = event;
         if (this.user.defaultTaskViewOverdueView !== event) {
-            const user = Object.assign({}, this.user, {defaultTaskViewTodayView: event});
+            const user = Object.assign({}, this.user, {defaultTaskViewOverdueView: event});
             this.store.dispatch(new UpdateUser({user}));
         }
     }
