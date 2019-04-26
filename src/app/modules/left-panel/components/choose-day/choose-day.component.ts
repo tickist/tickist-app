@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {FormControl} from '@angular/forms';
@@ -16,7 +16,7 @@ import {AppStore} from '../../../../store';
     styleUrls: ['./choose-day.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChooseDayComponent implements OnInit {
+export class ChooseDayComponent implements OnInit, OnDestroy {
     @Output() selectedDate = new EventEmitter();
     selectedDateFormControl: FormControl;
     private ngUnsubscribe: Subject<void> = new Subject<void>();

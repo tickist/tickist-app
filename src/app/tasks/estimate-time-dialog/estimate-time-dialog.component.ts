@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {Observable, Subject} from 'rxjs';
@@ -15,40 +15,15 @@ import {takeUntil} from 'rxjs/operators';
     styleUrls: ['./estimate-time-dialog.component.scss'],
     templateUrl: './task-estimate-time-filter-dialog.html'
 })
-export class EstimateTimeDialogComponent implements OnInit {
+export class EstimateTimeDialogComponent implements OnInit, OnDestroy {
     estimateTimeCurrentFilter$: Observable<{currentFilter_lt: Filter, currentFilter_gt: Filter}>;
     estimateTimeFilters$: Observable<{filters_lt: Filter[], filters_gt: Filter[]}>;
     filters_lt: Filter[];
     filters_gt: Filter[];
     rangeValues: number[];
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    estimateTime__ltValues: any = [];
-    estimateTime__ltValue: any = {};
-    estimateTime__ltId: number;
-    estimateTime__gtValues: any = [];
-    estimateTime__gtValue: any = {};
-    estimateTime__gtId: number;
 
     constructor(public dialogRef: MatDialogRef<EstimateTimeDialogComponent>, private store: Store<AppStore>) {
-        // this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
-        //
-        //     if (filters.length > 0) {
-        //         this.estimateTime__ltValue = filters.filter(filter => filter.label === 'estimateTime__lt')[0];
-        //         this.estimateTime__gtValue = filters.filter(filter => filter.label === 'estimateTime__gt')[0];
-        //         this.estimateTime__ltId = this.estimateTime__ltValue['id'];
-        //         this.estimateTime__gtId = this.estimateTime__gtValue['id'];
-        //     }
-        // });
-        //
-        // this.tasksFiltersService.tasksFilters$.subscribe((filters) => {
-        //     if (filters.length > 0) {
-        //         this.estimateTime__ltValues = filters.filter(filter => filter.label === 'estimateTime__lt');
-        //         this.estimateTime__gtValues = filters.filter(filter => filter.label === 'estimateTime__gt');
-        //
-        //     }
-        // });
-        // this.rangeValues = [this.estimateTime__ltId, this.estimateTime__gtId];
-
     }
 
     ngOnInit() {
@@ -63,7 +38,7 @@ export class EstimateTimeDialogComponent implements OnInit {
         this.estimateTimeCurrentFilter$
             .pipe(takeUntil(this.ngUnsubscribe)).subscribe((estimateTime) => {
             this.rangeValues = [estimateTime.currentFilter_lt.id, estimateTime.currentFilter_gt.id];
-        })
+        });
 
     }
 

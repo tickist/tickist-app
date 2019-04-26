@@ -20,7 +20,7 @@ import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add
     styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit, OnDestroy {
-    menu = {};
+    menu: Array<any>;
     changePasswordForm: FormGroup;
     userData: FormGroup;
     userSettings: FormGroup;
@@ -44,12 +44,34 @@ export class UserComponent implements OnInit, OnDestroy {
         this.defaultTaskViewOptions = this.configurationService.loadConfiguration()['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
         this.overdueTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['OVERDUE_TASKS_SORT_BY_OPTIONS'];
         this.futureTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['FUTURE_TASKS_SORT_BY_OPTIONS'];
-        this.menu = {
-            'main': true, 'password': false, 'notifications': false, 'settings': false
-        };
+        this.menu = this.createMenuDict();
 
     }
 
+    createMenuDict() {
+        return [
+            {
+                name: 'main',
+                isActive: true,
+                id: 1
+            },
+            {
+                name: 'password',
+                isActive: false,
+                id: 1
+            },
+            {
+                name: 'notifications',
+                isActive: false,
+                id: 1
+            },
+            {
+                name: 'settings',
+                isActive: false,
+                id: 1
+            },
+        ];
+    }
 
     ngOnInit(): void {
         this.store.select(selectLoggedInUser)
@@ -173,21 +195,16 @@ export class UserComponent implements OnInit, OnDestroy {
     //     });
     // }
 
-    changeActiveItemInMenu(menu_item: any) {
-        // DRY
-        for (const key in this.menu) {
-            this.menu[key] = false;
-        }
-        this.menu[menu_item] = true;
+    changeActiveItemInMenu(name): void {
+        this.menu.forEach(item => item.isActive = false);
+        this.menu.find(item => item.name === name).isActive = true;
     }
 
-    checkActiveItemInMenu(menu_item) {
-        // DRY
-        return this.menu[menu_item];
+    checkActiveItemInMenu(name): boolean {
+        return this.menu.find(item => item.name === name).isActive;
     }
 
     changeUserDetails() {
-        debugger;
         this.store.dispatch(new UpdateUser({user: this.user}));
     }
 

@@ -38,7 +38,7 @@ import { TasksFiltersEffects } from '../core/effects/tasks-filters.effects';
         ReactiveFormsModule,
         SliderModule,
 
-        
+
 
 
     ],

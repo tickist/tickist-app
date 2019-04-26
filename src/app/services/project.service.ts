@@ -11,7 +11,6 @@ import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {TasksFiltersService} from '../core/services/tasks-filters.service';
-import * as _ from 'lodash';
 import {IProjectApi} from '../models/project-api.interface';
 import {toSnakeCase} from '../core/utils/toSnakeCase';
 import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../core/selectors/projects.selectors';
@@ -46,7 +45,8 @@ export class ProjectService {
         // this.store.dispatch(new tasksAction.DeleteNonFixedAssignedTo({}));
         if (project) {
             // project.shareWith.map((user: (SimpleUser | PendingUser)) => {
-            //     if (user.hasOwnProperty('id') && user['id'] !== undefined && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
+            //     if (user.hasOwnProperty('id') && user['id'] !== undefined
+            //     && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
             //         // this.store.dispatch(new tasksAction.AddNewAssignedTo(
             //         //     new Filter({
             //         //         'id': user['id'],
@@ -81,38 +81,38 @@ export class ProjectService {
     createProject(project: Project) {
         return this.http.post(`${environment['apiUrl']}/project/`, toSnakeCase(project))
             .pipe(map((payload: IProjectApi) => new Project(payload)));
-            // .subscribe((payload: IProjectApi) => {
-            //     this.snackBar.open('Project has been saved successfully', '', {
-            //         duration: 2000,
-            //     });
-            //     const newProject = new Project(payload);
-            //     this.store.dispatch(new projectsAction.CreateProject(newProject));
-            //     this.router.navigate(['/home/projects', newProject.id]);
-            //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
-            // });
+        // .subscribe((payload: IProjectApi) => {
+        //     this.snackBar.open('Project has been saved successfully', '', {
+        //         duration: 2000,
+        //     });
+        //     const newProject = new Project(payload);
+        //     this.store.dispatch(new projectsAction.CreateProject(newProject));
+        //     this.router.navigate(['/home/projects', newProject.id]);
+        //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
+        // });
     }
 
     updateProject(project: Project, withoutSnackBar = false) {
         return this.http.put(`${environment['apiUrl']}/project/${project.id}/`, toSnakeCase(project));
-            // .subscribe((payload: IProjectApi) => {
-            //     this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));
-            //     if (!withoutSnackBar) {
-            //         this.snackBar.open('Project has been saved successfully', '', {
-            //         duration: 2000,
-            //         });
-            //     }
-            //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
-            // });
+        // .subscribe((payload: IProjectApi) => {
+        //     this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));
+        //     if (!withoutSnackBar) {
+        //         this.snackBar.open('Project has been saved successfully', '', {
+        //         duration: 2000,
+        //         });
+        //     }
+        //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
+        // });
     }
 
 
     deleteProject(projectId: number) {
         return this.http.delete(`${environment['apiUrl']}/project/${projectId}/`);
-            // .subscribe(action => {
-            //     this.store.dispatch(new projectsAction.DeleteProject(project));
-            //     this.snackBar.open('Project has been deleted successfully', '', {
-            //         duration: 2000,
-            //     });
-            // });
+        // .subscribe(action => {
+        //     this.store.dispatch(new projectsAction.DeleteProject(project));
+        //     this.snackBar.open('Project has been deleted successfully', '', {
+        //         duration: 2000,
+        //     });
+        // });
     }
 }

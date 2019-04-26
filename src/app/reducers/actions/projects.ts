@@ -2,12 +2,6 @@ import {Action} from '@ngrx/store';
 import {Project} from '../../models/projects';
 import {Filter} from '../../models/filter';
 
-export const ADD_PROJECTS = 'ADD_PROJECTS';
-export const CREATE_PROJECT = 'CREATE_PROJECT';
-export const UPDATE_PROJECT = 'UPDATE_PROJECT';
-export const DELETE_PROJECT = 'DELETE_PROJECT';
-export const SELECT_PROJECT = 'SELECT_PROJECT';
-
 export const ADD_CURRENT_FILTERS = '[PROJECTS] ADD_CURRENT_FILTERS';
 export const UPDATE_CURRENT_FILTER = '[PROJECTS] UPDATE_CURRENT_FILTER';
 

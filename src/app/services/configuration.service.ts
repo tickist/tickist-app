@@ -12,7 +12,6 @@ export class ConfigurationService {
     detectApiError$: Observable<any>;
     offlineModeNotification$: Observable<any>;
     leftSidenavVisibility$: Observable<any>;
-    addTaskComponentVisibility$: Observable<any>;
     configuration: {};
     TASK_EXTENDED_VIEW: any;
     TASK_SIMPLE_VIEW: any;
@@ -82,7 +81,8 @@ export class ConfigurationService {
                     this.TASK_SIMPLE_VIEW
                 ],
                 'STATIC_URL': '/site_media/static/',
-                'Google_plus_scope': 'https://www.googleapis.com/auth.effects.ts/plus.login https://www.googleapis.com/auth.effects.ts/userinfo.email',
+                'Google_plus_scope': 'https://www.googleapis.com/auth.effects.ts/plus.login ' +
+                    'https://www.googleapis.com/auth.effects.ts/userinfo.email',
                 'DEFAULT_REPEAT_OPTIONS': [
                     {'name_of_extension': '', 'id': 0, 'name': 'never'},
                     {'name_of_extension': 'day(s)', 'id': 1, 'name': 'daily'},

@@ -46,7 +46,7 @@
                 </mat-list>
             </div>
             <div fxFlex="68%" class="right-menu">
-                <div [hidden]="!menu.main">
+                <div [hidden]="!checkActiveItemInMenu('main')">
 
 
                     <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="userData"
@@ -76,7 +76,7 @@
                            (change)="changeAvatar($event)"/>
                 </div>
 
-                <div [hidden]="!menu.password">
+                <div [hidden]="!checkActiveItemInMenu('password')">
 
 
                     <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="changePasswordForm"
@@ -135,7 +135,7 @@
                 </div>
 
 
-                <div [hidden]="!menu.notifications" *ngIf="user">
+                <div [hidden]="!checkActiveItemInMenu('notifications')" *ngIf="user">
 
                     <div fxLayout="column" fxLayoutAlign="space-between none"><span class="title">Please send me an email notification:</span>
 
@@ -201,7 +201,7 @@
 
                 </div>
 
-                <div [hidden]="!menu.settings">
+                <div [hidden]="!checkActiveItemInMenu('settings')">
                     <div fxLayout="column" fxLayoutAlign="space-between none">
                         <form [formGroup]="userSettings">
                             <mat-form-field>

@@ -19,13 +19,13 @@ describe('ProgressBarComponent', () => {
             ]
         }).compileComponents();
     }));
-    
+
     beforeEach(() => {
         fixture = TestBed.createComponent(ProgressBarComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
-    
+
     it('should create', () => {
         expect(component).toBeTruthy();
     });

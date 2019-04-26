@@ -9,7 +9,7 @@ export class ProjectsPage {
 
     constructor() {
         this.tasksPage = new TasksPage();
-        this.menuPage = new MenuPage()
+        this.menuPage = new MenuPage();
     }
 
     navigateTo() {

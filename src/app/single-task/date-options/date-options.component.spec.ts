@@ -20,7 +20,7 @@ import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-
 let comp: DateOptionsComponent;
 let fixture: ComponentFixture<DateOptionsComponent>;
 let task: Task;
-let taskFromApi;
+
 
 describe('EditDateOptionsComponent', () => {
     let user: IUserApi;

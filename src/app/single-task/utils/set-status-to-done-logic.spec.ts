@@ -239,7 +239,7 @@ describe('setStatusDoneLogic', () => {
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
             expect(newTask.finishDate).toEqual(moment(oldFinishDate).add(2, 'd'));
-        })
+        });
 
     });
 });

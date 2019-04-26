@@ -13,7 +13,7 @@
     "test:coverage": "jest --coverage",
     "ci": "npm run test_ci && npm run e2e",
     "test": "jest",
-    "lint": "ng lint",
+    "lint": "ng lint --fix",
     "e2e": "ng e2e --port 4201",
     "generate-git-version": "node grab-git-info.js"
   },

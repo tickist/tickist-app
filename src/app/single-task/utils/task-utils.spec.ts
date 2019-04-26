@@ -26,7 +26,7 @@ describe('#isOverdue', () => {
         };
         expect(isOverdue(task as Task)).toBeFalsy();
     });
-    
+
     it('should return false because task is not overdue and finishDate is set to today', () => {
         const task = <Partial<Task>> {
             name: 'task',

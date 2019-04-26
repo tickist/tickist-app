@@ -71,7 +71,6 @@ function generateDifferentLevelsOfProjects(projects: Project[]) {
     // if we have a shared list on the second level
     the_second_level.forEach((item_1) => {
         if (list_of_list.indexOf(item_1) === -1) {
-            debugger
             item_1.level = 0;
             list_of_list.push(item_1);
             the_third_level.forEach((item_2) => {

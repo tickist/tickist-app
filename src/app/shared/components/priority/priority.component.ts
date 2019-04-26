@@ -5,17 +5,16 @@ import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 const noop = () => {
 };
 
-export const PRIORITY_INPUT_CONTROL_VALUE_ACCESSOR: any = {
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => PriorityComponent),
-    multi: true
-};
 
 @Component({
     selector: 'tickist-priority',
     templateUrl: './priority.component.html',
     styleUrls: ['./priority.component.scss'],
-    providers: [PRIORITY_INPUT_CONTROL_VALUE_ACCESSOR]
+    providers: [{
+        provide: NG_VALUE_ACCESSOR,
+        useExisting: forwardRef(() => PriorityComponent),
+        multi: true
+    }]
 })
 export class PriorityComponent implements ControlValueAccessor {
     @Output() change = new EventEmitter();

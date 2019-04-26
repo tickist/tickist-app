@@ -5,17 +5,21 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 const noop = () => {
 };
 
-export const COLOR_PICKER_INPUT_CONTROL_VALUE_ACCESSOR: any = {
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => ColorPickerComponent),
-    multi: true
-};
+// export const COLOR_PICKER_INPUT_CONTROL_VALUE_ACCESSOR: any = {
+//     provide: NG_VALUE_ACCESSOR,
+//     useExisting: forwardRef(() => ColorPickerComponent),
+//     multi: true
+// };
 
 @Component({
   selector: 'color-picker',
   templateUrl: './color-picker.html',
   styleUrls: ['./color-picker.scss'],
-  providers: [COLOR_PICKER_INPUT_CONTROL_VALUE_ACCESSOR]
+  providers: [{
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => ColorPickerComponent),
+      multi: true
+  }]
 })
 export class ColorPickerComponent implements ControlValueAccessor  {
 
