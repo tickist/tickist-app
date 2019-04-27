@@ -1,5 +1,4 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {ProjectTreeComponent} from './project-tree.component';
 import {TickistMaterialModule} from '../../../../material.module';
 import {TickistSharedModule} from '../../../../shared/shared.module';
@@ -10,35 +9,35 @@ import {CdkTree, CdkTreeModule} from '@angular/cdk/tree';
 import {MatBadgeModule, MatIconModule, MatToolbarModule, MatTreeModule, MatTreeNodeToggle} from '@angular/material';
 import {TickistSingleTaskModule} from '../../../../single-task/single-task.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
+import {MockDirective} from 'ng-mocks';
+import {Project} from '../../../../models/projects';
 
 describe('ProjectTreeComponent', () => {
     let component: ProjectTreeComponent;
     let fixture: ComponentFixture<ProjectTreeComponent>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
+         TestBed.configureTestingModule({
             imports: [
                 TickistSharedModule,
-                CdkTreeModule,
-                MatTreeModule,
                 TickistSingleTaskModule,
                 RouterModule.forRoot([]),
                 MatBadgeModule,
                 MatIconModule,
                 MatToolbarModule
             ],
-            declarations: [ProjectTreeComponent],
+            declarations: [ProjectTreeComponent, MockDirective(MatTreeNodeToggle)],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'}
             ],
             schemas: [NO_ERRORS_SCHEMA]
-        })
-            .compileComponents();
+        }).compileComponents();
     }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ProjectTreeComponent);
         component = fixture.componentInstance;
+        component.project = <Project> {'name': 'Project 1', 'color': 'red'};
         fixture.detectChanges();
     });
 

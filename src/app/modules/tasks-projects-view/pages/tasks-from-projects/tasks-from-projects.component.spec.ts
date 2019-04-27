@@ -32,11 +32,11 @@ import {MockTagService} from '../../../../testing/mocks/tag-service';
 import {MockTasksFiltersService} from '../../../../testing/mocks/tasks-filters-service';
 import {BlankComponent, RootComponent} from '../../../../testing/test.modules';
 import {PriorityComponent} from '../../../../shared/components/priority/priority.component';
-import {TasksListComponent} from '../tasks-list/tasks-list.component';
 import {SortTasksComponent} from '../../../../tasks/sort-tasks/sort-tasks.component';
 import {FilterTasksComponent} from '../../../../tasks/filter-tasks/filter-tasks.component';
 import {SingleTaskSimplifiedComponent} from '../../../../single-task/single-task-simplified/single-task-simplified.component';
 import {NoTasksComponent} from '../../../../single-task/no-tasks/no-tasks.component';
+import {StoreModule} from '@ngrx/store';
 
 
 const routes: Routes = [
@@ -70,9 +70,9 @@ describe('TasksFromProjectsComponent', () => {
         const activatedRoute = new MockActivatedRoute;
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FlexLayoutModule, RouterModule.forRoot(routes), FormsModule],
+            imports: [TickistMaterialModule, FlexLayoutModule, RouterModule.forRoot(routes), FormsModule, StoreModule.forRoot({})],
             declarations: [TasksFromProjectsComponent, ChangeTaskViewComponent, FilterTasksComponent,
-                MockComponent(SortTasksComponent), MockComponent(TasksListComponent), MockComponent(MenuButtonComponent),
+                MockComponent(SortTasksComponent), MockComponent(MenuButtonComponent),
                 MockComponent(SingleTaskSimplifiedComponent), MockComponent(SingleTaskComponent),
                 MockComponent(TaskNameComponent), MockComponent(PinButtonComponent),
                 MockComponent(DateOptionsComponent), MockComponent(RightMenuComponent),
