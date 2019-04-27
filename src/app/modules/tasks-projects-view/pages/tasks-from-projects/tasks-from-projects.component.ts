@@ -20,6 +20,7 @@ import {UpdateUser} from '../../../../core/actions/user.actions';
 import {homeRoutesName} from '../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
 import {UpdateProject} from '../../../../core/actions/projects/projects.actions';
+import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 
 @Component({
     selector: 'tickist-tasks-from-projects',
@@ -61,16 +62,17 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.selectedProjectsStream$ = combineLatest(
             this.route.params.pipe(map(params => params['projectId'])),
             this.store.select(selectAllProjects),
-            this.userService.user$
+            this.store.select(selectLoggedInUser),
+            this.store.select(selectActiveProject)
         );
         this.selectedProjectsStream$
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(([projectId, projects, user]) => {
+            .subscribe(([projectId, projects, user, activeProject]) => {
                 if (user) {
                     this.user = user;
                     if (projectId && projects && projects.length > 0 && user) {
                         const project = projects.find(p => p.id === parseInt(projectId, 10));
-                        if (project) {
+                        if (project && project !== activeProject) {
                             if (project.hasOwnProperty('allDescendants')) {
                                 this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));
                             }
