@@ -17,7 +17,13 @@ describe('FilterFutureTasksComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [FormsModule, FlexLayoutModule, TickistMaterialModule, NoopAnimationsModule],
+            imports: [
+                FormsModule,
+                FlexLayoutModule,
+                TickistMaterialModule,
+                NoopAnimationsModule,
+                StoreModule.forRoot({})
+            ],
             declarations: [FilterFutureTasksComponent],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'},

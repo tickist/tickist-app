@@ -14,6 +14,7 @@ import {MockUserService} from '../../../../../../testing/mocks/userService';
 import {MockConfigurationService} from '../../../../../../testing/mocks/configurationService';
 import {MockObservableMedia} from '../../../../../../testing/mocks/mediaObserver';
 import {MockProjectsFiltersService} from '../../../../../../testing/mocks/projects-filters-service';
+import {StoreModule} from '@ngrx/store';
 
 export const routes: Routes = [
     {
@@ -40,7 +41,7 @@ describe('ProjectsListComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, RouterModule.forRoot(routes), FormsModule],
+            imports: [TickistMaterialModule, RouterModule.forRoot(routes), FormsModule, StoreModule.forRoot({})],
             declarations: [ProjectsListComponent,
                 MockComponent(MenuButtonComponent),
                 RootComponent,

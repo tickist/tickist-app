@@ -6,6 +6,7 @@ import {TickistMaterialModule} from '../../../../material.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {GlobalStatisticsComponent} from './global-statistics.component';
 import {MockStatisticsService} from '../../../../testing/mocks/statisticsService';
+import {StoreModule} from '@ngrx/store';
 
 let comp: GlobalStatisticsComponent;
 let fixture: ComponentFixture<GlobalStatisticsComponent>;
@@ -18,14 +19,17 @@ describe('Component: GlobalStatistics', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule],
+            imports: [
+                TickistMaterialModule,
+                StoreModule.forRoot({})
+            ],
             declarations: [GlobalStatisticsComponent],
             providers: [
                 projectService.getProviders(),
                 statisticsService.getProviders(),
                 configurationService.getProviders()
             ],
-            schemas: [ NO_ERRORS_SCHEMA ]
+            schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(GlobalStatisticsComponent);
             comp = fixture.componentInstance;

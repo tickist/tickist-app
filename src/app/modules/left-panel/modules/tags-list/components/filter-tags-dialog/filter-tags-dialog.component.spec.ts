@@ -5,6 +5,7 @@ import {TickistMaterialModule} from '../../../../../../material.module';
 import {FormsModule} from '@angular/forms';
 import {MatDialogRef} from '@angular/material';
 import {MockTagsFiltersService} from '../../../../../../testing/mocks/tags-filters-service';
+import {StoreModule} from '@ngrx/store';
 
 
 describe('FilterTagsDialogComponent', () => {
@@ -13,7 +14,7 @@ describe('FilterTagsDialogComponent', () => {
     const tagsFiltersService = new MockTagsFiltersService();
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FormsModule],
+            imports: [TickistMaterialModule, FormsModule, StoreModule.forRoot({})],
             declarations: [FilterTagsDialogComponent],
             providers: [
                  [{provide : MatDialogRef, useValue : {}},

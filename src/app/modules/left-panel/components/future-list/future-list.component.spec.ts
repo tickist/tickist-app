@@ -11,6 +11,7 @@ import {MockTagService} from '../../../../testing/mocks/tag-service';
 import {MockConfigurationService} from '../../../../testing/mocks/configurationService';
 import {APP_BASE_HREF} from '@angular/common';
 import {RouterModule, Routes} from '@angular/router';
+import {StoreModule} from '@ngrx/store';
 
 const routes: Routes = [];
 
@@ -25,7 +26,13 @@ describe('FutureListComponent', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [ RouterModule.forRoot(routes), FormsModule, FlexLayoutModule, TickistMaterialModule, NoopAnimationsModule],
+            imports: [
+                RouterModule.forRoot(routes),
+                FormsModule, FlexLayoutModule,
+                TickistMaterialModule,
+                NoopAnimationsModule,
+                StoreModule.forRoot({})
+            ],
             declarations: [FutureListComponent],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'},

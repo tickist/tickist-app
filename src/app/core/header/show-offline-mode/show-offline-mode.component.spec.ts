@@ -3,6 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ShowOfflineModeComponent} from './show-offline-mode.component';
 import {MockConfigurationService} from '../../../testing/mocks/configurationService';
 import {APP_BASE_HREF} from '@angular/common';
+import {StoreModule} from '@ngrx/store';
 
 describe('ShowOfflineModeComponent', () => {
     let component: ShowOfflineModeComponent;
@@ -11,6 +12,7 @@ describe('ShowOfflineModeComponent', () => {
     beforeEach(async(() => {
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
+            imports: [StoreModule.forRoot({})],
             declarations: [ShowOfflineModeComponent],
             providers: [
                 configurationService.getProviders(),

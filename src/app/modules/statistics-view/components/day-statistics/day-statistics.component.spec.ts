@@ -6,6 +6,7 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {DayStatisticsComponent} from './day-statistics.component';
 import {TickistSharedModule} from '../../../../shared/shared.module';
 import {MockStatisticsService} from '../../../../testing/mocks/statisticsService';
+import {StoreModule} from '@ngrx/store';
 
 let comp: DayStatisticsComponent;
 let fixture: ComponentFixture<DayStatisticsComponent>;
@@ -18,7 +19,7 @@ describe('Component: Day statistics-view', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, TickistSharedModule],
+            imports: [TickistMaterialModule, TickistSharedModule, StoreModule.forRoot({})],
             declarations: [DayStatisticsComponent],
             providers: [
                 projectService.getProviders(),

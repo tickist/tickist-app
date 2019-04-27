@@ -6,6 +6,7 @@ import {MockConfigurationService} from '../../../../testing/mocks/configurationS
 import {TickistMaterialModule} from '../../../../material.module';
 import {TickistSharedModule} from '../../../../shared/shared.module';
 import {MockUserService} from '../../../../testing/mocks/userService';
+import {StoreModule} from '@ngrx/store';
 
 let comp: TodayComponent;
 let fixture: ComponentFixture<TodayComponent>;
@@ -18,7 +19,7 @@ describe('Component: Today', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, TickistSharedModule],
+            imports: [TickistMaterialModule, TickistSharedModule, StoreModule.forRoot({})],
             declarations: [TodayComponent],
             providers: [
                 projectService.getProviders(),

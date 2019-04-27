@@ -3,6 +3,7 @@ import {provideMockActions} from '@ngrx/effects/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 
 import {FutureTasksEffects} from './future-tasks.effects';
+import {StoreModule} from '@ngrx/store';
 
 describe('FutureTasksEffects', () => {
     let actions$: Observable<any>;
@@ -10,6 +11,7 @@ describe('FutureTasksEffects', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
+            imports: [StoreModule.forRoot({})],
             providers: [
                 FutureTasksEffects,
                 provideMockActions(() => actions$)

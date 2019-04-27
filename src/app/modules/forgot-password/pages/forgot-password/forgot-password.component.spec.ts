@@ -1,9 +1,9 @@
 import {TestBed, ComponentFixture, async} from '@angular/core/testing';
-import {MockProjectService} from '../../testing/mocks/project-service';
-import {MockConfigurationService} from '../../testing/mocks/configurationService';
-import {TickistMaterialModule} from '../../material.module';
 import {ForgotPasswordComponent} from './forgot-password.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
+import {MockProjectService} from '../../../../testing/mocks/project-service';
+import {MockConfigurationService} from '../../../../testing/mocks/configurationService';
+import {TickistMaterialModule} from '../../../../material.module';
 
 let comp: ForgotPasswordComponent;
 let fixture: ComponentFixture<ForgotPasswordComponent>;
@@ -21,7 +21,7 @@ describe('Component: ForgotPassword', () => {
                 projectService.getProviders(),
                 configurationService.getProviders()
             ],
-            schemas: [ NO_ERRORS_SCHEMA ]
+            schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(ForgotPasswordComponent);
             comp = fixture.componentInstance;

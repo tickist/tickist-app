@@ -6,6 +6,7 @@ import {MockProjectService} from '../../../../testing/mocks/project-service';
 import {MockConfigurationService} from '../../../../testing/mocks/configurationService';
 import {AvatarSize} from '../../../../shared/pipes/avatarSize';
 import {TickistMaterialModule} from '../../../../material.module';
+import {StoreModule} from '@ngrx/store';
 
 let comp: TeamComponent;
 let fixture: ComponentFixture<TeamComponent>;
@@ -17,7 +18,7 @@ describe('Component: Team', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule],
+            imports: [TickistMaterialModule, StoreModule.forRoot({})],
             declarations: [TeamComponent, AvatarSize],
             providers: [
                 projectService.getProviders(),

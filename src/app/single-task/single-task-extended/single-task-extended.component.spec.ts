@@ -6,6 +6,7 @@ import {MockTaskService} from '../../testing/mocks/task-service';
 import {MockConfigurationService} from '../../testing/mocks/configurationService';
 import {TickistMaterialModule} from '../../material.module';
 import {MockProjectService} from '../../testing/mocks/project-service';
+import {StoreModule} from '@ngrx/store';
 
 describe('SingleTaskExtendedComponent', () => {
     let component: SingleTaskExtendedComponent;
@@ -17,7 +18,7 @@ describe('SingleTaskExtendedComponent', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule],
+            imports: [TickistMaterialModule, StoreModule.forRoot({})],
             declarations: [SingleTaskExtendedComponent],
             providers: [
                 tasksService.getProviders(),

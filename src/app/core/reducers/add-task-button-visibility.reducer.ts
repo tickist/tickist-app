@@ -1,5 +1,3 @@
-import {Action} from '@ngrx/store';
-import {ApiErrorActionTypes} from '../actions/detect-api-error.actions';
 import {AddTaskButtonVisibilityActions, AddTaskButtonVisibilityActionTypes} from '../actions/add-task-button-visibility.actions';
 
 

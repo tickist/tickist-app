@@ -8,6 +8,7 @@ import {TickistSharedModule} from '../../../../shared/shared.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {MockLocation} from '../../../../testing/mocks/location';
+import {StoreModule} from '@ngrx/store';
 
 let comp: UserComponent;
 let fixture: ComponentFixture<UserComponent>;
@@ -21,7 +22,7 @@ describe('Component: ForgotPassword', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, TickistSharedModule, FormsModule, ReactiveFormsModule],
+            imports: [TickistMaterialModule, TickistSharedModule, FormsModule, ReactiveFormsModule, StoreModule.forRoot({})],
             declarations: [UserComponent],
             providers: [
                 projectService.getProviders(),

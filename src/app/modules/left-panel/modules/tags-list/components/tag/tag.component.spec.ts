@@ -6,6 +6,7 @@ import {MockTaskService} from '../../../../../../testing/mocks/task-service';
 import {MockTagService} from '../../../../../../testing/mocks/tag-service';
 import {TickistMaterialModule} from '../../../../../../material.module';
 import {MockTasksFiltersService} from '../../../../../../testing/mocks/tasks-filters-service';
+import {StoreModule} from '@ngrx/store';
 
 let comp: TagComponent;
 let fixture: ComponentFixture<TagComponent>;
@@ -19,7 +20,7 @@ describe('TagComponent', () => {
         const tasksFiltersService = new MockTasksFiltersService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, ReactiveFormsModule],
+            imports: [TickistMaterialModule, ReactiveFormsModule, StoreModule.forRoot({})],
             declarations: [TagComponent],
             providers: [
                 taskService.getProviders(),

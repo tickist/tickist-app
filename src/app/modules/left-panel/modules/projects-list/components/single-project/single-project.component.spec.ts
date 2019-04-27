@@ -13,6 +13,8 @@ import {MockUserService} from '../../../../../../testing/mocks/userService';
 import {BlankComponent, RootComponent} from '../../../../../../testing/test.modules';
 import {TickistMaterialModule} from '../../../../../../material.module';
 import {MenuButtonComponent} from '../../../../../../shared/components/menu-button/menu-button.component';
+import {MediaObserver} from '@angular/flex-layout';
+import {StoreModule} from '@ngrx/store';
 
 
 let comp: SingleProjectComponent;
@@ -35,6 +37,9 @@ export const routes: Routes = [
     }
 ];
 
+class MediaObserverMock {
+}
+
 describe('SingleProjectComponent', () => {
 
     beforeEach(async(() => {
@@ -43,13 +48,20 @@ describe('SingleProjectComponent', () => {
         const userService = new MockUserService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, ReactiveFormsModule, FormsModule, RouterModule.forRoot(routes), NoopAnimationsModule],
+            imports: [
+                TickistMaterialModule,
+                ReactiveFormsModule,
+                FormsModule,
+                RouterModule.forRoot(routes),
+                NoopAnimationsModule,
+                StoreModule.forRoot({})
+            ],
             declarations: [SingleProjectComponent, RootComponent, BlankComponent, MenuButtonComponent],
             providers: [
                 userService.getProviders(),
                 projectService.getProviders(),
                 configurationService.getProviders(),
-                ObservableMedia,
+                {provide: MediaObserver, useClass: MediaObserverMock},
                 {provide: APP_BASE_HREF, useValue: '/'}
             ]
         })

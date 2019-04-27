@@ -9,6 +9,7 @@ import {MockTaskService} from '../../../testing/mocks/task-service';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {StoreModule} from '@ngrx/store';
 
 describe('SearchAutocompleteComponent', () => {
     let component: SearchAutocompleteComponent;
@@ -18,14 +19,21 @@ describe('SearchAutocompleteComponent', () => {
         const tasksFiltersService = new MockTasksFiltersService();
         const tasksService = new MockTaskService();
         TestBed.configureTestingModule({
-            imports: [FormsModule, ReactiveFormsModule, TickistMaterialModule, RouterModule.forRoot([]), NoopAnimationsModule],
+            imports: [
+                FormsModule,
+                ReactiveFormsModule,
+                TickistMaterialModule,
+                RouterModule.forRoot([]),
+                NoopAnimationsModule,
+                StoreModule.forRoot({})
+            ],
             declarations: [SearchAutocompleteComponent],
             providers: [
                 tasksFiltersService.getProviders(),
                 tasksService.getProviders(),
                 {provide: APP_BASE_HREF, useValue: '/'}
             ],
-            schemas: [ NO_ERRORS_SCHEMA ]
+            schemas: [NO_ERRORS_SCHEMA]
         })
             .compileComponents();
     }));

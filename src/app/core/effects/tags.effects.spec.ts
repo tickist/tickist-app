@@ -4,6 +4,8 @@ import {Observable, ReplaySubject} from 'rxjs';
 
 import {TagsEffects} from './tags.effects';
 import {StoreModule} from '@ngrx/store';
+import {TagService} from '../../services/tag.service';
+import {HttpClientModule} from '@angular/common/http';
 
 describe('TagsEffects', () => {
     let actions$: Observable<any>;
@@ -11,9 +13,13 @@ describe('TagsEffects', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [StoreModule.forRoot({})],
+            imports: [
+                StoreModule.forRoot({}),
+                HttpClientModule
+            ],
             providers: [
                 TagsEffects,
+                TagService,
                 provideMockActions(() => actions$)
             ]
         });

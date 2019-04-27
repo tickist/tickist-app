@@ -3,9 +3,12 @@ import {provideMockActions} from '@ngrx/effects/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 import {StatisticsEffects} from './statistics.effects';
 import {StoreModule} from '@ngrx/store';
+import {UserService} from '../../../core/services/user.service';
+import {StatisticsService} from '../../../services/statistics.service';
 
+class StatisticsServiceMock {}
 
-describe('Statistics.EffectEffects', () => {
+describe('Statistics.Effect', () => {
     let actions$: Observable<any>;
     let effects: StatisticsEffects;
 
@@ -14,6 +17,7 @@ describe('Statistics.EffectEffects', () => {
             imports: [StoreModule.forRoot({})],
             providers: [
                 StatisticsEffects,
+                { provide: StatisticsService, useClass: StatisticsServiceMock },
                 provideMockActions(() => actions$)
             ]
         });

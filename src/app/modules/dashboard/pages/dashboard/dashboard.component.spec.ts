@@ -10,6 +10,7 @@ import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {StoreModule} from '@ngrx/store';
 
 let comp: DashboardComponent;
 let fixture: ComponentFixture<DashboardComponent>;
@@ -23,7 +24,7 @@ describe('Component: Dashboard', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, RouterModule.forRoot([]), FlexLayoutModule],
+            imports: [TickistMaterialModule, RouterModule.forRoot([]), FlexLayoutModule, StoreModule.forRoot({})],
             declarations: [DashboardComponent],
             providers: [
                 projectService.getProviders(),
