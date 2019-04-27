@@ -5,6 +5,7 @@ import {MockProjectService} from '../../testing/mocks/project-service';
 import {MockConfigurationService} from '../../testing/mocks/configurationService';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {MockTasksFiltersService} from '../../testing/mocks/tasks-filters-service';
+import {StoreModule} from '@ngrx/store';
 
 
 let comp: FilterTasksComponent;
@@ -18,7 +19,7 @@ describe('Component: ForgotPassword', () => {
         const tasksFiltersService = new MockTasksFiltersService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule],
+            imports: [TickistMaterialModule, StoreModule.forRoot({})],
             declarations: [FilterTasksComponent],
             providers: [
                 projectService.getProviders(),

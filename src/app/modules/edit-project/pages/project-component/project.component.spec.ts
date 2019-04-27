@@ -9,6 +9,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
+import {StoreModule} from '@ngrx/store';
 
 let comp: ProjectComponent;
 let fixture: ComponentFixture<ProjectComponent>;
@@ -21,7 +22,14 @@ describe('Component: Project', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, TickistSharedModule, FormsModule, ReactiveFormsModule, RouterModule.forRoot([])],
+            imports: [
+                TickistMaterialModule,
+                TickistSharedModule,
+                FormsModule,
+                ReactiveFormsModule,
+                RouterModule.forRoot([]),
+                StoreModule.forRoot({})
+            ],
             declarations: [ProjectComponent],
             providers: [
                 projectService.getProviders(),
@@ -29,7 +37,7 @@ describe('Component: Project', () => {
                 configurationService.getProviders(),
                 {provide: APP_BASE_HREF, useValue: '/'}
             ],
-            schemas: [ NO_ERRORS_SCHEMA ]
+            schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(ProjectComponent);
             comp = fixture.componentInstance;

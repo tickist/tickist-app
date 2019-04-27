@@ -4,6 +4,11 @@ import {Observable, ReplaySubject} from 'rxjs';
 
 import {AuthEffects} from './auth.effects';
 import {StoreModule} from '@ngrx/store';
+import {RouterModule} from '@angular/router';
+import {APP_BASE_HREF} from '@angular/common';
+import {UserService} from '../services/user.service';
+
+class UserServiceMock {}
 
 describe('Effects', () => {
     let actions$: Observable<any>;
@@ -11,10 +16,15 @@ describe('Effects', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [StoreModule.forRoot({})],
+            imports: [
+                StoreModule.forRoot({}),
+                RouterModule.forRoot([])
+            ],
             providers: [
                 AuthEffects,
-                provideMockActions(() => actions$)
+                provideMockActions(() => actions$),
+                {provide: APP_BASE_HREF, useValue: '/'},
+                {provide: UserService, useValue: UserServiceMock}
             ]
         });
 

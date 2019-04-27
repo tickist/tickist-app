@@ -4,6 +4,8 @@ import {MockProjectService} from './testing/mocks/project-service';
 import {MockConfigurationService} from './testing/mocks/configurationService';
 import {TickistMaterialModule} from './material.module';
 import {AppComponent} from './app.component';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {environment} from '../environments/environment';
 
 let comp: AppComponent;
 let fixture: ComponentFixture<AppComponent>;
@@ -13,7 +15,7 @@ describe('Component: ForgotPassword', () => {
     beforeEach(async(() => {
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule],
+            imports: [TickistMaterialModule,  ServiceWorkerModule.register('/ngsw-worker.js')],
             declarations: [AppComponent],
             schemas: [ NO_ERRORS_SCHEMA ]
         }).compileComponents().then(() => {

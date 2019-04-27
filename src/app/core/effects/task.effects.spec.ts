@@ -4,6 +4,9 @@ import {Observable, ReplaySubject} from 'rxjs';
 
 import {TaskEffects} from './task.effects';
 import {StoreModule} from '@ngrx/store';
+import {TaskService} from '../services/task.service';
+
+class TaskServiceMock {}
 
 describe('TaskEffects', () => {
     let actions$: Observable<any>;
@@ -14,6 +17,7 @@ describe('TaskEffects', () => {
             imports: [StoreModule.forRoot({})],
             providers: [
                 TaskEffects,
+                { provide: TaskService, useClass: TaskServiceMock },
                 provideMockActions(() => actions$)
             ]
         });

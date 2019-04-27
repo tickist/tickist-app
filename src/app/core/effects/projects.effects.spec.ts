@@ -4,6 +4,10 @@ import {Observable, ReplaySubject} from 'rxjs';
 
 import {ProjectsEffects} from './projects.effects';
 import {StoreModule} from '@ngrx/store';
+import {UserService} from '../services/user.service';
+import {ProjectService} from '../../services/project.service';
+
+class ProjectServiceMock {}
 
 describe('ProjectsEffects', () => {
     let actions$: Observable<any>;
@@ -14,6 +18,7 @@ describe('ProjectsEffects', () => {
             imports: [StoreModule.forRoot({})],
             providers: [
                 ProjectsEffects,
+                { provide: ProjectService, useClass: ProjectServiceMock },
                 provideMockActions(() => actions$)
             ]
         });

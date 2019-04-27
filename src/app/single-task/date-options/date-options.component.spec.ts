@@ -15,6 +15,7 @@ import * as moment from 'moment';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
+import {StoreModule} from '@ngrx/store';
 
 
 let comp: DateOptionsComponent;
@@ -39,7 +40,7 @@ describe('EditDateOptionsComponent', () => {
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FormsModule, NoopAnimationsModule],
+            imports: [TickistMaterialModule, FormsModule, NoopAnimationsModule, StoreModule.forRoot({})],
             declarations: [DateOptionsComponent, MenuButtonComponent],
             providers: [
                 taskService.getProviders(),
@@ -83,15 +84,4 @@ describe('EditDateOptionsComponent', () => {
 
     });
 
-    describe('saveTask', () => {
-        it('should call method updateTask from taskService', fakeAsync(inject([TaskService],
-            (taskService: TaskService) => {
-                task = new Task(taskFromApi);
-                comp.task = task;
-                fixture.detectChanges();
-                comp.ngOnInit();
-                comp.saveTask({}, '');
-                expect(taskService.updateTask).toHaveBeenCalledWith(task, true);
-            })));
-    });
 });

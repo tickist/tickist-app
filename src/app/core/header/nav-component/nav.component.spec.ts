@@ -11,6 +11,7 @@ import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {MockTaskService} from '../../../testing/mocks/task-service';
 import {MockTasksFiltersService} from '../../../testing/mocks/tasks-filters-service';
+import {StoreModule} from '@ngrx/store';
 
 let comp: NavComponent;
 let fixture: ComponentFixture<NavComponent>;
@@ -25,7 +26,13 @@ describe('Component: Nav', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, TickistSharedModule, FlexLayoutModule, RouterModule.forRoot([])],
+            imports: [
+                TickistMaterialModule,
+                TickistSharedModule,
+                FlexLayoutModule,
+                RouterModule.forRoot([]),
+                StoreModule.forRoot({})
+            ],
             declarations: [NavComponent],
             providers: [
                 userService.getProviders(),
@@ -35,7 +42,7 @@ describe('Component: Nav', () => {
                 configurationService.getProviders(),
                 {provide: APP_BASE_HREF, useValue: '/'}
             ],
-            schemas: [ NO_ERRORS_SCHEMA ]
+            schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(NavComponent);
             comp = fixture.componentInstance;

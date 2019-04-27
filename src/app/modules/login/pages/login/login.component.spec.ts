@@ -8,10 +8,13 @@ import {TickistRoutingModule} from '../../../../routing.module';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {MockUserService} from '../../../../testing/mocks/userService';
+import {AuthService} from '../../../../core/services/auth.service';
+import {StoreModule} from '@ngrx/store';
 
 let comp: LoginComponent;
 let fixture: ComponentFixture<LoginComponent>;
 
+class AuthServiceMock {}
 
 describe('Component: Login', () => {
     beforeEach(async(() => {
@@ -19,12 +22,13 @@ describe('Component: Login', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, RouterModule.forRoot([])],
+            imports: [TickistMaterialModule, RouterModule.forRoot([]), StoreModule.forRoot({})],
             declarations: [LoginComponent],
             providers: [
                 userService.getProviders(),
                 configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                {provide: APP_BASE_HREF, useValue: '/'},
+                {provide: AuthService, useValue: AuthServiceMock}
             ],
             schemas: [ NO_ERRORS_SCHEMA ]
         }).compileComponents().then(() => {

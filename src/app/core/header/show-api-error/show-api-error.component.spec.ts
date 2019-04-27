@@ -3,6 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ShowApiErrorComponent} from './show-api-error.component';
 import {MockConfigurationService} from '../../../testing/mocks/configurationService';
 import {APP_BASE_HREF} from '@angular/common';
+import {StoreModule} from '@ngrx/store';
 
 describe('ShowApiErrorComponent', () => {
     let component: ShowApiErrorComponent;
@@ -11,6 +12,7 @@ describe('ShowApiErrorComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
+            imports: [StoreModule.forRoot({})],
             declarations: [ShowApiErrorComponent],
             providers: [
                 configurationService.getProviders(),

@@ -7,10 +7,14 @@ import {SignupComponent} from './signup.component';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
+import {AuthService} from '../../../../core/services/auth.service';
+import {StoreModule} from '@ngrx/store';
 
 let comp: SignupComponent;
 let fixture: ComponentFixture<SignupComponent>;
 const routes: Routes = [];
+
+class AuthServiceMock {}
 
 describe('Component: SignUp', () => {
     beforeEach(async(() => {
@@ -18,11 +22,12 @@ describe('Component: SignUp', () => {
 
         TestBed.configureTestingModule({
             imports: [
-                TickistMaterialModule, RouterModule.forRoot(routes)],
+                TickistMaterialModule, RouterModule.forRoot(routes), StoreModule.forRoot({})],
             declarations: [SignupComponent],
             providers: [
                 userService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                {provide: APP_BASE_HREF, useValue: '/'},
+                {provide: AuthService, useValue: AuthServiceMock}
             ],
             schemas: [ NO_ERRORS_SCHEMA ]
         }).compileComponents().then(() => {

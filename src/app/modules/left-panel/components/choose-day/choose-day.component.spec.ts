@@ -5,6 +5,7 @@ import {MockConfigurationService} from '../../../../testing/mocks/configurationS
 import {ReactiveFormsModule} from '@angular/forms';
 import {APP_BASE_HREF} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {StoreModule} from '@ngrx/store';
 
 
 describe('ChooseDayComponent', () => {
@@ -14,7 +15,7 @@ describe('ChooseDayComponent', () => {
     beforeEach(async(() => {
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, ReactiveFormsModule, NoopAnimationsModule],
+            imports: [TickistMaterialModule, ReactiveFormsModule, NoopAnimationsModule, StoreModule.forRoot({})],
             declarations: [ChooseDayComponent],
              providers: [
                 configurationService.getProviders(),
