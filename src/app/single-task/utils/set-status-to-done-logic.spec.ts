@@ -85,7 +85,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(1, 'd'));
+            expect(newTask.finishDate.set(0, 'milliseconds')).toEqual(moment(date).set(0, 'milliseconds').add(1, 'd'));
         });
 
         it('should return task with status undone and finishDate=+2days', () => {

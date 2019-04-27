@@ -6,7 +6,6 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {FilterFutureTasksComponent} from '../../components/filter-future-tasks/filter-future-tasks.component';
 import {MockComponent} from 'ng-mocks';
-import {TasksListComponent} from '../../tasks-list/tasks-list.component';
 import {ChangeTaskViewComponent} from '../../../../shared/components/change-task-view-component/change-task-view.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MockTaskService} from '../../../../testing/mocks/task-service';
@@ -39,7 +38,7 @@ describe('FutureTasksComponent', () => {
                 FlexLayoutModule,
                 NoopAnimationsModule
             ],
-            declarations: [FutureTasksComponent, MockComponent(FilterFutureTasksComponent), MockComponent(TasksListComponent),
+            declarations: [FutureTasksComponent, MockComponent(FilterFutureTasksComponent),
                 MockComponent(ChangeTaskViewComponent)],
             providers: [
                 {provide: APP_BASE_HREF, useValue: '/'},
