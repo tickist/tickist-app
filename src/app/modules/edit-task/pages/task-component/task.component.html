@@ -182,7 +182,7 @@
                         </mat-form-field>
 
                         <mat-form-field>
-                                <textarea matInput #taskDescription (blur)="updateImmediately($event, taskForm.value)"
+                                <textarea matInput #taskDescription (blur)="updateImmediately('description', 'extra.description', taskForm.value)"
                                           placeholder="Task description" formControlName="description"></textarea>
                             <mat-hint align="end">{{taskDescription.value?.length || 0}}/5000</mat-hint>
                         </mat-form-field>

@@ -34,6 +34,7 @@ import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../singl
 import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-list/projects-filters.selectors';
+import {convert} from '../../../../core/utils/addClickableLinksToString';
 
 @Component({
     selector: 'app-task-component',
@@ -41,6 +42,9 @@ import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-l
     styleUrls: ['./task.component.scss']
 })
 export class TaskComponent implements OnInit, OnDestroy {
+    ENTER = 'Enter';
+    ARROW_DOWN = 'ArrowDown';
+    ARROW_UP = 'ArrowUp';
     task: Task;
     tasks$: Observable<Task[]>;
     stream$: Observable<any>;
@@ -136,14 +140,14 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     @HostListener('window:keyup', ['$event'])
     keyEvent(event: KeyboardEvent) {
-        if (event.keyCode === KEY_CODE.ENTER && this.checkActiveItemInMenu('steps')) {
+        if (event.key === this.ENTER && this.checkActiveItemInMenu('steps')) {
             this.addNewStep();
         }
-        if (event.keyCode === KEY_CODE.DOWN_ARROW && event.shiftKey) {
+        if (event.key === this.ARROW_DOWN && event.shiftKey) {
             this.nextMenuElement();
         }
 
-        if (event.keyCode === KEY_CODE.UP_ARROW && event.shiftKey) {
+        if (event.key === this.ARROW_UP  && event.shiftKey) {
             this.previousMenuElement();
         }
 
@@ -416,8 +420,10 @@ export class TaskComponent implements OnInit, OnDestroy {
         const updatedTask = Object.assign({}, this.task);
         if (this.taskForm.valid) {
             updatedTask.name = values['main']['name'];
+            updatedTask.richName = convert(values['main']['name']);
             updatedTask.priority = values['main']['priority'];
             updatedTask.description = values['extra']['description'];
+            updatedTask.richDescription = convert(values['extra']['description']);
             updatedTask.finishDate = values['main']['finishDate'] ? moment(values['main']['finishDate'], 'DD-MM-YYYY') : '';
             updatedTask.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';

@@ -25,12 +25,18 @@ export class TasksFiltersEffects {
             withLatestFrom(this.store.select(selectLoggedInUser)),
             concatMap(([action, user]) => {
                 const {currentFilter_lt, currentFilter_gt} = TasksFiltersService.getDefaultCurrentEstimateTimeFilters();
-                return [
+                const actions = [];
+                actions.push(
                     new SetCurrentMainFilter({currentFilter: TasksFiltersService.getDefaultCurrentMainFilter()}),
                     new SetCurrentAssignedToFilter({currentFilter: TasksFiltersService.getAssignedToAllFilter()}),
-                    new SetCurrentTagsFilters({currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters()}),
                     new SetCurrentEstimateTimeFiltersTasks({currentFilter_gt, currentFilter_lt})
-                ];
+                );
+                if (action.payload.event.urlAfterRedirects.indexOf('tasks-projects-view') > 0) {
+                    actions.push(
+                        new SetCurrentTagsFilters({currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters()})
+                    );
+                }
+                return actions;
             })
         );
 
