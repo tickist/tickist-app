@@ -16,6 +16,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {TickistTasksModule} from '../../../../tasks/tasks.module';
 import {TickistSingleTaskModule} from '../../../../single-task/single-task.module';
+import {StoreModule} from '@ngrx/store';
 
 
 describe('FutureTasksComponent', () => {
@@ -36,7 +37,8 @@ describe('FutureTasksComponent', () => {
                 TickistSingleTaskModule,
                 ReactiveFormsModule,
                 FlexLayoutModule,
-                NoopAnimationsModule
+                NoopAnimationsModule,
+                StoreModule.forRoot({})
             ],
             declarations: [FutureTasksComponent, MockComponent(FilterFutureTasksComponent),
                 MockComponent(ChangeTaskViewComponent)],

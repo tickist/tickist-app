@@ -56,6 +56,7 @@
     "primeng": "^7.0.5",
     "rxjs": "^6.3.3",
     "sortablejs": "^1.6.0",
+    "truncate-html": "^1.0.2",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
