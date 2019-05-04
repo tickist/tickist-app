@@ -1,19 +1,20 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+        "module": "commonjs",
         "baseUrl": "./",
         "outDir": "./dist/out-tsc",
         "sourceMap": true,
         "declaration": false,
         "downlevelIteration": true,
-//        "noImplicitAny": true,
-//        "noImplicitReturns": true,
-//        "strictNullChecks": true,
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "target": "es5",
+//        "noImplicitAny": true,
+//        "suppressImplicitAnyIndexErrors": true,
         "typeRoots": [
             "node_modules/@types"
         ],

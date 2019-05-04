@@ -47,7 +47,7 @@ export const reducers: ActionReducerMap<any> = {
 };
 
 import createNgrxMiddleware from 'logrocket-ngrx';
-import * as LogRocket from 'logrocket';
+import LogRocket from 'logrocket';
 
 
 const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});

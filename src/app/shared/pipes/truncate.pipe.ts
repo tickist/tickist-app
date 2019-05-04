@@ -11,6 +11,7 @@ export class TruncatePipe implements PipeTransform {
             const limit = arg1 ? parseInt(arg1, 10) : 10;
             const trail = arg2 ? arg2 : '...';
             const options = {ellipsis: trail};
+
             return value.length > limit ? truncate(value, limit, options) : value;
         }
 

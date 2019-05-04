@@ -6,7 +6,7 @@ import {ITagApi} from '../../../models/tag-api.interface';
 import {IUserApi} from '../../../models/user-api.interface';
 import {IProjectApi} from '../../../models/project-api.interface';
 import * as _ from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import {Menu} from '../../../models/menu';
 
 export class TasksApiMockFactory {

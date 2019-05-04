@@ -11,7 +11,7 @@ import {AddUser} from '../actions/user.actions';
 import {User} from '../models';
 import {IToken, Token} from '../models/auth';
 import {ResetStore} from '../../tickist.actions';
-import * as LogRocket from 'logrocket';
+import LogRocket from 'logrocket';
 import {environment} from '../../../environments/environment';
 
 

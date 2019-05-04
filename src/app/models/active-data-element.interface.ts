@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import {stateActiveDateElement} from './state-active-date-element.enum';
 
 export interface IActiveDateElement {

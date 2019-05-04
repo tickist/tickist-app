@@ -4,7 +4,7 @@ import {ActiveDateState} from '../reducers/active-date.reducer';
 import {selectTasksState} from './task.selectors';
 import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
 import * as configurationAction from '../../reducers/actions/configuration';
-import * as moment from 'moment';
+import moment from 'moment';
 
 
 export const selectActiveDateState = createFeatureSelector<ActiveDateState>('activeDate');

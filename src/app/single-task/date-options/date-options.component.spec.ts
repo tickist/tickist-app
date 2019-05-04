@@ -11,7 +11,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {IUserApi} from '../../models/user-api.interface';
 import {IProjectApi} from '../../models/project-api.interface';
 import {ITaskApi} from '../../models/task-api.interface';
-import * as moment from 'moment';
+import moment from 'moment';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
