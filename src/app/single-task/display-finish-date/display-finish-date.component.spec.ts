@@ -7,7 +7,7 @@ import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-
 import {IUserApi} from '../../models/user-api.interface';
 import {IProjectApi} from '../../models/project-api.interface';
 import {ITaskApi} from '../../models/task-api.interface';
-import * as moment from 'moment';
+import moment from 'moment';
 
 
 

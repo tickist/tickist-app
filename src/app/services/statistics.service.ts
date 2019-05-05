@@ -1,24 +1,18 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Headers, RequestOptions, Response} from '@angular/http';
 import {select, Store} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {AppStore} from '../store';
 
 import {GlobalStatistics, DailyStatistics, ChartStatistics} from '../models/statistics';
-import {ConfigurationService} from './configuration.service';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {IActiveDateElement} from '../models/active-data-element.interface';
-import * as  moment from 'moment';
+import moment from 'moment';
 import {selectActiveDate} from '../core/selectors/active-date.selectors';
 
 @Injectable()
 export class StatisticsService {
-    global$: Observable<GlobalStatistics>;
-    charts$: Observable<ChartStatistics>;
-    daily$: Observable<DailyStatistics>;
-    globalStatisticsDateRage$: Observable<any>;
     activeDateElement: IActiveDateElement;
 
     constructor(public http: HttpClient, private store: Store<AppStore>) {

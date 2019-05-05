@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {FutureListElement} from './models';
-import * as moment from 'moment';
+import moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {MediaObserver} from '@angular/flex-layout';

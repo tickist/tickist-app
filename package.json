@@ -56,6 +56,7 @@
     "primeng": "^7.0.5",
     "rxjs": "^6.3.3",
     "sortablejs": "^1.6.0",
+    "truncate-html": "^1.0.2",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
@@ -70,7 +71,7 @@
     "@types/jasmine": "3.3.0",
     "@types/jasminewd2": "2.0.6",
     "@types/jest": "^23.3.5",
-    "@types/lodash": "4.14.117",
+    "@types/lodash": "4.14.123",
     "@types/node": "^10.11.7",
     "blue-harvest": "^0.3.1",
     "branch-name": "^1.0.0",
