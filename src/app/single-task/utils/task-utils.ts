@@ -19,12 +19,12 @@ export function hideAllMenuElements(task: Task): Task {
 
 
 export function removeTag(task: Task, tag: Tag): Task {
-    const newTask = Object.assign({}, task);
-    const index: number = newTask.tags.indexOf(tag, 0);
+    const tags = [...task.tags];
+    const index: number = tags.indexOf(tag, 0);
     if (index > -1) {
-        newTask.tags.splice(index, 1);
+        tags.splice(index, 1);
     }
-    return newTask;
+    return Object.assign({}, task, {tags: tags});
 }
 
 export function moveFinishDateFromPreviousFinishDate(task, delta: string | number): Task {

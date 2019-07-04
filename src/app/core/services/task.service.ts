@@ -55,7 +55,8 @@ export class TaskService {
         if (!cleanMenuState) {
             menuStateCopy = taskToSnakeCase(task)['menu_showing'];
         }
-        return this.http.put<ITaskApi>(`${environment['apiUrl']}/tasks/${task.id}/`, taskToSnakeCase(task));
+        return this.http.put<ITaskApi>(`${environment['apiUrl']}/tasks/${task.id}/`, taskToSnakeCase(task))
+            .pipe(map((payload: ITaskApi) => new Task(payload)));
             // .subscribe(payload => {
             //     if (!cleanMenuState) {
             //         payload['menu_showing'] = menuStateCopy;

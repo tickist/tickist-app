@@ -27,7 +27,7 @@ import {ITaskApi} from '../../../../models/task-api.interface';
 import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
-import {DeleteTask, RequestCreateTask, UpdateTask} from '../../../../core/actions/tasks/task.actions';
+import {DeleteTask, RequestCreateTask, RequestUpdateTask, UpdateTask} from '../../../../core/actions/tasks/task.actions';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
@@ -381,7 +381,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         .subscribe((t) => {
                             this.task.tags.push(new Tag(t));
                             if (!this.isNewTask()) {
-                                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
                             }
 
                         });
@@ -391,7 +391,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 if (existingTag) {
                     this.task.tags.push(existingTag);
                     if (!this.isNewTask()) {
-                        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
                     }
                 } else {
                     this.tagService.createTagDuringEditingTask(new Tag({name: this.tagsCtrl.value}))
@@ -399,7 +399,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         .subscribe((t) => {
                             this.task.tags.push(new Tag(t));
                             if (!this.isNewTask()) {
-                                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
                             }
 
                         });
@@ -464,7 +464,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             if (this.isNewTask()) {
                 this.store.dispatch(new RequestCreateTask({task: updatedTask}));
             } else {
-                this.store.dispatch(new UpdateTask({task: {id: updatedTask.id, changes: updatedTask}}));
+                this.store.dispatch(new RequestUpdateTask({task: {id: updatedTask.id, changes: updatedTask}}));
             }
 
             if (!withoutClose) {

@@ -11,7 +11,7 @@ import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
-import {UpdateTask} from '../../core/actions/tasks/task.actions';
+import {RequestUpdateTask, UpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
@@ -96,7 +96,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.selectTaskProject.valueChanges.subscribe(value => {
             this.store.select(selectProjectById(value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
                 const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
-                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: task}}));
+                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));
             });
         });
     }
@@ -114,7 +114,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     changeAssignedTo(event) {
         this.task.owner = <SimpleUser> this.task
             .taskProject.shareWith.find(user => user.hasOwnProperty('id') && (<SimpleUser> user).id === event.value);
-        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task, true, true);
     }
 
@@ -131,7 +131,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     removeTag(tag) {
         this.task = removeTag(this.task,  tag);
-        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
