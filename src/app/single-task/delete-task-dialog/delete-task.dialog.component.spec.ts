@@ -4,7 +4,7 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {TickistMaterialModule} from '../../material.module';
 import {DeleteTaskDialogComponent} from './delete-task.dialog.component';
 import {MockProjectService} from '../../testing/mocks/project-service';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 let comp: DeleteTaskDialogComponent;
 let fixture: ComponentFixture<DeleteTaskDialogComponent>;

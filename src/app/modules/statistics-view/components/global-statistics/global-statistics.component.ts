@@ -28,8 +28,8 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
     optionsTasksCounter: any = {};
     optionsTimeChart: any = {};
     minutes2Hours: Minutes2hoursPipe;
-    @ViewChild('tasksCounterChart', {read: BaseChartDirective}) tasksCounterChart: any;
-    @ViewChild('timeChart', {read: BaseChartDirective}) timeChart: any;
+    @ViewChild('tasksCounterChart', { read: BaseChartDirective, static: false }) tasksCounterChart: any;
+    @ViewChild('timeChart', { read: BaseChartDirective, static: false }) timeChart: any;
 
     constructor(private store: Store<AppStore>, private cd: ChangeDetectorRef) {
         this.minutes2Hours = new Minutes2hoursPipe();

@@ -12,7 +12,7 @@ import {
 })
 export class PinButtonComponent implements OnInit, OnChanges, AfterViewInit {
     @Input() pinned: boolean;
-    @ViewChild('iconElement') iconElement: ElementRef;
+    @ViewChild('iconElement', { static: true }) iconElement: ElementRef;
 
     constructor(private elRef: ElementRef, private renderer: Renderer2) {
     }

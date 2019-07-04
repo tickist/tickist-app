@@ -1,7 +1,9 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges} from '@angular/core';
 import {ConfigurationService} from '../../services/configuration.service';
 import {Task} from '../../models/tasks';
-import {TaskService} from '../../core/services/task.service';
+import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
+import {AppStore} from '../../store';
+import {Store} from '@ngrx/store';
 
 
 @Component({
@@ -22,7 +24,7 @@ export class EditRepeatingOptionComponent implements OnInit {
     @Input() task: Task;
 
 
-    constructor(protected configurationService: ConfigurationService, protected taskService: TaskService) {
+    constructor(protected configurationService: ConfigurationService, private store: Store<AppStore>) {
     }
 
     ngOnInit() {
@@ -45,22 +47,25 @@ export class EditRepeatingOptionComponent implements OnInit {
     }
 
     saveTask($event: any, source: string) {
+        let task;
         if (source === 'repeatDefault') {
+            let repeat, repeatDelta;
             if ($event.value !== 99) {
-                this.task.repeat = $event.value;
-                this.task.repeatDelta = 1;
+                repeat = $event.value;
+                repeatDelta = 1;
             } else {
-                this.task.repeatDelta = this.repeatDelta;
-                this.task.repeat = this.repeatCustom;
+                repeatDelta = this.repeatDelta;
+                repeat = this.repeatCustom;
             }
+            task = Object.assign({}, this.task, {repeat: repeat, repeatDelta: repeatDelta});
         } else if (source === 'repeatDelta') {
-            this.task.repeatDelta = $event.value;
+            task = Object.assign({}, this.task, {repeatDelta: $event.value});
         } else if (source === 'repeatCustom') {
-            this.task.repeat = $event.value;
+            task = Object.assign({}, this.task, {repeat: $event.value});
         } else if (source === 'fromRepeating') {
-            this.task.fromRepeating = $event.value;
+            task = Object.assign({}, this.task, {fromRepeating: $event.value});
         }
-        this.taskService.updateTask(this.task, true);
+        this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
         // if (this.repeatDefault !== 99) {
         //     this.task.repeat = this.repeatDefault;
         //     this.task.repeatDelta = 1;

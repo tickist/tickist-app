@@ -4,7 +4,7 @@ import {Store, State, select} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
 import {Task} from '../../models/tasks';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {StatisticsService} from '../../services/statistics.service';
 import {ConfigurationService} from '../../services/configuration.service';
 import {TagService} from '../../services/tag.service';

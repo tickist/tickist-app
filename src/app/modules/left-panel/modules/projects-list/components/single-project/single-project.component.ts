@@ -8,7 +8,7 @@ import {ConfigurationService} from '../../../../../../services/configuration.ser
 
 import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {UserService} from '../../../../../../core/services/user.service';
 import {User} from '../../../../../../core/models';
 import {AddNewActiveProjectId, DeleteActiveProjectId} from '../../../../../../core/actions/projects/active-projects-ids.actions';

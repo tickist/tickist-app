@@ -4,7 +4,8 @@ import {
 } from '@angular/core';
 import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../services/configuration.service';
-import {MatDialog, MatSelect} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
 import {ProjectService} from '../../services/project.service';
 import {Project} from '../../models/projects';
 import {Observable, Subject} from 'rxjs';
@@ -32,7 +33,7 @@ import {FormControl} from '@angular/forms';
 export class SingleTaskExtendedComponent extends SingleTask implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     @Input() task: Task;
     @Input() mediaChange;
-    @ViewChild('container') container: ElementRef;
+    @ViewChild('container', { static: true }) container: ElementRef;
 
     dateFormat = 'DD-MM-YYYY';
     projects$: Observable<Project[]>;

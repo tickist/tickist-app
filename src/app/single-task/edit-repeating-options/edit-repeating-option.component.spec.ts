@@ -15,6 +15,9 @@ import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.f
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
 import moment from 'moment';
+import {MockStore, provideMockStore} from '@ngrx/store/testing';
+import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
+import {Store} from '@ngrx/store';
 
 
 let comp: EditRepeatingOptionComponent;
@@ -23,6 +26,7 @@ let task: Task;
 
 
 describe('Edit repeating Component', () => {
+    let suite: any = {};
     let user: IUserApi;
     let project: IProjectApi;
     let taskFromApi: ITaskApi;
@@ -31,17 +35,17 @@ describe('Edit repeating Component', () => {
     const projectApiMockFactory: ProjectsApiMockFactory = new ProjectsApiMockFactory();
 
     beforeEach(async(() => {
+        const initialState = {};
         user = userApiMockFactroy.createUserDict();
         project = projectApiMockFactory.createProjectDict([], user, []);
-        taskFromApi = taskApiMockFactory.createTaskDict(user, user, project,  []);
+        taskFromApi = taskApiMockFactory.createTaskDict(user, user, project, []);
         taskFromApi.finish_date = moment().format('DD-MM-YYYY');
-        const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, FormsModule],
             declarations: [EditRepeatingOptionComponent],
             providers: [
-                taskService.getProviders(),
+                provideMockStore({initialState}),
                 configurationService.getProviders()
             ]
         }).compileComponents().then(() => {
@@ -49,12 +53,14 @@ describe('Edit repeating Component', () => {
             comp = fixture.componentInstance;
 
         });
+
     }));
     afterEach(() => {
         comp = null;
         fixture = null;
         task = null;
         taskFromApi = null;
+        suite = {};
     });
     it('should create', () => {
         expect(comp).toBeTruthy();
@@ -83,42 +89,50 @@ describe('Edit repeating Component', () => {
 
 
     describe('saveTask', () => {
-        it('should call method updateTask from taskService', fakeAsync(inject([TaskService],
-            (taskService: TaskService) => {
-                task = new Task(taskFromApi);
-                comp.task = task;
-                comp.ngOnInit();
-                comp.saveTask({}, '');
-                expect(taskService.updateTask).toHaveBeenCalledWith(task, true);
-            })));
+        beforeEach(() => {
+            suite.store = TestBed.get(Store);
+            suite.dispatch = jest.spyOn(suite.store, 'dispatch');
+        });
+        it('should dispatch action RequestUpdateTask', () => {
+            task = new Task(taskFromApi);
+            comp.task = task;
+            comp.ngOnInit();
+            comp.saveTask({value: 1}, 'repeatDefault');
+            task.repeat = 1;
+            expect(suite.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+        });
 
-        it('should update task model when the repeat default is changed (scenario 1. -> default repeat )', fakeAsync(inject([TaskService],
-            (taskService: TaskService) => {
-                const taskRepeat = 2;
-                task = new Task(taskFromApi);
-                comp.task = task;
-                comp.ngOnInit();
-                comp.saveTask({value: taskRepeat}, 'repeatDefault');
-                expect(comp.task.repeat).toBe(taskRepeat);
-                expect(comp.task.repeatDelta).toBe(1);
-                expect(taskService.updateTask).toHaveBeenCalledWith(task, true);
-            })));
+        it('should update task model when the repeat default is changed (scenario 1. -> default repeat )', () => {
+            const taskRepeat = 2;
+            task = new Task(taskFromApi);
+            comp.task = task;
+            comp.ngOnInit();
+            comp.saveTask({value: taskRepeat}, 'repeatDefault');
+            expect(suite.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
+                task: {
+                    id: task.id,
+                    changes: Object.assign({}, task, {repeat: taskRepeat, repeatDelta: 1})
+                }
+            }));
+        });
 
-        it('should update task model when the repeat default is changed (scenario 2. -> repeat custom)', fakeAsync(inject([TaskService],
-            (taskService: TaskService) => {
-                const taskRepeat = 99;
-                const repeatDelta = 5;
-                const repeatCustom = 4;
-                task = new Task(taskFromApi);
-                comp.task = task;
-                comp.ngOnInit();
-                comp.repeatDelta = repeatDelta;
-                comp.repeatCustom = repeatCustom;
-                comp.saveTask({value: taskRepeat}, 'repeatDefault');
-                expect(comp.task.repeat).toBe(repeatCustom);
-                expect(comp.task.repeatDelta).toBe(repeatDelta);
-                expect(taskService.updateTask).toHaveBeenCalledWith(task, true);
-            })));
+        it('should update task model when the repeat default is changed (scenario 2. -> repeat custom)', () => {
+            const taskRepeat = 99;
+            const repeatDelta = 5;
+            const repeatCustom = 4;
+            task = new Task(taskFromApi);
+            comp.task = task;
+            comp.ngOnInit();
+            comp.repeatDelta = repeatDelta;
+            comp.repeatCustom = repeatCustom;
+            comp.saveTask({value: taskRepeat}, 'repeatDefault');
+            expect(suite.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
+                task: {
+                    id: task.id,
+                    changes: Object.assign({}, task, {repeat: repeatCustom, repeatDelta: repeatDelta})
+                }
+            }));
+        });
     });
 
 

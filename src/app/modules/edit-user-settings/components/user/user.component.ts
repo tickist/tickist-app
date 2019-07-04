@@ -34,7 +34,7 @@ export class UserComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
+    @ViewChild('changeAvatarInput', { static: false }) changeAvatarInput: ElementRef;
 
     constructor(private fb: FormBuilder, private store: Store<AppStore>, private location: Location,
                 private configurationService: ConfigurationService, private userService: UserService) {

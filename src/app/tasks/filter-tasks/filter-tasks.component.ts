@@ -4,7 +4,7 @@ import {TagsFilterDialogComponent} from '../tags-filter-dialog/tags-filter-dialo
 import {EstimateTimeDialogComponent} from '../estimate-time-dialog/estimate-time-dialog.component';
 import {TasksFilterDialogComponent} from '../tasks-filter-dialog/tasks-filter-dialog.component';
 import {AssignedToDialogComponent} from '../assigned-to-dialog/assigned-to.dialog.component';
-import {MatDialog, MatDialogConfig} from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     selectCurrentAssignedToFilter,
     selectCurrentEstimateTimeFilter,

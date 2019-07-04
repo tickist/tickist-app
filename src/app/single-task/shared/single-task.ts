@@ -1,6 +1,6 @@
 import {Task} from '../../models/tasks';
 import {TaskService} from '../../core/services/task.service';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {Step} from '../../models/steps';
 import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';

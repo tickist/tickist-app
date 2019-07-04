@@ -13,9 +13,9 @@ import {Task} from '../../models/tasks';
 })
 export class DisplayFinishDateComponent implements OnInit, OnChanges, AfterViewInit {
     @Input() task: Task;
-    @ViewChild('typeFinishDateIcon') typeFinishDateIcon: ElementRef;
-    @ViewChild('finishTime') finishTime: ElementRef;
-    @ViewChild('finishTimeIcon') finishTimeIcon: ElementRef;
+    @ViewChild('typeFinishDateIcon', { static: true }) typeFinishDateIcon: ElementRef;
+    @ViewChild('finishTime', { static: false }) finishTime: ElementRef;
+    @ViewChild('finishTimeIcon', { static: false }) finishTimeIcon: ElementRef;
     dateFormat = 'DD-MM-YYYY';
     finishDateFormat: string;
 

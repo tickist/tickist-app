@@ -13,7 +13,7 @@ import {
 export class ToggleButtonComponent implements OnInit, OnChanges, AfterViewInit {
     @Input() status: number;
     @Input() priority: string;
-    @ViewChild('iconElement') iconElement: ElementRef;
+    @ViewChild('iconElement', { static: true }) iconElement: ElementRef;
 
     constructor(private elRef: ElementRef, private renderer: Renderer2) {
     }

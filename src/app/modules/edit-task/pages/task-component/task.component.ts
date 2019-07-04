@@ -14,10 +14,11 @@ import {User, SimpleUser} from '../../../../core/models';
 import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
-import {MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog } from '@angular/material/dialog';
 import moment from 'moment';
 import {Tag} from '../../../../models/tags';
-import {MatAutocompleteTrigger} from '@angular/material';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../../../../shared/keymap';
 import {map, startWith, takeUntil} from 'rxjs/operators';
@@ -69,8 +70,8 @@ export class TaskComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
-    @ViewChild('autocompleteTags') autocompleteTags;
+    @ViewChild('trigger', { read: MatAutocompleteTrigger, static: false }) trigger: MatAutocompleteTrigger;
+    @ViewChild('autocompleteTags', { static: false }) autocompleteTags;
 
     constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<AppStore>,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
