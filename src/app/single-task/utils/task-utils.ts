@@ -1,5 +1,5 @@
 import {Tag} from '../../models/tags';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Task } from '../../models/tasks';
 import {Step} from '../../models/steps';
 

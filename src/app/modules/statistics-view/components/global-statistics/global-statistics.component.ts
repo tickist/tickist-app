@@ -3,7 +3,7 @@ import {StatisticsService} from '../../../../services/statistics.service';
 import {ChartStatistics, GlobalStatistics} from '../../../../models/statistics';
 import {BaseChartDirective} from 'ng2-charts';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
-import * as moment from 'moment';
+import moment from 'moment';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectChartStatistics, selectGlobalStatistics} from '../../statistics.selectors';

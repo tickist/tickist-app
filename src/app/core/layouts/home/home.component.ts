@@ -11,7 +11,7 @@ import {TagService} from '../../../services/tag.service';
 import {MediaObserver, MediaChange} from '@angular/flex-layout';
 import {ConfigurationService} from '../../../services/configuration.service';
 import {SideNavVisibility} from '../../../models';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 

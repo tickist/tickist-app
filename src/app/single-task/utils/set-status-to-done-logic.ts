@@ -1,6 +1,6 @@
 import {isRepeated, setAllStepsToDone, setAllStepsToUndone} from './task-utils';
 import {Task} from '../../models/tasks';
-import * as moment from 'moment';
+import moment from 'moment';
 import {debug} from 'util';
 
 export function setStatusDoneLogic(task): Task {

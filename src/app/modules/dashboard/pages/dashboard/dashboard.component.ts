@@ -5,7 +5,7 @@ import {ConfigurationService} from '../../../../services/configuration.service';
 import {Task} from '../../../../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
-import * as moment from 'moment';
+import moment from 'moment';
 import {User} from '../../../../core/models';
 import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';

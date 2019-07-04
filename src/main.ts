@@ -3,7 +3,7 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {AppModule} from './app';
 import {enableProdMode} from '@angular/core';
 import 'hammerjs';
-import * as LogRocket from 'logrocket';
+import LogRocket from 'logrocket';
 
 
 if (environment.production) {

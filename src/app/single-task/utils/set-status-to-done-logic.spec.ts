@@ -1,7 +1,7 @@
 import {Task} from '../../models/tasks';
 import {setStatusDoneLogic} from './set-status-to-done-logic';
 import {Step} from '../../models/steps';
-import * as moment from 'moment';
+import moment from 'moment';
 import 'jest';
 
 describe('setStatusDoneLogic', () => {
@@ -40,6 +40,7 @@ describe('setStatusDoneLogic', () => {
         let date;
         beforeEach(() => {
             date = new Date();
+            date = date.setMilliseconds(0);
         });
 
         it('should return task with status undone', () => {
@@ -85,7 +86,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate.millisecond(0)).toEqual(moment(date).millisecond(0).add(1, 'd'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(1, 'd').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+2days', () => {
@@ -100,7 +101,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(2, 'd'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(2, 'd').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+1day (workweek)', () => {
@@ -147,7 +148,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(1, 'w'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(1, 'w').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+2weeks', () => {
@@ -162,7 +163,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(2, 'w'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(2, 'w').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+1month', () => {
@@ -177,7 +178,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(1, 'months'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(1, 'months').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+2months', () => {
@@ -192,7 +193,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(2, 'months'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(2, 'months').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+1year', () => {
@@ -207,7 +208,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(1, 'y'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(1, 'y').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+2years', () => {
@@ -222,7 +223,7 @@ describe('setStatusDoneLogic', () => {
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.status).toBe(0);
-            expect(newTask.finishDate).toEqual(moment(date).add(2, 'y'));
+            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(2, 'y').format('DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+2oldFinishDate', () => {

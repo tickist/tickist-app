@@ -4,7 +4,7 @@ import {MatDialog} from '@angular/material';
 import {Step} from '../../models/steps';
 import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
-import * as moment from 'moment';
+import moment from 'moment';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
 import {DeleteTask, RequestUpdateTask, UpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';

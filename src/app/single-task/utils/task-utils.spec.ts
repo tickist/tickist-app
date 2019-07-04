@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import {isOverdue} from './task-utils';
 import { Task } from '../../models/tasks';
 

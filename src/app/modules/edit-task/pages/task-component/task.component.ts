@@ -15,7 +15,7 @@ import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractCont
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
 import {MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
-import * as moment from 'moment';
+import moment from 'moment';
 import {Tag} from '../../../../models/tags';
 import {MatAutocompleteTrigger} from '@angular/material';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';

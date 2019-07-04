@@ -1,7 +1,7 @@
 import {SimpleUser} from '../core/models';
 import {Tag} from './tags';
 import {Api} from './commons';
-import * as moment from 'moment';
+import moment from 'moment';
 import {SimpleProject} from './projects';
 import {Step} from './steps';
 import {Menu} from './menu';

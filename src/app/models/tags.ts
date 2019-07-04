@@ -1,6 +1,5 @@
-import * as _ from 'lodash';
 import {Api} from './commons';
-import * as moment from 'moment';
+import moment from 'moment';
 import {ITagApi} from './tag-api.interface';
 
 export class Tag extends Api {
