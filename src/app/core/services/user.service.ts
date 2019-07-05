@@ -5,7 +5,7 @@ import {select, Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
 import {User, UserLogin, SimpleUser} from '../models';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {TasksFiltersService} from './tasks-filters.service';

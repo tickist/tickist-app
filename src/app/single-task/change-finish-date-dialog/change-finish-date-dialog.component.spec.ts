@@ -4,7 +4,7 @@ import {ChangeFinishDateDialogComponent} from './change-finish-date-dialog.compo
 import {TickistMaterialModule} from '../../material.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {Task} from '../../models/tasks';
 import {IUserApi} from '../../models/user-api.interface';
 import {IProjectApi} from '../../models/project-api.interface';

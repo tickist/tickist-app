@@ -7,7 +7,7 @@ import {ConfigurationService} from '../../../../services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User, SimpleUser, PendingUser} from '../../../../core/models';
 import {UserService} from '../../../../core/services/user.service';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
 import {DeleteProjectConfirmationDialogComponent} from '../../../left-panel/modules/projects-list/components/delete-project-dialog/delete-project-dialog.component';
 import {map, startWith, takeUntil} from 'rxjs/operators';
@@ -46,8 +46,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     subscription: Subscription;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('auto') auto: any;
-    @ViewChild('matAutocomplete') matAutocomplete: any;
+    @ViewChild('auto', { static: false }) auto: any;
+    @ViewChild('matAutocomplete', { static: false }) matAutocomplete: any;
 
     constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
                 private store: Store<AppStore>, private location: Location, public dialog: MatDialog,

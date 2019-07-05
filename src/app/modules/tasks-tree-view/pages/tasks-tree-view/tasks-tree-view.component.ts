@@ -6,7 +6,7 @@ import {Store} from '@ngrx/store';
 import {Task} from '../../../../models/tasks';
 import {selectAllTasksTreeView} from '../../tasks-tree-view.selectors';
 import {Observable, Subject} from 'rxjs';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {takeUntil} from 'rxjs/operators';
 

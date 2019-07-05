@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {Observable, Subject} from 'rxjs';
 import {Filter} from '../../models/filter';

@@ -3,7 +3,7 @@ import 'hammerjs'; // Recommended
 // import gitInfo from '../git-version.json';
 import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
-import {MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material';
+import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 
 @Component({

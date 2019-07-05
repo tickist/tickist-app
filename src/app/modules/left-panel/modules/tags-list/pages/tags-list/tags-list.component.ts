@@ -9,7 +9,7 @@ import {UserService} from '../../../../../../core/services/user.service';
 import {User} from '../../../../../../core/models';
 import {ConfigurationService} from '../../../../../../services/configuration.service';
 import {FilterTagsDialogComponent} from '../../components/filter-tags-dialog/filter-tags-dialog.component';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {TagsFiltersService} from '../../../../../../services/tags-filters.service';
 import {Filter} from '../../../../../../models/filter';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';

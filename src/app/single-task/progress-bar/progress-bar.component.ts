@@ -16,7 +16,7 @@ import {Step} from '../../models/steps';
 export class ProgressBarComponent implements AfterViewChecked, OnChanges {
     @Input() percent: number;
     @Input() isDisabled = false;
-    @ViewChild('progressBar') progressBar: ElementRef;
+    @ViewChild('progressBar', { static: false }) progressBar: ElementRef;
     showProgressBar = false;
     showIcon = false;
     tooltipString: string;

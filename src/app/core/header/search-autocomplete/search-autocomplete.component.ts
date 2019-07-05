@@ -4,7 +4,7 @@ import {FormControl} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {MatAutocompleteSelectedEvent} from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {AppStore} from '../../../store';
 import {Store} from '@ngrx/store';
 import {SetCurrrentSearchTasksFilter} from '../../actions/tasks/search-tasks.actions';

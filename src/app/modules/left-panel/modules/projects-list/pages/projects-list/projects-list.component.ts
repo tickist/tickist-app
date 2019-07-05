@@ -8,7 +8,7 @@ import {ConfigurationService} from '../../../../../../services/configuration.ser
 import {User} from '../../../../../../core/models';
 import {UserService} from '../../../../../../core/services/user.service';
 import {MediaObserver} from '@angular/flex-layout';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {FilterProjectDialogComponent} from '../../components/filter-projects-dialog/filter-projects.dialog.component';
 import {Filter} from '../../../../../../models/filter';
 import {takeUntil} from 'rxjs/operators';

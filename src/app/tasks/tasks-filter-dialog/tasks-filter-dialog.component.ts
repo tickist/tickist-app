@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {selectCurrentMainFilter, selectMainFilters} from '../../core/selectors/filters-tasks.selectors';

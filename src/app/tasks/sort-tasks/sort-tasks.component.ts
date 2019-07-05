@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MatDialog, MatDialogConfig} from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {SortByDialogComponent} from '../sort-tasks-dialog/sort-tasks.dialog.component';
 
 

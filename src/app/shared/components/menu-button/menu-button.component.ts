@@ -15,7 +15,7 @@ export class MenuButtonComponent implements OnInit, OnChanges {
     @Input() isDisabled = false;
     @Input() fontSize = '16px';
     @Input() transform = '';
-    @ViewChild('icon') iconElement: ElementRef;
+    @ViewChild('icon', { static: true }) iconElement: ElementRef;
 
     constructor(private elRef: ElementRef, private renderer: Renderer2) {
     }
