@@ -1,17 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {TagService} from '../../../../services/tag.service';
 import {Tag} from '../../../../models/tags';
 import {Task} from '../../../../models/tasks';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {User} from '../../../../core/models';
-import {SideNavVisibility} from '../../../../models';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
-import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectTasksStreamInTagsView} from '../../../../core/selectors/task.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {takeUntil} from 'rxjs/operators';
@@ -39,27 +37,6 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.tasks$ = this.store.select(selectTasksStreamInTagsView);
-        // this.tasksStream$ = combineLatest(
-        //     this.taskService.tasks$,
-        //     this.tasksFiltersService.currentTasksFilters$
-        // );
-        // this.tagsStream$
-        //     .pipe(takeUntil(this.ngUnsubscribe))
-        //     .subscribe(([tags]) => {
-        //         if (tags) {
-        //             this.tags = tags;
-        //         }
-        //     });
-        // this.tasksStream$
-        //     .pipe(takeUntil(this.ngUnsubscribe))
-        //     .subscribe((([tasks, currentTasksFilters]) => {
-        //         if (currentTasksFilters && currentTasksFilters.length > 0) {
-        //             tasks = TasksFiltersService.useFilters(tasks, currentTasksFilters);
-        //         }
-        //         if (tasks) {
-        //             this.tasks = tasks;
-        //         }
-        //     }));
         this.store.select(selectLoggedInUser)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((user) => {

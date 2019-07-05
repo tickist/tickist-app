@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, HostListener} from '@angular/core';
 import {Project} from '../../../../models/projects';
 import {Location} from '@angular/common';
 import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angular/forms';
@@ -9,7 +9,6 @@ import {User, SimpleUser, PendingUser} from '../../../../core/models';
 import {UserService} from '../../../../core/services/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
-import {DeleteProjectConfirmationDialogComponent} from '../../../left-panel/modules/projects-list/components/delete-project-dialog/delete-project-dialog.component';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 import {RequestCreateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
@@ -20,15 +19,18 @@ import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {addUserToShareList} from '../../../../core/utils/projects-utils';
 import {convert} from '../../../../core/utils/addClickableLinksToString';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
+import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
 
 
 @Component({
-    selector: 'app-project',
+    selector: 'tickist-project',
     templateUrl: './project.component.html',
     styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit, OnDestroy {
+    ENTER = 'Enter';
     project: Project;
+    defaultAvatarUrl: string;
     projectsAncestors: Project[] | any[];
     stream$: Observable<any>;
     projectForm: FormGroup;
@@ -52,11 +54,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
     constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
                 private store: Store<AppStore>, private location: Location, public dialog: MatDialog,
                 private configurationService: ConfigurationService, protected router: Router) {
-
         this.staticUrl = environment['staticUrl'];
         this.addUserToShareWithListCtrl = new FormControl();
         this.menu = this.createMenuDict();
-
     }
 
     ngOnInit() {
@@ -64,6 +64,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
         this.defaultTaskView = this.configurationService.configuration['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
         this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
+        this.defaultAvatarUrl = this.configurationService.configuration['commons']['DEFAULT_USER_AVATAR_URL'];
 
         this.stream$ = combineLatest(
             this.store.select(selectAllProjects),
@@ -130,6 +131,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
     checkActiveItemInMenu(menu_item) {
         // DRY
         return this.menu[menu_item];
+    }
+
+    @HostListener('window:keyup', ['$event'])
+    keyEvent(event: KeyboardEvent) {
+        if (event.key === this.ENTER && this.checkActiveItemInMenu('sharing')) {
+            this.inviteUser();
+        }
     }
 
     onSubmit(values) {
@@ -213,7 +221,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;
 
-        const dialogRef = this.dialog.open(DeleteProjectConfirmationDialogComponent);
+        const dialogRef = this.dialog.open(DeleteUserConfirmationDialogComponent);
         dialogRef.componentInstance.setTitle(title);
         dialogRef.componentInstance.setContent(content);
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
@@ -241,8 +249,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
             if (this.addUserToShareWithListCtrl.hasError('pattern') || this.addUserToShareWithListCtrl.hasError('required')) {
                 return [{'id': '', 'email': 'Please write a valid email'}];
             } else {
+                console.log([...this.team
+                    .filter(u => !userIds.includes(u.id))
+                    .filter(u => new RegExp(val, 'gi').test(u.email)), {'email': val}
+                ])
                 return [...this.team
-                    .filter(u => userIds.indexOf(u['id']) > -1)
+                    .filter(u => !userIds.includes(u.id))
                     .filter(u => new RegExp(val, 'gi').test(u.email)), {'email': val}
                 ];
             }
@@ -256,7 +268,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
             this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value)
                 .pipe(takeUntil(this.ngUnsubscribe))
                 .subscribe((user) => {
-                    addUserToShareList(this.project, user);
+                    this.project = <Project> addUserToShareList(this.project, user);
+                    this.addUserToShareWithListCtrl.reset();
                 });
         } else {
             this.addUserToShareWithListCtrl.markAsDirty();

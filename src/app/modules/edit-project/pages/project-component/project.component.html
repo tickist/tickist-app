@@ -1,8 +1,11 @@
 <mat-card fxFlex="100">
     <form *ngIf="projectForm" [formGroup]="projectForm" novalidate (ngSubmit)="onSubmit(projectForm.value)"
-          fxLayoutAlign="center none" class="flex-container" fxLayout="column">
-        <div fxFlex><span class="close" (click)="close()"><i class="fa fa-times pointer"
-                                                             aria-hidden="true"></i></span></div>
+          fxLayoutAlign="center none" class="flex-container" fxLayout="column" (keydown.enter)="$event.preventDefault()">
+        <div fxFlex>
+            <span class="close" (click)="close()">
+                <i class="fa fa-times pointer" aria-hidden="true"></i>
+            </span>
+        </div>
         <div fxLayout="row" class="main-view">
             <div fxFlex.gt-md="230px" fxFlex.lt-md="30%" class="left-menu">
                 <mat-list>
@@ -15,8 +18,6 @@
                         <i class="fa fa-pencil-square-o menu_icon"></i>
 
                         <p [fxHide.xs]="1"><span>Main</span></p>
-
-
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('extra')"
@@ -125,43 +126,45 @@
                     <div fxLayout="column">
 
                         <mat-form-field>
-                            <input matInput placeholder="Write an email to invite new user to this list"
+                            <input matInput placeholder="Write an email to invite new user to this list."
                                    [matAutocomplete]="auto" [formControl]="addUserToShareWithListCtrl">
                         </mat-form-field>
-                        <button mat-button (click)="inviteUser()" type="button"> Invite</button>
+                        <div fxLayout="row" fxLayoutAlign="center center">
+                            <button mat-button (click)="inviteUser()" type="button"> Invite</button>
+                        </div>
 
                         <mat-autocomplete #auto="matAutocomplete">
                             <mat-option *ngFor="let u of filteredUsers | async" [value]="u.email">
-                                <img
-                                    [src]="staticUrl + u.avatarUrl | avatarsize: '32x32'"><span>{{ u.email }}</span>
+                                <img *ngIf="u.avatarUrl" [src]="(staticUrl + u.avatarUrl) | avatarsize: '24x24'" class="avatar">
+                                <img *ngIf="!u.avatarUrl" [src]="(staticUrl +defaultAvatarUrl) | avatarsize: '24x24'" class="avatar">
+                                <span>{{ u.email }}</span>
                             </mat-option>
                         </mat-autocomplete>
 
                         <mat-list>
-                            <mat-list-item class="mat-3-line" *ngFor="let u of project.shareWith; let i=index">
-                                <img [src]="staticUrl + u.avatarUrl | avatarsize: '32x32'" class="mat-avatar"
+                            <mat-list-item *ngFor="let u of project.shareWith; let i=index">
+                                <img matListAvatar [src]="(staticUrl + u.avatarUrl) | avatarsize: '32x32'" class="avatar"
                                      alt="{{ u.username }}"/>
 
-
-                                <h4 mat-line *ngIf="user.hasOwnProperty('id')">
+                                <h3 mat-line *ngIf="user.hasOwnProperty('id')">
                                     <span>{{ u.username }}</span>
                                     <span flex></span>
                                     <span [hidden]="user.email==u.email"
                                           (click)="deleteUserFromShareWithList(user, i)">
                                             <i class="fa fa-times" aria-hidden="true"></i>
                                         </span>
-                                </h4>
-                                <p *ngIf="user.hasOwnProperty('id')">{{ u.email }}</p>
+                                </h3>
+                                <p matLine *ngIf="user.hasOwnProperty('id')">{{ u.email }}</p>
 
-                                <h4 mat-line *ngIf="!user.hasOwnProperty('id')">
+                                <h3 mat-line *ngIf="!user.hasOwnProperty('id')">
                                     <span>{{ u.email }}</span>
                                     <span flex></span>
                                     <span [hidden]="user.email==u.email"
                                           (click)="deleteUserFromShareWithList(user, i)">
                                             <i class="fa fa-times" aria-hidden="true"></i>
                                         </span>
-                                </h4>
-                                <p *ngIf="!user.hasOwnProperty('id')">Without account on tickst.com. The email with
+                                </h3>
+                                <p matLine *ngIf="!user.hasOwnProperty('id')">Without account on tickst.com. The email with
                                     invitation was send.</p>
 
                             </mat-list-item>

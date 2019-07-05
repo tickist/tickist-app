@@ -111,7 +111,8 @@ export class ConfigurationService {
                 'MEDIA_URL': '/uploaded/',
                 'FACEBOOK_FANPAGE': 'https://www.facebook.com/Tickist',
                 'GOOGLE_PLUS': 'https://google.com/+Tickist',
-                'TWITTER': 'https://twitter.com/tickist'
+                'TWITTER': 'https://twitter.com/tickist',
+                'DEFAULT_USER_AVATAR_URL': '/site_media/images/default_images/default_avatar_user.png'
             }
         };
     }

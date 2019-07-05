@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<mat-dialog-content>
+    {{content}}
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="dialogRef.close(true)">Yes</button>
+    <button mat-button (click)="dialogRef.close(false)">No</button>
+</mat-dialog-actions>
