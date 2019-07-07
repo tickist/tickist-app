@@ -7,7 +7,7 @@ import {toSnakeCase} from './toSnakeCase';
 
 export function addUserToShareList(project: (SimpleProject | Project), user) {
     const shareWith = [...project.shareWith];
-    const shareWithOnlyIds = shareWith.map(simpleUser => (<SimpleUser> simpleUser).id)
+    const shareWithOnlyIds = shareWith.map(simpleUser => (<SimpleUser> simpleUser).id);
     if (user.hasOwnProperty('id') && !shareWithOnlyIds.includes(user.id)) {
         shareWith.push(new SimpleUser(user));
     } else if (!user.hasOwnProperty('id')) {

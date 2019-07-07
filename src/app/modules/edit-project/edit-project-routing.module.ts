@@ -11,6 +11,10 @@ const routes: Routes = [
 
     },
     {
+        path: 'createWithAncestor/:ancestorProjectId',
+        component: ProjectComponent,
+    },
+    {
         path: ':projectId',
         component: ProjectComponent,
     }

@@ -7,7 +7,7 @@ import {ConfigurationService} from '../../../../services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User, SimpleUser, PendingUser} from '../../../../core/models';
 import {UserService} from '../../../../core/services/user.service';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 import {RequestCreateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
@@ -30,6 +30,7 @@ import {DeleteUserConfirmationDialogComponent} from '../../components/delete-use
 export class ProjectComponent implements OnInit, OnDestroy {
     ENTER = 'Enter';
     project: Project;
+    ancestorProjectId: number;
     defaultAvatarUrl: string;
     projectsAncestors: Project[] | any[];
     stream$: Observable<any>;
@@ -48,8 +49,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     subscription: Subscription;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('auto', { static: false }) auto: any;
-    @ViewChild('matAutocomplete', { static: false }) matAutocomplete: any;
+    @ViewChild('auto', {static: false}) auto: any;
+    @ViewChild('matAutocomplete', {static: false}) matAutocomplete: any;
 
     constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
                 private store: Store<AppStore>, private location: Location, public dialog: MatDialog,
@@ -65,7 +66,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.defaultTaskView = this.configurationService.configuration['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
         this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
         this.defaultAvatarUrl = this.configurationService.configuration['commons']['DEFAULT_USER_AVATAR_URL'];
-
+        this.route.params.pipe(
+            takeUntil(this.ngUnsubscribe),
+            map(params => parseInt(params['ancestorProjectId'], 10))
+        )
+            .subscribe(ancestorProjectId => {
+                this.ancestorProjectId = ancestorProjectId;
+            });
         this.stream$ = combineLatest(
             this.store.select(selectAllProjects),
             this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
@@ -201,7 +208,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         return new Project({
             'name': '',
             'description': '',
-            'ancestor': null,
+            'ancestor': this.ancestorProjectId ? this.ancestorProjectId : null,
             'color': this.configurationService.loadConfiguration()['commons']['COLOR_LIST_DEFAULT'],
             'default_finish_date': '',
             'default_priority': this.configurationService.loadConfiguration()['commons']['DEFAULT_PRIORITY_OF_TASK'],
@@ -249,10 +256,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
             if (this.addUserToShareWithListCtrl.hasError('pattern') || this.addUserToShareWithListCtrl.hasError('required')) {
                 return [{'id': '', 'email': 'Please write a valid email'}];
             } else {
-                console.log([...this.team
-                    .filter(u => !userIds.includes(u.id))
-                    .filter(u => new RegExp(val, 'gi').test(u.email)), {'email': val}
-                ])
                 return [...this.team
                     .filter(u => !userIds.includes(u.id))
                     .filter(u => new RegExp(val, 'gi').test(u.email)), {'email': val}
@@ -268,7 +271,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value)
                 .pipe(takeUntil(this.ngUnsubscribe))
                 .subscribe((user) => {
-                    this.project = <Project> addUserToShareList(this.project, user);
+                    this.project = <Project>addUserToShareList(this.project, user);
                     this.addUserToShareWithListCtrl.reset();
                 });
         } else {
