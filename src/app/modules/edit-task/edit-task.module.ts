@@ -6,12 +6,14 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {TaskComponent} from './pages/task-component/task.component';
 import {TickistEditTaskRoutingModule} from './edit-task-routing.module';
 import {TickistSharedModule} from '../../shared/shared.module';
-import {SortablejsModule} from 'angular-sortablejs';
+import {SortablejsModule} from 'ngx-sortablejs';
 
 
 @NgModule({
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistEditTaskRoutingModule, TickistSharedModule, SortablejsModule],
+        ReactiveFormsModule, TickistEditTaskRoutingModule, TickistSharedModule, SortablejsModule.forRoot({
+            animation: 150
+        })],
     providers: [],
     exports: [TaskComponent],
     declarations: [

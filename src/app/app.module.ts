@@ -16,7 +16,6 @@ import {TagService} from './services/tag.service';
 import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configuration.service';
 import {StatisticsService} from './services/statistics.service';
-import {SortablejsModule} from 'angular-sortablejs';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {ErrorService} from './services/error.service';
 import {TypeFinishDateString} from './shared/pipes/typeFinishDateString';
@@ -41,6 +40,7 @@ import {InMemoryDataService} from './testing/mocks/inMemryDb';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TickistCoreModule} from './core/core.module';
+import {SortablejsModule} from 'ngx-sortablejs';
 
 
 export function tokenGetter() {
@@ -78,7 +78,9 @@ export function tokenGetter() {
             logOnly: environment.production, // Restrict extension to log-only mode
         }),
         environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
-        SortablejsModule,
+        SortablejsModule.forRoot({
+            animation: 150
+        }),
         TickistMaterialModule,
         MenuModule,
         TieredMenuModule,

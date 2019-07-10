@@ -4,14 +4,21 @@
     .tree-viewport {
         margin-left: 16px
     }
+
     .buttons {
         background-color: $background_card_color;
         margin-left: 16px;
+
         i {
             margin: 10px;
         }
     }
+
     i {
         cursor: pointer;
+    }
+
+    .orange {
+        color: $orange;
     }
 }
