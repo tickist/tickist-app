@@ -2,34 +2,38 @@
 @import "../../shared/commons";
 
 :host {
-  button {
-    @extend .tickist-icon-button;
-  }
-}
-
-.pinned {
-  transform: rotate(-45deg);
-  color: $orange !important;
-  visibility: visible !important;
-  &:hover {
-    transform: rotate(0deg);
-    color: $white;
-    .fa {
-      color: $white;
+    button {
+        @extend .tickist-icon-button;
     }
-  }
-  .fa {
-    color: $orange !important;
-  }
-
 }
 
-.unpinned {
-  &:hover {
+::ng-deep .pinned{
     transform: rotate(-45deg);
     color: $orange !important;
-    .fa {
-      color: $orange !important;
+    visibility: visible !important;
+
+    &:hover {
+        transform: rotate(0deg);
+        color: $white;
+
+        .fas {
+            color: $white;
+        }
     }
-  }
+
+    .fas {
+        color: $orange !important;
+    }
+
+}
+
+::ng-deep .unpinned {
+    &:hover {
+        transform: rotate(-45deg);
+        color: $orange !important;
+
+        .fas {
+            color: $orange !important;
+        }
+    }
 }

@@ -41,6 +41,9 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TickistCoreModule} from './core/core.module';
 import {SortablejsModule} from 'ngx-sortablejs';
+import {library} from '@fortawesome/fontawesome-svg-core';
+import {faBars, faThumbtack} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 export function tokenGetter() {
@@ -99,7 +102,8 @@ export function tokenGetter() {
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
         EffectsModule.forRoot([]),
         TickistRoutingModule,
-        TickistCoreModule
+        TickistCoreModule,
+        FontAwesomeModule
         // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],
@@ -126,6 +130,9 @@ export function tokenGetter() {
     ]
 })
 export class AppModule {
-
+    constructor() {
+        // Add an icon to the library for convenient access in other components
+        library.add(faBars, faThumbtack);
+    }
 
 }

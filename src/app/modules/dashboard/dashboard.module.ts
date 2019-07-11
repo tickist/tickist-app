@@ -9,10 +9,12 @@ import {TickistSharedModule} from '../../shared/shared.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistTasksModule} from '../../tasks/tasks.module';
 import {TickistDashboardRoutingModule} from './dashboard-routing.module';
+import {TickistSingleTaskModule} from '../../single-task/single-task.module';
+
 
 @NgModule({
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule, TickistDashboardRoutingModule,
-        ReactiveFormsModule, TickistSharedModule,  TickistTasksModule],
+        ReactiveFormsModule, TickistSharedModule, TickistSingleTaskModule, TickistTasksModule],
     providers: [],
     exports: [DashboardComponent],
     declarations: [

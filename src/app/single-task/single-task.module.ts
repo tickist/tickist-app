@@ -18,10 +18,11 @@ import {SingleTaskComponent} from './single-task/single-task.component';
 import {SingleTaskSimplifiedComponent} from './single-task-simplified/single-task-simplified.component';
 import {SingleTaskExtendedComponent} from './single-task-extended/single-task-extended.component';
 import {NoTasksComponent} from './no-tasks/no-tasks.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
     imports: [ CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistSharedModule, RouterModule],
+        ReactiveFormsModule, TickistSharedModule, RouterModule, FontAwesomeModule],
     providers: [
     ],
     exports: [SingleTaskComponent,

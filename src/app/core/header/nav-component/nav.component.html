@@ -2,7 +2,7 @@
 <tickist-show-offline-mode></tickist-show-offline-mode>
 <mat-toolbar [ngClass]="{'add-margin': isOffline}">
     <button class="fab-button" mat-mini-fab color="primary"  [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
-        <i class="fa fa-bars"></i>
+        <fa-icon [icon]="['fas', 'bars']"></fa-icon>
     </button>
 
      <a (click)='navigateToWeekdays()' layout="row" class="logo" [fxHide.xs]="1" [fxHide.sm]="1">
