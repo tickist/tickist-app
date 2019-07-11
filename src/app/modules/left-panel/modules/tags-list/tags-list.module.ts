@@ -20,7 +20,6 @@ import * as fromTagsFilters from './tags-filters.reducers';
         TickistMaterialModule,
         FormsModule,
         ReactiveFormsModule,
-        ChartsModule,
         TickistSharedModule,
         FlexLayoutModule,
         StoreModule.forFeature('tagsFilters', fromTagsFilters.reducer),

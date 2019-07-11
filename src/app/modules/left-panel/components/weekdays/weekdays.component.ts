@@ -1,24 +1,22 @@
-import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {Task} from '../../../../models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subject, Subscription} from 'rxjs';
+import {Subject} from 'rxjs';
 import moment from 'moment';
 import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {User} from '../../../../core/models';
-import {map, takeUntil} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 import {IActiveDateElement} from '../../../../models/active-data-element.interface';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
 import {dashboardRoutesName} from '../../../dashboard/routes.names';
-import {homeRoutesName} from '../../../../routing.module';
-import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
-import {stateActiveDateElement} from '../../../../models/state-active-date-element.enum';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
+import {homeRoutesName} from '../../../../routing.module.name';
 
 
 @Component({

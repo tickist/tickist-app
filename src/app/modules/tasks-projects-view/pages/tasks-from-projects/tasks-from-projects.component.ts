@@ -17,10 +17,10 @@ import {SetActiveProject} from '../../../../core/actions/projects/active-project
 import {selectActiveProject, selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectTasksStreamInProjectsView} from '../../../../core/selectors/task.selectors';
 import {UpdateUser} from '../../../../core/actions/user.actions';
-import {homeRoutesName} from '../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
 import {UpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
+import {homeRoutesName} from '../../../../routing.module.name';
 
 @Component({
     selector: 'tickist-tasks-from-projects',

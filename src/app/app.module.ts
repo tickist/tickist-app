@@ -1,6 +1,6 @@
 import {NgModule, ErrorHandler} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { DateAdapter } from '@angular/material/core';
+import {DateAdapter} from '@angular/material/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -71,7 +71,7 @@ export function tokenGetter() {
             HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, {delay: 100}) : [],
         StoreModule.forRoot(reducers, {
             initialState: {},
-            metaReducers, runtimeChecks: { strictStateImmutability: true, strictActionImmutability: true }
+            metaReducers, runtimeChecks: {strictStateImmutability: true, strictActionImmutability: true}
         }),
         StoreDevtoolsModule.instrument({
             maxAge: 25, // Retains last 25 states

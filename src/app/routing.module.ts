@@ -24,10 +24,6 @@ import {forgotPasswordRoutesName} from './modules/forgot-password/routes-names';
 import {loginRoutesName} from './modules/login/routes-names';
 import {signupRoutesName} from './modules/signup/routes-names';
 
-export const homeRoutesName = {
-    HOME: 'home'
-};
-
 
 export const routes: Routes = [
     {

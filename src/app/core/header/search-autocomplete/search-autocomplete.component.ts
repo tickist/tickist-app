@@ -9,8 +9,8 @@ import {AppStore} from '../../../store';
 import {Store} from '@ngrx/store';
 import {SetCurrrentSearchTasksFilter} from '../../actions/tasks/search-tasks.actions';
 import {selectAllUndoneTasks} from '../../selectors/task.selectors';
-import {homeRoutesName} from '../../../routing.module';
 import {editTaskRoutesName} from '../../../modules/edit-task/routes-names';
+import {homeRoutesName} from '../../../routing.module.name';
 
 @Component({
     selector: 'tickist-search-autocomplete',
