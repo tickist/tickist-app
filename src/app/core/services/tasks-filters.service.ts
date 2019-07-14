@@ -153,56 +153,64 @@ export class TasksFiltersService {
                 label: 'sorting',
                 sortKeys: ['priority'],
                 order: ['desc'],
-                name: 'priority <i class="fa fa-arrow-up"></i>'
+                name: 'priority',
+                icon: 'arrow-up'
             }),
             new SortBy({
                 id: 2,
                 label: 'sorting',
                 sortKeys: ['finish_date_obj', 'finishTime'],
                 order: ['asc', 'desc'],
-                name: 'due date <i class="fa fa-arrow-up"></i>'
+                name: 'due date',
+                icon: 'arrow-up'
             }),
             new SortBy({
                 id: 3,
                 label: 'sorting',
                 sortKeys: ['creation_date'],
                 order: ['asc'],
-                name: 'creation date <i class="fa fa-arrow-up"></i>'
+                name: 'creation date',
+                icon: 'arrow-up'
             }),
             new SortBy({
                 id: 4,
                 label: 'sorting',
                 sortKeys: ['name'],
                 order: ['asc'],
-                name: 'A-Z <i class="fa fa-arrow-up"></i>'
+                name: 'A-Z',
+                icon: 'arrow-up'
             }),
             new SortBy({
                 id: 5,
                 label: 'sorting',
                 sortKeys: ['priority'],
                 order: ['asc'],
-                name: 'priority <i class="fa fa-arrow-down"></i>'
+                name: 'priority',
+                icon: 'arrow-down'
             }),
             new SortBy({
                 id: 6,
                 label: 'sorting',
                 sortKeys: ['finish_date_obj', 'finishTime'],
                 order: ['desc', 'asc'],
-                name: 'due date <i class="fa fa-arrow-down"></i>'
+                name: 'due date',
+                icon: 'arrow-down'
             }),
             new SortBy({
                 id: 7,
                 label: 'sorting',
                 sortKeys: ['creation_date'],
                 order: ['desc'],
-                name: 'creation date  <i class="fa fa-arrow-down"></i>'
+                name: 'creation date',
+                icon: 'arrow-down'
             }),
             new SortBy({
                 id: 8,
                 label: 'sorting',
                 sortKeys: ['name'],
                 order: ['desc'],
-                name: 'A-Z <i class="fa fa-arrow-down"></i>'
+                name: 'A-Z',
+                icon: 'arrow-down'
             })
         ];
     }

@@ -19,20 +19,20 @@
             </tickist-right-menu>
         </div>
         <div id="second-row">
-            <tickist-menu-button [icon]="'fa-folder'"
+            <tickist-menu-button [icon]="'folder'"
                                  [color]="task.taskProject.color"
                                  (click)="changeShowing('isTaskProject')"
                                  [matTooltip]="task.taskProject.name">
             </tickist-menu-button>
-            <tickist-menu-button [icon]="'fa-comment-o'"
+            <tickist-menu-button [icon]="'comment'"
                                  [isDisabled]="!task.description"
                                  (click)="changeShowing('isDescription')">
             </tickist-menu-button>
-            <tickist-menu-button [icon]="'fa-tags'"
+            <tickist-menu-button [icon]="'tags'"
                                  [isDisabled]="task.tags.length === 0"
                                  (click)="changeShowing('isTags')">
             </tickist-menu-button>
-            <tickist-menu-button [icon]="'fa-repeat'" [matTooltip]="repeatString"
+            <tickist-menu-button [icon]="'redo'" [matTooltip]="repeatString"
                                  [isDisabled]="task.repeat == 0"
                                  (click)="changeShowing('isRepeat')">
             </tickist-menu-button>
@@ -56,7 +56,7 @@
 
     <div class="task-description" *ngIf="task.menuShowing.isDescription">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
         <div [innerHTML]="task.richDescription"></div>
@@ -66,14 +66,14 @@
 
     <div id="steps" *ngIf="task.menuShowing.isSteps" class="steps">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
         <div class="step" *ngFor="let step of task.steps" fxLayout="row" fxLayoutAlign="start stretch"
              (click)="toggleDoneStep(step)"
              [ngClass]="{'taskstep-done': step.status == 1, 'taskstep-undone': step.status == 0}">
-            <i class="fa fa-check-square-o"></i>
-            <i class="fa fa-square-o"></i>
+            <fa-icon [icon]="'check-square'"></fa-icon>
+            <fa-icon [icon]="'square'"></fa-icon>
             <span class="step-name" fxFlex>{{ step.name }}</span>
         </div>
 
@@ -81,13 +81,14 @@
 
     <div *ngIf="task.menuShowing.isTags" class="task-tags">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
         <mat-chip-list>
             <mat-chip *ngFor="let tag of task.tags">
-                <span class="chip-name">{{ tag.name }}</span><span fxFlex></span><i matTooltip="Remove tag" (click)="removeTag(tag)"
-                                                                  class="fa fa-times"></i>
+                <span class="chip-name">{{ tag.name }}</span>
+                <span fxFlex></span>
+                <fa-icon matTooltip="Remove tag"  (click)="removeTag(tag)" [icon]="'times'"></fa-icon>
             </mat-chip>
         </mat-chip-list>
 
@@ -95,7 +96,7 @@
 
     <div id="repeat-options" *ngIf="task.menuShowing.isRepeat">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
         <app-edit-repeating-option [task]="task"></app-edit-repeating-option>
@@ -104,7 +105,7 @@
 
     <div id="change-project-task" *ngIf="task.menuShowing.isTaskProject">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
         <mat-form-field>
@@ -120,7 +121,7 @@
 
     <div id="change-assigned-to" *ngIf="task.menuShowing.isAssignedTo">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
         <mat-form-field>
@@ -136,7 +137,7 @@
 
     <div id="finish-date-options" *ngIf="task.menuShowing.isFinishDate">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <tickist-menu-button [icon]="'fa-times'" (click)="hideAllMenuElements()">
+            <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
 

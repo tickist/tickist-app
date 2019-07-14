@@ -13,6 +13,7 @@ import {FutureListComponent} from './components/future-list/future-list.componen
 import {TickistProjectListModule} from './modules/projects-list/projects-list.module';
 import {TickistTagsListModule} from './modules/tags-list/tags-list.module';
 import {TickistLeftPanelRoutingModule} from './left-panel-routing.module';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import {TickistLeftPanelRoutingModule} from './left-panel-routing.module';
         ReactiveFormsModule,
         RouterModule,
         TickistProjectListModule,
-        TickistTagsListModule
+        TickistTagsListModule,
+        FontAwesomeModule
     ],
     declarations: [
         LeftPanelComponent,

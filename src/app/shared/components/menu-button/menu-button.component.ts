@@ -10,12 +10,12 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenuButtonComponent implements OnInit, OnChanges {
-    @Input() icon: string;
+    @Input() icon: any;
     @Input() color = 'white';
     @Input() isDisabled = false;
     @Input() fontSize = '16px';
     @Input() transform = '';
-    @ViewChild('icon', { static: true }) iconElement: ElementRef;
+    isDisabledClass: string;
 
     constructor(private elRef: ElementRef, private renderer: Renderer2) {
     }
@@ -24,21 +24,10 @@ export class MenuButtonComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        this.renderer.addClass(this.iconElement.nativeElement, 'fa');
-        this.renderer.setStyle(this.iconElement.nativeElement, 'color', this.color);
-        this.renderer.addClass(this.iconElement.nativeElement, this.icon);
-        if (this.fontSize) {
-            this.renderer.setStyle(this.iconElement.nativeElement, 'font-size', this.fontSize);
-        }
         if (changes.hasOwnProperty('isDisabled') && changes.isDisabled.currentValue) {
-            this.renderer.addClass(this.elRef.nativeElement, 'unvisible');
-            this.renderer.removeClass(this.elRef.nativeElement, 'visible');
+            this.isDisabledClass = 'unvisible';
         } else {
-            this.renderer.removeClass(this.elRef.nativeElement, 'unvisible');
-            this.renderer.addClass(this.elRef.nativeElement, 'visible');
-        }
-        if (this.transform) {
-            this.renderer.setStyle(this.iconElement.nativeElement, 'transform', this.transform);
+            this.isDisabledClass = 'visible';
         }
     }
 

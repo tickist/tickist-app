@@ -11,6 +11,7 @@ import {RouterModule} from '@angular/router';
 import {AddTaskTreeViewComponent} from './components/add-task-tree-view/add-task-tree-view.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistTasksTreeViewRoutingModule} from './tasks-tree-view-routing.module';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import {TickistTasksTreeViewRoutingModule} from './tasks-tree-view-routing.modul
         FormsModule,
         ReactiveFormsModule,
         RouterModule,
-        TickistTasksTreeViewRoutingModule
+        TickistTasksTreeViewRoutingModule,
+        FontAwesomeModule
     ],
     declarations: [
         TasksTreeViewComponent,

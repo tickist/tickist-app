@@ -26,6 +26,7 @@ export class DisplayFinishDateComponent implements OnInit, OnChanges, AfterViewI
         if (!this.task) {
             throw new Error(`Attribute 'task' is required`);
         }
+        
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {

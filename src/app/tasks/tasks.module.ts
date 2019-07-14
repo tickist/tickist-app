@@ -14,6 +14,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SliderModule} from 'primeng/primeng';
 import {NoTasksComponent} from '../single-task/no-tasks/no-tasks.component';
 import {TaskService} from '../core/services/task.service';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import {TaskService} from '../core/services/task.service';
         FormsModule,
         ReactiveFormsModule,
         SliderModule,
+        FontAwesomeModule
     ],
     declarations: [SortTasksComponent, SortByDialogComponent, EstimateTimeDialogComponent, AssignedToDialogComponent, FilterTasksComponent,
         TagsFilterDialogComponent, TasksFilterDialogComponent],

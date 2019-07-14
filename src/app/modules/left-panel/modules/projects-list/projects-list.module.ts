@@ -14,6 +14,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { ProjectsFiltersEffects } from './projects-filters.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromProjectsFilters from './projects-filters.reducers';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import * as fromProjectsFilters from './projects-filters.reducers';
         TickistSharedModule,
         RouterModule,
         FlexLayoutModule,
+        FontAwesomeModule,
         StoreModule.forFeature('projectsFilters', fromProjectsFilters.reducer),
         EffectsModule.forFeature([ProjectsFiltersEffects])
     ],

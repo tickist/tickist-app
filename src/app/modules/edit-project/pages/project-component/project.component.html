@@ -3,7 +3,7 @@
           fxLayoutAlign="center none" class="flex-container" fxLayout="column" (keydown.enter)="$event.preventDefault()">
         <div fxFlex>
             <span class="close" (click)="close()">
-                <i class="fa fa-times pointer" aria-hidden="true"></i>
+                <fa-icon [icon]="'times'" aria-hidden="true"></fa-icon>
             </span>
         </div>
         <div fxLayout="row" class="main-view">
@@ -15,7 +15,7 @@
                                     'invalid': !projectForm.controls['main'].valid && projectForm.controls['main'].touched
                                    }">
 
-                        <i class="fa fa-pencil-square-o menu_icon"></i>
+                        <fa-icon [icon]="'edit'"></fa-icon>
 
                         <p [fxHide.xs]="1"><span>Main</span></p>
                     </mat-list-item>
@@ -25,8 +25,7 @@
                                    'active': checkActiveItemInMenu('extra'),
                                    'invalid': !projectForm.controls['extra'].valid && projectForm.controls['extra'].touched
                                    }">
-                        <i class="fa fa-wrench menu_iconn"></i>
-
+                        <fa-icon [icon]="'wrench'"></fa-icon>
                         <p [fxHide.xs]="1"><span>Extra</span></p>
 
                     </mat-list-item>
@@ -35,8 +34,7 @@
                                    [ngClass]="{
                                    'active': checkActiveItemInMenu('sharing')
                                    }">
-                        <i class="fa fa-tags menu_icon"></i>
-
+                        <fa-icon [icon]="'tags'"></fa-icon>
 
                         <p [fxHide.xs]="1"><span>Sharing</span></p>
 
@@ -151,7 +149,8 @@
                                     <span flex></span>
                                     <span [hidden]="user.email==u.email"
                                           (click)="deleteUserFromShareWithList(user, i)">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        
+                                        <fa-icon [icon]="'times'"></fa-icon>
                                         </span>
                                 </h3>
                                 <p matLine *ngIf="user.hasOwnProperty('id')">{{ u.email }}</p>
@@ -161,7 +160,7 @@
                                     <span flex></span>
                                     <span [hidden]="user.email==u.email"
                                           (click)="deleteUserFromShareWithList(user, i)">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        <fa-icon [icon]="'times'"></fa-icon>
                                         </span>
                                 </h3>
                                 <p matLine *ngIf="!user.hasOwnProperty('id')">Without account on tickst.com. The email with

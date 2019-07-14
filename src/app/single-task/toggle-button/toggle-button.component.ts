@@ -10,39 +10,32 @@ import {
     styleUrls: ['./toggle-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ToggleButtonComponent implements OnInit, OnChanges, AfterViewInit {
+export class ToggleButtonComponent implements OnInit {
     @Input() status: number;
     @Input() priority: string;
-    @ViewChild('iconElement', { static: true }) iconElement: ElementRef;
+    icon: Array<string>;
 
-    constructor(private elRef: ElementRef, private renderer: Renderer2) {
+    constructor() {
     }
 
     ngOnInit() {
-    }
-
-    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        if (changes.hasOwnProperty('priority')) {
-            this.renderer.removeClass(this.elRef.nativeElement, changes.priority.previousValue);
-            this.renderer.addClass(this.elRef.nativeElement, changes.priority.currentValue);
-        }
-    }
-
-    ngAfterViewInit() {
-        this.renderer.addClass(this.elRef.nativeElement, this.priority);
-        this.renderer.addClass(this.iconElement.nativeElement, 'fa');
         switch (this.status) {
             case 0:
-                this.renderer.addClass(this.iconElement.nativeElement, 'fa-square-o');
+                this.icon = ['far', 'square'];
+                // this.renderer.addClass(this.iconElement.nativeElement, 'fa-square-o');
                 break;
             case 1:
-                this.renderer.addClass(this.iconElement.nativeElement, 'fa-check-square-o');
+                this.icon = ['far', 'check-square'];
+                // this.renderer.addClass(this.iconElement.nativeElement, 'fa-check-square-o');
                 break;
             case 2:
-                this.renderer.addClass(this.iconElement.nativeElement, 'fa-pause');
+                this.icon = ['fas', 'pause'];
+                // this.renderer.addClass(this.iconElement.nativeElement, 'fa-pause');
                 break;
             default:
                 break;
         }
+        this.icon = ['fas', 'pause'];
     }
+
 }

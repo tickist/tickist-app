@@ -13,10 +13,11 @@ import {DateToString} from './pipes/datetostring';
 import {RepeatString} from './pipes/repeatString';
 import {RepeatStringExtension} from './pipes/repeatStringExtension';
 import {AutofocusDirective} from './autofocus';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
-    imports: [ CommonModule, TickistMaterialModule, FormsModule],
+    imports: [ CommonModule, TickistMaterialModule, FormsModule, FontAwesomeModule],
     providers: [
         ConfigurationService
     ],

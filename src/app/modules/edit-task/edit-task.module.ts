@@ -7,11 +7,20 @@ import {TaskComponent} from './pages/task-component/task.component';
 import {TickistEditTaskRoutingModule} from './edit-task-routing.module';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {SortablejsModule} from 'ngx-sortablejs';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
-    imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistEditTaskRoutingModule, TickistSharedModule, SortablejsModule.forRoot({
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        TickistMaterialModule,
+        FormsModule,
+        FlexLayoutModule,
+        ReactiveFormsModule,
+        TickistEditTaskRoutingModule,
+        TickistSharedModule,
+        SortablejsModule.forRoot({
             animation: 150
         })],
     providers: [],

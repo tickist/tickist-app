@@ -1,4 +1,4 @@
-import {NgModule, ErrorHandler} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter} from '@angular/material/core';
 import {BrowserModule} from '@angular/platform-browser';
@@ -8,12 +8,11 @@ import {StoreModule} from '@ngrx/store';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {MyErrorHandler} from './services/error-handler.service';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {ChartModule, SharedModule} from 'primeng/primeng';
+import {ChartModule, MenuModule, SharedModule, SliderModule, TieredMenuModule} from 'primeng/primeng';
 import {AppComponent} from './app.component';
 import {UserService} from './core/services/user.service';
 import {ProjectService} from './services/project.service';
 import {TagService} from './services/tag.service';
-import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configuration.service';
 import {StatisticsService} from './services/statistics.service';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
@@ -25,7 +24,7 @@ import {BlankComponent, RootComponent} from './testing/test.modules';
 import {MyDateAdapter} from './shared/data-adapter';
 import {environment} from '../environments/environment';
 import {JwtModule} from '@auth0/angular-jwt';
-import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {RequestInterceptorService} from './httpInterceptor';
 import {TasksFiltersService} from './core/services/tasks-filters.service';
 import {ProjectsFiltersService} from './modules/left-panel/modules/projects-list/projects-filters.service';
@@ -42,8 +41,47 @@ import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TickistCoreModule} from './core/core.module';
 import {SortablejsModule} from 'ngx-sortablejs';
 import {library} from '@fortawesome/fontawesome-svg-core';
-import {faBars, faThumbtack} from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowDown,
+    faArrowsAlt,
+    faArrowsAltV,
+    faArrowUp,
+    faBars,
+    faBell,
+    faCalendar,
+    faChartLine,
+    faCog,
+    faComment,
+    faCompress,
+    faCompressArrowsAlt,
+    faDesktop,
+    faEdit,
+    faEllipsisV,
+    faExpand,
+    faFastForward,
+    faFilter,
+    faFolder,
+    faList, faPause,
+    faPenSquare,
+    faPlus,
+    faQuestion,
+    faRedo,
+    faReply,
+    faReplyAll,
+    faSearch,
+    faShare,
+    faSitemap,
+    faSort,
+    faSun,
+    faTag,
+    faTags,
+    faThumbtack,
+    faTimes,
+    faTrashAlt,
+    faWrench
+} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {faCheckSquare, faSquare} from '@fortawesome/free-regular-svg-icons';
 
 
 export function tokenGetter() {
@@ -132,7 +170,10 @@ export function tokenGetter() {
 export class AppModule {
     constructor() {
         // Add an icon to the library for convenient access in other components
-        library.add(faBars, faThumbtack);
+        library.add(faBars, faThumbtack, faFilter, faPlus, faSun, faDesktop, faReply, faEllipsisV, faEdit, faFastForward, faTimes, faTags,
+        faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
+            faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
+            faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause);
     }
 
 }

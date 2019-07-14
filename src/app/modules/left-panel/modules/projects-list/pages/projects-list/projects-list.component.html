@@ -1,7 +1,7 @@
 <div id="all-projects" fxLayout="row" fxLayoutAlign="center center">
     <span fxFlex (click)="navigateTo(tasksProjectsViewRoutingName)">All projects</span>
     <span fxFlex (click)="navigateTo(tasksProjectsViewRoutingName)"></span>
-    <tickist-menu-button [icon]="'fa-filter'" (click)="openFilterDialog()">
+    <tickist-menu-button [icon]="'filter'" (click)="openFilterDialog()">
     </tickist-menu-button>
     <mat-menu #projectsMenu="matMenu">
         <button mat-menu-item [routerLink]="['/home/project']">Create new project</button>
@@ -17,7 +17,7 @@
                 *ngFor="let project of (projectsList$ | async);trackBy: trackByFn">
 </single-project>
 <div id="add-project" fxLayout="row" fxLayoutAlign="start center" (click)="navigateToCreateProjectView()">
-    <tickist-menu-button [icon]="'fa-plus'" [color]="'#fcb150'">
+    <tickist-menu-button [icon]="'plus'" [color]="'#fcb150'">
     </tickist-menu-button>
     <span>Create new project</span>
 </div>

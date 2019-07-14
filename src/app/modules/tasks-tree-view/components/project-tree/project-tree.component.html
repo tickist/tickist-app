@@ -5,7 +5,7 @@
 
     <span class="project-name" matTreeNodeToggle>{{ project.name }}</span>
     <div fxFlex></div>
-    <tickist-menu-button [icon]="'fa-ellipsis-v'"
+    <tickist-menu-button [icon]="'ellipsis-v'"
                          [matMenuTriggerFor]="menu">
     </tickist-menu-button>
 
@@ -19,12 +19,12 @@
 
 <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="navigateToCreateNewChildProject(project?.id)">
-        <i class="fa fa-plus orange"></i>
+        <fa-icon [icon]="'plus'" [ngClass]="'orange'" [classes]="'orange'"></fa-icon>
         <span class="orange">Create child project</span>
 
     </button>
     <button mat-menu-item (click)="navigateToEditProjectView(project?.id)">
-        <i class="fa fa-pencil-square-o"></i>
+        <i class="fa edit"></i>
         <span>Edit project</span>
     </button>
 </mat-menu>

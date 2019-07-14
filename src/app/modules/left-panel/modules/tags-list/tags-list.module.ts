@@ -12,6 +12,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { TagsFiltersEffects } from './tags-filters.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromTagsFilters from './tags-filters.reducers';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import * as fromTagsFilters from './tags-filters.reducers';
         ReactiveFormsModule,
         TickistSharedModule,
         FlexLayoutModule,
+        FontAwesomeModule,
         StoreModule.forFeature('tagsFilters', fromTagsFilters.reducer),
         EffectsModule.forFeature([TagsFiltersEffects])
     ],
