@@ -42,14 +42,14 @@ import {TickistCoreModule} from './core/core.module';
 import {SortablejsModule} from 'ngx-sortablejs';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {
-    faArrowDown,
+    faArrowDown, faArrowRight,
     faArrowsAlt,
     faArrowsAltV,
     faArrowUp,
     faBars,
     faBell,
     faCalendar,
-    faChartLine,
+    faChartLine, faCircle,
     faCog,
     faComment,
     faCompress,
@@ -81,7 +81,7 @@ import {
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {faCheckSquare, faSquare} from '@fortawesome/free-regular-svg-icons';
+import {faCheckSquare, faSquare, faDotCircle, faClock} from '@fortawesome/free-regular-svg-icons';
 
 
 export function tokenGetter() {
@@ -173,7 +173,7 @@ export class AppModule {
         library.add(faBars, faThumbtack, faFilter, faPlus, faSun, faDesktop, faReply, faEllipsisV, faEdit, faFastForward, faTimes, faTags,
         faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
             faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
-            faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause);
+            faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, faCircle, faDotCircle, faArrowRight, faClock);
     }
 
 }

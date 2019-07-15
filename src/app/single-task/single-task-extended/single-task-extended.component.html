@@ -70,11 +70,10 @@
             </tickist-menu-button>
         </div>
         <div class="step" *ngFor="let step of task.steps" fxLayout="row" fxLayoutAlign="start stretch"
-             (click)="toggleDoneStep(step)"
-             [ngClass]="{'taskstep-done': step.status == 1, 'taskstep-undone': step.status == 0}">
-            <fa-icon [icon]="'check-square'"></fa-icon>
-            <fa-icon [icon]="'square'"></fa-icon>
-            <span class="step-name" fxFlex>{{ step.name }}</span>
+             (click)="toggleDoneStep(step)">
+            <fa-icon [icon]="['far', 'check-square']" *ngIf="step.status === 1"></fa-icon>
+            <fa-icon [icon]="['far', 'square']" *ngIf="step.status === 0"></fa-icon>
+            <span [ngClass]="{'taskstep-done-step-name': step.status === 1}" fxFlex>{{ step.name }}</span>
         </div>
 
     </div>

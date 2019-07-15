@@ -35,7 +35,6 @@ export class ToggleButtonComponent implements OnInit {
             default:
                 break;
         }
-        this.icon = ['fas', 'pause'];
     }
 
 }
