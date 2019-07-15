@@ -1,4 +1,4 @@
-import { Action } from '@ngrx/store';
+import {Action} from '@ngrx/store';
 import {Filter} from '../../../models/filter';
 import {TagsFiltersTasksActions, TagsFiltersTasksActionTypes} from '../../actions/tasks/tags-filters-tasks.actions';
 
@@ -12,10 +12,10 @@ export const initialState: TagsFiltersTasksState = {
 };
 
 export function reducer(state = initialState, action: TagsFiltersTasksActions): TagsFiltersTasksState {
-  switch (action.type) {
-      case TagsFiltersTasksActionTypes.SetCurrentTagsFilters:
-          return {currentTagsFilter: action.payload.currentTagsFilter};
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case TagsFiltersTasksActionTypes.SetCurrentTagsFilters:
+            return {currentTagsFilter: action.payload.currentTagsFilter};
+        default:
+            return state;
+    }
 }

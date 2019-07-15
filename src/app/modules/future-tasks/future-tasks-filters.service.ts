@@ -1,6 +1,8 @@
-import {Injectable} from '@angular/core';
+import {ComponentFactoryResolver, Injectable, ViewContainerRef} from '@angular/core';
 import {SimpleUser, User} from '../../core/models';
 import {Filter} from '../../models/filter';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {icon} from '@fortawesome/fontawesome-svg-core';
 
 
 @Injectable()
@@ -12,15 +14,15 @@ export class FutureTasksFiltersService {
     static getAllFutureTasksFilters () {
         return [
             new Filter({
-                'id': 1, 'label': 'filter', 'name': 'All',
+                'id': 1, 'label': 'filter', 'name': 'all',
                 'value': `task => task`, 'icon': ''
             }),
             new Filter({
-                'id': 2, 'label': 'filter', 'name': 'Only <i class="fa fa-arrow-right"></i>  &lt;date&gt; ',
+                'id': 2, 'label': 'filter', 'name': 'statusBy',
                 'value': `task => task.typeFinishDate === 0`, icon: 'arrow-right'
             }),
             new Filter({
-                'id': 3, 'label': 'filter', 'name': 'Only <i class="fa fa-dot-circle-o"></i> &lt;date&gt;',
+                'id': 3, 'label': 'filter', 'name': 'statusOn',
                 'value': `tag => tag.typeFinishDate === 1`, icon: 'dot-circle'
             })
         ];

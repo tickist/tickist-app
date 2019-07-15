@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {TaskService} from '../../../../core/services/task.service';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
-import {map, takeUntil} from 'rxjs/operators';
+import {filter, map, takeUntil} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {Task} from '../../../../models/tasks';
@@ -62,7 +62,10 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         });
 
         this.store.select(selectLoggedInUser)
-            .pipe(takeUntil(this.ngUnsubscribe))
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                filter(user => !!user)
+            )
             .subscribe(user => {
                 this.user = user;
                 this.defaultTaskView = user.defaultTaskViewFutureView;
