@@ -77,11 +77,13 @@ import {
     faTags,
     faThumbtack,
     faTimes,
-    faTrashAlt,
+    faTrashAlt, faUserPlus,
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {faCheckSquare, faSquare, faDotCircle, faClock} from '@fortawesome/free-regular-svg-icons';
+import {faSign} from '@fortawesome/free-solid-svg-icons/faSign';
+import { SnackBarMessageComponent } from './components/snack-bar-message/snack-bar-message.component';
 
 
 export function tokenGetter() {
@@ -97,7 +99,8 @@ export function tokenGetter() {
         TypeFinishDateString,
         ChangeFinishDateDialogComponent,
         BlankComponent,
-        RootComponent
+        RootComponent,
+        SnackBarMessageComponent
     ],
     imports: [
         TickistSharedModule,
@@ -145,7 +148,7 @@ export function tokenGetter() {
         // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],
-    entryComponents: [TimeDialogComponent, DeleteTaskDialogComponent, ChangeFinishDateDialogComponent
+    entryComponents: [TimeDialogComponent, DeleteTaskDialogComponent, ChangeFinishDateDialogComponent, SnackBarMessageComponent
     ],
     providers: [
         // {provide: LocationStrategy, useClass: HashLocationStrategy},
@@ -173,7 +176,8 @@ export class AppModule {
         library.add(faBars, faThumbtack, faFilter, faPlus, faSun, faDesktop, faReply, faEllipsisV, faEdit, faFastForward, faTimes, faTags,
         faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
             faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
-            faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, faCircle, faDotCircle, faArrowRight, faClock);
+            faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, faCircle, faDotCircle, faArrowRight, faClock,
+            faUserPlus, faSign);
     }
 
 }
