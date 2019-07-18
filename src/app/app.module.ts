@@ -69,7 +69,7 @@ import {
     faReply,
     faReplyAll,
     faSearch,
-    faShare,
+    faShare, faSignInAlt,
     faSitemap,
     faSort,
     faSun,
@@ -177,7 +177,7 @@ export class AppModule {
         faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
             faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
             faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, faCircle, faDotCircle, faArrowRight, faClock,
-            faUserPlus, faSign);
+            faUserPlus, faSign, faSignInAlt);
     }
 
 }
