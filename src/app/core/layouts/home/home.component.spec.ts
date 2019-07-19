@@ -22,6 +22,7 @@ import {ConfigurationService} from '../../../services/configuration.service';
 import {MockObservableMedia} from '../../../testing/mocks/mediaObserver';
 import {StatisticsService} from '../../../services/statistics.service';
 import {Observable} from 'rxjs';
+import {RouterTestingModule} from '@angular/router/testing';
 
 const routes: Routes = [
     {
@@ -59,14 +60,13 @@ describe('Component: Home', () => {
 
 
         TestBed.configureTestingModule({
-            imports: [RouterModule.forRoot(routes), FlexLayoutModule, TickistMaterialModule, NoopAnimationsModule,
+            imports: [RouterTestingModule.withRoutes(routes), FlexLayoutModule, TickistMaterialModule, NoopAnimationsModule,
                 StoreModule.forRoot(reducers, {
                     initialState: {}
                 })],
             declarations: [HomeComponent, RootComponent, BlankComponent, MockComponent(AddTaskComponent),
                 MockComponent(GlobalStatisticsComponent), MockComponent(NavComponent)],
             providers: [
-                {provide: APP_BASE_HREF, useValue: '/'},
                 userService.getProviders(),
                 taskService.getProviders(),
                 tagService.getProviders(),

@@ -12,6 +12,7 @@ import {MockTaskService} from '../../../../testing/mocks/task-service';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {MockTagService} from '../../../../testing/mocks/tag-service';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 let comp: TaskComponent;
 let fixture: ComponentFixture<TaskComponent>;
@@ -26,15 +27,14 @@ describe('Component: Task', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FormsModule, ReactiveFormsModule, RouterModule.forRoot([]), StoreModule.forRoot({})],
+            imports: [TickistMaterialModule, FormsModule, ReactiveFormsModule, RouterTestingModule, StoreModule.forRoot({})],
             declarations: [TaskComponent],
             providers: [
                 projectService.getProviders(),
                 userService.getProviders(),
                 tagService.getProviders(),
                 tasksService.getProviders(),
-                configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                configurationService.getProviders()
             ],
             schemas: [ NO_ERRORS_SCHEMA ]
         }).compileComponents().then(() => {

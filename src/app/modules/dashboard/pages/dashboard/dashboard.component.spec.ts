@@ -11,6 +11,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 let comp: DashboardComponent;
 let fixture: ComponentFixture<DashboardComponent>;
@@ -24,14 +25,13 @@ describe('Component: Dashboard', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, RouterModule.forRoot([]), FlexLayoutModule, StoreModule.forRoot({})],
+            imports: [TickistMaterialModule, RouterTestingModule, FlexLayoutModule, StoreModule.forRoot({})],
             declarations: [DashboardComponent],
             providers: [
                 projectService.getProviders(),
                 userService.getProviders(),
                 tasksService.getProviders(),
-                configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                configurationService.getProviders()
             ],
             schemas: [ NO_ERRORS_SCHEMA ]
         }).compileComponents().then(() => {

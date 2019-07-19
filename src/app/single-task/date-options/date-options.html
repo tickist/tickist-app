@@ -17,7 +17,7 @@
                    (dateInput)="saveTask($event)"
                    placeholder="Choose a date"
                    #finishDateInputViewChild="ngModel">
-            <tickist-menu-button [icon]="'close'" (click)="clearFinishDate($event)" matSuffix></tickist-menu-button>
+            <tickist-menu-button [icon]="'times'" (click)="clearFinishDate($event)" matSuffix></tickist-menu-button>
             <mat-error
                     *ngIf="finishDateInputViewChild.invalid && (finishDateInputViewChild.dirty || finishDateInputViewChild.touched)">
                 Date format is invalid
@@ -29,7 +29,7 @@
         <mat-form-field *ngIf="finishDate">
             <input matInput #finishTimeInputViewChild="ngModel" type="time" [(ngModel)]="finishTime" (change)="saveTask($event)"
                    placeholder="Choose time">
-            <tickist-menu-button [icon]="'close'" (click)="clearFinishTime($event)" matSuffix></tickist-menu-button>
+            <tickist-menu-button [icon]="'times'" (click)="clearFinishTime($event)" matSuffix></tickist-menu-button>
         </mat-form-field>
     </div>
 

@@ -10,6 +10,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {AuthService} from '../../../../core/services/auth.service';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 let comp: LoginComponent;
 let fixture: ComponentFixture<LoginComponent>;
@@ -22,12 +23,11 @@ describe('Component: Login', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, RouterModule.forRoot([]), StoreModule.forRoot({})],
+            imports: [TickistMaterialModule, RouterTestingModule, StoreModule.forRoot({})],
             declarations: [LoginComponent],
             providers: [
                 userService.getProviders(),
                 configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'},
                 {provide: AuthService, useValue: AuthServiceMock}
             ],
             schemas: [ NO_ERRORS_SCHEMA ]

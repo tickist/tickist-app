@@ -8,6 +8,7 @@ import {RouterModule} from '@angular/router';
 import {reducers} from '../store';
 import {APP_BASE_HREF} from '@angular/common';
 import {Project} from '../models/projects';
+import {RouterTestingModule} from '@angular/router/testing';
 
 const project1FromApi = {
     name: 'F project',
@@ -80,7 +81,6 @@ const project7FromApi = {
 };
 
 
-
 describe('Project service', () => {
     let injector: TestBed;
     let httpMock: HttpTestingController;
@@ -89,12 +89,11 @@ describe('Project service', () => {
     beforeEach(() => {
         const tasksFiltersService = new MockTasksFiltersService();
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, TickistMaterialModule, StoreModule.forRoot(reducers), RouterModule.forRoot([])],
+            imports: [HttpClientTestingModule, TickistMaterialModule, StoreModule.forRoot(reducers), RouterTestingModule],
             providers: [
                 ProjectService,
                 tasksFiltersService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
-                ]
+            ]
         });
         injector = getTestBed();
         service = injector.get(ProjectService);

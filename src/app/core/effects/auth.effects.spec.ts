@@ -7,6 +7,7 @@ import {StoreModule} from '@ngrx/store';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {UserService} from '../services/user.service';
+import {RouterTestingModule} from '@angular/router/testing';
 
 class UserServiceMock {}
 
@@ -18,12 +19,11 @@ describe('Effects', () => {
         TestBed.configureTestingModule({
             imports: [
                 StoreModule.forRoot({}),
-                RouterModule.forRoot([])
+                RouterTestingModule
             ],
             providers: [
                 AuthEffects,
                 provideMockActions(() => actions$),
-                {provide: APP_BASE_HREF, useValue: '/'},
                 {provide: UserService, useValue: UserServiceMock}
             ]
         });

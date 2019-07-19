@@ -48,7 +48,7 @@ import {
     faArrowUp,
     faBars,
     faBell,
-    faCalendar,
+    faCalendar, faCalendarDay,
     faChartLine, faCircle,
     faCog,
     faComment,
@@ -81,7 +81,7 @@ import {
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {faCheckSquare, faSquare, faDotCircle, faClock} from '@fortawesome/free-regular-svg-icons';
+import {faCheckSquare, faSquare, faDotCircle, faClock, faArrowAltCircleRight} from '@fortawesome/free-regular-svg-icons';
 import {faSign} from '@fortawesome/free-solid-svg-icons/faSign';
 import { SnackBarMessageComponent } from './components/snack-bar-message/snack-bar-message.component';
 
@@ -177,7 +177,7 @@ export class AppModule {
         faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
             faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
             faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, faCircle, faDotCircle, faArrowRight, faClock,
-            faUserPlus, faSign, faSignInAlt);
+            faUserPlus, faSign, faSignInAlt, faCalendarDay, faArrowAltCircleRight);
     }
 
 }

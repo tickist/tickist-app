@@ -17,6 +17,7 @@ import {MockUserService} from '../../../../testing/mocks/userService';
 import {TickistTasksModule} from '../../../../tasks/tasks.module';
 import {TickistSingleTaskModule} from '../../../../single-task/single-task.module';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 
 describe('FutureTasksComponent', () => {
@@ -31,7 +32,7 @@ describe('FutureTasksComponent', () => {
         const userService = new MockUserService();
         TestBed.configureTestingModule({
             imports: [
-                RouterModule.forRoot(routes),
+                RouterTestingModule.withRoutes(routes),
                 TickistMaterialModule,
                 TickistTasksModule,
                 TickistSingleTaskModule,
@@ -43,7 +44,6 @@ describe('FutureTasksComponent', () => {
             declarations: [FutureTasksComponent, MockComponent(FilterFutureTasksComponent),
                 MockComponent(ChangeTaskViewComponent)],
             providers: [
-                {provide: APP_BASE_HREF, useValue: '/'},
                 taskService.getProviders(),
                 configurationService.getProviders(),
                 userService.getProviders(),

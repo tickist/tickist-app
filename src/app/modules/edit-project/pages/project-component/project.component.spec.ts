@@ -10,6 +10,7 @@ import {MockUserService} from '../../../../testing/mocks/userService';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 let comp: ProjectComponent;
 let fixture: ComponentFixture<ProjectComponent>;
@@ -27,15 +28,14 @@ describe('Component: Project', () => {
                 TickistSharedModule,
                 FormsModule,
                 ReactiveFormsModule,
-                RouterModule.forRoot([]),
+                RouterTestingModule,
                 StoreModule.forRoot({})
             ],
             declarations: [ProjectComponent],
             providers: [
                 projectService.getProviders(),
                 userService.getProviders(),
-                configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                configurationService.getProviders()
             ],
             schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents().then(() => {

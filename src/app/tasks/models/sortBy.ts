@@ -12,7 +12,7 @@ export class SortBy {
         this.sortKeys = sortKeys;
         this.order = order;
         this.name = name;
-        this.icon = icon
+        this.icon = icon;
     }
 
 }

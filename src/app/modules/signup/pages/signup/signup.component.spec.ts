@@ -26,7 +26,6 @@ describe('Component: SignUp', () => {
             declarations: [SignupComponent],
             providers: [
                 userService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'},
                 {provide: AuthService, useValue: AuthServiceMock}
             ],
             schemas: [ NO_ERRORS_SCHEMA ]

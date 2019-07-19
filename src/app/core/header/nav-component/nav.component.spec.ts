@@ -12,6 +12,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import {MockTaskService} from '../../../testing/mocks/task-service';
 import {MockTasksFiltersService} from '../../../testing/mocks/tasks-filters-service';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 let comp: NavComponent;
 let fixture: ComponentFixture<NavComponent>;
@@ -30,7 +31,7 @@ describe('Component: Nav', () => {
                 TickistMaterialModule,
                 TickistSharedModule,
                 FlexLayoutModule,
-                RouterModule.forRoot([]),
+                RouterTestingModule,
                 StoreModule.forRoot({})
             ],
             declarations: [NavComponent],
@@ -39,8 +40,7 @@ describe('Component: Nav', () => {
                 projectService.getProviders(),
                 tasksFiltersService.getProviders(),
                 tasksService.getProviders(),
-                configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                configurationService.getProviders()
             ],
             schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents().then(() => {

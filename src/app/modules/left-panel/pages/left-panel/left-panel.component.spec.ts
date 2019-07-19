@@ -13,6 +13,7 @@ import {TagsListComponent} from '../../modules/tags-list/pages/tags-list/tags-li
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('LeftPanelComponent', () => {
     let component: LeftPanelComponent;
@@ -20,11 +21,10 @@ describe('LeftPanelComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, StoreModule.forRoot({}), RouterModule.forRoot([]), NoopAnimationsModule],
+            imports: [TickistMaterialModule, StoreModule.forRoot({}), RouterTestingModule, NoopAnimationsModule],
             declarations: [LeftPanelComponent, MockComponent(FutureListComponent), MockComponent(WeekDaysComponent),
                 MockComponent(ProjectsListComponent), MockComponent(TagsListComponent)],
             providers: [
-                {provide: APP_BASE_HREF, useValue: '/'},
             ]
 
         })

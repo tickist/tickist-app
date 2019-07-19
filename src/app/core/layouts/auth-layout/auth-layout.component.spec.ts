@@ -6,6 +6,7 @@ import {MockComponent} from 'ng-mocks';
 import {NavBarAuthPageComponent} from '../../header/nav-bar-auth-page/nav-bar-auth-page.component';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DialogLayoutComponent', () => {
     let component: AuthLayoutComponent;
@@ -14,15 +15,12 @@ describe('DialogLayoutComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [
-                RouterModule.forRoot([])
+                RouterTestingModule
             ],
             declarations: [
                 AuthLayoutComponent,
                 MockComponent(NavBarAuthPageComponent)
-            ],
-            providers: [
-                {provide: APP_BASE_HREF, useValue: '/'}
-            ],
+            ]
         })
             .compileComponents();
     }));
