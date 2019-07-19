@@ -16,7 +16,9 @@
     "lint": "ng lint",
     "lint-with-fix": "ng lint --fix",
     "e2e": "ng e2e --port 4201",
-    "generate-git-version": "node grab-git-info.js"
+    "generate-git-version": "node grab-git-info.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "private": false,
   "repository": "https://github.com/tickist/frontend",
@@ -60,7 +62,8 @@
     "rxjs": "^6.5.2",
     "sortablejs": "^1.9.0",
     "truncate-html": "^1.0.2",
-    "zone.js": "^0.9.1"
+    "zone.js": "^0.9.1",
+    "snyk": "^1.195.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.801.0",
@@ -109,5 +112,6 @@
       "post-checkout": "npm run generate-git-version",
       "post-commit": "npm run generate-git-version"
     }
-  }
+  },
+  "snyk": true
 }
