@@ -2,7 +2,7 @@
 
 
     <div (click)="toggleDone()" [ngClass]="task.priority" class="done">
-        <i class="fa" [ngClass]="{'fa-check-square-o': task.status == 1, 'fa-square-o': task.status == 0, 'fa-pause': task.status == 2 }"></i>
+        <fa-icon [icon]="icon"></fa-icon>
     </div>
 
     <tickist-task-name [task]="task" ></tickist-task-name>
@@ -15,7 +15,7 @@
                                 (changePriorityClick)="changePriority($event)"
                                 (fastMenuOpen)="changeFastMenuVisible($event)"
                                 (fastMenuClose)="changeFastMenuVisible($event)">
-         
+
      </tickist-right-menu>
     <div class="right-menu" *ngIf="finishDateVisible">
         <tickist-display-finish-date [task]="task" *ngIf="task.finishDate"></tickist-display-finish-date>

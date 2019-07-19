@@ -5,7 +5,7 @@ import {MockProjectService} from '../../testing/mocks/project-service';
 import {MockConfigurationService} from '../../testing/mocks/configurationService';
 import {TickistMaterialModule} from '../../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 let comp: TimeDialogComponent;
 let fixture: ComponentFixture<TimeDialogComponent>;

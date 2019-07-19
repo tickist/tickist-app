@@ -18,8 +18,7 @@ describe('ChooseDayComponent', () => {
             imports: [TickistMaterialModule, ReactiveFormsModule, NoopAnimationsModule, StoreModule.forRoot({})],
             declarations: [ChooseDayComponent],
              providers: [
-                configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                configurationService.getProviders()
             ]
         }).compileComponents();
     }));

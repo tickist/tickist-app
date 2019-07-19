@@ -1,6 +1,4 @@
-
-
-
+@import "../../../../shared/variables";
 
 :host {
     width: 100%;
@@ -33,5 +31,13 @@ mat-icon {
 }
 
 .visibility-hidden {
-    visibility: hidden; 
+    visibility: hidden;
+}
+
+fa-icon {
+    padding-right: 5px;
+}
+
+.orange {
+    color: $orange;
 }

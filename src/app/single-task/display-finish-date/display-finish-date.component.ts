@@ -1,7 +1,4 @@
-import {
-    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
-    ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
 import {Task} from '../../models/tasks';
 
 
@@ -11,52 +8,29 @@ import {Task} from '../../models/tasks';
     styleUrls: ['./display-finish-date.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DisplayFinishDateComponent implements OnInit, OnChanges, AfterViewInit {
+export class DisplayFinishDateComponent implements OnInit, OnChanges {
     @Input() task: Task;
-    @ViewChild('typeFinishDateIcon') typeFinishDateIcon: ElementRef;
-    @ViewChild('finishTime') finishTime: ElementRef;
-    @ViewChild('finishTimeIcon') finishTimeIcon: ElementRef;
+    statusOn = false;
+    statusBy = false;
+
     dateFormat = 'DD-MM-YYYY';
     finishDateFormat: string;
 
-    constructor(private renderer: Renderer2) {
+    constructor() {
     }
 
     ngOnInit() {
         if (!this.task) {
             throw new Error(`Attribute 'task' is required`);
         }
+
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        console.log(changes);
         if (changes.hasOwnProperty('task')) {
-            this.addTypeFinishDateIcon();
+            this.statusOn = this.task.typeFinishDate === 1;
+            this.statusBy = this.task.typeFinishDate === 0;
+            this.finishDateFormat = this.task.finishDate.format(this.dateFormat);
         }
     }
-
-    ngAfterViewInit() {
-        this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa');
-        this.addTypeFinishDateIcon();
-
-        this.renderer.setStyle(this.typeFinishDateIcon.nativeElement, 'margin-right', '3px');
-        if (this.finishTime) {
-            this.renderer.addClass(this.finishTimeIcon.nativeElement, 'fa');
-            this.renderer.addClass(this.finishTimeIcon.nativeElement, 'fa-clock-o');
-            this.renderer.setStyle(this.finishTime.nativeElement, 'margin-right', '3px');
-            this.renderer.setStyle(this.finishTime.nativeElement, 'margin-left', '3px');
-        }
-    }
-
-    addTypeFinishDateIcon() {
-        this.renderer.removeClass(this.typeFinishDateIcon.nativeElement, 'fa-dot-circle-o');
-        this.renderer.removeClass(this.typeFinishDateIcon.nativeElement, 'fa-arrow-right');
-        if (this.task.typeFinishDate === 1) {
-            this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa-dot-circle-o');
-        } else if (this.task.typeFinishDate === 0) {
-            this.renderer.addClass(this.typeFinishDateIcon.nativeElement, 'fa-arrow-right');
-        }
-        this.finishDateFormat = this.task.finishDate.format(this.dateFormat);
-    }
-
 }

@@ -1,6 +1,4 @@
-import {
-    Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, OnChanges, SimpleChange, HostListener, ChangeDetectorRef
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {Project} from '../../../../../../models/projects';
 import {ProjectService} from '../../../../../../services/project.service';
 import {Router} from '@angular/router';
@@ -8,8 +6,7 @@ import {ConfigurationService} from '../../../../../../services/configuration.ser
 
 import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
-import {MatDialog} from '@angular/material';
-import {UserService} from '../../../../../../core/services/user.service';
+import {MatDialog} from '@angular/material/dialog';
 import {User} from '../../../../../../core/models';
 import {AddNewActiveProjectId, DeleteActiveProjectId} from '../../../../../../core/actions/projects/active-projects-ids.actions';
 import {AppStore} from '../../../../../../store';
@@ -17,12 +14,12 @@ import {Store} from '@ngrx/store';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/routes.names';
-import {dashboardRoutesName} from '../../../../../dashboard/routes.names';
-import {homeRoutesName} from '../../../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
 import {selectActiveProject, selectActiveProjectsIds} from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
 import {DeleteProject} from '../../../../../../core/actions/projects/projects.actions';
+import {homeRoutesName} from '../../../../../../routing.module.name';
+
 
 class Timer {
     readonly start = performance.now();

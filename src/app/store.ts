@@ -2,7 +2,7 @@ import {ActionReducerMap, MetaReducer} from '@ngrx/store';
 import {leftSidenavVisibility, addTaskComponentVisibility} from './reducers/configuration';
 import {IActiveDateElement} from './models/active-data-element.interface';
 import {environment} from '../environments/environment';
-import {storeFreeze} from 'ngrx-store-freeze';
+
 
 
 export interface AppStore {
@@ -54,4 +54,4 @@ const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});
 
 
 export const metaReducers: MetaReducer<AppStore>[] =
-    !environment.production ? [storeFreeze] : [logrocketMiddleware];
+    !environment.production ? [] : [logrocketMiddleware];

@@ -35,7 +35,6 @@ describe('FutureListComponent', () => {
             ],
             declarations: [FutureListComponent],
             providers: [
-                {provide: APP_BASE_HREF, useValue: '/'},
                 userService.getProviders(),
                 taskService.getProviders(),
                 configurationService.getProviders(),

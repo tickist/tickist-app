@@ -1,3 +1,4 @@
 <button [matTooltip]="'Do it today'" aria-label="Pin task">
-    <i #iconElement></i>
+    <fa-icon *ngIf="pinned" [icon]="['fas', 'thumbtack']" [classes]="['pinned']" [ngClass]="'pinned'"></fa-icon>
+    <fa-icon *ngIf="!pinned" [icon]="['fas', 'thumbtack']" [classes]="['unpinned']" [ngClass]="'unpinned'"></fa-icon>
 </button>

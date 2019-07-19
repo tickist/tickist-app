@@ -9,6 +9,7 @@ import {Store} from '@ngrx/store';
 import {AddFutureTasksFilters, SetCurrentFutureTaskFilter} from './future-tasks-filters.actions';
 import {FutureTasksFiltersService} from './future-tasks-filters.service';
 
+const ALL_DATES = 1;
 
 @Injectable()
 export class FutureTasksEffects {
@@ -36,6 +37,10 @@ export class FutureTasksEffects {
                     actions.push(new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}));
                     actions.push(new SetCurrentFutureTaskFilter({
                         currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(user.projectsFilterId)
+                    }));
+                } else {
+                    actions.push(new SetCurrentFutureTaskFilter({
+                        currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(ALL_DATES)
                     }));
                 }
                 return actions;

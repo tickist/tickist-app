@@ -11,6 +11,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { FutureTasksEffects } from './future-tasks.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromFutureTasks from './future-tasks-filters.reducers';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 
@@ -22,6 +23,7 @@ import * as fromFutureTasks from './future-tasks-filters.reducers';
         TickistSingleTaskModule,
         FormsModule,
         TickistSharedModule,
+        FontAwesomeModule,
         StoreModule.forFeature('futureTasks', fromFutureTasks.reducer),
         EffectsModule.forFeature([FutureTasksEffects]),
     ],

@@ -4,7 +4,7 @@
             <mat-expansion-panel >
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <i class="fa fa-calendar-o"></i>Weekdays
+                        <fa-icon [icon]="'calendar-day'"></fa-icon>Weekdays
                     </mat-panel-title>
 
                 </mat-expansion-panel-header>
@@ -13,7 +13,7 @@
             <mat-expansion-panel >
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <i class="fa fa-calendar"></i> Future
+                        <fa-icon [icon]="'calendar'"></fa-icon> Future
                     </mat-panel-title>
                 </mat-expansion-panel-header>
                 <tickist-future-list></tickist-future-list>
@@ -21,7 +21,7 @@
             <mat-expansion-panel >
                 <mat-expansion-panel-header >
                     <mat-panel-title>
-                        <i class="fa fa-folder"></i>Projects
+                        <fa-icon [icon]="'folder'"></fa-icon>Projects
                     </mat-panel-title>
                 </mat-expansion-panel-header>
                 <tickist-projects-list></tickist-projects-list>
@@ -30,7 +30,7 @@
             <mat-expansion-panel (click)="navigateToTasksTreeView()" hideToggle="true" [expanded]="'false'" class="always-collapsed">
                 <mat-expansion-panel-header expandedHeight="48px">
                     <mat-panel-title>
-                        <i class="fa fa-sitemap"></i>Tasks tree view
+                        <fa-icon [icon]="'sitemap'"></fa-icon>Tasks tree view
                     </mat-panel-title>
                 </mat-expansion-panel-header>
 
@@ -39,7 +39,7 @@
             <mat-expansion-panel (afterExpand)="navigateToTags()">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                      <i class="fa fa-tags"></i> Tags
+                        <fa-icon [icon]="'tags'"></fa-icon> Tags
                     </mat-panel-title>
                 </mat-expansion-panel-header>
                 <tickist-tags-list></tickist-tags-list>
@@ -48,7 +48,7 @@
 <!--            <mat-expansion-panel (click)="navigateToStatisticsView()"  hideToggle="true"  [expanded]="'false'"  class="always-collapsed">-->
 <!--                <mat-expansion-panel-header expandedHeight="48px">-->
 <!--                    <mat-panel-title>-->
-<!--                       <i class="fa fa-line-chart"></i> Statistics-->
+<!--                        <fa-icon [icon]="'line-chart'"></fa-icon> Statistics-->
 <!--                    </mat-panel-title>-->
 <!--                </mat-expansion-panel-header>-->
 

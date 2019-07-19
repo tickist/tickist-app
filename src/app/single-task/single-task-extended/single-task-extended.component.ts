@@ -4,14 +4,15 @@ import {
 } from '@angular/core';
 import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../services/configuration.service';
-import {MatDialog, MatSelect} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
 import {ProjectService} from '../../services/project.service';
 import {Project} from '../../models/projects';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
-import {UpdateTask} from '../../core/actions/tasks/task.actions';
+import {RequestUpdateTask, UpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
@@ -32,7 +33,7 @@ import {FormControl} from '@angular/forms';
 export class SingleTaskExtendedComponent extends SingleTask implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     @Input() task: Task;
     @Input() mediaChange;
-    @ViewChild('container') container: ElementRef;
+    @ViewChild('container', { static: true }) container: ElementRef;
 
     dateFormat = 'DD-MM-YYYY';
     projects$: Observable<Project[]>;
@@ -96,7 +97,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.selectTaskProject.valueChanges.subscribe(value => {
             this.store.select(selectProjectById(value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
                 const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
-                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: task}}));
+                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));
             });
         });
     }
@@ -114,7 +115,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     changeAssignedTo(event) {
         this.task.owner = <SimpleUser> this.task
             .taskProject.shareWith.find(user => user.hasOwnProperty('id') && (<SimpleUser> user).id === event.value);
-        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task, true, true);
     }
 
@@ -131,7 +132,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     removeTag(tag) {
         this.task = removeTag(this.task,  tag);
-        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {

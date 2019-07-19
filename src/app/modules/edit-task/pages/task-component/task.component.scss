@@ -18,11 +18,11 @@ mat-list-item {
     }
 }
 
-.fa {
+fa-icon {
     cursor: pointer;
 }
 
-.fa-question {
+.question {
     cursor: help !important;
 }
 
@@ -47,6 +47,9 @@ mat-list-item {
         .hover-visible {
             visibility: visible;
         }
+    }
+    fa-icon {
+        margin-right: 5px;
     }
 }
 

@@ -7,6 +7,7 @@ import {TickistEditUserSettingsRoutingModule} from './edit-user-settings-routing
 import {UserComponent} from './components/user/user.component';
 import {CalendarModule} from 'primeng/primeng';
 import {TickistSharedModule} from '../../shared/shared.module';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import {TickistSharedModule} from '../../shared/shared.module';
         TickistSharedModule,
         ReactiveFormsModule,
         TickistEditUserSettingsRoutingModule,
-        CalendarModule
+        CalendarModule,
+        FontAwesomeModule
     ],
     providers: [],
     exports: [

@@ -48,6 +48,9 @@ import * as fromSearchTasks from './reducers/tasks/search-tasks.reducer';
 import {AssignedToFiltersTasksEffects} from './effects/assigned-to-filters-tasks.effects';
 import {TasksFiltersEffects} from './effects/tasks-filters.effects';
 import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {library} from '@fortawesome/fontawesome-svg-core';
+import {faBars} from '@fortawesome/free-solid-svg-icons';
 
 
 @NgModule({
@@ -85,6 +88,7 @@ import {ShowNotificationAboutNewDayComponent} from './header/show-notification-a
         EffectsModule.forFeature([TagsEffects]),
         EffectsModule.forFeature([UserEffects, TeamEffects]),
         EffectsModule.forFeature([AssignedToFiltersTasksEffects, TasksFiltersEffects]),
+        FontAwesomeModule
     ],
     providers: [
         TaskService,

@@ -1,7 +1,7 @@
 <div class="header" fxLayout="row" fxLayoutAlign="start center">
     <div fxFlex fxLayoutAlign="start center" ><span >Overdue tasks</span></div>
     <span fxFlex></span>
-    <tickist-menu-button [icon]="'fa-share'" (click)="postponeToToday()" [fontSize]="'18px'"></tickist-menu-button>
+    <tickist-menu-button [icon]="'share'" (click)="postponeToToday()" [fontSize]="'18px'"></tickist-menu-button>
     <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)">
     </change-task-view>
 </div>

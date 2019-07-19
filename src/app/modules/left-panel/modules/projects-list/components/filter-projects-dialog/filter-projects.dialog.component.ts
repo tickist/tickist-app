@@ -1,4 +1,4 @@
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {Component, OnDestroy} from '@angular/core';
 import {ProjectsFiltersService} from '../../projects-filters.service';
 import {takeUntil} from 'rxjs/operators';

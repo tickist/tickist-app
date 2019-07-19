@@ -1,25 +1,29 @@
-import {createEntityAdapter, EntityAdapter, EntityState, Update} from '@ngrx/entity';
+import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {TaskActions, TaskActionTypes} from '../../actions/tasks/task.actions';
 import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
 import {Task} from '../../../models/tasks';
 import {setStatusDoneLogic} from '../../../single-task/utils/set-status-to-done-logic';
+import {createDefaultLoadable, Loadable} from '../../utils/loadable/loadable';
+import {withLoadable} from '../../utils/loadable/with-loadable';
 
-export interface TasksState extends EntityState<Task> {
-
+export interface TasksState extends EntityState<Task>, Loadable {
     allTasksLoaded: boolean;
 
 }
+
+
 
 export const adapter: EntityAdapter<Task> =
     createEntityAdapter<Task>();
 
 
 export const initialTasksState: TasksState = adapter.getInitialState({
-    allTasksLoaded: false
+    allTasksLoaded: false,
+    ...createDefaultLoadable(),
 });
 
 
-export function reducer(state = initialTasksState, action: (TaskActions | TickistActions)): TasksState {
+export function baseReducer(state = initialTasksState, action: (TaskActions | TickistActions)): TasksState {
     switch (action.type) {
         case TaskActionTypes.CREATE_TASK:
             return adapter.addOne(action.payload.task, state);
@@ -29,10 +33,6 @@ export function reducer(state = initialTasksState, action: (TaskActions | Tickis
 
         case TaskActionTypes.UPDATE_TASK:
             return adapter.updateOne(action.payload.task, state);
-
-        case TaskActionTypes.SET_TASK_STATUS_TO_DONE:
-            const task = setStatusDoneLogic(action.payload.task.changes);
-            return adapter.updateOne({id: task.id, changes: task}, state);
 
         case TaskActionTypes.DELETE_TASK:
             return adapter.removeOne(action.payload.taskId, state);
@@ -46,6 +46,14 @@ export function reducer(state = initialTasksState, action: (TaskActions | Tickis
         default:
             return state;
     }
+}
+
+export function reducer(state: TasksState, action: (TaskActions | TickistActions)): TasksState {
+    return withLoadable(baseReducer, {
+        loadingActionType: [TaskActionTypes.REQUEST_UPDATE_TASK, TaskActionTypes.REQUEST_ALL_TASKS],
+        successActionType: [TaskActionTypes.UPDATE_TASK, TaskActionTypes.CREATE_TASK, TaskActionTypes.ADD_TASKS],
+        errorActionType: [],
+    })(state, action);
 }
 
 export const {

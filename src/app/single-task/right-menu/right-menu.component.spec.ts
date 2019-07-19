@@ -18,6 +18,7 @@ import {Project} from '../../models/projects';
 import {IUserApi} from '../../models/user-api.interface';
 import {IProjectApi} from '../../models/project-api.interface';
 import {ITaskApi} from '../../models/task-api.interface';
+import {RouterTestingModule} from '@angular/router/testing';
 
 
 const routes: Routes = [
@@ -52,7 +53,7 @@ describe('RightMenuComponent', () => {
         project = projectApiMockFactory.createProjectDict([], user, []);
         task = taskApiMockFactory.createTaskDict(user, user, project,  []);
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, RouterModule.forRoot(routes)],
+            imports: [TickistMaterialModule, RouterTestingModule.withRoutes(routes)],
             declarations: [
                 RightMenuComponent,
                 MockComponent(PinButtonComponent),
@@ -60,9 +61,6 @@ describe('RightMenuComponent', () => {
                 MockComponent(PriorityComponent),
                 RootComponent,
                 BlankComponent
-            ],
-            providers: [
-                {provide: APP_BASE_HREF, useValue: '/'}
             ]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(RightMenuComponent);

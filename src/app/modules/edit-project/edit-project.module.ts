@@ -7,6 +7,8 @@ import {ColorPickerComponent} from './components/color-picker/color-picker.compo
 import {ProjectComponent} from './pages/project-component/project.component';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {TickistEditProjectRoutingModule} from './edit-project-routing.module';
+import { DeleteUserConfirmationDialogComponent } from './components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -16,12 +18,14 @@ import {TickistEditProjectRoutingModule} from './edit-project-routing.module';
         FlexLayoutModule,
         ReactiveFormsModule,
         TickistSharedModule,
-        TickistEditProjectRoutingModule
+        TickistEditProjectRoutingModule,
+        FontAwesomeModule
     ],
     providers: [],
+    entryComponents: [DeleteUserConfirmationDialogComponent],
     exports: [ProjectComponent],
     declarations: [
-        ColorPickerComponent,   ProjectComponent
+        ColorPickerComponent,   ProjectComponent, DeleteUserConfirmationDialogComponent
     ]
 })
 export class TickistEditProjectModule {

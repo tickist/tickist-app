@@ -1,8 +1,8 @@
 import {Component, Inject} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
 import {Task} from '../../models/tasks';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'tickist-time-dialog',

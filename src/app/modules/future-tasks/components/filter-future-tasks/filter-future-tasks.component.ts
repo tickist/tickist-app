@@ -1,10 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FutureTasksFiltersService} from '../../future-tasks-filters.service';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
-import {selectCurrentMainFilter, selectMainFilters} from '../../../../core/selectors/filters-tasks.selectors';
 import {Filter} from '../../../../models/filter';
 import {selectAllFutureTasksFilters, selectCurrentFutureTasksFilter} from '../../future-tasks.selectors';
 import {SetCurrentFutureTaskFilter} from '../../future-tasks-filters.actions';

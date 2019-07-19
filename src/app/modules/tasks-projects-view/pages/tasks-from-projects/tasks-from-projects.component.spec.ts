@@ -87,8 +87,7 @@ describe('TasksFromProjectsComponent', () => {
                 taskService.getProviders(),
                 tagService.getProviders(),
                 userService.getProviders(),
-                activatedRoute.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                activatedRoute.getProviders()
             ]
         }).compileComponents();
     }));

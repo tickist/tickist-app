@@ -6,12 +6,14 @@ import {IPendingUser} from '../../models/pending-user-api.interface';
 import {toSnakeCase} from './toSnakeCase';
 
 export function addUserToShareList(project: (SimpleProject | Project), user) {
-    if (user.hasOwnProperty('id')) {
-        project.shareWith.push(new SimpleUser(user));
-    } else {
-        project.shareWith.push(new PendingUser(user));
+    const shareWith = [...project.shareWith];
+    const shareWithOnlyIds = shareWith.map(simpleUser => (<SimpleUser> simpleUser).id);
+    if (user.hasOwnProperty('id') && !shareWithOnlyIds.includes(user.id)) {
+        shareWith.push(new SimpleUser(user));
+    } else if (!user.hasOwnProperty('id')) {
+        shareWith.push(new PendingUser(user));
     }
-    return project;
+    return Object.assign({}, project, {shareWith: shareWith});
 }
 
 export function convertToSimpleProject(project: Project): SimpleProject {

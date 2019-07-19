@@ -1,10 +1,8 @@
-import {Observable} from 'rxjs';
-import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
+import {ComponentFactoryResolver, Injectable, ViewContainerRef} from '@angular/core';
 import {SimpleUser, User} from '../../core/models';
-import {Router} from '@angular/router';
 import {Filter} from '../../models/filter';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {icon} from '@fortawesome/fontawesome-svg-core';
 
 
 @Injectable()
@@ -16,16 +14,16 @@ export class FutureTasksFiltersService {
     static getAllFutureTasksFilters () {
         return [
             new Filter({
-                'id': 1, 'label': 'filter', 'name': 'All',
-                'value': `task => task`
+                'id': 1, 'label': 'filter', 'name': 'all',
+                'value': `task => task`, 'icon': ''
             }),
             new Filter({
-                'id': 2, 'label': 'filter', 'name': 'Only <i class="fa fa-arrow-right"></i>  &lt;date&gt; ',
-                'value': `task => task.typeFinishDate === 0`
+                'id': 2, 'label': 'filter', 'name': 'statusBy',
+                'value': `task => task.typeFinishDate === 0`, icon: 'arrow-right'
             }),
             new Filter({
-                'id': 3, 'label': 'filter', 'name': 'Only <i class="fa fa-dot-circle-o"></i> &lt;date&gt;',
-                'value': `tag => tag.typeFinishDate === 1`
+                'id': 3, 'label': 'filter', 'name': 'statusOn',
+                'value': `tag => tag.typeFinishDate === 1`, icon: 'dot-circle'
             })
         ];
     }
@@ -35,34 +33,7 @@ export class FutureTasksFiltersService {
         return filters.find(filter => filter.id === filterId);
     }
 
-    constructor(private store: Store<AppStore>, private router: Router) {
-
-        // this.futureTasksFilters$ = this.store.pipe(
-        //     select(s => s.futureTasksFilters)
-        // );
-        // this.currentFutureTasksFilters$ = this.store.pipe(
-        //     select(s => s.currentTasksFutureFilters)
-        // );
-        // this.filters = [
-        //     new Filter({
-        //         'id': 1, 'label': 'filter', 'name': 'All',
-        //         'value': task => task
-        //     }),
-        //     new Filter({
-        //         'id': 2, 'label': 'filter', 'name': 'Only <i class="fa fa-arrow-right"></i>  &lt;date&gt; ',
-        //         'value': task => task.typeFinishDate === 0
-        //     }),
-        //     new Filter({
-        //         'id': 3, 'label': 'filter', 'name': 'Only <i class="fa fa-dot-circle-o"></i> &lt;date&gt;',
-        //         'value': tag => tag.typeFinishDate === 1
-        //     })
-        // ];
-        // this.userService.user$.subscribe(user => {
-        //     this.user = user;
-        //     this.loadCurrentFutureTasksFilters();
-        // });
-        // this.loadFutureTasksFilters();
-
+    constructor() {
     }
 
     loadCurrentFutureTasksFilters() {

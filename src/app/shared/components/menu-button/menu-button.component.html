@@ -1,3 +1,7 @@
-<button type="button">
-    <i #icon></i>
+<button type="button" [ngClass]="[isDisabledClass]">
+    <fa-icon [icon]="['fas', icon]"
+             [classes]="[isDisabledClass]"
+             transform="transform"
+             [styles]="{'color': color, 'font-size': fontSize}"
+    ></fa-icon>
 </button>

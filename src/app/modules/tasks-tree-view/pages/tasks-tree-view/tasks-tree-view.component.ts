@@ -6,9 +6,11 @@ import {Store} from '@ngrx/store';
 import {Task} from '../../../../models/tasks';
 import {selectAllTasksTreeView} from '../../tasks-tree-view.selectors';
 import {Observable, Subject} from 'rxjs';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {takeUntil} from 'rxjs/operators';
+import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
+import {Router} from '@angular/router';
 
 
 interface TaskTreeViewNode {
@@ -51,7 +53,7 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     tasksFormCounter = 1;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private store: Store<AppStore>, private cd: ChangeDetectorRef) {
+    constructor(private store: Store<AppStore>, private cd: ChangeDetectorRef, private router: Router) {
         this.transformer = (node: TaskTreeViewNode, level: number) => {
             const isProject = !!node.project;
             const isTask = !!node.task;
@@ -127,6 +129,10 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
 
     expandAll() {
         this.treeControl.expandAll();
+    }
+
+    navigateToCreateProjectView() {
+        this.router.navigate(['home', {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT]}}]);
     }
 
     ngOnDestroy() {

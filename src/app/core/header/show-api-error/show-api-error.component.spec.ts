@@ -15,8 +15,7 @@ describe('ShowApiErrorComponent', () => {
             imports: [StoreModule.forRoot({})],
             declarations: [ShowApiErrorComponent],
             providers: [
-                configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                configurationService.getProviders()
             ]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(ShowApiErrorComponent);

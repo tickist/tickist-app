@@ -14,10 +14,11 @@ import {User, SimpleUser} from '../../../../core/models';
 import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
-import {MatDialog, MatAutocompleteSelectedEvent} from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog } from '@angular/material/dialog';
 import moment from 'moment';
 import {Tag} from '../../../../models/tags';
-import {MatAutocompleteTrigger} from '@angular/material';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../../../../shared/keymap';
 import {map, startWith, takeUntil} from 'rxjs/operators';
@@ -27,7 +28,7 @@ import {ITaskApi} from '../../../../models/task-api.interface';
 import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
-import {DeleteTask, RequestCreateTask, UpdateTask} from '../../../../core/actions/tasks/task.actions';
+import {DeleteTask, RequestCreateTask, RequestUpdateTask, UpdateTask} from '../../../../core/actions/tasks/task.actions';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
@@ -69,8 +70,8 @@ export class TaskComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
-    @ViewChild('autocompleteTags') autocompleteTags;
+    @ViewChild('trigger', { read: MatAutocompleteTrigger, static: false }) trigger: MatAutocompleteTrigger;
+    @ViewChild('autocompleteTags', { static: false }) autocompleteTags;
 
     constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<AppStore>,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
@@ -381,7 +382,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         .subscribe((t) => {
                             this.task.tags.push(new Tag(t));
                             if (!this.isNewTask()) {
-                                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
                             }
 
                         });
@@ -391,7 +392,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 if (existingTag) {
                     this.task.tags.push(existingTag);
                     if (!this.isNewTask()) {
-                        this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
                     }
                 } else {
                     this.tagService.createTagDuringEditingTask(new Tag({name: this.tagsCtrl.value}))
@@ -399,7 +400,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         .subscribe((t) => {
                             this.task.tags.push(new Tag(t));
                             if (!this.isNewTask()) {
-                                this.store.dispatch(new UpdateTask({task: {id: this.task.id, changes: this.task}}));
+                                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
                             }
 
                         });
@@ -464,7 +465,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             if (this.isNewTask()) {
                 this.store.dispatch(new RequestCreateTask({task: updatedTask}));
             } else {
-                this.store.dispatch(new UpdateTask({task: {id: updatedTask.id, changes: updatedTask}}));
+                this.store.dispatch(new RequestUpdateTask({task: {id: updatedTask.id, changes: updatedTask}}));
             }
 
             if (!withoutClose) {

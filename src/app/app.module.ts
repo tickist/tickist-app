@@ -1,6 +1,6 @@
-import {NgModule, ErrorHandler} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DateAdapter} from '@angular/material';
+import {DateAdapter} from '@angular/material/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -8,15 +8,13 @@ import {StoreModule} from '@ngrx/store';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {MyErrorHandler} from './services/error-handler.service';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {ChartModule, SharedModule} from 'primeng/primeng';
+import {ChartModule, MenuModule, SharedModule, SliderModule, TieredMenuModule} from 'primeng/primeng';
 import {AppComponent} from './app.component';
 import {UserService} from './core/services/user.service';
 import {ProjectService} from './services/project.service';
 import {TagService} from './services/tag.service';
-import {MenuModule, TieredMenuModule, SliderModule} from 'primeng/primeng';
 import {ConfigurationService} from './services/configuration.service';
 import {StatisticsService} from './services/statistics.service';
-import {SortablejsModule} from 'angular-sortablejs';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {ErrorService} from './services/error.service';
 import {TypeFinishDateString} from './shared/pipes/typeFinishDateString';
@@ -26,7 +24,7 @@ import {BlankComponent, RootComponent} from './testing/test.modules';
 import {MyDateAdapter} from './shared/data-adapter';
 import {environment} from '../environments/environment';
 import {JwtModule} from '@auth0/angular-jwt';
-import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {RequestInterceptorService} from './httpInterceptor';
 import {TasksFiltersService} from './core/services/tasks-filters.service';
 import {ProjectsFiltersService} from './modules/left-panel/modules/projects-list/projects-filters.service';
@@ -41,6 +39,51 @@ import {InMemoryDataService} from './testing/mocks/inMemryDb';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TickistCoreModule} from './core/core.module';
+import {SortablejsModule} from 'ngx-sortablejs';
+import {library} from '@fortawesome/fontawesome-svg-core';
+import {
+    faArrowDown, faArrowRight,
+    faArrowsAlt,
+    faArrowsAltV,
+    faArrowUp,
+    faBars,
+    faBell,
+    faCalendar, faCalendarDay,
+    faChartLine, faCircle,
+    faCog,
+    faComment,
+    faCompress,
+    faCompressArrowsAlt,
+    faDesktop,
+    faEdit,
+    faEllipsisV,
+    faExpand,
+    faFastForward,
+    faFilter,
+    faFolder,
+    faList, faPause,
+    faPenSquare,
+    faPlus,
+    faQuestion,
+    faRedo,
+    faReply,
+    faReplyAll,
+    faSearch,
+    faShare, faSignInAlt,
+    faSitemap,
+    faSort,
+    faSun,
+    faTag,
+    faTags,
+    faThumbtack,
+    faTimes,
+    faTrashAlt, faUserPlus,
+    faWrench
+} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {faCheckSquare, faSquare, faDotCircle, faClock, faArrowAltCircleRight} from '@fortawesome/free-regular-svg-icons';
+import {faSign} from '@fortawesome/free-solid-svg-icons/faSign';
+import { SnackBarMessageComponent } from './components/snack-bar-message/snack-bar-message.component';
 
 
 export function tokenGetter() {
@@ -56,7 +99,8 @@ export function tokenGetter() {
         TypeFinishDateString,
         ChangeFinishDateDialogComponent,
         BlankComponent,
-        RootComponent
+        RootComponent,
+        SnackBarMessageComponent
     ],
     imports: [
         TickistSharedModule,
@@ -71,14 +115,16 @@ export function tokenGetter() {
             HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, {delay: 100}) : [],
         StoreModule.forRoot(reducers, {
             initialState: {},
-            metaReducers
+            metaReducers, runtimeChecks: {strictStateImmutability: true, strictActionImmutability: true}
         }),
         StoreDevtoolsModule.instrument({
             maxAge: 25, // Retains last 25 states
             logOnly: environment.production, // Restrict extension to log-only mode
         }),
         environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
-        SortablejsModule,
+        SortablejsModule.forRoot({
+            animation: 150
+        }),
         TickistMaterialModule,
         MenuModule,
         TieredMenuModule,
@@ -97,11 +143,12 @@ export function tokenGetter() {
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
         EffectsModule.forRoot([]),
         TickistRoutingModule,
-        TickistCoreModule
+        TickistCoreModule,
+        FontAwesomeModule
         // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],
-    entryComponents: [TimeDialogComponent, DeleteTaskDialogComponent, ChangeFinishDateDialogComponent
+    entryComponents: [TimeDialogComponent, DeleteTaskDialogComponent, ChangeFinishDateDialogComponent, SnackBarMessageComponent
     ],
     providers: [
         // {provide: LocationStrategy, useClass: HashLocationStrategy},
@@ -124,6 +171,13 @@ export function tokenGetter() {
     ]
 })
 export class AppModule {
-
+    constructor() {
+        // Add an icon to the library for convenient access in other components
+        library.add(faBars, faThumbtack, faFilter, faPlus, faSun, faDesktop, faReply, faEllipsisV, faEdit, faFastForward, faTimes, faTags,
+        faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
+            faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
+            faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, faCircle, faDotCircle, faArrowRight, faClock,
+            faUserPlus, faSign, faSignInAlt, faCalendarDay, faArrowAltCircleRight);
+    }
 
 }

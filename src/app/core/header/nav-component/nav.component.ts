@@ -34,12 +34,12 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     progressBar = false;
     isOffline = false;
 
-    @ViewChild('homeElement', {read: ElementRef}) homeElement: ElementRef;
-    @ViewChild('homeMobileElement', {read: ElementRef}) homeMobileElement: ElementRef;
-    @ViewChild('projectsElement', {read: ElementRef}) projectsElement: ElementRef;
-    @ViewChild('projectsMobileElement', {read: ElementRef}) projectsMobileElement: ElementRef;
-    @ViewChild('tagsElement', {read: ElementRef}) tagsElement: ElementRef;
-    @ViewChild('tagsMobileElement', {read: ElementRef}) tagsMobileElement: ElementRef;
+    @ViewChild('homeElement', { read: ElementRef, static: false }) homeElement: ElementRef;
+    @ViewChild('homeMobileElement', { read: ElementRef, static: false }) homeMobileElement: ElementRef;
+    @ViewChild('projectsElement', { read: ElementRef, static: false }) projectsElement: ElementRef;
+    @ViewChild('projectsMobileElement', { read: ElementRef, static: false }) projectsMobileElement: ElementRef;
+    @ViewChild('tagsElement', { read: ElementRef, static: false }) tagsElement: ElementRef;
+    @ViewChild('tagsMobileElement', { read: ElementRef, static: false }) tagsMobileElement: ElementRef;
 
     constructor(private configurationService: ConfigurationService,
                 private projectService: ProjectService, private media: MediaObserver, private router: Router,

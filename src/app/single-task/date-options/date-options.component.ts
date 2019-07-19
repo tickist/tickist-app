@@ -2,7 +2,7 @@ import {Component, OnInit, Input, ChangeDetectionStrategy, ViewChild} from '@ang
 import {ConfigurationService} from '../../services/configuration.service';
 import {Task} from '../../models/tasks';
 import moment from 'moment';
-import {UpdateTask} from '../../core/actions/tasks/task.actions';
+import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 
@@ -22,8 +22,8 @@ export class DateOptionsComponent implements OnInit {
     finishTime: any;
     minFilter: any;
     @Input() task: Task;
-    @ViewChild('finishDateInputViewChild') finishDateInputViewChild;
-    @ViewChild('finishTimeInputViewChild') finishTimeInputViewChild;
+    @ViewChild('finishDateInputViewChild', { static: false }) finishDateInputViewChild;
+    @ViewChild('finishTimeInputViewChild', { static: false }) finishTimeInputViewChild;
 
     constructor(protected configurationService: ConfigurationService, private store: Store<AppStore>) {
         this.minDate = new Date();
@@ -49,7 +49,7 @@ export class DateOptionsComponent implements OnInit {
             } else if (source === 'finishTime') {
 
             }
-            this.store.dispatch(new UpdateTask({
+            this.store.dispatch(new RequestUpdateTask({
                 task: {
                     id: this.task.id,
                     changes: Object.assign({}, this.task, {

@@ -1,9 +1,10 @@
-<span #finishTime *ngIf="task.finishTime">
-    <i #finishTimeIcon></i>  {{ task.finishTime }} 
+<span *ngIf="task.finishTime">
+    <fa-icon [icon]="['far', 'clock']"></fa-icon>  {{ task.finishTime }}
 </span>
 
 <span>
-    <i #typeFinishDateIcon></i>
+    <fa-icon *ngIf="statusOn" [icon]="['far', 'dot-circle']"></fa-icon>
+    <fa-icon *ngIf="statusBy" [icon]="['fas', 'arrow-right']"></fa-icon>
 </span>
 
 <span>{{ finishDateFormat }}</span>

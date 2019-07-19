@@ -61,8 +61,7 @@ describe('SingleProjectComponent', () => {
                 userService.getProviders(),
                 projectService.getProviders(),
                 configurationService.getProviders(),
-                {provide: MediaObserver, useClass: MediaObserverMock},
-                {provide: APP_BASE_HREF, useValue: '/'}
+                {provide: MediaObserver, useClass: MediaObserverMock}
             ]
         })
             .compileComponents().then(() => {

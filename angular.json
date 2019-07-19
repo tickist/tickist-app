@@ -34,10 +34,13 @@
                         ],
                         "styles": [
                             "src/style.scss",
-                            "node_modules/primeng/resources/primeng.min.css",
-                            "node_modules/primeng/resources/themes/omega/theme.css"
+                            "node_modules/primeng/resources/primeng.css",
+                            "node_modules/primeng/resources/themes/nova-dark/theme.css"
                         ],
-                        "scripts": []
+                        "scripts": [
+                            "node_modules/chart.js/dist/Chart.js",
+                            "node_modules/quill/dist/quill.js"
+                        ]
                     },
                     "configurations": {
                         "dev": {

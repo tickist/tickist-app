@@ -3,6 +3,7 @@
 
 :host {
     height: 82px;
+
     span {
         color: $white;
     }
@@ -16,6 +17,7 @@
     .fa-dot-circle-o, .fa-arrow-right {
         margin-right: 5px;
     }
+
     .chip-name {
         color: $white;
         font-size: 10px;
@@ -25,6 +27,7 @@
 
 #steps {
     @extend .additional-info;
+
     .step {
         height: 20px
     }
@@ -36,25 +39,13 @@
         text-overflow: ellipsis;
     }
 
-    i {
+    fa-icon {
         margin-right: 10px;
     }
 
-    .taskstep-done {
-        .step-name {
-            text-decoration: line-through;
-            text-decoration-color: $white;
-        }
-
-        .fa-square-o {
-            display: none;
-        }
-    }
-
-    .taskstep-undone {
-        .fa-check-square-o {
-            display: none;
-        }
+    .taskstep-done-step-name {
+        text-decoration: line-through;
+        text-decoration-color: $white;
     }
 }
 
@@ -67,7 +58,7 @@
     place-content: flex-start space-between;
 }
 
-i {
+fa-icon {
     cursor: pointer;
 }
 
@@ -117,7 +108,7 @@ i {
         margin-top: 10px
     }
 
-    span, i {
+    span, fa-icon {
         color: $white;
     }
 

@@ -1,9 +1,9 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Project} from '../../../../models/projects';
 import {SelectionModel} from '@angular/cdk/collections';
-import {homeRoutesName} from '../../../../routing.module';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
 import {Router} from '@angular/router';
+import {homeRoutesName} from '../../../../routing.module.name';
 
 @Component({
     selector: 'tickist-project-tree',
@@ -41,5 +41,18 @@ export class ProjectTreeComponent implements OnInit {
 
     navigateToEditProjectView(projectId: number) {
         this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
+    }
+
+    navigateToCreateNewChildProject(projectId: number) {
+        this.router.navigate([
+            homeRoutesName.HOME,
+            {
+                outlets: {
+                    content: [
+                        editProjectSettingsRoutesName.EDIT_PROJECT, 'createWithAncestor', projectId
+                    ]
+                }
+            }
+        ]);
     }
 }

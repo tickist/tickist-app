@@ -4,7 +4,8 @@ import {statisticsRoutesName} from '../../../statistics-view/routes.names';
 import {Router} from '@angular/router';
 import {tasksTagsViewRoutesName} from '../../../tasks-tags-view/routes.names';
 import {dashboardRoutesName} from '../../../dashboard/routes.names';
-import {homeRoutesName} from '../../../../routing.module';
+import {homeRoutesName} from '../../../../routing.module.name';
+
 
 @Component({
     selector: 'tickist-left-panel',

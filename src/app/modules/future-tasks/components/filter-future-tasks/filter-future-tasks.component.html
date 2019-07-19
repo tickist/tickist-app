@@ -1,8 +1,10 @@
 <div class="container">
-<mat-radio-group (change)="changeFilter($event)" [(ngModel)]="filterValueId">
-    <mat-radio-button *ngFor="let filter of filters" [value]="filter.id">
-        <span [innerHTML]=filter.name></span>
-    </mat-radio-button>
+    <mat-radio-group (change)="changeFilter($event)" [(ngModel)]="filterValueId">
+        <mat-radio-button *ngFor="let filter of filters" [value]="filter.id">
+            <span *ngIf="filter.name === 'all'">All</span>
+            <span *ngIf="filter.name === 'statusBy'">Only <fa-icon [icon]="'arrow-right'"></fa-icon>  &lt;date&gt; </span>
+            <span *ngIf="filter.name === 'statusOn'">Only <fa-icon [icon]="['far', 'dot-circle']"></fa-icon> &lt;date&gt;</span>
+        </mat-radio-button>
 
-</mat-radio-group>
+    </mat-radio-group>
 </div>

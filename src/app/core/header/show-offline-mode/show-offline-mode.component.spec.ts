@@ -15,8 +15,7 @@ describe('ShowOfflineModeComponent', () => {
             imports: [StoreModule.forRoot({})],
             declarations: [ShowOfflineModeComponent],
             providers: [
-                configurationService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                configurationService.getProviders()
             ]
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(ShowOfflineModeComponent);

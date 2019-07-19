@@ -3,7 +3,8 @@ import 'hammerjs'; // Recommended
 // import gitInfo from '../git-version.json';
 import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
-import {MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material';
+import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material/snack-bar';
+import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar-message.component';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         if (this.swUpdate.isEnabled) {
             this.swUpdate.available.subscribe(() => {
-                this.snackBarRef = this.snackBar.open('New version available. Load New Version?', 'Yes', this.config);
+                this.snackBarRef = this.snackBar.openFromComponent(SnackBarMessageComponent, this.config);
                 this.snackBarRef.onAction().subscribe(() => {
                     window.location.reload();
                 });

@@ -4,7 +4,7 @@ import {Store, State, select} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
 import {Task} from '../../models/tasks';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {StatisticsService} from '../../services/statistics.service';
 import {ConfigurationService} from '../../services/configuration.service';
 import {TagService} from '../../services/tag.service';
@@ -53,9 +53,17 @@ export class TaskService {
     updateTask(task: Task, isSilenceUpdate = false, cleanMenuState = false) {
         let menuStateCopy;
         if (!cleanMenuState) {
-            menuStateCopy = taskToSnakeCase(task)['menu_showing'];
+            menuStateCopy = task.menuShowing;
         }
-        return this.http.put<ITaskApi>(`${environment['apiUrl']}/tasks/${task.id}/`, taskToSnakeCase(task));
+        return this.http.put<ITaskApi>(`${environment['apiUrl']}/tasks/${task.id}/`, taskToSnakeCase(task))
+            .pipe(map((payload: ITaskApi) => new Task(payload)),
+                map(payload => {
+                    if (!cleanMenuState) {
+                        return Object.assign({}, payload, {'menuShowing': menuStateCopy});
+                    }
+                    return payload;
+                }));
+
             // .subscribe(payload => {
             //     if (!cleanMenuState) {
             //         payload['menu_showing'] = menuStateCopy;

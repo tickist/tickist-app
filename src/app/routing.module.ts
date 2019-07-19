@@ -24,10 +24,6 @@ import {forgotPasswordRoutesName} from './modules/forgot-password/routes-names';
 import {loginRoutesName} from './modules/login/routes-names';
 import {signupRoutesName} from './modules/signup/routes-names';
 
-export const homeRoutesName = {
-    HOME: 'home'
-};
-
 
 export const routes: Routes = [
     {
@@ -44,67 +40,69 @@ export const routes: Routes = [
                 path: dashboardRoutesName.DASHBOARD,
                 canActivate: [LoggedInGuard],
                 outlet: 'content',
-                loadChildren: './modules/dashboard/dashboard.module#TickistDashboardModule'
+                loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.TickistDashboardModule)
             },
             {
                 path: futureTasksRoutesName.FUTURE_TASKS,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/future-tasks/future-tasks.module#TickistFutureTasksModule'
+                loadChildren: () => import('./modules/future-tasks/future-tasks.module').then(m => m.TickistFutureTasksModule)
             },
             {
                 path: tasksTreeViewRoutesName.TASKS_TREE_VIEW,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/tasks-tree-view/tasks-tree-view.module#TickistTasksTreeViewModule'
+                loadChildren: () => import('./modules/tasks-tree-view/tasks-tree-view.module').then(m => m.TickistTasksTreeViewModule)
             },
             {
                 path: tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/tasks-projects-view/tasks-projects-view.module#TickistTasksProjectsViewModule'
+                loadChildren: () => import('./modules/tasks-projects-view/tasks-projects-view.module')
+                    .then(m => m.TickistTasksProjectsViewModule)
             },
             {
                 path: tasksTagsViewRoutesName.TASKS_TAGS_VIEW,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/tasks-tags-view/tasks-tags-view.module#TickistTasksTagsViewModule'
+                loadChildren: () => import('./modules/tasks-tags-view/tasks-tags-view.module').then(m => m.TickistTasksTagsViewModule)
             },
             {
                 path: statisticsRoutesName.STATISTICS,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/statistics-view/statistics-view.module#TickistStatisticsViewModule'
+                loadChildren: () => import('./modules/statistics-view/statistics-view.module').then(m => m.TickistStatisticsViewModule)
             },
             {
                 path: editTaskRoutesName.EDIT_TASK,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/edit-task/edit-task.module#TickistEditTaskModule'
+                loadChildren: () => import('./modules/edit-task/edit-task.module').then(m => m.TickistEditTaskModule)
             },
             {
                 path: editUserSettingsRoutesName.EDIT_USER_SETTINGS,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/edit-user-settings/edit-user-settings.module#TickistEditUserSettingsModule'
+                loadChildren: () => import('./modules/edit-user-settings/edit-user-settings.module')
+                    .then(m => m.TickistEditUserSettingsModule)
             },
             {
                 path: teamRoutesName.TEAM,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/team/team.module#TickistTeamModule'
+                loadChildren: () => import('./modules/team/team.module').then(m => m.TickistTeamModule)
             },
             {
                 path: editProjectSettingsRoutesName.EDIT_PROJECT,
                 outlet: 'content',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/edit-project/edit-project.module#TickistEditProjectModule'
+                loadChildren: () => import('./modules/edit-project/edit-project.module').then(m => m.TickistEditProjectModule)
             },
             {
                 path: 'left-panel',
                 outlet: 'left',
                 canActivate: [LoggedInGuard],
-                loadChildren: './modules/left-panel/left-panel.module#TickistLeftPanelModule'
+                loadChildren: () => import('./modules/left-panel/left-panel.module').then(m => m.TickistLeftPanelModule)
             }
         ]
     },

@@ -10,6 +10,7 @@ import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('SearchAutocompleteComponent', () => {
     let component: SearchAutocompleteComponent;
@@ -23,15 +24,14 @@ describe('SearchAutocompleteComponent', () => {
                 FormsModule,
                 ReactiveFormsModule,
                 TickistMaterialModule,
-                RouterModule.forRoot([]),
+                RouterTestingModule,
                 NoopAnimationsModule,
                 StoreModule.forRoot({})
             ],
             declarations: [SearchAutocompleteComponent],
             providers: [
                 tasksFiltersService.getProviders(),
-                tasksService.getProviders(),
-                {provide: APP_BASE_HREF, useValue: '/'}
+                tasksService.getProviders()
             ],
             schemas: [NO_ERRORS_SCHEMA]
         })

@@ -18,7 +18,7 @@ export interface ITaskApi {
     author: ISimpleUserApi;
     percent: number;
     priority: string;
-    repeat: number;
+    repeat: number | string;
     from_repeating: number;
     repeat_delta: number;
     description: string;

@@ -53,7 +53,7 @@ export class Task {
         this.author = new SimpleUser(task.author);
         this.percent = task.percent;
         this.priority = task.priority;
-        this.repeat = task.repeat;
+        this.repeat = parseInt((<string> task.repeat), 10);
         this.fromRepeating = task.from_repeating;
         this.repeatDelta = task.repeat_delta;
         this.description = task.description;

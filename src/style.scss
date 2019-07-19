@@ -399,6 +399,18 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
     border-left: none;
 }
 
+.mat-calendar-previous-button {
+    color: $white !important;
+}
+
+.mat-calendar-next-button {
+    color: $white !important;
+}
+
+.mat-calendar-arrow {
+    border-top-color: $white !important;
+}
+
 .tickist-snack-bar {
     background-color: $background_card_color;
     span {

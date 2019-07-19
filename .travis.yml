@@ -22,6 +22,9 @@ jobs:
         - stage: "Unit tests"
           name: "Unit tests"
           script: npm run test_ci
-        - stage: "e2e tests"
-          name: "e2e tests"
-          script: npm run e2e
+#        - stage: "e2e tests"
+#          name: "e2e tests"
+#          script: npm run e2e
+        - stage: "build"
+          name: "build"
+          script: npm run build

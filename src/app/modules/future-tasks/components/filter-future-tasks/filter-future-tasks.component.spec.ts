@@ -26,7 +26,6 @@ describe('FilterFutureTasksComponent', () => {
             ],
             declarations: [FilterFutureTasksComponent],
             providers: [
-                {provide: APP_BASE_HREF, useValue: '/'},
                 futureTaskFiltersService.getProviders()
             ]
         }).compileComponents();

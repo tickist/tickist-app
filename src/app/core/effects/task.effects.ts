@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {concatMap, filter, map, mapTo, mergeMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, mapTo, mergeMap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
     AddTasks,
@@ -8,7 +8,7 @@ import {
     CreateTask,
     DeleteTask,
     RequestCreateTask,
-    RequestsAllTasks, SetTaskStatusToDone,
+    RequestsAllTasks, RequestUpdateTask,
     TaskActionTypes,
     UpdateTask
 } from '../actions/tasks/task.actions';
@@ -19,6 +19,7 @@ import {Task} from '../../models/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOffProgressBar, SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {repeatTaskLogic} from '../../single-task/utils/set-status-to-done-logic';
+import {of} from 'rxjs';
 
 
 
@@ -43,18 +44,32 @@ export class TaskEffects {
             map(payload => new CreateTask({task: payload}))
         );
 
+    // @Effect()
+    // updateTask$ = this.actions$
+    //     .pipe(
+    //         ofType<UpdateTask | SetTaskStatusToDone>(TaskActionTypes.UPDATE_TASK, TaskActionTypes.SET_TASK_STATUS_TO_DONE),
+    //         mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes)),
+    //         mapTo(new SwitchOffProgressBar())
+    //     );
+
+
     @Effect()
     updateTask$ = this.actions$
         .pipe(
-            ofType<UpdateTask | SetTaskStatusToDone>(TaskActionTypes.UPDATE_TASK, TaskActionTypes.SET_TASK_STATUS_TO_DONE),
-            mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes)),
-            mapTo(new SwitchOffProgressBar())
+            ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
+            mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes).pipe(
+                map((task) => {
+                    console.log(task);
+                    return new UpdateTask({task: {id: task.id, changes: task}});
+                }),
+                catchError((error: any) => of(console.log(error)))
+            ))
         );
 
     @Effect()
     progressBar$ = this.actions$
         .pipe(
-            ofType<UpdateTask>(TaskActionTypes.UPDATE_TASK),
+            ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
             filter(action => action.payload.progressBar),
             mapTo(new SwitchOnProgressBar())
         );

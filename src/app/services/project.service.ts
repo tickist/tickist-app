@@ -6,7 +6,7 @@ import {AppStore} from '../store';
 import {Project} from '../models/projects';
 
 import {SimpleUser} from '../core/models';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
