@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Tag} from '../../models/tags';
 import { MatDialogRef } from '@angular/material/dialog';
 import {TaskService} from '../../core/services/task.service';
-import {TagService} from '../../services/tag.service';
+import {TagService} from '../../core/services/tag.service';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {SetCurrentTagsFilters} from '../../core/actions/tasks/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';

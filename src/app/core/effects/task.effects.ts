@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {catchError, concatMap, filter, map, mapTo, mergeMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
     AddTasks,
@@ -20,12 +20,46 @@ import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOffProgressBar, SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {repeatTaskLogic} from '../../single-task/utils/set-status-to-done-logic';
 import {of} from 'rxjs';
+import {AddTags, QueryTags, TagActionTypes} from '../actions/tags.actions';
+import {Tag} from '../../models/tags';
+import {TagService} from '../services/tag.service';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 
 
 @Injectable()
 export class TaskEffects {
-
+    
+    
+    @Effect()
+    queryTasks$ = this.actions$
+        .pipe(
+            ofType<QueryTags>(TaskActionTypes.QUERY_TASKS),
+            switchMap(action => {
+                console.log(action);
+                return this.db.collection('tasks').stateChanges();
+            }),
+            // mergeMap(action => action),
+            map(actions => {
+                // debugger;
+                const addedTasks: Task[] = [];
+                const deletedTasks: Task[] = [];
+                const updatedTasks: Task[] = [];
+                // action.payload.doc.data()
+                console.log(actions);
+                actions.forEach((action => {
+                    if (action.type === 'added') {
+                        const data: any = action.payload.doc.data();
+                        addedTasks.push(new Task({
+                            id: action.payload.doc.id,
+                            ...data
+                        }));
+                    }
+                }));
+                return new AddTasks({tasks: addedTasks});
+            })
+        )
+    
     @Effect()
     addTasks$ = this.actions$
         .pipe(
@@ -107,7 +141,7 @@ export class TaskEffects {
             })
         );
 
-    constructor(private actions$: Actions, private tasksService: TaskService,
+    constructor(private actions$: Actions, private tasksService: TaskService, private db: AngularFirestore,
                 private store: Store<AppStore>) {
 
     }

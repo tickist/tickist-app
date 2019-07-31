@@ -1,4 +1,4 @@
-import {ProjectService} from './project.service';
+import {ProjectService} from '../core/services/project.service';
 import {getTestBed, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TickistMaterialModule} from '../material.module';

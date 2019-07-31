@@ -14,38 +14,47 @@ import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Logout} from '../actions/auth.actions';
 import {userToSnakeCase} from '../utils/userToSnakeCase';
+import {AngularFirestore} from '@angular/fire/firestore';
+import {MatDialog} from '@angular/material';
+import {AngularFireAuth} from '@angular/fire/auth';
 
-
+const userCollectionName = 'users';
 
 @Injectable()
 export class UserService {
     user$: Observable<User>;
     team$: Observable<SimpleUser[]>;
 
-    constructor(private http: HttpClient, private store: Store<AppStore>,
-                public snackBar: MatSnackBar, protected tasksFiltersService: TasksFiltersService) {
+    constructor(private http: HttpClient, private store: Store<AppStore>, private db: AngularFirestore,
+                public snackBar: MatSnackBar, private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {
         this.user$ = this.store.select(selectLoggedInUser);
-
         this.team$ = this.store.select(s => s.team);
 
     }
+    
 
-    loadUser(userId?): any {
-        if (_.isNil(userId)) {
+    loadUser(uid?): any {
+        if (_.isNil(uid)) {
             this.store.dispatch(new Logout());
         } else {
-            return this.http.get(`${environment['apiUrl']}/user/${userId}/`)
-                .pipe(map((payload: IUserApi) => {
-                    return new User(payload);
-                    // this.tasksFiltersService.createDefaultFilters(user);
-                    // this.tasksFiltersService.loadTasksFilters(user);
-                    // this.tasksFiltersService.loadCurrentTasksFilters(user);
-                }));
+            return this.db.collection('users').doc(uid).get();
+
+
+            // return this.http.get(`${environment['apiUrl']}/user/${userId}/`)
+            //     .pipe(map((payload: IUserApi) => {
+            //         return new User(payload);
+            //         // this.tasksFiltersService.createDefaultFilters(user);
+            //         // this.tasksFiltersService.loadTasksFilters(user);
+            //         // this.tasksFiltersService.loadCurrentTasksFilters(user);
+            //     }));
         }
     }
 
     updateUser(user: User) {
-        return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user));
+        return this.db.collection(userCollectionName).doc(this.authFire.auth.currentUser.uid).set({...user});
+            
+            // .set(JSON.parse(JSON.stringify(user)));
+        // return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user));
             // .subscribe(payload => {
             //     if (!withoutSnackBar) {
             //         this.snackBar.open('User data has been update successfully', '', {
@@ -69,10 +78,6 @@ export class UserService {
                     })
                 );
         }
-    }
-
-    login(user: UserLogin) {
-        return this.http.post(`${environment.apiUrl}/api-token-auth/`, user);
     }
 
     changePassword(values: any) {

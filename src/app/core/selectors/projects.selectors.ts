@@ -13,7 +13,7 @@ export const allProjectsLoaded = createSelector(
     tasksState => tasksState.allProjectsLoaded
 );
 
-export const selectProjectById = (projectId: number) => createSelector(
+export const selectProjectById = (projectId: string) => createSelector(
     selectProjectsState,
     projectsState => projectsState.entities[projectId]
 );

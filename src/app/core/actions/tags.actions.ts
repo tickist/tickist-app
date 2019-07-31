@@ -3,6 +3,7 @@ import {Update} from '@ngrx/entity';
 import {Tag} from '../../models/tags';
 
 export enum TagActionTypes {
+    QUERY_TAGS = '[TAGS] QUERY TAGS',
     REQUEST_ALL_TAGS = '[] REQUEST_ALL_TAGS',
     REQUEST_CREATE_TAG = '[] REQUEST_CREATE_TAG',
     REQUEST_UPDATE_TAG= '[] REQUEST_UPDATE TAG',
@@ -13,6 +14,9 @@ export enum TagActionTypes {
     DELETE_TAG = '[] DELETE_TAG'
 }
 
+export class QueryTags implements Action {
+    readonly type = TagActionTypes.QUERY_TAGS;
+}
 
 export class RequestsAllTags implements Action {
     readonly type = TagActionTypes.REQUEST_ALL_TAGS;
@@ -46,6 +50,13 @@ export class UpdateTag implements Action {
     }
 }
 
+export class RequestUpdateTag implements Action {
+    readonly type = TagActionTypes.REQUEST_UPDATE_TAG;
+
+    constructor(public payload: { tag: Update<Tag> }) {
+    }
+}
+
 export class DeleteTag implements Action {
     readonly type = TagActionTypes.DELETE_TAG;
 
@@ -53,9 +64,19 @@ export class DeleteTag implements Action {
     }
 }
 
+export class RequestDeleteTag implements Action {
+    readonly type = TagActionTypes.REQUEST_DELETE_TAG;
+
+    constructor(public payload: { tagId: number }) {
+    }
+}
+
 export type TagActions = AddTags
+    | QueryTags
     | DeleteTag
     | UpdateTag
     | CreateTag
     | RequestsAllTags
-    | RequestCreateTag;
+    | RequestCreateTag
+    | RequestUpdateTag
+    | RequestDeleteTag;

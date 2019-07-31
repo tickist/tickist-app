@@ -1,7 +1,7 @@
-import {Api} from '../../models/commons';
 
 
-export class PendingUser extends Api {
+
+export class PendingUser {
   is_active: boolean;
   username: string;
   avatarUrl: string;
@@ -9,7 +9,6 @@ export class PendingUser extends Api {
   status: string;
 
   constructor(user) {
-    super();
     this.username = user.username;
     this.avatarUrl = user.avatar_url;
     this.email = user.email;

@@ -42,7 +42,7 @@ export class ProjectsApiMockFactory {
             description: faker.lorem.lines(3),
             dialog_time_when_task_finished: false,
             get_all_descendants: [this.id],
-            id: this.id,
+            id: this.id.toString(),
             is_active: true,
             is_inbox: false,
             level: 0,

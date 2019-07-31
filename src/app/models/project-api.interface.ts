@@ -3,7 +3,7 @@ import {ITagApi} from './tag-api.interface';
 
 export interface IProjectApi {
     name: string;
-    id?: number;
+    id?: string;
     ancestor;
     creation_date?: string;
     color: string;

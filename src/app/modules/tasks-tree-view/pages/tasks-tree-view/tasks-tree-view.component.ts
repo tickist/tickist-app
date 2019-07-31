@@ -41,7 +41,7 @@ interface FlatNode {
 })
 export class TasksTreeViewComponent implements OnInit, OnDestroy {
     transformer: any;
-    expandedProjectsNode = new Set<number>();
+    expandedProjectsNode = new Set<string>();
     treeControl = new FlatTreeControl<FlatNode>(
         node => node.level,
         node => node.expandable

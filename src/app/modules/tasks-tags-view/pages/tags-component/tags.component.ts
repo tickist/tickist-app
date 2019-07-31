@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {TagService} from '../../../../services/tag.service';
+import {TagService} from '../../../../core/services/tag.service';
 import {Tag} from '../../../../models/tags';
 import {Task} from '../../../../models/tasks';
 import {TaskService} from '../../../../core/services/task.service';

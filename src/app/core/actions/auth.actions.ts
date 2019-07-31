@@ -11,7 +11,7 @@ export class Login implements Action {
 
     readonly type = AuthActionTypes.LoginAction;
 
-    constructor(public payload: { token: Token }) {
+    constructor(public payload: { uid: string }) {
 
     }
 }
@@ -19,7 +19,7 @@ export class Login implements Action {
 export class FetchedLoginUser implements Action {
     readonly type = AuthActionTypes.FetchedLoginUser;
 
-    constructor(public payload: { token: Token }) {
+    constructor(public payload: { uid: string }) {
 
     }
 }

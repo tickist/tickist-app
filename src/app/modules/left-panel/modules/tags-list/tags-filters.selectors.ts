@@ -23,10 +23,13 @@ export const selectFilteredTagsList = createSelector(
     selectAllTags,
     selectCurrentTagFilter,
     (tags, filter): Tag[] => {
-        if (!filter) return [];
-        const filteredTags = tags.filter(Function(`return ${filter.value}`)());
-
-        return <Tag[]> _.orderBy(filteredTags, 'name', 'asc');
+        // @TODO add filters 
+        return tags;
+        
+        // if (!filter) return [];
+        // const filteredTags = tags.filter(Function(`return ${filter.value}`)());
+        //
+        // return <Tag[]> _.orderBy(filteredTags, 'name', 'asc');
 
     }
 );

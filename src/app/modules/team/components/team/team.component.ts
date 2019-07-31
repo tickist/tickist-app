@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ProjectService} from '../../../../services/project.service';
+import {ProjectService} from '../../../../core/services/project.service';
 import {SimpleUser} from '../../../../core/models';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {environment} from '../../../../../environments/environment';

@@ -88,8 +88,7 @@ export class UserComponent implements OnInit, OnDestroy {
                     }, {updateOn: 'blur'});
 
                     this.userData.get('username').valueChanges.subscribe(newValue => {
-                        this.user.username = newValue;
-                        this.changeUserDetails();
+                        this.changeUserDetails(Object.assign({}, this.user, {username: newValue}));
                     });
                     this.userSettings = new FormGroup({
                         'orderTasksDashboard': new FormControl(user.orderTasksDashboard, {validators: [Validators.required]}),
@@ -171,16 +170,18 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     toggleDailySumary() {
+        let dailySummaryHour;
         this.dailySummaryCheckbox = !this.dailySummaryCheckbox;
+        // @TODO you can remove first part of if statement
         if (this.dailySummaryCheckbox) {
-            this.user.dailySummaryHour = null;
+            dailySummaryHour = null;
         } else {
             const d = new Date();
             d.setHours(7, 0);
             d.setMinutes(0);
-            this.user.dailySummaryHour = d;
+            dailySummaryHour = d;
         }
-        this.changeUserDetails();
+        this.changeUserDetails(Object.assign({}, this.user, {dailySummaryHour: dailySummaryHour}));
     }
 
     changeAvatarTrigger(): void {
@@ -204,8 +205,8 @@ export class UserComponent implements OnInit, OnDestroy {
         return this.menu.find(item => item.name === name).isActive;
     }
 
-    changeUserDetails() {
-        this.store.dispatch(new UpdateUser({user: this.user}));
+    changeUserDetails(updatedUser) {
+        this.store.dispatch(new UpdateUser({user: updatedUser}));
     }
 
     getErrorMessage(field: AbstractControl): string {

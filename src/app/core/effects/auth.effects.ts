@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {AuthActionTypes, FetchedLoginUser, Login, Logout} from '../actions/auth.actions';
-import {tap, mergeMap, map, mapTo} from 'rxjs/operators';
+import {map, mapTo, switchMap, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {defer, of} from 'rxjs';
 import {Store} from '@ngrx/store';
@@ -9,11 +9,11 @@ import {AppStore} from '../../store';
 import {UserService} from '../services/user.service';
 import {AddUser} from '../actions/user.actions';
 import {User} from '../models';
-import {IToken, Token} from '../models/auth';
 import {ResetStore} from '../../tickist.actions';
 import LogRocket from 'logrocket';
 import {environment} from '../../../environments/environment';
-
+import {AuthService} from '../services/auth.service';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 
 @Injectable()
@@ -23,43 +23,38 @@ export class AuthEffects {
     login$ = this.actions$
         .pipe(
             ofType<Login>(AuthActionTypes.LoginAction),
-            tap(action => {
-                localStorage.setItem('JWT', `JWT ${action.payload.token.access}`);
-                localStorage.setItem('JWT_REFRESH', `JWT ${action.payload.token.refresh}`);
-                localStorage.setItem('USER_ID', action.payload.token.userId.toString());
-            }),
-            mergeMap(action => this.userService.loadUser(action.payload.token.userId)),
-            map((user: User) => {
-                return new AddUser({user: user});
-            }),
-            tap(() => this.router.navigateByUrl('/'))
+            tap(() => this.router.navigateByUrl('/')),
+            map(action => new FetchedLoginUser({uid: action.payload.uid}))
         );
 
     @Effect()
     FetchedLoginUser$ = this.actions$
         .pipe(
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
-            mergeMap(action => this.userService.loadUser(action.payload.token.userId)),
-            tap((user: User) => {
+            switchMap(action => {
+                console.log(action);
+                return this.db.collection('users').doc(action.payload.uid).snapshotChanges();
+            }),
+            tap((snapshot: any) => {
                 if (environment.production) {
-                    LogRocket.identify(user.id.toString(), {
-                        name: user.username,
-                        email: user.email,
+                    LogRocket.identify(snapshot.payload.data().id.toString(), {
+                        name: snapshot.payload.data().username,
+                        email: snapshot.payload.data().email,
                     });
                 }
             }),
-            map((user: User) => {
-                return new AddUser({user: user});
+            map((snapshot: any) => {
+                return new AddUser({user: <User>snapshot.payload.data()});
             })
         );
 
     @Effect()
     logout$ = this.actions$.pipe(
         ofType<Logout>(AuthActionTypes.LogoutAction),
+        switchMap(() => {
+            return of(this.authService.logout());
+        }),
         tap(() => {
-            localStorage.removeItem('JWT');
-            localStorage.removeItem('JWT_REFRESH');
-            localStorage.removeItem('USER_ID');
             this.router.navigateByUrl('/login');
         }),
         mapTo(new ResetStore())
@@ -78,25 +73,18 @@ export class AuthEffects {
 
     @Effect()
     init$ = defer(() => {
-        const token: IToken = {
-            access: localStorage.getItem('JWT'),
-            refresh: localStorage.getItem('JWT_REFRESH'),
-            user_id: parseInt(localStorage.getItem('USER_ID'), 10)
-        };
-
-        if (token && token.access) {
-            return of(new FetchedLoginUser({token: new Token(token)}));
-        } else {
-            return <any>of(new Logout());
-        }
-
+        return this.authService.authState$.pipe(
+            map(state => {
+                console.log(state);
+                if (state !== null) {
+                    return new FetchedLoginUser({uid: state.uid});
+                }
+                return new Logout();
+            })
+        );
     });
 
-    constructor(private actions$: Actions, private router: Router,
-                private store: Store<AppStore>, private userService: UserService) {
-
-
+    constructor(private actions$: Actions, private router: Router, private authService: AuthService,
+                private store: Store<AppStore>, private userService: UserService, private db: AngularFirestore) {
     }
-
-
 }

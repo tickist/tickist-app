@@ -38,3 +38,8 @@ Every code patch accepted in Tickist is licensed under GPL v3.0. You must be car
 
 Please read carefully [our license](https://github.com/tickist/frontend/blob/master/LICENSE) and ask us if you have any questions.
 
+## How to install 
+* npm install 
+* npm i -g firebase-tools
+* firebase login 
+* firebase init

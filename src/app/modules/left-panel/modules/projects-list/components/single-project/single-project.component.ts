@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {Project} from '../../../../../../models/projects';
-import {ProjectService} from '../../../../../../services/project.service';
+import {ProjectService} from '../../../../../../core/services/project.service';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../../../../../../services/configuration.service';
 
@@ -17,7 +17,7 @@ import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/ro
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
 import {selectActiveProject, selectActiveProjectsIds} from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
-import {DeleteProject} from '../../../../../../core/actions/projects/projects.actions';
+import {DeleteProject, RequestDeleteProject} from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
 
 
@@ -46,7 +46,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     @Input() project: Project;
     @Input() isSmallScreen: boolean;
     selectedProject$: Observable<Project>;
-    selectedProjectsIds$: Observable<Array<Number>>;
+    selectedProjectsIds$: Observable<Array<Number| string>>;
     isActive = false;
     activeCheckboxMode = false;
     isSelected = false;
@@ -167,7 +167,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         dialogRef.componentInstance.setContent(content);
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
-                this.store.dispatch(new DeleteProject({projectId: this.project.id}));
+                this.store.dispatch(new RequestDeleteProject({projectId: this.project.id}));
                 this.router.navigate(['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, this.user.inboxPk]}}]);
             }
         });

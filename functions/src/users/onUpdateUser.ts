@@ -1,0 +1,36 @@
+
+import * as functions from 'firebase-functions';
+import {db} from '../init';
+
+
+export const onUpdateUser = functions.firestore.document('users/{userId}/')
+        .onUpdate(async (snap, context) => {
+
+            console.log("Running onAddLesson trigger ...");
+
+            return db.runTransaction(async transaction => {
+                
+
+                // transaction.update(courseRef, changes);
+
+            });
+
+        });
+
+
+// function courseTransaction(snap, cb:Function) {
+//     return db.runTransaction(async transaction => {
+//
+//         const courseRef = snap.ref.parent.parent;
+//
+//         const courseSnap = await transaction.get(courseRef);
+//
+//         const course = courseSnap.data();
+//
+//         const changes = cb(course);
+//
+//         transaction.update(courseRef, changes);
+//
+//     });
+//
+// }

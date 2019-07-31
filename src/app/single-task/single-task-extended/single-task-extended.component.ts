@@ -6,7 +6,7 @@ import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../services/configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
-import {ProjectService} from '../../services/project.service';
+import {ProjectService} from '../../core/services/project.service';
 import {Project} from '../../models/projects';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';

@@ -42,7 +42,7 @@ export class AddTaskTreeViewComponent implements OnInit {
             //     defaultTypeFinishDate = this.project.defaultTypeFinishDate;
             // }
 
-            const task = new Task(<ITaskApi>{
+            const task = new Task(<any>{
                 'name': taskName,
                 'priority': this.project.defaultPriority,
                 'description': '',

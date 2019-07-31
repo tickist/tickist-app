@@ -3,6 +3,8 @@ import {Router, ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/rout
 import {Injectable} from '@angular/core';
 import {CanActivate} from '@angular/router';
 import {AuthService} from '../services/auth.service';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 
 @Injectable()
@@ -12,11 +14,23 @@ export class LoggedInGuard implements CanActivate {
 
     }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        if (state.url !== '/login' && !this.authService.isLoggedIn()) {
-            this.router.navigate(['login']);
-            return false;
-        }
-        return true;
+    canActivate(route: ActivatedRouteSnapshot, stateRouter: RouterStateSnapshot): Observable<boolean> {
+        return this.authService.authState$.pipe(map(state => {
+                console.log(state);
+                if (state !== null) {
+                    return true;
+                }
+                this.router.navigate(['login']);
+                return false;
+            })
+        );
+
+        //
+        //
+        // if (state.url !== '/login' && !this.authService.isLoggedIn()) {
+        //     this.router.navigate(['login']);
+        //     return false;
+        // }
+        // return true;
     }
 }

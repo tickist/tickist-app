@@ -9,5 +9,6 @@ export const environment: IEnvironment = {
     production: false,
     apiUrl: 'http://localhost:8000/api',
     staticUrl: '',
-    e2eTest: false
+    e2eTest: false,
+    firebase: {}
 };

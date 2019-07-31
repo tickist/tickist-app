@@ -1,7 +1,7 @@
-import {Api} from './commons';
 
 
-export class Step extends Api {
+
+export class Step  {
     id: number;
     name: string;
     status: number;
@@ -11,7 +11,6 @@ export class Step extends Api {
 
 
     constructor(step) {
-        super();
         this.id = step.id;
         this.name = step.name;
         this.status = step.status;

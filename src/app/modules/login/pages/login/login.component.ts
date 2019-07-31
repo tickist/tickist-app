@@ -45,21 +45,27 @@ export class LoginComponent {
 
     onSubmit(values: any) {
         this.authService.login(values)
-            .pipe(
-                tap((token: IToken) => {
-                    this.store.dispatch(new Login({token: new Token(token)} ));
-                })
-            )
-            .subscribe(
-            noop,
-            (err: any) => { // on error
-                this.loginForm.controls['email'].setErrors({'incorrectLoginPassword': true});
-                this.loginForm.controls['password'].setErrors({'incorrectLoginPassword': true});
-            },
-            () => { // on completion
-
-            }
-        );
+            .then((user) => {
+                console.log(user);
+                this.store.dispatch(new Login({uid: user.user.uid} ));
+            })
+            .catch(
+                err => console.log(err.message)
+            );
+            // .pipe(
+            //     tap((token: IToken) => {
+            //         this.store.dispatch(new Login({token: new Token(token)} ));
+            //     })
+            // )
+            // .subscribe(
+            // noop,
+            // (err: any) => { // on error
+            //     this.loginForm.controls['email'].setErrors({'incorrectLoginPassword': true});
+            //     this.loginForm.controls['password'].setErrors({'incorrectLoginPassword': true});
+            // },
+            // () => { // on completion
+            //
+            // }
     }
 
 }

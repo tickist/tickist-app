@@ -16,7 +16,7 @@ import {IProjectApi} from '../../models/project-api.interface';
 const NUMBERS_OF_USERS = 4;
 const MAIN_USER_ID = 1;
 const TAKEN_EMAIL = 'bill@tickist.com';
-const INBOX_ID = 1;
+const INBOX_ID = '1';
 
 
 export class InMemoryDataService implements InMemoryDbService {

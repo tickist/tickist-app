@@ -1,10 +1,10 @@
 import {Component, OnInit, Input, ViewContainerRef} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {TagService} from '../../../../../../services/tag.service';
+import {TagService} from '../../../../../../core/services/tag.service';
 import {Tag} from '../../../../../../models/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {Filter} from '../../../../../../models/filter';
-import {DeleteTag, UpdateTag} from '../../../../../../core/actions/tags.actions';
+import {DeleteTag, RequestDeleteTag, RequestUpdateTag, UpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../../../store';
 import {SetCurrentTagsFilters} from '../../../../../../core/actions/tasks/tags-filters-tasks.actions';
@@ -21,7 +21,7 @@ export class TagComponent implements OnInit {
     @Input() id: string | number;
     @Input() tasksCounter: number;
     @Input() tag?: Tag;
-    tagsIds: string | Set<number>;
+    tagsIds: string | Set<number | string>;
     isActive: boolean;
     isChecked: boolean;
     editTagForm: FormGroup;
@@ -52,11 +52,12 @@ export class TagComponent implements OnInit {
     editTag(values) {
         const tag = JSON.parse(JSON.stringify(this.tag));
         tag.name = values['name'];
-        this.store.dispatch(new UpdateTag({tag: {id: tag.id, changes: tag}}));
+        this.store.dispatch(new RequestUpdateTag({tag: {id: tag.id, changes: tag}}));
+        this.editMode = !this.editMode;
     }
 
     deleteTag() {
-        this.store.dispatch(new DeleteTag({tagId: this.tag.id}));
+        this.store.dispatch(new RequestDeleteTag(<any> {tagId: this.tag.id}));
     }
 
     toggleEditMode() {
@@ -77,7 +78,7 @@ export class TagComponent implements OnInit {
     }
 
     selectTags() {
-        let result: Array<number> | string;
+        let result: Array<number| string> | string;
         const value = this.tagsIds;
         if (value instanceof String || typeof this.id === 'string') {
             result = <string> this.id;

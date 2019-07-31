@@ -2,8 +2,10 @@ import {Action} from '@ngrx/store';
 import {Task} from '../../../models/tasks';
 import {Update} from '@ngrx/entity';
 import {CLOSE_MENU_IN_TASKS} from '../../../reducers/actions/tasks';
+import {TagActionTypes} from '../tags.actions';
 
 export enum TaskActionTypes {
+    QUERY_TASKS = '[TASKS] QUERY TASKS',
     REQUEST_ALL_TASKS = '[] REQUEST_ALL_TASKS',
     REQUEST_CREATE_TASK = '[] REQUEST_CREATE_TASK',
     REQUEST_UPDATE_TASK = '[] REQUEST_UPDATE TASK',
@@ -13,6 +15,10 @@ export enum TaskActionTypes {
     UPDATE_TASK = '[] UPDATE_TASK',
     DELETE_TASK = '[] DELETE_TASK',
     CLOSE_MENU_IN_ALL_TASKS = '[] CLOSE MENU IN ALL TASKS'
+}
+
+export class QueryTasks implements Action {
+    readonly type = TaskActionTypes.QUERY_TASKS;
 }
 
 export class RequestsAllTasks implements Action {
@@ -84,4 +90,5 @@ export type TaskActions = AddTasks
     | CreateTask
     | RequestsAllTasks
     | RequestCreateTask
+    | QueryTasks
     | CloseMenuInAllTasks;

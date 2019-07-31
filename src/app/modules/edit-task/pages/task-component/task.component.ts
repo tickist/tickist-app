@@ -3,10 +3,10 @@ import {
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../../../../core/services/task.service';
-import {TagService} from '../../../../services/tag.service';
+import {TagService} from '../../../../core/services/tag.service';
 import {Task} from '../../../../models/tasks';
 import {Observable, combineLatest, Subject} from 'rxjs';
-import {ProjectService} from '../../../../services/project.service';
+import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
 import {Project} from '../../../../models/projects';
 import {ConfigurationService} from '../../../../services/configuration.service';
@@ -323,28 +323,28 @@ export class TaskComponent implements OnInit, OnDestroy {
         if (isTypeFinishDateOptionsDefined) {
             defaultTypeFinishDate = selectedProject.defaultTypeFinishDate;
         }
-        let task = new Task(<ITaskApi>{
+        let task = new Task(<any>{
             'name': '',
             'priority': selectedProject.defaultPriority,
             'description': '',
-            'type_finish_date': defaultTypeFinishDate,
-            'finish_date': '',
-            'finish_time': '',
-            'suspend_date': '',
+            'typeFinishDate': defaultTypeFinishDate,
+            'finishDate': '',
+            'finishTime': '',
+            'suspendDate': '',
             'repeat': 0,
             'owner': toSnakeCase(this.user.convertToSimpleUser()),
-            'owner_pk': this.user.id,
+            'ownerPk': this.user.id,
             'author': toSnakeCase(this.user.convertToSimpleUser()),
-            'repeat_delta': 1,
-            'from_repeating': 0,
-            'task_project': toSnakeCase(convertToSimpleProject(selectedProject)),
+            'repeatDelta': 1,
+            'fromRepeating': 0,
+            'taskProject': toSnakeCase(convertToSimpleProject(selectedProject)),
             'estimate_time': 0,
-            'task_list_pk': selectedProject.id,
+            'taskListPk': selectedProject.id,
             'time': undefined,
             'steps': [],
             'tags': [],
             'status': 0,
-            'is_active': true,
+            'isActive': true,
             'percent': 0,
             'pinned': false,
         });
@@ -377,7 +377,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         if (this.tagsCtrl.valid) {
             if (newTag instanceof MatAutocompleteSelectedEvent) {
                 if (newTag.option.value) {
-                    this.tagService.createTagDuringEditingTask(new Tag({name: newTag.option.value.name}))
+                    this.tagService.createTagDuringEditingTask(new Tag(<any> {name: newTag.option.value.name}))
                         .pipe(takeUntil(this.ngUnsubscribe))
                         .subscribe((t) => {
                             this.task.tags.push(new Tag(t));
@@ -395,7 +395,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
                     }
                 } else {
-                    this.tagService.createTagDuringEditingTask(new Tag({name: this.tagsCtrl.value}))
+                    this.tagService.createTagDuringEditingTask(new Tag(<any> {name: this.tagsCtrl.value}))
                         .pipe(takeUntil(this.ngUnsubscribe))
                         .subscribe((t) => {
                             this.task.tags.push(new Tag(t));
@@ -430,7 +430,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
             updatedTask.taskProject = convertToSimpleProject(this.projects
-                .find(project => project.id === parseInt(values['main']['taskProjectPk'], 10)));
+                .find(project => project.id === values['main']['taskProjectPk']));
             updatedTask.owner = <SimpleUser>updatedTask.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
 
             if (values['repeat']['repeatDefault'] !== 99) {

@@ -7,14 +7,12 @@ import {AddEstimateTimeFiltersTasks, SetCurrentEstimateTimeFiltersTasks} from '.
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {AddMainFilters, SetCurrentMainFilter} from '../actions/tasks/main-filters-tasks.actions';
 import {SetCurrentTagsFilters} from '../actions/tasks/tags-filters-tasks.actions';
-import {LoadTeams} from '../actions/team.actions';
 import {UserService} from '../services/user.service';
-import {RequestsAllTasks, TaskActionTypes, UpdateTask} from '../actions/tasks/task.actions';
+import {QueryTasks, UpdateTask} from '../actions/tasks/task.actions';
 import {SwitchOffProgressBar, SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {AddSortByOptions, SetCurrentSortBy} from '../actions/tasks/sort-tasks.actions';
-import {RequestsAllTags} from '../actions/tags.actions';
-import {RequestsAllProjects} from '../actions/projects/projects.actions';
-
+import {QueryTags} from '../actions/tags.actions';
+import {QueryProjects} from '../actions/projects/projects.actions';
 
 
 @Injectable()
@@ -79,10 +77,10 @@ export class UserEffects {
         .pipe(
             ofType<AddUser>(UserActionTypes.AddUser),
             concatMapTo([
-                new LoadTeams(),
-                new RequestsAllTags(),
-                new RequestsAllProjects(),
-                new RequestsAllTasks()
+                // new LoadTeams(),
+                new QueryTasks(),
+                new QueryTags(),
+                new QueryProjects(),
             ])
         );
 

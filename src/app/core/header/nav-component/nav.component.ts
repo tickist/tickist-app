@@ -4,7 +4,7 @@ import {ConfigurationService} from '../../../services/configuration.service';
 import {environment} from '../../../../environments/environment';
 import {MediaObserver} from '@angular/flex-layout';
 import {NavigationEnd, Router} from '@angular/router';
-import {ProjectService} from '../../../services/project.service';
+import {ProjectService} from '../../services/project.service';
 import {Subject, pipe, Observable} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';

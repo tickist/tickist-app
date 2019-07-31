@@ -1,11 +1,10 @@
-import {Api} from '../../models/commons';
 import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import {SimpleUser} from './simple-user';
 import {userToSnakeCase} from '../utils/userToSnakeCase';
 
 
-export class User extends Api {
+export class User {
     id: number;
     username: string;
     email: string;
@@ -38,7 +37,6 @@ export class User extends Api {
     tagsFilterId: number;
 
     constructor(user: IUserApi) {
-        super();
         this.id = user.id || undefined;
         this.username = user.username;
         this.email = user.email;

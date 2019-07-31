@@ -24,7 +24,7 @@ export function reducer(state = initialTagsState, action: TagActions): TagsState
             return adapter.addOne(action.payload.tag, state);
 
         case TagActionTypes.ADD_TAGS:
-            return adapter.addAll(action.payload.tags, {...state, allTagsLoaded: true});
+            return adapter.addMany(action.payload.tags, {...state, allTagsLoaded: true});
 
         case TagActionTypes.UPDATE_TAG:
             return adapter.updateOne(action.payload.tag, state);

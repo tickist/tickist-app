@@ -1,51 +1,107 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {filter, map, mergeMap, withLatestFrom} from 'rxjs/operators';
+import {concatMap, filter, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
-import {AddTags, CreateTag, DeleteTag, RequestCreateTag, RequestsAllTags, TagActionTypes, UpdateTag} from '../actions/tags.actions';
+import {
+    AddTags,
+    CreateTag,
+    DeleteTag,
+    QueryTags,
+    RequestCreateTag, RequestDeleteTag,
+    RequestsAllTags, RequestUpdateTag,
+    TagActionTypes,
+    UpdateTag
+} from '../actions/tags.actions';
 import {AppStore} from '../../store';
 import {allTagsLoaded, selectTagById} from '../selectors/tags.selectors';
 import {Tag} from '../../models/tags';
 import {Update} from '@ngrx/entity';
-import {TagService} from '../../services/tag.service';
+import {TagService} from '../services/tag.service';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 
 @Injectable()
 export class TagsEffects {
-
+    
     @Effect()
-    addTags$ = this.actions$
+    query$ = this.actions$
         .pipe(
-            ofType<RequestsAllTags>(TagActionTypes.REQUEST_ALL_TAGS),
-            withLatestFrom(this.store.pipe(select(allTagsLoaded))),
-            filter(([action, allTagsLoadedValue]) => !allTagsLoadedValue),
-            mergeMap(() => this.tagsService.loadTags()),
-            map(tags => new AddTags({tags: tags}))
+            ofType<QueryTags>(TagActionTypes.QUERY_TAGS),
+            switchMap(action => {
+                console.log(action);
+                return this.db.collection('tags').stateChanges();
+            }),
+            // mergeMap(action => action),
+            concatMap(actions => {
+                // debugger;
+                const addedTags: Tag[] = [];
+                const deletedTags: Tag[] = [];
+                let updatedTag: Update<Tag>;
+                // action.payload.doc.data()
+                console.log(actions);
+                actions.forEach((action => {
+                    if (action.type === 'added') {
+                        const data: any = action.payload.doc.data();
+                        addedTags.push(new Tag({
+                            id: action.payload.doc.id,
+                            ...data
+                        }));
+                    }
+                    if (action.type === 'modified') {
+                        const data: any = action.payload.doc.data();
+                        updatedTag = {
+                            id: action.payload.doc.id,
+                            changes: {...data}
+                        };
+                    }
+                }));
+                const returnsActions = [];
+                if (addedTags.length > 0) {
+                    returnsActions.push( new AddTags({tags: addedTags}));
+                }
+                if (updatedTag) {
+                    returnsActions.push(new UpdateTag({tag: updatedTag}));
+                }
+                return returnsActions;
+            })
         );
+    
+    
+    // @Effect()
+    // addTags$ = this.actions$
+    //     .pipe(
+    //         ofType<RequestsAllTags>(TagActionTypes.REQUEST_ALL_TAGS),
+    //         withLatestFrom(this.store.pipe(select(allTagsLoaded))),
+    //         filter(([action, allTagsLoadedValue]) => !allTagsLoadedValue),
+    //         mergeMap(() => this.tagsService.loadTags()),
+    //         map(tags => {
+    //             debugger;
+    //             return new AddTags({tags: tags})
+    //         })
+    //     );
 
-    @Effect()
+    @Effect({dispatch: false})
     createTag$ = this.actions$
         .pipe(
             ofType<RequestCreateTag>(TagActionTypes.REQUEST_CREATE_TAG),
             mergeMap(action => this.tagsService.createTag(action.payload.tag)),
-            map(payload => new CreateTag({tag: payload}))
         );
 
     @Effect({dispatch: false})
     updateTag$ = this.actions$
         .pipe(
-            ofType<UpdateTag>(TagActionTypes.UPDATE_TAG),
+            ofType<RequestUpdateTag>(TagActionTypes.REQUEST_UPDATE_TAG),
             mergeMap((action) => this.tagsService.updateTag(<Tag> action.payload.tag.changes))
         );
 
     @Effect({dispatch: false})
     deleteTag$ = this.actions$
         .pipe(
-            ofType<DeleteTag>(TagActionTypes.DELETE_TAG),
+            ofType<RequestDeleteTag>(TagActionTypes.REQUEST_DELETE_TAG),
             mergeMap(action => this.tagsService.deleteTag(action.payload.tagId))
         );
 
-    constructor(private actions$: Actions, private tagsService: TagService,
+    constructor(private actions$: Actions, private tagsService: TagService, private db: AngularFirestore,
                 private store: Store<AppStore>) {
 
     }

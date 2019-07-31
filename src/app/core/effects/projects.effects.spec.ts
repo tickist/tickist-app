@@ -5,7 +5,7 @@ import {Observable, ReplaySubject} from 'rxjs';
 import {ProjectsEffects} from './projects.effects';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '../services/user.service';
-import {ProjectService} from '../../services/project.service';
+import {ProjectService} from '../services/project.service';
 
 class ProjectServiceMock {}
 

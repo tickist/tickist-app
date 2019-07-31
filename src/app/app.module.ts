@@ -11,8 +11,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChartModule, MenuModule, SharedModule, SliderModule, TieredMenuModule} from 'primeng/primeng';
 import {AppComponent} from './app.component';
 import {UserService} from './core/services/user.service';
-import {ProjectService} from './services/project.service';
-import {TagService} from './services/tag.service';
+import {ProjectService} from './core/services/project.service';
+import {TagService} from './core/services/tag.service';
 import {ConfigurationService} from './services/configuration.service';
 import {StatisticsService} from './services/statistics.service';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
@@ -40,6 +40,10 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {TickistCoreModule} from './core/core.module';
 import {SortablejsModule} from 'ngx-sortablejs';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {
     faArrowDown, faArrowRight,
@@ -107,12 +111,11 @@ export function tokenGetter() {
         TickistSingleTaskModule,
         BrowserModule,
         BrowserAnimationsModule,
+        AngularFireModule.initializeApp(environment.firebase),
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
-        environment.e2eTest ?
-            HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, {delay: 100}) : [],
         StoreModule.forRoot(reducers, {
             initialState: {},
             metaReducers, runtimeChecks: {strictStateImmutability: true, strictActionImmutability: true}
@@ -151,7 +154,6 @@ export function tokenGetter() {
     entryComponents: [TimeDialogComponent, DeleteTaskDialogComponent, ChangeFinishDateDialogComponent, SnackBarMessageComponent
     ],
     providers: [
-        // {provide: LocationStrategy, useClass: HashLocationStrategy},
         {provide: DateAdapter, useClass: MyDateAdapter},
         UserService,
         TasksFiltersService,
@@ -163,11 +165,6 @@ export function tokenGetter() {
         StatisticsService,
         MyErrorHandler,
         ErrorService,
-        {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptorService, multi: true},
-        {
-            provide: ErrorHandler,
-            useClass: MyErrorHandler
-        }
     ]
 })
 export class AppModule {

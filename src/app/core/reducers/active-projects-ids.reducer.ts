@@ -2,7 +2,7 @@ import {ActiveProjectsIdActionTypes, ActiveProjectsIdsActions} from '../actions/
 
 
 export interface ActiveProjectsIdsState {
-    projectsIds: Array<Number>;
+    projectsIds: Array<string>;
 }
 
 export const initialState: ActiveProjectsIdsState = {

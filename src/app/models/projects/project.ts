@@ -1,6 +1,5 @@
 import {SimpleUser} from '../../core/models';
 import {PendingUser} from '../../core/models';
-import {Api} from '../commons';
 import {IProjectApi} from '../project-api.interface';
 import {ISimpleUserApi} from '../simple-user-api.interface';
 import {SimpleProject} from './index';
@@ -12,16 +11,16 @@ import {convert} from '../../core/utils/addClickableLinksToString';
 
 
 export class Project {
-    id: number;
+    id: string;
     name: string;
     isActive: boolean;
     isInbox: boolean;
     description: string;
     richDescription: string;
-    ancestor: number;
+    ancestor: string;
     color: string;
     tasksCounter: number;
-    allDescendants: Array<number>;
+    allDescendants: Array<number| string>;
     shareWith: (SimpleUser | PendingUser)[] = [];
     level: number;
     owner: number;
@@ -32,7 +31,7 @@ export class Project {
     taskView: string;
     matOptionClass: string;
 
-    constructor(project: IProjectApi) {
+    constructor(project: any) {
         this.name = project.name;
         this.id = project.id || undefined;
         this.ancestor = project.ancestor || undefined;

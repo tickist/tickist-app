@@ -51,6 +51,10 @@ import {ShowNotificationAboutNewDayComponent} from './header/show-notification-a
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {faBars} from '@fortawesome/free-solid-svg-icons';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import {AngularFireModule} from '@angular/fire';
+import {environment} from '../../environments/environment';
 
 
 @NgModule({
@@ -88,7 +92,9 @@ import {faBars} from '@fortawesome/free-solid-svg-icons';
         EffectsModule.forFeature([TagsEffects]),
         EffectsModule.forFeature([UserEffects, TeamEffects]),
         EffectsModule.forFeature([AssignedToFiltersTasksEffects, TasksFiltersEffects]),
-        FontAwesomeModule
+        FontAwesomeModule,
+        AngularFireAuthModule,
+        AngularFirestoreModule,
     ],
     providers: [
         TaskService,

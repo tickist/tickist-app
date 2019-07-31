@@ -1,16 +1,24 @@
 import {Action} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
 import {Project} from '../../../models/projects';
+import {TagActionTypes} from '../tags.actions';
 
 export enum ProjectActionTypes {
-    REQUEST_ALL_PROJECTS = '[] REQUEST_ALL_PROJECTS',
-    REQUEST_CREATE_PROJECT = '[] REQUEST_CREATE_PROJECT',
-    ADD_PROJECTS = '[] ADD_PROJECTS',
-    CREATE_PROJECT = '[] CREATE_PROJECT',
-    UPDATE_PROJECT = '[] UPDATE_PROJECT',
-    DELETE_PROJECT = '[] DELETE_PROJECT'
+    QUERY_PROJECTS = '[PROJECTS] QUERY PROJECTS',
+    REQUEST_ALL_PROJECTS = '[PROJECTS] REQUEST_ALL_PROJECTS',
+    REQUEST_CREATE_PROJECT = '[PROJECTS] REQUEST_CREATE_PROJECT',
+    ADD_PROJECTS = '[PROJECTS] ADD_PROJECTS',
+    CREATE_PROJECT = '[PROJECTS] CREATE_PROJECT',
+    UPDATE_PROJECT = '[PROJECTS] UPDATE_PROJECT',
+    REQUEST_UPDATE_PROJECT = '[PROJECTS] REQUEST UPDATE_PROJECT',
+    DELETE_PROJECT = '[PROJECTS] DELETE_PROJECT',
+    REQUEST_DELETE_PROJECT = '[PROJECTS] REQUEST DELETE_PROJECT'
 }
 
+
+export class QueryProjects implements Action {
+    readonly type = ProjectActionTypes.QUERY_PROJECTS;
+}
 
 export class RequestsAllProjects implements Action {
     readonly type = ProjectActionTypes.REQUEST_ALL_PROJECTS;
@@ -43,17 +51,33 @@ export class UpdateProject implements Action {
     constructor(public payload: { project: Update<Project> }) {
     }
 }
+export class RequestUpdateProject implements Action {
+    readonly type = ProjectActionTypes.REQUEST_UPDATE_PROJECT;
+
+    constructor(public payload: { project: Update<Project> }) {
+    }
+}
 
 export class DeleteProject implements Action {
     readonly type = ProjectActionTypes.DELETE_PROJECT;
 
-    constructor(public payload: { projectId: number }) {
+    constructor(public payload: { projectId: string }) {
+    }
+}
+
+export class RequestDeleteProject implements Action {
+    readonly type = ProjectActionTypes.REQUEST_DELETE_PROJECT;
+
+    constructor(public payload: { projectId: string }) {
     }
 }
 
 export type ProjectActions = AddProjects
     | DeleteProject
+    | QueryProjects
+    | RequestDeleteProject
     | UpdateProject
+    | RequestUpdateProject
     | CreateProject
     | RequestsAllProjects
     | RequestCreateProject;

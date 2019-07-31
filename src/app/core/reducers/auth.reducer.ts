@@ -4,12 +4,12 @@ import {Token} from '../models/auth';
 
 export interface AuthState {
     loggedIn: boolean;
-    token: Token;
+    uid: string;
 }
 
 export const initialState: AuthState = {
     loggedIn: false,
-    token: undefined
+    uid: undefined
 };
 
 export function authReducer(state = initialState, action: AuthActions): AuthState {
@@ -17,7 +17,7 @@ export function authReducer(state = initialState, action: AuthActions): AuthStat
         case AuthActionTypes.LoginAction:
             return {
                 loggedIn: true,
-                token: ( <Login> action).payload.token
+                uid: ( <Login> action).payload.uid
             };
         case AuthActionTypes.FetchedLoginUser:
             return {
@@ -28,7 +28,7 @@ export function authReducer(state = initialState, action: AuthActions): AuthStat
         case AuthActionTypes.LogoutAction:
             return {
                 loggedIn: false,
-                token: undefined
+                uid: undefined
             };
 
         default:

@@ -2,6 +2,7 @@ import {ISimpleUserApi} from './simple-user-api.interface';
 import {ISimpleProjectApi} from './simple-project-api.inferface';
 import {ITagApi} from './tag-api.interface';
 import {Menu} from './menu';
+import {Tag} from './tags';
 
 export interface ITaskApi {
     name: string;
@@ -29,8 +30,8 @@ export interface ITaskApi {
     modification_date?: string;
     finish_date_dateformat?: string;
     steps: Array<any>;
-    tags: ITagApi[];
-    task_list_pk: number;
+    tags: Tag[];
+    task_list_pk: string;
     when_complete?: any;
     menu_showing?: Menu;
 }

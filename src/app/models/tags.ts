@@ -1,24 +1,22 @@
-import {Api} from './commons';
 import moment from 'moment';
-import {ITagApi} from './tag-api.interface';
 
-export class Tag extends Api {
-    id: number;
+
+export class Tag {
+    id: string;
     name: string;
-    author: number;
-    creationDate: moment.Moment;
-    modificationDate: moment.Moment;
+    author: string;
+    creationDate: string;
+    modificationDate: string;
     tasksCounter: number;
 
 
-    constructor(tag: ITagApi) {
-        super();
-        this.name = tag.name;
-        this.id = tag.id || undefined;
-        this.author = tag.author;
-        this.tasksCounter = tag.tasks_counter;
-        this.creationDate = moment(tag.creation_date);
-        this.modificationDate = moment(tag.modification_date);
+    constructor({ id = null, name, author, tasksCounter = 0, creationDate = moment().format(), modificationDate = moment().format()}) {
+        this.name = name;
+        this.id = id;
+        this.author = author;
+        this.tasksCounter = tasksCounter || 0;
+        this.creationDate = creationDate;
+        this.modificationDate = modificationDate;
 
     }
 }

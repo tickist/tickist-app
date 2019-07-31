@@ -14,7 +14,7 @@
             width: 215px;
         }
     }
-    .fa-tag {
+    .tag-icon {
         margin-left: 5px;
         margin-right: 5px;
     }
@@ -24,7 +24,7 @@
     &.is-active {
         background-color: grey;
     }
-    .fa-pencil-square-o {
+    .tag-edit-icon {
         display: none;
         cursor: pointer;
         margin-left: 5px;
@@ -37,7 +37,7 @@
         .task-counter {
             display: none;
         }
-        .fa-pencil-square-o {
+        .tag-edit-icon {
             display: inline-block;
         }
     }

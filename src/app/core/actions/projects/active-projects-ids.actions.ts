@@ -11,19 +11,19 @@ export enum ActiveProjectsIdActionTypes {
 export class NewActiveProjectsIds implements Action {
     readonly type = ActiveProjectsIdActionTypes.NewActiveProjectsIds;
 
-    constructor(public payload: {projectsIds: Array<number>}) {}
+    constructor(public payload: {projectsIds: Array<string>}) {}
 }
 
 export class AddNewActiveProjectId implements Action {
     readonly type = ActiveProjectsIdActionTypes.AddNewActiveProjectId;
 
-    constructor(public payload: {projectId: number}) {}
+    constructor(public payload: {projectId: string}) {}
 }
 
 export class DeleteActiveProjectId implements Action {
     readonly type = ActiveProjectsIdActionTypes.DeleteActiveProjectId;
 
-    constructor(public payload: {projectId: number}) {}
+    constructor(public payload: {projectId: string}) {}
 }
 
 

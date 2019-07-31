@@ -1,11 +1,11 @@
-import {Component, OnInit, OnDestroy, ViewChild, HostListener} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Project} from '../../../../models/projects';
 import {Location} from '@angular/common';
-import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angular/forms';
-import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {User, SimpleUser, PendingUser} from '../../../../core/models';
+import {PendingUser, SimpleUser, User} from '../../../../core/models';
 import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
@@ -13,7 +13,7 @@ import {map, startWith, takeUntil} from 'rxjs/operators';
 import {RequestCreateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
-import {selectAllProjects, selectAllProjectsL0L1} from '../../../../core/selectors/projects.selectors';
+import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {addUserToShareList} from '../../../../core/utils/projects-utils';
@@ -281,7 +281,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     isNewProject(): boolean {
-        return !Number.isInteger(this.project.id);
+        return !this.project.id;
     }
 
 }

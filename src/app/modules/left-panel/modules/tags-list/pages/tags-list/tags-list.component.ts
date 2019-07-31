@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {TagService} from '../../../../../../services/tag.service';
+import {TagService} from '../../../../../../core/services/tag.service';
 import {Tag} from '../../../../../../models/tags';
 import {Task} from '../../../../../../models/tasks';
 import {TaskService} from '../../../../../../core/services/task.service';
@@ -17,6 +17,8 @@ import {Store} from '@ngrx/store';
 import {takeUntil} from 'rxjs/operators';
 import {RequestCreateTag} from '../../../../../../core/actions/tags.actions';
 import {selectFilteredTagsList} from '../../tags-filters.selectors';
+import {HttpClient} from '@angular/common/http';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 @Component({
     selector: 'tickist-tags-list',
@@ -34,9 +36,9 @@ export class TagsListComponent implements OnInit, OnDestroy {
     filteredTagsList$: Observable<Tag[]>;
 
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
-                protected userService: UserService, protected configurationService: ConfigurationService,
-                public dialog: MatDialog, protected tagsFiltersService: TagsFiltersService,
-                protected tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
+                private userService: UserService, private configurationService: ConfigurationService,
+                public dialog: MatDialog, private authFire: AngularFireAuth,
+                private tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
 
     }
 
@@ -55,7 +57,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     createTag(values): void {
         if (this.createTagForm.valid) {
-            const newTag = new Tag({name: values['name']});
+            const newTag = new Tag(<any> {name: values['name'], author: this.authFire.auth.currentUser.uid});
             this.store.dispatch(new RequestCreateTag({tag: newTag}));
             this.createTagForm.reset();
         }

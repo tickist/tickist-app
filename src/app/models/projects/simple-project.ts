@@ -3,7 +3,7 @@ import {SimpleUser} from '../../core/models';
 
 
 export class SimpleProject  {
-    id: number;
+    id: string;
     name: string;
     color: string;
     dialogTimeWhenTaskFinished: boolean;
