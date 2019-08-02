@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {Task} from '../../../models/tasks';
+import {Task} from '../../../models/tasks/tasks';
 import {Update} from '@ngrx/entity';
 import {CLOSE_MENU_IN_TASKS} from '../../../reducers/actions/tasks';
 import {TagActionTypes} from '../tags.actions';
@@ -64,14 +64,14 @@ export class RequestUpdateTask implements Action {
 export class DeleteTask implements Action {
     readonly type = TaskActionTypes.DELETE_TASK;
 
-    constructor(public payload: { taskId: number }) {
+    constructor(public payload: { taskId: string }) {
     }
 }
 
 export class RequestDeleteTask implements Action {
     readonly type = TaskActionTypes.DELETE_TASK;
 
-    constructor(public payload: { taskId: number }) {
+    constructor(public payload: { taskId: string }) {
     }
 }
 

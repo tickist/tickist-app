@@ -1,7 +1,7 @@
 import {Tag} from '../../models/tags';
 import moment from 'moment';
-import { Task } from '../../models/tasks';
-import {Step} from '../../models/steps';
+import { Task } from '../../models/tasks/tasks';
+import {Step} from '../../models/tasks/steps';
 
 export function hideAllMenuElements(task: Task): Task {
     return Object.assign({}, task, {

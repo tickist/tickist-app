@@ -174,7 +174,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
 
     }
 
-    navigateToEditProjectView(projectId: number) {
+    navigateToEditProjectView(projectId: string) {
         this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
     }
 
@@ -182,7 +182,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         const elementClickPath = $event.path;
         const mdCheckbox = elementClickPath.find(elem => elem.localName === 'mat-checkbox');
         if (!mdCheckbox) {
-            this.router.navigate(['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]}}]);
+            this.router.navigate(['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]}}]).catch((err => console.log(err)));
             if (this.media.isActive('sm') || this.media.isActive('xs')) {
                 this.configurationService.changeOpenStateLeftSidenavVisibility('close');
             }

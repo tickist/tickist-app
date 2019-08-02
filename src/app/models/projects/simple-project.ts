@@ -1,5 +1,5 @@
-import {PendingUser} from '../../core/models';
-import {SimpleUser} from '../../core/models';
+import {ShareWithUser} from './share-with-user';
+import {ShareWithPendingUser} from './share-with-pending-user';
 
 
 export class SimpleProject  {
@@ -7,7 +7,7 @@ export class SimpleProject  {
     name: string;
     color: string;
     dialogTimeWhenTaskFinished: boolean;
-    shareWith: (SimpleUser | PendingUser)[] = [];
+    shareWith: (ShareWithUser | ShareWithPendingUser)[] = [];
 
     constructor(project) {
         this.id = project.id;
@@ -17,9 +17,9 @@ export class SimpleProject  {
         if (project.hasOwnProperty('share_with')) {
             project.share_with.forEach((user) => {
                 if (user.hasOwnProperty('id')) {
-                    this.shareWith.push(new SimpleUser(user));
+                    this.shareWith.push(new ShareWithUser(user));
                 } else {
-                    this.shareWith.push(new PendingUser(user));
+                    this.shareWith.push(new ShareWithPendingUser(user));
                 }
             });
         }

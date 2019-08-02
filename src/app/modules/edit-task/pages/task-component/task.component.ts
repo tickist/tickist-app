@@ -4,7 +4,7 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../../../../core/services/task.service';
 import {TagService} from '../../../../core/services/tag.service';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import {Observable, combineLatest, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
@@ -22,9 +22,9 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../../../../shared/keymap';
 import {map, startWith, takeUntil} from 'rxjs/operators';
-import {Step} from '../../../../models/steps';
+import {Step} from '../../../../models/tasks/steps';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
-import {ITaskApi} from '../../../../models/task-api.interface';
+
 import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
@@ -104,7 +104,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.user = user;
                 this.projects = projects;
                 if (taskId) {
-                    task = tasks.filter(t => t.id === parseInt(taskId, 10))[0];
+                    task = tasks.filter(t => t.id === taskId)[0];
                 } else {
                     if (!selectedProject) {
                         this.selectedProject = projects.filter(project => project.id === user.inboxPk)[0];
@@ -431,7 +431,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
             updatedTask.taskProject = convertToSimpleProject(this.projects
                 .find(project => project.id === values['main']['taskProjectPk']));
-            updatedTask.owner = <SimpleUser>updatedTask.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            updatedTask.owner = updatedTask.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
 
             if (values['repeat']['repeatDefault'] !== 99) {
                 updatedTask.repeat = values['repeat']['repeatDefault'];
@@ -569,6 +569,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     isNewTask(): boolean {
-        return !Number.isInteger(this.task.id);
+        return !this.task.id;
     }
 }

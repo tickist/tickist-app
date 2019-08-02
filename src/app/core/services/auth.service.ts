@@ -42,8 +42,10 @@ export class AuthService {
 
     }
 
-    save(user: any) {
-        this.usersCollection.doc(user.uid).set({uid: user.uid, username: user.username, email: user.email});
+    save({uid, username, email}) {
+        debugger
+        const user = new User(<any> {id: uid, username: username, email: email});
+        this.usersCollection.doc(uid).set({...user}).catch((err) => console.log(err));
     }
 
 

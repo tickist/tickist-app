@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges} from '@angular/core';
 import {ConfigurationService} from '../../services/configuration.service';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';

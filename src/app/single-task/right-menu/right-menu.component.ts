@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {editTaskRoutesName} from '../../modules/edit-task/routes-names';
 import {Router} from '@angular/router';
 import {homeRoutesName} from '../../routing.module.name';

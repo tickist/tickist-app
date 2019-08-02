@@ -6,7 +6,7 @@ import {MockComponent} from 'ng-mocks';
 import {BlankComponent, RootComponent} from '../../testing/test.modules';
 import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {PinButtonComponent} from '../pin-button/pin-button.component';
 import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
 import {PriorityComponent} from '../../shared/components/priority/priority.component';
@@ -15,9 +15,7 @@ import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.f
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
 import {User} from '../../core/models';
 import {Project} from '../../models/projects';
-import {IUserApi} from '../../models/user-api.interface';
 import {IProjectApi} from '../../models/project-api.interface';
-import {ITaskApi} from '../../models/task-api.interface';
 import {RouterTestingModule} from '@angular/router/testing';
 
 
@@ -39,9 +37,9 @@ const routes: Routes = [
 
 
 describe('RightMenuComponent', () => {
-    let user: IUserApi;
+    let user: any;
     let project: IProjectApi;
-    let task: ITaskApi;
+    let task: any;
     let component: RightMenuComponent;
     let fixture: ComponentFixture<RightMenuComponent>;
     const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();

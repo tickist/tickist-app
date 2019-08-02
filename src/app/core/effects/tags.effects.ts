@@ -18,6 +18,7 @@ import {Tag} from '../../models/tags';
 import {Update} from '@ngrx/entity';
 import {TagService} from '../services/tag.service';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 
 @Injectable()
@@ -29,7 +30,10 @@ export class TagsEffects {
             ofType<QueryTags>(TagActionTypes.QUERY_TAGS),
             switchMap(action => {
                 console.log(action);
-                return this.db.collection('tags').stateChanges();
+                return this.db.collection(
+                    'tags',
+                    ref => ref.where('author', '==', this.authFire.auth.currentUser.uid))
+                    .stateChanges();
             }),
             // mergeMap(action => action),
             concatMap(actions => {
@@ -102,7 +106,7 @@ export class TagsEffects {
         );
 
     constructor(private actions$: Actions, private tagsService: TagService, private db: AngularFirestore,
-                private store: Store<AppStore>) {
+                private store: Store<AppStore>, private authFire: AngularFireAuth) {
 
     }
 

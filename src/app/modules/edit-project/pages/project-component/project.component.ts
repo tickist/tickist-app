@@ -1,11 +1,11 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Project} from '../../../../models/projects';
+import {Project, ShareWithPendingUser, ShareWithUser} from '../../../../models/projects';
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {PendingUser, SimpleUser, User} from '../../../../core/models';
+import {SimpleUser, User} from '../../../../core/models';
 import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
@@ -68,14 +68,14 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.defaultAvatarUrl = this.configurationService.configuration['commons']['DEFAULT_USER_AVATAR_URL'];
         this.route.params.pipe(
             takeUntil(this.ngUnsubscribe),
-            map(params => parseInt(params['ancestorProjectId'], 10))
+            map(params => params['ancestorProjectId'])
         )
             .subscribe(ancestorProjectId => {
                 this.ancestorProjectId = ancestorProjectId;
             });
         this.stream$ = combineLatest(
             this.store.select(selectAllProjects),
-            this.route.params.pipe(map(params => parseInt(params['projectId'], 10))),
+            this.route.params.pipe(map(params => params['projectId'])),
             this.store.select(selectLoggedInUser),
             this.store.select(selectTeam)
         );
@@ -161,6 +161,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
             project.taskView = values['extra']['taskView'];
             project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
+            // @TODO maybe whole object instead of ID
 
             // if (project.ancestor) {
             //     this.updateAncestorProject(project.ancestor);
@@ -210,20 +211,21 @@ export class ProjectComponent implements OnInit, OnDestroy {
             'description': '',
             'ancestor': this.ancestorProjectId ? this.ancestorProjectId : null,
             'color': this.configurationService.loadConfiguration()['commons']['COLOR_LIST_DEFAULT'],
-            'default_finish_date': '',
-            'default_priority': this.configurationService.loadConfiguration()['commons']['DEFAULT_PRIORITY_OF_TASK'],
-            'default_type_finish_date': this.configurationService.loadConfiguration()['commons']['DEFAULT_TYPE_FINISH_DATE'],
-            'default_task_view': this.user.defaultTaskView,
+            'defaultFinishDate': '',
+            'defaultPriority': this.configurationService.loadConfiguration()['commons']['DEFAULT_PRIORITY_OF_TASK'],
+            'defaultTypeFinishDate': this.configurationService.loadConfiguration()['commons']['DEFAULT_TYPE_FINISH_DATE'],
+            'defaultTaskView': this.user.defaultTaskView,
             'owner': this.user.id,
-            'is_active': true,
-            'share_with': [],
+            'isActive': true,
+            'shareWith': [{id: this.user.id, email: this.user.email, username: this.user.username, avatarUrl: this.user.avatarUrl}],
+            'shareWithIds': [this.user.id],
             'tags': [],
-            'dialog_time_when_task_finished': this.user.dialogTimeWhenTaskFinishedInProject,
-            'is_inbox': false
+            'dialogTimeWhenTaskFinished': this.user.dialogTimeWhenTaskFinishedInProject,
+            'isInbox': false
         });
     }
 
-    deleteUserFromShareWithList(user: (SimpleUser | PendingUser | User), i: number) {
+    deleteUserFromShareWithList(user: (ShareWithUser | ShareWithPendingUser | User), i: number) {
         const title = 'Confirmatiom';
         const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;
@@ -235,7 +237,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             if (result) {
                 const control = <FormArray>this.projectForm.controls['sharing'];
                 if (control.controls[i].value.hasOwnProperty('id')) {
-                    this.project.shareWith.filter((u: SimpleUser | PendingUser) => {
+                    this.project.shareWith.filter((u: ShareWithUser | ShareWithPendingUser) => {
                         return (u.hasOwnProperty('id') && u['id'] === control.controls[i].value.id);
                     });
                 }

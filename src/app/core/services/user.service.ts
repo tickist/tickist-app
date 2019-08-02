@@ -1,21 +1,18 @@
 import * as _ from 'lodash';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {select, Store} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import {User, UserLogin, SimpleUser} from '../models';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {SimpleUser, User} from '../models';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {TasksFiltersService} from './tasks-filters.service';
-import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Logout} from '../actions/auth.actions';
-import {userToSnakeCase} from '../utils/userToSnakeCase';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {MatDialog} from '@angular/material';
 import {AngularFireAuth} from '@angular/fire/auth';
 
 const userCollectionName = 'users';
@@ -31,7 +28,7 @@ export class UserService {
         this.team$ = this.store.select(s => s.team);
 
     }
-    
+
 
     loadUser(uid?): any {
         if (_.isNil(uid)) {
@@ -52,7 +49,7 @@ export class UserService {
 
     updateUser(user: User) {
         return this.db.collection(userCollectionName).doc(this.authFire.auth.currentUser.uid).set({...user});
-            
+
             // .set(JSON.parse(JSON.stringify(user)));
         // return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user));
             // .subscribe(payload => {

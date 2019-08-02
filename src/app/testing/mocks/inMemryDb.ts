@@ -5,8 +5,6 @@ import {UsersApiMockFactory} from './api-mock/users-api-mock.factory';
 import {TagsApiMockFactory} from './api-mock/tags-api-mock.factory';
 import {TasksApiMockFactory} from './api-mock/tasks-api-mock.factory';
 import {ProjectsApiMockFactory} from './api-mock/projects-api-mock.factory';
-import {ITaskApi} from '../../models/task-api.interface';
-import {IUserApi} from '../../models/user-api.interface';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import moment from 'moment';
 import * as _ from 'lodash';
@@ -24,9 +22,9 @@ export class InMemoryDataService implements InMemoryDbService {
     tagsApiMockFactory: TagsApiMockFactory;
     tasksApiMockFactory: TasksApiMockFactory;
     projectsApiMockFactory: ProjectsApiMockFactory;
-    users: IUserApi[];
+    users: any[];
     teamList: ISimpleUserApi[];
-    tasks: ITaskApi[] = [];
+    tasks: any[] = [];
     dayStatistics: any = [];
 
     createDb() {
@@ -228,7 +226,7 @@ export class InMemoryDataService implements InMemoryDbService {
             console.log('HTTP GET override');
 
             const dataEncapsulation = reqInfo.utils.getConfig().dataEncapsulation;
-            const data = JSON.parse(JSON.stringify(this.tasks.filter((task: ITaskApi) => task.status === 0)));
+            const data = JSON.parse(JSON.stringify(this.tasks.filter((task: any) => task.status === 0)));
             const options: ResponseOptions = {
                 body: dataEncapsulation ? {data} : data,
                 status: STATUS.OK

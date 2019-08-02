@@ -4,7 +4,7 @@ import {selectAllTasks, selectAllUndoneTasks} from '../../core/selectors/task.se
 import {FutureTasksFiltersState} from './future-tasks-filters.reducers';
 import {selectLoggedInUser} from '../../core/selectors/user.selectors';
 import {selectActiveDate} from '../../core/selectors/active-date.selectors';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 
 
 export const selectFutureTasksFilters = createFeatureSelector<FutureTasksFiltersState>('futureTasks');

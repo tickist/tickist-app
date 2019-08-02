@@ -7,7 +7,7 @@ import {
     selectCurrentTagsFilter,
     selectSearchTasksText
 } from './filters-tasks.selectors';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {Tag} from '../../models/tags';
 import {orderBy} from 'lodash';
 

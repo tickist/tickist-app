@@ -1,4 +1,4 @@
-import {Task} from './tasks';
+import {Task} from './tasks/tasks';
 import {Project} from './projects';
 
 export class Filter {

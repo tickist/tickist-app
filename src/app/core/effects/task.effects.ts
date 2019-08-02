@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {catchError, concatMap, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
     AddTasks,
@@ -8,36 +8,37 @@ import {
     CreateTask,
     DeleteTask,
     RequestCreateTask,
-    RequestsAllTasks, RequestUpdateTask,
+    RequestUpdateTask,
     TaskActionTypes,
     UpdateTask
 } from '../actions/tasks/task.actions';
 import {TaskService} from '../services/task.service';
 import {AppStore} from '../../store';
-import {allTasksLoaded, selectAllTasks, selectTaskById} from '../selectors/task.selectors';
-import {Task} from '../../models/tasks';
+import {selectAllTasks} from '../selectors/task.selectors';
+import {Task} from '../../models/tasks/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
-import {SwitchOffProgressBar, SwitchOnProgressBar} from '../actions/progress-bar.actions';
-import {repeatTaskLogic} from '../../single-task/utils/set-status-to-done-logic';
+import {SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {of} from 'rxjs';
-import {AddTags, QueryTags, TagActionTypes} from '../actions/tags.actions';
-import {Tag} from '../../models/tags';
-import {TagService} from '../services/tag.service';
+import {QueryTags} from '../actions/tags.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
-
+import {AngularFireAuth} from '@angular/fire/auth';
 
 
 @Injectable()
 export class TaskEffects {
-    
-    
+
+
     @Effect()
     queryTasks$ = this.actions$
         .pipe(
             ofType<QueryTags>(TaskActionTypes.QUERY_TASKS),
             switchMap(action => {
                 console.log(action);
-                return this.db.collection('tasks').stateChanges();
+                return this.db.collection('tasks', ref => ref
+                    .where('owner.id', '==', this.authFire.auth.currentUser.uid)
+                    .where('status', '<', 1)
+                    .where('status', '>', 1)
+                ).stateChanges();
             }),
             // mergeMap(action => action),
             map(actions => {
@@ -58,24 +59,24 @@ export class TaskEffects {
                 }));
                 return new AddTasks({tasks: addedTasks});
             })
-        )
-    
-    @Effect()
-    addTasks$ = this.actions$
-        .pipe(
-            ofType<RequestsAllTasks>(TaskActionTypes.REQUEST_ALL_TASKS),
-            withLatestFrom(this.store.pipe(select(allTasksLoaded))),
-            filter(([action, allTasksLoadedValue]) => !allTasksLoadedValue),
-            mergeMap(() => this.tasksService.loadTasks()),
-            map(tasks => new AddTasks({tasks: tasks}))
         );
+
+    // @Effect()
+    // addTasks$ = this.actions$
+    //     .pipe(
+    //         ofType<RequestsAllTasks>(TaskActionTypes.REQUEST_ALL_TASKS),
+    //         withLatestFrom(this.store.pipe(select(allTasksLoaded))),
+    //         filter(([action, allTasksLoadedValue]) => !allTasksLoadedValue),
+    //         mergeMap(() => this.tasksService.loadTasks()),
+    //         map(tasks => new AddTasks({tasks: tasks}))
+    //     );
 
     @Effect()
     createTask$ = this.actions$
         .pipe(
             ofType<RequestCreateTask>(TaskActionTypes.REQUEST_CREATE_TASK),
             mergeMap(action => this.tasksService.createTask(action.payload.task)),
-            map(payload => new CreateTask({task: payload}))
+            catchError((error: any) => of(console.log(error)))
         );
 
     // @Effect()
@@ -91,13 +92,8 @@ export class TaskEffects {
     updateTask$ = this.actions$
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
-            mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes).pipe(
-                map((task) => {
-                    console.log(task);
-                    return new UpdateTask({task: {id: task.id, changes: task}});
-                }),
-                catchError((error: any) => of(console.log(error)))
-            ))
+            mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes)),
+            catchError((error: any) => of(console.log(error)))
         );
 
     @Effect()
@@ -142,7 +138,7 @@ export class TaskEffects {
         );
 
     constructor(private actions$: Actions, private tasksService: TaskService, private db: AngularFirestore,
-                private store: Store<AppStore>) {
+                private store: Store<AppStore>, private authFire: AngularFireAuth) {
 
     }
 

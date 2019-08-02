@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {TagService} from '../../../../../../core/services/tag.service';
 import {Tag} from '../../../../../../models/tags';
-import {Task} from '../../../../../../models/tasks';
+import {Task} from '../../../../../../models/tasks/tasks';
 import {TaskService} from '../../../../../../core/services/task.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../../../../core/services/user.service';
@@ -10,15 +10,14 @@ import {User} from '../../../../../../core/models';
 import {ConfigurationService} from '../../../../../../services/configuration.service';
 import {FilterTagsDialogComponent} from '../../components/filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {TagsFiltersService} from '../../../../../../services/tags-filters.service';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';
 import {takeUntil} from 'rxjs/operators';
 import {RequestCreateTag} from '../../../../../../core/actions/tags.actions';
 import {selectFilteredTagsList} from '../../tags-filters.selectors';
-import {HttpClient} from '@angular/common/http';
 import {AngularFireAuth} from '@angular/fire/auth';
+
 
 @Component({
     selector: 'tickist-tags-list',
@@ -34,6 +33,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
     defaultTaskView: string;
     taskView: string;
     filteredTagsList$: Observable<Tag[]>;
+    @ViewChild('form', {static: true}) createTagFormDOM;
 
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
                 private userService: UserService, private configurationService: ConfigurationService,
@@ -60,6 +60,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
             const newTag = new Tag(<any> {name: values['name'], author: this.authFire.auth.currentUser.uid});
             this.store.dispatch(new RequestCreateTag({tag: newTag}));
             this.createTagForm.reset();
+            this.createTagFormDOM.resetForm();
         }
 
     }

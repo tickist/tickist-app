@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {AppStore} from '../../../store';
 import {Store} from '@ngrx/store';
 import {Router} from '@angular/router';
-import {Task} from '../../../models/tasks';
+import {Task} from '../../../models/tasks/tasks';
 import {Project} from '../../../models/projects';
 import {ProjectService} from '../../services/project.service';
 import {TaskService} from '../../services/task.service';
@@ -10,10 +10,10 @@ import {UserService} from '../../services/user.service';
 import {TagService} from '../../services/tag.service';
 import {MediaObserver, MediaChange} from '@angular/flex-layout';
 import {ConfigurationService} from '../../../services/configuration.service';
-import {SideNavVisibility} from '../../../models';
 import _ from 'lodash';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {SideNavVisibility} from '../../../models/configurations';
 
 
 @Component({

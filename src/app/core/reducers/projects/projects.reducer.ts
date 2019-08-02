@@ -22,7 +22,7 @@ export function reducer(state = initialProjectsState, action: (ProjectActions | 
             return adapter.addOne(action.payload.project, state);
 
         case ProjectActionTypes.ADD_PROJECTS:
-            return adapter.addAll(action.payload.projects, {...state, allProjectsLoaded: true});
+            return adapter.addMany(action.payload.projects, {...state, allProjectsLoaded: true});
 
         case ProjectActionTypes.UPDATE_PROJECT:
             return adapter.updateOne(action.payload.project, state);

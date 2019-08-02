@@ -6,9 +6,12 @@
       "**/.*",
       "**/node_modules/**"
     ],
-      "rewrites": [
-          { "source": "**", "function": "universal" }
-      ]
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   },
   "firestore": {
     "rules": "firestore.rules",

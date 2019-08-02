@@ -1,13 +1,7 @@
-import {SimpleUser} from '../../core/models';
-import {PendingUser} from '../../core/models';
-import {IProjectApi} from '../project-api.interface';
-import {ISimpleUserApi} from '../simple-user-api.interface';
-import {SimpleProject} from './index';
-import {ISimpleProjectApi} from '../simple-project-api.inferface';
-import {IUserApi} from '../user-api.interface';
-import {toSnakeCase} from '../../core/utils/toSnakeCase';
-import {IPendingUser} from '../pending-user-api.interface';
 import {convert} from '../../core/utils/addClickableLinksToString';
+import {ShareWithUser} from './share-with-user';
+import {ShareWithPendingUser} from './share-with-pending-user';
+
 
 
 export class Project {
@@ -19,44 +13,46 @@ export class Project {
     richDescription: string;
     ancestor: string;
     color: string;
-    tasksCounter: number;
+    tasksCounter = 0;
     allDescendants: Array<number| string>;
-    shareWith: (SimpleUser | PendingUser)[] = [];
-    level: number;
-    owner: number;
+    shareWith: (ShareWithUser | ShareWithPendingUser)[] = [];
+    level = 0;
+    owner: number | string;
     defaultFinishDate: any;
     defaultPriority: any;
     defaultTypeFinishDate: any;
     dialogTimeWhenTaskFinished: boolean;
     taskView: string;
     matOptionClass: string;
+    shareWithIds: Array<string> = [];
 
     constructor(project: any) {
         this.name = project.name;
-        this.id = project.id || undefined;
+        this.id = project.id || null;
         this.ancestor = project.ancestor || undefined;
         this.color = project.color || undefined;
-        this.tasksCounter = !(isNaN(project.tasks_counter)) ? project.tasks_counter : undefined;
-        this.allDescendants = project.get_all_descendants;
+        this.tasksCounter = !(isNaN(project.tasksCounter)) ? project.tasksCounter : 0;
+        this.allDescendants = project.getAllDescendants ? project.getAllDescendants : [];
         this.description = project.description;
         this.richDescription = convert(project.description);
-        this.defaultFinishDate = project.default_finish_date;
-        this.defaultPriority = project.default_priority;
-        this.defaultTypeFinishDate = project.default_type_finish_date;
+        this.defaultFinishDate = project.defaultFinishDate;
+        this.defaultPriority = project.defaultPriority;
+        this.defaultTypeFinishDate = project.defaultTypeFinishDate;
         this.owner = project.owner;
-        this.level = project.level;
-        this.isActive = project.is_active;
-        this.taskView = project.task_view;
-        this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
-        this.isInbox = project.is_inbox;
+        this.level = project.level ? project.level : 0;
+        this.isActive = project.isActive;
+        this.taskView = project.taskView;
+        this.dialogTimeWhenTaskFinished = project.dialogTimeWhenTaskFinished;
+        this.isInbox = project.isInbox;
         this.matOptionClass = `level_${this.level}`;
-        project.share_with.forEach((user) => {
+        project.shareWith.forEach((user) => {
             if (user.hasOwnProperty('id')) {
-                this.shareWith.push(new SimpleUser(user));
+                this.shareWith.push(new ShareWithUser(user));
             } else {
-                this.shareWith.push(new PendingUser(user));
+                this.shareWith.push(new ShareWithPendingUser(user));
             }
 
         });
+        this.shareWithIds = project.shareWithIds;
     }
 }

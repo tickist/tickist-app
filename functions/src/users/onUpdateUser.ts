@@ -6,12 +6,9 @@ import {db} from '../init';
 export const onUpdateUser = functions.firestore.document('users/{userId}/')
         .onUpdate(async (snap, context) => {
 
-            console.log("Running onAddLesson trigger ...");
+            console.log('Running onAddLesson trigger ...');
 
             return db.runTransaction(async transaction => {
-                
-
-                // transaction.update(courseRef, changes);
 
             });
 

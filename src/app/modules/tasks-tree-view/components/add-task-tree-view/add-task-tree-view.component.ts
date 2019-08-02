@@ -3,8 +3,7 @@ import {AppStore} from '../../../../store';
 import {Project} from '../../../../models/projects';
 import {Store} from '@ngrx/store';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Task} from '../../../../models/tasks';
-import {ITaskApi} from '../../../../models/task-api.interface';
+import {Task} from '../../../../models/tasks/tasks';
 import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
 import {User} from '../../../../core/models';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
@@ -46,7 +45,7 @@ export class AddTaskTreeViewComponent implements OnInit {
                 'name': taskName,
                 'priority': this.project.defaultPriority,
                 'description': '',
-                'type_finish_date': 1,
+                'typeFinishDate': 1,
                 'finish_date': '',
                 'finish_time': '',
                 'suspend_date': '',

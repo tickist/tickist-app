@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {Store, State, select} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {StatisticsService} from '../../services/statistics.service';
 import {ConfigurationService} from '../../services/configuration.service';
@@ -12,28 +12,23 @@ import {ProjectService} from './project.service';
 import * as tasksAction from '../../reducers/actions/tasks';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
-import {ITaskApi} from '../../models/task-api.interface';
 import {selectAllTasks} from '../selectors/task.selectors';
 import {taskToSnakeCase} from '../../single-task/utils/taskToSnakeCase';
+import {AngularFirestore} from '@angular/fire/firestore';
 
+
+const tasksCollectionName = 'tasks';
 
 @Injectable()
 export class TaskService {
     tasks$: Observable<Task[]>;
 
-    constructor(public http: HttpClient, private store: Store<AppStore>,
+    constructor(private db: AngularFirestore, public http: HttpClient, private store: Store<AppStore>,
                 public snackBar: MatSnackBar,
                 private configurationService: ConfigurationService, private projectService: ProjectService,
                 private tagService: TagService) {
 
         this.tasks$ = this.store.select(selectAllTasks);
-    }
-
-    loadTasks() {
-        return this.http.get<ITaskApi[]>(`${environment['apiUrl']}/tasks/?assign=all&status=0&status=2`)
-            .pipe(
-                map(payload => payload.map((task: ITaskApi) => new Task(task))),
-            );
     }
 
     saveTask(task: Task) {
@@ -46,23 +41,27 @@ export class TaskService {
     }
 
     createTask(task: Task) {
-        return this.http.post(`${environment['apiUrl']}/tasks/`, taskToSnakeCase(task))
-            .pipe(map((payload: ITaskApi) => new Task(payload)));
+        const newTask = this.db.collection(tasksCollectionName).ref.doc();
+        return newTask.set(JSON.parse(JSON.stringify({...task, id: newTask.id})));
     }
 
     updateTask(task: Task, isSilenceUpdate = false, cleanMenuState = false) {
-        let menuStateCopy;
-        if (!cleanMenuState) {
-            menuStateCopy = task.menuShowing;
-        }
-        return this.http.put<ITaskApi>(`${environment['apiUrl']}/tasks/${task.id}/`, taskToSnakeCase(task))
-            .pipe(map((payload: ITaskApi) => new Task(payload)),
-                map(payload => {
-                    if (!cleanMenuState) {
-                        return Object.assign({}, payload, {'menuShowing': menuStateCopy});
-                    }
-                    return payload;
-                }));
+        return this.db.collection(tasksCollectionName).doc(task.id).update(JSON.parse(JSON.stringify(task)));
+
+
+
+        // let menuStateCopy;
+        // if (!cleanMenuState) {
+        //     menuStateCopy = task.menuShowing;
+        // }
+        // return this.http.put<any>(`${environment['apiUrl']}/tasks/${task.id}/`, taskToSnakeCase(task))
+        //     .pipe(map((payload: any) => new Task(payload)),
+        //         map(payload => {
+        //             if (!cleanMenuState) {
+        //                 return Object.assign({}, payload, {'menuShowing': menuStateCopy});
+        //             }
+        //             return payload;
+        //         }));
 
             // .subscribe(payload => {
             //     if (!cleanMenuState) {
@@ -77,7 +76,7 @@ export class TaskService {
             // });
     }
 
-    deleteTask(taskId: number) {
+    deleteTask(taskId: string) {
         return this.http.delete(`${environment['apiUrl']}/tasks/${taskId}/`);
     }
 

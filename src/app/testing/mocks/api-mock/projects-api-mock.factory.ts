@@ -4,7 +4,6 @@ import {IProjectApi} from '../../../models/project-api.interface';
 import {ISimpleUserApi} from '../../../models/simple-user-api.interface';
 import {ITagApi} from '../../../models/tag-api.interface';
 import * as _ from 'lodash';
-import {IUserApi} from '../../../models/user-api.interface';
 import {UsersApiMockFactory} from './users-api-mock.factory';
 
 export class ProjectsApiMockFactory {
@@ -22,7 +21,7 @@ export class ProjectsApiMockFactory {
 
     constructor() {}
 
-    createProjectsDict(shareWith: ISimpleUserApi[], owner: IUserApi, tags: ITagApi[], howMuch: number = 17) {
+    createProjectsDict(shareWith: ISimpleUserApi[], owner: any, tags: ITagApi[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createProjectDict(
             shareWith,
             UsersApiMockFactory.createSimpleUserFromUser(owner),

@@ -1,9 +1,8 @@
 import {toSnakeCase} from './toSnakeCase';
 import {User} from '../models';
-import {IUserApi} from '../../models/user-api.interface';
 
-export function userToSnakeCase(user: User): IUserApi {
-    const result = <IUserApi> toSnakeCase(user);
+export function userToSnakeCase(user: User): any {
+    const result = <any> toSnakeCase(user);
 
     if (user.dailySummaryHour) {
         const hour = user.dailySummaryHour.getHours();

@@ -20,8 +20,9 @@ import {ProjectService} from '../services/project.service';
 import {Project} from '../../models/projects';
 import {QueryTags} from '../actions/tags.actions';
 import {AddTasks, TaskActionTypes} from '../actions/tasks/task.actions';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 
 @Injectable()
@@ -33,7 +34,12 @@ export class ProjectsEffects {
             ofType<QueryProjects>(ProjectActionTypes.QUERY_PROJECTS),
             switchMap(action => {
                 console.log(action);
-                return this.db.collection('projects').stateChanges();
+                return this.db.collection(
+                    'projects',
+                    ref => ref
+                        .where('shareWithIds', 'array-contains', this.authFire.auth.currentUser.uid)
+                        .where('isActive', '==', true)
+                ).stateChanges();
             }),
             // mergeMap(action => action),
             map(actions => {
@@ -47,15 +53,15 @@ export class ProjectsEffects {
                     if (action.type === 'added') {
                         const data: any = action.payload.doc.data();
                         addedProjects.push(new Project({
+                            ...data,
                             id: action.payload.doc.id,
-                            ...data
                         }));
                     }
                 }));
                 return new AddProjects({projects: addedProjects});
             })
         );
-    
+
     // @Effect()
     // addProjects$ = this.actions$
     //     .pipe(
@@ -77,7 +83,7 @@ export class ProjectsEffects {
     updateProject$ = this.actions$
         .pipe(
             ofType<RequestUpdateProject>(ProjectActionTypes.REQUEST_UPDATE_PROJECT),
-            mergeMap(action => this.projectService.updateProject(<Project> action.payload.project.changes))
+            mergeMap(action => this.projectService.updateProject(<Project>action.payload.project.changes))
         );
 
     @Effect({dispatch: false})
@@ -88,7 +94,7 @@ export class ProjectsEffects {
         );
 
     constructor(private actions$: Actions, private projectService: ProjectService, private db: AngularFirestore,
-                private store: Store<AppStore>) {
+                private store: Store<AppStore>, private authFire: AngularFireAuth) {
 
     }
 

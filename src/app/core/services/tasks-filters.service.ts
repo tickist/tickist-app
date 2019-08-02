@@ -9,7 +9,7 @@ import * as tasksAction from '../../reducers/actions/tasks';
 import {Filter} from '../../models/filter';
 import {HttpClient} from '@angular/common/http';
 import {take} from 'rxjs/operators';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {Tag} from '../../models/tags';
 import {AddUser} from '../actions/user.actions';
 import {SortBy} from '../../tasks/models/sortBy';

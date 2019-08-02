@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../../../core/services/user.service';
 import {ProjectService} from '../../../../core/services/project.service';
 import {Observable, Subject, combineLatest} from 'rxjs';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import {Project} from '../../../../models/projects';
 import {User} from '../../../../core/models';
 import {map, takeUntil} from 'rxjs/operators';
@@ -71,7 +71,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                 if (user) {
                     this.user = user;
                     if (projectId && projects && projects.length > 0 && user) {
-                        const project = projects.find(p => p.id === parseInt(projectId, 10));
+                        const project = projects.find(p => p.id === projectId);
                         if (project && project !== activeProject) {
                             if (project.hasOwnProperty('allDescendants')) {
                                 this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));

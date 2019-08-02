@@ -1,23 +1,32 @@
 import {
-    Component, OnInit, Input, OnDestroy, OnChanges, SimpleChange, ChangeDetectionStrategy,
-    AfterViewInit, ElementRef, ViewChild, Renderer2, HostListener
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    HostListener,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Renderer2,
+    SimpleChange,
+    ViewChild
 } from '@angular/core';
 import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../services/configuration.service';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelect } from '@angular/material/select';
+import {MatDialog} from '@angular/material/dialog';
 import {ProjectService} from '../../core/services/project.service';
-import {Project} from '../../models/projects';
+import {Project, ShareWithUser} from '../../models/projects';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
-import {RequestUpdateTask, UpdateTask} from '../../core/actions/tasks/task.actions';
+import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
 import {selectFilteredProjectsList} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {SimpleUser} from '../../core/models';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {convertToSimpleProject} from '../../core/utils/projects-utils';
@@ -114,7 +123,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     changeAssignedTo(event) {
         this.task.owner = <SimpleUser> this.task
-            .taskProject.shareWith.find(user => user.hasOwnProperty('id') && (<SimpleUser> user).id === event.value);
+            .taskProject.shareWith.find(user => user.hasOwnProperty('id') && (<ShareWithUser> user).id === event.value);
         this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task, true, true);
     }

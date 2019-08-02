@@ -1,5 +1,4 @@
 import {ISimpleUserApi} from '../../../models/simple-user-api.interface';
-import {IUserApi} from '../../../models/user-api.interface';
 import * as _ from 'lodash';
 import * as faker from 'faker';
 import {ISimpleProjectApi} from '../../../models/simple-project-api.inferface';
@@ -7,7 +6,7 @@ import {ISimpleProjectApi} from '../../../models/simple-project-api.inferface';
 export class UsersApiMockFactory {
     id = 0;
 
-    static createSimpleUserFromUser(user: IUserApi): ISimpleUserApi {
+    static createSimpleUserFromUser(user: any): ISimpleUserApi {
         return {
             avatar: user.avatar,
             avatar_url: user.avatar_url,
@@ -24,7 +23,7 @@ export class UsersApiMockFactory {
         return _.range(0, howMuch).map(() => this.createUserDict());
     }
 
-    createUserDict(): IUserApi {
+    createUserDict(): any {
         this.id += 1;
         return {
             'username': faker.internet.userName(),

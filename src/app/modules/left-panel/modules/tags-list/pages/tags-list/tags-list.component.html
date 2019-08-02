@@ -11,7 +11,7 @@
     <app-tag fxFlex label="Without tags" id="withoutTags"></app-tag>
 </div>
 
-<form [formGroup]="createTagForm" (ngSubmit)="createTag(createTagForm.value)">
+<form [formGroup]="createTagForm" (ngSubmit)="createTag(createTagForm.value)" #form="ngForm">
     <mat-form-field [ngStyle]="{'margin-left':'20px'}">
         <input matInput name="tag-name" formControlName="name" placeholder="Tag name">
         <mat-error *ngIf="createTagForm.controls['name'].hasError('required')">Name is required</mat-error>

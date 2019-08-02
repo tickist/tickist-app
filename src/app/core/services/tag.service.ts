@@ -33,8 +33,8 @@ export class TagService {
     createTag(tag: Tag) {
         // const uid = this.authFire.auth.currentUser.uid;
         // tag.author = uid;
-        console.log(tag);
-        return this.db.collection(tagsCollectionName).add({...tag});
+        const newTagRef = this.db.collection(tagsCollectionName).ref.doc();
+        return newTagRef.set({...tag, id: newTagRef.id});
         // return this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
         //     .pipe(map(payload => new Tag(payload)));
     }

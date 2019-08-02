@@ -1,18 +1,15 @@
-import {Observable, pipe} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {select, Store} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
 import {Project} from '../../models/projects';
 
 import {SimpleUser} from '../models';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {map} from 'rxjs/operators';
 import {TasksFiltersService} from './tasks-filters.service';
-import {IProjectApi} from '../../models/project-api.interface';
-import {toSnakeCase} from '../utils/toSnakeCase';
 import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../selectors/projects.selectors';
 import {AngularFirestore} from '@angular/fire/firestore';
 
@@ -31,15 +28,6 @@ export class ProjectService {
         this.projects$ = this.store.select(selectAllProjects);
         this.selectedProject$ = this.store.select(selectActiveProject);
         this.selectedProjectsIds$ = this.store.select(selectActiveProjectsIds);
-    }
-
-    loadProjects() {
-        // return this.http.get<IProjectApi[]>(`${environment['apiUrl']}/project/`)
-        //     .pipe(
-        //         map(payload => payload.map(project => new Project(project))),
-        //     );
-        return this.db.collection(projectsCollectionName).get();
-        
     }
 
     selectProject(project: Project | null) {
@@ -83,9 +71,9 @@ export class ProjectService {
     }
 
     createProject(project: Project) {
-        
-        return this.db.collection(projectsCollectionName).add({...project});
-        
+        const newProject = this.db.collection(projectsCollectionName).ref.doc();
+        return newProject.set(JSON.parse(JSON.stringify({...project, id: newProject.id})));
+
         // return this.http.post(`${environment['apiUrl']}/project/`, toSnakeCase(project))
         //     .pipe(map((payload: IProjectApi) => new Project(payload)));
         // .subscribe((payload: IProjectApi) => {
@@ -101,8 +89,8 @@ export class ProjectService {
 
     updateProject(project: Project, withoutSnackBar = false) {
         return this.db.collection(projectsCollectionName).doc(project.id).update({...project});
-        
-        
+
+
         // return this.http.put(`${environment['apiUrl']}/project/${project.id}/`, toSnakeCase(project));
         // .subscribe((payload: IProjectApi) => {
         //     this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));

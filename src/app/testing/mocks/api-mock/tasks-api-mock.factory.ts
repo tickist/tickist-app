@@ -1,8 +1,6 @@
 import {UsersApiMockFactory} from './users-api-mock.factory';
 import {ProjectsApiMockFactory} from './projects-api-mock.factory';
-import {ITaskApi} from '../../../models/task-api.interface';
 import * as faker from 'faker';
-import {IUserApi} from '../../../models/user-api.interface';
 import {IProjectApi} from '../../../models/project-api.interface';
 import * as _ from 'lodash';
 import moment from 'moment';
@@ -12,7 +10,7 @@ import {Tag} from '../../../models/tags';
 export class TasksApiMockFactory {
     id = 0;
 
-    static createResponseFromServer(task: ITaskApi) {
+    static createResponseFromServer(task: any) {
         if (task.steps instanceof Object) {
             task.steps = [];
         }
@@ -23,13 +21,13 @@ export class TasksApiMockFactory {
 
     }
 
-    createTasksDict(owner: IUserApi, author: IUserApi, project: IProjectApi, tags: Tag[], howMuch: number = 17) {
+    createTasksDict(owner: any, author: any, project: IProjectApi, tags: Tag[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createTaskDict(owner, author, project, tags));
     }
 
 
 
-    createTaskDict(owner: IUserApi, author: IUserApi, project: IProjectApi, tags: Tag[]): ITaskApi {
+    createTaskDict(owner: any, author: any, project: IProjectApi, tags: Tag[]): any {
         this.id += 1;
 
         return {

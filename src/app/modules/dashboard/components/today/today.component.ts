@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import {User} from '../../../../core/models';
 import {IActiveDateElement} from '../../../../models/active-data-element.interface';
 import {takeUntil} from 'rxjs/operators';

@@ -3,19 +3,19 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {
     LoadChartStatistics,
     LoadDailyStatistics,
-    LoadGlobalStatistics, LoadGlobalStatisticsDateRange,
-    StatisticsActionTypes, UpdateChartStatistics, UpdateDailyStatistics, UpdateGlobalStatistics
+    LoadGlobalStatistics,
+    LoadGlobalStatisticsDateRange,
+    StatisticsActionTypes,
+    UpdateChartStatistics,
+    UpdateDailyStatistics,
+    UpdateGlobalStatistics
 } from '../actions/statistics.actions';
 import {StatisticsService} from '../../../services/statistics.service';
 import {concatMap, concatMapTo, map, mergeMap} from 'rxjs/operators';
 import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../../models/statistics';
-import {defer, of} from 'rxjs';
-import {IToken, Token} from '../../../core/models/auth';
-import {FetchedLoginUser, Logout} from '../../../core/actions/auth.actions';
+import {defer} from 'rxjs';
 import {AddUser, UserActionTypes} from '../../../core/actions/user.actions';
 import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
-import {AddProjectsFilters, SetCurrentProjectFilter} from '../../left-panel/modules/projects-list/projects-filters.actions';
-import {ProjectsFiltersService} from '../../left-panel/modules/projects-list/projects-filters.service';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../store';
 

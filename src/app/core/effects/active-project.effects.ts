@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ActiveProjectActionTypes, SetActiveProject} from '../actions/projects/active-project.actions';
 import {concatMap, withLatestFrom} from 'rxjs/operators';
-import {PendingUser, SimpleUser} from '../models';
 import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
 import {Filter} from '../../models/filter';
 import {selectTeam} from '../selectors/team.selectors';
@@ -10,6 +9,8 @@ import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
+import {ShareWithUser} from '../../models/projects/share-with-user';
+import {ShareWithPendingUser} from '../../models/projects/share-with-pending-user';
 
 @Injectable()
 export class ActiveProjectEffects {
@@ -22,11 +23,11 @@ export class ActiveProjectEffects {
                 const actions = [];
                 const filters = [];
                 if (action.payload.project) {
-                    action.payload.project.shareWith.map((simpleUserOrPendingUser: (SimpleUser | PendingUser)) => {
+                    action.payload.project.shareWith.map((simpleUserOrPendingUser: (ShareWithUser | ShareWithPendingUser)) => {
                         if (simpleUserOrPendingUser.hasOwnProperty('id')
                             && simpleUserOrPendingUser['id'] !== undefined
                             && simpleUserOrPendingUser['id'] !== user.id) {
-                                const userId = (<SimpleUser>simpleUserOrPendingUser).id;
+                                const userId = (<ShareWithUser>simpleUserOrPendingUser).id;
                                 filters.push(
                                     new Filter({
                                         'id': simpleUserOrPendingUser['id'],
@@ -38,7 +39,7 @@ export class ActiveProjectEffects {
                         }
                     });
                     actions.push(new AddNewAssignedToFilter({filters}));
-                    // @Todo move to service tasksFilters kiedy tam będzie porzadek
+                    // @TODO move to service tasksFilters kiedy tam będzie porzadek
                     actions.push(new SetCurrentAssignedToFilter({
                         currentFilter: new Filter({
                             id: 0,

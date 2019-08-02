@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ConfigurationService} from '../../../../services/configuration.service';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import moment from 'moment';

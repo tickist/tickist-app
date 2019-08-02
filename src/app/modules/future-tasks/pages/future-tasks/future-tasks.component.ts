@@ -4,7 +4,7 @@ import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {filter, map, takeUntil} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../../../services/configuration.service';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import * as _ from 'lodash';
 import {User} from '../../../../core/models';
 import {IActiveDateElement} from '../../../../models/active-data-element.interface';

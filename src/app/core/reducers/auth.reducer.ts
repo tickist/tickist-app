@@ -1,5 +1,4 @@
-import {AuthActions, AuthActionTypes, FetchedLoginUser, Login} from '../actions/auth.actions';
-import {Token} from '../models/auth';
+import {AuthActions, AuthActionTypes, Login} from '../actions/auth.actions';
 
 
 export interface AuthState {

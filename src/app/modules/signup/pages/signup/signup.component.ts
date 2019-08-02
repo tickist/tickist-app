@@ -1,10 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {map, tap} from 'rxjs/operators';
-import {noop} from 'rxjs';
-import {IToken, Token} from '../../../../core/models/auth';
-import {Login} from '../../../../core/actions/auth.actions';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {AuthService} from '../../../../core/services/auth.service';

@@ -1,16 +1,27 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "outDir": "lib",
-    "sourceMap": true,
-    "strict": true,
-    "target": "es2017",
-      "noImplicitAny": false
-  },
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitReturns": true,
+        "outDir": "lib",
+        "sourceMap": true,
+        "target": "es2017",
+        "noImplicitAny": false,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "types": ["node"],
+        "lib": [
+            "es2018",
+            "dom"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@tickist/*": ["../src/app/*"]
+        }
+    },
     "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+    "include": [
+        "src"
+    ]
+
 }

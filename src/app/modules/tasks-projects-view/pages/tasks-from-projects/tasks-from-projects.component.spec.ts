@@ -27,7 +27,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import {MockActivatedRoute} from '../../../../testing/mocks/activatedRoute';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {Component, Input} from '@angular/core';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import {MockTagService} from '../../../../testing/mocks/tag-service';
 import {MockTasksFiltersService} from '../../../../testing/mocks/tasks-filters-service';
 import {BlankComponent, RootComponent} from '../../../../testing/test.modules';

@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {ConfigurationService} from '../../../../services/configuration.service';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
 import moment from 'moment';

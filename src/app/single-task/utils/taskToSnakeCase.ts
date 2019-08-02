@@ -1,5 +1,5 @@
 import {toSnakeCase} from '../../core/utils/toSnakeCase';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 
 
 export function taskToSnakeCase(task: Task) {

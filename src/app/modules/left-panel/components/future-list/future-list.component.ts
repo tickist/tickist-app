@@ -8,7 +8,7 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {IActiveDateElement} from '../../../../models/active-data-element.interface';
 import {TaskService} from '../../../../core/services/task.service';
-import {Task} from '../../../../models/tasks';
+import {Task} from '../../../../models/tasks/tasks';
 import {UserService} from '../../../../core/services/user.service';
 import {User} from '../../../../core/models';
 import {stateActiveDateElement} from '../../../../models/state-active-date-element.enum';

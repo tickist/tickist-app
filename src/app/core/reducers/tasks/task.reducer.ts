@@ -1,7 +1,7 @@
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {TaskActions, TaskActionTypes} from '../../actions/tasks/task.actions';
 import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
-import {Task} from '../../../models/tasks';
+import {Task} from '../../../models/tasks/tasks';
 import {setStatusDoneLogic} from '../../../single-task/utils/set-status-to-done-logic';
 import {createDefaultLoadable, Loadable} from '../../utils/loadable/loadable';
 import {withLoadable} from '../../utils/loadable/with-loadable';
@@ -29,7 +29,7 @@ export function baseReducer(state = initialTasksState, action: (TaskActions | Ti
             return adapter.addOne(action.payload.task, state);
 
         case TaskActionTypes.ADD_TASKS:
-            return adapter.addAll(action.payload.tasks, {...state, allTasksLoaded: true});
+            return adapter.addMany(action.payload.tasks, {...state, allTasksLoaded: true});
 
         case TaskActionTypes.UPDATE_TASK:
             return adapter.updateOne(action.payload.task, state);

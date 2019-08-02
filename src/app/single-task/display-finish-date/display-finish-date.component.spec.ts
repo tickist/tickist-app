@@ -1,12 +1,9 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {DisplayFinishDateComponent} from './display-finish-date.component';
-import {Task} from '../../models/tasks';
+import {Task} from '../../models/tasks/tasks';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
-import {IUserApi} from '../../models/user-api.interface';
-import {IProjectApi} from '../../models/project-api.interface';
-import {ITaskApi} from '../../models/task-api.interface';
 import moment from 'moment';
 
 
@@ -14,9 +11,9 @@ import moment from 'moment';
 describe('DisplayFinishDateComponent', () => {
     let component: DisplayFinishDateComponent;
     let fixture: ComponentFixture<DisplayFinishDateComponent>;
-    let user: IUserApi;
-    let project: IProjectApi;
-    let task: ITaskApi;
+    let user: any;
+    let project: any;
+    let task: any;
     const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
     const usersApiMockFactory: UsersApiMockFactory = new UsersApiMockFactory();
     const projectApiMockFactory: ProjectsApiMockFactory = new ProjectsApiMockFactory();
