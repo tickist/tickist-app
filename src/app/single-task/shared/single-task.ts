@@ -34,7 +34,8 @@ export class SingleTask {
     }
 
     isSharedList(): boolean {
-        return this.task.taskProject.shareWith.length > 0;
+        // @TODO Fix it
+        return false // this.task.taskProject.shareWith.length > 0;
     }
 
     hideAllMenuElements(): void {

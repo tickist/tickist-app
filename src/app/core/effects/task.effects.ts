@@ -37,7 +37,7 @@ export class TaskEffects {
                 return this.db.collection('tasks', ref => ref
                     .where('owner.id', '==', this.authFire.auth.currentUser.uid)
                     .where('status', '<', 1)
-                    .where('status', '>', 1)
+                   // .where('status', '>', 1)
                 ).stateChanges();
             }),
             // mergeMap(action => action),
@@ -71,7 +71,7 @@ export class TaskEffects {
     //         map(tasks => new AddTasks({tasks: tasks}))
     //     );
 
-    @Effect()
+    @Effect({dispatch: false})
     createTask$ = this.actions$
         .pipe(
             ofType<RequestCreateTask>(TaskActionTypes.REQUEST_CREATE_TASK),
@@ -88,7 +88,7 @@ export class TaskEffects {
     //     );
 
 
-    @Effect()
+    @Effect({dispatch: false})
     updateTask$ = this.actions$
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),

@@ -1,28 +1,39 @@
 import {convert} from '../../core/utils/addClickableLinksToString';
 import {ShareWithUser} from './share-with-user';
 import {ShareWithPendingUser} from './share-with-pending-user';
+import {DEFAULT_COLOR_LIST, DEFAULT_PRIORITY, DEFAULT_TASK_VIEW} from '../../core/config/config-projects';
+
+interface IProject {
+    id: string;
+    name: string;
+    isActive?: boolean;
+    isInbox?: boolean;
+    description?: string;
+    ancestor?: string;
+    color?: string;
+}
 
 
 
 export class Project {
     id: string;
     name: string;
-    isActive: boolean;
-    isInbox: boolean;
-    description: string;
-    richDescription: string;
+    isActive = true;
+    isInbox = false;
+    description = '';
+    richDescription = '';
     ancestor: string;
-    color: string;
+    color = DEFAULT_COLOR_LIST;
     tasksCounter = 0;
     allDescendants: Array<number| string>;
     shareWith: (ShareWithUser | ShareWithPendingUser)[] = [];
     level = 0;
     owner: number | string;
     defaultFinishDate: any;
-    defaultPriority: any;
+    defaultPriority = DEFAULT_PRIORITY;
     defaultTypeFinishDate: any;
     dialogTimeWhenTaskFinished: boolean;
-    taskView: string;
+    taskView = DEFAULT_TASK_VIEW.value;
     matOptionClass: string;
     shareWithIds: Array<string> = [];
 
@@ -41,7 +52,7 @@ export class Project {
         this.owner = project.owner;
         this.level = project.level ? project.level : 0;
         this.isActive = project.isActive;
-        this.taskView = project.taskView;
+        if (project.taskView) this.taskView = project.taskView;
         this.dialogTimeWhenTaskFinished = project.dialogTimeWhenTaskFinished;
         this.isInbox = project.isInbox;
         this.matOptionClass = `level_${this.level}`;

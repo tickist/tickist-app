@@ -102,7 +102,7 @@ export class TasksFiltersService {
         return new Filter({
             id: user.id,
             label: 'assignedTo',
-            value: `task => task.owner.id === ${user.id}`,
+            value: `task => task.owner.id === '${user.id}'`,
             name: 'me',
             avatar: user.avatarUrl,
             fixed: true

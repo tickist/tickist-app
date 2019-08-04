@@ -1,3 +1,19 @@
 // @TODO add mandatory fields
 
-type TaskProject = any;
+interface ITaskProject {
+    id: string;
+    name: string;
+    color: string;
+
+}
+
+export class TaskProject {
+    id: string;
+    name: string;
+    color: string;
+
+    constructor(kwargs: ITaskProject) {
+        Object.assign(this, kwargs);
+    }
+
+}

@@ -95,6 +95,7 @@ export const selectTasksStreamInProjectsView = createSelector(
     selectActiveProjectsIds,
     selectCurrentSortBy,
     (tasks, tagsFilter, assignedToFilter, mainFilter, searchFilter, estimateTimeFilter, activeProjectIds, currentSortBy) => {
+       console.log({activeProjectIds})
         tasks = tasks
             .filter(Function(`return ${mainFilter.value}`)())
             .filter(Function(`return ${assignedToFilter.value}`)())

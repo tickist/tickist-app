@@ -1,13 +1,10 @@
-import {SimpleUser} from '../../core/models';
 import {Tag} from '../tags';
 import moment from 'moment';
-import {SimpleProject} from '../projects';
 import {Step} from './steps';
 import {Menu} from '../menu';
 import {convert} from '../../core/utils/addClickableLinksToString';
-import {ISimpleProjectApi} from '../simple-project-api.inferface';
-import {ISimpleUserApi} from '../simple-user-api.interface';
 import {TaskUser} from './task-user';
+import {TaskProject} from './task-project';
 
 export interface ITaskApi {
     name: string;
@@ -51,15 +48,15 @@ export class Task {
     finishDate: any;
     finishTime: string;
     suspendDate: any;
-    pinned: boolean;
-    isActive: boolean;
-    status: number;
-    typeFinishDate: number;
+    pinned = false;
+    isActive = true;
+    status = 0;
+    typeFinishDate = 1;
     taskProject: TaskProject;
     owner: TaskUser;
     steps: Step[] = [];
     priority: string;
-    percent: number;
+    percent: number | null = null;
     repeat: number;
     repeatDelta: number;
     author: TaskUser;
@@ -80,15 +77,15 @@ export class Task {
         this.pinned = task.pinned;
         this.status = task.status;
         this.typeFinishDate = task.typeFinishDate;
-        this.taskProject = new SimpleProject(task.taskProject);
-        this.owner = new SimpleUser(task.owner);
-        this.author = new SimpleUser(task.author);
+        this.taskProject = task.taskProject;
+        this.owner = task.owner;
+        this.author = task.author;
         this.percent = task.percent;
         this.priority = task.priority;
         this.repeat = parseInt((<string> task.repeat), 10);
         this.fromRepeating = task.fromRepeating;
         this.repeatDelta = task.repeatDelta;
-        this.description = task.description;
+        this.description = task.description || '';
         this.richDescription = convert(task.description);
         this.estimateTime = task.estimateTime ? task.estimateTime : null;
         this.time = task.time;

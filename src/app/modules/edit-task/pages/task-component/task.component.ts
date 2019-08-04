@@ -14,11 +14,11 @@ import {User, SimpleUser} from '../../../../core/models';
 import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialog } from '@angular/material/dialog';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatDialog} from '@angular/material/dialog';
 import moment from 'moment';
 import {Tag} from '../../../../models/tags';
-import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import {MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
 import {KEY_CODE} from '../../../../shared/keymap';
 import {map, startWith, takeUntil} from 'rxjs/operators';
@@ -36,6 +36,8 @@ import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-list/projects-filters.selectors';
 import {convert} from '../../../../core/utils/addClickableLinksToString';
+import {TaskUser} from '../../../../models/tasks/task-user';
+import {TaskProject} from '../../../../models/tasks/task-project';
 
 @Component({
     selector: 'app-task-component',
@@ -70,8 +72,8 @@ export class TaskComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('trigger', { read: MatAutocompleteTrigger, static: false }) trigger: MatAutocompleteTrigger;
-    @ViewChild('autocompleteTags', { static: false }) autocompleteTags;
+    @ViewChild('trigger', {read: MatAutocompleteTrigger, static: false}) trigger: MatAutocompleteTrigger;
+    @ViewChild('autocompleteTags', {static: false}) autocompleteTags;
 
     constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<AppStore>,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
@@ -100,8 +102,9 @@ export class TaskComponent implements OnInit, OnDestroy {
 
         this.stream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([tasks, taskId, selectedProject, projects, user]) => {
             let task: Task;
-            if (projects && tasks && projects.length > 0 && user && tasks.length > 0) {
+            if (projects && tasks && projects.length > 0 && user) {
                 this.user = user;
+
                 this.projects = projects;
                 if (taskId) {
                     task = tasks.filter(t => t.id === taskId)[0];
@@ -148,7 +151,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             this.nextMenuElement();
         }
 
-        if (event.key === this.ARROW_UP  && event.shiftKey) {
+        if (event.key === this.ARROW_UP && event.shiftKey) {
             this.previousMenuElement();
         }
 
@@ -332,12 +335,12 @@ export class TaskComponent implements OnInit, OnDestroy {
             'finishTime': '',
             'suspendDate': '',
             'repeat': 0,
-            'owner': toSnakeCase(this.user.convertToSimpleUser()),
+            'owner': new TaskUser(this.user),
             'ownerPk': this.user.id,
-            'author': toSnakeCase(this.user.convertToSimpleUser()),
+            'author': new TaskUser(this.user),
             'repeatDelta': 1,
             'fromRepeating': 0,
-            'taskProject': toSnakeCase(convertToSimpleProject(selectedProject)),
+            'taskProject': new TaskProject(selectedProject),
             'estimate_time': 0,
             'taskListPk': selectedProject.id,
             'time': undefined,
@@ -373,37 +376,67 @@ export class TaskComponent implements OnInit, OnDestroy {
         return this.menu.find(item => item.name === name).isActive;
     }
 
-    addingTag(newTag) {
+    async addingTag(newTag) {
+        // @TODO refactor it is duplicated code
+        const tags = [...this.task.tags];
         if (this.tagsCtrl.valid) {
             if (newTag instanceof MatAutocompleteSelectedEvent) {
                 if (newTag.option.value) {
-                    this.tagService.createTagDuringEditingTask(new Tag(<any> {name: newTag.option.value.name}))
-                        .pipe(takeUntil(this.ngUnsubscribe))
-                        .subscribe((t) => {
-                            this.task.tags.push(new Tag(t));
-                            if (!this.isNewTask()) {
-                                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
-                            }
+                    if (newTag.option.value instanceof Tag) {
+                        tags.push(new Tag(newTag.option.value));
+                        if (!this.isNewTask()) {
+                            this.store.dispatch(new RequestUpdateTask({
+                                task: {
+                                    id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
+                                }
+                            }));
+                        } else {
+                            this.task = Object.assign({}, this.task, {tags: tags});
+                        }
 
-                        });
+                    } else {
+                        const tag = new Tag({name: newTag.option.value.name, author: this.user.id});
+                        tag.id = await this.tagService.createTagDuringEditingTask(tag);
+                        tags.push(tag);
+                        if (!this.isNewTask()) {
+                            this.store.dispatch(new RequestUpdateTask({
+                                task: {
+                                    id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
+                                }
+                            }));
+                        } else {
+                            this.task = Object.assign({}, this.task, {tags: tags});
+                        }
+                    }
+
+
                 }
             } else {
                 const existingTag = this.tags.filter((t: Tag) => t.name === this.tagsCtrl.value)[0];
                 if (existingTag) {
-                    this.task.tags.push(existingTag);
+                    tags.push(existingTag);
                     if (!this.isNewTask()) {
-                        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
+                        this.store.dispatch(new RequestUpdateTask({
+                            task: {
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
+                            }
+                        }));
+                    } else {
+                        this.task = Object.assign({}, this.task, {tags: tags});
                     }
                 } else {
-                    this.tagService.createTagDuringEditingTask(new Tag(<any> {name: this.tagsCtrl.value}))
-                        .pipe(takeUntil(this.ngUnsubscribe))
-                        .subscribe((t) => {
-                            this.task.tags.push(new Tag(t));
-                            if (!this.isNewTask()) {
-                                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
+                    const tag = new Tag({name: this.tagsCtrl.value, author: this.user.id});
+                    tag.id = await this.tagService.createTagDuringEditingTask(tag);
+                    tags.push(tag);
+                    if (!this.isNewTask()) {
+                        this.store.dispatch(new RequestUpdateTask({
+                            task: {
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
                             }
-
-                        });
+                        }));
+                    } else {
+                        this.task = Object.assign({}, this.task, {tags: tags});
+                    }
                 }
             }
         } else {
@@ -420,6 +453,9 @@ export class TaskComponent implements OnInit, OnDestroy {
     onSubmit(values, withoutClose = false): void {
         const updatedTask = Object.assign({}, this.task);
         if (this.taskForm.valid) {
+            const selectedTaskProject = this.projects
+                .find(project => project.id === values['main']['taskProjectPk']
+                );
             updatedTask.name = values['main']['name'];
             updatedTask.richName = convert(values['main']['name']);
             updatedTask.priority = values['main']['priority'];
@@ -429,9 +465,8 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
-            updatedTask.taskProject = convertToSimpleProject(this.projects
-                .find(project => project.id === values['main']['taskProjectPk']));
-            updatedTask.owner = updatedTask.taskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            updatedTask.taskProject = new TaskProject(selectedTaskProject);
+            updatedTask.owner = selectedTaskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
 
             if (values['repeat']['repeatDefault'] !== 99) {
                 updatedTask.repeat = values['repeat']['repeatDefault'];
@@ -535,7 +570,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     changeProjectInTask(event): void {
-        this.task.taskProject = convertToSimpleProject(this.projects.find((project) => project.id === event.value));
+        this.task.taskProject = new TaskProject(this.projects.find((project) => project.id === event.value));
         const extra = <FormGroup>this.taskForm.controls['extra'];
         extra.controls['ownerId'].setValue(this.user.id);
     }

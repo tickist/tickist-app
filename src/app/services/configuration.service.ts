@@ -37,7 +37,6 @@ export class ConfigurationService {
             'commons': {
                 'DEFAULT_PRIORITY_OF_TASK': 'B',
                 'DEFAULT_TYPE_FINISH_DATE': 0,
-                'COLOR_LIST_DEFAULT': '#2c86ff',
                 'COLOR_LIST': ['#6be494', '#f3d749', '#fcb150', '#f3df9a', '#b6926e', '#2c86ff', '#4fc4f6', '#367cdc',
                     '#b679b2', '#be5753', '#fb7087', '#365D37', '#543562', '#FF0000', '#A8EF0E', '#CCFFE5', '#40E0D0',
                     '#B0E0E6', '#F5F5DC', '#FFFAFA', '#C0C0C0', '#C71585'],

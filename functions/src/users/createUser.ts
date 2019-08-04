@@ -3,6 +3,7 @@ import {db} from '../init';
 import * as admin from 'firebase-admin';
 import {ShareWithUser} from '@tickist/models/projects/share-with-user';
 import {Tag} from '@tickist/models/tags';
+import {Task} from '@tickist/models/tasks/tasks';
 
 
 
@@ -12,13 +13,18 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
         console.log('Running createUser trigger ...');
 
         return db.runTransaction(async transaction => {
+            const tagsNamesIds = [];
             const projectRef = db.collection('projects').doc();
             console.log(projectRef.id);
             transaction.set(projectRef, {id: projectRef.id, ...createInboxProject(snap.data(), userId)});
             defaultTagsName().forEach(tagName => {
                 const tagRef = db.collection('tags').doc();
                 transaction.set(tagRef, {...createTag(tagName, userId)});
+                tagsNamesIds.push({tagName: tagRef.id});
             });
+            transaction.update(snap.ref, {inboxPk: projectRef.id});
+            // createTask('Find out more about Tickist')
+            // createTask('Find out more about editing tasks)
             // transaction.update(courseRef, changes);
 
         });
@@ -33,7 +39,7 @@ function createInboxProject(userData, userId) {
     };
 }
 
-function createTag(tagName, userId): Tag {
+function createTag(tagName, userId) {
     return {name: tagName, author: userId};
 }
 
@@ -42,6 +48,15 @@ function defaultTagsName () {
        'work', 'home', 'need focus', 'someday/maybe', 'tasks for later', 'quick tasks', 'getting to know Tickist'
     ];
 }
+
+// function createTask(name, user, project) {
+//     return new Task({
+//         name: name,
+//         owner: user,
+//         author: user,
+//         taskProject: {'id': project.id, name: project.name}
+//     });
+// }
 // @receiver(post_save, sender=User)
 // @disable_for_loaddata
 // def creating_inbox_tasks_tags_after_user_save(sender, instance, created, *args, **kwargs):

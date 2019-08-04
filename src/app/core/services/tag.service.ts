@@ -40,15 +40,29 @@ export class TagService {
     }
 
     createTagDuringEditingTask(tag: Tag) {
-        // @Todo do something with that
+        const newTagRef = this.db.collection(tagsCollectionName).ref.doc();
+        return this.createTag(tag).then(() => {
+            return newTagRef.id;
+        });
 
-        return this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
-            .pipe(
-                map(payload => new Tag(<any> payload)),
-                map(payload => {
-                // this.store.dispatch(new tagsAction.CreateTag(payload));
-                return payload;
-            }));
+        // @Todo do something with that
+//         this.db.firestore.runTransaction(transaction =>
+// // This code may get re-run multiple times if there are conflicts.
+//
+//
+//             transaction.get(sfDocRef)
+//                 .then(sfDoc => {
+//                     const newPopulation = sfDoc.data().population + 1;
+//                     transaction.update(sfDocRef, { population: sfDoc.data().population + 1 });
+//                 })).then(() => console.log("Transaction successfully committed!"))
+//             .catch(error => console.log("Transaction failed: ", error));
+        // return this.http.post<ITagApi>(`${environment['apiUrl']}/tag/`, tag)
+        //     .pipe(
+        //         map(payload => new Tag(<any> payload)),
+        //         map(payload => {
+        //         // this.store.dispatch(new tagsAction.CreateTag(payload));
+        //         return payload;
+        //     }));
     }
 
     updateTag(tag: Tag) {

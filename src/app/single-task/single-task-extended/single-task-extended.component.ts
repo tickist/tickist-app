@@ -27,7 +27,6 @@ import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
 import {selectFilteredProjectsList} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
 import {Task} from '../../models/tasks/tasks';
-import {SimpleUser} from '../../core/models';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {convertToSimpleProject} from '../../core/utils/projects-utils';
 import {FormControl} from '@angular/forms';
@@ -122,8 +121,9 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     }
 
     changeAssignedTo(event) {
-        this.task.owner = <SimpleUser> this.task
-            .taskProject.shareWith.find(user => user.hasOwnProperty('id') && (<ShareWithUser> user).id === event.value);
+        const selectedTaskProject = this.projects.find(project => project.id === this.task.taskProject.id);
+        this.task.owner = selectedTaskProject
+            .shareWith.find(user => user.hasOwnProperty('id') && (<ShareWithUser> user).id === event.value);
         this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task, true, true);
     }

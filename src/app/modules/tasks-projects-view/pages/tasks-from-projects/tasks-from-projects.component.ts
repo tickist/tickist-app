@@ -53,6 +53,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.store.select(selectTasksStreamInProjectsView)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(tasks => {
+                console.log({tasks})
                 this.tasks = tasks;
                 this.cd.detectChanges();
             });

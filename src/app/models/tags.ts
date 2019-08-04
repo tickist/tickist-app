@@ -1,12 +1,12 @@
 import moment from 'moment';
 
 interface ITag {
-    id: string;
+    id?: string;
     name: string;
     author: string;
-    creationDate: string;
-    modificationDate: string;
-    tasksCounter: number;
+    creationDate?: string;
+    modificationDate?: string;
+    tasksCounter?: number;
 }
 
 
@@ -16,10 +16,17 @@ export class Tag {
     author: string;
     creationDate: string;
     modificationDate: string;
-    tasksCounter: number;
+    tasksCounter = 0;
 
 
-    constructor({ id = null, name, author, tasksCounter = 0, creationDate = moment().format(), modificationDate = moment().format()}: ITag) {
+    constructor({
+                    id = null,
+                    name,
+                    author,
+                    tasksCounter = 0,
+                    creationDate = moment().format(),
+                    modificationDate = moment().format()
+                }: ITag) {
         this.name = name;
         this.id = id;
         this.author = author;

@@ -210,7 +210,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
             'name': '',
             'description': '',
             'ancestor': this.ancestorProjectId ? this.ancestorProjectId : null,
-            'color': this.configurationService.loadConfiguration()['commons']['COLOR_LIST_DEFAULT'],
             'defaultFinishDate': '',
             'defaultPriority': this.configurationService.loadConfiguration()['commons']['DEFAULT_PRIORITY_OF_TASK'],
             'defaultTypeFinishDate': this.configurationService.loadConfiguration()['commons']['DEFAULT_TYPE_FINISH_DATE'],
