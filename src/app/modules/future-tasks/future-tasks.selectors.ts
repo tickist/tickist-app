@@ -29,7 +29,7 @@ export const selectFutureTasksList = createSelector(
         const filteredTasks = tasks.filter(Function(`return ${filter.value}`)())
             .filter((task: Task) => {
                 return task.owner.id === user.id
-                    && task.status === 0
+                    && task.isDone === false
                     && task.finishDate
                     && task.finishDate.month() === activeDate.date.month()
                     && task.finishDate.year() === activeDate.date.year();

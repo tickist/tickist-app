@@ -6,7 +6,7 @@ import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
 import moment from 'moment';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
-import {DeleteTask, RequestUpdateTask, UpdateTask} from '../../core/actions/tasks/task.actions';
+import {DeleteTask, RequestDeleteTask, RequestUpdateTask, SetStatusDone, UpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
@@ -35,7 +35,7 @@ export class SingleTask {
 
     isSharedList(): boolean {
         // @TODO Fix it
-        return false // this.task.taskProject.shareWith.length > 0;
+        return false; // this.task.taskProject.shareWith.length > 0;
     }
 
     hideAllMenuElements(): void {
@@ -44,6 +44,7 @@ export class SingleTask {
 
     toggleDoneStep(toggledStep) {
         const steps = [];
+
         this.task.steps.forEach((step: Step) => {
             let newStatus = step.status;
             if (step.id === toggledStep.id) {
@@ -53,13 +54,16 @@ export class SingleTask {
         });
         const task = Object.assign({}, this.task, {steps: steps});
         this.amountOfStepsDoneInPercent = task.steps.filter(step => step.status === 1).length * 100 / task.steps.length;
+
+        // if amount is 100 the status === 1
         this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+        if (this.amountOfStepsDoneInPercent === 100) this.toggleDone();
     }
 
     toggleDone() {
         let task;
-        if (this.task.status === 0) {
-            task = Object.assign({}, this.task, {status: 1});
+        if (this.task.isDone === false) {
+            task = Object.assign({}, this.task, {isDone: true});
             if (task.taskProject.dialogTimeWhenTaskFinished) {
                 const dialogRef = this.dialog.open(TimeDialogComponent, {
                     data: {'task': task}
@@ -71,7 +75,7 @@ export class SingleTask {
                             task.estimateTime = result['estimateTime'];
                             task.time = result['realTime'];
                         }
-                        this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+                        this.store.dispatch(new SetStatusDone({task: {id: task.id, changes: task}}));
                     });
             } else if (isRepeated(this.task) && isOverdue(this.task) && this.task.fromRepeating === 1) {
                 const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
@@ -83,16 +87,16 @@ export class SingleTask {
                         if (result && result.hasOwnProperty('finishDate')) {
                             task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
                         }
-                        this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+                        this.store.dispatch(new SetStatusDone({task: {id: task.id, changes: task}}));
                     });
             } else {
-                this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+                this.store.dispatch(new SetStatusDone({task: {id: task.id, changes: task}}));
             }
-        } else if (this.task.status === 1) {
-            task = Object.assign({}, this.task, {status: 0});
+        } else if (this.task.isDone === true) {
+            task = Object.assign({}, this.task, {isDone: false});
             this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
-        } else if (this.task.status === 2) {
-            task = Object.assign({}, this.task, {status: 0});
+        } else if (this.task.onHold === true) {
+            task = Object.assign({}, this.task, {isDone: false});
             this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
         }
 
@@ -125,7 +129,6 @@ export class SingleTask {
         }
         const task = moveFinishDateFromPreviousFinishDate(this.task, delta);
         this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));
-        // this.taskService.updateTask(this.task);
     }
 
 
@@ -135,8 +138,7 @@ export class SingleTask {
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(result => {
                 if (result) {
-                    this.store.dispatch(new DeleteTask({taskId: this.task.id}));
-                    // this.taskService.deleteTask(this.task);
+                    this.store.dispatch(new RequestDeleteTask({taskId: this.task.id}));
                 }
             });
     }

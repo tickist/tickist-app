@@ -69,7 +69,7 @@ export class TagService {
         return this.db.collection(tagsCollectionName).doc(tag.id).update({...tag});
     }
 
-    deleteTag(tagId: number) {
+    deleteTag(tagId: string) {
         return this.http.delete(`${environment['apiUrl']}/tag/${tagId}/`);
     }
 

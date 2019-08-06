@@ -11,7 +11,8 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToggleButtonComponent implements OnInit {
-    @Input() status: number;
+    @Input() isDone: boolean;
+    @Input() onHold: boolean;
     @Input() priority: string;
     icon: Array<string>;
 
@@ -19,21 +20,12 @@ export class ToggleButtonComponent implements OnInit {
     }
 
     ngOnInit() {
-        switch (this.status) {
-            case 0:
-                this.icon = ['far', 'square'];
-                // this.renderer.addClass(this.iconElement.nativeElement, 'fa-square-o');
-                break;
-            case 1:
-                this.icon = ['far', 'check-square'];
-                // this.renderer.addClass(this.iconElement.nativeElement, 'fa-check-square-o');
-                break;
-            case 2:
-                this.icon = ['fas', 'pause'];
-                // this.renderer.addClass(this.iconElement.nativeElement, 'fa-pause');
-                break;
-            default:
-                break;
+        if (this.isDone && !this.onHold) {
+            this.icon = ['far', 'check-square'];
+        } else if (!this.isDone && !this.onHold) {
+            this.icon = ['far', 'square'];
+        } else if (this.onHold) {
+            this.icon = ['fas', 'pause'];
         }
     }
 

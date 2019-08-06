@@ -15,6 +15,7 @@ import {map} from 'rxjs/operators';
 import {selectAllTasks} from '../selectors/task.selectors';
 import {taskToSnakeCase} from '../../single-task/utils/taskToSnakeCase';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {setStatusDoneLogic} from '../../single-task/utils/set-status-to-done-logic';
 
 
 const tasksCollectionName = 'tasks';
@@ -74,6 +75,10 @@ export class TaskService {
             //     this.projectService.loadProjects().subscribe();
             //     this.tagService.loadTags().subscribe();
             // });
+    }
+
+    setStatusDone(task: Task) {
+        return this.updateTask(setStatusDoneLogic(task));
     }
 
     deleteTask(taskId: string) {

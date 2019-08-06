@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {filter, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
+import {concatMap, filter, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 
@@ -18,7 +18,7 @@ import {
 import {allProjectsLoaded, selectProjectById} from '../selectors/projects.selectors';
 import {ProjectService} from '../services/project.service';
 import {Project} from '../../models/projects';
-import {QueryTags} from '../actions/tags.actions';
+import {AddTags, DeleteTag, QueryTags, UpdateTag} from '../actions/tags.actions';
 import {AddTasks, TaskActionTypes} from '../actions/tasks/task.actions';
 import {Task} from '../../models/tasks/tasks';
 import {AngularFirestore} from '@angular/fire/firestore';
@@ -42,11 +42,11 @@ export class ProjectsEffects {
                 ).stateChanges();
             }),
             // mergeMap(action => action),
-            map(actions => {
+            concatMap(actions => {
                 // debugger;
                 const addedProjects: Project[] = [];
-                const deletedProjects: Project[] = [];
-                const updatedProjects: Project[] = [];
+                let deletedProjectId: string;
+                let updatedProject: Update<Project>;
                 // action.payload.doc.data()
                 console.log(actions);
                 actions.forEach((action => {
@@ -57,8 +57,28 @@ export class ProjectsEffects {
                             id: action.payload.doc.id,
                         }));
                     }
+                    if (action.type === 'modified') {
+                        const data: any = action.payload.doc.data();
+                        updatedProject = {
+                            id: action.payload.doc.id,
+                            changes: {...data}
+                        };
+                    }
+                    if (action.type === 'removed') {
+                        deletedProjectId = action.payload.doc.id;
+                    }
                 }));
-                return new AddProjects({projects: addedProjects});
+                const returnsActions = [];
+                if (addedProjects.length > 0) {
+                    returnsActions.push( new AddProjects({projects: addedProjects}));
+                }
+                if (updatedProject) {
+                    returnsActions.push(new UpdateProject({project: updatedProject}));
+                }
+                if (deletedProjectId) {
+                    returnsActions.push(new DeleteProject({projectId: deletedProjectId}));
+                }
+                return returnsActions;
             })
         );
 

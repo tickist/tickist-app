@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {catchError, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
     AddTasks,
@@ -8,7 +8,7 @@ import {
     CreateTask,
     DeleteTask,
     RequestCreateTask,
-    RequestUpdateTask,
+    RequestUpdateTask, SetStatusDone,
     TaskActionTypes,
     UpdateTask
 } from '../actions/tasks/task.actions';
@@ -19,9 +19,10 @@ import {Task} from '../../models/tasks/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {of} from 'rxjs';
-import {QueryTags} from '../actions/tags.actions';
+import {AddTags, DeleteTag, QueryTags, UpdateTag} from '../actions/tags.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {Update} from '@ngrx/entity';
 
 
 @Injectable()
@@ -36,16 +37,16 @@ export class TaskEffects {
                 console.log(action);
                 return this.db.collection('tasks', ref => ref
                     .where('owner.id', '==', this.authFire.auth.currentUser.uid)
-                    .where('status', '<', 1)
+                    .where('isDone', '==', false)
                    // .where('status', '>', 1)
                 ).stateChanges();
             }),
             // mergeMap(action => action),
-            map(actions => {
+            concatMap(actions => {
                 // debugger;
                 const addedTasks: Task[] = [];
-                const deletedTasks: Task[] = [];
-                const updatedTasks: Task[] = [];
+                let deletedTaskId: string;
+                let updatedTask: Update<Task>;
                 // action.payload.doc.data()
                 console.log(actions);
                 actions.forEach((action => {
@@ -56,8 +57,28 @@ export class TaskEffects {
                             ...data
                         }));
                     }
+                    if (action.type === 'modified') {
+                        const data: any = action.payload.doc.data();
+                        updatedTask = {
+                            id: action.payload.doc.id,
+                            changes: {...data}
+                        };
+                    }
+                    if (action.type === 'removed') {
+                        deletedTaskId = action.payload.doc.id;
+                    }
                 }));
-                return new AddTasks({tasks: addedTasks});
+                const returnsActions = [];
+                if (addedTasks.length > 0) {
+                    returnsActions.push( new AddTasks({tasks: addedTasks}));
+                }
+                if (updatedTask) {
+                    returnsActions.push(new UpdateTask({task: updatedTask}));
+                }
+                if (deletedTaskId) {
+                    returnsActions.push(new DeleteTask({taskId: deletedTaskId}));
+                }
+                return returnsActions;
             })
         );
 
@@ -93,6 +114,15 @@ export class TaskEffects {
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
             mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes)),
+            catchError((error: any) => of(console.log(error)))
+        );
+
+
+    @Effect({dispatch: false})
+    setStatusDone$ = this.actions$
+        .pipe(
+            ofType<SetStatusDone>(TaskActionTypes.SET_STATUS_DONE),
+            mergeMap((action) => this.tasksService.setStatusDone(<Task> action.payload.task.changes)),
             catchError((error: any) => of(console.log(error)))
         );
 

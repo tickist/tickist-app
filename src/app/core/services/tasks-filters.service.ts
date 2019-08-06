@@ -225,10 +225,10 @@ export class TasksFiltersService {
 
     static getDefaultMainFilters() {
         return [
-            new Filter({id: 1, label: 'filter', name: 'not done', value: `task => task.status === 0`}),
+            new Filter({id: 1, label: 'filter', name: 'not done', value: `task => task.isDone === false`}),
             new Filter({id: 2, label: 'filter', name: 'w/o due date', value: `task => task.finishDate !== ''`}),
             new Filter({id: 3, label: 'filter', name: 'w/o estimated time', value: `task => task.estimateTime === null`}),
-            new Filter({id: 4, label: 'filter', name: 'on hold', value: `task => task.status === 2`})
+            new Filter({id: 4, label: 'filter', name: 'on hold', value: `task => task.onHold === true`})
         ];
     }
 

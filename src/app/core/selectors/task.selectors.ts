@@ -35,7 +35,7 @@ export const selectAllTasks = createSelector(
 export const selectAllUndoneTasks = createSelector(
     selectAllTasks,
     tasks => {
-        return tasks.filter(task => task.status === 0);
+        return tasks.filter(task => task.isDone === false);
     }
 );
 

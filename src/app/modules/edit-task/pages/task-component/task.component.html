@@ -34,7 +34,7 @@
                                    [ngClass]="{'active': checkActiveItemInMenu('steps'),
                                   'invalid': !taskForm.controls['steps'].valid && taskForm.controls['steps'].touched}">
                         <fa-icon [icon]="'list'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Steps</span></p>
+                        <p [fxHide.xs]="1"><span>Steps {{taskForm.controls['steps'].errors}}</span></p>
                     </mat-list-item>
 
 

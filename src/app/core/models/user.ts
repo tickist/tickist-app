@@ -2,39 +2,45 @@ import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 import {SimpleUser} from './simple-user';
 import {userToSnakeCase} from '../utils/userToSnakeCase';
 import {ISimpleProjectApi} from '../../models/simple-project-api.inferface';
+import {
+    DEFAULT_FUTURE_TASKS_SORT_BY,
+    DEFAULT_OVERDUE_TASKS_SORT_BY,
+    DEFAULT_PROJECTS_FILTER_ID,
+    DEFAULT_TAGS_FILTER_ID, DEFAULT_TASKS_ORDER_OPTIONS
+} from '../config/config-user';
 
-export interface IUserApi {
+export interface IUser {
     id: string;
     username: string;
     email: string;
     avatar: string;
     dateJoined: Date;
-    facebookConnection: boolean;
-    googleConnection: boolean;
+    facebookConnection?: boolean;
+    googleConnection?: boolean;
     inboxPk: number;
-    orderTasksDashboard: string;
-    assignsTaskToMe: boolean;
-    changesTaskFromSharedListThatIsAssignedToMe: boolean;
-    changesTaskFromSharedListThatIAssignedToHimHer: boolean;
-    completesTaskFromSharedList: boolean;
+    orderTasksDashboard?: string;
+    assignsTaskToMe?: boolean;
+    changesTaskFromSharedListThatIsAssignedToMe?: boolean;
+    changesTaskFromSharedListThatIAssignedToHimHer?: boolean;
+    completesTaskFromSharedList?: boolean;
     dailySummaryHour: string;
-    deletesListSharedWithMe: boolean;
-    leavesSharedList: boolean;
-    removesMeFromSharedList: boolean;
+    deletesListSharedWithMe?: boolean;
+    leavesSharedList?: boolean;
+    removesMeFromSharedList?: boolean;
     sharesListWithMe: boolean;
-    dialogTimeWhenTaskFinishedInProject: boolean;
-    defaultTaskView: string;
-    allTasksView: string;
-    defaultTaskViewTodayView: string;
-    defaultTaskViewOverdueView: string;
-    defaultTaskViewFutureView: string;
-    defaultTaskViewTagsView: string;
-    overdueTasksSortBy: string;
-    futureTasksSortBy: string;
-    projectsFilterId: number;
-    tagsFilterId: number;
+    dialogTimeWhenTaskFinishedInProject?: boolean;
+    defaultTaskView?: string;
+    allTasksView?: string;
+    defaultTaskViewTodayView?: string;
+    defaultTaskViewOverdueView?: string;
+    defaultTaskViewFutureView?: string;
+    defaultTaskViewTagsView?: string;
+    overdueTasksSortBy?: string;
+    futureTasksSortBy?: string;
+    projectsFilterId?: number;
+    tagsFilterId?: number;
     dataJoined: string;
-    avatarUrl: string;
+    avatarUrl?: string;
     shareWith: ISimpleProjectApi[];
 }
 
@@ -43,78 +49,62 @@ export class User {
     id: string;
     username: string;
     email: string;
-    assignsTaskToMe: boolean;
+    assignsTaskToMe = true;
     dateJoined: Date;
-    facebookConnection: boolean;
-    googleConnection: boolean;
+    facebookConnection = null;
+    googleConnection = null;
     inboxPk: number;
-    orderTasksDashboard: string;
-    changesTaskFromSharedListThatIsAssignedToMe: boolean;
-    changesTaskFromSharedListThatIAssignedToHimHer: boolean;
-    completesTaskFromSharedList: boolean;
+    orderTasksDashboard = DEFAULT_TASKS_ORDER_OPTIONS;
+    changesTaskFromSharedListThatIsAssignedToMe = true;
+    changesTaskFromSharedListThatIAssignedToHimHer = true;
+    completesTaskFromSharedList = true;
     dailySummaryHour: Date;
-    deletesListSharedWithMe: boolean;
-    leavesSharedList: boolean;
-    removesMeFromSharedList: boolean;
+    deletesListSharedWithMe = true;
+    leavesSharedList = true;
+    removesMeFromSharedList = true;
     sharesListWithMe: boolean;
-    avatarUrl: string;
-    dialogTimeWhenTaskFinishedInProject: boolean;
-    allTasksView: string;
-    defaultTaskView: string;
-    defaultTaskViewTodayView: string;
-    defaultTaskViewOverdueView: string;
-    defaultTaskViewFutureView: string;
-    defaultTaskViewTagsView: string;
-    overdueTasksSortBy: string;
-    futureTasksSortBy: string;
-    projectsFilterId: number;
-    tagsFilterId: number;
+    avatarUrl = '';
+    dialogTimeWhenTaskFinishedInProject = false;
+    allTasksView = 'extended';
+    defaultTaskView = 'extended';
+    defaultTaskViewTodayView = 'extended';
+    defaultTaskViewOverdueView = 'extended';
+    defaultTaskViewFutureView = 'extended';
+    defaultTaskViewTagsView = 'extended';
+    overdueTasksSortBy =  DEFAULT_OVERDUE_TASKS_SORT_BY;
+    futureTasksSortBy = DEFAULT_FUTURE_TASKS_SORT_BY;
+    projectsFilterId = DEFAULT_PROJECTS_FILTER_ID;
+    tagsFilterId = DEFAULT_TAGS_FILTER_ID;
 
-    constructor({
-                    id = null, username, email, avatarUrl = '', dateJoined = new Date(), facebookConnection = null,
-                    googleConnection = null, inboxPk = null, orderTasksDashboard  = '',
-                    assignsTaskToMe  = true, changesTaskFromSharedListThatIsAssignedToMe = true,
-                    changesTaskFromSharedListThatIAssignedToHimHer = true,
-                    allTasksView = 'extended',
-                    completesTaskFromSharedList = true, dailySummaryHour = '', deletesListSharedWithMe = true, leavesSharedList = true,
-                    removesMeFromSharedList = true,
-                    dialogTimeWhenTaskFinishedInProject = false, defaultTaskView = 'extended', sharesListWithMe = true,
-                    defaultTaskViewTodayView = 'extended', defaultTaskViewOverdueView = 'extended',
-                    defaultTaskViewFutureView = 'extended', defaultTaskViewTagsView = 'extended', overdueTasksSortBy = '',
-                    futureTasksSortBy = '', projectsFilterId = 1, tagsFilterId = 1
-                }: IUserApi) {
+    constructor(user: IUser) {
+        Object.assign(this, user);
 
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.dateJoined = new Date(dateJoined);
-        this.facebookConnection = facebookConnection;
-        this.googleConnection = googleConnection;
-        this.inboxPk = inboxPk;
-        this.orderTasksDashboard = orderTasksDashboard;
-        this.avatarUrl = avatarUrl;
+    //
+    // constructor({
+    //                 id = null, username, email, dateJoined = new Date(), facebookConnection = null,
+    //                 googleConnection = null, inboxPk = null, orderTasksDashboard  = '',
+    //                 assignsTaskToMe  = true, changesTaskFromSharedListThatIsAssignedToMe = true,
+    //                 changesTaskFromSharedListThatIAssignedToHimHer = true,
+    //                 allTasksView = 'extended',
+    //                 completesTaskFromSharedList = true, dailySummaryHour = '', deletesListSharedWithMe = true, leavesSharedList = true,
+    //                 removesMeFromSharedList = true,
+    //                 dialogTimeWhenTaskFinishedInProject = false, defaultTaskView = 'extended', sharesListWithMe = true,
+    //                 defaultTaskViewTodayView = 'extended', defaultTaskViewOverdueView = 'extended',
+    //                 defaultTaskViewFutureView = 'extended', defaultTaskViewTagsView = 'extended', overdueTasksSortBy = '',
+    //                 futureTasksSortBy = '', projectsFilterId = 1, tagsFilterId = 1
+    //             }: IUserApi)
+
+
+        this.id = user.id;
+        this.dateJoined = new Date(user.dateJoined);
+        this.inboxPk = user.inboxPk;
+        this.orderTasksDashboard = user.orderTasksDashboard;
         // notifications
-        this.assignsTaskToMe = assignsTaskToMe;
-        this.changesTaskFromSharedListThatIsAssignedToMe = changesTaskFromSharedListThatIsAssignedToMe;
-        this.changesTaskFromSharedListThatIAssignedToHimHer = changesTaskFromSharedListThatIAssignedToHimHer;
-        this.completesTaskFromSharedList = completesTaskFromSharedList;
-        this.dailySummaryHour = this.setDailySummaryHour(dailySummaryHour);
-        this.deletesListSharedWithMe = deletesListSharedWithMe;
-        this.leavesSharedList = leavesSharedList;
-        this.removesMeFromSharedList = removesMeFromSharedList;
-        this.sharesListWithMe = sharesListWithMe;
-        // settings
-        this.dialogTimeWhenTaskFinishedInProject = dialogTimeWhenTaskFinishedInProject;
-        this.defaultTaskView = defaultTaskView;
-        this.allTasksView = allTasksView;
-        this.defaultTaskViewTodayView = defaultTaskViewTodayView;
-        this.defaultTaskViewOverdueView = defaultTaskViewOverdueView;
-        this.defaultTaskViewFutureView = defaultTaskViewFutureView;
-        this.defaultTaskViewTagsView = defaultTaskViewTagsView;
-        this.overdueTasksSortBy = overdueTasksSortBy;
-        this.futureTasksSortBy = futureTasksSortBy;
-        this.projectsFilterId = projectsFilterId;
-        this.tagsFilterId = tagsFilterId;
+        this.assignsTaskToMe = user.assignsTaskToMe;
+        this.changesTaskFromSharedListThatIsAssignedToMe = user.changesTaskFromSharedListThatIsAssignedToMe;
+        this.changesTaskFromSharedListThatIAssignedToHimHer = user.changesTaskFromSharedListThatIAssignedToHimHer;
+        this.dailySummaryHour = this.setDailySummaryHour(user.dailySummaryHour);
+
     }
 
     setDailySummaryHour(dailySummaryHour: string) {

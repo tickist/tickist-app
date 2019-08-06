@@ -136,7 +136,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
                 'name': nextDay.format('dddd'),
                 'date': nextDay.format('DD-MM-YYYY'),
                 'tasksCounter': this.tasks.filter(task => {
-                    return task.owner.id === userId && task.status === 0;
+                    return task.owner.id === userId && task.isDone === false;
                 })
                     .filter(task => {
                         const finishDate = task.finishDate;

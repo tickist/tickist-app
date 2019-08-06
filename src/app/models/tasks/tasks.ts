@@ -12,22 +12,23 @@ export interface ITaskApi {
     finishDate: string;
     finishTime: string;
     suspendDate: string;
-    pinned: boolean;
-    status: number;
+    pinned?: boolean;
+    isDone?: boolean;
+    onHold?: boolean;
     typeFinishDate: number;
     taskProject: TaskProject;
     owner: TaskUser;
     ownerPk: number;
     author: TaskUser;
-    percent: number;
+    percent?: number;
     priority: string;
     repeat: number | string;
     fromRepeating: number;
     repeatDelta: number;
-    description: string;
+    description?: string;
     estimateTime: number;
     time: number;
-    isActive: boolean;
+    isActive?: boolean;
     creationDate?: string;
     modificationDate?: string;
     finishDateDateformat?: string;
@@ -42,7 +43,7 @@ export interface ITaskApi {
 export class Task {
     id: string;
     name: string;
-    description: string;
+    description = '';
     richName: string;
     richDescription: string;
     finishDate: any;
@@ -50,13 +51,14 @@ export class Task {
     suspendDate: any;
     pinned = false;
     isActive = true;
-    status = 0;
+    isDone = false;
+    onHold = false;
     typeFinishDate = 1;
     taskProject: TaskProject;
     owner: TaskUser;
     steps: Step[] = [];
     priority: string;
-    percent: number | null = null;
+    percent = 0;
     repeat: number;
     repeatDelta: number;
     author: TaskUser;
@@ -68,28 +70,14 @@ export class Task {
 
 
     constructor(task: ITaskApi) {
-        this.name = task.name;
+        Object.assign(this, task);
         this.richName = convert(task.name);
-        this.id = task.id || null;
         this.finishDate = task.finishDate ? moment(task.finishDate, 'DD-MM-YYYY') : '';
         this.finishTime = task.finishTime ? task.finishTime : '';
         this.suspendDate = task.suspendDate ? moment(task.suspendDate, 'DD-MM-YYYY') : '';
-        this.pinned = task.pinned;
-        this.status = task.status;
-        this.typeFinishDate = task.typeFinishDate;
-        this.taskProject = task.taskProject;
-        this.owner = task.owner;
-        this.author = task.author;
-        this.percent = task.percent;
-        this.priority = task.priority;
         this.repeat = parseInt((<string> task.repeat), 10);
-        this.fromRepeating = task.fromRepeating;
-        this.repeatDelta = task.repeatDelta;
-        this.description = task.description || '';
         this.richDescription = convert(task.description);
         this.estimateTime = task.estimateTime ? task.estimateTime : null;
-        this.time = task.time;
-        this.isActive = task.isActive;
         if (Array.isArray(task.steps)) {
             task.steps.forEach((step) => {
                 this.steps.push(new Step(step));

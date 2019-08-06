@@ -60,14 +60,14 @@ export class RequestUpdateTag implements Action {
 export class DeleteTag implements Action {
     readonly type = TagActionTypes.DELETE_TAG;
 
-    constructor(public payload: { tagId: number }) {
+    constructor(public payload: { tagId: string }) {
     }
 }
 
 export class RequestDeleteTag implements Action {
     readonly type = TagActionTypes.REQUEST_DELETE_TAG;
 
-    constructor(public payload: { tagId: number }) {
+    constructor(public payload: { tagId: string }) {
     }
 }
 

@@ -72,7 +72,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
                 'label': momentDate.format('MMMM YYYY'),
                 'tasksCounter': this.tasks.filter(task => {
                     return task.owner.id === this.user.id
-                        && task.status === 0
+                        && task.isDone === false
                         && task.finishDate
                         && task.finishDate.month() === momentDate.month()
                         && task.finishDate.year() === momentDate.year();

@@ -38,6 +38,7 @@ import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-l
 import {convert} from '../../../../core/utils/addClickableLinksToString';
 import {TaskUser} from '../../../../models/tasks/task-user';
 import {TaskProject} from '../../../../models/tasks/task-project';
+import {createUniqueId} from '../../../../core/utils/unique-id';
 
 @Component({
     selector: 'app-task-component',
@@ -62,7 +63,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     typeFinishDateOptions: any;
     defaultFinishDateOptions: any;
     minutes2Hours: Minutes2hoursPipe;
-    steps: any;
+    steps: Step[];
     minDate: Date;
     tagsCtrl: FormControl;
     filteredTags: Observable<any>;
@@ -277,7 +278,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 'time': new FormControl(this.minutes2Hours.transform(task.time)),
                 'estimateTime': new FormControl(this.minutes2Hours.transform(task.estimateTime)),
                 'ownerId': new FormControl(task.owner.id, {validators: Validators.required}),
-                'suspended': new FormControl(task.status === 2, {validators: Validators.required}),
+                'suspended': new FormControl(task.onHold === true, {validators: Validators.required}),
                 'suspendedDate': new FormControl(task.suspendDate),
             }, {validators: this.finishTimeWithFinishDate}),
             'repeat': new FormGroup({
@@ -345,11 +346,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             'taskListPk': selectedProject.id,
             'time': undefined,
             'steps': [],
-            'tags': [],
-            'status': 0,
-            'isActive': true,
-            'percent': 0,
-            'pinned': false,
+            'tags': []
         });
 
         if (finishDateOption) {
@@ -475,12 +472,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 updatedTask.repeatDelta = values['repeat']['repeatDelta'];
                 updatedTask.repeat = values['repeat']['repeatCustom'];
             }
-            if (values['extra']['suspended']) {
-                updatedTask.status = 2;
-            }
-            if (!values['extra']['suspended'] && updatedTask.status === 2) {
-                updatedTask.status = 0;
-            }
+            updatedTask.onHold = values['extra']['suspended']
 
             updatedTask.fromRepeating = values['repeat']['fromRepeating'];
             updatedTask.estimateTime = values['extra']['estimateTime'];
@@ -546,7 +538,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     initStep() {
         return this.fb.group({
             'name': [''],
-            'id': [''],
+            'id': [createUniqueId()],
             'status': [0]
         });
     }
@@ -559,14 +551,18 @@ export class TaskComponent implements OnInit, OnDestroy {
     removeStep(i: number) {
         const control = <FormArray>this.taskForm.controls['steps'];
         // delete steps from task model
+        const steps = [...this.task.steps];
         if (control.controls[i].value.hasOwnProperty('id')) {
-            this.task.steps.map(step => {
-                if (step.id === control.controls[i].value.id) {
-                    step.delete = true;
+            steps.map(step => {
+                const updatedStep = {...step};
+                if (updatedStep.id === control.controls[i].value.id) {
+                    updatedStep.delete = true;
                 }
+                return updatedStep;
             });
         }
         control.removeAt(i);
+        this.task = Object.assign({}, this.task, {steps: steps});
     }
 
     changeProjectInTask(event): void {

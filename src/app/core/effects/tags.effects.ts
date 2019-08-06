@@ -23,7 +23,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 
 @Injectable()
 export class TagsEffects {
-    
+
     @Effect()
     query$ = this.actions$
         .pipe(
@@ -39,7 +39,7 @@ export class TagsEffects {
             concatMap(actions => {
                 // debugger;
                 const addedTags: Tag[] = [];
-                const deletedTags: Tag[] = [];
+                let deletedTagId: string;
                 let updatedTag: Update<Tag>;
                 // action.payload.doc.data()
                 console.log(actions);
@@ -58,6 +58,9 @@ export class TagsEffects {
                             changes: {...data}
                         };
                     }
+                    if (action.type === 'removed') {
+                        deletedTagId = action.payload.doc.id;
+                    }
                 }));
                 const returnsActions = [];
                 if (addedTags.length > 0) {
@@ -66,11 +69,14 @@ export class TagsEffects {
                 if (updatedTag) {
                     returnsActions.push(new UpdateTag({tag: updatedTag}));
                 }
+                if (deletedTagId) {
+                    returnsActions.push(new DeleteTag({tagId: deletedTagId}));
+                }
                 return returnsActions;
             })
         );
-    
-    
+
+
     // @Effect()
     // addTags$ = this.actions$
     //     .pipe(
