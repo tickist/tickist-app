@@ -40,18 +40,12 @@ export class SingleTaskSimplifiedComponent extends SingleTask {
     }
 
     ngOnInit() {
-        switch (this.task.status) {
-            case 0:
-                this.icon = ['far', 'square'];
-                break;
-            case 1:
-                this.icon = ['far', 'check-square'];
-                break;
-            case 2:
-                this.icon = ['fas', 'pause'];
-                break;
-            default:
-                break;
+        if (this.task.isDone && !this.task.onHold) {
+            this.icon = ['far', 'check-square'];
+        } else if (!this.task.isDone && !this.task.onHold) {
+            this.icon = ['far', 'square'];
+        } else if (this.task.onHold) {
+            this.icon = ['fas', 'pause'];
         }
     }
 

@@ -5,7 +5,7 @@ export class Filter {
     id: number;
     label: string;
     name: string;
-    value: string | Array<string | number>;
+    value: string | Array<string>;
     avatar?: string;
     order?: string;
     fixed?: boolean;

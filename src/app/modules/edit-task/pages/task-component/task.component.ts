@@ -1,38 +1,31 @@
-import {
-    Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener
-} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../../../../core/services/task.service';
 import {TagService} from '../../../../core/services/tag.service';
 import {Task} from '../../../../models/tasks/tasks';
-import {Observable, combineLatest, Subject} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
 import {Project} from '../../../../models/projects';
 import {ConfigurationService} from '../../../../services/configuration.service';
-import {User, SimpleUser} from '../../../../core/models';
-import {FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl} from '@angular/forms';
+import {User} from '../../../../core/models';
+import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
-import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {MatDialog} from '@angular/material/dialog';
 import moment from 'moment';
 import {Tag} from '../../../../models/tags';
-import {MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
-import {KEY_CODE} from '../../../../shared/keymap';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 import {Step} from '../../../../models/tasks/steps';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
-
-import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
-import {DeleteTask, RequestCreateTask, RequestUpdateTask, UpdateTask} from '../../../../core/actions/tasks/task.actions';
+import {DeleteTask, RequestCreateTask, RequestUpdateTask} from '../../../../core/actions/tasks/task.actions';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
-import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-list/projects-filters.selectors';
 import {convert} from '../../../../core/utils/addClickableLinksToString';
@@ -472,7 +465,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 updatedTask.repeatDelta = values['repeat']['repeatDelta'];
                 updatedTask.repeat = values['repeat']['repeatCustom'];
             }
-            updatedTask.onHold = values['extra']['suspended']
+            updatedTask.onHold = values['extra']['suspended'];
 
             updatedTask.fromRepeating = values['repeat']['fromRepeating'];
             updatedTask.estimateTime = values['extra']['estimateTime'];

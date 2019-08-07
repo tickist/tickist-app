@@ -38,23 +38,16 @@ export class Project {
     shareWithIds: Array<string> = [];
 
     constructor(project: any) {
-        this.name = project.name;
+        Object.assign(this, project);
         this.id = project.id || null;
         this.ancestor = project.ancestor || undefined;
-        this.color = project.color || undefined;
         this.tasksCounter = !(isNaN(project.tasksCounter)) ? project.tasksCounter : 0;
         this.allDescendants = project.getAllDescendants ? project.getAllDescendants : [];
-        this.description = project.description;
         this.richDescription = convert(project.description);
         this.defaultFinishDate = project.defaultFinishDate;
-        this.defaultPriority = project.defaultPriority;
         this.defaultTypeFinishDate = project.defaultTypeFinishDate;
-        this.owner = project.owner;
-        this.level = project.level ? project.level : 0;
-        this.isActive = project.isActive;
         if (project.taskView) this.taskView = project.taskView;
         this.dialogTimeWhenTaskFinished = project.dialogTimeWhenTaskFinished;
-        this.isInbox = project.isInbox;
         this.matOptionClass = `level_${this.level}`;
         project.shareWith.forEach((user) => {
             if (user.hasOwnProperty('id')) {

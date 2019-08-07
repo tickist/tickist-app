@@ -1,10 +1,9 @@
-import {Component, OnInit, Input, ViewContainerRef} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {TagService} from '../../../../../../core/services/tag.service';
 import {Tag} from '../../../../../../models/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {Filter} from '../../../../../../models/filter';
-import {DeleteTag, RequestDeleteTag, RequestUpdateTag, UpdateTag} from '../../../../../../core/actions/tags.actions';
+import {RequestDeleteTag, RequestUpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../../../store';
 import {SetCurrentTagsFilters} from '../../../../../../core/actions/tasks/tags-filters-tasks.actions';
@@ -18,10 +17,10 @@ import {selectCurrentTagsFilter} from '../../../../../../core/selectors/filters-
 })
 export class TagComponent implements OnInit {
     @Input() label: string;
-    @Input() id: string | number;
+    @Input() id: string;
     @Input() tasksCounter: number;
     @Input() tag?: Tag;
-    tagsIds: string | Set<number | string>;
+    tagsIds: string | Set<string>;
     isActive: boolean;
     isChecked: boolean;
     editTagForm: FormGroup;
@@ -40,9 +39,9 @@ export class TagComponent implements OnInit {
             } else {
                 this.tagsIds = filter.value;
             }
-            this.isActive = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
-            this.isChecked = ((this.tagsIds instanceof Set && this.tagsIds.has(<number>this.id)) || this.tagsIds === this.id);
-            this.isCheckboxModeEnabled = this.isInt(this.id) && (this.tagsIds instanceof Set) && this.tagsIds.size > 0;
+            this.isActive = ((this.tagsIds instanceof Set && this.tagsIds.has(this.id)) || this.tagsIds === this.id);
+            this.isChecked = ((this.tagsIds instanceof Set && this.tagsIds.has(this.id)) || this.tagsIds === this.id);
+            this.isCheckboxModeEnabled = this.isId(this.id) && (this.tagsIds instanceof Set) && this.tagsIds.size > 0;
         });
         this.editTagForm = new FormGroup({
             'name': new FormControl(this.label, Validators.required)
@@ -66,9 +65,9 @@ export class TagComponent implements OnInit {
 
     selectTag() {
         let value;
-        if (!this.isInt(this.id)) {
+        if (!this.isId(this.id)) {
             value = this.id;
-        } else if (this.isInt(this.id)) {
+        } else if (this.isId(this.id)) {
             const set = new Set([this.id]);
             value = Array.from(set);
         }
@@ -78,10 +77,10 @@ export class TagComponent implements OnInit {
     }
 
     selectTags() {
-        let result: Array<number| string> | string;
+        let result: Array<string> | string;
         const value = this.tagsIds;
-        if (value instanceof String || typeof this.id === 'string') {
-            result = <string> this.id;
+        if (value instanceof String) {
+            result = this.id;
         } else if (value instanceof Set) {
             if (value.has(this.id)) {
                 value.delete(this.id);
@@ -95,8 +94,8 @@ export class TagComponent implements OnInit {
         }));
     }
 
-    private isInt(value: any): boolean {
-        return Number.isInteger(value);
+    private isId(value: any): boolean {
+        return value !== 'allTasks' && value !== 'allTags' && value !== 'withoutTags' && typeof value === 'string';
     }
 
 }
