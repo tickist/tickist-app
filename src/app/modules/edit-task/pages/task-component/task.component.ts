@@ -6,7 +6,7 @@ import {Task} from '../../../../models/tasks/tasks';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
-import {Project} from '../../../../models/projects';
+import {Project, ShareWithUser} from '../../../../models/projects';
 import {ConfigurationService} from '../../../../services/configuration.service';
 import {User} from '../../../../core/models';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -29,7 +29,7 @@ import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../singl
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-list/projects-filters.selectors';
 import {convert} from '../../../../core/utils/addClickableLinksToString';
-import {TaskUser} from '../../../../models/tasks/task-user';
+import {ITaskUser, TaskUser} from '../../../../models/tasks/task-user';
 import {TaskProject} from '../../../../models/tasks/task-project';
 import {createUniqueId} from '../../../../core/utils/unique-id';
 
@@ -367,7 +367,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     async addingTag(newTag) {
-        // @TODO refactor it is duplicated code
+        // @TODO need refactoring It is duplicated code
         const tags = [...this.task.tags];
         if (this.tagsCtrl.valid) {
             if (newTag instanceof MatAutocompleteSelectedEvent) {
@@ -441,6 +441,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(values, withoutClose = false): void {
+        debugger;
         const updatedTask = Object.assign({}, this.task);
         if (this.taskForm.valid) {
             const selectedTaskProject = this.projects
@@ -456,7 +457,8 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
             updatedTask.taskProject = new TaskProject(selectedTaskProject);
-            updatedTask.owner = selectedTaskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            const user = <ShareWithUser> selectedTaskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            updatedTask.owner = new TaskUser(<ITaskUser> {id: user.id, avatarUrl: user.avatarUrl, email: user.email, username: user.username});
 
             if (values['repeat']['repeatDefault'] !== 99) {
                 updatedTask.repeat = values['repeat']['repeatDefault'];

@@ -30,6 +30,8 @@ export const DEFAULT_OVERDUE_TASKS_SORT_BY = OVERDUE_TASKS_SORT_BY_OPTIONS [0].v
 export const DEFAULT_PROJECTS_FILTER_ID = 1;
 export const DEFAULT_TAGS_FILTER_ID = 1;
 
+export const DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT = false;
+
 export const TASKS_ORDER_OPTIONS = [
     'Today->Overdue',
     'Overdue->Today'

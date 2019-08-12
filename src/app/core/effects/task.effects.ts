@@ -38,16 +38,12 @@ export class TaskEffects {
                 return this.db.collection('tasks', ref => ref
                     .where('owner.id', '==', this.authFire.auth.currentUser.uid)
                     .where('isDone', '==', false)
-                   // .where('status', '>', 1)
                 ).stateChanges();
             }),
-            // mergeMap(action => action),
             concatMap(actions => {
-                // debugger;
                 const addedTasks: Task[] = [];
                 let deletedTaskId: string;
                 let updatedTask: Update<Task>;
-                // action.payload.doc.data()
                 console.log(actions);
                 actions.forEach((action => {
                     if (action.type === 'added') {
@@ -61,7 +57,7 @@ export class TaskEffects {
                         const data: any = action.payload.doc.data();
                         updatedTask = {
                             id: action.payload.doc.id,
-                            changes: {...data}
+                            changes: new Task({...data})
                         };
                     }
                     if (action.type === 'removed') {

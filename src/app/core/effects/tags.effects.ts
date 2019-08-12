@@ -55,7 +55,7 @@ export class TagsEffects {
                         const data: any = action.payload.doc.data();
                         updatedTag = {
                             id: action.payload.doc.id,
-                            changes: {...data}
+                            changes: new Tag({...data})
                         };
                     }
                     if (action.type === 'removed') {

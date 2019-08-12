@@ -4,7 +4,9 @@ import {Task} from '../../models/tasks/tasks';
 
 export enum UserActionTypes {
     AddUser = '[User] Add Users',
-    UpdateUser = '[User Form Edit] Update Users'
+    UpdateUser = '[User Form Edit] Update Users',
+    RequestUpdateUser = '[User Form Edit] Request Update Users',
+    QueryUser = '[User] QueryUser'
 }
 
 export class AddUser implements Action {
@@ -21,5 +23,17 @@ export class UpdateUser implements Action {
     }
 }
 
+export class RequestUpdateUser implements Action {
+    readonly type = UserActionTypes.RequestUpdateUser;
 
-export type UserActions = AddUser | UpdateUser;
+    constructor(public payload: { user: User, progressBar?: boolean, snackBar?: boolean}) {
+    }
+}
+
+export class QueryUser implements Action {
+    readonly type = UserActionTypes.QueryUser;
+
+}
+
+
+export type UserActions = AddUser | UpdateUser | RequestUpdateUser;

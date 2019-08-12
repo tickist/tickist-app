@@ -48,7 +48,9 @@ export class UserService {
     }
 
     updateUser(user: User) {
-        return this.db.collection(userCollectionName).doc(this.authFire.auth.currentUser.uid).set({...user});
+        return this.db.collection(userCollectionName)
+            .doc(this.authFire.auth.currentUser.uid)
+            .update(JSON.parse(JSON.stringify(user)));
 
             // .set(JSON.parse(JSON.stringify(user)));
         // return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user));

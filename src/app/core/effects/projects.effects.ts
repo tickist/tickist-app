@@ -61,7 +61,7 @@ export class ProjectsEffects {
                         const data: any = action.payload.doc.data();
                         updatedProject = {
                             id: action.payload.doc.id,
-                            changes: {...data}
+                            changes: new Project({...data})
                         };
                     }
                     if (action.type === 'removed') {

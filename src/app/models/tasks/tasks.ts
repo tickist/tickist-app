@@ -72,20 +72,19 @@ export class Task {
     constructor(task: ITaskApi) {
         Object.assign(this, task);
         this.richName = convert(task.name);
-        this.finishDate = task.finishDate ? moment(task.finishDate, 'DD-MM-YYYY') : '';
+        this.finishDate = task.finishDate ? moment(task.finishDate) : '';
         this.finishTime = task.finishTime ? task.finishTime : '';
-        this.suspendDate = task.suspendDate ? moment(task.suspendDate, 'DD-MM-YYYY') : '';
+        this.suspendDate = task.suspendDate ? moment(task.suspendDate) : '';
         this.repeat = parseInt((<string> task.repeat), 10);
         this.richDescription = convert(task.description);
         this.estimateTime = task.estimateTime ? task.estimateTime : null;
         if (Array.isArray(task.steps)) {
-            task.steps.forEach((step) => {
-                this.steps.push(new Step(step));
-            });
+            this.steps.map((step) => new Step(step));
         }
-        task.tags.forEach((tag) => {
-            this.tags.push(new Tag(tag));
-        });
+        this.tags.map(tag => new Tag(tag));
+        // task.tags.forEach((tag) => {
+        //     this.tags.push(new Tag(tag));
+        // });
         this.menuShowing = new Menu(task.menuShowing);
     }
 

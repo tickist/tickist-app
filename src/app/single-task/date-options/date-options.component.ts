@@ -34,6 +34,7 @@ export class DateOptionsComponent implements OnInit {
             throw new Error(`Attribute 'task' is required`);
         }
         this.typeFinishDateOptions = this.configurationService.loadConfiguration()['commons']['TYPE_FINISH_DATE_OPTIONS'];
+        debugger
         this.finishDate = this.task.finishDate.toDate();
         this.finishTime = this.task.finishTime;
         this.typeFinishDate = this.task.typeFinishDate;
@@ -41,6 +42,7 @@ export class DateOptionsComponent implements OnInit {
     }
 
     saveTask($event: any, source: string) {
+        debugger;
         if (this.finishDateInputViewChild.valid) {
             if (source === 'typeFinishDate') {
                 this.task.typeFinishDate = $event.value;
@@ -53,7 +55,7 @@ export class DateOptionsComponent implements OnInit {
                 task: {
                     id: this.task.id,
                     changes: Object.assign({}, this.task, {
-                        finishDate: this.finishDate ? moment(this.finishDate, 'DD-MM-YYYY') : '',
+                        finishDate: this.finishDate ? moment(this.finishDate) : '',
                         finishTime: this.finishTime,
                         typeFinishDate: $event.value ? $event.value : this.task.typeFinishDate
                     })

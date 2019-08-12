@@ -140,10 +140,9 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
                 })
                     .filter(task => {
                         const finishDate = task.finishDate;
-                        const a = ((finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
+                        return ((finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
                             (this.isToday(nextDay) && task.pinned)
                         );
-                        return a;
                     }).length
             });
             nextDay = nextDay.add(1, 'days');

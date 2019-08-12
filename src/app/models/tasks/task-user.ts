@@ -1,5 +1,5 @@
 
-interface  ITaskUser {
+export interface  ITaskUser {
     id: string;
     username: string;
     email: string;

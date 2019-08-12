@@ -47,8 +47,6 @@
             </div>
             <div fxFlex="68%" class="right-menu">
                 <div [hidden]="!checkActiveItemInMenu('main')">
-
-
                     <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="userData"
                           *ngIf="userData" (ngSubmit)="onSubmitUserData(userData.value)" autocomplete="off"
                           novalidate>
@@ -136,68 +134,60 @@
 
 
                 <div [hidden]="!checkActiveItemInMenu('notifications')" *ngIf="user">
+                    <form [formGroup]="userNotificationSettings">
+                        <div fxLayout="column" fxLayoutAlign="space-between none"><span class="title">Please send me an email notification:</span>
 
-                    <div fxLayout="column" fxLayoutAlign="space-between none"><span class="title">Please send me an email notification:</span>
-
-                        <mat-checkbox [(ngModel)]="dailySummaryCheckbox" aria-label="Switch 1"
-                                      (change)="toggleDailySumary()">
-
-
-                        </mat-checkbox>
-                        with the list of my tasks for every day at
-                        <p-calendar id="daily_summary" (onFocus)="changeUserDetails()"
-                                    (onBlur)="changeUserDetails()"
-                                    [(ngModel)]="user.dailySummaryHour" [timeOnly]="true"
-                                    [disabled]="!dailySummaryCheckbox"></p-calendar>
+<!--                            <mat-checkbox [(ngModel)]="dailySummaryCheckbox" aria-label="Switch 1"-->
+<!--                                          (change)="toggleDailySumary()">-->
 
 
-                        <mat-checkbox [(ngModel)]="user.removesMeFromSharedList" aria-label="Switch 2"
-                                      (change)="changeUserDetails()">
-                            when another user removes me from a shared list
-                        </mat-checkbox>
+<!--                            </mat-checkbox>-->
+<!--                            with the list of my tasks for every day at-->
+<!--                            <p-calendar id="daily_summary" (onFocus)="changeUserDetails()"-->
+<!--                                        (onBlur)="changeUserDetails()"-->
+<!--                                        [(ngModel)]="user.dailySummaryHour" [timeOnly]="true"-->
+<!--                                        [disabled]="!dailySummaryCheckbox"></p-calendar>-->
 
 
-                        <mat-checkbox [(ngModel)]="user.assignsTaskToMe" aria-label="Switch 3"
-                                      (change)="changeUserDetails()">
-                            when another user assigns a task to me
-                        </mat-checkbox>
+                            <mat-checkbox formControlName="removesMeFromSharedList" aria-label="Switch 2">
+                                when another user removes me from a shared list
+                            </mat-checkbox>
 
 
-                        <mat-checkbox [(ngModel)]="user.completesTaskFromSharedList" aria-label="Switch 4"
-                                      (change)="changeUserDetails()">
-                            when another user completes a task from a shared list
-                        </mat-checkbox>
-
-                        <mat-checkbox [(ngModel)]="user.changesTaskFromSharedListThatIsAssignedToMe"
-                                      aria-label="Checkbox 5"
-                                      (change)="changeUserDetails()">
-                            when another user changes a task from a shared list that is assigned to me
-                        </mat-checkbox>
-
-                        <mat-checkbox [(ngModel)]="user.changesTaskFromSharedListThatIAssignedToHimHer"
-                                      aria-label="Switch 6"
-                                      (change)="changeUserDetails()">
-                            when another user changes a task from a shared list that I assigned to him/her
-                        </mat-checkbox>
+                            <mat-checkbox formControlName="assignsTaskToMe" aria-label="Switch 3">
+                                when another user assigns a task to me
+                            </mat-checkbox>
 
 
-                        <mat-checkbox [(ngModel)]="user.leavesSharedList" aria-label="Switch 7"
-                                      (change)="changeUserDetails()">
-                            when another user leaves a shared list
-                        </mat-checkbox>
+                            <mat-checkbox formControlName="completesTaskFromSharedList" aria-label="Switch 4">
+                                when another user completes a task from a shared list
+                            </mat-checkbox>
 
-                        <mat-checkbox [(ngModel)]="user.sharesListWithMe" aria-label="Switch 8"
-                                      (change)="changeUserDetails()">
-                            when another user shares a list with me
-                        </mat-checkbox>
+                            <mat-checkbox formControlName="changesTaskFromSharedListThatIsAssignedToMe"
+                                          aria-label="Checkbox 5">
+                                when another user changes a task from a shared list that is assigned to me
+                            </mat-checkbox>
+
+                            <mat-checkbox formControlName="changesTaskFromSharedListThatIAssignedToHimHer"
+                                          aria-label="Switch 6">
+                                when another user changes a task from a shared list that I assigned to him/her
+                            </mat-checkbox>
 
 
-                        <mat-checkbox [(ngModel)]="user.deletesListSharedWithMe" aria-label="Switch 9"
-                                      (change)="changeUserDetails()">
-                            when another user deletes a list shared with me
-                        </mat-checkbox>
-                    </div>
+                            <mat-checkbox formControlName="leavesSharedList" aria-label="Switch 7">
+                                when another user leaves a shared list
+                            </mat-checkbox>
 
+                            <mat-checkbox formControlName="sharesListWithMe" aria-label="Switch 8">
+                                when another user shares a list with me
+                            </mat-checkbox>
+
+
+                            <mat-checkbox formControlName="deletesListSharedWithMe" aria-label="Switch 9">
+                                when another user deletes a list shared with me
+                            </mat-checkbox>
+                        </div>
+                    </form>
 
                 </div>
 

@@ -3,6 +3,7 @@ import {SimpleUser} from './simple-user';
 import {userToSnakeCase} from '../utils/userToSnakeCase';
 import {ISimpleProjectApi} from '../../models/simple-project-api.inferface';
 import {
+    DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT,
     DEFAULT_FUTURE_TASKS_SORT_BY,
     DEFAULT_OVERDUE_TASKS_SORT_BY,
     DEFAULT_PROJECTS_FILTER_ID,
@@ -64,7 +65,7 @@ export class User {
     removesMeFromSharedList = true;
     sharesListWithMe: boolean;
     avatarUrl = '';
-    dialogTimeWhenTaskFinishedInProject = false;
+    dialogTimeWhenTaskFinishedInProject = DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT;
     allTasksView = 'extended';
     defaultTaskView = 'extended';
     defaultTaskViewTodayView = 'extended';

@@ -11,8 +11,9 @@ import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {RequestUpdateUser} from '../../../../core/actions/user.actions';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
+import {TASKS_ORDER_OPTIONS} from '../../../../core/config/config-user';
 
 @Component({
     selector: 'app-user',
@@ -24,6 +25,7 @@ export class UserComponent implements OnInit, OnDestroy {
     changePasswordForm: FormGroup;
     userData: FormGroup;
     userSettings: FormGroup;
+    userNotificationSettings: FormGroup;
     user: User = null;
     dailySummaryCheckbox: boolean;
     staticUrl: string;
@@ -34,13 +36,13 @@ export class UserComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('changeAvatarInput', { static: false }) changeAvatarInput: ElementRef;
+    @ViewChild('changeAvatarInput', {static: false}) changeAvatarInput: ElementRef;
 
     constructor(private fb: FormBuilder, private store: Store<AppStore>, private location: Location,
                 private configurationService: ConfigurationService, private userService: UserService) {
 
         this.staticUrl = environment['staticUrl'];
-        this.tasksOrderOptions = this.configurationService.loadConfiguration()['commons']['TASKS_ORDER_OPTIONS'];
+        this.tasksOrderOptions = TASKS_ORDER_OPTIONS;
         this.defaultTaskViewOptions = this.configurationService.loadConfiguration()['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
         this.overdueTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['OVERDUE_TASKS_SORT_BY_OPTIONS'];
         this.futureTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['FUTURE_TASKS_SORT_BY_OPTIONS'];
@@ -105,52 +107,122 @@ export class UserComponent implements OnInit, OnDestroy {
                     });
                     this.userSettings.get('orderTasksDashboard').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {orderTasksDashboard: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
                     this.userSettings.get('defaultTaskView').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {defaultTaskView: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
 
                     this.userSettings.get('defaultTaskViewTodayView').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {defaultTaskViewTodayView: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
                     this.userSettings.get('defaultTaskViewOverdueView').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {defaultTaskViewOverdueView: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
                     this.userSettings.get('defaultTaskViewFutureView').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {defaultTaskViewFutureView: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
                     this.userSettings.get('defaultTaskViewTagsView').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {defaultTaskViewTagsView: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
 
                     this.userSettings.get('overdueTasksSortBy').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {overdueTasksSortBy: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
                     this.userSettings.get('futureTasksSortBy').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {futureTasksSortBy: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
 
                     this.userSettings.get('dialogTimeWhenTaskFinishedInProject').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {dialogTimeWhenTaskFinishedInProject: newValue});
-                        this.store.dispatch(new UpdateUser({user: updatedUser})
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
+
+                    this.userNotificationSettings = new FormGroup({
+                        'dailySummaryHour': new FormControl(user.dailySummaryHour, {validators: [Validators.required]}),
+                        'removesMeFromSharedList': new FormControl(user.removesMeFromSharedList, {validators: [Validators.required]}),
+                        'assignsTaskToMe': new FormControl(user.assignsTaskToMe, {validators: [Validators.required]}),
+                        'completesTaskFromSharedList': new FormControl(
+                            user.completesTaskFromSharedList, {validators: [Validators.required]}
+                            ),
+                        'changesTaskFromSharedListThatIsAssignedToMe': new FormControl(
+                            user.changesTaskFromSharedListThatIsAssignedToMe, {validators: [Validators.required]}
+                            ),
+                        'changesTaskFromSharedListThatIAssignedToHimHer': new FormControl(
+                            user.changesTaskFromSharedListThatIAssignedToHimHer, {validators: [Validators.required]}
+                            ),
+                        'leavesSharedList': new FormControl(user.leavesSharedList, {validators: [Validators.required]}),
+                        'sharesListWithMe': new FormControl(user.sharesListWithMe, {validators: [Validators.required]}),
+                        'deletesListSharedWithMe': new FormControl(
+                            user.deletesListSharedWithMe, {validators: [Validators.required]}
+                        )
+                    });
+
+                    this.userNotificationSettings.get('dailySummaryHour').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {dailySummaryHour: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userNotificationSettings.get('removesMeFromSharedList').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {removesMeFromSharedList: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+
+                    this.userNotificationSettings.get('assignsTaskToMe').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {assignsTaskToMe: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userNotificationSettings.get('completesTaskFromSharedList').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {completesTaskFromSharedList: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userNotificationSettings.get('changesTaskFromSharedListThatIsAssignedToMe').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIsAssignedToMe: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userNotificationSettings.get('changesTaskFromSharedListThatIAssignedToHimHer').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIAssignedToHimHer: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+
+                    this.userNotificationSettings.get('leavesSharedList').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {leavesSharedList: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+                    this.userNotificationSettings.get('sharesListWithMe').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {sharesListWithMe: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+
+                    this.userNotificationSettings.get('deletesListSharedWithMe').valueChanges.subscribe(newValue => {
+                        const updatedUser = Object.assign({}, this.user, {deletesListSharedWithMe: newValue});
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                        );
+                    });
+
                 }
             });
 
@@ -206,7 +278,7 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     changeUserDetails(updatedUser) {
-        this.store.dispatch(new UpdateUser({user: updatedUser}));
+        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
     }
 
     getErrorMessage(field: AbstractControl): string {

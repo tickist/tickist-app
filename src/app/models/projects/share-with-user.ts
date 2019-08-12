@@ -1,4 +1,4 @@
-interface IShareWithUser {
+export interface IShareWithUser {
     id: string;
     username: string;
     email: string;
@@ -11,10 +11,7 @@ export class ShareWithUser {
     email: string;
     avatarUrl: string;
 
-    constructor({id, username, email, avatarUrl}: IShareWithUser) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.avatarUrl = avatarUrl;
+    constructor(user: IShareWithUser) {
+        Object.assign(this, user);
     }
 }

@@ -122,7 +122,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     changeAssignedTo(event) {
         const selectedTaskProject = this.projects.find(project => project.id === this.task.taskProject.id);
-        this.task.owner = selectedTaskProject
+        this.task.owner = <ShareWithUser> selectedTaskProject
             .shareWith.find(user => user.hasOwnProperty('id') && (<ShareWithUser> user).id === event.value);
         this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task, true, true);
