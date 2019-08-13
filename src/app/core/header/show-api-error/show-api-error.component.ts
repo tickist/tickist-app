@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ConfigurationService} from '../../../services/configuration.service';
+import {ConfigurationService} from '../../services/configuration.service';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {AppStore} from '../../../store';

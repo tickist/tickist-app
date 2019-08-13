@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {StatisticsService} from '../../../../services/statistics.service';
+import {StatisticsService} from '../../../../core/services/statistics.service';
 import {ChartStatistics, GlobalStatistics} from '../../../../models/statistics';
 import {BaseChartDirective} from 'ng2-charts';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';

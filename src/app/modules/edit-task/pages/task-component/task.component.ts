@@ -7,7 +7,7 @@ import {combineLatest, Observable, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
 import {Project, ShareWithUser} from '../../../../models/projects';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {User} from '../../../../core/models';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Location} from '@angular/common';
@@ -441,7 +441,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(values, withoutClose = false): void {
-        debugger;
         const updatedTask = Object.assign({}, this.task);
         if (this.taskForm.valid) {
             const selectedTaskProject = this.projects

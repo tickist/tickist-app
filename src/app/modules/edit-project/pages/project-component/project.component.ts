@@ -3,7 +3,7 @@ import {Project, ShareWithPendingUser, ShareWithUser} from '../../../../models/p
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SimpleUser, User} from '../../../../core/models';
 import {UserService} from '../../../../core/services/user.service';

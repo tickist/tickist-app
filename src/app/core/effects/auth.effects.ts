@@ -33,7 +33,7 @@ export class AuthEffects {
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
             switchMap(action => {
                 console.log(action);
-                return this.db.collection('users').doc(action.payload.uid).snapshotChanges();
+                return this.db.collection('users').doc(action.payload.uid).get();
             }),
             tap((snapshot: any) => {
                 if (environment.production) {
@@ -44,7 +44,7 @@ export class AuthEffects {
                 }
             }),
             map((snapshot: any) => {
-                return new AddUser({user: <User>snapshot.payload.data()});
+                return new AddUser({user: {id: snapshot.id, ...snapshot.data()}});
             })
         );
 

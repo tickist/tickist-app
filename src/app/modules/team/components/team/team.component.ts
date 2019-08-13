@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProjectService} from '../../../../core/services/project.service';
 import {SimpleUser} from '../../../../core/models';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {environment} from '../../../../../environments/environment';
 import {Observable} from 'rxjs';
 import {selectTeam} from '../../../../core/selectors/team.selectors';

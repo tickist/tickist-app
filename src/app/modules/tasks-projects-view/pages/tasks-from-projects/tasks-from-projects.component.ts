@@ -9,7 +9,7 @@ import {Project} from '../../../../models/projects';
 import {User} from '../../../../core/models';
 import {map, takeUntil} from 'rxjs/operators';
 import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {NewActiveProjectsIds} from '../../../../core/actions/projects/active-projects-ids.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';

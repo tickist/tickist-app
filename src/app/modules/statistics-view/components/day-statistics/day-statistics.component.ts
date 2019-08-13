@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {StatisticsService} from '../../../../services/statistics.service';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {StatisticsService} from '../../../../core/services/statistics.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {Observable, Subject, Subscription} from 'rxjs';
 import * as _ from 'lodash';
 import {IActiveDateElement} from '../../../../models/active-data-element.interface';

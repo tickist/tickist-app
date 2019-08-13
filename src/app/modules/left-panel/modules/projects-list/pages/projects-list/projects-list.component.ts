@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 import {TaskService} from '../../../../../../core/services/task.service';
 import {Project} from '../../../../../../models/projects';
-import {ConfigurationService} from '../../../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../../../core/services/configuration.service';
 import {User} from '../../../../../../core/models';
 import {UserService} from '../../../../../../core/services/user.service';
 import {MediaObserver} from '@angular/flex-layout';

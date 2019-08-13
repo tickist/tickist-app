@@ -3,7 +3,7 @@ import {User} from '../../../../core/models';
 import {UserService} from '../../../../core/services/user.service';
 import {FormBuilder, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {environment} from '../../../../../environments/environment';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
 import {Subject} from 'rxjs';
@@ -13,7 +13,7 @@ import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {RequestUpdateUser} from '../../../../core/actions/user.actions';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
-import {TASKS_ORDER_OPTIONS} from '../../../../core/config/config-user';
+import {DEFAULT_DAILY_SUMMARY_HOUR, TASKS_ORDER_OPTIONS} from '../../../../core/config/config-user';
 
 @Component({
     selector: 'app-user',
@@ -47,7 +47,6 @@ export class UserComponent implements OnInit, OnDestroy {
         this.overdueTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['OVERDUE_TASKS_SORT_BY_OPTIONS'];
         this.futureTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['FUTURE_TASKS_SORT_BY_OPTIONS'];
         this.menu = this.createMenuDict();
-
     }
 
     createMenuDict() {
@@ -79,6 +78,7 @@ export class UserComponent implements OnInit, OnDestroy {
         this.store.select(selectLoggedInUser)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((user) => {
+                // @TODO too much logic. Fix It
                 if (user) {
                     this.user = user;
                     this.dailySummaryCheckbox = !!user.dailySummaryHour;
@@ -105,6 +105,8 @@ export class UserComponent implements OnInit, OnDestroy {
                             user.dialogTimeWhenTaskFinishedInProject, {validators: [Validators.required]}
                         )
                     });
+                    // @TODO Fix it a lot of duplicated code.
+
                     this.userSettings.get('orderTasksDashboard').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {orderTasksDashboard: newValue});
                         this.store.dispatch(new RequestUpdateUser({user: updatedUser})
@@ -155,18 +157,19 @@ export class UserComponent implements OnInit, OnDestroy {
                     });
 
                     this.userNotificationSettings = new FormGroup({
-                        'dailySummaryHour': new FormControl(user.dailySummaryHour, {validators: [Validators.required]}),
+                        'dailySummaryHour': new FormControl({value: user.dailySummaryHour, disabled: !this.dailySummaryCheckbox}),
+                        'dailySummaryCheckbox': new FormControl(this.dailySummaryCheckbox),
                         'removesMeFromSharedList': new FormControl(user.removesMeFromSharedList, {validators: [Validators.required]}),
                         'assignsTaskToMe': new FormControl(user.assignsTaskToMe, {validators: [Validators.required]}),
                         'completesTaskFromSharedList': new FormControl(
                             user.completesTaskFromSharedList, {validators: [Validators.required]}
-                            ),
+                        ),
                         'changesTaskFromSharedListThatIsAssignedToMe': new FormControl(
                             user.changesTaskFromSharedListThatIsAssignedToMe, {validators: [Validators.required]}
-                            ),
+                        ),
                         'changesTaskFromSharedListThatIAssignedToHimHer': new FormControl(
                             user.changesTaskFromSharedListThatIAssignedToHimHer, {validators: [Validators.required]}
-                            ),
+                        ),
                         'leavesSharedList': new FormControl(user.leavesSharedList, {validators: [Validators.required]}),
                         'sharesListWithMe': new FormControl(user.sharesListWithMe, {validators: [Validators.required]}),
                         'deletesListSharedWithMe': new FormControl(
@@ -176,13 +179,15 @@ export class UserComponent implements OnInit, OnDestroy {
 
                     this.userNotificationSettings.get('dailySummaryHour').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {dailySummaryHour: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                    });
+
+                    this.userNotificationSettings.get('dailySummaryCheckbox').valueChanges.subscribe(newValue => {
+                        this.toggleDailySummary();
                     });
                     this.userNotificationSettings.get('removesMeFromSharedList').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {removesMeFromSharedList: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
                     });
 
                     this.userNotificationSettings.get('assignsTaskToMe').valueChanges.subscribe(newValue => {
@@ -197,31 +202,29 @@ export class UserComponent implements OnInit, OnDestroy {
                     });
                     this.userNotificationSettings.get('changesTaskFromSharedListThatIsAssignedToMe').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIsAssignedToMe: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
                     });
                     this.userNotificationSettings.get('changesTaskFromSharedListThatIAssignedToHimHer').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIAssignedToHimHer: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
                     });
 
                     this.userNotificationSettings.get('leavesSharedList').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {leavesSharedList: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
                     });
                     this.userNotificationSettings.get('sharesListWithMe').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {sharesListWithMe: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
+                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
                     });
+
 
                     this.userNotificationSettings.get('deletesListSharedWithMe').valueChanges.subscribe(newValue => {
                         const updatedUser = Object.assign({}, this.user, {deletesListSharedWithMe: newValue});
                         this.store.dispatch(new RequestUpdateUser({user: updatedUser})
                         );
                     });
+
 
                 }
             });
@@ -241,17 +244,14 @@ export class UserComponent implements OnInit, OnDestroy {
         this.store.dispatch(new ShowAddTaskButton());
     }
 
-    toggleDailySumary() {
+    toggleDailySummary() {
         let dailySummaryHour;
         this.dailySummaryCheckbox = !this.dailySummaryCheckbox;
         // @TODO you can remove first part of if statement
         if (this.dailySummaryCheckbox) {
-            dailySummaryHour = null;
+            dailySummaryHour = '';
         } else {
-            const d = new Date();
-            d.setHours(7, 0);
-            d.setMinutes(0);
-            dailySummaryHour = d;
+            dailySummaryHour = DEFAULT_DAILY_SUMMARY_HOUR;
         }
         this.changeUserDetails(Object.assign({}, this.user, {dailySummaryHour: dailySummaryHour}));
     }

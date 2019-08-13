@@ -1,13 +1,13 @@
-import {ProjectService} from '../core/services/project.service';
+import {ProjectService} from './project.service';
 import {getTestBed, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {TickistMaterialModule} from '../material.module';
-import {MockTasksFiltersService} from '../testing/mocks/tasks-filters-service';
+import {TickistMaterialModule} from '../../material.module';
+import {MockTasksFiltersService} from '../../testing/mocks/tasks-filters-service';
 import {StoreModule} from '@ngrx/store';
 import {RouterModule} from '@angular/router';
-import {reducers} from '../store';
+import {reducers} from '../../store';
 import {APP_BASE_HREF} from '@angular/common';
-import {Project} from '../models/projects';
+import {Project} from '../../models/projects';
 import {RouterTestingModule} from '@angular/router/testing';
 
 const project1FromApi = {

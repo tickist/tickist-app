@@ -4,7 +4,7 @@ import {select, Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {User} from '../models';
 import * as _ from 'lodash';
-import {ConfigurationService} from '../../services/configuration.service';
+import {ConfigurationService} from './configuration.service';
 import * as tasksAction from '../../reducers/actions/tasks';
 import {Filter} from '../../models/filter';
 import {HttpClient} from '@angular/common/http';

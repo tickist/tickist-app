@@ -48,6 +48,7 @@ export class UserService {
     }
 
     updateUser(user: User) {
+        debugger
         return this.db.collection(userCollectionName)
             .doc(this.authFire.auth.currentUser.uid)
             .update(JSON.parse(JSON.stringify(user)));

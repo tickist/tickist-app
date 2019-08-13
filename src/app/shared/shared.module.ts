@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeTaskViewComponent} from './components/change-task-view-component/change-task-view.component';
 import {TickistMaterialModule} from '../material.module';
 import {FormsModule} from '@angular/forms';
-import {ConfigurationService} from '../services/configuration.service';
+import {ConfigurationService} from '../core/services/configuration.service';
 import {MenuButtonComponent} from './components/menu-button/menu-button.component';
 import {AvatarSize} from './pipes/avatarSize';
 import {PriorityComponent} from './components/priority/priority.component';

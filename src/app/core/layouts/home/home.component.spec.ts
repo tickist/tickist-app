@@ -18,9 +18,9 @@ import {FlexLayoutModule, MediaObserver} from '@angular/flex-layout';
 import {NavComponent} from '../../header/nav-component/nav.component';
 import {ActionReducerMap, StoreModule} from '@ngrx/store';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {ConfigurationService} from '../../../services/configuration.service';
+import {ConfigurationService} from '../../services/configuration.service';
 import {MockObservableMedia} from '../../../testing/mocks/mediaObserver';
-import {StatisticsService} from '../../../services/statistics.service';
+import {StatisticsService} from '../../services/statistics.service';
 import {Observable} from 'rxjs';
 import {RouterTestingModule} from '@angular/router/testing';
 

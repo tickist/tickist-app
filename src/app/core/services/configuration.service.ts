@@ -1,10 +1,10 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
-import {AppStore} from '../store';
+import {AppStore} from '../../store';
 import {MediaObserver} from '@angular/flex-layout';
-import * as configurationAction from '../reducers/actions/configuration';
-import {ShowApiErrorBar} from '../core/actions/detect-api-error.actions';
+import * as configurationAction from '../../reducers/actions/configuration';
+import {ShowApiErrorBar} from '../actions/detect-api-error.actions';
 
 
 @Injectable()

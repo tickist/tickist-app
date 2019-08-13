@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inp
 import {Project} from '../../../../../../models/projects';
 import {ProjectService} from '../../../../../../core/services/project.service';
 import {Router} from '@angular/router';
-import {ConfigurationService} from '../../../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../../../core/services/configuration.service';
 
 import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';

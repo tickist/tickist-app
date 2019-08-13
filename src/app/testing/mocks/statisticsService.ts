@@ -1,6 +1,6 @@
 import {SpyObject} from '../test.helpers';
 import {of} from 'rxjs';
-import {StatisticsService} from '../../services/statistics.service';
+import {StatisticsService} from '../../core/services/statistics.service';
 
 
 export class MockStatisticsService extends SpyObject {

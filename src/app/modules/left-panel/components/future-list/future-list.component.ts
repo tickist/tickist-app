@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {FutureListElement} from './models';
 import moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {MediaObserver} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';

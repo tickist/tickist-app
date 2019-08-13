@@ -9,6 +9,8 @@ import {User} from '../../../../core/models';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {RequestCreateTask} from '../../../../core/actions/tasks/task.actions';
 import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
+import {TaskUser} from '../../../../models/tasks/task-user';
+import {TaskProject} from '../../../../models/tasks/task-project';
 
 @Component({
     selector: 'tickist-add-task-tree-view',
@@ -41,30 +43,25 @@ export class AddTaskTreeViewComponent implements OnInit {
             //     defaultTypeFinishDate = this.project.defaultTypeFinishDate;
             // }
 
-            const task = new Task(<any>{
+            return new Task(<any>{
                 'name': taskName,
                 'priority': this.project.defaultPriority,
                 'description': '',
-                'typeFinishDate': 1,
-                'finish_date': '',
-                'finish_time': '',
-                'suspend_date': '',
+                'finishDate': '',
+                'finishTime': '',
+                'suspendDate': '',
                 'repeat': 0,
-                'owner': toSnakeCase(this.user.convertToSimpleUser()),
-                'owner_pk': this.user.id,
-                'author': toSnakeCase(this.user.convertToSimpleUser()),
-                'repeat_delta': 1,
-                'from_repeating': 0,
-                'task_project': toSnakeCase(convertToSimpleProject(this.project)),
+                'owner': new TaskUser(this.user),
+                'ownerPk': this.user.id,
+                'author': new TaskUser(this.user),
+                'repeatDelta': 1,
+                'fromRepeating': 0,
+                'taskProject': new TaskProject(this.project),
                 'estimate_time': 0,
-                'task_list_pk': this.project.id,
+                'taskListPk': this.project.id,
                 'time': undefined,
                 'steps': [],
-                'tags': [],
-                'status': 0,
-                'is_active': true,
-                'percent': 0,
-                'pinned': false,
+                'tags': []
             });
 
             // if (finishDateOption) {
@@ -79,7 +76,6 @@ export class AddTaskTreeViewComponent implements OnInit {
             //     }
             // }
 
-            return task;
     }
 
     createTask(values) {

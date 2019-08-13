@@ -5,7 +5,7 @@ import {MockConfigurationService} from '../../testing/mocks/configurationService
 import {TickistMaterialModule} from '../../material.module';
 import {FormsModule} from '@angular/forms';
 import {fakeAsync} from '@angular/core/testing';
-import {ConfigurationService} from '../../services/configuration.service';
+import {ConfigurationService} from '../../core/services/configuration.service';
 import {Task} from '../../models/tasks/tasks';
 import {IProjectApi} from '../../models/project-api.interface';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';

@@ -1,5 +1,5 @@
 import {SpyObject} from '../test.helpers';
-import {TagsFiltersService} from '../../services/tags-filters.service';
+import {TagsFiltersService} from '../../core/services/tags-filters.service';
 
 
 

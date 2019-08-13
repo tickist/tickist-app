@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy} from '@angular/core';
 import {TaskService} from '../../core/services/task.service';
-import {ConfigurationService} from '../../services/configuration.service';
+import {ConfigurationService} from '../../core/services/configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 
 

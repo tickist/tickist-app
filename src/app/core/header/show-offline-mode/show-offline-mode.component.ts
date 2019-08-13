@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {ConfigurationService} from '../../../services/configuration.service';
+import {ConfigurationService} from '../../services/configuration.service';
 import {Subject, pipe, Observable} from 'rxjs';
 import {Ping} from './ping';
 import {takeUntil} from 'rxjs/operators';

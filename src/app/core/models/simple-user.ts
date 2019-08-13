@@ -1,4 +1,4 @@
-import {SimpleProject} from '../../models/projects/simple-project';
+import {SimpleProject} from '../../models/projects';
 import {ISimpleUserApi} from '../../models/simple-user-api.interface';
 
 export class SimpleUser {

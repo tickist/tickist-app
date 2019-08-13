@@ -1,5 +1,5 @@
 import {SpyObject} from '../test.helpers';
-import {ConfigurationService} from '../../services/configuration.service';
+import {ConfigurationService} from '../../core/services/configuration.service';
 import {of} from 'rxjs';
 
 

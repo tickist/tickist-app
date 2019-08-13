@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {ConfigurationService} from '../../services/configuration.service';
+import {ConfigurationService} from '../../core/services/configuration.service';
 
 @Pipe({
   name: 'repeatstring'

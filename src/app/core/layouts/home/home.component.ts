@@ -9,7 +9,7 @@ import {TaskService} from '../../services/task.service';
 import {UserService} from '../../services/user.service';
 import {TagService} from '../../services/tag.service';
 import {MediaObserver, MediaChange} from '@angular/flex-layout';
-import {ConfigurationService} from '../../../services/configuration.service';
+import {ConfigurationService} from '../../services/configuration.service';
 import _ from 'lodash';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';

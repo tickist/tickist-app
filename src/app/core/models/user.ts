@@ -1,8 +1,8 @@
-import {ISimpleUserApi} from '../../models/simple-user-api.interface';
+
 import {SimpleUser} from './simple-user';
-import {userToSnakeCase} from '../utils/userToSnakeCase';
 import {ISimpleProjectApi} from '../../models/simple-project-api.inferface';
 import {
+    DEFAULT_DAILY_SUMMARY_HOUR,
     DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT,
     DEFAULT_FUTURE_TASKS_SORT_BY,
     DEFAULT_OVERDUE_TASKS_SORT_BY,
@@ -51,7 +51,7 @@ export class User {
     username: string;
     email: string;
     assignsTaskToMe = true;
-    dateJoined: Date;
+    readonly dateJoined: Date;
     facebookConnection = null;
     googleConnection = null;
     inboxPk: number;
@@ -59,7 +59,7 @@ export class User {
     changesTaskFromSharedListThatIsAssignedToMe = true;
     changesTaskFromSharedListThatIAssignedToHimHer = true;
     completesTaskFromSharedList = true;
-    dailySummaryHour: Date;
+    dailySummaryHour = DEFAULT_DAILY_SUMMARY_HOUR;
     deletesListSharedWithMe = true;
     leavesSharedList = true;
     removesMeFromSharedList = true;
@@ -80,64 +80,6 @@ export class User {
     constructor(user: IUser) {
         Object.assign(this, user);
 
-    //
-    // constructor({
-    //                 id = null, username, email, dateJoined = new Date(), facebookConnection = null,
-    //                 googleConnection = null, inboxPk = null, orderTasksDashboard  = '',
-    //                 assignsTaskToMe  = true, changesTaskFromSharedListThatIsAssignedToMe = true,
-    //                 changesTaskFromSharedListThatIAssignedToHimHer = true,
-    //                 allTasksView = 'extended',
-    //                 completesTaskFromSharedList = true, dailySummaryHour = '', deletesListSharedWithMe = true, leavesSharedList = true,
-    //                 removesMeFromSharedList = true,
-    //                 dialogTimeWhenTaskFinishedInProject = false, defaultTaskView = 'extended', sharesListWithMe = true,
-    //                 defaultTaskViewTodayView = 'extended', defaultTaskViewOverdueView = 'extended',
-    //                 defaultTaskViewFutureView = 'extended', defaultTaskViewTagsView = 'extended', overdueTasksSortBy = '',
-    //                 futureTasksSortBy = '', projectsFilterId = 1, tagsFilterId = 1
-    //             }: IUserApi)
-
-
-        this.id = user.id;
         this.dateJoined = new Date(user.dateJoined);
-        this.inboxPk = user.inboxPk;
-        this.orderTasksDashboard = user.orderTasksDashboard;
-        // notifications
-        this.assignsTaskToMe = user.assignsTaskToMe;
-        this.changesTaskFromSharedListThatIsAssignedToMe = user.changesTaskFromSharedListThatIsAssignedToMe;
-        this.changesTaskFromSharedListThatIAssignedToHimHer = user.changesTaskFromSharedListThatIAssignedToHimHer;
-        this.dailySummaryHour = this.setDailySummaryHour(user.dailySummaryHour);
-
-    }
-
-    setDailySummaryHour(dailySummaryHour: string) {
-        if (dailySummaryHour) {
-            const date = new Date();
-            date.setHours(parseInt(dailySummaryHour.split(':')[0], 10), parseInt(dailySummaryHour.split(':')[1], 10),
-                parseInt(dailySummaryHour.split(':')[2], 10));
-            return date;
-        } else {
-            return null;
-        }
-
-    }
-
-    updateProjectsFilterId(filter) {
-        this.projectsFilterId = filter.id;
-    }
-
-    updateTagsFilterId(filter) {
-        this.tagsFilterId = filter.id;
-    }
-
-    convertToSimpleUser(): SimpleUser {
-        const userApi = userToSnakeCase(this);
-        const simpleUserApi: any = {
-            avatar: userApi.avatar,
-            avatar_url: userApi.avatar_url,
-            email: userApi.email,
-            id: userApi.id,
-            username: userApi.username,
-            shareWith: userApi.shareWith
-        };
-        return new SimpleUser(simpleUserApi);
     }
 }

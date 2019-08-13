@@ -7,7 +7,7 @@ import {TaskService} from '../../../../../../core/services/task.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../../../../core/services/user.service';
 import {User} from '../../../../../../core/models';
-import {ConfigurationService} from '../../../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../../../core/services/configuration.service';
 import {FilterTagsDialogComponent} from '../../components/filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';

@@ -10,7 +10,7 @@ import {
     UpdateDailyStatistics,
     UpdateGlobalStatistics
 } from '../actions/statistics.actions';
-import {StatisticsService} from '../../../services/statistics.service';
+import {StatisticsService} from '../../../core/services/statistics.service';
 import {concatMap, concatMapTo, map, mergeMap} from 'rxjs/operators';
 import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../../models/statistics';
 import {defer} from 'rxjs';

@@ -6,7 +6,7 @@ import {Task} from '../../../../models/tasks/tasks';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {User} from '../../../../core/models';
-import {ConfigurationService} from '../../../../services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';

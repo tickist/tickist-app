@@ -4,7 +4,7 @@ import {Observable, ReplaySubject} from 'rxjs';
 import {StatisticsEffects} from './statistics.effects';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '../../../core/services/user.service';
-import {StatisticsService} from '../../../services/statistics.service';
+import {StatisticsService} from '../../../core/services/statistics.service';
 
 class StatisticsServiceMock {}
 
