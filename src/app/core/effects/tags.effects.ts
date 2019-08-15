@@ -29,7 +29,6 @@ export class TagsEffects {
         .pipe(
             ofType<QueryTags>(TagActionTypes.QUERY_TAGS),
             switchMap(action => {
-                console.log(action);
                 return this.db.collection(
                     'tags',
                     ref => ref.where('author', '==', this.authFire.auth.currentUser.uid))
@@ -37,11 +36,9 @@ export class TagsEffects {
             }),
             // mergeMap(action => action),
             concatMap(actions => {
-                // debugger;
                 const addedTags: Tag[] = [];
                 let deletedTagId: string;
                 let updatedTag: Update<Tag>;
-                // action.payload.doc.data()
                 console.log(actions);
                 actions.forEach((action => {
                     if (action.type === 'added') {

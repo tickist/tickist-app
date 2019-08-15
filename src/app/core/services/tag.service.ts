@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Tag} from '../../models/tags';
 import {HttpClient} from '@angular/common/http';
-import {map} from 'rxjs/operators';
-import {ITagApi} from '../../models/tag-api.interface';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {environment} from '../../../environments/environment';
@@ -12,19 +10,18 @@ const tagsCollectionName = 'tags';
 
 @Injectable()
 export class TagService {
-    tagsCollection$: AngularFirestoreCollection<Tag>;
 
     constructor(private db: AngularFirestore, private http: HttpClient, private authFire: AngularFireAuth) {
         // this.tagsCollection$ = this.db.collection('tags');
     }
 
-    loadTags() {
-        return this.db.collection(tagsCollectionName).get();
-        // return this.http.get<ITagApi[]>(`${environment['apiUrl']}/tag/`)
-        //     .pipe(
-        //         map(payload => payload.map(tag => new Tag(tag))),
-        //     );
-    }
+    // loadTags() {
+    //     return this.db.collection(tagsCollectionName).get();
+    //     // return this.http.get<ITagApi[]>(`${environment['apiUrl']}/tag/`)
+    //     //     .pipe(
+    //     //         map(payload => payload.map(tag => new Tag(tag))),
+    //     //     );
+    // }
 
     saveTag(tag: Tag) {
         (tag.id) ? this.updateTag(tag) : this.createTag(tag);

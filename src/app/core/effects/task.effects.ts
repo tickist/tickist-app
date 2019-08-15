@@ -36,7 +36,8 @@ export class TaskEffects {
             switchMap(action => {
                 console.log(action);
                 return this.db.collection('tasks', ref => ref
-                    .where('owner.id', '==', this.authFire.auth.currentUser.uid)
+                    .where('taskProject.shareWithIds', 'array-contains', this.authFire.auth.currentUser.uid)
+                    .where('isActive', '==', true)
                     .where('isDone', '==', false)
                 ).stateChanges();
             }),

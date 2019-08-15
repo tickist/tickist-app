@@ -105,7 +105,8 @@ export class ProjectService {
 
 
     deleteProject(projectId: string) {
-        return this.http.delete(`${environment['apiUrl']}/project/${projectId}/`);
+        return this.db.collection(projectsCollectionName).doc(projectId).update({isActive: true});
+        // return this.http.delete(`${environment['apiUrl']}/project/${projectId}/`);
         // .subscribe(action => {
         //     this.store.dispatch(new projectsAction.DeleteProject(project));
         //     this.snackBar.open('Project has been deleted successfully', '', {
