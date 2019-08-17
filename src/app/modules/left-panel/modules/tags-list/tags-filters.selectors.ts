@@ -3,7 +3,10 @@ import {TagsFiltersState} from './tags-filters.reducers';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectSortByState} from '../../../../core/selectors/sort-by-tasks.selectors';
 import * as _ from 'lodash';
-import {Tag} from '../../../../models/tags';
+import {Tag} from '../../../../models/tags/tags';
+import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
+import {TagWithTaskCounter} from '../../../../models/tags/tag-with-task-counter';
+import {calculateTasksCounterInTags} from '../../../../core/utils/tags-utlis';
 
 
 
@@ -22,14 +25,12 @@ export const selectAllTagsFilters = createSelector(
 export const selectFilteredTagsList = createSelector(
     selectAllTags,
     selectCurrentTagFilter,
-    (tags, filter): Tag[] => {
-        // @TODO add filters 
-        return tags;
-        
-        // if (!filter) return [];
-        // const filteredTags = tags.filter(Function(`return ${filter.value}`)());
-        //
-        // return <Tag[]> _.orderBy(filteredTags, 'name', 'asc');
+    selectAllUndoneTasks,
+    (tags, filter, tasks): TagWithTaskCounter[] => {
+        if (!filter) return [];
+        const filteredTags = calculateTasksCounterInTags(tags, tasks).filter(Function(`return ${filter.value}`)());
+
+        return <TagWithTaskCounter[]> _.orderBy(filteredTags, 'name', 'asc');
 
     }
 );

@@ -33,7 +33,6 @@ export class UserEffects {
 
             }),
             concatMap(actions => {
-                debugger;
                 let updatedUser: User;
                 console.log(actions);
                 actions.forEach((action => {

@@ -15,10 +15,16 @@ import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/routes.names';
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
-import {selectActiveProject, selectActiveProjectsIds} from '../../../../../../core/selectors/projects.selectors';
+import {
+    selectActiveProject,
+    selectActiveProjectsIds,
+    selectActiveProjectWithAllDescendants
+} from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
 import {DeleteProject, RequestDeleteProject} from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
+import {ProjectWithAllDescendants} from '../../../../../../models/projects/project-with-all-descendants';
+
 
 
 class Timer {
@@ -45,8 +51,8 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     @Input() project: Project;
     @Input() isSmallScreen: boolean;
-    selectedProject$: Observable<Project>;
-    selectedProjectsIds$: Observable<Array<Number| string>>;
+    selectedProject$: Observable<ProjectWithAllDescendants>;
+    selectedProjectsIds$: Observable<Array<string>>;
     isActive = false;
     activeCheckboxMode = false;
     isSelected = false;
@@ -70,7 +76,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
             .subscribe(user => {
                 this.user = user;
             });
-        this.selectedProject$ = this.store.select(selectActiveProject);
+        this.selectedProject$ = this.store.select(selectActiveProjectWithAllDescendants);
         this.selectedProject$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(project => {
@@ -182,7 +188,9 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         const elementClickPath = $event.path;
         const mdCheckbox = elementClickPath.find(elem => elem.localName === 'mat-checkbox');
         if (!mdCheckbox) {
-            this.router.navigate(['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]}}]).catch((err => console.log(err)));
+            this.router.navigate(
+                ['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]}}]
+            ).catch((err => console.log(err)));
             if (this.media.isActive('sm') || this.media.isActive('xs')) {
                 this.configurationService.changeOpenStateLeftSidenavVisibility('close');
             }

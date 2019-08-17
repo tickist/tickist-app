@@ -1,5 +1,3 @@
-// @TODO add mandatory fields
-
 interface ITaskProject {
     id: string;
     name: string;

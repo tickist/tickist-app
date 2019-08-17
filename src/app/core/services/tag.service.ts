@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Tag} from '../../models/tags';
+import {Tag} from '../../models/tags/tags';
 import {HttpClient} from '@angular/common/http';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';

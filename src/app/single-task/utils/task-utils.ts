@@ -1,4 +1,4 @@
-import {Tag} from '../../models/tags';
+import {Tag} from '../../models/tags/tags';
 import moment from 'moment';
 import { Task } from '../../models/tasks/tasks';
 import {Step} from '../../models/tasks/steps';

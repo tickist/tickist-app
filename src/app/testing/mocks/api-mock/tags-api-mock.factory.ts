@@ -1,6 +1,6 @@
 import * as faker from 'faker';
 import * as _ from 'lodash';
-import {ITagApi} from '../../../models/tag-api.interface';
+
 
 export class TagsApiMockFactory {
     id = 0;
@@ -13,7 +13,7 @@ export class TagsApiMockFactory {
         return _.range(0, howMuch).map(() => this.createTagDict());
     }
 
-    createTagDict(): ITagApi {
+    createTagDict(): any {
         this.id += 1;
         return {
             'id': this.id,

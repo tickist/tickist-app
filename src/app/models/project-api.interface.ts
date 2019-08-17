@@ -1,5 +1,5 @@
 import {ISimpleUserApi} from './simple-user-api.interface';
-import {ITagApi} from './tag-api.interface';
+
 
 export interface IProjectApi {
     name: string;
@@ -19,7 +19,7 @@ export interface IProjectApi {
     level?: number;
     logo?: string;
     modification_date?: string;
-    tags: ITagApi[];
+    tags: any[];
     is_active: boolean;
     task_view?: string;
     dialog_time_when_task_finished: boolean;

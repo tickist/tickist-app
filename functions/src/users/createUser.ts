@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import {db} from '../init';
 import * as admin from 'firebase-admin';
 import {ShareWithUser} from '@tickist/models/projects/share-with-user';
-import {Tag} from '@tickist/models/tags';
+import {Tag} from '@tickist/models/tags/tags';
 import {Task} from '@tickist/models/tasks/tasks';
 
 

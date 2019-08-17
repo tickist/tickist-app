@@ -14,7 +14,7 @@ import {
 } from '../actions/tags.actions';
 import {AppStore} from '../../store';
 import {allTagsLoaded, selectTagById} from '../selectors/tags.selectors';
-import {Tag} from '../../models/tags';
+import {Tag} from '../../models/tags/tags';
 import {Update} from '@ngrx/entity';
 import {TagService} from '../services/tag.service';
 import {AngularFirestore} from '@angular/fire/firestore';

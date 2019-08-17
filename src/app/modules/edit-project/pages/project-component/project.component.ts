@@ -10,7 +10,7 @@ import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
 import {map, startWith, takeUntil} from 'rxjs/operators';
-import {RequestCreateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
+import {RequestCreateProject, RequestUpdateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
@@ -20,6 +20,7 @@ import {addUserToShareList} from '../../../../core/utils/projects-utils';
 import {convert} from '../../../../core/utils/addClickableLinksToString';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
+import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE} from '../../../../core/config/config-projects';
 
 
 @Component({
@@ -167,10 +168,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
             //     this.updateAncestorProject(project.ancestor);
             // }
             // List share with is added directly
+            debugger;
             if (this.isNewProject()) {
                 this.store.dispatch(new RequestCreateProject({project: project}));
             } else {
-                this.store.dispatch(new UpdateProject({project: {id: project.id, changes: project}}));
+                this.store.dispatch(new RequestUpdateProject({project: {id: project.id, changes: project}}));
             }
 
             this.close();
@@ -210,9 +212,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
             'name': '',
             'description': '',
             'ancestor': this.ancestorProjectId ? this.ancestorProjectId : null,
-            'defaultFinishDate': '',
-            'defaultPriority': this.configurationService.loadConfiguration()['commons']['DEFAULT_PRIORITY_OF_TASK'],
-            'defaultTypeFinishDate': this.configurationService.loadConfiguration()['commons']['DEFAULT_TYPE_FINISH_DATE'],
+            'defaultPriority': DEFAULT_PRIORITY,
+            'defaultTypeFinishDate': DEFAULT_TYPE_FINISH_DATE,
             'defaultTaskView': this.user.defaultTaskView,
             'owner': this.user.id,
             'isActive': true,

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {TagService} from '../../../../../../core/services/tag.service';
-import {Tag} from '../../../../../../models/tags';
+import {Tag} from '../../../../../../models/tags/tags';
 import {Task} from '../../../../../../models/tasks/tasks';
 import {TaskService} from '../../../../../../core/services/task.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';

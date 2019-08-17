@@ -1,4 +1,4 @@
-import {Tag} from '../tags';
+import {Tag} from '../tags/tags';
 import moment from 'moment';
 import {Step} from './steps';
 import {Menu} from '../menu';
@@ -44,8 +44,8 @@ export class Task {
     id: string;
     name: string;
     description = '';
-    richName: string;
-    richDescription: string;
+    richName = '';
+    richDescription = '';
     finishDate: any;
     finishTime: string;
     suspendDate: any;
@@ -82,9 +82,6 @@ export class Task {
             this.steps.map((step) => new Step(step));
         }
         this.tags.map(tag => new Tag(tag));
-        // task.tags.forEach((tag) => {
-        //     this.tags.push(new Tag(tag));
-        // });
         this.menuShowing = new Menu(task.menuShowing);
     }
 

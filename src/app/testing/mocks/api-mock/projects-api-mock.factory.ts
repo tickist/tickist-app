@@ -2,7 +2,6 @@ import * as faker from 'faker';
 import {ISimpleProjectApi} from '../../../models/simple-project-api.inferface';
 import {IProjectApi} from '../../../models/project-api.interface';
 import {ISimpleUserApi} from '../../../models/simple-user-api.interface';
-import {ITagApi} from '../../../models/tag-api.interface';
 import * as _ from 'lodash';
 import {UsersApiMockFactory} from './users-api-mock.factory';
 
@@ -21,7 +20,7 @@ export class ProjectsApiMockFactory {
 
     constructor() {}
 
-    createProjectsDict(shareWith: ISimpleUserApi[], owner: any, tags: ITagApi[], howMuch: number = 17) {
+    createProjectsDict(shareWith: ISimpleUserApi[], owner: any, tags: any[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createProjectDict(
             shareWith,
             UsersApiMockFactory.createSimpleUserFromUser(owner),
@@ -29,7 +28,7 @@ export class ProjectsApiMockFactory {
         );
     }
 
-    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: ITagApi[]): IProjectApi {
+    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: any[]): IProjectApi {
         this.id += 1;
         return {
             ancestor: null,

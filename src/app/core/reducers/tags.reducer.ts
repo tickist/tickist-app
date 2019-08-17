@@ -1,4 +1,4 @@
-import {Tag} from 'app/models/tags';
+import {Tag} from 'app/models/tags/tags';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {TagActions, TagActionTypes} from '../actions/tags.actions';
 

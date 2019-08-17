@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Tag} from '../../../../../../models/tags';
+import {Tag} from '../../../../../../models/tags/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {Filter} from '../../../../../../models/filter';
 import {RequestDeleteTag, RequestUpdateTag} from '../../../../../../core/actions/tags.actions';

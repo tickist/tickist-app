@@ -8,7 +8,7 @@ import {
     selectSearchTasksText
 } from './filters-tasks.selectors';
 import {Task} from '../../models/tasks/tasks';
-import {Tag} from '../../models/tags';
+import {Tag} from '../../models/tags/tags';
 import {orderBy} from 'lodash';
 
 import {selectActiveProjectsIds} from './projects.selectors';

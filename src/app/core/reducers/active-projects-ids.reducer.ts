@@ -1,4 +1,5 @@
 import {ActiveProjectsIdActionTypes, ActiveProjectsIdsActions} from '../actions/projects/active-projects-ids.actions';
+import {debug} from 'util';
 
 
 export interface ActiveProjectsIdsState {
@@ -20,6 +21,7 @@ export function reducer(state = initialState, action: ActiveProjectsIdsActions):
                 projectsIds: [...state.projectsIds, action.payload.projectId]
             };
         case ActiveProjectsIdActionTypes.DeleteActiveProjectId:
+            debugger;
             const index = state.projectsIds.indexOf(action.payload.projectId);
             return {
                 projectsIds: [

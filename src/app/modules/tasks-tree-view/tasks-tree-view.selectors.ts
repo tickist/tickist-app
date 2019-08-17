@@ -7,7 +7,7 @@ export const selectAllTasksTreeView = createSelector(
     selectAllProjects,
     (tasks, projects) => {
         if (tasks.length === 0 || projects.length === 0) return [];
-        const projectsLevel0 = projects.filter(project => project.level === 0);
+        const projectsLevel0 = projects.filter(project => !project.ancestor);
         const tasksTreeView = [];
         projectsLevel0.forEach(project => {
             tasksTreeView.push(createTreeViewNode(project));

@@ -21,6 +21,7 @@ import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names'
 import {UpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {homeRoutesName} from '../../../../routing.module.name';
+import {calculateProjectDescendants} from '../../../../core/utils/projects-utils';
 
 @Component({
     selector: 'tickist-tasks-from-projects',
@@ -74,8 +75,10 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                     if (projectId && projects && projects.length > 0 && user) {
                         const project = projects.find(p => p.id === projectId);
                         if (project && project !== activeProject) {
-                            if (project.hasOwnProperty('allDescendants')) {
-                                this.store.dispatch(new NewActiveProjectsIds({projectsIds: project.allDescendants}));
+                            if (project) {
+                                const allDescendants = calculateProjectDescendants(project, projects);
+                                debugger;
+                                this.store.dispatch(new NewActiveProjectsIds({projectsIds: allDescendants}));
                             }
                             this.store.dispatch(new SetActiveProject({project: project}));
                         }

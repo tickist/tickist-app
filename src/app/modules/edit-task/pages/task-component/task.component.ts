@@ -15,7 +15,7 @@ import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
 import {MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {MatDialog} from '@angular/material/dialog';
 import moment from 'moment';
-import {Tag} from '../../../../models/tags';
+import {Tag} from '../../../../models/tags/tags';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 import {Step} from '../../../../models/tasks/steps';
@@ -32,6 +32,9 @@ import {convert} from '../../../../core/utils/addClickableLinksToString';
 import {ITaskUser, TaskUser} from '../../../../models/tasks/task-user';
 import {TaskProject} from '../../../../models/tasks/task-project';
 import {createUniqueId} from '../../../../core/utils/unique-id';
+import {CHOICES_DEFAULT_FINISH_DATE} from '../../../../core/config/config-projects';
+import {ProjectWithLevel} from '../../../../models/projects/project-with-level';
+import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 
 @Component({
     selector: 'app-task-component',
@@ -45,7 +48,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     task: Task;
     tasks$: Observable<Task[]>;
     stream$: Observable<any>;
-    projects: Project[];
+    projects: ProjectWithLevel[];
     selectedProject: Project;
     menu: Array<any>;
     user: User;
@@ -82,14 +85,14 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.customRepeatOptions = this.configurationService.loadConfiguration()['commons']['CUSTOM_REPEAT_OPTIONS'];
         this.fromRepetingOptions = this.configurationService.loadConfiguration()['commons']['FROM_REPEATING_OPTIONS'];
         this.typeFinishDateOptions = this.configurationService.loadConfiguration()['commons']['TYPE_FINISH_DATE_OPTIONS'];
-        this.defaultFinishDateOptions = this.configurationService.configuration['commons']['CHOICES_DEFAULT_FINISH_DATE'];
+        this.defaultFinishDateOptions = CHOICES_DEFAULT_FINISH_DATE;
         this.typeFinishDateOptions = this.configurationService.configuration['commons']['TYPE_FINISH_DATE_OPTIONS'];
         this.tasks$ = this.store.select(selectAllTasks);
         this.stream$ = combineLatest(
             this.tasks$,
             this.route.params.pipe(map(params => params['taskId'])),
             this.projectService.selectedProject$,
-            this.store.select(selectFilteredProjectsList),
+            this.store.select(selectAllProjectsWithLevelAndTreeStructures),
             this.userService.user$
         );
         this.menu = this.createMenuDict();
@@ -104,7 +107,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     task = tasks.filter(t => t.id === taskId)[0];
                 } else {
                     if (!selectedProject) {
-                        this.selectedProject = projects.filter(project => project.id === user.inboxPk)[0];
+                        this.selectedProject = projects.find(project => project.isInbox);
                     } else {
                         this.selectedProject = selectedProject;
                     }
@@ -323,7 +326,6 @@ export class TaskComponent implements OnInit, OnDestroy {
         let task = new Task(<any>{
             'name': '',
             'priority': selectedProject.defaultPriority,
-            'description': '',
             'typeFinishDate': defaultTypeFinishDate,
             'finishDate': '',
             'finishTime': '',
@@ -334,7 +336,12 @@ export class TaskComponent implements OnInit, OnDestroy {
             'author': new TaskUser(this.user),
             'repeatDelta': 1,
             'fromRepeating': 0,
-            'taskProject': new TaskProject(selectedProject),
+            'taskProject': new TaskProject({
+                id: this.selectedProject.id,
+                name: this.selectedProject.name,
+                color: this.selectedProject.color,
+                shareWithIds: selectedProject.shareWithIds
+            }),
             'estimate_time': 0,
             'taskListPk': selectedProject.id,
             'time': undefined,
@@ -456,8 +463,13 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
             updatedTask.taskProject = new TaskProject(selectedTaskProject);
-            const user = <ShareWithUser> selectedTaskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
-            updatedTask.owner = new TaskUser(<ITaskUser> {id: user.id, avatarUrl: user.avatarUrl, email: user.email, username: user.username});
+            const user = <ShareWithUser>selectedTaskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            updatedTask.owner = new TaskUser(<ITaskUser>{
+                id: user.id,
+                avatarUrl: user.avatarUrl,
+                email: user.email,
+                username: user.username
+            });
 
             if (values['repeat']['repeatDefault'] !== 99) {
                 updatedTask.repeat = values['repeat']['repeatDefault'];
@@ -560,7 +572,11 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     changeProjectInTask(event): void {
-        this.task.taskProject = new TaskProject(this.projects.find((project) => project.id === event.value));
+        this.task = Object.assign(
+            {},
+            this.task,
+            {taskProject: new TaskProject(this.projects.find(project => project.id === event.value))}
+        );
         const extra = <FormGroup>this.taskForm.controls['extra'];
         extra.controls['ownerId'].setValue(this.user.id);
     }

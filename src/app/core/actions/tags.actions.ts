@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
-import {Tag} from '../../models/tags';
+import {Tag} from '../../models/tags/tags';
 
 export enum TagActionTypes {
     QUERY_TAGS = '[TAGS] QUERY TAGS',

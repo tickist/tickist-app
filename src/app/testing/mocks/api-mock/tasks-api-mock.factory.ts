@@ -5,7 +5,7 @@ import {IProjectApi} from '../../../models/project-api.interface';
 import * as _ from 'lodash';
 import moment from 'moment';
 import {Menu} from '../../../models/menu';
-import {Tag} from '../../../models/tags';
+import {Tag} from '../../../models/tags/tags';
 
 export class TasksApiMockFactory {
     id = 0;
