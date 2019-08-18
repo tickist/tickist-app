@@ -3,17 +3,17 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "tickist": {
+        "tickist-web": {
             "root": "",
             "sourceRoot": "src",
             "projectType": "application",
-            "prefix": "tickist",
+            "prefix": "tickist-web",
             "schematics": {},
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/tickist",
+                        "outputPath": "dist/tickist-web",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "tsConfig": "src/tsconfig.app.json",
@@ -98,20 +98,20 @@
                     },
                     "configurations": {
                         "dev": {
-                            "browserTarget": "tickist:build:dev"
+                            "browserTarget": "tickist-web:build:dev"
                         },
                         "production": {
-                            "browserTarget": "tickist:build:production"
+                            "browserTarget": "tickist-web:build:production"
                         },
                         "e2e": {
-                            "browserTarget": "tickist:build:e2e"
+                            "browserTarget": "tickist-web:build:e2e"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "tickist:build"
+                        "browserTarget": "tickist-web:build"
                     }
                 },
                 "test": {
@@ -154,7 +154,7 @@
                 }
             }
         },
-        "tickist-e2e": {
+        "tickist-web-e2e": {
             "root": "e2e/",
             "projectType": "application",
             "architect": {
@@ -162,11 +162,11 @@
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
                         "protractorConfig": "e2e/protractor.conf.js",
-                        "devServerTarget": "tickist:serve:e2e"
+                        "devServerTarget": "tickist-web:serve:e2e"
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "tickist:serve:e2e"
+                            "devServerTarget": "tickist-web:serve:e2e"
                         }
                     }
                 },
@@ -184,7 +184,7 @@
             }
         }
     },
-    "defaultProject": "tickist",
+    "defaultProject": "tickist-web",
     "cli": {
         "defaultCollection": "@ngrx/schematics"
     }

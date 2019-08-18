@@ -2,7 +2,7 @@ import {Tag} from '../../tags/models/tags';
 import moment from 'moment';
 import {Step} from './steps';
 import {Menu} from '../../menu';
-import {convert} from '../../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
+import {convert} from '../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
 import {TaskUser} from './task-user';
 import {TaskProject} from './task-project';
 

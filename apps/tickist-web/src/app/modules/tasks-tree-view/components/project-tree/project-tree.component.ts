@@ -1,5 +1,5 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
-import {Project} from '../../../../../../../../libs/data/src/lib/projects/models';
+import {Project} from '../../../../../../../../libs/data/src/projects/models';
 import {SelectionModel} from '@angular/cdk/collections';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
 import {Router} from '@angular/router';

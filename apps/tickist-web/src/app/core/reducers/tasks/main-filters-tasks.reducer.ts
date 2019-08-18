@@ -1,4 +1,4 @@
-import {Filter} from '../../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 import {MainFiltersTasksActions, MainFiltersTasksActionTypes} from '../../actions/tasks/main-filters-tasks.actions';
 
 

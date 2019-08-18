@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {Filter} from '../../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 
 
 export enum AssignedToFiltersTasksActionTypes {

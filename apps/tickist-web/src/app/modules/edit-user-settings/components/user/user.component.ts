@@ -1,5 +1,5 @@
 import {Component, OnInit, ElementRef, Renderer2, ViewChild, OnDestroy} from '@angular/core';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '../../../../../../../../libs/data/src/users/models';
 import {UserService} from '../../../../core/services/user.service';
 import {FormBuilder, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Location} from '@angular/common';
@@ -13,7 +13,7 @@ import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {RequestUpdateUser} from '../../../../core/actions/user.actions';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
-import {DEFAULT_DAILY_SUMMARY_HOUR, TASKS_ORDER_OPTIONS} from '../../../../../../../../libs/data/src/lib/users/config-user';
+import {DEFAULT_DAILY_SUMMARY_HOUR, TASKS_ORDER_OPTIONS} from '../../../../../../../../libs/data/src/users/config-user';
 
 @Component({
     selector: 'app-user',

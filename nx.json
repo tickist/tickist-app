@@ -8,10 +8,10 @@
     "nx.json": "*"
   },
   "projects": {
-    "tickist-e2e": {
+    "tickist-web-e2e": {
       "tags": []
     },
-    "tickist": {
+    "tickist-web": {
       "tags": []
     },
     "tickist-functions": {

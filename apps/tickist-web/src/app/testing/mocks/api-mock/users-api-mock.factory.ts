@@ -1,7 +1,7 @@
-import {ISimpleUserApi} from '../../../../../../../libs/data/src/lib/simple-user-api.interface';
+import {ISimpleUserApi} from '@tickist/data/simple-user-api.interface';
 import * as _ from 'lodash';
 import * as faker from 'faker';
-import {ISimpleProjectApi} from '../../../../../../../libs/data/src/lib/simple-project-api.inferface';
+import {ISimpleProjectApi} from '@tickist/data/simple-project-api.inferface';
 
 export class UsersApiMockFactory {
     id = 0;

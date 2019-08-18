@@ -1,4 +1,4 @@
-import {Filter} from '../../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 import {AssignedToFiltersTasksActions, AssignedToFiltersTasksActionTypes} from '../../actions/tasks/assigned-to-filters-tasks.actions';
 
 

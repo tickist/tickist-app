@@ -18,7 +18,7 @@
         "deploy:development": "ng build && firebase deploy --project development",
         "deploy:staging": "ng build --configuration staging && firebase deploy --project staging",
         "deploy:production": "ng build --prod && firebase deploy --production",
-        "firebase:serve": "concurrently --kill-others \"npm run build tickist-functions --watch\" \"firebase serve --only functions\"",
+        "firebase:serve": "concurrently --kill-others \"npm run build tickist-functions --watch\" \"firebase serve --only functions,firestore\"",
         "firebase:shell": "concurrently --kill-others \"npm run build tickist-functions --watch\" \"firebase functions:shell\" --raw",
         "deploy:development:functions": "concurrently --kill-others \"npm run build tickist-functions --watch\" \"firebase deploy --project development --only functions\"",
         "affected:apps": "nx affected:apps",
@@ -119,11 +119,5 @@
         "ts-node": "~7.0.0",
         "tslint": "~5.11.0",
         "typescript": "~3.4.5"
-    },
-    "husky": {
-        "hooks": {
-            "post-checkout": "npm run generate-git-version",
-            "post-commit": "npm run generate-git-version"
-        }
     }
 }

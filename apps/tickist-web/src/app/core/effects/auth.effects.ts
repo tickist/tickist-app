@@ -8,7 +8,7 @@ import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {UserService} from '../services/user.service';
 import {AddUser} from '../actions/user.actions';
-import {User} from '../../../../../../libs/data/src/lib/users/models';
+import {User} from '../../../../../../libs/data/src/users/models';
 import {ResetStore} from '../../tickist.actions';
 import LogRocket from 'logrocket';
 import {environment} from '../../../environments/environment';

@@ -3,9 +3,9 @@ import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import {Project} from '../../../../../../libs/data/src/lib/projects/models';
+import {Project} from '../../../../../../libs/data/src/projects/models';
 
-import {SimpleUser} from '../../../../../../libs/data/src/lib/users/models';
+import {SimpleUser} from '../../../../../../libs/data/src/users/models';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';

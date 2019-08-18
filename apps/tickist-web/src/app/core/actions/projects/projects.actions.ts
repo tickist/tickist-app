@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
-import {Project} from '../../../../../../../libs/data/src/lib/projects/models';
+import {Project} from '../../../../../../../libs/data/src/projects/models';
 import {TagActionTypes} from '../tags.actions';
 
 export enum ProjectActionTypes {

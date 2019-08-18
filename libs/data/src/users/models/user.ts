@@ -79,7 +79,5 @@ export class User {
 
     constructor(user: IUser) {
         Object.assign(this, user);
-
-        this.dateJoined = new Date(user.dateJoined);
     }
 }

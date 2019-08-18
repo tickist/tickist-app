@@ -2,8 +2,8 @@ import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Out
 import moment from 'moment';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {FormControl} from '@angular/forms';
-import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
-import {stateActiveDateElement} from '../../../../../../../../libs/data/src/lib/state-active-date-element.enum';
+import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
+import {stateActiveDateElement} from '@tickist/data/state-active-date-element.enum';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';

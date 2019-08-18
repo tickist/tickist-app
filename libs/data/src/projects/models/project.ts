@@ -1,4 +1,4 @@
-import {convert} from '../../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
+import {convert} from '../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
 import {IShareWithUser, ShareWithUser} from './share-with-user';
 import {IPendingUser, ShareWithPendingUser} from './share-with-pending-user';
 import {

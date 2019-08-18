@@ -1,7 +1,7 @@
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
 import {TaskService} from '../../core/services/task.service';
 import { MatDialog } from '@angular/material/dialog';
-import {Step} from '../../../../../../libs/data/src/lib/tasks/models/steps';
+import {Step} from '../../../../../../libs/data/src/tasks/models/steps';
 import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
 import moment from 'moment';

@@ -2,23 +2,23 @@ import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/co
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../../../../core/services/task.service';
 import {TagService} from '../../../../core/services/tag.service';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../../../libs/data/src/tasks/models/tasks';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
-import {Project, ShareWithUser} from '../../../../../../../../libs/data/src/lib/projects/models';
+import {Project, ShareWithUser} from '../../../../../../../../libs/data/src/projects/models';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '../../../../../../../../libs/data/src/users/models';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Location} from '@angular/common';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
 import {MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {MatDialog} from '@angular/material/dialog';
 import moment from 'moment';
-import {Tag} from '../../../../../../../../libs/data/src/lib/tags/models/tags';
+import {Tag} from '../../../../../../../../libs/data/src/tags/models/tags';
 import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
 import {map, startWith, takeUntil} from 'rxjs/operators';
-import {Step} from '../../../../../../../../libs/data/src/lib/tasks/models/steps';
+import {Step} from '../../../../../../../../libs/data/src/tasks/models/steps';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
@@ -29,11 +29,11 @@ import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../singl
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {selectFilteredProjectsList} from '../../../left-panel/modules/projects-list/projects-filters.selectors';
 import {convert} from '../../../../core/utils/addClickableLinksToString';
-import {ITaskUser, TaskUser} from '../../../../../../../../libs/data/src/lib/tasks/models/task-user';
-import {TaskProject} from '../../../../../../../../libs/data/src/lib/tasks/models/task-project';
+import {ITaskUser, TaskUser} from '../../../../../../../../libs/data/src/tasks/models/task-user';
+import {TaskProject} from '../../../../../../../../libs/data/src/tasks/models/task-project';
 import {createUniqueId} from '../../../../core/utils/unique-id';
-import {CHOICES_DEFAULT_FINISH_DATE} from '../../../../../../../../libs/data/src/lib/projects/config-projects';
-import {ProjectWithLevel} from '../../../../../../../../libs/data/src/lib/projects/models/project-with-level';
+import {CHOICES_DEFAULT_FINISH_DATE} from '../../../../../../../../libs/data/src/projects/config-projects';
+import {ProjectWithLevel} from '../../../../../../../../libs/data/src/projects/models/project-with-level';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 
 @Component({

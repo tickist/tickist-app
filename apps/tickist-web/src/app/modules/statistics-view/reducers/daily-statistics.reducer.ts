@@ -1,4 +1,4 @@
-import {DailyStatistics} from '../../../../../../../libs/data/src/lib/statistics';
+import {DailyStatistics} from '@tickist/data/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
 
 

@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, ViewChild} from '@angular/core';
 import {ConfigurationService} from '../../core/services/configuration.service';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
 import moment from 'moment';
 import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';

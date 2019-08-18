@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {Filter} from '../../../../../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 import {AppStore} from '../../../../../../store';
 import {selectAllTagsFilters, selectCurrentTagFilter} from '../../tags-filters.selectors';
 import {Store} from '@ngrx/store';

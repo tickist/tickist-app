@@ -4,11 +4,11 @@ import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {filter, map, takeUntil} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../../../libs/data/src/tasks/models/tasks';
 import * as _ from 'lodash';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
-import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
+import {User} from '../../../../../../../../libs/data/src/users/models';
+import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
+import {Filter} from '@tickist/data/filter';
 import {FutureTasksFiltersService} from '../../future-tasks-filters.service';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {UpdateUser} from '../../../../core/actions/user.actions';
@@ -17,7 +17,7 @@ import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectFutureTasksList} from '../../future-tasks.selectors';
 import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
-import {stateActiveDateElement} from '../../../../../../../../libs/data/src/lib/state-active-date-element.enum';
+import {stateActiveDateElement} from '@tickist/data/state-active-date-element.enum';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 
 @Component({

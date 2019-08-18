@@ -1,4 +1,4 @@
-import {Filter} from '../../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 import {EstimateTimeFiltersTasksActions, EstimateTimeFiltersTasksActionTypes} from '../../actions/tasks/estimate-time-filters-tasks.actions';
 
 

@@ -1,5 +1,5 @@
 import {Component, OnInit, ChangeDetectionStrategy, OnDestroy} from '@angular/core';
-import {Task} from '../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../../libs/data/src/tasks/models/tasks';
 import {FormControl} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, startWith, takeUntil} from 'rxjs/operators';

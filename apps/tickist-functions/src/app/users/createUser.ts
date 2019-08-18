@@ -1,9 +1,7 @@
 import * as functions from 'firebase-functions';
 import {db} from '../init';
 import * as admin from 'firebase-admin';
-import {ShareWithUser} from '../../../../../libs/data/src/lib/projects/models';
-
-
+import {Project, ShareWithUser} from '@data/projects';
 
 
 
@@ -16,7 +14,8 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
             const tagsNamesIds = [];
             const projectRef = db.collection('projects').doc();
             console.log(projectRef.id);
-            transaction.set(projectRef, {id: projectRef.id, ...createInboxProject(snap.data(), userId)});
+            const inbox = createInboxProject(snap.data(), userId);
+            transaction.set(projectRef, JSON.parse(JSON.stringify({id: projectRef.id, ...inbox})));
             defaultTagsName().forEach(tagName => {
                 const tagRef = db.collection('tags').doc();
                 transaction.set(tagRef, {...createTag(tagName, userId)});
@@ -33,10 +32,10 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
 
 
 function createInboxProject(userData, userId) {
-    return {name: 'Inbox', isInbox: true, owner: userId,
+    return new Project({name: 'Inbox', isInbox: true, owner: userId,
         shareWith: [<ShareWithUser> {id: userId, username: userData.username, email: userData.email, avatarUrl: userData.avatarUrl}],
         shareWithIds: [userId]
-    };
+    });
 }
 
 function createTag(tagName, userId) {

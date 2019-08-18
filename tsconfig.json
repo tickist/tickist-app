@@ -17,7 +17,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@tickist/data": ["libs/data/src/index.ts"]
+      "@data": ["libs/data/src/index.ts"],
+      "@data/*": ["libs/data/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

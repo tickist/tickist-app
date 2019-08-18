@@ -1,6 +1,6 @@
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {ProjectActions, ProjectActionTypes} from '../../actions/projects/projects.actions';
-import {Project} from '../../../../../../../libs/data/src/lib/projects/models';
+import {Project} from '../../../../../../../libs/data/src/projects/models';
 import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
 
 export interface ProjectsState extends EntityState<Project> {

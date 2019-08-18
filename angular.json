@@ -1,21 +1,21 @@
 {
     "version": 1,
     "projects": {
-        "tickist": {
+        "tickist-web": {
             "projectType": "application",
             "schematics": {
                 "@nrwl/angular:component": {
                     "style": "scss"
                 }
             },
-            "root": "apps/tickist",
+            "root": "apps/tickist-web",
             "sourceRoot": "apps/tickist-web/src",
-            "prefix": "tickist",
+            "prefix": "tickist-web",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/apps/tickist",
+                        "outputPath": "dist/apps/tickist-web",
                         "index": "apps/tickist-web/src/index.html",
                         "main": "apps/tickist-web/src/main.ts",
                         "polyfills": "apps/tickist-web/src/polyfills.ts",
@@ -85,21 +85,21 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "tickist:build"
+                        "browserTarget": "tickist-web:build"
                     },
                     "configurations": {
                         "dev": {
-                          "browserTarget": "tickist:build:dev"
+                          "browserTarget": "tickist-web:build:dev"
                         },
                         "production": {
-                            "browserTarget": "tickist:build:production"
+                            "browserTarget": "tickist-web:build:production"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "tickist:build"
+                        "browserTarget": "tickist-web:build"
                     }
                 },
                 "lint": {
@@ -125,7 +125,7 @@
                 }
             }
         },
-        "tickist-e2e": {
+        "tickist-web-e2e": {
             "root": "apps/tickist-web-e2e",
             "sourceRoot": "apps/tickist-web-e2e/src",
             "projectType": "application",

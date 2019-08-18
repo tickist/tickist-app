@@ -1,4 +1,4 @@
-import {ChartStatistics} from '../../../../../../../libs/data/src/lib/statistics';
+import {ChartStatistics} from '@tickist/data/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
 
 

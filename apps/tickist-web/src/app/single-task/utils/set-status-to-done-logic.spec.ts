@@ -1,6 +1,6 @@
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
 import {setStatusDoneLogic} from './set-status-to-done-logic';
-import {Step} from '../../../../../../libs/data/src/lib/tasks/models/steps';
+import {Step} from '../../../../../../libs/data/src/tasks/models/steps';
 import moment from 'moment';
 import 'jest';
 

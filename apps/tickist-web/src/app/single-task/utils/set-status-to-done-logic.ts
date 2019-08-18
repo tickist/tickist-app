@@ -1,5 +1,5 @@
 import {isRepeated, setAllStepsToDone, setAllStepsToUndone} from './task-utils';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
 import moment from 'moment';
 import {debug} from 'util';
 

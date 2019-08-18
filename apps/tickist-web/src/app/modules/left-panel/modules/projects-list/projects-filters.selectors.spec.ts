@@ -1,6 +1,6 @@
 import {selectFilteredProjectsList} from './projects-filters.selectors';
-import {Project} from '../../../../../../../../libs/data/src/lib/projects/models';
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
+import {Project} from '../../../../../../../../libs/data/src/projects/models';
+import {Filter} from '@tickist/data/filter';
 
 describe('Projects filters selectors', () => {
     describe('selectFilteredProjectsList', () => {

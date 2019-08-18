@@ -1,7 +1,7 @@
-import {Tag} from '../../../../../../libs/data/src/lib/tags/models/tags';
+import {Tag} from '../../../../../../libs/data/src/tags/models/tags';
 import moment from 'moment';
-import { Task } from '../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {Step} from '../../../../../../libs/data/src/lib/tasks/models/steps';
+import { Task } from '../../../../../../libs/data/src/tasks/models/tasks';
+import {Step} from '../../../../../../libs/data/src/tasks/models/steps';
 
 export function hideAllMenuElements(task: Task): Task {
     return Object.assign({}, task, {

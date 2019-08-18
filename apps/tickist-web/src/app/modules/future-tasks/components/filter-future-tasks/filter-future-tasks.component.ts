@@ -3,7 +3,7 @@ import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 import {selectAllFutureTasksFilters, selectCurrentFutureTasksFilter} from '../../future-tasks.selectors';
 import {SetCurrentFutureTaskFilter} from '../../future-tasks-filters.actions';
 

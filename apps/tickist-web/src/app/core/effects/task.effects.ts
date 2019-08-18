@@ -15,7 +15,7 @@ import {
 import {TaskService} from '../services/task.service';
 import {AppStore} from '../../store';
 import {selectAllTasks} from '../selectors/task.selectors';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {of} from 'rxjs';

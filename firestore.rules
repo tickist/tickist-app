@@ -9,7 +9,8 @@ service cloud.firestore {
      }
 
      match /users/{userId} {
-       allow read, write: if request.auth.uid == resource.data.id;
+        allow create: if isAuthenticated();
+        allow read, write: if request.auth.uid == resource.data.id;
      }
 
      match /tasks/{taskId} {

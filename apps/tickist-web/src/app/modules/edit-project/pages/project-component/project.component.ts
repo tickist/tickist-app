@@ -1,11 +1,11 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Project, ShareWithPendingUser, ShareWithUser} from '../../../../../../../../libs/data/src/lib/projects/models';
+import {Project, ShareWithPendingUser, ShareWithUser} from '../../../../../../../../libs/data/src/projects/models';
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {SimpleUser, User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {SimpleUser, User} from '../../../../../../../../libs/data/src/users/models';
 import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
@@ -20,7 +20,7 @@ import {addUserToShareList} from '../../../../core/utils/projects-utils';
 import {convert} from '../../../../core/utils/addClickableLinksToString';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
-import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE} from '../../../../../../../../libs/data/src/lib/projects/config-projects';
+import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE} from '../../../../../../../../libs/data/src/projects/config-projects';
 
 
 @Component({

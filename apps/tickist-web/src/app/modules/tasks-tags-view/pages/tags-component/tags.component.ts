@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {TagService} from '../../../../core/services/tag.service';
-import {Tag} from '../../../../../../../../libs/data/src/lib/tags/models/tags';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Tag} from '../../../../../../../../libs/data/src/tags/models/tags';
+import {Task} from '../../../../../../../../libs/data/src/tasks/models/tasks';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '../../../../../../../../libs/data/src/users/models';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
 import {AppStore} from '../../../../store';

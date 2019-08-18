@@ -1,4 +1,4 @@
-import {GlobalStatistics} from '../../../../../../../libs/data/src/lib/statistics';
+import {GlobalStatistics} from '@tickist/data/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
 
 

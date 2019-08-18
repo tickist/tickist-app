@@ -1,4 +1,4 @@
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 import {ProjectsFiltersActions, ProjectsFiltersActionTypes} from './projects-filters.actions';
 
 

@@ -7,7 +7,7 @@ import {StoreModule} from '@ngrx/store';
 import {RouterModule} from '@angular/router';
 import {reducers} from '../../store';
 import {APP_BASE_HREF} from '@angular/common';
-import {Project} from '../../../../../../libs/data/src/lib/projects/models';
+import {Project} from '../../../../../../libs/data/src/projects/models';
 import {RouterTestingModule} from '@angular/router/testing';
 
 const project1FromApi = {

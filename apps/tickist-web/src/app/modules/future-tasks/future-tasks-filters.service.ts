@@ -1,6 +1,6 @@
 import {ComponentFactoryResolver, Injectable, ViewContainerRef} from '@angular/core';
-import {SimpleUser, User} from '../../../../../../libs/data/src/lib/users/models';
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
+import {SimpleUser, User} from '../../../../../../libs/data/src/users/models';
+import {Filter} from '@tickist/data/filter';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {icon} from '@fortawesome/fontawesome-svg-core';
 

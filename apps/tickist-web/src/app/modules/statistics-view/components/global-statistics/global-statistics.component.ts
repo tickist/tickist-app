@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {StatisticsService} from '../../../../core/services/statistics.service';
-import {ChartStatistics, GlobalStatistics} from '../../../../../../../../libs/data/src/lib/statistics';
+import {ChartStatistics, GlobalStatistics} from '@tickist/data/statistics';
 import {BaseChartDirective} from 'ng2-charts';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
 import moment from 'moment';

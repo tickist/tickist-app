@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Tag} from '../../../../../../libs/data/src/lib/tags/models/tags';
+import {Tag} from '../../../../../../libs/data/src/tags/models/tags';
 import { MatDialogRef } from '@angular/material/dialog';
 import {TaskService} from '../../core/services/task.service';
 import {TagService} from '../../core/services/tag.service';
@@ -7,7 +7,7 @@ import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {SetCurrentTagsFilters} from '../../core/actions/tasks/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
+import {Filter} from '@tickist/data/filter';
 import {selectCurrentTagsFilter} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
 import {selectAllTags} from '../../core/selectors/tags.selectors';
