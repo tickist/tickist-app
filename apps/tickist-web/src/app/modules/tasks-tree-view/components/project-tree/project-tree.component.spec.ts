@@ -10,7 +10,7 @@ import {MatTreeNodeToggle} from '@angular/material/tree';
 import {TickistSingleTaskModule} from '../../../../single-task/single-task.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {MockDirective} from 'ng-mocks';
-import {Project} from '../../../../models/projects';
+import {Project} from '../../../../../../../../libs/data/src/lib/projects/models';
 import {MatMenuModule} from '@angular/material';
 import {RouterTestingModule} from '@angular/router/testing';
 

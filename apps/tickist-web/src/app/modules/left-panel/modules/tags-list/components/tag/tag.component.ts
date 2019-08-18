@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Tag} from '../../../../../../models/tags/tags';
+import {Tag} from '../../../../../../../../../../libs/data/src/lib/tags/models/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
-import {Filter} from '../../../../../../models/filter';
+import {Filter} from '../../../../../../../../../../libs/data/src/lib/filter';
 import {RequestDeleteTag, RequestUpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../../../store';

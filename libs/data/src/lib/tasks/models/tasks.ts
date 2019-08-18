@@ -1,8 +1,8 @@
-import {Tag} from '../tags/tags';
+import {Tag} from '../../tags/models/tags';
 import moment from 'moment';
 import {Step} from './steps';
-import {Menu} from '../menu';
-import {convert} from '../../core/utils/addClickableLinksToString';
+import {Menu} from '../../menu';
+import {convert} from '../../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
 import {TaskUser} from './task-user';
 import {TaskProject} from './task-project';
 

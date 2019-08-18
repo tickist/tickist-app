@@ -14,7 +14,7 @@ import {
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Observable, Subject} from 'rxjs';
-import {Filter} from '../../models/filter';
+import {Filter} from '../../../../../../libs/data/src/lib/filter';
 import {takeUntil} from 'rxjs/operators';
 
 

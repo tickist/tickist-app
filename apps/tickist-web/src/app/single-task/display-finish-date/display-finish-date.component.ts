@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
-import {Task} from '../../models/tasks/tasks';
+import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
 
 
 @Component({

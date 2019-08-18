@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {SimpleUser} from '../models';
+import {SimpleUser} from '../../../../../../libs/data/src/lib/users/models';
 import {Update} from '@ngrx/entity';
 
 export enum TeamActionTypes {

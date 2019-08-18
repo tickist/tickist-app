@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {Project} from '../../models/projects';
+import {Project} from '../../../../../../libs/data/src/lib/projects/models';
 import {ActiveProjectActions, ActiveProjectActionTypes} from '../actions/projects/active-project.actions';
 
 

@@ -6,12 +6,12 @@ import {ConfigurationService} from '../../../../core/services/configuration.serv
 import {MediaObserver} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {IActiveDateElement} from '../../../../models/active-data-element.interface';
+import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
 import {TaskService} from '../../../../core/services/task.service';
-import {Task} from '../../../../models/tasks/tasks';
+import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
 import {UserService} from '../../../../core/services/user.service';
-import {User} from '../../../../core/models';
-import {stateActiveDateElement} from '../../../../models/state-active-date-element.enum';
+import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {stateActiveDateElement} from '../../../../../../../../libs/data/src/lib/state-active-date-element.enum';
 import {dashboardRoutesName} from '../../../dashboard/routes.names';
 import {futureTasksRoutesName} from '../../../future-tasks/routes.names';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';

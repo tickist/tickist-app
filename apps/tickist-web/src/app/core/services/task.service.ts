@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import {Task} from '../../models/tasks/tasks';
+import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ConfigurationService} from './configuration.service';
 import {TagService} from './tag.service';

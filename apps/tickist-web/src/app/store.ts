@@ -1,6 +1,6 @@
 import {ActionReducerMap, MetaReducer} from '@ngrx/store';
 import {leftSidenavVisibility, addTaskComponentVisibility} from './reducers/configuration';
-import {IActiveDateElement} from './models/active-data-element.interface';
+import {IActiveDateElement} from '../../../../libs/data/src/lib/active-data-element.interface';
 import {environment} from '../environments/environment';
 
 

@@ -1,4 +1,4 @@
-import {GlobalStatistics} from '../../../models/statistics';
+import {GlobalStatistics} from '../../../../../../../libs/data/src/lib/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
 
 

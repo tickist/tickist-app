@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, AfterViewInit} from '@angular/core';
-import {User} from '../../models';
+import {User} from '../../../../../../../libs/data/src/lib/users/models';
 import {ConfigurationService} from '../../services/configuration.service';
 import {environment} from '../../../../environments/environment';
 import {MediaObserver} from '@angular/flex-layout';

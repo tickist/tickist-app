@@ -4,7 +4,7 @@ import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {selectCurrentMainFilter, selectMainFilters} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
-import {Filter} from '../../models/filter';
+import {Filter} from '../../../../../../libs/data/src/lib/filter';
 import {SetCurrentMainFilter} from '../../core/actions/tasks/main-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
 

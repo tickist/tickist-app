@@ -1,5 +1,5 @@
-import {SimpleProject} from '../../models/projects';
-import {ISimpleUserApi} from '../../models/simple-user-api.interface';
+import {SimpleProject} from '../../projects/models';
+import {ISimpleUserApi} from '../../simple-user-api.interface';
 
 export class SimpleUser {
     id: number;

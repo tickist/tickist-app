@@ -17,10 +17,10 @@ import {
 } from '../actions/projects/projects.actions';
 import {allProjectsLoaded, selectProjectById} from '../selectors/projects.selectors';
 import {ProjectService} from '../services/project.service';
-import {Project} from '../../models/projects';
+import {Project} from '../../../../../../libs/data/src/lib/projects/models';
 import {AddTags, DeleteTag, QueryTags, UpdateTag} from '../actions/tags.actions';
 import {AddTasks, TaskActionTypes} from '../actions/tasks/task.actions';
-import {Task} from '../../models/tasks/tasks';
+import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 

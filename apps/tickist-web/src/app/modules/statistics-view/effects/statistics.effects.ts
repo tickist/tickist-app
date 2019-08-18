@@ -12,7 +12,7 @@ import {
 } from '../actions/statistics.actions';
 import {StatisticsService} from '../../../core/services/statistics.service';
 import {concatMap, concatMapTo, map, mergeMap} from 'rxjs/operators';
-import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../../models/statistics';
+import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../../../../../../libs/data/src/lib/statistics';
 import {defer} from 'rxjs';
 import {AddUser, UserActionTypes} from '../../../core/actions/user.actions';
 import {selectLoggedInUser} from '../../../core/selectors/user.selectors';

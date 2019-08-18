@@ -1,6 +1,6 @@
 
 import {SimpleUser} from './simple-user';
-import {ISimpleProjectApi} from '../../models/simple-project-api.inferface';
+import {ISimpleProjectApi} from '../../simple-project-api.inferface';
 import {
     DEFAULT_DAILY_SUMMARY_HOUR,
     DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT,
@@ -8,7 +8,7 @@ import {
     DEFAULT_OVERDUE_TASKS_SORT_BY,
     DEFAULT_PROJECTS_FILTER_ID,
     DEFAULT_TAGS_FILTER_ID, DEFAULT_TASKS_ORDER_OPTIONS
-} from '../config/config-user';
+} from '../config-user';
 
 export interface IUser {
     id: string;

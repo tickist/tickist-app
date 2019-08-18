@@ -3,14 +3,14 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ActiveProjectActionTypes, SetActiveProject} from '../actions/projects/active-project.actions';
 import {concatMap, withLatestFrom} from 'rxjs/operators';
 import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
-import {Filter} from '../../models/filter';
+import {Filter} from '../../../../../../libs/data/src/lib/filter';
 import {selectTeam} from '../selectors/team.selectors';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
-import {ShareWithUser} from '../../models/projects/share-with-user';
-import {ShareWithPendingUser} from '../../models/projects/share-with-pending-user';
+import {ShareWithUser} from '../../../../../../libs/data/src/lib/projects/models/share-with-user';
+import {ShareWithPendingUser} from '../../../../../../libs/data/src/lib/projects/models/share-with-pending-user';
 
 @Injectable()
 export class ActiveProjectEffects {

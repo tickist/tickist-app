@@ -1,6 +1,6 @@
 import {selectAllTasksTreeView} from './tasks-tree-view.selectors';
-import {Project, SimpleProject} from '../../models/projects';
-import {Task} from '../../models/tasks/tasks';
+import {Project, SimpleProject} from '../../../../../../libs/data/src/lib/projects/models';
+import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
 
 
 describe('Tasks tree view filters selectors', () => {

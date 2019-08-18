@@ -1,4 +1,4 @@
-import {DailyStatistics} from '../../../models/statistics';
+import {DailyStatistics} from '../../../../../../../libs/data/src/lib/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
 
 

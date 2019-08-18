@@ -6,7 +6,7 @@ import {Observable, Subject} from 'rxjs';
 import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';
 import {selectAllProjectsFilters, selectCurrentProjectFilter} from '../../projects-filters.selectors';
-import {Filter} from '../../../../../../models/filter';
+import {Filter} from '../../../../../../../../../../libs/data/src/lib/filter';
 import {SetCurrentProjectFilter} from '../../projects-filters.actions';
 
 

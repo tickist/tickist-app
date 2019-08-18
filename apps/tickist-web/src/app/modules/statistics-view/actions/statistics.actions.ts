@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../../models/statistics';
+import {ChartStatistics, DailyStatistics, GlobalStatistics} from '../../../../../../../libs/data/src/lib/statistics';
 
 export enum StatisticsActionTypes {
     LoadGlobalStatistics = '[Statistics] Load Global Statistics',

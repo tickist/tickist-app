@@ -1,5 +1,5 @@
-import {Task} from './tasks/tasks';
-import {Project} from './projects';
+import {Task} from './tasks/models/tasks';
+import {Project} from './projects/models';
 
 export class Filter {
     id: number;

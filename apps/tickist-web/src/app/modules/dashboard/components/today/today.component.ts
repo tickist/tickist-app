@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {Task} from '../../../../models/tasks/tasks';
-import {User} from '../../../../core/models';
-import {IActiveDateElement} from '../../../../models/active-data-element.interface';
+import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Store} from '@ngrx/store';

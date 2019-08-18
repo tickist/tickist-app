@@ -3,7 +3,7 @@ import {
     ViewChild
 } from '@angular/core';
 import {MediaObserver} from '@angular/flex-layout';
-import {Step} from '../../models/tasks/steps';
+import {Step} from '../../../../../../libs/data/src/lib/tasks/models/steps';
 
 
 

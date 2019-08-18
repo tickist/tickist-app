@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { Task } from '../../models/tasks/tasks';
+import { Task } from '../../../../../../libs/data/src/lib/tasks/models/tasks';
 
 
 @Component({

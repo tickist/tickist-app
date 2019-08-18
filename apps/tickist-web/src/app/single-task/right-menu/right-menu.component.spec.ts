@@ -6,16 +6,16 @@ import {MockComponent} from 'ng-mocks';
 import {BlankComponent, RootComponent} from '../../testing/test.modules';
 import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
-import {Task} from '../../models/tasks/tasks';
+import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
 import {PinButtonComponent} from '../pin-button/pin-button.component';
 import {MenuButtonComponent} from '../../shared/components/menu-button/menu-button.component';
 import {PriorityComponent} from '../../shared/components/priority/priority.component';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
-import {User} from '../../core/models';
-import {Project} from '../../models/projects';
-import {IProjectApi} from '../../models/project-api.interface';
+import {User} from '../../../../../../libs/data/src/lib/users/models';
+import {Project} from '../../../../../../libs/data/src/lib/projects/models';
+import {IProjectApi} from '../../../../../../libs/data/src/lib/project-api.interface';
 import {RouterTestingModule} from '@angular/router/testing';
 
 

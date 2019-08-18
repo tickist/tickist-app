@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {Filter} from '../../../../models/filter';
+import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
 
 
 

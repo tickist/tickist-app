@@ -1,7 +1,7 @@
 import * as faker from 'faker';
-import {ISimpleProjectApi} from '../../../models/simple-project-api.inferface';
-import {IProjectApi} from '../../../models/project-api.interface';
-import {ISimpleUserApi} from '../../../models/simple-user-api.interface';
+import {ISimpleProjectApi} from '../../../../../../../libs/data/src/lib/simple-project-api.inferface';
+import {IProjectApi} from '../../../../../../../libs/data/src/lib/project-api.interface';
+import {ISimpleUserApi} from '../../../../../../../libs/data/src/lib/simple-user-api.interface';
 import * as _ from 'lodash';
 import {UsersApiMockFactory} from './users-api-mock.factory';
 

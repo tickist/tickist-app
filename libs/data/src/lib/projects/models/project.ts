@@ -1,4 +1,4 @@
-import {convert} from '../../core/utils/addClickableLinksToString';
+import {convert} from '../../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
 import {IShareWithUser, ShareWithUser} from './share-with-user';
 import {IPendingUser, ShareWithPendingUser} from './share-with-pending-user';
 import {
@@ -7,7 +7,7 @@ import {
     DEFAULT_PRIORITY,
     DEFAULT_TASK_VIEW,
     DEFAULT_TYPE_FINISH_DATE
-} from '../../core/config/config-projects';
+} from '../config-projects';
 import construct = Reflect.construct;
 
 interface IProject {

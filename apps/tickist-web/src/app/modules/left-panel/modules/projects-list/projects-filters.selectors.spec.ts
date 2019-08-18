@@ -1,6 +1,6 @@
 import {selectFilteredProjectsList} from './projects-filters.selectors';
-import {Project} from '../../../../models/projects';
-import {Filter} from '../../../../models/filter';
+import {Project} from '../../../../../../../../libs/data/src/lib/projects/models';
+import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
 
 describe('Projects filters selectors', () => {
     describe('selectFilteredProjectsList', () => {

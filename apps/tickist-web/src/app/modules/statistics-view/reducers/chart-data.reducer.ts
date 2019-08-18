@@ -1,4 +1,4 @@
-import {ChartStatistics} from '../../../models/statistics';
+import {ChartStatistics} from '../../../../../../../libs/data/src/lib/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
 
 

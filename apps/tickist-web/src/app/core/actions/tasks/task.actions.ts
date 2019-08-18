@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {Task} from '../../../models/tasks/tasks';
+import {Task} from '../../../../../../../libs/data/src/lib/tasks/models/tasks';
 import {Update} from '@ngrx/entity';
 import {CLOSE_MENU_IN_TASKS} from '../../../reducers/actions/tasks';
 import {TagActionTypes} from '../tags.actions';

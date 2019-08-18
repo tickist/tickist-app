@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {User as FirebaseUser} from 'firebase';
-import {User, UserLogin} from '../models';
+import {User, UserLogin} from '../../../../../../libs/data/src/lib/users/models';
 import {HttpClient} from '@angular/common/http';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';

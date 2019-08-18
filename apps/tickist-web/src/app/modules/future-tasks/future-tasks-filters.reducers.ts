@@ -1,4 +1,4 @@
-import {Filter} from '../../models/filter';
+import {Filter} from '../../../../../../libs/data/src/lib/filter';
 import {FutureTasksFiltersActions, FutureTasksFiltersActionTypes} from './future-tasks-filters.actions';
 
 

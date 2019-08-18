@@ -1,4 +1,4 @@
-import {User} from '../models';
+import {User} from '../../../../../../libs/data/src/lib/users/models';
 import {UserActions, UserActionTypes} from '../actions/user.actions';
 import {TickistActions, TickistActionTypes} from '../../tickist.actions';
 

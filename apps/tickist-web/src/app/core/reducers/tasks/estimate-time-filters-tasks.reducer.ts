@@ -1,4 +1,4 @@
-import {Filter} from '../../../models/filter';
+import {Filter} from '../../../../../../../libs/data/src/lib/filter';
 import {EstimateTimeFiltersTasksActions, EstimateTimeFiltersTasksActionTypes} from '../../actions/tasks/estimate-time-filters-tasks.actions';
 
 

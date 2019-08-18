@@ -3,12 +3,12 @@ import {StatisticsService} from '../../../../core/services/statistics.service';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {Observable, Subject, Subscription} from 'rxjs';
 import * as _ from 'lodash';
-import {IActiveDateElement} from '../../../../models/active-data-element.interface';
+import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
 import {Chart} from '../../models';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectDailyStatistics} from '../../statistics.selectors';
-import {DailyStatistics} from '../../../../models/statistics';
+import {DailyStatistics} from '../../../../../../../../libs/data/src/lib/statistics';
 import {takeUntil} from 'rxjs/operators';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 

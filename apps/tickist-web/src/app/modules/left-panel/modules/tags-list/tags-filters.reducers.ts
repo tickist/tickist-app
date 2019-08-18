@@ -1,4 +1,4 @@
-import {Filter} from '../../../../models/filter';
+import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
 import {TagsFiltersActions, TagsFiltersActionTypes} from './tags-filters.actions';
 
 

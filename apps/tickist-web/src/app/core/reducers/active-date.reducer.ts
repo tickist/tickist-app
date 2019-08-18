@@ -1,5 +1,5 @@
 import {ActiveDateActions, ActiveDateActionTypes} from '../actions/active-date.actions';
-import {stateActiveDateElement} from '../../models/state-active-date-element.enum';
+import {stateActiveDateElement} from '../../../../../../libs/data/src/lib/state-active-date-element.enum';
 import moment from 'moment';
 
 

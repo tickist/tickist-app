@@ -1,12 +1,12 @@
-import {Project, ShareWithUser, SimpleProject} from '../../models/projects';
-import {ISimpleProjectApi} from '../../models/simple-project-api.inferface';
-import {ISimpleUserApi} from '../../models/simple-user-api.interface';
-import {IPendingUser} from '../../models/pending-user-api.interface';
+import {Project, ShareWithUser, SimpleProject} from '../../../../../../libs/data/src/lib/projects/models';
+import {ISimpleProjectApi} from '../../../../../../libs/data/src/lib/simple-project-api.inferface';
+import {ISimpleUserApi} from '../../../../../../libs/data/src/lib/simple-user-api.interface';
+import {IPendingUser} from '../../../../../../libs/data/src/lib/pending-user-api.interface';
 import {toSnakeCase} from './toSnakeCase';
-import {ShareWithPendingUser} from '../../models/projects/share-with-pending-user';
+import {ShareWithPendingUser} from '../../../../../../libs/data/src/lib/projects/models/share-with-pending-user';
 import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
 import * as _ from 'lodash';
-import {ProjectWithLevel} from '../../models/projects/project-with-level';
+import {ProjectWithLevel} from '../../../../../../libs/data/src/lib/projects/models/project-with-level';
 
 export function addUserToShareList(project: (SimpleProject | Project), user) {
     const shareWith = [...project.shareWith];
