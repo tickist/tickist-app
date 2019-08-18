@@ -9,6 +9,11 @@
     }
   },
   "projects": {
-    "default": "proven-reality-657"
+    "default": "proven-reality-657",
+    "testing": "tickist-testing",
+    "development": "proven-reality-657",
+    "production": "tickist-production"
+
   }
 }
+

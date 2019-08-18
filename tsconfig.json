@@ -1,27 +1,24 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "module": "esnext",
-        "baseUrl": "./",
-        "outDir": "./dist/out-tsc",
-        "sourceMap": true,
-        "importHelpers": true,
-        "declaration": false,
-        "downlevelIteration": true,
-        "moduleResolution": "node",
-        "emitDecoratorMetadata": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "experimentalDecorators": true,
-        "target": "es2015",
-//        "noImplicitAny": true,
-//        "suppressImplicitAnyIndexErrors": true,
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "lib": [
-            "es2018",
-            "dom"
-        ]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@tickist/data": ["libs/data/src/index.ts"]
     }
+  },
+  "exclude": ["node_modules", "tmp"]
 }
