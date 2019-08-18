@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
-import {User} from '../../../../../../libs/data/src/lib/users/models';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {User} from '@data/users/models';
+
 
 export enum UserActionTypes {
     AddUser = '[User] Add Users',

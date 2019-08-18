@@ -1,18 +1,13 @@
-import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {select, Store} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
-import {User} from '../../../../../../libs/data/src/lib/users/models';
+import {User} from '@data/users/models';
 import * as _ from 'lodash';
-import {ConfigurationService} from './configuration.service';
 import * as tasksAction from '../../reducers/actions/tasks';
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
-import {HttpClient} from '@angular/common/http';
-import {take} from 'rxjs/operators';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {Tag} from '../../../../../../libs/data/src/lib/tags/models/tags';
-import {AddUser} from '../actions/user.actions';
+import {Task} from '@data/tasks/models/tasks';
+import {Tag} from '@data/tags/models/tags';
 import {SortBy} from '../../tasks/models/sortBy';
+import {Filter} from '@data/filter';
 
 
 @Injectable()
@@ -57,7 +52,7 @@ export class TasksFiltersService {
         return tasks;
     }
 
-    constructor(public http: HttpClient, private store: Store<AppStore>) {
+    constructor(private store: Store<AppStore>) {
     }
 
     static getDefaultEstimateTimeFilters() {

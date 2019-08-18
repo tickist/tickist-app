@@ -1,19 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {Tag} from '../../../../../../libs/data/src/lib/tags/models/tags';
+import {Tag} from '@data/tags/models/tags';
 import { MatDialogRef } from '@angular/material/dialog';
-import {TaskService} from '../../core/services/task.service';
 import {TagService} from '../../core/services/tag.service';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {SetCurrentTagsFilters} from '../../core/actions/tasks/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
 import {selectCurrentTagsFilter} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
 import {selectAllTags} from '../../core/selectors/tags.selectors';
+import {Filter} from '@data/filter';
 
 @Component({
-    selector: 'tags-filter-dialog',
+    selector: 'tickist-tags-filter-dialog',
     templateUrl: './tags-filter-dialog.html'
 })
 export class TagsFilterDialogComponent implements OnInit {

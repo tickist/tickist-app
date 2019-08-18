@@ -3,9 +3,10 @@ import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
-import {selectAllFutureTasksFilters, selectCurrentFutureTasksFilter} from '../../future-tasks.selectors';
-import {SetCurrentFutureTaskFilter} from '../../future-tasks-filters.actions';
+import {selectAllFutureTasksFilters, selectCurrentFutureTasksFilter} from '../../core/selectors/future-tasks.selectors';
+import {SetCurrentFutureTaskFilter} from '../../core/actions/future-tasks-filters.actions';
+import {Filter} from '@data/filter';
+
 
 @Component({
     selector: 'tickist-filter-future-tasks',

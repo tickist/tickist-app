@@ -1,4 +1,4 @@
-import {TagWithTaskCounter} from '../../../../../../libs/data/src/lib/tags/models/tag-with-task-counter';
+import {TagWithTaskCounter} from '@data/tags/models/tag-with-task-counter';
 
 
 export function calculateTasksCounterInTags(tags, tasks): TagWithTaskCounter[] {
@@ -10,9 +10,7 @@ export function calculateTasksCounterInTags(tags, tasks): TagWithTaskCounter[] {
             return tagIds.includes(tag.id);
         }).length;
         return new TagWithTaskCounter({
-            name: tag.name,
-            id: tag.id,
-            author: tag.author,
+            ...tag,
             tasksCounter: tasksCounter,
         });
     });

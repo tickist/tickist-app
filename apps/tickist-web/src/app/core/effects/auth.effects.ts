@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import { Location } from '@angular/common';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {AuthActionTypes, FetchedLoginUser, Login, Logout} from '../actions/auth.actions';
 import {map, mapTo, switchMap, tap} from 'rxjs/operators';
@@ -8,12 +9,14 @@ import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {UserService} from '../services/user.service';
 import {AddUser} from '../actions/user.actions';
-import {User} from '../../../../../../libs/data/src/lib/users/models';
 import {ResetStore} from '../../tickist.actions';
 import LogRocket from 'logrocket';
 import {environment} from '../../../environments/environment';
 import {AuthService} from '../services/auth.service';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {signupRoutesName} from '../../modules/signup/routes-names';
+import {TasksFiltersService} from '../services/tasks-filters.service';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 
 @Injectable()
@@ -32,6 +35,7 @@ export class AuthEffects {
         .pipe(
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
             switchMap(action => {
+                console.log(this.authFire.auth.currentUser)
                 console.log(action);
                 return this.db.collection('users').doc(action.payload.uid).get();
             }),
@@ -55,7 +59,12 @@ export class AuthEffects {
             return of(this.authService.logout());
         }),
         tap(() => {
-            this.router.navigateByUrl('/login');
+            if (this.location.path().includes(signupRoutesName.SIGNUP)) {
+                this.router.navigateByUrl(`/${signupRoutesName.SIGNUP}`);
+            } else {
+                this.router.navigateByUrl('/login');
+            }
+
         }),
         mapTo(new ResetStore())
     );
@@ -84,7 +93,8 @@ export class AuthEffects {
         );
     });
 
-    constructor(private actions$: Actions, private router: Router, private authService: AuthService,
-                private store: Store<AppStore>, private userService: UserService, private db: AngularFirestore) {
+    constructor(private actions$: Actions, private router: Router, private authService: AuthService, private location: Location,
+                private store: Store<AppStore>, private userService: UserService, private db: AngularFirestore,
+                private authFire: AngularFireAuth) {
     }
 }

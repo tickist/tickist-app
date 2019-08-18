@@ -1,5 +1,6 @@
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
+
 import {TagsFiltersActions, TagsFiltersActionTypes} from './tags-filters.actions';
+import {Filter} from '@data/filter';
 
 
 

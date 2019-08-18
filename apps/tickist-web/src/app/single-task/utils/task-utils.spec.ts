@@ -1,6 +1,6 @@
 import moment from 'moment';
 import {isOverdue} from './task-utils';
-import { Task } from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import { Task } from '@data/tasks/models/tasks';
 
 describe('#isOverdue', () => {
     it('should return true because task is overdue', () => {

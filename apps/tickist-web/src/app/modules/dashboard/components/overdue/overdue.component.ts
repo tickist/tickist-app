@@ -1,8 +1,8 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '@data/users/models';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {UpdateUser} from '../../../../core/actions/user.actions';

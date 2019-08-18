@@ -1,6 +1,6 @@
 import {SpyObject} from '../test.helpers';
 import {of} from 'rxjs';
-import {FutureTasksFiltersService} from '../../modules/future-tasks/future-tasks-filters.service';
+import {FutureTasksFiltersService} from '../../modules/future-tasks/core/services/future-tasks-filters.service';
 
 
 export class MockFutureTasksFiltersService extends SpyObject {

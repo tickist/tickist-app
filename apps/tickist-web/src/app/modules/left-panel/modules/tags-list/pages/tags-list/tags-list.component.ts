@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {TagService} from '../../../../../../core/services/tag.service';
-import {Tag} from '../../../../../../../../../../libs/data/src/lib/tags/models/tags';
-import {Task} from '../../../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Tag} from '@data/tags/models/tags';
+import {Task} from '@data/tasks/models/tasks';
 import {TaskService} from '../../../../../../core/services/task.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../../../../core/services/user.service';
-import {User} from '../../../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '@data/users/models';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
 import {FilterTagsDialogComponent} from '../../components/filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material/dialog';

@@ -1,13 +1,13 @@
-import {Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, AfterViewInit} from '@angular/core';
-import {User} from '../../../../../../../libs/data/src/lib/users/models';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {User} from '@data/users/models';
 import {ConfigurationService} from '../../services/configuration.service';
-import {environment} from '../../../../environments/environment';
+import {environment} from '@env/environment';
 import {MediaObserver} from '@angular/flex-layout';
 import {NavigationEnd, Router} from '@angular/router';
 import {ProjectService} from '../../services/project.service';
-import {Subject, pipe, Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
-import {select, Store} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../selectors/user.selectors';
 import {AppStore} from '../../../store';
 import {SetActiveProject} from '../../actions/projects/active-project.actions';

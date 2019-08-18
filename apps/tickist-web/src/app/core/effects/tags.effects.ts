@@ -1,20 +1,19 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {concatMap, filter, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
-import {select, Store} from '@ngrx/store';
+import {concatMap, mergeMap, switchMap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
 import {
     AddTags,
-    CreateTag,
     DeleteTag,
     QueryTags,
-    RequestCreateTag, RequestDeleteTag,
-    RequestsAllTags, RequestUpdateTag,
+    RequestCreateTag,
+    RequestDeleteTag,
+    RequestUpdateTag,
     TagActionTypes,
     UpdateTag
 } from '../actions/tags.actions';
 import {AppStore} from '../../store';
-import {allTagsLoaded, selectTagById} from '../selectors/tags.selectors';
-import {Tag} from '../../../../../../libs/data/src/lib/tags/models/tags';
+import {Tag} from '@data/tags/models/tags';
 import {Update} from '@ngrx/entity';
 import {TagService} from '../services/tag.service';
 import {AngularFirestore} from '@angular/fire/firestore';

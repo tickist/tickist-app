@@ -1,12 +1,7 @@
-import {Project, ShareWithUser, SimpleProject} from '../../../../../../libs/data/src/lib/projects/models';
-import {ISimpleProjectApi} from '../../../../../../libs/data/src/lib/simple-project-api.inferface';
-import {ISimpleUserApi} from '../../../../../../libs/data/src/lib/simple-user-api.interface';
-import {IPendingUser} from '../../../../../../libs/data/src/lib/pending-user-api.interface';
-import {toSnakeCase} from './toSnakeCase';
-import {ShareWithPendingUser} from '../../../../../../libs/data/src/lib/projects/models/share-with-pending-user';
+import {Project, ProjectWithLevel, ShareWithPendingUser, ShareWithUser, SimpleProject} from '@data/projects';
 import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
 import * as _ from 'lodash';
-import {ProjectWithLevel} from '../../../../../../libs/data/src/lib/projects/models/project-with-level';
+
 
 export function addUserToShareList(project: (SimpleProject | Project), user) {
     const shareWith = [...project.shareWith];
@@ -17,17 +12,6 @@ export function addUserToShareList(project: (SimpleProject | Project), user) {
         shareWith.push(new ShareWithPendingUser(user));
     }
     return Object.assign({}, project, {shareWith: shareWith});
-}
-
-export function convertToSimpleProject(project: Project): SimpleProject {
-    const simpleProjectApi: ISimpleProjectApi = {
-        id: project.id,
-        name: project.name,
-        color: project.color,
-        dialog_time_when_task_finished: project.dialogTimeWhenTaskFinished,
-        share_with: <(ISimpleUserApi | IPendingUser)[]>project.shareWith.map(user => toSnakeCase(user))
-    };
-    return new SimpleProject(simpleProjectApi);
 }
 
 

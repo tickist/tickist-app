@@ -1,5 +1,5 @@
-import {ChartStatistics} from '../../../../../../../libs/data/src/lib/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
+import {ChartStatistics} from '@data/statistics';
 
 
 export interface ChartStatisticsState {

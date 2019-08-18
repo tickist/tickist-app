@@ -1,5 +1,6 @@
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
+
 import {Action} from '@ngrx/store';
+import {Filter} from '@data/filter';
 
 
 export const CLOSE_MENU_IN_TASKS = 'CLOSE_MENU_IN_TASKS';

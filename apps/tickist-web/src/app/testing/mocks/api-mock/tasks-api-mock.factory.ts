@@ -1,11 +1,9 @@
 import {UsersApiMockFactory} from './users-api-mock.factory';
 import {ProjectsApiMockFactory} from './projects-api-mock.factory';
 import * as faker from 'faker';
-import {IProjectApi} from '../../../../../../../libs/data/src/lib/project-api.interface';
 import * as _ from 'lodash';
-import moment from 'moment';
-import {Menu} from '../../../../../../../libs/data/src/lib/menu';
-import {Tag} from '../../../../../../../libs/data/src/lib/tags/models/tags';
+import {Tag} from '@data/tags/models/tags';
+import {Menu} from '@data/menu';
 
 export class TasksApiMockFactory {
     id = 0;
@@ -21,13 +19,13 @@ export class TasksApiMockFactory {
 
     }
 
-    createTasksDict(owner: any, author: any, project: IProjectApi, tags: Tag[], howMuch: number = 17) {
+    createTasksDict(owner: any, author: any, project: any, tags: Tag[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createTaskDict(owner, author, project, tags));
     }
 
 
 
-    createTaskDict(owner: any, author: any, project: IProjectApi, tags: Tag[]): any {
+    createTaskDict(owner: any, author: any, project: any, tags: Tag[]): any {
         this.id += 1;
 
         return {

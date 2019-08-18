@@ -1,14 +1,13 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, ViewChild} from '@angular/core';
 import {ConfigurationService} from '../../core/services/configuration.service';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
-import moment from 'moment';
+import {Task} from '@data/tasks/models/tasks';
 import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 
 
 @Component({
-    selector: 'app-date-options',
+    selector: 'tickist-date-options',
     templateUrl: './date-options.html',
     styleUrls: ['./date-options.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -34,15 +33,13 @@ export class DateOptionsComponent implements OnInit {
             throw new Error(`Attribute 'task' is required`);
         }
         this.typeFinishDateOptions = this.configurationService.loadConfiguration()['commons']['TYPE_FINISH_DATE_OPTIONS'];
-        debugger
-        this.finishDate = this.task.finishDate.toDate();
+        this.finishDate = this.task.finishDate;
         this.finishTime = this.task.finishTime;
         this.typeFinishDate = this.task.typeFinishDate;
         this.createFinishDateFilter();
     }
 
     saveTask($event: any, source: string) {
-        debugger;
         if (this.finishDateInputViewChild.valid) {
             if (source === 'typeFinishDate') {
                 this.task.typeFinishDate = $event.value;
@@ -55,7 +52,7 @@ export class DateOptionsComponent implements OnInit {
                 task: {
                     id: this.task.id,
                     changes: Object.assign({}, this.task, {
-                        finishDate: this.finishDate ? moment(this.finishDate) : '',
+                        finishDate: this.finishDate ? this.finishDate : '',
                         finishTime: this.finishTime,
                         typeFinishDate: $event.value ? $event.value : this.task.typeFinishDate
                     })

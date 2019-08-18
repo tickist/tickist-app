@@ -2,14 +2,13 @@ import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 import {TaskService} from '../../../../../../core/services/task.service';
-import {Project} from '../../../../../../../../../../libs/data/src/lib/projects/models';
+import {Project} from '@data/projects';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
-import {User} from '../../../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '@data/users/models';
 import {UserService} from '../../../../../../core/services/user.service';
 import {MediaObserver} from '@angular/flex-layout';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterProjectDialogComponent} from '../../components/filter-projects-dialog/filter-projects.dialog.component';
-import {Filter} from '../../../../../../../../../../libs/data/src/lib/filter';
 import {ProjectsFiltersService} from '../../projects-filters.service';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../../../store';
@@ -17,6 +16,7 @@ import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/ro
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
 import {selectFilteredProjectsList} from '../../projects-filters.selectors';
 import {homeRoutesName} from '../../../../../../routing.module.name';
+import {Filter} from '@data/filter';
 
 
 @Component({

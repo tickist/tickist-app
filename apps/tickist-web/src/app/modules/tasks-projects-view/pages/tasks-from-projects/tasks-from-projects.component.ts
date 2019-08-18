@@ -4,9 +4,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../../../core/services/user.service';
 import {ProjectService} from '../../../../core/services/project.service';
 import {Observable, Subject, combineLatest} from 'rxjs';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {Project} from '../../../../../../../../libs/data/src/lib/projects/models';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {Task} from '@data/tasks/models/tasks';
+import {Project} from '@data/projects';
+import {User} from '@data/users/models';
 import {map, takeUntil} from 'rxjs/operators';
 import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
@@ -77,7 +77,6 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                         if (project && project !== activeProject) {
                             if (project) {
                                 const allDescendants = calculateProjectDescendants(project, projects);
-                                debugger;
                                 this.store.dispatch(new NewActiveProjectsIds({projectsIds: allDescendants}));
                             }
                             this.store.dispatch(new SetActiveProject({project: project}));
@@ -127,7 +126,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.cd.detach();
     }
 
-    navigateToEditProjectView(projectId: number) {
+    navigateToEditProjectView(projectId: string) {
         this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
     }
 

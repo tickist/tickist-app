@@ -1,14 +1,13 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import moment from 'moment';
-import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {FormControl} from '@angular/forms';
-import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
-import {stateActiveDateElement} from '../../../../../../../../libs/data/src/lib/state-active-date-element.enum';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
+import {IActiveDateElement} from '@data/active-data-element.interface';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
+import {differenceInDays, format, isDate} from 'date-fns';
 
 @Component({
     selector: 'tickist-choose-day',
@@ -32,14 +31,14 @@ export class ChooseDayComponent implements OnInit, OnDestroy {
             if (activeDateElement.state === stateActiveDateElement.future) {
                 this.selectedDateFormControl.setValue('');
             } else if (activeDateElement.state === stateActiveDateElement.weekdays) {
-                const today = moment();
-                const diffAbsTodaySelectedDate = Math.abs(today.diff(moment(this.selectedDateFormControl.value), 'days'));
+                const today = new Date();
+                const diffAbsTodaySelectedDate = differenceInDays(today, this.selectedDateFormControl.value);
                 if (diffAbsTodaySelectedDate < 7) {
                     this.selectedDateFormControl.setValue('');
                 }
-                const diffAbsTodayActiveDay = Math.abs(today.diff(moment(activeDateElement.date), 'days'));
-                if (diffAbsTodayActiveDay > 7 && moment.isMoment(activeDateElement.date)) {
-                    this.selectedDateFormControl.setValue(activeDateElement.date.toDate());
+                const diffAbsTodayActiveDay = differenceInDays(today, activeDateElement.date);
+                if (diffAbsTodayActiveDay > 7 && isDate(activeDateElement.date)) {
+                    this.selectedDateFormControl.setValue(activeDateElement.date);
                 }
             }
         });
@@ -53,7 +52,7 @@ export class ChooseDayComponent implements OnInit, OnDestroy {
 
     emitOnSelectedDate() {
         if (this.selectedDateFormControl.value) {
-            this.selectedDate.emit(moment(this.selectedDateFormControl.value).format('DD-MM-YYYY'));
+            this.selectedDate.emit(format(this.selectedDateFormControl.value, 'dd-MM-yyyy'));
         }
     }
 }

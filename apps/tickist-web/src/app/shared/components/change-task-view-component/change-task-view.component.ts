@@ -6,7 +6,7 @@ import {ConfigurationService} from '../../../core/services/configuration.service
 
 
 @Component({
-    selector: 'change-task-view',
+    selector: 'tickist-change-task-view',
     templateUrl: './change-task-view.component.html',
     styleUrls: ['./change-task-view.component.scss']
 })

@@ -10,7 +10,7 @@ import {SetCurrentSortBy} from '../../core/actions/tasks/sort-tasks.actions';
 
 
 @Component({
-    selector: 'sort-by-dialog',
+    selector: 'tickist-sort-by-dialog',
     templateUrl: './sort-tasks.dialog.component.html',
     styleUrls: ['./sort-tasks.dialog.component.scss']
 })

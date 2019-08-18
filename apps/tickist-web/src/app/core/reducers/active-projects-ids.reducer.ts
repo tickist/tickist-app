@@ -21,7 +21,6 @@ export function reducer(state = initialState, action: ActiveProjectsIdsActions):
                 projectsIds: [...state.projectsIds, action.payload.projectId]
             };
         case ActiveProjectsIdActionTypes.DeleteActiveProjectId:
-            debugger;
             const index = state.projectsIds.indexOf(action.payload.projectId);
             return {
                 projectsIds: [

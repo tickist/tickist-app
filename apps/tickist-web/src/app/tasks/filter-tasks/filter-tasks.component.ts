@@ -14,12 +14,12 @@ import {
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Observable, Subject} from 'rxjs';
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
 import {takeUntil} from 'rxjs/operators';
+import {Filter} from '@data/filter';
 
 
 @Component({
-    selector: 'app-filter-tasks',
+    selector: 'tickist-filter-tasks',
     templateUrl: './filter-tasks.component.html',
     styleUrls: ['./filter-tasks.component.scss']
 })

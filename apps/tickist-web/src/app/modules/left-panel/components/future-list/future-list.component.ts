@@ -1,22 +1,20 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {FutureListElement} from './models';
-import moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {MediaObserver} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
 import {TaskService} from '../../../../core/services/task.service';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {UserService} from '../../../../core/services/user.service';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
-import {stateActiveDateElement} from '../../../../../../../../libs/data/src/lib/state-active-date-element.enum';
-import {dashboardRoutesName} from '../../../dashboard/routes.names';
+import {User} from '@data/users/models';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
 import {futureTasksRoutesName} from '../../../future-tasks/routes.names';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
+import {IActiveDateElement} from '@data/active-data-element.interface';
+import {addMonths, format, getMonth, getYear} from 'date-fns';
 
 @Component({
     selector: 'tickist-future-list',
@@ -45,6 +43,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
                 this.activeDateElement = activeDateElement;
                 this.cd.detectChanges();
             });
+        // @TODO we need only tasks with finishDate
         this.taskService.tasks$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((tasks: Task[]) => {
             this.tasks = tasks;
             this.futureList = this.createFutureList();
@@ -66,16 +65,16 @@ export class FutureListComponent implements OnInit, OnDestroy {
         if (!this.tasks.length || !this.user) return [];
         const futureList = [];
         for (let i = 0; i <= this.monthsRequired; i++) {
-            const momentDate = moment().add(i, 'months');
+            const momentDate = addMonths(new Date(), i);
             futureList.push({
-                'url': momentDate.format('MMMM-YYYY'),
-                'label': momentDate.format('MMMM YYYY'),
+                'url': format(momentDate, 'MMMM-yyyy'),
+                'label': format(momentDate, 'MMMM yyyy'),
                 'tasksCounter': this.tasks.filter(task => {
                     return task.owner.id === this.user.id
                         && task.isDone === false
                         && task.finishDate
-                        && task.finishDate.month() === momentDate.month()
-                        && task.finishDate.year() === momentDate.year();
+                        && getMonth(task.finishDate) === getMonth(momentDate)
+                        && getYear(task.finishDate) === getYear(momentDate);
                 }).length
             });
         }
@@ -85,7 +84,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
 
     isSelected(elem: FutureListElement) {
         return this.activeDateElement.state === this.stateActiveDateElement.future
-            && elem.url === this.activeDateElement.date.format('MMMM-YYYY');
+            && elem.url === format(this.activeDateElement.date, 'MMMM-yyyy');
     }
 
     navigateTo(path, arg) {

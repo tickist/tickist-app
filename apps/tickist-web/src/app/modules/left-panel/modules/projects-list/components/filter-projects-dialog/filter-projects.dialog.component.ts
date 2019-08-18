@@ -6,12 +6,12 @@ import {Observable, Subject} from 'rxjs';
 import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';
 import {selectAllProjectsFilters, selectCurrentProjectFilter} from '../../projects-filters.selectors';
-import {Filter} from '../../../../../../../../../../libs/data/src/lib/filter';
 import {SetCurrentProjectFilter} from '../../projects-filters.actions';
+import {Filter} from '@data/filter';
 
 
 @Component({
-    selector: 'app-filter-projects',
+    selector: 'tickist-filter-projects',
     templateUrl: './filter-projects.dialog.component.html',
 })
 export class FilterProjectDialogComponent implements OnDestroy {

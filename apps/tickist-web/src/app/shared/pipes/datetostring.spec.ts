@@ -1,5 +1,4 @@
 import {DateToString} from './datetostring';
-import moment from 'moment';
 
 
 describe('Pipe: DateToString', () => {

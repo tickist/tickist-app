@@ -21,5 +21,21 @@
 // Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
 //
 //
-// -- This will overwrite an existing command --
+// -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
+import 'firebase/firestore';
+import attachCustomCommands from 'cypress-firebase/lib/attachCustomCommands'
+import {environment} from '@env/environment.e2e'
+
+
+
+const fbInstance = firebase.initializeApp(environment.firebase);
+if (fbInstance) {
+    (window as any).fbInstance = fbInstance
+}
+attachCustomCommands({ Cypress, cy, firebase });

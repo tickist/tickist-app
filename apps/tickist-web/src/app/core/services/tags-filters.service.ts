@@ -1,15 +1,6 @@
-import {Observable, pipe} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {select, Store} from '@ngrx/store';
-import {AppStore} from '../../store';
-import {SimpleUser, User} from '../../../../../../libs/data/src/lib/users/models';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import * as tagsAction from '../../modules/left-panel/modules/tags-list/tags-filters.actions';
-import {HttpClient} from '@angular/common/http';
-import {Router} from '@angular/router';
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
-import {UserService} from './user.service';
-import {UpdateUser} from '../actions/user.actions';
+import {User} from '@data/users/models';
+import {Filter} from '@data/filter';
 
 
 @Injectable()

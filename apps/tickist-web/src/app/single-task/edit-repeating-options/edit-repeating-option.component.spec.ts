@@ -6,15 +6,14 @@ import {TickistMaterialModule} from '../../material.module';
 import {FormsModule} from '@angular/forms';
 import {fakeAsync} from '@angular/core/testing';
 import {ConfigurationService} from '../../core/services/configuration.service';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {IProjectApi} from '../../../../../../libs/data/src/lib/project-api.interface';
+import {Task} from '@data/tasks/models/tasks';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
-import moment from 'moment';
 import {MockStore, provideMockStore} from '@ngrx/store/testing';
 import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
+import {format} from 'date-fns';
 
 
 let comp: EditRepeatingOptionComponent;
@@ -36,7 +35,7 @@ describe('Edit repeating Component', () => {
         user = userApiMockFactroy.createUserDict();
         project = projectApiMockFactory.createProjectDict([], user, []);
         taskFromApi = taskApiMockFactory.createTaskDict(user, user, project, []);
-        taskFromApi.finish_date = moment().format('DD-MM-YYYY');
+        taskFromApi.finish_date = format(new Date(), 'dd-MM-yyyy');
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, FormsModule],

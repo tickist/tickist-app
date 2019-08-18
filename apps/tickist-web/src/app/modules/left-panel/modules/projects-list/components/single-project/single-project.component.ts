@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {Project} from '../../../../../../../../../../libs/data/src/lib/projects/models';
+import {Project} from '@data/projects';
 import {ProjectService} from '../../../../../../core/services/project.service';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
@@ -7,7 +7,7 @@ import {ConfigurationService} from '../../../../../../core/services/configuratio
 import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {User} from '../../../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '@data/users/models';
 import {AddNewActiveProjectId, DeleteActiveProjectId} from '../../../../../../core/actions/projects/active-projects-ids.actions';
 import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';
@@ -23,7 +23,7 @@ import {
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
 import {DeleteProject, RequestDeleteProject} from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
-import {ProjectWithAllDescendants} from '../../../../../../../../../../libs/data/src/lib/projects/models/project-with-all-descendants';
+import {ProjectWithAllDescendants} from '@data/projects';
 
 
 
@@ -41,7 +41,7 @@ class Timer {
 
 
 @Component({
-    selector: 'single-project',
+    selector: 'tickist-single-project',
     templateUrl: './single-project.component.html',
     styleUrls: ['./single-project.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

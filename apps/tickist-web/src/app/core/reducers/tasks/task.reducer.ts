@@ -1,7 +1,7 @@
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+ import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {TaskActions, TaskActionTypes} from '../../actions/tasks/task.actions';
 import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
-import {Task} from '../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {setStatusDoneLogic} from '../../../single-task/utils/set-status-to-done-logic';
 import {createDefaultLoadable, Loadable} from '../../utils/loadable/loadable';
 import {withLoadable} from '../../utils/loadable/with-loadable';

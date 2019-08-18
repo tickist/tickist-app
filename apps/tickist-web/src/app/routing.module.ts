@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
-import {FutureTasksFiltersService} from './modules/future-tasks/future-tasks-filters.service';
+import {FutureTasksFiltersService} from './modules/future-tasks/core/services/future-tasks-filters.service';
 import {RouterModule, Routes} from '@angular/router';
 import {LoggedInGuard} from './core/guards/loggedIn.guard';
 import {AnonymousGuard} from './core/guards/anonymous.guard';
@@ -110,7 +110,7 @@ export const routes: Routes = [
         path: signupRoutesName.SIGNUP,
         component: AuthLayoutComponent,
         canActivate: [AnonymousGuard],
-        loadChildren: './modules/signup/signup.module#TickistSignupModule'
+        loadChildren: './modules/signup/signup.module#TickistSignUpModule'
     },
     {
         path: loginRoutesName.LOGIN,

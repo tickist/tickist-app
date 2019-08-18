@@ -8,9 +8,9 @@ import {FutureTasksComponent} from './pages/future-tasks/future-tasks.component'
 import {TickistSingleTaskModule} from '../../single-task/single-task.module';
 import {FilterFutureTasksComponent} from './components/filter-future-tasks/filter-future-tasks.component';
 import { EffectsModule } from '@ngrx/effects';
-import { FutureTasksEffects } from './future-tasks.effects';
+import { FutureTasksEffects } from './core/effects/future-tasks.effects';
 import {StoreModule} from '@ngrx/store';
-import * as fromFutureTasks from './future-tasks-filters.reducers';
+import * as fromFutureTasks from './core/reducers/future-tasks-filters.reducers';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 

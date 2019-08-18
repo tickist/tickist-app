@@ -16,7 +16,7 @@ import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectService} from '../../core/services/project.service';
-import {Project, ShareWithUser} from '../../../../../../libs/data/src/lib/projects/models';
+import {Project, ShareWithUser} from '@data/projects';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
@@ -26,10 +26,10 @@ import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
 import {selectFilteredProjectsList} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
-import {convertToSimpleProject} from '../../core/utils/projects-utils';
 import {FormControl} from '@angular/forms';
+import {TaskProject} from '@data/tasks/models/task-project';
 
 
 @Component({
@@ -43,7 +43,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     @Input() mediaChange;
     @ViewChild('container', { static: true }) container: ElementRef;
 
-    dateFormat = 'DD-MM-YYYY';
+    dateFormat = 'dd-MM-yyyy';
     projects$: Observable<Project[]>;
     projects: Project[];
     ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -96,7 +96,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.projects$ = this.store.select(selectFilteredProjectsList);
         this.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(projects => this.projects = projects);
         if (this.mediaChange && this.mediaChange.mqAlias === 'xs') {
-            this.dateFormat = 'DD-MM';
+            this.dateFormat = 'dd-MM';
         }
         const repeatDelta = this.task.repeatDelta;
         const repeatDeltaExtension = this.repeatStringExtension.transform(this.task.repeat);
@@ -104,7 +104,14 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.amountOfStepsDoneInPercent = this.task.steps.filter(step => step.status === 1).length * 100 / this.task.steps.length;
         this.selectTaskProject.valueChanges.subscribe(value => {
             this.store.select(selectProjectById(value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
-                const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
+                const task = Object.assign({}, this.task, {
+                    taskProject: new TaskProject({
+                        name: project.name,
+                        color: project.color,
+                        shareWithIds: project.shareWithIds,
+                        id: project.id
+                    })
+                });
                 this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));
             });
         });
@@ -147,9 +154,9 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('mediaChange') && changes['mediaChange'].hasOwnProperty('currentValue')
             && changes['mediaChange'].currentValue && changes['mediaChange'].currentValue.mqAlias === 'xs') {
-            this.dateFormat = 'DD-MM';
+            this.dateFormat = 'dd-MM';
         } else {
-            this.dateFormat = 'DD-MM-YYYY';
+            this.dateFormat = 'dd-MM-yyyy';
         }
         if (changes.hasOwnProperty('task') && changes.task.currentValue && this.selectTaskProject) {
             this.selectTaskProject.setValue(changes.task.currentValue.taskProject.id, {emitEvent: false});

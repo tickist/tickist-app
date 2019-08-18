@@ -1,44 +1,44 @@
 import {isRepeated, setAllStepsToDone, setAllStepsToUndone} from './task-utils';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
-import moment from 'moment';
+import {Task} from '@data/tasks/models/tasks';
 import {debug} from 'util';
+import {addBusinessDays, addDays, addMonths, addWeeks, addYears} from 'date-fns';
 
 export function setStatusDoneLogic(task): Task {
     if (isRepeated(task)) {
         return repeatTaskLogic(task);
     } else {
-        return Object.assign({}, task, {status: 1, steps: setAllStepsToDone(task.steps)});
+        return Object.assign({}, task, {isDone: true, steps: setAllStepsToDone(task.steps)});
     }
 }
 
 
 export function repeatTaskLogic(task: Task): Task {
-    let finishDate = task.finishDate || moment(new Date());
+    let finishDate = task.finishDate || new Date();
 
     if (task.fromRepeating === 0) {
-        finishDate = moment(new Date());
+        finishDate = new Date();
     }
 
     switch (task.repeat) {
         case 1:
-            finishDate.add(task.repeatDelta, 'days');
+            addDays(finishDate, task.repeatDelta);
             break;
         case 2:
-            finishDate = calculateFinishDateWorkWeek(finishDate, task.repeatDelta);
+            finishDate = addBusinessDays(finishDate, task.repeatDelta);
             break;
         case 3:
-            finishDate.add(task.repeatDelta, 'weeks');
+            addWeeks(finishDate, task.repeatDelta);
             break;
         case 4:
-            finishDate.add(task.repeatDelta, 'months');
+            addMonths(finishDate, task.repeatDelta);
             break;
         case 5:
-            finishDate.add(task.repeatDelta, 'years');
+            addYears(finishDate, task.repeatDelta);
             break;
     }
 
     return Object.assign({}, task, {
-        status: 0,
+        isDone: false,
         time: 0,
         steps: setAllStepsToUndone(task.steps),
         finishDate: finishDate
@@ -46,19 +46,19 @@ export function repeatTaskLogic(task: Task): Task {
 }
 
 
-function calculateFinishDateWorkWeek(finishDate, delta) {
-    const newFinishDate = finishDate ? moment(finishDate) : moment(new Date());
-    for (let i = 0; i < delta; i++) {
-        newFinishDate.add(1, 'days');
-        if (newFinishDate.day() === 6) {
-            // set to monday from Saturday
-            newFinishDate.add(2, 'days');
-        } else if (newFinishDate.day() === 0) {
-            // set to monday from Sunday
-            newFinishDate.add(1, 'days');
-        }
-    }
-    return newFinishDate;
-}
+// function calculateFinishDateWorkWeek(finishDate, delta) {
+//     const newFinishDate = finishDate ? finishDate) : moment(new Date());
+//     for (let i = 0; i < delta; i++) {
+//         newFinishDate.add(1, 'days');
+//         if (newFinishDate.day() === 6) {
+//             // set to monday from Saturday
+//             newFinishDate.add(2, 'days');
+//         } else if (newFinishDate.day() === 0) {
+//             // set to monday from Sunday
+//             newFinishDate.add(1, 'days');
+//         }
+//     }
+//     return newFinishDate;
+// }
 
 

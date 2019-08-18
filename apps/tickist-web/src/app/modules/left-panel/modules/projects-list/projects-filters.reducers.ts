@@ -1,5 +1,6 @@
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
+
 import {ProjectsFiltersActions, ProjectsFiltersActionTypes} from './projects-filters.actions';
+import {Filter} from '@data/filter';
 
 
 export interface ProjectsFiltersState {

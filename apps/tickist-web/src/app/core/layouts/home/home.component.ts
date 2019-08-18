@@ -2,8 +2,8 @@ import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {AppStore} from '../../../store';
 import {Store} from '@ngrx/store';
 import {Router} from '@angular/router';
-import {Task} from '../../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {Project} from '../../../../../../../libs/data/src/lib/projects/models';
+import {Task} from '@data/tasks/models/tasks';
+import {Project} from '@data/projects';
 import {ProjectService} from '../../services/project.service';
 import {TaskService} from '../../services/task.service';
 import {UserService} from '../../services/user.service';
@@ -13,7 +13,7 @@ import {ConfigurationService} from '../../services/configuration.service';
 import _ from 'lodash';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {SideNavVisibility} from '../../../../../../../libs/data/src/lib/configurations';
+import {SideNavVisibility} from '@data/configurations';
 
 
 @Component({

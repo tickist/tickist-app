@@ -5,10 +5,13 @@ import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {Login} from '../../../../core/actions/auth.actions';
 import {AuthService} from '../../../../core/services/auth.service';
+import {homeRoutesName} from '../../../../routing.module.name';
+import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
+import {signupRoutesName} from '../../../signup/routes-names';
 
 
 @Component({
-    selector: 'app-login',
+    selector: 'tickist-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
@@ -63,6 +66,9 @@ export class LoginComponent {
             // () => { // on completion
             //
             // }
+    }
+    navigateToSignUp() {
+        this.router.navigate([signupRoutesName.SIGNUP]);
     }
 
 }

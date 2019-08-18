@@ -1,14 +1,13 @@
 import * as faker from 'faker';
-import {ISimpleProjectApi} from '../../../../../../../libs/data/src/lib/simple-project-api.inferface';
-import {IProjectApi} from '../../../../../../../libs/data/src/lib/project-api.interface';
-import {ISimpleUserApi} from '../../../../../../../libs/data/src/lib/simple-user-api.interface';
 import * as _ from 'lodash';
 import {UsersApiMockFactory} from './users-api-mock.factory';
+
+import {Project} from '@data/projects';
 
 export class ProjectsApiMockFactory {
     id = 0;
 
-    static createSimpleProjectFromProject(project: IProjectApi): ISimpleProjectApi {
+    static createSimpleProjectFromProject(project: any): any {
         return {
             id: project.id,
             name: project.name,
@@ -20,7 +19,7 @@ export class ProjectsApiMockFactory {
 
     constructor() {}
 
-    createProjectsDict(shareWith: ISimpleUserApi[], owner: any, tags: any[], howMuch: number = 17) {
+    createProjectsDict(shareWith: any[], owner: any, tags: any[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createProjectDict(
             shareWith,
             UsersApiMockFactory.createSimpleUserFromUser(owner),
@@ -28,12 +27,11 @@ export class ProjectsApiMockFactory {
         );
     }
 
-    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: any[]): IProjectApi {
+    createProjectDict(shareWith: any[], owner: any, tags: any[]): any {
         this.id += 1;
         return {
             ancestor: null,
             color: '#2c86ff',
-            creation_date: '2014-08-07T20:41:56.777000+02:00',
             default_finish_date: 0,
             default_priority: 'B',
             default_type_finish_date: 1,

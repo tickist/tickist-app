@@ -1,6 +1,6 @@
 import {selectAllTasksTreeView} from './tasks-tree-view.selectors';
-import {Project, SimpleProject} from '../../../../../../libs/data/src/lib/projects/models';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Project, SimpleProject} from '@data/projects';
+import {Task} from '@data/tasks/models/tasks';
 
 
 describe('Tasks tree view filters selectors', () => {
@@ -9,9 +9,9 @@ describe('Tasks tree view filters selectors', () => {
         let tasksList: Partial<Task>[];
         beforeEach(() => {
             projectsList = [
-                {id: 1, name: 'Project 1 L0', level: 0, ancestor: null},
-                {id: 5, name: 'Project 5 L1', level: 1, ancestor: 1},
-                {id: 9, name: 'Project 9 L2', level: 2, ancestor: 5}
+                {id: '1', name: 'Project 1 L0', ancestor: null},
+                {id: '5', name: 'Project 5 L1', ancestor: '1'},
+                {id: '9', name: 'Project 9 L2', ancestor: '5'}
             ];
             tasksList = [
                 {id: 1, taskProject: {id: 1} as SimpleProject},

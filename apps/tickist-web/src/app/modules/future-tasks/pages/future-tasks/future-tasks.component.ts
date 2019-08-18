@@ -1,24 +1,24 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {TaskService} from '../../../../core/services/task.service';
-import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {filter, map, takeUntil} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
-import * as _ from 'lodash';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
-import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
-import {Filter} from '../../../../../../../../libs/data/src/lib/filter';
-import {FutureTasksFiltersService} from '../../future-tasks-filters.service';
+import {Task} from '@data/tasks/models/tasks';
+import {User} from '@data/users/models';
+import {FutureTasksFiltersService} from '../../core/services/future-tasks-filters.service';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {UpdateUser} from '../../../../core/actions/user.actions';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {selectFutureTasksList} from '../../future-tasks.selectors';
+import {selectFutureTasksList} from '../../core/selectors/future-tasks.selectors';
 import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
-import {stateActiveDateElement} from '../../../../../../../../libs/data/src/lib/state-active-date-element.enum';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
+import {IActiveDateElement} from '@data/active-data-element.interface';
+import {Filter} from '@data/filter';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
+
 
 @Component({
     selector: 'tickist-future-tasks',

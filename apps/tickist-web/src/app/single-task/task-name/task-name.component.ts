@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, OnChanges, ChangeDetectionStrategy} from '@angular/core';
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 
 @Component({
     selector: 'tickist-task-name',

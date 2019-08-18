@@ -1,7 +1,7 @@
-import {Tag} from '../../../../../../libs/data/src/lib/tags/models/tags';
-import moment from 'moment';
-import { Task } from '../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {Step} from '../../../../../../libs/data/src/lib/tasks/models/steps';
+import {Tag} from '@data/tags/models/tags';
+import {Task} from '@data/tasks/models/tasks';
+import {Step} from '@data/tasks/models/steps';
+import {addDays, getDaysInMonth, isDate, isPast, isToday} from 'date-fns';
 
 export function hideAllMenuElements(task: Task): Task {
     return Object.assign({}, task, {
@@ -18,25 +18,25 @@ export function hideAllMenuElements(task: Task): Task {
 }
 
 
-export function removeTag(task: Task, tag: Tag): Task {
+export function removeTag(task: Task, deletedTag: Tag): Task {
     const tags = [...task.tags];
-    const index: number = tags.indexOf(tag, 0);
+    const index: number = tags.indexOf(deletedTag, 0);
     if (index > -1) {
         tags.splice(index, 1);
     }
-    return Object.assign({}, task, {tags: tags});
+    return Object.assign({}, task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
 }
 
 export function moveFinishDateFromPreviousFinishDate(task, delta: string | number): Task {
     const newTask = Object.assign({}, task);
-    if (!moment.isMoment(task.finishDate)) newTask.finishDate = moment();
+    if (!isDate(task.finishDate)) newTask.finishDate = new Date();
 
     if (delta === 'today' || !task.finishDate) {
-        newTask.finishDate = moment();
+        newTask.finishDate = new Date();
     } else if (delta === 'lastDayOfMonth') {
-        newTask.finishDate = moment().date(moment().daysInMonth());
+        newTask.finishDate = getDaysInMonth(new Date());
     } else {
-        newTask.finishDate = (moment(task.finishDate)).add(delta, 'day');
+        newTask.finishDate = addDays(task.finishDate, <number> delta);
     }
     return newTask;
 }
@@ -47,7 +47,7 @@ export function isRepeated(task: Task): boolean {
 }
 
 export function isOverdue(task: Task): boolean {
-    return task.finishDate < moment().hours(0).minutes(0).seconds(0);
+    return !isToday(task.finishDate) && isPast(task.finishDate)
 }
 
 export function setAllStepsToDone(taskSteps: Step[]): Step[] {

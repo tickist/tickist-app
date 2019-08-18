@@ -1,7 +1,6 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
-import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
+import {Task} from '@data/tasks/models/tasks';
+import {User} from '@data/users/models';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Store} from '@ngrx/store';
@@ -9,6 +8,7 @@ import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {UpdateUser} from '../../../../core/actions/user.actions';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
+import {IActiveDateElement} from '@data/active-data-element.interface';
 
 @Component({
     selector: 'tickist-today',

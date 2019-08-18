@@ -11,7 +11,8 @@
                      [matMenuTriggerFor]="menu"
                      (onMenuClose)="emitOnMenuClose($event)"
                      (onMenuOpen)="emitOnMenuOpen($event)"
-                     *ngIf="isRightMenuVisible">
+                     *ngIf="isRightMenuVisible"
+                     data-cy="task-short-menu">
 </tickist-menu-button>
 
 <mat-menu #menu="matMenu" >
@@ -19,7 +20,7 @@
     <div>
         <span>Priority</span>
         <div>
-            <tickist-priority [ngStyle]="{'z-index': '1000'}" [manualValue]="task.priority" (change)="emitChangePriorityClickEvent($event)">
+            <tickist-priority [ngStyle]="{'z-index': '1000'}" [manualValue]="task.priority" (changePriority)="emitChangePriorityClickEvent($event)">
 
             </tickist-priority>
         </div>
@@ -39,7 +40,7 @@
                                  [matTooltip]="'next week'"
                                  [transform]="'rotate(-180deg)'"
                                  (click)="emitChangeDataClickEvent('next_week')">
-            </tickist-menu-button> 
+            </tickist-menu-button>
             <tickist-menu-button [icon]="'fast-forward'"
                                  [matTooltip]="'end of month'"
                                  (click)="emitChangeDataClickEvent('lastDayOfMonth')">
@@ -52,7 +53,7 @@
         </div>
     </div>
     <div id="delete-button">
-        <button mat-button (click)="emitDeleteTaskEvent()"><span>delete</span></button>
+        <button data-cy="delete-task-button" mat-button (click)="emitDeleteTaskEvent()"><span>delete</span></button>
     </div>
 
 

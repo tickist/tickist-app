@@ -1,17 +1,16 @@
-import {Task} from '../../../../../../libs/data/src/lib/tasks/models/tasks';
-import {TaskService} from '../../core/services/task.service';
+import {Task} from '@data/tasks/models/tasks';
 import { MatDialog } from '@angular/material/dialog';
-import {Step} from '../../../../../../libs/data/src/lib/tasks/models/steps';
+import {Step} from '@data/tasks/models/steps';
 import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
-import moment from 'moment';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
-import {DeleteTask, RequestDeleteTask, RequestUpdateTask, SetStatusDone, UpdateTask} from '../../core/actions/tasks/task.actions';
+import {RequestDeleteTask, RequestUpdateTask, SetStatusDone} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {parse} from 'date-fns';
 
 export class SingleTask {
     task: Task;
@@ -85,7 +84,7 @@ export class SingleTask {
                     .pipe(takeUntil(this.ngUnsubscribe))
                     .subscribe(result => {
                         if (result && result.hasOwnProperty('finishDate')) {
-                            task.finishDate = moment(result['finishDate'], 'DD-MM-YYYY');
+                            task.finishDate = parse(result['finishDate'],  'dd-MM-yyyy', new Date());
                         }
                         this.store.dispatch(new SetStatusDone({task: {id: task.id, changes: task}}));
                     });

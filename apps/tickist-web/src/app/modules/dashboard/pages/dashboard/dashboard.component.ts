@@ -2,20 +2,20 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {Task} from '../../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
-import moment from 'moment';
-import {User} from '../../../../../../../../libs/data/src/lib/users/models';
+import {User} from '@data/users/models';
 import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {map, takeUntil} from 'rxjs/operators';
-import {IActiveDateElement} from '../../../../../../../../libs/data/src/lib/active-data-element.interface';
 import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
-import {stateActiveDateElement} from '../../../../../../../../libs/data/src/lib/state-active-date-element.enum';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
+import {IActiveDateElement} from '@data/active-data-element.interface';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
+import {addDays, format} from 'date-fns';
 
 
 @Component({
@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     overdueTasks: Task[] = [];
     tasks: Task[] = [];
     activeDateElement: IActiveDateElement;
-    today: moment.Moment;
+    today: Date;
     stream$: Observable<any>;
     user: User;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -57,13 +57,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     isToday(activeDateElement = this.activeDateElement) {
-        const today = moment().format('DD-MM-YYYY');
-        return (today === activeDateElement.date.format('DD-MM-YYYY'));
+        const today = format(new Date(), 'dd-MM-yyyy');
+        return (today === format(activeDateElement.date, 'dd-MM-yyyy'));
     }
 
     isTomorrow(activeDateElement = this.activeDateElement) {
-        const tomorrow = moment().add(1, 'days').format('DD-MM-YYYY');
-        return (tomorrow === activeDateElement.date.format('DD-MM-YYYY'));
+        const tomorrow = format(addDays(new Date(), 1), 'dd-MM-yyyy');
+        return (tomorrow === format(activeDateElement.date, 'dd-MM-yyyy'));
     }
 
     ngOnInit() {
@@ -74,7 +74,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.tasks = tasks.filter(task => task.owner.id === this.user.id && task.isDone === false);
                 this.todayTasks = this.tasks.filter((task: Task) => {
                     return (
-                        (task.finishDate && task.finishDate.format('DD-MM-YYYY') === this.activeDateElement.date.format('DD-MM-YYYY') ||
+                        (task.finishDate && format(task.finishDate, 'dd-MM-yyyy') === format(this.activeDateElement.date, 'dd-MM-yyyy') ||
                             (task.pinned === true && this.isToday()))
                     );
                 });

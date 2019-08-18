@@ -4,9 +4,9 @@
             <div>All tasks</div>
             <div fxFlex></div>
             <tickist-sort-tasks></tickist-sort-tasks>
-            <app-filter-tasks [showTags]="true"></app-filter-tasks>
-            <change-task-view [defaultTaskView]="defaultTaskView"
-                              (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+            <tickist-filter-tasks [showTags]="true"></tickist-filter-tasks>
+            <tickist-change-task-view [defaultTaskView]="defaultTaskView"
+                              (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
 
         </div>
     </div>
@@ -14,13 +14,13 @@
         <div class="header">
             <div>{{ selectedProject.name }}</div>
             <div fxFlex></div>
-            <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'"
+            <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'" data-cy="edit-project"
                                  (click)="navigateToEditProjectView(selectedProject.id)">
             </tickist-menu-button>
             <tickist-sort-tasks></tickist-sort-tasks>
-            <app-filter-tasks [showTags]="true"></app-filter-tasks>
-            <change-task-view [defaultTaskView]="defaultTaskView"
-                              (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+            <tickist-filter-tasks [showTags]="true"></tickist-filter-tasks>
+            <tickist-change-task-view [defaultTaskView]="defaultTaskView"
+                              (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
         </div>
 
         <div *ngIf=projectHasDescription(selectedProject)

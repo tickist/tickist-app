@@ -1,9 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Tag} from '../../../../../../libs/data/src/lib/tags/models/tags';
-import {HttpClient} from '@angular/common/http';
-import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
-import {AngularFireAuth} from '@angular/fire/auth';
-import {environment} from '../../../environments/environment';
+import {Tag} from '@data/tags/models/tags';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 const tagsCollectionName = 'tags';
 
@@ -11,7 +8,7 @@ const tagsCollectionName = 'tags';
 @Injectable()
 export class TagService {
 
-    constructor(private db: AngularFirestore, private http: HttpClient, private authFire: AngularFireAuth) {
+    constructor(private db: AngularFirestore) {
         // this.tagsCollection$ = this.db.collection('tags');
     }
 
@@ -67,7 +64,7 @@ export class TagService {
     }
 
     deleteTag(tagId: string) {
-        return this.http.delete(`${environment['apiUrl']}/tag/${tagId}/`);
+        return this.db.collection(tagsCollectionName).doc(tagId).delete();
     }
 
 }

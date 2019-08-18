@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {User as FirebaseUser} from 'firebase';
-import {User, UserLogin} from '../../../../../../libs/data/src/lib/users/models';
+import {User, UserLogin} from '@data/users/models';
 import {HttpClient} from '@angular/common/http';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
@@ -43,7 +43,6 @@ export class AuthService {
     }
 
     save({uid, username, email}) {
-        debugger
         const user = new User(<any> {id: uid, username: username, email: email});
         this.usersCollection.doc(uid).set({...user}).catch((err) => console.log(err));
     }

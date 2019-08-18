@@ -4,12 +4,12 @@ import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import {SimpleUser, User} from '../../../../../../libs/data/src/lib/users/models';
+import { User} from '@data/users/models';
+import { SimpleUser} from '@data/users/models';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {TasksFiltersService} from './tasks-filters.service';
-import {ISimpleUserApi} from '../../../../../../libs/data/src/lib/simple-user-api.interface';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Logout} from '../actions/auth.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
@@ -63,20 +63,6 @@ export class UserService {
             //
             //     // this.store.dispatch(new userAction.UpdateUser(new User(payload)));
             // });
-    }
-
-    loadTeam(): any {
-        const userID = localStorage.getItem('USER_ID');
-        if (userID == null) {
-            this.store.dispatch(new Logout());
-        } else {
-            return this.http.get<ISimpleUserApi[]>(`${environment['apiUrl']}/user/${userID}/teamlist/`)
-                .pipe(
-                    map(payload => {
-                        return payload.map(user => new SimpleUser(user));
-                    })
-                );
-        }
     }
 
     changePassword(values: any) {

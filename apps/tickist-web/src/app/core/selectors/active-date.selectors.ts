@@ -1,10 +1,7 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {TasksState} from '../reducers/tasks/task.reducer';
 import {ActiveDateState} from '../reducers/active-date.reducer';
-import {selectTasksState} from './task.selectors';
-import {stateActiveDateElement} from '../../../../../../libs/data/src/lib/state-active-date-element.enum';
-import * as configurationAction from '../../reducers/actions/configuration';
-import moment from 'moment';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
+import {parse, setHours, setMilliseconds, setMinutes, setSeconds} from 'date-fns';
 
 
 export const selectActiveDateState = createFeatureSelector<ActiveDateState>('activeDate');
@@ -13,18 +10,16 @@ export const selectActiveDateState = createFeatureSelector<ActiveDateState>('act
 export const selectActiveDate = createSelector(
     selectActiveDateState,
     activeDateState => {
-        let date: moment.Moment;
-        const splittedDate: string[] = activeDateState.active.date.split('-');
+        let date: Date;
         if (activeDateState.active.state === stateActiveDateElement.future) {
-            const year = splittedDate[1];
-            const month = splittedDate[0];
-            date = moment(new Date(`1 ${month} ${year}`));
+            date = parse(`01-${activeDateState.active.date}`, 'dd-LLLL-uuuu', new Date());
         } else if (activeDateState.active.state === stateActiveDateElement.weekdays) {
-            date = moment()
-                .month(parseInt(splittedDate[1], 10) - 1)
-                .year(parseInt(splittedDate[2], 10))
-                .date(parseInt(splittedDate[0], 10));
-            date = date.set({hour: 0, minute: 0, second: 0, millisecond: 0});
+            const splittedDate: string[] = activeDateState.active.date.split('-');
+            date = new Date(parseInt(splittedDate[2], 10), parseInt(splittedDate[1], 10) - 1, parseInt(splittedDate[0], 10));
+            date = setMinutes(date, 0);
+            date = setHours(date, 0);
+            date = setSeconds(date, 0);
+            date = setMilliseconds(date, 0);
         }
         return {
             date: date,

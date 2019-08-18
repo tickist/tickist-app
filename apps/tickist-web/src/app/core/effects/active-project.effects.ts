@@ -3,14 +3,15 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ActiveProjectActionTypes, SetActiveProject} from '../actions/projects/active-project.actions';
 import {concatMap, withLatestFrom} from 'rxjs/operators';
 import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
-import {Filter} from '../../../../../../libs/data/src/lib/filter';
 import {selectTeam} from '../selectors/team.selectors';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
-import {ShareWithUser} from '../../../../../../libs/data/src/lib/projects/models/share-with-user';
-import {ShareWithPendingUser} from '../../../../../../libs/data/src/lib/projects/models/share-with-pending-user';
+import {ShareWithUser} from '@data/projects';
+import {ShareWithPendingUser} from '@data/projects';
+import {Filter} from '@data/filter';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 @Injectable()
 export class ActiveProjectEffects {
@@ -32,7 +33,7 @@ export class ActiveProjectEffects {
                                     new Filter({
                                         'id': simpleUserOrPendingUser['id'],
                                         'label': 'assignedTo',
-                                        'value': `(task) => task.owner.id === ${userId}`,
+                                        'value': `(task) => task.owner.id === '${userId}'`,
                                         'name': simpleUserOrPendingUser.username
                                     })
                                 );
@@ -52,12 +53,12 @@ export class ActiveProjectEffects {
                     }));
                 } else {
                     team.forEach(mate => {
-                        if (mate.id !== parseInt(localStorage.getItem('USER_ID'), 10)) {
+                        if (mate.id !== this.authFire.auth.currentUser.uid) {
                             filters.push(
                                 new Filter({
                                     'id': mate.id,
                                     'label': 'assignedTo',
-                                    'value': `task => task.owner.id === ${mate.id}`,
+                                    'value': `task => task.owner.id === '${mate.id}'`,
                                     'name': mate.username
                                 })
                             );
@@ -70,6 +71,6 @@ export class ActiveProjectEffects {
             })
         );
 
-    constructor(private actions$: Actions, private store: Store<AppStore>) {
+    constructor(private actions$: Actions, private store: Store<AppStore>, private authFire: AngularFireAuth) {
     }
 }

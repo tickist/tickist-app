@@ -1,21 +1,21 @@
 import {Action} from '@ngrx/store';
-import {Task} from '../../../../../../../libs/data/src/lib/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {Update} from '@ngrx/entity';
-import {CLOSE_MENU_IN_TASKS} from '../../../reducers/actions/tasks';
-import {TagActionTypes} from '../tags.actions';
+
 
 export enum TaskActionTypes {
     QUERY_TASKS = '[TASKS] QUERY TASKS',
-    REQUEST_ALL_TASKS = '[] REQUEST_ALL_TASKS',
-    REQUEST_CREATE_TASK = '[] REQUEST_CREATE_TASK',
-    REQUEST_UPDATE_TASK = '[] REQUEST_UPDATE TASK',
-    SET_STATUS_DONE = '[] SET_STATUS_DONE',
-    REQUEST_DELETE_TASK = '[] REQUEST_DELETE_TASK',
-    ADD_TASKS = '[] ADD_TASKS',
-    CREATE_TASK = '[] CREATE_TASK',
-    UPDATE_TASK = '[] UPDATE_TASK',
-    DELETE_TASK = '[] DELETE_TASK',
-    CLOSE_MENU_IN_ALL_TASKS = '[] CLOSE MENU IN ALL TASKS'
+    REQUEST_ALL_TASKS = '[TASKS] REQUEST_ALL_TASKS',
+    REQUEST_CREATE_TASK = '[TASKS] REQUEST_CREATE_TASK',
+    REQUEST_UPDATE_TASK = '[TASKS] REQUEST_UPDATE TASK',
+    REQUEST_REQUEST_TASK = '[TASKS] REQUEST_DELETE TASK',
+    SET_STATUS_DONE = '[TASKS] SET_STATUS_DONE',
+    REQUEST_DELETE_TASK = '[TASKS] REQUEST_DELETE_TASK',
+    ADD_TASKS = '[TASKS] ADD_TASKS',
+    CREATE_TASK = '[TASKS] CREATE_TASK',
+    UPDATE_TASK = '[TASKS] UPDATE_TASK',
+    DELETE_TASK = '[TASKS] DELETE_TASK',
+    CLOSE_MENU_IN_ALL_TASKS = '[TASKS] CLOSE MENU IN ALL TASKS'
 }
 
 export class QueryTasks implements Action {
@@ -77,7 +77,7 @@ export class DeleteTask implements Action {
 }
 
 export class RequestDeleteTask implements Action {
-    readonly type = TaskActionTypes.DELETE_TASK;
+    readonly type = TaskActionTypes.REQUEST_REQUEST_TASK;
 
     constructor(public payload: { taskId: string }) {
     }

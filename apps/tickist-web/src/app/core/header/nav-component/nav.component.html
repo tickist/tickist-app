@@ -21,5 +21,5 @@
     </mat-menu>
 
 </mat-toolbar>
-<div style="height: 5px;width:100%;background-color: #1F253D" *ngIf="!(progressBarIsEnabled$ | async)"></div>
+<div style="height: 5px;width:100%;background-color: #1F253D" *ngIf="(progressBarIsEnabled$ | async) === false"></div>
 <mat-progress-bar *ngIf="progressBarIsEnabled$ | async" mode="indeterminate"></mat-progress-bar>

@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 
 
 @Component({
-    selector: 'delete-project-confirmation-dialog',
+    selector: 'tickist-delete-project-confirmation-dialog',
     templateUrl: './delete-project-dialog.component.html',
 })
 export class DeleteProjectConfirmationDialogComponent {

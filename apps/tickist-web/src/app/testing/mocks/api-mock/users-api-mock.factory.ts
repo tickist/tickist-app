@@ -1,12 +1,13 @@
-import {ISimpleUserApi} from '../../../../../../../libs/data/src/lib/simple-user-api.interface';
+
 import * as _ from 'lodash';
 import * as faker from 'faker';
-import {ISimpleProjectApi} from '../../../../../../../libs/data/src/lib/simple-project-api.inferface';
+
+
 
 export class UsersApiMockFactory {
     id = 0;
 
-    static createSimpleUserFromUser(user: any): ISimpleUserApi {
+    static createSimpleUserFromUser(user: any): any {
         return {
             avatar: user.avatar,
             avatar_url: user.avatar_url,
