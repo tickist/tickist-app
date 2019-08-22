@@ -9,31 +9,31 @@ import {TaskProject} from './task-project';
 export interface ITaskApi {
     name: string;
     id?: string;
-    finishDate: string;
-    finishTime: string;
-    suspendDate: string;
+    finishDate?: string;
+    finishTime?: string;
+    suspendDate?: string;
     pinned?: boolean;
     isDone?: boolean;
     onHold?: boolean;
-    typeFinishDate: number;
+    typeFinishDate?: number;
     taskProject: TaskProject;
     owner: TaskUser;
-    ownerPk: number;
+    ownerPk: string;
     author: TaskUser;
     percent?: number;
     priority: string;
-    repeat: number | string;
-    fromRepeating: number;
-    repeatDelta: number;
+    repeat?: number | string;
+    fromRepeating?: number | null;
+    repeatDelta?: number | null;
     description?: string;
-    estimateTime: number;
-    time: number;
+    estimateTime?: number;
+    time?: number;
     isActive?: boolean;
     creationDate?: string;
     modificationDate?: string;
     finishDateDateformat?: string;
-    steps: Array<any>;
-    tags: Tag[];
+    steps?: Array<any>;
+    tags?: Tag[];
     taskListPk: string;
     whenComplete?: any;
     menuShowing?: Menu;
@@ -59,13 +59,13 @@ export class Task {
     steps: Step[] = [];
     priority: string;
     percent = 0;
-    repeat: number;
-    repeatDelta: number;
+    repeat = 0;
+    repeatDelta = null;
     author: TaskUser;
     fromRepeating: number;
     tags: Tag[] = [];
-    time: number;
-    estimateTime: number;
+    time = null;
+    estimateTime = null;
     menuShowing: Menu;
 
 
@@ -77,7 +77,6 @@ export class Task {
         this.suspendDate = task.suspendDate ? moment(task.suspendDate) : '';
         this.repeat = parseInt((<string> task.repeat), 10);
         this.richDescription = convert(task.description);
-        this.estimateTime = task.estimateTime ? task.estimateTime : null;
         if (Array.isArray(task.steps)) {
             this.steps.map((step) => new Step(step));
         }
