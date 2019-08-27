@@ -1,6 +1,5 @@
-import {Action} from '@ngrx/store';
-import {Filter} from '@tickist/data/filter';
 import {TagsFiltersTasksActions, TagsFiltersTasksActionTypes} from '../../actions/tasks/tags-filters-tasks.actions';
+import {Filter} from '@data/filter';
 
 
 export interface TagsFiltersTasksState {

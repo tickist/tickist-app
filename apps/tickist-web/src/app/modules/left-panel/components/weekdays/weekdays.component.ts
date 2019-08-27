@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {Task} from '../../../../../../../../libs/data/src/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import moment from 'moment';
@@ -8,15 +8,15 @@ import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
-import {User} from '../../../../../../../../libs/data/src/users/models';
+import {User} from '@data/users/models';
 import {takeUntil} from 'rxjs/operators';
-import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
 import {dashboardRoutesName} from '../../../dashboard/routes.names';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {homeRoutesName} from '../../../../routing.module.name';
+import {IActiveDateElement} from '@data/active-data-element.interface';
 
 
 @Component({

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {User} from '../../../../../../../../libs/data/src/users/models';
-import {Filter} from '@tickist/data/filter';
+import {Filter} from '@data/filter';
+
 
 
 @Injectable()

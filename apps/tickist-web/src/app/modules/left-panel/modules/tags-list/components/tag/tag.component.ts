@@ -1,13 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Tag} from '../../../../../../../../../../libs/data/src/tags/models/tags';
+import {Tag} from '@data/tags/models/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
-import {Filter} from '@tickist/data/filter';
 import {RequestDeleteTag, RequestUpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../../../store';
 import {SetCurrentTagsFilters} from '../../../../../../core/actions/tasks/tags-filters-tasks.actions';
 import {selectCurrentTagsFilter} from '../../../../../../core/selectors/filters-tasks.selectors';
+import {Filter} from '@data/filter';
 
 
 @Component({

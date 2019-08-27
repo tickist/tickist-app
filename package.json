@@ -10,7 +10,7 @@
     "scripts": {
         "ng": "ng",
         "nx": "nx",
-        "start": "ng serve -c dev  --host 0.0.0.0",
+        "start": "ng serve -c dev --host 0.0.0.0",
         "build": "ng build",
         "test": "ng test",
         "lint": "nx workspace-lint && ng lint",
@@ -70,6 +70,8 @@
         "angular-in-memory-web-api": "0.8.0",
         "chart.js": "^2.8.0",
         "core-js": "^2.5.4",
+        "date-fns": "^2.0.1",
+        "date-fns-timezone": "^0.1.4",
         "firebase": "^6.3.1",
         "firebase-admin": "^8.3.0",
         "firebase-functions": "^3.2.0",

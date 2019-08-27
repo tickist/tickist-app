@@ -1,5 +1,6 @@
-import {Filter} from '@tickist/data/filter';
+
 import {AssignedToFiltersTasksActions, AssignedToFiltersTasksActionTypes} from '../../actions/tasks/assigned-to-filters-tasks.actions';
+import {Filter} from '@data/filter';
 
 
 export interface AssignedToFiltersTasks {

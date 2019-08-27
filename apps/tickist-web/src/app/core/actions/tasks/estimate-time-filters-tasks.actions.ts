@@ -1,5 +1,6 @@
 import {Action} from '@ngrx/store';
-import {Filter} from '@tickist/data/filter';
+import {Filter} from '@data/filter';
+
 
 export enum EstimateTimeFiltersTasksActionTypes {
     AddEstimateTimeFiltersTasks = '[EstimateTimeFiltersTasks] Add estimate time filters tasks',

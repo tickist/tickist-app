@@ -7,10 +7,10 @@ import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {SetCurrentTagsFilters} from '../../core/actions/tasks/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
-import {Filter} from '@tickist/data/filter';
 import {selectCurrentTagsFilter} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
 import {selectAllTags} from '../../core/selectors/tags.selectors';
+import {Filter} from '@data/filter';
 
 @Component({
     selector: 'tags-filter-dialog',

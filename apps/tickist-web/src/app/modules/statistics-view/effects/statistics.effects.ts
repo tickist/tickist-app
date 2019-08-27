@@ -12,12 +12,12 @@ import {
 } from '../actions/statistics.actions';
 import {StatisticsService} from '../../../core/services/statistics.service';
 import {concatMap, concatMapTo, map, mergeMap} from 'rxjs/operators';
-import {ChartStatistics, DailyStatistics, GlobalStatistics} from '@tickist/data/statistics';
 import {defer} from 'rxjs';
 import {AddUser, UserActionTypes} from '../../../core/actions/user.actions';
 import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../store';
+import {ChartStatistics, DailyStatistics, GlobalStatistics} from '@data/statistics';
 
 
 @Injectable()

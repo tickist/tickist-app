@@ -10,12 +10,12 @@ import {User} from '../../../../../../../../libs/data/src/users/models';
 import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {map, takeUntil} from 'rxjs/operators';
-import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
 import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
-import {stateActiveDateElement} from '@tickist/data/state-active-date-element.enum';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
+import {IActiveDateElement} from '@data/active-data-element.interface';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
 
 
 @Component({

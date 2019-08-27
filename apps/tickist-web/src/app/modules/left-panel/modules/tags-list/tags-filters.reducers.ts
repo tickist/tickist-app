@@ -1,5 +1,6 @@
-import {Filter} from '@tickist/data/filter';
+
 import {TagsFiltersActions, TagsFiltersActionTypes} from './tags-filters.actions';
+import {Filter} from '@data/filter';
 
 
 

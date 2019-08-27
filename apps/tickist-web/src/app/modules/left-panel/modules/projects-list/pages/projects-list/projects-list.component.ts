@@ -9,7 +9,6 @@ import {UserService} from '../../../../../../core/services/user.service';
 import {MediaObserver} from '@angular/flex-layout';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterProjectDialogComponent} from '../../components/filter-projects-dialog/filter-projects.dialog.component';
-import {Filter} from '@tickist/data/filter';
 import {ProjectsFiltersService} from '../../projects-filters.service';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../../../store';
@@ -17,6 +16,7 @@ import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/ro
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
 import {selectFilteredProjectsList} from '../../projects-filters.selectors';
 import {homeRoutesName} from '../../../../../../routing.module.name';
+import {Filter} from '@data/filter';
 
 
 @Component({

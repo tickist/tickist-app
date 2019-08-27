@@ -2,12 +2,12 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {Observable, Subject} from 'rxjs';
-import {Filter} from '@tickist/data/filter';
 import {selectCurrentEstimateTimeFilter, selectEstimateTimeFilters} from '../../core/selectors/filters-tasks.selectors';
 import {SetCurrentEstimateTimeFiltersTasks} from '../../core/actions/tasks/estimate-time-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {takeUntil} from 'rxjs/operators';
+import {Filter} from '@data/filter';
 
 
 @Component({

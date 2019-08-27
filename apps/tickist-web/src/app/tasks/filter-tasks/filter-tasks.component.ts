@@ -14,8 +14,8 @@ import {
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Observable, Subject} from 'rxjs';
-import {Filter} from '@tickist/data/filter';
 import {takeUntil} from 'rxjs/operators';
+import {Filter} from '@data/filter';
 
 
 @Component({

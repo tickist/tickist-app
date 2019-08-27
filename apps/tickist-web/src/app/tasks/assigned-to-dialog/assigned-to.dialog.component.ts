@@ -2,12 +2,12 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {Observable, Subject} from 'rxjs';
-import {Filter} from '@tickist/data/filter';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {selectAssignedToFilters, selectCurrentAssignedToFilter} from '../../core/selectors/filters-tasks.selectors';
 import {SetCurrentAssignedToFilter} from '../../core/actions/tasks/assigned-to-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
+import {Filter} from '@data/filter';
 
 
 @Component({

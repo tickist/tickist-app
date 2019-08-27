@@ -1,11 +1,10 @@
-import moment from 'moment';
+import { format } from 'date-fns'
 
 interface ITag {
     id?: string;
     name: string;
     author: string;
     creationDate?: string;
-    modificationDate?: string;
 }
 
 
@@ -13,12 +12,10 @@ export class Tag {
     id: string;
     name: string;
     author: string;
-    creationDate = moment().format();
-    modificationDate = moment().format();
-
+    creationDate: string;
 
     constructor(kwargs: ITag) {
         Object.assign(this, kwargs);
-
+        this.creationDate = format(new Date(),"XXXXX")
     }
 }

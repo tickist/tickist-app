@@ -1,5 +1,5 @@
-import {GlobalStatistics} from '@tickist/data/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
+import {GlobalStatistics} from '@data/statistics';
 
 
 export interface GlobalStatisticsState {

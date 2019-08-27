@@ -5,7 +5,7 @@ import {db} from '../init';
 
 
 
-describe('onCreateUser', function () {
+describe('onUpdateProject', () => {
     let adminStub, api;
     beforeAll(() => {
 
@@ -22,12 +22,8 @@ describe('onCreateUser', function () {
     });
 
     it('first test', async () => {
-        const wrapped = test.wrap(api.onCreateUser);
-        await wrapped({
-            data: jest.fn(() => {
-                return {email: 'bill@tickist.com', id: 1, username: 'bill'};
-            })
-        });
+        const wrapped = test.wrap(api.onUpdateProject);
+        await wrapped();
     });
 
     afterEach(() => {

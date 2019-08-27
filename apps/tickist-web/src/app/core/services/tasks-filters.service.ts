@@ -6,13 +6,13 @@ import {User} from '../../../../../../libs/data/src/users/models';
 import * as _ from 'lodash';
 import {ConfigurationService} from './configuration.service';
 import * as tasksAction from '../../reducers/actions/tasks';
-import {Filter} from '@tickist/data/filter';
 import {HttpClient} from '@angular/common/http';
 import {take} from 'rxjs/operators';
 import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
 import {Tag} from '../../../../../../libs/data/src/tags/models/tags';
 import {AddUser} from '../actions/user.actions';
 import {SortBy} from '../../tasks/models/sortBy';
+import {Filter} from '@data/filter';
 
 
 @Injectable()

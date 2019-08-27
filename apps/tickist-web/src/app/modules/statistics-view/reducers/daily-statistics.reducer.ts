@@ -1,5 +1,5 @@
-import {DailyStatistics} from '@tickist/data/statistics';
 import {StatisticsActions, StatisticsActionTypes} from '../actions/statistics.actions';
+import {DailyStatistics} from '@data/statistics';
 
 
 export interface DailyStatisticsState {

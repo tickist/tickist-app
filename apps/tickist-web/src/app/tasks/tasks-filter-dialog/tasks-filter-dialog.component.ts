@@ -4,9 +4,9 @@ import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {selectCurrentMainFilter, selectMainFilters} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
-import {Filter} from '@tickist/data/filter';
 import {SetCurrentMainFilter} from '../../core/actions/tasks/main-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
+import {Filter} from '@data/filter';
 
 @Component({
     selector: 'tasks-filter-dialog',

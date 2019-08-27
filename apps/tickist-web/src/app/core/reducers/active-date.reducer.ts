@@ -1,6 +1,6 @@
 import {ActiveDateActions, ActiveDateActionTypes} from '../actions/active-date.actions';
-import {stateActiveDateElement} from '@tickist/data/state-active-date-element.enum';
-import moment from 'moment';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
+import {format} from 'date-fns';
 
 
 export interface ActiveDateState {
@@ -12,7 +12,7 @@ export interface ActiveDateState {
 
 export const activeDateInitialState: ActiveDateState = {
     active: {
-        date: moment().format( 'DD-MM-YYYY'),
+        date: format(new Date(), 'DD-MM-YYYY'),
         state: stateActiveDateElement.weekdays
     }
 };

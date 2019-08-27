@@ -4,12 +4,12 @@ import {select, Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
 
-import {GlobalStatistics, DailyStatistics, ChartStatistics} from '@tickist/data/statistics';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
-import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
 import moment from 'moment';
 import {selectActiveDate} from '../selectors/active-date.selectors';
+import {IActiveDateElement} from '@data/active-data-element.interface';
+import {ChartStatistics, DailyStatistics, GlobalStatistics} from '@data/statistics';
 
 @Injectable()
 export class StatisticsService {

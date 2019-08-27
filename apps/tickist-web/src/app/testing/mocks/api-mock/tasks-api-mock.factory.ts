@@ -1,11 +1,10 @@
 import {UsersApiMockFactory} from './users-api-mock.factory';
 import {ProjectsApiMockFactory} from './projects-api-mock.factory';
 import * as faker from 'faker';
-import {IProjectApi} from '@tickist/data/project-api.interface';
 import * as _ from 'lodash';
-import moment from 'moment';
-import {Menu} from '@tickist/data/menu';
-import {Tag} from '../../../../../../../libs/data/src/tags/models/tags';
+import {Tag} from '@data/tags/models/tags';
+import {IProjectApi} from '@data/project-api.interface';
+import {Menu} from '@data/menu';
 
 export class TasksApiMockFactory {
     id = 0;

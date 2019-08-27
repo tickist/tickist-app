@@ -2,21 +2,19 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {FutureListElement} from './models';
 import moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {MediaObserver} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
 import {TaskService} from '../../../../core/services/task.service';
-import {Task} from '../../../../../../../../libs/data/src/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {UserService} from '../../../../core/services/user.service';
-import {User} from '../../../../../../../../libs/data/src/users/models';
-import {stateActiveDateElement} from '@tickist/data/state-active-date-element.enum';
-import {dashboardRoutesName} from '../../../dashboard/routes.names';
+import {User} from '@data/users/models';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
 import {futureTasksRoutesName} from '../../../future-tasks/routes.names';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
+import {IActiveDateElement} from '@data/active-data-element.interface';
 
 @Component({
     selector: 'tickist-future-list',

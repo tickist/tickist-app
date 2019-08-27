@@ -1,9 +1,9 @@
 import * as faker from 'faker';
-import {ISimpleProjectApi} from '@tickist/data/simple-project-api.inferface';
-import {IProjectApi} from '@tickist/data/project-api.interface';
-import {ISimpleUserApi} from '@tickist/data/simple-user-api.interface';
 import * as _ from 'lodash';
 import {UsersApiMockFactory} from './users-api-mock.factory';
+import {ISimpleUserApi} from '@data/simple-user-api.interface';
+import {IProjectApi} from '@data/project-api.interface';
+import {ISimpleProjectApi} from '@data/simple-project-api.inferface';
 
 export class ProjectsApiMockFactory {
     id = 0;

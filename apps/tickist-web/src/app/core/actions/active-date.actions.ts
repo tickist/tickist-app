@@ -1,5 +1,6 @@
 import {Action} from '@ngrx/store';
-import {stateActiveDateElement} from '@tickist/data/state-active-date-element.enum';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
+
 
 
 export enum ActiveDateActionTypes {

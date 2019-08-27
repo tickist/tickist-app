@@ -1,6 +1,5 @@
 import {ActionReducerMap, MetaReducer} from '@ngrx/store';
 import {leftSidenavVisibility, addTaskComponentVisibility} from './reducers/configuration';
-import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
 import {environment} from '../environments/environment';
 
 
@@ -48,6 +47,7 @@ export const reducers: ActionReducerMap<any> = {
 
 import createNgrxMiddleware from 'logrocket-ngrx';
 import LogRocket from 'logrocket';
+import {IActiveDateElement} from '@data/active-data-element.interface';
 
 
 const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});

@@ -9,10 +9,6 @@ import {Task} from '@data/tasks/models/tasks';
 export const onCreateUser = functions.firestore.document('users/{userId}')
     .onCreate(async (snap, context) => {
         const userId = context.params.userId;
-        const projectRef = db.collection('projects').doc();
-        console.log(projectRef.id);
-        console.log({db});
-        const inbox = createInboxProject(snap.data(), userId);
         console.log('Running createUser trigger ...');
 
         return db.runTransaction(async transaction => {

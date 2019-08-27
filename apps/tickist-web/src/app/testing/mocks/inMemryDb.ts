@@ -5,10 +5,10 @@ import {UsersApiMockFactory} from './api-mock/users-api-mock.factory';
 import {TagsApiMockFactory} from './api-mock/tags-api-mock.factory';
 import {TasksApiMockFactory} from './api-mock/tasks-api-mock.factory';
 import {ProjectsApiMockFactory} from './api-mock/projects-api-mock.factory';
-import {ISimpleUserApi} from '@tickist/data/simple-user-api.interface';
 import moment from 'moment';
 import * as _ from 'lodash';
-import {IProjectApi} from '@tickist/data/project-api.interface';
+import {ISimpleUserApi} from '@data/simple-user-api.interface';
+import {IProjectApi} from '@data/project-api.interface';
 
 
 const NUMBERS_OF_USERS = 4;

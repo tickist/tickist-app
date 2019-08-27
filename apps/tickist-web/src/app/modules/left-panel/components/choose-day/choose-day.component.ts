@@ -2,13 +2,13 @@ import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Out
 import moment from 'moment';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {FormControl} from '@angular/forms';
-import {IActiveDateElement} from '@tickist/data/active-data-element.interface';
-import {stateActiveDateElement} from '@tickist/data/state-active-date-element.enum';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
+import {IActiveDateElement} from '@data/active-data-element.interface';
+import {stateActiveDateElement} from '@data/state-active-date-element.enum';
 
 @Component({
     selector: 'tickist-choose-day',

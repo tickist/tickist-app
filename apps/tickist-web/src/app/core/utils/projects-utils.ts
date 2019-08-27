@@ -1,12 +1,12 @@
 import {Project, ShareWithUser, SimpleProject} from '../../../../../../libs/data/src/projects/models';
-import {ISimpleProjectApi} from '@tickist/data/simple-project-api.inferface';
-import {ISimpleUserApi} from '@tickist/data/simple-user-api.interface';
-import {IPendingUser} from '@tickist/data/pending-user-api.interface';
 import {toSnakeCase} from './toSnakeCase';
 import {ShareWithPendingUser} from '../../../../../../libs/data/src/projects/models/share-with-pending-user';
 import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
 import * as _ from 'lodash';
 import {ProjectWithLevel} from '../../../../../../libs/data/src/projects/models/project-with-level';
+import {ISimpleUserApi} from '@data/simple-user-api.interface';
+import {ISimpleProjectApi} from '@data/simple-project-api.inferface';
+import {IPendingUser} from '@data/pending-user-api.interface';
 
 export function addUserToShareList(project: (SimpleProject | Project), user) {
     const shareWith = [...project.shareWith];

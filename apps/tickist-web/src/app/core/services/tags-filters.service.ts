@@ -7,9 +7,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import * as tagsAction from '../../modules/left-panel/modules/tags-list/tags-filters.actions';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {Filter} from '@tickist/data/filter';
 import {UserService} from './user.service';
 import {UpdateUser} from '../actions/user.actions';
+import {Filter} from '@data/filter';
 
 
 @Injectable()
