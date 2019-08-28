@@ -12,7 +12,7 @@ export interface ActiveDateState {
 
 export const activeDateInitialState: ActiveDateState = {
     active: {
-        date: format(new Date(), 'DD-MM-YYYY'),
+        date: format(new Date(), 'dd-MM-yyyy'),
         state: stateActiveDateElement.weekdays
     }
 };

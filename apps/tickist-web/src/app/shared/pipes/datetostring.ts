@@ -1,27 +1,28 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import moment from 'moment';
+import {format, isDate, isToday, isTomorrow, isYesterday, parse} from 'date-fns';
 
 @Pipe({
     name: 'datetostring'
 })
 export class DateToString implements PipeTransform {
-    transform(value: any): any {
+    transform(value: Date | string): string {
         if (value) {
-            let result = moment(value, 'DD-MM-YYYY').format('dddd');
-            const valueDateFormated: string = moment(value, 'DD-MM-YYYY').hours(0).minutes(0).seconds(0).format('DD-MM-YYYY');
-            const todayDateFormated: string = moment().hours(0).minutes(0).seconds(0).format('DD-MM-YYYY');
-            const tomorrowDateFormated: string =  moment().hours(0).minutes(0).seconds(0).add(1, 'days').format('DD-MM-YYYY');
-            const yesterdayDateFormated: string =  moment().hours(0).minutes(0).seconds(0).add(-1, 'days').format('DD-MM-YYYY');
-            if (valueDateFormated === todayDateFormated) {
-                result = 'today';
-            } else if (valueDateFormated === tomorrowDateFormated) {
-                result = 'tomorrow';
-            } else if (valueDateFormated === yesterdayDateFormated) {
-                result = 'yesterday';
+            let result;
+            if (isDate(value)) {
+                result = value;
+            } else {
+                result = parse(<string> value, 'dd-MM-yyyy', new Date());
             }
-            return result;
-        } else {
-            return value;
+            if (isToday(result)) {
+                return 'today';
+            } else if (isTomorrow(result)) {
+                return 'tomorrow';
+            } else if (isYesterday(result)) {
+                return 'yesterday';
+            }
+            return format(result, 'EEEE');
         }
+        return <string> value;
+
     }
 }

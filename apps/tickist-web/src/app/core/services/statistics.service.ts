@@ -1,15 +1,15 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {select, Store} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
 
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
-import moment from 'moment';
 import {selectActiveDate} from '../selectors/active-date.selectors';
 import {IActiveDateElement} from '@data/active-data-element.interface';
 import {ChartStatistics, DailyStatistics, GlobalStatistics} from '@data/statistics';
+import {format} from 'date-fns';
 
 @Injectable()
 export class StatisticsService {
@@ -32,11 +32,11 @@ export class StatisticsService {
     //     this.loadChartsData();
     // }
 
-    loadDailyStatistics(date: moment.Moment = moment()): Observable<DailyStatistics> {
+    loadDailyStatistics(date: Date = new Date()): Observable<DailyStatistics> {
         // const formatedDate = activeDateElement ?
         //     activeDateElement.date.format('YYYY-MM-DD') :
         //     this.activeDateElement.date.format('YYYY-MM-DD');
-        const formatedDate = date.format('YYYY-MM-DD');
+        const formatedDate = format(date, 'yyyy-MM-dd');
         return this.http.get(`${environment['apiUrl']}/day_statistics/?date=${formatedDate}`)
             .pipe(
                 map(payload => new DailyStatistics(payload))

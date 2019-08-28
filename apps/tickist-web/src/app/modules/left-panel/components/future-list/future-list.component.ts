@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {FutureListElement} from './models';
-import moment from 'moment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MediaObserver} from '@angular/flex-layout';
 import {takeUntil} from 'rxjs/operators';
@@ -15,6 +14,7 @@ import {selectActiveDate} from '../../../../core/selectors/active-date.selectors
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {IActiveDateElement} from '@data/active-data-element.interface';
+import {addMonths, format, getMonth, getYear} from 'date-fns';
 
 @Component({
     selector: 'tickist-future-list',
@@ -64,16 +64,16 @@ export class FutureListComponent implements OnInit, OnDestroy {
         if (!this.tasks.length || !this.user) return [];
         const futureList = [];
         for (let i = 0; i <= this.monthsRequired; i++) {
-            const momentDate = moment().add(i, 'months');
+            const momentDate = addMonths(new Date, i);
             futureList.push({
-                'url': momentDate.format('MMMM-YYYY'),
-                'label': momentDate.format('MMMM YYYY'),
+                'url': format(momentDate, 'MMMM-yyyy'),
+                'label': format(momentDate, 'MMMM yyyy'),
                 'tasksCounter': this.tasks.filter(task => {
                     return task.owner.id === this.user.id
                         && task.isDone === false
                         && task.finishDate
-                        && task.finishDate.month() === momentDate.month()
-                        && task.finishDate.year() === momentDate.year();
+                        && getMonth(task.finishDate) === getMonth(momentDate)
+                        && getMonth(task.finishDate) === getYear(momentDate);
                 }).length
             });
         }
@@ -83,7 +83,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
 
     isSelected(elem: FutureListElement) {
         return this.activeDateElement.state === this.stateActiveDateElement.future
-            && elem.url === this.activeDateElement.date.format('MMMM-YYYY');
+            && elem.url === format(this.activeDateElement.date, 'MMMM-yyyy');
     }
 
     navigateTo(path, arg) {

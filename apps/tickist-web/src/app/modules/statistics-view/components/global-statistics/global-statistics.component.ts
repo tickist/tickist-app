@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BaseChartDirective} from 'ng2-charts';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
-import moment from 'moment';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectChartStatistics, selectGlobalStatistics} from '../../statistics.selectors';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {ChartStatistics, GlobalStatistics} from '@data/statistics';
+import {format} from 'date-fns';
 
 
 @Component({
@@ -59,11 +59,11 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
             this.charts = charts;
             if (this.charts) {
                 this.charts.tasksChart.forEach((elem) => {
-                    tasksCounterX.push(moment(elem.x).format('ddd'));
+                    tasksCounterX.push(format(new Date(elem.x), 'ddd'));
                     tasksCounterY.push(elem.tasksCounter);
                 });
                 this.charts.timeChart.forEach((elem) => {
-                    timeChartX.push(moment(elem.x).format('ddd'));
+                    timeChartX.push(format(new Date(elem.x), 'ddd'));
                     timeChartY.push(elem.time);
                     estimateTimeChartY.push(elem.estimateTime);
                 });

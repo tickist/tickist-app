@@ -1,11 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {TaskService} from '../../../../core/services/task.service';
-import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {filter, map, takeUntil} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {Task} from '@data/tasks/models/tasks';
-import * as _ from 'lodash';
 import {User} from '@data/users/models';
 import {FutureTasksFiltersService} from '../../future-tasks-filters.service';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';

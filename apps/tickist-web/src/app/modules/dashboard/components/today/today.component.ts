@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {Task} from '../../../../../../../../libs/data/src/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {User} from '../../../../../../../../libs/data/src/users/models';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';

@@ -45,7 +45,7 @@ export class Task {
     description = '';
     richName = '';
     richDescription = '';
-    finishDate: any;
+    finishDate: Date;
     finishTime: string;
     suspendDate: any;
     pinned = false;
@@ -71,7 +71,7 @@ export class Task {
     constructor(task: ITaskApi) {
         Object.assign(this, task);
         this.richName = convert(task.name);
-        this.finishDate = task.finishDate ? new Date(task.finishDate) : '';
+        this.finishDate = task.finishDate ? new Date(task.finishDate) : null;
         this.finishTime = task.finishTime ? task.finishTime : '';
         this.suspendDate = task.suspendDate ? new Date(task.suspendDate) : '';
         this.repeat = parseInt((<string> task.repeat), 10);

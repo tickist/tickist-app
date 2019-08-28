@@ -43,7 +43,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     @Input() mediaChange;
     @ViewChild('container', { static: true }) container: ElementRef;
 
-    dateFormat = 'DD-MM-YYYY';
+    dateFormat = 'dd-MM-yyyy';
     projects$: Observable<Project[]>;
     projects: Project[];
     ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -96,7 +96,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.projects$ = this.store.select(selectFilteredProjectsList);
         this.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(projects => this.projects = projects);
         if (this.mediaChange && this.mediaChange.mqAlias === 'xs') {
-            this.dateFormat = 'DD-MM';
+            this.dateFormat = 'dd-MM';
         }
         const repeatDelta = this.task.repeatDelta;
         const repeatDeltaExtension = this.repeatStringExtension.transform(this.task.repeat);
@@ -147,9 +147,9 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('mediaChange') && changes['mediaChange'].hasOwnProperty('currentValue')
             && changes['mediaChange'].currentValue && changes['mediaChange'].currentValue.mqAlias === 'xs') {
-            this.dateFormat = 'DD-MM';
+            this.dateFormat = 'dd-MM';
         } else {
-            this.dateFormat = 'DD-MM-YYYY';
+            this.dateFormat = 'dd-MM-yyyy';
         }
         if (changes.hasOwnProperty('task') && changes.task.currentValue && this.selectTaskProject) {
             this.selectTaskProject.setValue(changes.task.currentValue.taskProject.id, {emitEvent: false});

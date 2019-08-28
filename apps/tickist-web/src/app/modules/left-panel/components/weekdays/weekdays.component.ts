@@ -3,7 +3,6 @@ import {ConfigurationService} from '../../../../core/services/configuration.serv
 import {Task} from '@data/tasks/models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from 'rxjs';
-import moment from 'moment';
 import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {TaskService} from '../../../../core/services/task.service';
@@ -17,6 +16,7 @@ import {dashboardRoutesName} from '../../../dashboard/routes.names';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {homeRoutesName} from '../../../../routing.module.name';
 import {IActiveDateElement} from '@data/active-data-element.interface';
+import {addDays, format, isDate} from 'date-fns';
 
 
 @Component({
@@ -28,7 +28,7 @@ import {IActiveDateElement} from '@data/active-data-element.interface';
 export class WeekDaysComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     activeDateElement: IActiveDateElement;
-    today: moment.Moment;
+    today: Date;
     tasks: Task[] = [];
     week: Array<any> = [];
     mediaChange: MediaChange;
@@ -51,12 +51,12 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         // }, timeToMidnight);
     }
 
-    isToday(date: (moment.Moment | string) = this.activeDateElement.date): boolean {
-        const today: moment.Moment = moment();
-        if (moment.isMoment(date)) {
-            date = (<string>(date.format('DD-MM-YYYY')));
+    isToday(date: (Date | string) = this.activeDateElement.date): boolean {
+        const today: Date = new Date();
+        if (isDate(date)) {
+            date = (<string>(format(<Date> date, 'dd-MM-yyyy')));
         }
-        return today.format('DD-MM-YYYY') === date;
+        return format(today, 'dd-MM-yyyy') === date;
     }
 
     ngOnInit(): void {
@@ -104,7 +104,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     }
 
     isSelected(day): boolean {
-        return (day.date === this.activeDateElement.date.format('DD-MM-YYYY'));
+        return (day.date === format(this.activeDateElement.date, 'dd-MM-yyyy'));
     }
 
     navigateTo(arg) {
@@ -125,7 +125,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     }
 
     feelWeekData() {
-        let nextDay = moment();
+        let nextDay = new Date();
         const userId = _.get(this.user, 'id');
         this.week = [];
         if (!userId || this.tasks.length === 0) {
@@ -133,19 +133,19 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         }
         for (let i = 0; i < 7; i++) {
             this.week.push({
-                'name': nextDay.format('dddd'),
-                'date': nextDay.format('DD-MM-YYYY'),
+                'name': format(nextDay, 'EEEE'),
+                'date': format(nextDay, 'dd-MM-yyyy'),
                 'tasksCounter': this.tasks.filter(task => {
                     return task.owner.id === userId && task.isDone === false;
                 })
                     .filter(task => {
                         const finishDate = task.finishDate;
-                        return ((finishDate && (finishDate.format('DD-MM-YYYY') === nextDay.format('DD-MM-YYYY'))) ||
+                        return ((finishDate && (format(finishDate, 'dd-MM-yyyy') === format(nextDay, 'dd-MM-yyyy'))) ||
                             (this.isToday(nextDay) && task.pinned)
                         );
                     }).length
             });
-            nextDay = nextDay.add(1, 'days');
+            nextDay = addDays(nextDay, 1);
         }
     }
 

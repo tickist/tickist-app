@@ -4,6 +4,7 @@ import {UsersApiMockFactory} from './users-api-mock.factory';
 import {ISimpleUserApi} from '@data/simple-user-api.interface';
 import {IProjectApi} from '@data/project-api.interface';
 import {ISimpleProjectApi} from '@data/simple-project-api.inferface';
+import {Project} from '@data/projects';
 
 export class ProjectsApiMockFactory {
     id = 0;
@@ -28,7 +29,7 @@ export class ProjectsApiMockFactory {
         );
     }
 
-    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: any[]): IProjectApi {
+    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: any[]): Project {
         this.id += 1;
         return {
             ancestor: null,

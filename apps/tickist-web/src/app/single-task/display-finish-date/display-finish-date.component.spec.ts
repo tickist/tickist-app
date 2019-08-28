@@ -1,11 +1,10 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {DisplayFinishDateComponent} from './display-finish-date.component';
-import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
-import moment from 'moment';
-
+import {format} from 'date-fns';
 
 
 describe('DisplayFinishDateComponent', () => {
@@ -22,7 +21,7 @@ describe('DisplayFinishDateComponent', () => {
         user = usersApiMockFactory.createUserDict();
         project = projectApiMockFactory.createProjectDict([], user, []);
         task = taskApiMockFactory.createTaskDict(user, user, project,  []);
-        task.finish_date = moment().format('DD-MM-YYYY');
+        task.finish_date = format(new Date, 'dd-MM-yyyy');
         TestBed.configureTestingModule({
             declarations: [DisplayFinishDateComponent]
         }).compileComponents();

@@ -4,7 +4,8 @@ import {selectAllTasks, selectAllUndoneTasks} from '../../core/selectors/task.se
 import {FutureTasksFiltersState} from './future-tasks-filters.reducers';
 import {selectLoggedInUser} from '../../core/selectors/user.selectors';
 import {selectActiveDate} from '../../core/selectors/active-date.selectors';
-import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
+import {Task} from '@data/tasks/models/tasks';
+import {getMonth, getYear} from 'date-fns';
 
 
 export const selectFutureTasksFilters = createFeatureSelector<FutureTasksFiltersState>('futureTasks');
@@ -31,8 +32,8 @@ export const selectFutureTasksList = createSelector(
                 return task.owner.id === user.id
                     && task.isDone === false
                     && task.finishDate
-                    && task.finishDate.month() === activeDate.date.month()
-                    && task.finishDate.year() === activeDate.date.year();
+                    && getMonth(task.finishDate) === getMonth(activeDate.date)
+                    && getYear(task.finishDate) === getYear(activeDate.date);
             });
 
         const futureTasksSortBy = JSON.parse(user.futureTasksSortBy);

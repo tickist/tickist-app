@@ -5,10 +5,10 @@ import {UsersApiMockFactory} from './api-mock/users-api-mock.factory';
 import {TagsApiMockFactory} from './api-mock/tags-api-mock.factory';
 import {TasksApiMockFactory} from './api-mock/tasks-api-mock.factory';
 import {ProjectsApiMockFactory} from './api-mock/projects-api-mock.factory';
-import moment from 'moment';
 import * as _ from 'lodash';
 import {ISimpleUserApi} from '@data/simple-user-api.interface';
 import {IProjectApi} from '@data/project-api.interface';
+import {addDays, format} from 'date-fns';
 
 
 const NUMBERS_OF_USERS = 4;
@@ -49,13 +49,13 @@ export class InMemoryDataService implements InMemoryDbService {
         this.tasks.map(task => {
             _.range(0, 6 + 1).forEach((number) => {
                 if ((task.id % 17)  === number) {
-                    task.finish_date = moment().add(number, 'days').format('DD-MM-YYYY');
-                    task.finish_date_dateformat = moment().add(number, 'days').format('YYYY-MM-DD');
+                    task.finish_date = format(addDays(new Date(), number), 'dd-MM-yyyy');
+                    task.finish_date_dateformat = format(addDays(new Date(), number), 'yyyy-MM-dd');
                 }
             });
             if ((task.id % 17)  === 8) {
-                task.finish_date = moment().add(-1, 'days').format('DD-MM-YYYY');
-                task.finish_date_dateformat = moment().add(-1, 'days').format('YYYY-MM-DD');
+                task.finish_date = format(addDays(new Date(), -1), 'dd-MM-yyyy');
+                task.finish_date_dateformat = format(addDays(new Date(), -1), 'yyyy-MM-dd');
             }
         });
 
