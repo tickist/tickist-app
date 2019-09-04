@@ -18,13 +18,13 @@ export function hideAllMenuElements(task: Task): Task {
 }
 
 
-export function removeTag(task: Task, tag: Tag): Task {
+export function removeTag(task: Task, deletedTag: Tag): Task {
     const tags = [...task.tags];
-    const index: number = tags.indexOf(tag, 0);
+    const index: number = tags.indexOf(deletedTag, 0);
     if (index > -1) {
         tags.splice(index, 1);
     }
-    return Object.assign({}, task, {tags: tags});
+    return Object.assign({}, task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
 }
 
 export function moveFinishDateFromPreviousFinishDate(task, delta: string | number): Task {

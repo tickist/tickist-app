@@ -1,7 +1,7 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import {ActiveDateState} from '../reducers/active-date.reducer';
 import {stateActiveDateElement} from '@data/state-active-date-element.enum';
-import {setHours, setMilliseconds, setMinutes, setSeconds} from 'date-fns';
+import {parse, setHours, setMilliseconds, setMinutes, setSeconds} from 'date-fns';
 
 
 export const selectActiveDateState = createFeatureSelector<ActiveDateState>('activeDate');
@@ -11,12 +11,10 @@ export const selectActiveDate = createSelector(
     selectActiveDateState,
     activeDateState => {
         let date: Date;
-        const splittedDate: string[] = activeDateState.active.date.split('-');
         if (activeDateState.active.state === stateActiveDateElement.future) {
-            const year = parseInt(splittedDate[1], 10);
-            const month = parseInt(splittedDate[0], 10);
-            date = new Date(year, month, 1);
+            date = parse(`01-${activeDateState.active.date}`, 'dd-LLLL-uuuu', new Date());
         } else if (activeDateState.active.state === stateActiveDateElement.weekdays) {
+            const splittedDate: string[] = activeDateState.active.date.split('-');
             date = new Date(parseInt(splittedDate[2], 10), parseInt(splittedDate[1], 10) - 1, parseInt(splittedDate[0], 10));
             date = setMinutes(date, 0);
             date = setHours(date, 0);

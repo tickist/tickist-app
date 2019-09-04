@@ -33,6 +33,7 @@ export interface ITaskApi {
     finishDateDateformat?: string;
     steps?: Array<any>;
     tags?: Tag[];
+    tagsIds?: string[];
     taskListPk: string;
     whenComplete?: any;
     menuShowing?: Menu;
@@ -63,6 +64,7 @@ export class Task {
     author: TaskUser;
     fromRepeating: number;
     tags: Tag[] = [];
+    tagsIds: string[] = [];
     time = null;
     estimateTime = null;
     menuShowing: Menu;
@@ -79,7 +81,8 @@ export class Task {
         if (Array.isArray(task.steps)) {
             this.steps.map((step) => new Step(step));
         }
-        this.tags.map(tag => new Tag(tag));
+        this.tags = this.tags.map(tag => new Tag(tag));
+        this.tagsIds = this.tags.map(tag => tag.id);
         this.menuShowing = new Menu(task.menuShowing);
     }
 

@@ -2,7 +2,8 @@
 
             <div class="header"  fxLayout="row" fxLayoutAlign="start center">
 
-                <div fxFlex>Future tasks from {{ (activeDateElement$ | async).date }}</div>
+                <div fxFlex>Future tasks from {{ (activeDateElement$ | async).date | date:"LLLL yyyy"}}</div>
+
                 <div fxFlex></div>
                 <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
             </div>

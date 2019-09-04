@@ -74,6 +74,7 @@ function createTask(name, user, project, tags) {
         author: user,
         taskListPk: project.id,
         tags: tags,
+        tagsIds: tags.map(tag => tag.id),
         estimateTime: 5,
         finishDate: new Date().toISOString(),
         taskProject: {'id': project.id, name: project.name, color: project.color, shareWithIds: project.shareWithIds}

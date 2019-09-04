@@ -388,7 +388,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                                 }
                             }));
                         } else {
-                            this.task = Object.assign({}, this.task, {tags: tags});
+                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
                         }
 
                     } else {
@@ -398,11 +398,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                         if (!this.isNewTask()) {
                             this.store.dispatch(new RequestUpdateTask({
                                 task: {
-                                    id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
+                                    id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)})
                                 }
                             }));
                         } else {
-                            this.task = Object.assign({}, this.task, {tags: tags});
+                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
                         }
                     }
 
@@ -415,11 +415,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                     if (!this.isNewTask()) {
                         this.store.dispatch(new RequestUpdateTask({
                             task: {
-                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)})
                             }
                         }));
                     } else {
-                        this.task = Object.assign({}, this.task, {tags: tags});
+                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
                     }
                 } else {
                     const tag = new Tag({name: this.tagsCtrl.value, author: this.user.id});
@@ -428,11 +428,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                     if (!this.isNewTask()) {
                         this.store.dispatch(new RequestUpdateTask({
                             task: {
-                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)})
                             }
                         }));
                     } else {
-                        this.task = Object.assign({}, this.task, {tags: tags});
+                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag =>tag.id)});
                     }
                 }
             }

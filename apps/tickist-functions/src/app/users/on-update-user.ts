@@ -3,7 +3,7 @@ import * as functions from 'firebase-functions';
 import {db} from '../init';
 
 
-export const onUpdateUser = functions.firestore.document('users/{userId}/')
+export const onUpdateUser = functions.firestore.document('users/{userId}')
         .onUpdate(async (snap, context) => {
 
             console.log('Running onUpdateUser trigger ...');

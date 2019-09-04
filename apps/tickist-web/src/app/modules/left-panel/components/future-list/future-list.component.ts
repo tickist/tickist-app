@@ -64,7 +64,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
         if (!this.tasks.length || !this.user) return [];
         const futureList = [];
         for (let i = 0; i <= this.monthsRequired; i++) {
-            const momentDate = addMonths(new Date, i);
+            const momentDate = addMonths(new Date(), i);
             futureList.push({
                 'url': format(momentDate, 'MMMM-yyyy'),
                 'label': format(momentDate, 'MMMM yyyy'),

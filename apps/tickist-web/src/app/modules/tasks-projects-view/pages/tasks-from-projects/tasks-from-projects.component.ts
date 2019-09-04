@@ -77,7 +77,6 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                         if (project && project !== activeProject) {
                             if (project) {
                                 const allDescendants = calculateProjectDescendants(project, projects);
-                                debugger;
                                 this.store.dispatch(new NewActiveProjectsIds({projectsIds: allDescendants}));
                             }
                             this.store.dispatch(new SetActiveProject({project: project}));

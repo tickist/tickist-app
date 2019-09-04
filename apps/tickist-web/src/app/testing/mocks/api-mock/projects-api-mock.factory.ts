@@ -29,12 +29,11 @@ export class ProjectsApiMockFactory {
         );
     }
 
-    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: any[]): Project {
+    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: any[]): any {
         this.id += 1;
         return {
             ancestor: null,
             color: '#2c86ff',
-            creation_date: '2014-08-07T20:41:56.777000+02:00',
             default_finish_date: 0,
             default_priority: 'B',
             default_type_finish_date: 1,
