@@ -18,7 +18,7 @@ export interface IUser {
     dateJoined: Date;
     facebookConnection?: boolean;
     googleConnection?: boolean;
-    inboxPk: number;
+    inboxPk: string;
     orderTasksDashboard?: string;
     assignsTaskToMe?: boolean;
     changesTaskFromSharedListThatIsAssignedToMe?: boolean;
@@ -54,7 +54,7 @@ export class User {
     readonly dateJoined: Date;
     facebookConnection = null;
     googleConnection = null;
-    inboxPk: number;
+    inboxPk: string;
     orderTasksDashboard = DEFAULT_TASKS_ORDER_OPTIONS;
     changesTaskFromSharedListThatIsAssignedToMe = true;
     changesTaskFromSharedListThatIAssignedToHimHer = true;

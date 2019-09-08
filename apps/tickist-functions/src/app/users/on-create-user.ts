@@ -12,7 +12,6 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
         console.log('Running createUser trigger ...');
 
         return db.runTransaction(async transaction => {
-            console.log('here');
             const tags: { [key: string]: Tag } = {};
             const projectRef = db.collection('projects').doc();
             console.log(projectRef.id);

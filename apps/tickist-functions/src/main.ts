@@ -8,3 +8,4 @@ export {onCreateUser} from './app/users/on-create-user';
 export {onUpdateUser} from './app/users/on-update-user';
 export {onUpdateProject} from './app/projects/on-update-project';
 export {onUpdateTag} from './app/tags/on-update-tag';
+export {onDeleteTag} from './app/tags/on-delete-tag';

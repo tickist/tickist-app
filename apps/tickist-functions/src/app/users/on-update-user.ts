@@ -7,7 +7,7 @@ export const onUpdateUser = functions.firestore.document('users/{userId}')
         .onUpdate(async (snap, context) => {
 
             console.log('Running onUpdateUser trigger ...');
-
+            // @TODO need to add the body
             return db.runTransaction(async transaction => {
 
             });

@@ -1,28 +1,23 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {concatMap, filter, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
-import {select, Store} from '@ngrx/store';
+import {concatMap, map, mergeMap, switchMap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
-
-
 import {Update} from '@ngrx/entity';
 import {
     AddProjects,
-    CreateProject,
     DeleteProject,
-    ProjectActionTypes, QueryProjects,
-    RequestCreateProject,
-    RequestsAllProjects, RequestUpdateProject,
+    ProjectActionTypes,
+    QueryProjects,
+    RequestCreateProject, RequestDeleteProject,
+    RequestUpdateProject,
     UpdateProject
 } from '../actions/projects/projects.actions';
-import {allProjectsLoaded, selectProjectById} from '../selectors/projects.selectors';
 import {ProjectService} from '../services/project.service';
-import {Project} from '../../../../../../libs/data/src/projects/models';
-import {AddTags, DeleteTag, QueryTags, UpdateTag} from '../actions/tags.actions';
-import {AddTasks, TaskActionTypes} from '../actions/tasks/task.actions';
-import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
+import {Project} from '@data/projects';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {MatSnackBar} from '@angular/material';
 
 
 @Injectable()
@@ -37,8 +32,8 @@ export class ProjectsEffects {
                 return this.db.collection(
                     'projects',
                     ref => ref
-                        .where('shareWithIds', 'array-contains', this.authFire.auth.currentUser.uid)
                         .where('isActive', '==', true)
+                        .where('shareWithIds', 'array-contains', this.authFire.auth.currentUser.uid)
                 ).stateChanges();
             }),
             // mergeMap(action => action),
@@ -70,7 +65,7 @@ export class ProjectsEffects {
                 }));
                 const returnsActions = [];
                 if (addedProjects.length > 0) {
-                    returnsActions.push( new AddProjects({projects: addedProjects}));
+                    returnsActions.push(new AddProjects({projects: addedProjects}));
                 }
                 if (updatedProject) {
                     returnsActions.push(new UpdateProject({project: updatedProject}));
@@ -109,12 +104,15 @@ export class ProjectsEffects {
     @Effect({dispatch: false})
     deleteProject$ = this.actions$
         .pipe(
-            ofType<DeleteProject>(ProjectActionTypes.DELETE_PROJECT),
-            mergeMap(action => this.projectService.deleteProject(action.payload.projectId))
+            ofType<RequestDeleteProject>(ProjectActionTypes.REQUEST_DELETE_PROJECT),
+            mergeMap(action => this.projectService.deleteProject(action.payload.projectId)),
+            map(() => this.snackBar.open('Project has been deleted successfully', '', {
+                duration: 2000,
+            }))
         );
 
     constructor(private actions$: Actions, private projectService: ProjectService, private db: AngularFirestore,
-                private store: Store<AppStore>, private authFire: AngularFireAuth) {
+                private store: Store<AppStore>, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
 
     }
 

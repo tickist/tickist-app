@@ -1,11 +1,9 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import {Project} from '../../../../../../libs/data/src/projects/models';
-
-import {SimpleUser} from '../../../../../../libs/data/src/users/models';
+import {Project} from '@data/projects';
+import {SimpleUser} from '@data/users/models';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
@@ -105,13 +103,12 @@ export class ProjectService {
 
 
     deleteProject(projectId: string) {
-        return this.db.collection(projectsCollectionName).doc(projectId).update({isActive: true});
-        // return this.http.delete(`${environment['apiUrl']}/project/${projectId}/`);
-        // .subscribe(action => {
-        //     this.store.dispatch(new projectsAction.DeleteProject(project));
-        //     this.snackBar.open('Project has been deleted successfully', '', {
-        //         duration: 2000,
-        //     });
-        // });
+        return this.db.collection(projectsCollectionName).doc(projectId).update({isActive: false});
+    }
+
+    leaveProject(project: Project) {
+        // @TODO remove user from shareWith
+        // @TODO remove user from shareWithIds
+        return this.db.collection(projectsCollectionName).doc(project.id).update({isActive: false});
     }
 }

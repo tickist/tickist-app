@@ -104,6 +104,8 @@
         "codelyzer": "~5.0.1",
         "concurrently": "^4.1.2",
         "cypress": "3.4.1",
+        "cypress-cucumber-preprocessor": "^1.16.0",
+        "cypress-firebase": "^0.2.5",
         "dotenv": "6.2.0",
         "eslint": "6.1.0",
         "faker": "^4.1.0",

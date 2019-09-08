@@ -23,6 +23,7 @@ import {AddTags, DeleteTag, QueryTags, UpdateTag} from '../actions/tags.actions'
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Update} from '@ngrx/entity';
+import {MatSnackBar} from '@angular/material';
 
 
 @Injectable()
@@ -67,7 +68,7 @@ export class TaskEffects {
                 }));
                 const returnsActions = [];
                 if (addedTasks.length > 0) {
-                    returnsActions.push( new AddTasks({tasks: addedTasks}));
+                    returnsActions.push(new AddTasks({tasks: addedTasks}));
                 }
                 if (updatedTask) {
                     returnsActions.push(new UpdateTask({task: updatedTask}));
@@ -110,7 +111,7 @@ export class TaskEffects {
     updateTask$ = this.actions$
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
-            mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes)),
+            mergeMap((action) => this.tasksService.updateTask(<Task>action.payload.task.changes)),
             catchError((error: any) => of(console.log(error)))
         );
 
@@ -119,7 +120,7 @@ export class TaskEffects {
     setStatusDone$ = this.actions$
         .pipe(
             ofType<SetStatusDone>(TaskActionTypes.SET_STATUS_DONE),
-            mergeMap((action) => this.tasksService.setStatusDone(<Task> action.payload.task.changes)),
+            mergeMap((action) => this.tasksService.setStatusDone(<Task>action.payload.task.changes)),
             catchError((error: any) => of(console.log(error)))
         );
 
@@ -135,7 +136,10 @@ export class TaskEffects {
     deleteTask$ = this.actions$
         .pipe(
             ofType<DeleteTask>(TaskActionTypes.DELETE_TASK),
-            mergeMap(action => this.tasksService.deleteTask(action.payload.taskId))
+            mergeMap(action => this.tasksService.deleteTask(action.payload.taskId)),
+            map(() => this.snackBar.open('Task has been deleted successfully', '', {
+                duration: 2000,
+            }))
         );
 
     @Effect()
@@ -145,9 +149,9 @@ export class TaskEffects {
             withLatestFrom(this.store.pipe(select(selectAllTasks))),
             map(([action, tasks]) => {
                 const tasksWithCloseMenu = tasks.map(task => {
-                    return  {
+                    return {
                         id: task.id,
-                        changes: <Partial<Task>> {
+                        changes: <Partial<Task>>{
                             menuShowing: {
                                 isFinishDate: false,
                                 isTaskProject: false,
@@ -165,7 +169,7 @@ export class TaskEffects {
         );
 
     constructor(private actions$: Actions, private tasksService: TaskService, private db: AngularFirestore,
-                private store: Store<AppStore>, private authFire: AngularFireAuth) {
+                private store: Store<AppStore>, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
 
     }
 

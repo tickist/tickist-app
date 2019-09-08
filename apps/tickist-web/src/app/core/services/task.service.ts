@@ -3,11 +3,7 @@ import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ConfigurationService} from './configuration.service';
-import {TagService} from './tag.service';
-import {ProjectService} from './project.service';
+import {Task} from '@data/tasks/models/tasks';
 import {HttpClient} from '@angular/common/http';
 import {selectAllTasks} from '../selectors/task.selectors';
 import {AngularFirestore} from '@angular/fire/firestore';
@@ -20,10 +16,7 @@ const tasksCollectionName = 'tasks';
 export class TaskService {
     tasks$: Observable<Task[]>;
 
-    constructor(private db: AngularFirestore, public http: HttpClient, private store: Store<AppStore>,
-                public snackBar: MatSnackBar,
-                private configurationService: ConfigurationService, private projectService: ProjectService,
-                private tagService: TagService) {
+    constructor(private db: AngularFirestore, public http: HttpClient, private store: Store<AppStore>) {
 
         this.tasks$ = this.store.select(selectAllTasks);
     }
