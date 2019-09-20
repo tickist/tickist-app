@@ -58,7 +58,6 @@ export class Task {
     owner: TaskUser;
     steps: Step[] = [];
     priority: string;
-    percent = 0;
     repeat = 0;
     repeatDelta = null;
     author: TaskUser;

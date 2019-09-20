@@ -11,7 +11,7 @@ const tagsCollectionName = 'tags';
 @Injectable()
 export class TagService {
 
-    constructor(private db: AngularFirestore, private http: HttpClient, private authFire: AngularFireAuth) {
+    constructor(private db: AngularFirestore) {
         // this.tagsCollection$ = this.db.collection('tags');
     }
 
@@ -63,6 +63,7 @@ export class TagService {
     }
 
     updateTag(tag: Tag) {
+        debugger;
         return this.db.collection(tagsCollectionName).doc(tag.id).update({...tag});
     }
 

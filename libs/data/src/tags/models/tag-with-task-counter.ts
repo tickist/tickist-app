@@ -4,8 +4,8 @@ interface ITagWithTaskCounter {
     id?: string;
     name: string;
     author: string;
-    creationDate?: string;
-    modificationDate?: string;
+    creationDate?: Date;
+    modificationDate?: Date;
     tasksCounter: number;
 }
 

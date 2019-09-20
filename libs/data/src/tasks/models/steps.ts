@@ -14,7 +14,7 @@ export class Step  {
     status = 0;
     order: number;
     delete = false;
-    taskId: string;
+    // taskId: string;
 
 
     constructor(step: IStep) {
@@ -23,7 +23,7 @@ export class Step  {
         this.status = step.status;
         this.order = step.order;
         this.delete = step.delete;
-        this.taskId = step.taskId;
+        // this.taskId = step.taskId;
 
     }
 }
