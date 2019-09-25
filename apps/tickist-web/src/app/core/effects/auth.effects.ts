@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import { Location } from '@angular/common';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {AuthActionTypes, FetchedLoginUser, Login, Logout} from '../actions/auth.actions';
 import {map, mapTo, switchMap, tap} from 'rxjs/operators';
@@ -8,12 +9,12 @@ import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {UserService} from '../services/user.service';
 import {AddUser} from '../actions/user.actions';
-import {User} from '../../../../../../libs/data/src/users/models';
 import {ResetStore} from '../../tickist.actions';
 import LogRocket from 'logrocket';
 import {environment} from '../../../environments/environment';
 import {AuthService} from '../services/auth.service';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {signupRoutesName} from '../../modules/signup/routes-names';
 
 
 @Injectable()
@@ -55,7 +56,12 @@ export class AuthEffects {
             return of(this.authService.logout());
         }),
         tap(() => {
-            this.router.navigateByUrl('/login');
+            if (this.location.path().includes(signupRoutesName.SIGNUP)) {
+                this.router.navigateByUrl(`/${signupRoutesName.SIGNUP}`);
+            } else {
+                this.router.navigateByUrl('/login');
+            }
+
         }),
         mapTo(new ResetStore())
     );
@@ -84,7 +90,7 @@ export class AuthEffects {
         );
     });
 
-    constructor(private actions$: Actions, private router: Router, private authService: AuthService,
+    constructor(private actions$: Actions, private router: Router, private authService: AuthService, private location: Location,
                 private store: Store<AppStore>, private userService: UserService, private db: AngularFirestore) {
     }
 }

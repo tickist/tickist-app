@@ -90,10 +90,7 @@ import {faSign} from '@fortawesome/free-solid-svg-icons/faSign';
 import { SnackBarMessageComponent } from './components/snack-bar-message/snack-bar-message.component';
 
 
-export function tokenGetter() {
-    return localStorage.getItem('JWT');
-}
-
+console.log(environment);
 
 @NgModule({
     declarations: [
@@ -135,14 +132,6 @@ export function tokenGetter() {
         ChartModule,
         FlexLayoutModule,
         SharedModule,
-        JwtModule.forRoot({
-            config: {
-                headerName: 'Authorization',
-                authScheme: '',
-                whitelistedDomains: ['localhost:4200', 'tickist-web.com', 'app.tickist-web.com', 'localhost:8000'],
-                tokenGetter: tokenGetter
-            }
-        }),
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
         EffectsModule.forRoot([]),
         TickistRoutingModule,

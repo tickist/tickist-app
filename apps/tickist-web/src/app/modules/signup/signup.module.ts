@@ -5,17 +5,17 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {SignupComponent} from './pages/signup/signup.component';
-import {TickistSignupRoutingModule} from './signup-routing.module';
+import {TickistSignUpRoutingModule} from './signup-routing.module';
 
 
 @NgModule({
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistSignupRoutingModule, TickistSharedModule],
+        ReactiveFormsModule, TickistSignUpRoutingModule, TickistSharedModule],
     providers: [],
     exports: [SignupComponent],
     declarations: [
         SignupComponent
     ]
 })
-export class TickistSignupModule {
+export class TickistSignUpModule {
 }

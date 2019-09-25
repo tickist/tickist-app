@@ -110,7 +110,7 @@ export const routes: Routes = [
         path: signupRoutesName.SIGNUP,
         component: AuthLayoutComponent,
         canActivate: [AnonymousGuard],
-        loadChildren: './modules/signup/signup.module#TickistSignupModule'
+        loadChildren: './modules/signup/signup.module#TickistSignUpModule'
     },
     {
         path: loginRoutesName.LOGIN,

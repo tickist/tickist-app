@@ -139,7 +139,13 @@
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "tickist:serve:production"
+                            "devServerTarget": "tickist:serve:production",
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/tickist-web/src/environments/environment.ts",
+                                    "with": "apps/tickist-web/src/environments/environment.e2e.ts"
+                                }
+                            ]
                         }
                     }
                 },

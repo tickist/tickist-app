@@ -26,14 +26,14 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
 
             transaction.update(snap.ref, {inboxPk: projectRef.id});
             transaction.set(
-                db.collection('tags').doc(),
+                db.collection('tasks').doc(),
                 JSON.parse(JSON.stringify(createTask('Find out more about Tickist', snap.data(), inbox, [
                     tags['quick tasks'],
                     tags['getting to know Tickist']])))
             );
 
             transaction.set(
-                db.collection('tags').doc(),
+                db.collection('tasks').doc(),
                 JSON.parse(JSON.stringify(createTask('Find out more about editing tasks', snap.data(), inbox, [
                     tags['work'],
                     tags['home'],
