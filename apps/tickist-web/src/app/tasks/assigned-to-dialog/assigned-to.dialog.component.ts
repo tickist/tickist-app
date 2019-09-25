@@ -11,7 +11,7 @@ import {Filter} from '@data/filter';
 
 
 @Component({
-    selector: 'assigned-to-dialog',
+    selector: 'tickist-assigned-to-dialog',
     styleUrls: ['./assigned-to.dialog.component.scss'],
     templateUrl: './assigned-to.dialog.component.html'
 })

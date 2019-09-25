@@ -1,4 +1,4 @@
-import {SimpleUser} from '../../../../../../libs/data/src/users/models';
+import {SimpleUser} from '@data/users/models';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {TeamActions, TeamActionTypes} from '../actions/team.actions';
 import {TickistActions, TickistActionTypes} from '../../tickist.actions';

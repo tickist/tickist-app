@@ -19,7 +19,7 @@ import {Filter} from '@data/filter';
 
 
 @Component({
-    selector: 'app-filter-tasks',
+    selector: 'tickist-filter-tasks',
     templateUrl: './filter-tasks.component.html',
     styleUrls: ['./filter-tasks.component.scss']
 })

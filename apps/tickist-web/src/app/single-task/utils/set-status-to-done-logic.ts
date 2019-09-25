@@ -7,7 +7,7 @@ export function setStatusDoneLogic(task): Task {
     if (isRepeated(task)) {
         return repeatTaskLogic(task);
     } else {
-        return Object.assign({}, task, {status: 1, steps: setAllStepsToDone(task.steps)});
+        return Object.assign({}, task, {isDone: true, steps: setAllStepsToDone(task.steps)});
     }
 }
 
@@ -38,7 +38,7 @@ export function repeatTaskLogic(task: Task): Task {
     }
 
     return Object.assign({}, task, {
-        status: 0,
+        isDone: false,
         time: 0,
         steps: setAllStepsToUndone(task.steps),
         finishDate: finishDate

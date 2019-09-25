@@ -1,16 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AppStore} from '../../../../store';
-import {Project} from '../../../../../../../../libs/data/src/projects/models';
+import {Project} from '@data/projects';
 import {Store} from '@ngrx/store';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Task} from '../../../../../../../../libs/data/src/tasks/models/tasks';
-import {toSnakeCase} from '../../../../core/utils/toSnakeCase';
-import {User} from '../../../../../../../../libs/data/src/users/models';
+import {Task} from '@data/tasks/models/tasks';
+import {User} from '@data/users/models';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {RequestCreateTask} from '../../../../core/actions/tasks/task.actions';
-import {convertToSimpleProject} from '../../../../core/utils/projects-utils';
-import {TaskUser} from '../../../../../../../../libs/data/src/tasks/models/task-user';
-import {TaskProject} from '../../../../../../../../libs/data/src/tasks/models/task-project';
+import {TaskUser} from '@data/tasks/models/task-user';
+import {TaskProject} from '@data/tasks/models/task-project';
 
 @Component({
     selector: 'tickist-add-task-tree-view',

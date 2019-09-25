@@ -1,7 +1,7 @@
 
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {TagActions, TagActionTypes} from '../actions/tags.actions';
-import {Tag} from '../../../../../../libs/data/src/tags/models/tags';
+import {Tag} from '@data/tags/models/tags';
 
 
 export interface TagsState extends EntityState<Tag> {

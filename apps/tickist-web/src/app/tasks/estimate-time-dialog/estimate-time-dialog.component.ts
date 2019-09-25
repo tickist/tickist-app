@@ -11,7 +11,7 @@ import {Filter} from '@data/filter';
 
 
 @Component({
-    selector: 'task-estimate-time-filter-dialog',
+    selector: 'tickist-task-estimate-time-filter-dialog',
     styleUrls: ['./estimate-time-dialog.component.scss'],
     templateUrl: './task-estimate-time-filter-dialog.html'
 })

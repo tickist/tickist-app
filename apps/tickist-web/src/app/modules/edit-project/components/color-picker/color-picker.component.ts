@@ -12,7 +12,7 @@ const noop = () => {
 // };
 
 @Component({
-  selector: 'color-picker',
+  selector: 'tickist-color-picker',
   templateUrl: './color-picker.html',
   styleUrls: ['./color-picker.scss'],
   providers: [{

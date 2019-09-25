@@ -1,14 +1,15 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {catchError, concatMap, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
     AddTasks,
     CloseMenuInAllTasks,
-    CreateTask,
     DeleteTask,
     RequestCreateTask,
-    RequestUpdateTask, SetStatusDone,
+    RequestDeleteTask,
+    RequestUpdateTask,
+    SetStatusDone,
     TaskActionTypes,
     UpdateTask
 } from '../actions/tasks/task.actions';
@@ -19,7 +20,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {of} from 'rxjs';
-import {AddTags, DeleteTag, QueryTags, UpdateTag} from '../actions/tags.actions';
+import {QueryTags} from '../actions/tags.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Update} from '@ngrx/entity';
@@ -63,6 +64,7 @@ export class TaskEffects {
                         };
                     }
                     if (action.type === 'removed') {
+                        const data: any = action.payload.doc.data();
                         deletedTaskId = action.payload.doc.id;
                     }
                 }));
@@ -80,16 +82,6 @@ export class TaskEffects {
             })
         );
 
-    // @Effect()
-    // addTasks$ = this.actions$
-    //     .pipe(
-    //         ofType<RequestsAllTasks>(TaskActionTypes.REQUEST_ALL_TASKS),
-    //         withLatestFrom(this.store.pipe(select(allTasksLoaded))),
-    //         filter(([action, allTasksLoadedValue]) => !allTasksLoadedValue),
-    //         mergeMap(() => this.tasksService.loadTasks()),
-    //         map(tasks => new AddTasks({tasks: tasks}))
-    //     );
-
     @Effect({dispatch: false})
     createTask$ = this.actions$
         .pipe(
@@ -97,15 +89,6 @@ export class TaskEffects {
             mergeMap(action => this.tasksService.createTask(action.payload.task)),
             catchError((error: any) => of(console.log(error)))
         );
-
-    // @Effect()
-    // updateTask$ = this.actions$
-    //     .pipe(
-    //         ofType<UpdateTask | SetTaskStatusToDone>(TaskActionTypes.UPDATE_TASK, TaskActionTypes.SET_TASK_STATUS_TO_DONE),
-    //         mergeMap((action) => this.tasksService.updateTask(<Task> action.payload.task.changes)),
-    //         mapTo(new SwitchOffProgressBar())
-    //     );
-
 
     @Effect({dispatch: false})
     updateTask$ = this.actions$
@@ -121,6 +104,9 @@ export class TaskEffects {
         .pipe(
             ofType<SetStatusDone>(TaskActionTypes.SET_STATUS_DONE),
             mergeMap((action) => this.tasksService.setStatusDone(<Task>action.payload.task.changes)),
+            tap(() => this.snackBar.open('Task is done. Great job!', '', {
+                duration: 2000,
+            })),
             catchError((error: any) => of(console.log(error)))
         );
 
@@ -135,9 +121,9 @@ export class TaskEffects {
     @Effect({dispatch: false})
     deleteTask$ = this.actions$
         .pipe(
-            ofType<DeleteTask>(TaskActionTypes.DELETE_TASK),
+            ofType<RequestDeleteTask>(TaskActionTypes.REQUEST_REQUEST_TASK),
             mergeMap(action => this.tasksService.deleteTask(action.payload.taskId)),
-            map(() => this.snackBar.open('Task has been deleted successfully', '', {
+            tap(() => this.snackBar.open('Task has been deleted successfully', '', {
                 duration: 2000,
             }))
         );

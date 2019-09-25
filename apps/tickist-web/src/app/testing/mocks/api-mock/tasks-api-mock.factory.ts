@@ -26,7 +26,7 @@ export class TasksApiMockFactory {
 
 
 
-    createTaskDict(owner: any, author: any, project: IProjectApi, tags: Tag[]): any {
+    createTaskDict(owner: any, author: any, project: any, tags: Tag[]): any {
         this.id += 1;
 
         return {

@@ -1,4 +1,3 @@
-import {convert} from '../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
 import {IShareWithUser, ShareWithUser} from './share-with-user';
 import {IPendingUser, ShareWithPendingUser} from './share-with-pending-user';
 import {
@@ -9,6 +8,7 @@ import {
     DEFAULT_TYPE_FINISH_DATE
 } from '../config-projects';
 import construct = Reflect.construct;
+import {addClickableLinks} from '@tickist/utils';
 
 interface IProject {
     id: string;
@@ -45,9 +45,9 @@ export class Project {
         Object.assign(this, project);
         this.id = project.id || null;
         this.ancestor = project.ancestor || undefined;
-        this.richDescription = convert(project.description);
+        this.richDescription = addClickableLinks(project.description);
         if (project.taskView) this.taskView = project.taskView;
-        this.shareWith.map((user) => {
+        this.shareWith = this.shareWith.map((user) => {
             if (user.hasOwnProperty('id')) {
                 return new ShareWithUser(<IShareWithUser> user);
             }

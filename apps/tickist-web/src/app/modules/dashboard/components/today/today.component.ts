@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import {Task} from '@data/tasks/models/tasks';
-import {User} from '../../../../../../../../libs/data/src/users/models';
+import {User} from '@data/users/models';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Store} from '@ngrx/store';

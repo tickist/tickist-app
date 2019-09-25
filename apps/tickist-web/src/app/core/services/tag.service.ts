@@ -1,9 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Tag} from '../../../../../../libs/data/src/tags/models/tags';
-import {HttpClient} from '@angular/common/http';
-import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
-import {AngularFireAuth} from '@angular/fire/auth';
-import {environment} from '../../../environments/environment';
+import {Tag} from '@data/tags/models/tags';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 const tagsCollectionName = 'tags';
 
@@ -63,7 +60,6 @@ export class TagService {
     }
 
     updateTag(tag: Tag) {
-        debugger;
         return this.db.collection(tagsCollectionName).doc(tag.id).update({...tag});
     }
 

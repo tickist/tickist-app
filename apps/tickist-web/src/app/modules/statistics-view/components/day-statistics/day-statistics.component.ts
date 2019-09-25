@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {StatisticsService} from '../../../../core/services/statistics.service';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {Observable, Subject, Subscription} from 'rxjs';
 import * as _ from 'lodash';
@@ -14,7 +13,7 @@ import {DailyStatistics} from '@data/statistics';
 
 
 @Component({
-    selector: 'app-day-statistics',
+    selector: 'tickist-day-statistics',
     templateUrl: './day-statistics.component.html',
     styleUrls: ['./day-statistics.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

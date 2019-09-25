@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProjectService} from '../../../../core/services/project.service';
-import {SimpleUser} from '../../../../../../../../libs/data/src/users/models';
+import {SimpleUser} from '@data/users/models';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {environment} from '../../../../../environments/environment';
 import {Observable} from 'rxjs';

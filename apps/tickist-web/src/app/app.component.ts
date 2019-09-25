@@ -8,7 +8,7 @@ import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar
 
 
 @Component({
-  selector: 'app-root',
+  selector: 'tickist-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

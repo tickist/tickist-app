@@ -6,7 +6,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
-import {Project, ShareWithUser} from '../../../../../../../../libs/data/src/projects/models';
+import {Project, ShareWithUser} from '@data//projects';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {User} from '@data/users/models';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -27,7 +27,6 @@ import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
-import {convert} from '../../../../core/utils/addClickableLinksToString';
 import {ITaskUser, TaskUser} from '@data/tasks/models/task-user';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {createUniqueId} from '../../../../core/utils/unique-id';
@@ -35,9 +34,10 @@ import {CHOICES_DEFAULT_FINISH_DATE} from '@data/projects';
 import {ProjectWithLevel} from '@data/projects';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {parse} from 'date-fns';
+import {addClickableLinks} from '@tickist/utils';
 
 @Component({
-    selector: 'app-task-component',
+    selector: 'tickist-task-component',
     templateUrl: './task.component.html',
     styleUrls: ['./task.component.scss']
 })
@@ -105,6 +105,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.projects = projects;
                 if (taskId) {
                     task = tasks.filter(t => t.id === taskId)[0];
+                    this.selectedProject = projects.find(project => project.id === task.taskProject.id)
                 } else {
                     if (!selectedProject) {
                         this.selectedProject = projects.find(project => project.isInbox);
@@ -454,11 +455,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                 .find(project => project.id === values['main']['taskProjectPk']
                 );
             updatedTask.name = values['main']['name'];
-            updatedTask.richName = convert(values['main']['name']);
+            updatedTask.richName = addClickableLinks(values['main']['name']);
             updatedTask.priority = values['main']['priority'];
             updatedTask.description = values['extra']['description'];
-            updatedTask.richDescription = convert(values['extra']['description']);
-            updatedTask.finishDate = values['main']['finishDate'] ? parse(values['main']['finishDate'], 'dd-MM-yyyy', new Date()) : null;
+            updatedTask.richDescription = addClickableLinks(values['extra']['description']);
+            updatedTask.finishDate = values['main']['finishDate'] ? values['main']['finishDate'] : null;
             updatedTask.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
@@ -572,6 +573,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     changeProjectInTask(event): void {
+        const newProject = this.projects.find(project => project.id === event.value);
         this.task = Object.assign(
             {},
             this.task,
@@ -579,6 +581,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         );
         const extra = <FormGroup>this.taskForm.controls['extra'];
         extra.controls['ownerId'].setValue(this.user.id);
+        this.selectedProject = newProject;
     }
 
     createAndAddMore($event, values): void {

@@ -21,36 +21,21 @@
 // Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
 //
 //
-// -- This will overwrite an existing command --
+// -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
 
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
-import * as admin from 'firebase-admin';
-import { attachCustomCommands } from 'cypress-firebase';
-
-const fbConfig = {
-    apiKey: 'AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg',
-    authDomain: 'proven-reality-657.firebaseapp.com',
-    databaseURL: 'https://proven-reality-657.firebaseio.com',
-    projectId: 'proven-reality-657',
-    storageBucket: 'proven-reality-657.appspot.com',
-    messagingSenderId: '924613962771',
-    appId: '1:924613962771:web:52fe355b5723d6af'
-};
-// admin.initializeApp({
-//     credential: admin.credential.applicationDefault(),
-//     databaseURL: 'https://proven-reality-657.firebaseio.com'
-// });
+import attachCustomCommands from 'cypress-firebase/lib/attachCustomCommands'
+import {environment} from '@env/environment.e2e'
 
 
 
-//
-firebase.initializeApp(fbConfig);
-// Cypress.Commands.add('checkLogin', () => {
-//     console.log(admin);
-// console.log(admin.app().name)
-// })
+const fbInstance = firebase.initializeApp(environment.firebase);
+if (fbInstance) {
+    (window as any).fbInstance = fbInstance
+}
 attachCustomCommands({ Cypress, cy, firebase });

@@ -1,11 +1,14 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Project, ShareWithPendingUser, ShareWithUser} from '../../../../../../../../libs/data/src/projects/models';
+import { ShareWithPendingUser} from '@data/projects';
+import {Project, } from '@data/projects';
+import {ShareWithUser} from '@data/projects';
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {SimpleUser, User} from '../../../../../../../../libs/data/src/users/models';
+import { User} from '@data/users/models';
+import {SimpleUser} from '@data/users/models';
 import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../../../environments/environment';
@@ -17,10 +20,11 @@ import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {addUserToShareList} from '../../../../core/utils/projects-utils';
-import {convert} from '../../../../core/utils/addClickableLinksToString';
+
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
-import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE} from '../../../../../../../../libs/data/src/projects/config-projects';
+import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE} from '@data/projects';
+import {addClickableLinks} from '@tickist/utils';
 
 
 @Component({
@@ -153,7 +157,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             const project = Object.assign({}, this.project);
             project.name = values['main']['name'];
             project.description = values['main']['description'];
-            project.richDescription = convert(values['main']['description']);
+            project.richDescription = addClickableLinks(values['main']['description']);
             project.ancestor = values['main']['ancestor'];
             project.color = values['main']['color'];
             project.defaultFinishDate = values['extra']['defaultFinishDate'];
@@ -168,7 +172,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             //     this.updateAncestorProject(project.ancestor);
             // }
             // List share with is added directly
-            debugger;
+
             if (this.isNewProject()) {
                 this.store.dispatch(new RequestCreateProject({project: project}));
             } else {

@@ -1,9 +1,9 @@
 import {Tag} from '../../tags/models/tags';
 import {Step} from './steps';
 import {Menu} from '../../menu';
-import {convert} from '../../../../../apps/tickist-web/src/app/core/utils/addClickableLinksToString';
 import {TaskUser} from './task-user';
 import {TaskProject} from './task-project';
+import {addClickableLinks} from '@tickist/utils';
 
 export interface ITaskApi {
     name: string;
@@ -71,12 +71,12 @@ export class Task {
 
     constructor(task: ITaskApi) {
         Object.assign(this, task);
-        this.richName = convert(task.name);
+        this.richName = addClickableLinks(task.name);
         this.finishDate = task.finishDate ? new Date(task.finishDate) : null;
         this.finishTime = task.finishTime ? task.finishTime : '';
         this.suspendDate = task.suspendDate ? new Date(task.suspendDate) : '';
         this.repeat = parseInt((<string> task.repeat), 10);
-        this.richDescription = convert(task.description);
+        this.richDescription = addClickableLinks(task.description);
         if (Array.isArray(task.steps)) {
             this.steps.map((step) => new Step(step));
         }

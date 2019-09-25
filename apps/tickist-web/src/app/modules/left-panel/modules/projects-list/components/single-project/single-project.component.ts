@@ -41,7 +41,7 @@ class Timer {
 
 
 @Component({
-    selector: 'single-project',
+    selector: 'tickist-single-project',
     templateUrl: './single-project.component.html',
     styleUrls: ['./single-project.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

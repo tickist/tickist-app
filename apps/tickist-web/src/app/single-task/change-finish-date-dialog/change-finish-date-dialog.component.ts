@@ -5,7 +5,7 @@ import { Task } from '@data/tasks/models/tasks';
 
 
 @Component({
-    selector: 'tickst-change-finish-date-dialog',
+    selector: 'tickist-change-finish-date-dialog',
     templateUrl: './change-finish-date-dialog.component.html',
     styleUrls: ['./change-finish-date-dialog.component.scss']
 })

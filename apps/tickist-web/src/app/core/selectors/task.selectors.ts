@@ -7,8 +7,8 @@ import {
     selectCurrentTagsFilter,
     selectSearchTasksText
 } from './filters-tasks.selectors';
-import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
-import {Tag} from '../../../../../../libs/data/src/tags/models/tags';
+import {Task} from '@data/tasks/models/tasks';
+import {Tag} from '@data/tags/models/tags';
 import {orderBy} from 'lodash';
 
 import {selectActiveProjectsIds} from './projects.selectors';

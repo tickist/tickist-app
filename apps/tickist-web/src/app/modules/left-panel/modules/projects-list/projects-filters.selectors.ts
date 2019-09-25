@@ -1,11 +1,8 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import * as _ from 'lodash';
 import {ProjectsFiltersState} from './projects-filters.reducers';
 import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
-import {Project} from '../../../../../../../../libs/data/src/projects/models';
-import {selectAllTasks, selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
-import {ProjectLeftPanel} from './models/project-list';
-import {calculateProjectsLevel, calculateTasksCounter, generateDifferentLevelsOfProjects} from '../../../../core/utils/projects-utils';
+import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
+import {calculateTasksCounter, generateDifferentLevelsOfProjects} from '../../../../core/utils/projects-utils';
 
 
 export const selectProjectsFilters = createFeatureSelector<ProjectsFiltersState>('projectsFilters');

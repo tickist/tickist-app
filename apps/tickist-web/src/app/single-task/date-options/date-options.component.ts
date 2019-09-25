@@ -7,7 +7,7 @@ import {AppStore} from '../../store';
 
 
 @Component({
-    selector: 'app-date-options',
+    selector: 'tickist-date-options',
     templateUrl: './date-options.html',
     styleUrls: ['./date-options.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

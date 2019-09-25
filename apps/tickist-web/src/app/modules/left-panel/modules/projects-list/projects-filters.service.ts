@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {User} from '../../../../../../../../libs/data/src/users/models';
+import {User} from '@data/users/models';
 import {Filter} from '@data/filter';
 
 

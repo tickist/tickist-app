@@ -9,7 +9,7 @@ import {takeUntil} from 'rxjs/operators';
 import {Filter} from '@data/filter';
 
 @Component({
-    selector: 'tasks-filter-dialog',
+    selector: 'tickist-tasks-filter-dialog',
     styleUrls: ['./tasks-filter-dialog.component.scss'],
     templateUrl: './tasks-filter-dialog.html'
 })

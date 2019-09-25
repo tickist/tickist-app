@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 
 
 @Component({
-    selector: 'app-delete-task',
+    selector: 'tickist-delete-task',
     templateUrl: './delete-task-dialog.component.html',
 })
 export class DeleteTaskDialogComponent {

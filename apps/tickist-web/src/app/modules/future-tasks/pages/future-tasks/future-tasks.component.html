@@ -5,7 +5,7 @@
                 <div fxFlex>Future tasks from {{ (activeDateElement$ | async).date | date:"LLLL yyyy"}}</div>
 
                 <div fxFlex></div>
-                <change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+                <tickist-change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
             </div>
 
 

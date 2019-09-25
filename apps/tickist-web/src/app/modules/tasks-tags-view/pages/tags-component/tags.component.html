@@ -4,10 +4,10 @@
         <span>Tags</span>
         <span fxFlex></span>
 
-        <change-task-view [defaultTaskView]="user?.defaultTaskViewTagsView"
-                          (currentTaskViewEvent)="changeTaskView($event)"></change-task-view>
+        <tickist-change-task-view [defaultTaskView]="user?.defaultTaskViewTagsView"
+                          (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
 
-        <app-filter-tasks [showTags]="false"></app-filter-tasks>
+        <tickist-filter-tasks [showTags]="false"></tickist-filter-tasks>
 
 
     </div>

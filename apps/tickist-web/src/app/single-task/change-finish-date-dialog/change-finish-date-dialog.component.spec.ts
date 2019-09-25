@@ -5,15 +5,14 @@ import {TickistMaterialModule} from '../../material.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {Task} from '../../../../../../libs/data/src/tasks/models/tasks';
-import {IUserApi} from '../../core/models/user-api.interface';
-import {IProjectApi} from '@tickist/data/project-api.interface';
+import {Task} from '@data/tasks/models/tasks';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
+import {IProjectApi} from '@data/project-api.interface';
 
 describe('ChangeFinishDateDialogComponent', () => {
-    let user: IUserApi;
+    let user: any;
     let project: IProjectApi;
     let task: Task;
     const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();

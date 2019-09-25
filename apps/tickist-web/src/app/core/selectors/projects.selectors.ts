@@ -4,7 +4,7 @@ import {ActiveProjectState} from '../reducers/active-project.reducer';
 import * as fromCourse from '../reducers/projects/projects.reducer';
 import {ProjectsState} from '../reducers/projects/projects.reducer';
 import {calculateProjectDescendants, generateDifferentLevelsOfProjects} from '../utils/projects-utils';
-import {ProjectWithAllDescendants} from '../../../../../../libs/data/src/projects/models/project-with-all-descendants';
+import {ProjectWithAllDescendants} from '@data/projects';
 
 export const selectActiveProjectsIdsState = createFeatureSelector<ActiveProjectsIdsState>('activeProjectsIds');
 export const selectActiveProjectState = createFeatureSelector<ActiveProjectState>('activeProject');

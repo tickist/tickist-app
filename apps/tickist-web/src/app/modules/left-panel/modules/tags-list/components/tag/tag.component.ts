@@ -11,7 +11,7 @@ import {Filter} from '@data/filter';
 
 
 @Component({
-    selector: 'app-tag',
+    selector: 'tickist-tag',
     templateUrl: './tag.component.html',
     styleUrls: ['./tag.component.scss']
 })

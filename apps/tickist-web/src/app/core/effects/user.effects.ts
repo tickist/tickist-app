@@ -15,7 +15,7 @@ import {QueryTags} from '../actions/tags.actions';
 import {QueryProjects} from '../actions/projects/projects.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {User} from '../../../../../../libs/data/src/users/models';
+import {User} from '@data/users/models';
 
 
 @Injectable()

@@ -4,10 +4,7 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {TickistMaterialModule} from '../../material.module';
 import {MockTasksFiltersService} from '../../testing/mocks/tasks-filters-service';
 import {StoreModule} from '@ngrx/store';
-import {RouterModule} from '@angular/router';
 import {reducers} from '../../store';
-import {APP_BASE_HREF} from '@angular/common';
-import {Project} from '../../../../../../libs/data/src/projects/models';
 import {RouterTestingModule} from '@angular/router/testing';
 
 const project1FromApi = {

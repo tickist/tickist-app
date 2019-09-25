@@ -11,7 +11,7 @@ import {signupRoutesName} from '../../../signup/routes-names';
 
 
 @Component({
-    selector: 'app-login',
+    selector: 'tickist-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })

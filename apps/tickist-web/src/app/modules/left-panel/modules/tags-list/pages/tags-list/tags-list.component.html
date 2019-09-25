@@ -4,11 +4,11 @@
     </tickist-menu-button>
 </div>
 <div fxLayout="column">
-    <app-tag fxFlex label="All tasks" id="allTasks"></app-tag>
-    <app-tag fxFlex label="All tags" id="allTags"></app-tag>
-    <app-tag fxFlex *ngFor="let tag of filteredTagsList$ | async; trackBy: trackByFn" [label]="tag.name" [id]="tag.id"
-             [tasksCounter]="tag.tasksCounter" [tag]="tag"></app-tag>
-    <app-tag fxFlex label="Without tags" id="withoutTags"></app-tag>
+    <tickist-tag fxFlex label="All tasks" id="allTasks"></tickist-tag>
+    <tickist-tag fxFlex label="All tags" id="allTags"></tickist-tag>
+    <tickist-tag fxFlex *ngFor="let tag of filteredTagsList$ | async; trackBy: trackByFn" [label]="tag.name" [id]="tag.id"
+             [tasksCounter]="tag.tasksCounter" [tag]="tag"></tickist-tag>
+    <tickist-tag fxFlex label="Without tags" id="withoutTags"></tickist-tag>
 </div>
 
 <form [formGroup]="createTagForm" (ngSubmit)="createTag(createTagForm.value)" #form="ngForm">

@@ -11,7 +11,8 @@
                      [matMenuTriggerFor]="menu"
                      (onMenuClose)="emitOnMenuClose($event)"
                      (onMenuOpen)="emitOnMenuOpen($event)"
-                     *ngIf="isRightMenuVisible">
+                     *ngIf="isRightMenuVisible"
+                     data-cy="task-short-menu">
 </tickist-menu-button>
 
 <mat-menu #menu="matMenu" >
@@ -39,7 +40,7 @@
                                  [matTooltip]="'next week'"
                                  [transform]="'rotate(-180deg)'"
                                  (click)="emitChangeDataClickEvent('next_week')">
-            </tickist-menu-button> 
+            </tickist-menu-button>
             <tickist-menu-button [icon]="'fast-forward'"
                                  [matTooltip]="'end of month'"
                                  (click)="emitChangeDataClickEvent('lastDayOfMonth')">
@@ -52,7 +53,7 @@
         </div>
     </div>
     <div id="delete-button">
-        <button mat-button (click)="emitDeleteTaskEvent()"><span>delete</span></button>
+        <button data-cy="delete-task-button" mat-button (click)="emitDeleteTaskEvent()"><span>delete</span></button>
     </div>
 
 

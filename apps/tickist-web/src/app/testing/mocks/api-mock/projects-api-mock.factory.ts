@@ -29,7 +29,7 @@ export class ProjectsApiMockFactory {
         );
     }
 
-    createProjectDict(shareWith: ISimpleUserApi[], owner: ISimpleUserApi, tags: any[]): any {
+    createProjectDict(shareWith: any[], owner: any, tags: any[]): any {
         this.id += 1;
         return {
             ancestor: null,

@@ -15,6 +15,8 @@ import {environment} from '../../../environments/environment';
 import {AuthService} from '../services/auth.service';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {signupRoutesName} from '../../modules/signup/routes-names';
+import {TasksFiltersService} from '../services/tasks-filters.service';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 
 @Injectable()
@@ -33,6 +35,7 @@ export class AuthEffects {
         .pipe(
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
             switchMap(action => {
+                console.log(this.authFire.auth.currentUser)
                 console.log(action);
                 return this.db.collection('users').doc(action.payload.uid).get();
             }),
@@ -91,6 +94,7 @@ export class AuthEffects {
     });
 
     constructor(private actions$: Actions, private router: Router, private authService: AuthService, private location: Location,
-                private store: Store<AppStore>, private userService: UserService, private db: AngularFirestore) {
+                private store: Store<AppStore>, private userService: UserService, private db: AngularFirestore,
+                private authFire: AngularFireAuth) {
     }
 }

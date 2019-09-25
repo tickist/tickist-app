@@ -40,10 +40,7 @@
                             "node_modules/primeng/resources/primeng.css",
                             "node_modules/primeng/resources/themes/nova-dark/theme.css"
                         ],
-                        "scripts": [
-                            "node_modules/chart.js/dist/Chart.js",
-                            "node_modules/quill/dist/quill.js"
-                        ]
+                        "scripts": ["node_modules/chart.js/dist/Chart.js", "node_modules/quill/dist/quill.js"]
                     },
                     "configurations": {
                         "dev": {
@@ -51,6 +48,14 @@
                                 {
                                     "replace": "apps/tickist-web/src/environments/environment.ts",
                                     "with": "apps/tickist-web/src/environments/environment.dev.ts"
+                                }
+                            ]
+                        },
+                        "e2e": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/tickist-web/src/environments/environment.ts",
+                                    "with": "apps/tickist-web/src/environments/environment.e2e.ts"
                                 }
                             ]
                         },
@@ -89,7 +94,10 @@
                     },
                     "configurations": {
                         "dev": {
-                          "browserTarget": "tickist-web:build:dev"
+                            "browserTarget": "tickist-web:build:dev"
+                        },
+                        "e2e": {
+                            "browserTarget": "tickist-web:build:e2e"
                         },
                         "production": {
                             "browserTarget": "tickist-web:build:production"
@@ -105,14 +113,8 @@
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
-                        "tsConfig": [
-                            "apps/tickist-web/tsconfig.app.json",
-                            "apps/tickist-web/tsconfig.spec.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**",
-                            "!apps/tickist-web/**"
-                        ]
+                        "tsConfig": ["apps/tickist-web/tsconfig.app.json", "apps/tickist-web/tsconfig.spec.json"],
+                        "exclude": ["**/node_modules/**", "!apps/tickist-web/**"]
                     }
                 },
                 "test": {
@@ -139,26 +141,18 @@
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "tickist:serve:production",
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/tickist-web/src/environments/environment.ts",
-                                    "with": "apps/tickist-web/src/environments/environment.e2e.ts"
-                                }
-                            ]
+                            "devServerTarget": "tickist-web:serve:production"
+                        },
+                        "e2e": {
+                            "devServerTarget": "tickist-web:serve:e2e"
                         }
                     }
                 },
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
-                        "tsConfig": [
-                            "apps/tickist-web-e2e/tsconfig.e2e.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**",
-                            "!apps/tickist-web-e2e/**"
-                        ]
+                        "tsConfig": ["apps/tickist-web-e2e/tsconfig.e2e.json"],
+                        "exclude": ["**/node_modules/**", "!apps/tickist-web-e2e/**"]
                     }
                 }
             }
@@ -176,9 +170,7 @@
                         "outputPath": "dist/apps/tickist-functions",
                         "main": "apps/tickist-functions/src/main.ts",
                         "tsConfig": "apps/tickist-functions/tsconfig.app.json",
-                        "assets": [
-                            "apps/tickist-functions/src/assets"
-                        ]
+                        "assets": ["apps/tickist-functions/src/assets"]
                     },
                     "configurations": {
                         "production": {
@@ -207,10 +199,7 @@
                             "apps/tickist-functions/tsconfig.app.json",
                             "apps/tickist-functions/tsconfig.spec.json"
                         ],
-                        "exclude": [
-                            "**/node_modules/**",
-                            "!apps/tickist-functions/**"
-                        ]
+                        "exclude": ["**/node_modules/**", "!apps/tickist-functions/**"]
                     }
                 },
                 "test": {
@@ -231,14 +220,8 @@
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
-                        "tsConfig": [
-                            "libs/data/tsconfig.lib.json",
-                            "libs/data/tsconfig.spec.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**",
-                            "!libs/data/**"
-                        ]
+                        "tsConfig": ["libs/data/tsconfig.lib.json", "libs/data/tsconfig.spec.json"],
+                        "exclude": ["**/node_modules/**", "!libs/data/**"]
                     }
                 },
                 "test": {
@@ -246,6 +229,28 @@
                     "options": {
                         "jestConfig": "libs/data/jest.config.js",
                         "tsConfig": "libs/data/tsconfig.spec.json"
+                    }
+                }
+            }
+        },
+        "utils": {
+            "root": "libs/utils",
+            "sourceRoot": "libs/utils/src",
+            "projectType": "library",
+            "schematics": {},
+            "architect": {
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": ["libs/utils/tsconfig.lib.json", "libs/utils/tsconfig.spec.json"],
+                        "exclude": ["**/node_modules/**", "!libs/utils/**"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "options": {
+                        "jestConfig": "libs/utils/jest.config.js",
+                        "tsConfig": "libs/utils/tsconfig.spec.json"
                     }
                 }
             }
@@ -263,5 +268,5 @@
             "unitTestRunner": "jest"
         }
     },
-    "defaultProject": "tickist"
+    "defaultProject": "tickist-web"
 }

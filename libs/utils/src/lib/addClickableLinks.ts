@@ -1,4 +1,4 @@
-export function convert(text: string): string {
+export function addClickableLinks(text: string): string {
     const exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     const exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     let richText;
