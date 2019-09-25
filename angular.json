@@ -139,7 +139,7 @@
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "tickist:serve:production",
+                            "devServerTarget": "tickist-web:serve:production",
                             "fileReplacements": [
                                 {
                                     "replace": "apps/tickist-web/src/environments/environment.ts",
@@ -263,5 +263,5 @@
             "unitTestRunner": "jest"
         }
     },
-    "defaultProject": "tickist"
+    "defaultProject": "tickist-web"
 }
