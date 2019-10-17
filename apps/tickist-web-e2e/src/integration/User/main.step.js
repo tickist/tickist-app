@@ -1,10 +1,7 @@
 import {Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-Given("I go on page",  () => {
-    cy.login();
-    cy.checkLogin();
-    cy.visit('/signup')
-});
+
+
 
 When("I fill registration form", () => {
     cy.get('input[name=username]').type('user');

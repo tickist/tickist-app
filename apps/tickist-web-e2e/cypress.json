@@ -3,15 +3,10 @@
   "fixturesFolder": "./src/fixtures",
   "integrationFolder": "./src/integration",
   "pluginsFile": "./src/plugins/index",
-  "supportFile": "./src/support/index.ts",
   "video": true,
   "ignoreTestFiles": ["*.js", "*.md"],
   "videosFolder": "../../dist/cypress/apps/tickist-web-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/tickist-web-e2e/screenshots",
   "chromeWebSecurity": false,
-  "testFiles": "**/*.{feature,features}",
-  "STAGE_TEST_UID": "7UdPdMcSFxTvpgBtzFJsh0NGvob2",
-  "TEST_UID": "7UdPdMcSFxTvpgBtzFJsh0NGvob2",
-  "FIREBASE_PROJECT_ID": "proven-reality-657",
-  "FIREBASE_API_KEY": "AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg"
+  "testFiles": "**/*.{feature,features}"
 }
