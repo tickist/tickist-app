@@ -10,21 +10,45 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-
-const cucumber = require('cypress-cucumber-preprocessor').default;
-const { preprocessTypescript } = require('@nrwl/cypress/plugins/preprocessor');
+const wp = require('@cypress/webpack-preprocessor')
+const pathsPlugin = require('tsconfig-paths-webpack-plugin');
+const path = require('path');
 const cypressFirebasePlugin = require('cypress-firebase').plugin;
-const browserify = require("@cypress/browserify-preprocessor");
 
 
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-  const options = browserify.defaultOptions;
+    // `on` is used to hook into various events Cypress emits
+    // `config` is the resolved Cypress config
 
-  options.browserifyOptions.plugin.unshift(['tsify', {project: './tsconfig.json'}]);
-  // Preprocess Typescript
-  on('file:preprocessor', preprocessTypescript(config));
-  on('file:preprocessor', cucumber(options));
-  return cypressFirebasePlugin(config)
+    on('file:preprocessor',
+        wp({
+            webpackOptions: {
+                resolve: {
+                    extensions: ['.ts', '.js'],
+                    plugins: [
+                        new pathsPlugin({
+                            configFile: path.join(__dirname, '../../tsconfig.e2e.json'),
+                            extensions: [".ts", ".js"]
+                        })
+                    ]
+                },
+                module: {
+                    rules: [
+                        {
+                            test: /\.ts$/,
+                            loader: 'ts-loader',
+                            options: {
+                                configFile: path.join(__dirname, '../../tsconfig.e2e.json'),
+                                // https://github.com/TypeStrong/ts-loader/pull/685
+                                experimentalWatchApi: true
+                            }
+                        },
+                    ],
+                }
+            }
+        })
+    );
+
+
+    return cypressFirebasePlugin(config)
 };

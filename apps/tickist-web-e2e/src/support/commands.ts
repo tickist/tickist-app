@@ -29,8 +29,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
-import {attachCustomCommands} from 'cypress-firebase/lib';
-// import attachCustomCommands from 'cypress-firebase';
+import attachCustomCommands from 'cypress-firebase/lib/attachCustomCommands'
 
 
 
@@ -44,5 +43,8 @@ const fbConfig = {
     appId: '1:924613962771:web:52fe355b5723d6af'
 };
 
-firebase.initializeApp(fbConfig);
+const fbInstance = firebase.initializeApp(fbConfig);
+if (fbInstance) {
+    (window as any).fbInstance = fbInstance
+}
 attachCustomCommands({ Cypress, cy, firebase });

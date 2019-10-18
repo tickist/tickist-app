@@ -1,15 +1,21 @@
-import {Given} from "cypress-cucumber-preprocessor/steps";
 import {Database} from "./create-database";
 
+export function createFirebase() {
+    removeOldFirebaseData();
+    setFirebaseData()
+}
 
-Given("Set firebase data", () => {
+export function login() {
+    cy.login().then($auth => cy.wrap($auth).its(<any> 'uid').as('uid'));
+}
+
+function setFirebaseData() {
     cy.get('@uid').then((uid) => {
         return new Database(uid);
     });
+}
 
-});
-
-Given("Remove old firebase data", () => {
+function removeOldFirebaseData() {
     cy.callFirestore("delete", "projects", {
         recursive: true
     });
@@ -19,12 +25,5 @@ Given("Remove old firebase data", () => {
     cy.callFirestore("delete", "tags", {
         recursive: true
     });
-});
+}
 
-Given("I go on page {string}",  (url) => {
-    cy.visit(url)
-});
-
-Given("Login into Firebase", () => {
-    cy.login().then($auth => cy.wrap($auth).its(<any> 'uid').as('uid'));
-});

@@ -69,9 +69,6 @@ target/
 # Database
 db.sqlite3
 
-# Vagrant
-.vagrant/
-
 # ZSH env file
 .env
 # node modules
@@ -92,4 +89,3 @@ serviceAccount.json
 cypress/config.json
 cypress.env.json
 /proven-reality-657-firebase-adminsdk-etp92-6397074848.json
-/apps/tickist-web-e2e/cypress/
