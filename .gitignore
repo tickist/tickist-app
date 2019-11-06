@@ -86,6 +86,7 @@ firebase-debug.log
 proven-reality-657-ea57273a5a76.json
 credentials.json
 serviceAccount.json
+serviceAccountTesting.json
 cypress/config.json
 cypress.env.json
 /proven-reality-657-firebase-adminsdk-etp92-6397074848.json

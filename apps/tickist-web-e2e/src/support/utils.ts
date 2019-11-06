@@ -55,12 +55,21 @@ export function clickMenuElement(element: string) {
 export function clickOnProject(projectName: string) {
     cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
     if (projectName !== "All projects") {
-
-        cy.get('tickist-single-project').contains(projectName).click();
+        // @TODO remove force
+        cy.get('tickist-single-project').contains(projectName).click({force: true}).then(() => {
+            cy.get('tickist-single-project').find('div.isActive').should('exist')
+        });
     } else {
         cy.get('[data-cy="All projects"]').click()
     }
 }
+
+export function clickOnCreateNewProject() {
+    cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click({force: true});
+    // @TODO remove force
+    cy.get('[data-cy="create-new-project"]').click({force: true});
+}
+
 
 export function createTask(taskName) {
     cy.log("Create new task");

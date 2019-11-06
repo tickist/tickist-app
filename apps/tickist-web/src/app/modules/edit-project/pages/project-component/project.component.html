@@ -48,12 +48,12 @@
 
                     <div fxLayout="column">
                         <mat-form-field>
-                            <input matInput placeholder="Project name" maxlength="100" formControlName="name"
+                            <input name="projectName" matInput placeholder="Project name" maxlength="100" formControlName="name"
                                    autofocus>
 
                         </mat-form-field>
-                        <color-picker [colors]="colors" customColorPicker="true"
-                                      formControlName="color"></color-picker>
+                        <tickist-color-picker [colors]="colors" customColorPicker="true"
+                                      formControlName="color"></tickist-color-picker>
 
                         <mat-form-field>
                             <mat-select placeholder="Ancestor:" formControlName="ancestor">
@@ -64,7 +64,7 @@
                         </mat-form-field>
 
                         <mat-form-field>
-                                <textarea matInput #projectDescription formControlName="description"
+                                <textarea name="projectDescription" matInput #projectDescription formControlName="description"
                                           placeholder="Project description"></textarea>
                             <mat-hint align="end">{{projectDescription.value?.length || 0}}/5000</mat-hint>
                         </mat-form-field>
@@ -149,7 +149,7 @@
                                     <span flex></span>
                                     <span [hidden]="user.email==u.email"
                                           (click)="deleteUserFromShareWithList(user, i)">
-                                        
+
                                         <fa-icon [icon]="'times'"></fa-icon>
                                         </span>
                                 </h3>
@@ -176,7 +176,7 @@
         </div>
 
         <div fxLayout="row" fxLayoutAlign="end none">
-            <button type="submit" mat-button class="button">Save</button>
+            <button type="submit" mat-button class="button" data-cy="save project">Save</button>
 
         </div>
 

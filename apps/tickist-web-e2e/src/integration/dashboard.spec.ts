@@ -14,7 +14,7 @@ describe('Dashboard view', () => {
     it('should see dashboard view', () => {
 
         cy.url().should('include', 'home').should('include', 'dashboard');
-        cy.get('tickist-today').find('tickist-single-task').should(($task) => {
+        cy.get('tickist-today').find("tickist-single-task:contains(\"Task 1\")").should(($task) => {
             expect($task).to.have.length(1);
             expect($task.first()).to.contain('Task 1');
             expect($task.first()).to.contain(format(new Date(), 'dd-MM-yyyy'));
@@ -36,10 +36,10 @@ describe('Dashboard view', () => {
                 expect($task).to.have.length(0);
             });
 
-            cy.get('tickist-today').find('change-task-view').click();
-            cy.get('tickist-overdue').find('change-task-view').click();
+            cy.get('tickist-today').find('tickist-change-task-view').click();
+            cy.get('tickist-overdue').find('tickist-change-task-view').click();
 
-            cy.get('tickist-today').find('tickist-single-task-simplified').should(($task) => {
+            cy.get('tickist-today').find('tickist-single-task-simplified:contains(\"Task 1\")').should(($task) => {
                 expect($task).to.have.length(1);
                 expect($task.first()).to.contain('Task 1');
                 expect($task.first()).to.contain(format(new Date(), 'dd-MM-yyyy'));

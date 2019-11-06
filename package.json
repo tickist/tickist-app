@@ -41,7 +41,7 @@
     "generate-git-version": "node grab-git-info.js",
     "build:testConfig": "cypress-firebase createTestEnvFile tickist-testing && mv cypress.env.json apps/tickist-web-e2e/"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "^8.0.0",
     "@angular/cdk": "~8.0.2",
@@ -108,7 +108,7 @@
     "@types/node": "~8.9.4",
     "codelyzer": "~5.0.1",
     "concurrently": "^4.1.2",
-    "cypress": "^3.5.0",
+    "cypress": "^3.6.0",
     "cypress-firebase": "^0.4.0",
     "cypress-pipe": "^1.5.0",
     "dotenv": "6.2.0",

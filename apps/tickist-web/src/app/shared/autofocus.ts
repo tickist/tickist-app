@@ -12,7 +12,7 @@ import {SimpleChanges} from '@angular/core';
 const BASE_TIMER_DELAY = 10;
 
 @Directive({
-    selector: '[autofocus], [appAutofocus]',
+    selector: '[tickistAutofocus], [autofocus], [appAutofocus]',
 })
 export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestroy {
     @Input() shouldFocusElement: any;

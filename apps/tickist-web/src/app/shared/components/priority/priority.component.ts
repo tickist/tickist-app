@@ -17,7 +17,7 @@ const noop = () => {
     }]
 })
 export class PriorityComponent implements ControlValueAccessor {
-    @Output() change = new EventEmitter();
+    @Output() changePriority = new EventEmitter();
 
     @Input('manualValue') set manualValue(manualValue) {
         this.innerValue = manualValue;
@@ -66,16 +66,16 @@ export class PriorityComponent implements ControlValueAccessor {
         this.onTouchedCallback = fn;
     }
 
-    changePriority($event) {
+    change($event) {
         this.innerValue = $event.value;
-        this.change.emit($event.value);
+        this.changePriority.emit($event.value);
         this.writeValue($event.value);
         this.onChangeCallback($event.value);
 
     }
 
     onClickChangePriority(priority) {
-         this.change.emit(priority);
+         this.changePriority.emit(priority);
     }
 
 

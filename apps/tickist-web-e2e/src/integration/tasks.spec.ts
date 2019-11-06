@@ -90,8 +90,7 @@ describe('Tasks', () => {
             clickOnProject("Inbox");
 
             cy.get(`tickist-single-task:contains("${newTaskName}")`).then($task => {
-                $task.find('tickist-toggle-button').click();
-
+                $task.find('tickist-toggle-button').on('click', () => {});
             });
             cy.get(`tickist-single-task:contains("${newTaskName}")`).should('not.exist');
             cy.get('simple-snack-bar').contains("Task is done. Great job!").should('exist')

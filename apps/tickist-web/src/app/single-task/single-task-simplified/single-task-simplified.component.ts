@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, HostListener, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener, Input, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {TaskService} from '../../core/services/task.service';
 import {SingleTask} from '../shared/single-task';
@@ -13,7 +13,7 @@ import {IconProp} from '@fortawesome/fontawesome-svg-core';
     styleUrls: ['./single-task-simplified.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SingleTaskSimplifiedComponent extends SingleTask {
+export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit {
     @Input() task;
     icon: IconProp;
     finishDateVisible = true;

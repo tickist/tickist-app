@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {User} from '@data/users/models';
 import {ConfigurationService} from '../../services/configuration.service';
-import {environment} from '../../../../environments/environment';
+import {environment} from '@env/environment';
 import {MediaObserver} from '@angular/flex-layout';
 import {NavigationEnd, Router} from '@angular/router';
 import {ProjectService} from '../../services/project.service';

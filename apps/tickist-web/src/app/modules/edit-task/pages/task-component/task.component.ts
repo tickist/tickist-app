@@ -399,11 +399,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                         if (!this.isNewTask()) {
                             this.store.dispatch(new RequestUpdateTask({
                                 task: {
-                                    id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)})
+                                    id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)})
                                 }
                             }));
                         } else {
-                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
+                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t=>t.id)});
                         }
                     }
 
@@ -416,7 +416,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     if (!this.isNewTask()) {
                         this.store.dispatch(new RequestUpdateTask({
                             task: {
-                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)})
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t=>t.id)})
                             }
                         }));
                     } else {
@@ -429,11 +429,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                     if (!this.isNewTask()) {
                         this.store.dispatch(new RequestUpdateTask({
                             task: {
-                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)})
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t=>t.id)})
                             }
                         }));
                     } else {
-                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag =>tag.id)});
+                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t =>t.id)});
                     }
                 }
             }
@@ -464,7 +464,8 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
             updatedTask.taskProject = new TaskProject(selectedTaskProject);
-            const user = <ShareWithUser>selectedTaskProject.shareWith.filter(user => user['id'] === values['extra']['ownerId'])[0];
+            const user = <ShareWithUser>selectedTaskProject.shareWith
+                .find(sharedUser => sharedUser['id'] === values['extra']['ownerId']);
             updatedTask.owner = new TaskUser(<ITaskUser>{
                 id: user.id,
                 avatarUrl: user.avatarUrl,

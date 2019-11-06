@@ -20,7 +20,7 @@
     <div>
         <span>Priority</span>
         <div>
-            <tickist-priority [ngStyle]="{'z-index': '1000'}" [manualValue]="task.priority" (change)="emitChangePriorityClickEvent($event)">
+            <tickist-priority [ngStyle]="{'z-index': '1000'}" [manualValue]="task.priority" (changePriority)="emitChangePriorityClickEvent($event)">
 
             </tickist-priority>
         </div>

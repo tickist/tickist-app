@@ -16,7 +16,7 @@
 <tickist-single-project [project]="project" [isSmallScreen]="isSmallScreen"
                 *ngFor="let project of (projectsList$ | async);trackBy: trackByFn">
 </tickist-single-project>
-<div id="add-project" fxLayout="row" fxLayoutAlign="start center" (click)="navigateToCreateProjectView()">
+<div id="add-project" data-cy="create-new-project" fxLayout="row" fxLayoutAlign="start center" (click)="navigateToCreateProjectView()">
     <tickist-menu-button [icon]="'plus'" [color]="'#fcb150'">
     </tickist-menu-button>
     <span>Create new project</span>
