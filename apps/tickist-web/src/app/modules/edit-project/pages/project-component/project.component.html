@@ -57,7 +57,7 @@
 
                         <mat-form-field>
                             <mat-select placeholder="Ancestor:" formControlName="ancestor">
-                                <mat-option *ngFor="let project of projectsAncestors"
+                                <mat-option *ngFor="let project of projectsAncestors" [ngClass]="'level_' + project.level"
                                             [value]="project.id"> {{ project.name }}
                                 </mat-option>
                             </mat-select>
@@ -65,7 +65,8 @@
 
                         <mat-form-field>
                                 <textarea name="projectDescription" matInput #projectDescription formControlName="description"
-                                          placeholder="Project description"></textarea>
+                                          placeholder="Project description">
+                                </textarea>
                             <mat-hint align="end">{{projectDescription.value?.length || 0}}/5000</mat-hint>
                         </mat-form-field>
                     </div>

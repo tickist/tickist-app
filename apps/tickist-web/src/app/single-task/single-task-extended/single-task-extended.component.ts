@@ -28,8 +28,8 @@ import {removeTag} from '../utils/task-utils';
 import {selectFilteredProjectsList} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
 import {Task} from '@data/tasks/models/tasks';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
-import {convertToSimpleProject} from '../../core/utils/projects-utils';
 import {FormControl} from '@angular/forms';
+import {TaskProject} from '@data/tasks/models/task-project';
 
 
 @Component({
@@ -104,7 +104,14 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.amountOfStepsDoneInPercent = this.task.steps.filter(step => step.status === 1).length * 100 / this.task.steps.length;
         this.selectTaskProject.valueChanges.subscribe(value => {
             this.store.select(selectProjectById(value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
-                const task = Object.assign({}, this.task, {taskProject: convertToSimpleProject(project)});
+                const task = Object.assign({}, this.task, {
+                    taskProject: new TaskProject({
+                        name: project.name,
+                        color: project.color,
+                        shareWithIds: project.shareWithIds,
+                        id: project.id
+                    })
+                });
                 this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));
             });
         });

@@ -86,7 +86,7 @@ export class ProjectService {
     }
 
     updateProject(project: Project, withoutSnackBar = false) {
-        return this.db.collection(projectsCollectionName).doc(project.id).update({...project});
+        return this.db.collection(projectsCollectionName).doc(project.id).update(JSON.parse(JSON.stringify(project)));
 
 
         // return this.http.put(`${environment['apiUrl']}/project/${project.id}/`, toSnakeCase(project));

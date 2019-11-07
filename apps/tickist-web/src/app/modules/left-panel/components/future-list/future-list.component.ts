@@ -43,6 +43,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
                 this.activeDateElement = activeDateElement;
                 this.cd.detectChanges();
             });
+        // @TODO we need only tasks with finishDate
         this.taskService.tasks$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((tasks: Task[]) => {
             this.tasks = tasks;
             this.futureList = this.createFutureList();
@@ -73,7 +74,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
                         && task.isDone === false
                         && task.finishDate
                         && getMonth(task.finishDate) === getMonth(momentDate)
-                        && getMonth(task.finishDate) === getYear(momentDate);
+                        && getYear(task.finishDate) === getYear(momentDate);
                 }).length
             });
         }

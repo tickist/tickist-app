@@ -1,13 +1,13 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { ShareWithPendingUser} from '@data/projects';
-import {Project, } from '@data/projects';
+import {ShareWithPendingUser} from '@data/projects';
+import {Project,} from '@data/projects';
 import {ShareWithUser} from '@data/projects';
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import { User} from '@data/users/models';
+import {User} from '@data/users/models';
 import {SimpleUser} from '@data/users/models';
 import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import {map, startWith, takeUntil} from 'rxjs/operators';
 import {RequestCreateProject, RequestUpdateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
-import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
+import {selectAllProjects, selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {addUserToShareList} from '../../../../core/utils/projects-utils';
@@ -40,7 +40,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     projectsAncestors: Project[] | any[];
     stream$: Observable<any>;
     projectForm: FormGroup;
-    menu: {};
+    menu: any;
     user: User;
     team: SimpleUser[];
     defaultTaskView: any;
@@ -74,40 +74,43 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.route.params.pipe(
             takeUntil(this.ngUnsubscribe),
             map(params => params['ancestorProjectId'])
-        )
+            )
             .subscribe(ancestorProjectId => {
                 this.ancestorProjectId = ancestorProjectId;
             });
         this.stream$ = combineLatest(
-            this.store.select(selectAllProjects),
+            this.store.select(selectAllProjectsWithLevelAndTreeStructures),
             this.route.params.pipe(map(params => params['projectId'])),
             this.store.select(selectLoggedInUser),
             this.store.select(selectTeam)
         );
-        this.subscription = this.stream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([projects, projectId, user, team]) => {
-            let project: Project;
-            this.user = user;
-            this.team = team;
-            if (projects.length > 0 && user) {
-                this.projectsAncestors = [{id: '', name: ''},
-                    ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
-                if (projectId) {
-                    project = projects.find(p => p.id === projectId);
-                    this.projectForm = this.createForm(project);
-                } else {
-                    project = this.createNewProject();
-                    this.projectForm = this.createForm(project);
-                }
-                if (this.user.id === project.owner) {
-                    this.deleteOrLeaveProjectLabel = 'Delete project';
+        this.subscription = this.stream$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(([projects, projectId, user, team]) => {
+                let project: Project;
+                this.user = user;
+                this.team = team;
+                if (projects.length > 0 && user) {
+                    console.log({projects})
+                    this.projectsAncestors = [{id: '', name: ''},
+                        ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
+                    if (projectId) {
+                        project = projects.find(p => p.id === projectId);
+                        this.projectForm = this.createForm(project);
+                    } else {
+                        project = this.createNewProject();
+                        this.projectForm = this.createForm(project);
+                    }
+                    if (this.user.id === project.owner) {
+                        this.deleteOrLeaveProjectLabel = 'Delete project';
 
-                } else {
-                    this.deleteOrLeaveProjectLabel = 'Leave project';
+                    } else {
+                        this.deleteOrLeaveProjectLabel = 'Leave project';
+                    }
+                    this.project = project;
                 }
-                this.project = project;
-            }
 
-        });
+            });
         this.addUserToShareWithListCtrl = new FormControl('',
             Validators.compose([Validators.required, Validators.email]));
         this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges.pipe(
@@ -178,7 +181,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             } else {
                 this.store.dispatch(new RequestUpdateProject({project: {id: project.id, changes: project}}));
             }
-
+            debugger;
             this.close();
         }
     }
