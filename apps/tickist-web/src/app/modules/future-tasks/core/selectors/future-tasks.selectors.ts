@@ -1,9 +1,9 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import * as _ from 'lodash';
-import {selectAllTasks, selectAllUndoneTasks} from '../../core/selectors/task.selectors';
-import {FutureTasksFiltersState} from './future-tasks-filters.reducers';
-import {selectLoggedInUser} from '../../core/selectors/user.selectors';
-import {selectActiveDate} from '../../core/selectors/active-date.selectors';
+import {selectAllTasks, selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
+import {FutureTasksFiltersState} from '../reducers/future-tasks-filters.reducers';
+import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
+import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {Task} from '@data/tasks/models/tasks';
 import {getMonth, getYear} from 'date-fns';
 

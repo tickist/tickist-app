@@ -181,7 +181,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
             } else {
                 this.store.dispatch(new RequestUpdateProject({project: {id: project.id, changes: project}}));
             }
-            debugger;
             this.close();
         }
     }

@@ -1,6 +1,5 @@
 
 import {SimpleUser} from './simple-user';
-import {ISimpleProjectApi} from '../../simple-project-api.inferface';
 import {
     DEFAULT_DAILY_SUMMARY_HOUR,
     DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT,
@@ -42,7 +41,7 @@ export interface IUser {
     tagsFilterId?: number;
     dataJoined: string;
     avatarUrl?: string;
-    shareWith: ISimpleProjectApi[];
+    // shareWith: ISimpleProjectApi[];
 }
 
 

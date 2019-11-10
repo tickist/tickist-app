@@ -11,10 +11,8 @@ import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {EffectsModule} from '@ngrx/effects';
 import {UserEffects} from './effects/user.effects';
-import {TeamEffects} from './effects/team.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromUser from './reducers/user.reducer';
-import * as fromTeam from './reducers/team.reducer';
 import * as fromAddTaskButtonVisibility from './reducers/add-task-button-visibility.reducer';
 import {UserService} from './services/user.service';
 import {TagsEffects} from './effects/tags.effects';
@@ -49,12 +47,8 @@ import {AssignedToFiltersTasksEffects} from './effects/assigned-to-filters-tasks
 import {TasksFiltersEffects} from './effects/tasks-filters.effects';
 import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {faBars} from '@fortawesome/free-solid-svg-icons';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import {AngularFireModule} from '@angular/fire';
-import {environment} from '../../environments/environment';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
 
 
 @NgModule({
@@ -67,7 +61,6 @@ import {environment} from '../../environments/environment';
         TickistSharedModule,
         RouterModule,
         StoreModule.forFeature('user', fromUser.reducer),
-        StoreModule.forFeature('team', fromTeam.reducer),
         StoreModule.forFeature('tags', fromTags.reducer),
         StoreModule.forFeature('projects', fromProjects.reducer),
         StoreModule.forFeature('activeProject', fromActiveProject.reducer),
@@ -90,7 +83,7 @@ import {environment} from '../../environments/environment';
         EffectsModule.forFeature([ProjectsEffects, ActiveProjectsIdsEffects, ActiveProjectEffects]),
         EffectsModule.forFeature([AuthEffects]),
         EffectsModule.forFeature([TagsEffects]),
-        EffectsModule.forFeature([UserEffects, TeamEffects]),
+        EffectsModule.forFeature([UserEffects]),
         EffectsModule.forFeature([AssignedToFiltersTasksEffects, TasksFiltersEffects]),
         FontAwesomeModule,
         AngularFireAuthModule,

@@ -14,7 +14,6 @@ import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Logout} from '../actions/auth.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {ISimpleUserApi} from '@data/simple-user-api.interface';
 
 const userCollectionName = 'users';
 
@@ -64,20 +63,6 @@ export class UserService {
             //
             //     // this.store.dispatch(new userAction.UpdateUser(new User(payload)));
             // });
-    }
-
-    loadTeam(): any {
-        const userID = localStorage.getItem('USER_ID');
-        if (userID == null) {
-            this.store.dispatch(new Logout());
-        } else {
-            return this.http.get<ISimpleUserApi[]>(`${environment['apiUrl']}/user/${userID}/teamlist/`)
-                .pipe(
-                    map(payload => {
-                        return payload.map(user => new SimpleUser(user));
-                    })
-                );
-        }
     }
 
     changePassword(values: any) {

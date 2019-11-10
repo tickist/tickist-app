@@ -3,7 +3,6 @@ import {ProjectsApiMockFactory} from './projects-api-mock.factory';
 import * as faker from 'faker';
 import * as _ from 'lodash';
 import {Tag} from '@data/tags/models/tags';
-import {IProjectApi} from '@data/project-api.interface';
 import {Menu} from '@data/menu';
 
 export class TasksApiMockFactory {
@@ -20,7 +19,7 @@ export class TasksApiMockFactory {
 
     }
 
-    createTasksDict(owner: any, author: any, project: IProjectApi, tags: Tag[], howMuch: number = 17) {
+    createTasksDict(owner: any, author: any, project: any, tags: Tag[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createTaskDict(owner, author, project, tags));
     }
 

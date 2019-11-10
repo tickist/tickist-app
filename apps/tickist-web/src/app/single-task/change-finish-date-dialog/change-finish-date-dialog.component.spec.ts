@@ -9,11 +9,10 @@ import {Task} from '@data/tasks/models/tasks';
 import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.factory';
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
-import {IProjectApi} from '@data/project-api.interface';
 
 describe('ChangeFinishDateDialogComponent', () => {
     let user: any;
-    let project: IProjectApi;
+    let project: any;
     let task: Task;
     const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
     const userApiMockFactroy: UsersApiMockFactory = new UsersApiMockFactory();

@@ -14,7 +14,7 @@
         <div class="header">
             <div>{{ selectedProject.name }}</div>
             <div fxFlex></div>
-            <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'"
+            <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'" data-cy="edit-project"
                                  (click)="navigateToEditProjectView(selectedProject.id)">
             </tickist-menu-button>
             <tickist-sort-tasks></tickist-sort-tasks>

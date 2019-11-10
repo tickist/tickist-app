@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
-import {FutureTasksFiltersService} from './modules/future-tasks/future-tasks-filters.service';
+import {FutureTasksFiltersService} from './modules/future-tasks/core/services/future-tasks-filters.service';
 import {RouterModule, Routes} from '@angular/router';
 import {LoggedInGuard} from './core/guards/loggedIn.guard';
 import {AnonymousGuard} from './core/guards/anonymous.guard';

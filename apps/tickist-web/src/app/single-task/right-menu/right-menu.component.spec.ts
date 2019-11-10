@@ -11,7 +11,6 @@ import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.f
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
 import {RouterTestingModule} from '@angular/router/testing';
-import {IProjectApi} from '@data/project-api.interface';
 import {Task} from '@data/tasks/models/tasks';
 
 
@@ -34,7 +33,7 @@ const routes: Routes = [
 
 describe('RightMenuComponent', () => {
     let user: any;
-    let project: IProjectApi;
+    let project: any;
     let task: any;
     let component: RightMenuComponent;
     let fixture: ComponentFixture<RightMenuComponent>;

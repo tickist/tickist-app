@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {AddUser, UserActionTypes} from '../../core/actions/user.actions';
+import {AddUser, UserActionTypes} from '../../../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {defer} from 'rxjs';
-import {selectLoggedInUser} from '../../core/selectors/user.selectors';
-import {AppStore} from '../../store';
+import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
+import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
-import {AddFutureTasksFilters, SetCurrentFutureTaskFilter} from './future-tasks-filters.actions';
-import {FutureTasksFiltersService} from './future-tasks-filters.service';
+import {AddFutureTasksFilters, SetCurrentFutureTaskFilter} from '../actions/future-tasks-filters.actions';
+import {FutureTasksFiltersService} from '../services/future-tasks-filters.service';
 
 const ALL_DATES = 1;
 

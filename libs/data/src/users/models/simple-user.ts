@@ -1,5 +1,5 @@
 import {SimpleProject} from '../../projects/models';
-import {ISimpleUserApi} from '../../simple-user-api.interface';
+
 
 export class SimpleUser {
     id: number;
@@ -9,7 +9,7 @@ export class SimpleUser {
     avatarUrl: string;
     shareWith: SimpleProject[] = [];
 
-    constructor(user: ISimpleUserApi) {
+    constructor(user: any) {
         this.id = user.id;
         this.username = user.username;
         this.email = user.email;

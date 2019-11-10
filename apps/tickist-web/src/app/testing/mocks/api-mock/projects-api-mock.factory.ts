@@ -1,15 +1,13 @@
 import * as faker from 'faker';
 import * as _ from 'lodash';
 import {UsersApiMockFactory} from './users-api-mock.factory';
-import {ISimpleUserApi} from '@data/simple-user-api.interface';
-import {IProjectApi} from '@data/project-api.interface';
-import {ISimpleProjectApi} from '@data/simple-project-api.inferface';
+
 import {Project} from '@data/projects';
 
 export class ProjectsApiMockFactory {
     id = 0;
 
-    static createSimpleProjectFromProject(project: IProjectApi): ISimpleProjectApi {
+    static createSimpleProjectFromProject(project: any): any {
         return {
             id: project.id,
             name: project.name,
@@ -21,7 +19,7 @@ export class ProjectsApiMockFactory {
 
     constructor() {}
 
-    createProjectsDict(shareWith: ISimpleUserApi[], owner: any, tags: any[], howMuch: number = 17) {
+    createProjectsDict(shareWith: any[], owner: any, tags: any[], howMuch: number = 17) {
         return _.range(0, howMuch).map(() => this.createProjectDict(
             shareWith,
             UsersApiMockFactory.createSimpleUserFromUser(owner),

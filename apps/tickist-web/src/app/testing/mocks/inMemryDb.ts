@@ -6,8 +6,6 @@ import {TagsApiMockFactory} from './api-mock/tags-api-mock.factory';
 import {TasksApiMockFactory} from './api-mock/tasks-api-mock.factory';
 import {ProjectsApiMockFactory} from './api-mock/projects-api-mock.factory';
 import * as _ from 'lodash';
-import {ISimpleUserApi} from '@data/simple-user-api.interface';
-import {IProjectApi} from '@data/project-api.interface';
 import {addDays, format} from 'date-fns';
 
 
@@ -23,7 +21,7 @@ export class InMemoryDataService implements InMemoryDbService {
     tasksApiMockFactory: TasksApiMockFactory;
     projectsApiMockFactory: ProjectsApiMockFactory;
     users: any[];
-    teamList: ISimpleUserApi[];
+    teamList: any[];
     tasks: any[] = [];
     dayStatistics: any = [];
 
@@ -138,7 +136,7 @@ export class InMemoryDataService implements InMemoryDbService {
             }]
         }];
         // createInbox;
-        const inbox = projects.find((project: IProjectApi) => project.id === INBOX_ID );
+        const inbox = projects.find((project: any) => project.id === INBOX_ID );
         inbox.is_inbox = true;
         // @TODO add function to create inbox
 

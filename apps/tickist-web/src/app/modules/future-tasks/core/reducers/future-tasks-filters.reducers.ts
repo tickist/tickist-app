@@ -1,4 +1,4 @@
-import {FutureTasksFiltersActions, FutureTasksFiltersActionTypes} from './future-tasks-filters.actions';
+import {FutureTasksFiltersActions, FutureTasksFiltersActionTypes} from '../actions/future-tasks-filters.actions';
 import {Filter} from '@data/filter';
 
 

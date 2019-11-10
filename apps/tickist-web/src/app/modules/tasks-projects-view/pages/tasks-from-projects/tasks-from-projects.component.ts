@@ -126,7 +126,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         this.cd.detach();
     }
 
-    navigateToEditProjectView(projectId: number) {
+    navigateToEditProjectView(projectId: string) {
         this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
     }
 
