@@ -1,0 +1,44 @@
+.tag-row {
+    cursor: pointer;
+    height: 40px;
+    .checkbox {
+        margin-top: 3px;
+        margin-right: 5px;
+        margin-left: 3px;
+    }
+    .tag-name {
+        span {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 215px;
+        }
+    }
+    .tag-icon {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+    &:hover {
+        background-color: grey;
+    }
+    &.is-active {
+        background-color: grey;
+    }
+    .tag-edit-icon {
+        display: none;
+        cursor: pointer;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+    .task-counter {
+        margin-right: 10px;
+    }
+    &:hover {
+        .task-counter {
+            display: none;
+        }
+        .tag-edit-icon {
+            display: inline-block;
+        }
+    }
+}

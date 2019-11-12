@@ -1,0 +1,300 @@
+<mat-card *ngIf="user" fxFlex="100">
+
+    <div fxLayout="column" fxLayoutAlign="center none">
+        <div fxFlex>
+            <span class="close" (click)="close()">
+             <fa-icon [icon]="'times'"></fa-icon>
+        </span>
+        </div>
+        <div fxLayout="row">
+            <div fxFlex.gt-md="230px" class="left-menu" fxFlex.lt-md="30%">
+                <mat-list>
+                    <mat-list-item (click)="changeActiveItemInMenu('main')"
+                                   [ngClass]="{'active': checkActiveItemInMenu('main')}">
+
+                        <fa-icon [icon]="'edit'"></fa-icon>
+
+                        <p [fxHide.xs]="1"><span>Main</span></p>
+
+
+                    </mat-list-item>
+
+                    <mat-list-item (click)="changeActiveItemInMenu('password')"
+                                   [ngClass]="{'active': checkActiveItemInMenu('password')}">
+                        <fa-icon [icon]="'wrench'"></fa-icon>
+
+                        <p [fxHide.xs]="1"><span>Password</span></p>
+
+                    </mat-list-item>
+
+                    <mat-list-item (click)="changeActiveItemInMenu('notifications')"
+                                   [ngClass]="{'active': checkActiveItemInMenu('notifications')}">
+                        <fa-icon [icon]="'bell'"></fa-icon>
+
+                        <p [fxHide.xs]="1"><span>Notifications</span></p>
+
+                    </mat-list-item>
+
+                    <mat-list-item (click)="changeActiveItemInMenu('settings')"
+                                   [ngClass]="{'active': checkActiveItemInMenu('settings')}">
+                        <fa-icon [icon]="'cog'"></fa-icon>
+                        <p [fxHide.xs]="1"><span>Settings</span></p>
+
+                    </mat-list-item>
+
+
+                </mat-list>
+            </div>
+            <div fxFlex="68%" class="right-menu">
+                <div [hidden]="!checkActiveItemInMenu('main')">
+                    <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="userData"
+                          *ngIf="userData" (ngSubmit)="onSubmitUserData(userData.value)" autocomplete="off"
+                          novalidate>
+                        <mat-form-field>
+                            <input matInput placeholder="username" formControlName="username"
+                                   [errorStateMatcher]="matcher">
+                            <mat-error *ngIf="hasErrorMessage(userData.controls['username'])">
+                                {{ getErrorMessage(userData.get('username')) }}
+                            </mat-error>
+
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput placeholder="email" formControlName="email" [readonly]="true">
+                            <mat-hint>
+                                You cannot change your email
+                            </mat-hint>
+                        </mat-form-field>
+
+                    </form>
+
+                    <img [src]="staticUrl + user.avatarUrl | avatarsize: '64x64'">
+                    <button (click)="changeAvatarTrigger()" mat-button>Change</button>
+                    <input #changeAvatarInput type="file" name="openFile" accept="image/x-png,image/jpeg"
+                           (change)="changeAvatar($event)"/>
+                </div>
+
+                <div [hidden]="!checkActiveItemInMenu('password')">
+
+
+                    <form fxLayout="column" fxLayoutAlign="space-between none" [formGroup]="changePasswordForm"
+                          (ngSubmit)="changePassword($event, changePasswordForm.value)">
+                        <div class="errror"
+                             *ngIf="changePasswordForm.hasError('oldSameNew') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['password'].touched">
+                            New Password should not be same as old password.
+                        </div>
+                        <div class="error"
+                             *ngIf="changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched && changePasswordForm.controls['repeatNewPassword'].touched">
+                            Password and conform password should be the same.
+                        </div>
+
+                        <div class="errror"
+                             *ngIf="changePasswordForm.controls['password'].hasError('minlength') && changePasswordForm.controls['password'].touched">
+                            Old password should contain at least 4 distinct characters.
+                        </div>
+                        <div class="errror"
+                             *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength') && changePasswordForm.controls['newPassword'].touched">
+                            New Password should contain at least 4 distinct characters.
+                        </div>
+
+                        <div class="errror" *ngIf="changePasswordForm.hasError('wrongPassword')">
+                            Old password is not correct.
+                        </div>
+
+
+                        <mat-form-field>
+                            <input matInput id="old password" type="password" name="old password"
+                                   placeholder="Old password"
+                                   [formControl]="changePasswordForm.controls['password']"
+                                   [ngClass]="{'input-error': ((changePasswordForm.controls['password'].hasError('required') || changePasswordForm.controls['password'].hasError('minlength')) && changePasswordForm.controls['password'].touched)}">
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput id="new_password" type="password" name="net password"
+                                   placeholder="New password"
+                                   [formControl]="changePasswordForm.controls['newPassword']"
+                                   [ngClass]="{'input-error': ((changePasswordForm.controls['newPassword'].hasError('required') || changePasswordForm.controls['newPassword'].hasError('minlength') || (changePasswordForm.controls['repeatNewPassword'].touched && changePasswordForm.hasError('mismatchedPasswords')))  && changePasswordForm.controls['newPassword'].touched)}">
+
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput id="confirm_new_password" type="password" name="confirm_new_password"
+                                   placeholder="Confirm new password"
+                                   [formControl]="changePasswordForm.controls['repeatNewPassword']"
+                                   [ngClass]="{'input-error': ((changePasswordForm.controls['repeatNewPassword'].hasError('required') ||
+                                   (changePasswordForm.hasError('mismatchedPasswords') && changePasswordForm.controls['newPassword'].touched)) && changePasswordForm.controls['repeatNewPassword'].touched)}">
+                        </mat-form-field>
+
+                        <div class="pull-right">
+                            <button type="submit" mat-button [disabled]="!changePasswordForm.valid">Change password
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+
+                <div [hidden]="!checkActiveItemInMenu('notifications')" *ngIf="user">
+                    <form [formGroup]="userNotificationSettings">
+                        <div fxLayout="column" fxLayoutAlign="space-between none">
+                            <span class="title">Please send me an email notification:</span>
+
+                            <mat-checkbox formControlName="dailySummaryCheckbox" aria-label="Switch 1"
+                                          (change)="toggleDailySummary()">
+                            </mat-checkbox>
+
+                            <mat-form-field>
+                                <label>
+                                    with the list of my tasks for every day at:
+                                    <input type="time" matInput formControlName="dailySummaryHour">
+                                </label>
+                            </mat-form-field>
+
+
+                            <mat-checkbox formControlName="removesMeFromSharedList" aria-label="Switch 2">
+                                when another user removes me from a shared list
+                            </mat-checkbox>
+
+
+                            <mat-checkbox formControlName="assignsTaskToMe" aria-label="Switch 3">
+                                when another user assigns a task to me
+                            </mat-checkbox>
+
+
+                            <mat-checkbox formControlName="completesTaskFromSharedList" aria-label="Switch 4">
+                                when another user completes a task from a shared list
+                            </mat-checkbox>
+
+                            <mat-checkbox formControlName="changesTaskFromSharedListThatIsAssignedToMe"
+                                          aria-label="Checkbox 5">
+                                when another user changes a task from a shared list that is assigned to me
+                            </mat-checkbox>
+
+                            <mat-checkbox formControlName="changesTaskFromSharedListThatIAssignedToHimHer"
+                                          aria-label="Switch 6">
+                                when another user changes a task from a shared list that I assigned to him/her
+                            </mat-checkbox>
+
+
+                            <mat-checkbox formControlName="leavesSharedList" aria-label="Switch 7">
+                                when another user leaves a shared list
+                            </mat-checkbox>
+
+                            <mat-checkbox formControlName="sharesListWithMe" aria-label="Switch 8">
+                                when another user shares a list with me
+                            </mat-checkbox>
+
+
+                            <mat-checkbox formControlName="deletesListSharedWithMe" aria-label="Switch 9">
+                                when another user deletes a list shared with me
+                            </mat-checkbox>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div [hidden]="!checkActiveItemInMenu('settings')">
+                    <div fxLayout="column" fxLayoutAlign="space-between none">
+                        <form [formGroup]="userSettings">
+                            <mat-form-field>
+                                <mat-select formControlName="orderTasksDashboard"
+                                            placeholder="Tasks order in dashboard"
+                                            name="orderTasksDashboard">
+                                    <mat-option *ngFor="let option of tasksOrderOptions" [value]="option">
+                                        {{ option }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view:</span>
+                                <mat-radio-group formControlName="defaultTaskView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on todays tasks:</span>
+                                <mat-radio-group formControlName="defaultTaskViewTodayView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on overdue tasks:</span>
+                                <mat-radio-group formControlName="defaultTaskViewOverdueView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on future tasks:</span>
+                                <mat-radio-group formControlName="defaultTaskViewFutureView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+                            <div class="form-field" fxLayout="column" fxLayoutAlign="start none">
+                                <span>Default task view on tags:</span>
+                                <mat-radio-group formControlName="defaultTaskViewTagsView"
+                                                 fxLayout.xs="column">
+                                    <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                      *ngFor="let option of defaultTaskViewOptions"
+                                                      [value]="option.value">
+                                        {{ option.name }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+
+                            <mat-form-field>
+                                <mat-select placeholder="Overdue tasks sort by:" formControlName="overdueTasksSortBy">
+                                    <mat-option *ngFor="let option of overdueTasksSortByOptions"
+                                                [value]="option.value"> {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-select placeholder="Future tasks sort by:" formControlName="futureTasksSortBy">
+                                    <mat-option *ngFor="let option of futureTasksSortByOptions"
+                                                [value]="option.value"> {{ option.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+
+                            <mat-checkbox formControlName="dialogTimeWhenTaskFinishedInProject"
+                                          aria-label="Switch 9">
+                                Dialog with real time and estimation time after finish task
+                            </mat-checkbox>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</mat-card>
+

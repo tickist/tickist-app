@@ -1,0 +1,186 @@
+<mat-card fxFlex="100">
+    <form *ngIf="projectForm" [formGroup]="projectForm" novalidate (ngSubmit)="onSubmit(projectForm.value)"
+          fxLayoutAlign="center none" class="flex-container" fxLayout="column" (keydown.enter)="$event.preventDefault()">
+        <div fxFlex>
+            <span class="close" (click)="close()">
+                <fa-icon [icon]="'times'" aria-hidden="true"></fa-icon>
+            </span>
+        </div>
+        <div fxLayout="row" class="main-view">
+            <div fxFlex.gt-md="230px" fxFlex.lt-md="30%" class="left-menu">
+                <mat-list>
+                    <mat-list-item (click)="changeActiveItemInMenu('main')"
+                                   [ngClass]="{
+                                    'active': checkActiveItemInMenu('main'),
+                                    'invalid': !projectForm.controls['main'].valid && projectForm.controls['main'].touched
+                                   }">
+
+                        <fa-icon [icon]="'edit'"></fa-icon>
+
+                        <p [fxHide.xs]="1"><span>Main</span></p>
+                    </mat-list-item>
+
+                    <mat-list-item (click)="changeActiveItemInMenu('extra')"
+                                   [ngClass]="{
+                                   'active': checkActiveItemInMenu('extra'),
+                                   'invalid': !projectForm.controls['extra'].valid && projectForm.controls['extra'].touched
+                                   }">
+                        <fa-icon [icon]="'wrench'"></fa-icon>
+                        <p [fxHide.xs]="1"><span>Extra</span></p>
+
+                    </mat-list-item>
+
+                    <mat-list-item (click)="changeActiveItemInMenu('sharing')"
+                                   [ngClass]="{
+                                   'active': checkActiveItemInMenu('sharing')
+                                   }">
+                        <fa-icon [icon]="'tags'"></fa-icon>
+
+                        <p [fxHide.xs]="1"><span>Sharing</span></p>
+
+                    </mat-list-item>
+
+
+                </mat-list>
+            </div>
+            <div fxFlex="68%" class="right-menu">
+                <div [hidden]="!menu.main" formGroupName="main">
+
+                    <div fxLayout="column">
+                        <mat-form-field>
+                            <input name="projectName" matInput placeholder="Project name" maxlength="100" formControlName="name"
+                                   autofocus>
+
+                        </mat-form-field>
+                        <tickist-color-picker [colors]="colors" customColorPicker="true"
+                                      formControlName="color"></tickist-color-picker>
+
+                        <mat-form-field>
+                            <mat-select data-cy='select-ancestor' placeholder="Ancestor:" formControlName="ancestor">
+                                <mat-option *ngFor="let project of projectsAncestors" [ngClass]="'level_' + project.level"
+                                            [value]="project.id"> {{ project.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field>
+                                <textarea name="projectDescription" matInput #projectDescription formControlName="description"
+                                          placeholder="Project description">
+                                </textarea>
+                            <mat-hint align="end">{{projectDescription.value?.length || 0}}/5000</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div [hidden]="!menu.extra" formGroupName="extra">
+                    <div fxLayout="column">
+                        <div class="form-field" fxLayout="column">
+                            <span>Default priority of project tasks</span>
+                            <tickist-priority formControlName="defaultPriority">
+                            </tickist-priority>
+
+                        </div>
+
+                        <div class="form-field">
+                            <span>Default due date for all tasks in the project:</span>
+                            <mat-radio-group formControlName="defaultTypeFinishDate" fxLayout.xs="column">
+                                <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                  *ngFor="let option of typeFinishDateOptions" [value]="option.id">
+                                    {{ option.name }}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+
+                        <div class="form-field">
+                            <span>Default task view:</span>
+                            <mat-radio-group formControlName="taskView" fxLayout.xs="column">
+                                <mat-radio-button [ngStyle]="{'margin-right': '10px'}"
+                                                  *ngFor="let option of defaultTaskView" [value]="option.value">
+                                    {{ option.name }}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+
+                        <mat-form-field>
+                            <mat-select placeholder="Choose default date"
+                                        formControlName="defaultFinishDate"
+                                        name="defaultFinishDate">
+                                <mat-option *ngFor="let option of defaultFinishDateOptions" [value]="option.id">
+                                    {{ option.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+
+                        <mat-checkbox formControlName="dialogTimeWhenTaskFinished">
+                            Always open the form to edit estimated / real time after completing a task from this
+                            project
+                        </mat-checkbox>
+
+
+                    </div>
+                </div>
+
+                <div [hidden]="!menu.sharing">
+                    <div fxLayout="column">
+
+                        <mat-form-field>
+                            <input matInput placeholder="Write an email to invite new user to this list."
+                                   [matAutocomplete]="auto" [formControl]="addUserToShareWithListCtrl">
+                        </mat-form-field>
+                        <div fxLayout="row" fxLayoutAlign="center center">
+                            <button mat-button (click)="inviteUser()" type="button"> Invite</button>
+                        </div>
+
+                        <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let u of filteredUsers | async" [value]="u.email">
+                                <img *ngIf="u.avatarUrl" [src]="(staticUrl + u.avatarUrl) | avatarsize: '24x24'" class="avatar">
+                                <img *ngIf="!u.avatarUrl" [src]="(staticUrl +defaultAvatarUrl) | avatarsize: '24x24'" class="avatar">
+                                <span>{{ u.email }}</span>
+                            </mat-option>
+                        </mat-autocomplete>
+
+                        <mat-list>
+                            <mat-list-item *ngFor="let u of project.shareWith; let i=index">
+                                <img matListAvatar [src]="(staticUrl + u.avatarUrl) | avatarsize: '32x32'" class="avatar"
+                                     alt="{{ u.username }}"/>
+
+                                <h3 mat-line *ngIf="user.hasOwnProperty('id')">
+                                    <span>{{ u.username }}</span>
+                                    <span flex></span>
+                                    <span [hidden]="user.email==u.email"
+                                          (click)="deleteUserFromShareWithList(user, i)">
+
+                                        <fa-icon [icon]="'times'"></fa-icon>
+                                        </span>
+                                </h3>
+                                <p matLine *ngIf="user.hasOwnProperty('id')">{{ u.email }}</p>
+
+                                <h3 mat-line *ngIf="!user.hasOwnProperty('id')">
+                                    <span>{{ u.email }}</span>
+                                    <span flex></span>
+                                    <span [hidden]="user.email==u.email"
+                                          (click)="deleteUserFromShareWithList(user, i)">
+                                        <fa-icon [icon]="'times'"></fa-icon>
+                                        </span>
+                                </h3>
+                                <p matLine *ngIf="!user.hasOwnProperty('id')">Without account on tickst.com. The email with
+                                    invitation was send.</p>
+
+                            </mat-list-item>
+
+                        </mat-list>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="end none">
+            <button type="submit" mat-button class="button" data-cy="save project">Save</button>
+
+        </div>
+
+    </form>
+</mat-card>
+

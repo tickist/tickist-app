@@ -1,0 +1,7 @@
+<div fxLayout="row" fxLayoutAlign="space-around center">
+    <span *ngFor="let color of colors" (click)="changeColor(color)" [ngClass]="color">
+        <fa-icon [icon]="['far', 'square']"  [ngStyle]="{'color': color, 'background-color': color, 'border-color': color}"
+           [ngClass]="{'active': innerValue == color}" aria-hidden="true"></fa-icon>
+    </span>
+
+</div>

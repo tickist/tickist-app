@@ -1,0 +1,14 @@
+<div class="header" fxLayout="row" fxLayoutAlign="start center">
+    <div fxFlex fxLayoutAlign="start center" ><span >Overdue tasks</span></div>
+    <span fxFlex></span>
+    <tickist-menu-button [icon]="'share'" (click)="postponeToToday()" [fontSize]="'18px'"></tickist-menu-button>
+    <tickist-change-task-view [defaultTaskView]="defaultTaskView" (currentTaskViewEvent)="changeTaskView($event)">
+    </tickist-change-task-view>
+</div>
+
+<tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="taskView"
+                 *ngFor="let task of tasks;trackBy: trackByFn">
+
+</tickist-single-task>
+<tickist-no-tasks [tasksLength]="tasks.length"></tickist-no-tasks>
+

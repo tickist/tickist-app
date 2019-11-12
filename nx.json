@@ -1,0 +1,27 @@
+{
+    "npmScope": "tickist",
+    "implicitDependencies": {
+        "angular.json": "*",
+        "package.json": "*",
+        "tsconfig.json": "*",
+        "tslint.json": "*",
+        "nx.json": "*"
+    },
+    "projects": {
+        "tickist-web-e2e": {
+            "tags": []
+        },
+        "tickist-web": {
+            "tags": []
+        },
+        "tickist-functions": {
+            "tags": []
+        },
+        "data": {
+            "tags": []
+        },
+        "utils": {
+            "tags": []
+        }
+    }
+}
