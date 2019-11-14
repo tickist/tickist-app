@@ -1,6 +1,7 @@
 import {selectAllTasksTreeView} from './tasks-tree-view.selectors';
 import {Project, SimpleProject} from '@data/projects';
 import {Task} from '@data/tasks/models/tasks';
+import {TaskProject} from '@data/tasks/models/task-project';
 
 
 describe('Tasks tree view filters selectors', () => {
@@ -14,9 +15,9 @@ describe('Tasks tree view filters selectors', () => {
                 {id: '9', name: 'Project 9 L2', ancestor: '5'}
             ];
             tasksList = [
-                {id: 1, taskProject: {id: 1} as SimpleProject},
-                {id: 5, taskProject: {id: 5} as SimpleProject},
-                {id: 9, taskProject: {id: 9} as SimpleProject}
+                {id: '1', taskProject: {id: '1'} as TaskProject},
+                {id: '5', taskProject: {id: '5'} as TaskProject},
+                {id: '9', taskProject: {id: '9'} as TaskProject}
             ];
         });
         it('should return tasks treeViewNodes', () => {

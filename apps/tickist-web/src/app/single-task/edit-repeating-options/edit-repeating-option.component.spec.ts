@@ -25,7 +25,6 @@ describe('Edit repeating Component', () => {
     let suite: any = {};
     let user: any;
     let project: any;
-    let taskFromApi: any;
     const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
     const userApiMockFactroy: UsersApiMockFactory = new UsersApiMockFactory();
     const projectApiMockFactory: ProjectsApiMockFactory = new ProjectsApiMockFactory();
@@ -34,8 +33,17 @@ describe('Edit repeating Component', () => {
         const initialState = {};
         user = userApiMockFactroy.createUserDict();
         project = projectApiMockFactory.createProjectDict([], user, []);
-        taskFromApi = taskApiMockFactory.createTaskDict(user, user, project, []);
-        taskFromApi.finish_date = format(new Date(), 'dd-MM-yyyy');
+        task = new Task({
+            name: 'Task 1',
+            taskProject: {id: '1', name:"inbox", shareWithIds: [], color: ''},
+            owner: user,
+            priority: 'A',
+            ownerPk: user.id,
+            author: user,
+            taskListPk: project.id
+        }
+            );
+
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, FormsModule],
@@ -55,7 +63,6 @@ describe('Edit repeating Component', () => {
         comp = null;
         fixture = null;
         task = null;
-        taskFromApi = null;
         suite = {};
     });
     it('should create', () => {
@@ -67,7 +74,6 @@ describe('Edit repeating Component', () => {
                 expect(comp.defaultRepeatOptions).toBeFalsy();
                 expect(comp.customRepeatOptions).toBeFalsy();
                 expect(comp.fromRepeatingOptions).toBeFalsy();
-                task = new Task(taskFromApi);
                 comp.task = task;
                 comp.ngOnInit();
                 expect(comp.defaultRepeatOptions).toBe(configurationService.loadConfiguration()['commons']['DEFAULT_REPEAT_OPTIONS']);
@@ -90,17 +96,15 @@ describe('Edit repeating Component', () => {
             suite.dispatch = jest.spyOn(suite.store, 'dispatch');
         });
         it('should dispatch action RequestUpdateTask', () => {
-            task = new Task(taskFromApi);
             comp.task = task;
             comp.ngOnInit();
             comp.saveTask({value: 1}, 'repeatDefault');
-            task.repeat = 1;
+            task = Object.assign({}, task, {repeat: 1});
             expect(suite.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({task: {id: task.id, changes: task}}));
         });
 
         it('should update task model when the repeat default is changed (scenario 1. -> default repeat )', () => {
             const taskRepeat = 2;
-            task = new Task(taskFromApi);
             comp.task = task;
             comp.ngOnInit();
             comp.saveTask({value: taskRepeat}, 'repeatDefault');
@@ -116,7 +120,6 @@ describe('Edit repeating Component', () => {
             const taskRepeat = 99;
             const repeatDelta = 5;
             const repeatCustom = 4;
-            task = new Task(taskFromApi);
             comp.task = task;
             comp.ngOnInit();
             comp.repeatDelta = repeatDelta;

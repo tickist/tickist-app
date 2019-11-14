@@ -2,6 +2,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {setStatusDoneLogic} from './set-status-to-done-logic';
 import {Step} from '@data/tasks/models/steps';
 import 'jest';
+import {addDays, format} from 'date-fns';
 
 describe('setStatusDoneLogic', () => {
     describe('task without repeating options', () => {
@@ -80,12 +81,12 @@ describe('setStatusDoneLogic', () => {
                 'repeat': 1,
                 'repeatDelta': 1,
                 'fromRepeating': 0,
-                'finishDate': moment(date),
+                'finishDate': date,
                 'steps': []
             };
             const newTask = setStatusDoneLogic(task);
             expect(newTask.isDone).toBe(false);
-            expect(newTask.finishDate.format('DD-MM-YYYY')).toEqual(moment(date).add(1, 'd').format('DD-MM-YYYY'));
+            expect(format(newTask.finishDate, 'DD-MM-YYYY')).toEqual(format(addDays(date, 1), 'DD-MM-YYYY'));
         });
 
         it('should return task with status undone and finishDate=+2days', () => {

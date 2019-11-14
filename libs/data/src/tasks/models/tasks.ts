@@ -5,7 +5,7 @@ import {TaskUser} from './task-user';
 import {TaskProject} from './task-project';
 import {addClickableLinks} from '@tickist/utils';
 
-export interface ITaskApi {
+export interface ITask {
     name: string;
     id?: string;
     finishDate?: string;
@@ -69,7 +69,7 @@ export class Task {
     menuShowing: Menu;
 
 
-    constructor(task: ITaskApi) {
+    constructor(task: ITask) {
         Object.assign(this, task);
         this.richName = addClickableLinks(task.name);
         this.finishDate = task.finishDate ? new Date(task.finishDate) : null;

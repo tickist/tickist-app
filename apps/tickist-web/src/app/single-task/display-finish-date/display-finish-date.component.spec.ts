@@ -5,6 +5,7 @@ import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.f
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
 import {format} from 'date-fns';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 describe('DisplayFinishDateComponent', () => {
@@ -20,9 +21,10 @@ describe('DisplayFinishDateComponent', () => {
     beforeEach(async(() => {
         user = usersApiMockFactory.createUserDict();
         project = projectApiMockFactory.createProjectDict([], user, []);
-        task = taskApiMockFactory.createTaskDict(user, user, project,  []);
+        task = taskApiMockFactory.createTaskDict(user, user, project, []);
         task.finish_date = format(new Date, 'dd-MM-yyyy');
         TestBed.configureTestingModule({
+            imports: [FontAwesomeModule],
             declarations: [DisplayFinishDateComponent]
         }).compileComponents();
 

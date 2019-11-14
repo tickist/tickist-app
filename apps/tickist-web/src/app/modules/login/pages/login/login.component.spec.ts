@@ -1,12 +1,8 @@
-import {TestBed, ComponentFixture, async} from '@angular/core/testing';
-import {MockProjectService} from '../../../../testing/mocks/project-service';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MockConfigurationService} from '../../../../testing/mocks/configurationService';
 import {TickistMaterialModule} from '../../../../material.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {LoginComponent} from './login.component';
-import {TickistRoutingModule} from '../../../../routing.module';
-import {RouterModule} from '@angular/router';
-import {APP_BASE_HREF} from '@angular/common';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {AuthService} from '../../../../core/services/auth.service';
 import {StoreModule} from '@ngrx/store';

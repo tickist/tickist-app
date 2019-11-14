@@ -35,6 +35,7 @@ import {FilterTasksComponent} from '../../../../tasks/filter-tasks/filter-tasks.
 import {SingleTaskSimplifiedComponent} from '../../../../single-task/single-task-simplified/single-task-simplified.component';
 import {NoTasksComponent} from '../../../../single-task/no-tasks/no-tasks.component';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 
 const routes: Routes = [
@@ -68,7 +69,7 @@ describe('TasksFromProjectsComponent', () => {
         const activatedRoute = new MockActivatedRoute;
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FlexLayoutModule, RouterModule.forRoot(routes), FormsModule, StoreModule.forRoot({})],
+            imports: [TickistMaterialModule, FlexLayoutModule, RouterTestingModule, FormsModule, StoreModule.forRoot({})],
             declarations: [TasksFromProjectsComponent, ChangeTaskViewComponent, FilterTasksComponent,
                 MockComponent(SortTasksComponent), MockComponent(MenuButtonComponent),
                 MockComponent(SingleTaskSimplifiedComponent), MockComponent(SingleTaskComponent),

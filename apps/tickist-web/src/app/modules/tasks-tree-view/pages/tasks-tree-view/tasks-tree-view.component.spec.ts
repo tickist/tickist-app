@@ -6,6 +6,9 @@ import {ProjectTreeComponent} from '../../components/project-tree/project-tree.c
 import {AddTaskTreeViewComponent} from '../../components/add-task-tree-view/add-task-tree-view.component';
 import {TickistSingleTaskModule} from '../../../../single-task/single-task.module';
 import {StoreModule} from '@ngrx/store';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {Router} from '@angular/router';
+import {RouterTestingModule} from '@angular/router/testing';
 
 
 describe('TasksTreeViewMainViewComponent', () => {
@@ -17,7 +20,9 @@ describe('TasksTreeViewMainViewComponent', () => {
             imports: [
                 TickistMaterialModule,
                 TickistSingleTaskModule,
-                StoreModule.forRoot({})
+                StoreModule.forRoot({}),
+                FontAwesomeModule,
+                RouterTestingModule
             ],
             declarations: [
                 TasksTreeViewComponent,

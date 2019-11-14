@@ -8,6 +8,7 @@ import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {UserService} from '../services/user.service';
 import {RouterTestingModule} from '@angular/router/testing';
+import {AuthService} from '../services/auth.service';
 
 class UserServiceMock {}
 
@@ -24,7 +25,8 @@ describe('Effects', () => {
             providers: [
                 AuthEffects,
                 provideMockActions(() => actions$),
-                {provide: UserService, useValue: UserServiceMock}
+                {provide: UserService, useValue: UserServiceMock},
+                {provide: AuthService, useValue: AuthService}
             ]
         });
 

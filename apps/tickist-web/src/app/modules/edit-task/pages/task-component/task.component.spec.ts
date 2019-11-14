@@ -1,4 +1,4 @@
-import {TestBed, ComponentFixture, async} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MockProjectService} from '../../../../testing/mocks/project-service';
 import {MockConfigurationService} from '../../../../testing/mocks/configurationService';
 import {TickistMaterialModule} from '../../../../material.module';
@@ -6,8 +6,6 @@ import {TickistMaterialModule} from '../../../../material.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {TaskComponent} from './task.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {RouterModule} from '@angular/router';
-import {APP_BASE_HREF} from '@angular/common';
 import {MockTaskService} from '../../../../testing/mocks/task-service';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {MockTagService} from '../../../../testing/mocks/tag-service';

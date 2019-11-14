@@ -90,8 +90,6 @@ import {faSign} from '@fortawesome/free-solid-svg-icons/faSign';
 import { SnackBarMessageComponent } from './components/snack-bar-message/snack-bar-message.component';
 
 
-console.log(environment);
-
 @NgModule({
     declarations: [
         AppComponent,

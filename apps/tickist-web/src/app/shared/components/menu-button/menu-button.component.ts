@@ -15,7 +15,7 @@ export class MenuButtonComponent implements OnInit, OnChanges {
     @Input() isDisabled = false;
     @Input() fontSize = '16px';
     @Input() transform = '';
-    isDisabledClass: string;
+    isDisabledClass = '';
 
     constructor(private elRef: ElementRef, private renderer: Renderer2) {
     }

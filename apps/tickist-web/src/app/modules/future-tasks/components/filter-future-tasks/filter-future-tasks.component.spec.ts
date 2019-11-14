@@ -9,6 +9,7 @@ import {StoreModule} from '@ngrx/store';
 import {FormsModule} from '@angular/forms';
 import {MockFutureTasksFiltersService} from '../../../../testing/mocks/future-tasks-fiters-service';
 import {APP_BASE_HREF} from '@angular/common';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 describe('FilterFutureTasksComponent', () => {
     let component: FilterFutureTasksComponent;
@@ -22,7 +23,8 @@ describe('FilterFutureTasksComponent', () => {
                 FlexLayoutModule,
                 TickistMaterialModule,
                 NoopAnimationsModule,
-                StoreModule.forRoot({})
+                StoreModule.forRoot({}),
+                FontAwesomeModule
             ],
             declarations: [FilterFutureTasksComponent],
             providers: [

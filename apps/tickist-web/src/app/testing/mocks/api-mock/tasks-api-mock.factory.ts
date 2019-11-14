@@ -30,11 +30,11 @@ export class TasksApiMockFactory {
 
         return {
             author: UsersApiMockFactory.createSimpleUserFromUser(author),
-            creation_date: faker.date.past().toISOString(),
+            creationDate: faker.date.past().toISOString(),
             description: faker.lorem.lines(3),
-            estimate_time: 0,
-            finish_date:  '',
-            finish_date_dateformat: '',
+            estimateTime: 0,
+            finishDate:  '',
+            finishDate_dateformat: '',
             finish_time: null,
             from_repeating: 0,
             id: this.id,

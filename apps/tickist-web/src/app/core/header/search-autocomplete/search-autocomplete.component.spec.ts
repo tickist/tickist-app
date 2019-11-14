@@ -6,8 +6,6 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {TickistMaterialModule} from '../../../material.module';
 import {MockTasksFiltersService} from '../../../testing/mocks/tasks-filters-service';
 import {MockTaskService} from '../../../testing/mocks/task-service';
-import {RouterModule} from '@angular/router';
-import {APP_BASE_HREF} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreModule} from '@ngrx/store';
 import {RouterTestingModule} from '@angular/router/testing';

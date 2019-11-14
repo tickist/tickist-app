@@ -14,6 +14,7 @@ import {StoreModule} from '@ngrx/store';
 import {User} from '@data/users/models';
 import {Project} from '@data/projects';
 import {format} from 'date-fns';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 let comp: DateOptionsComponent;
@@ -32,13 +33,13 @@ describe('EditDateOptionsComponent', () => {
     beforeEach(async(() => {
         user = userApiMockFactroy.createUserDict();
         project = projectApiMockFactory.createProjectDict([], user, []);
-        taskFromApi = taskApiMockFactory.createTaskDict(user, user, project,  []);
+        taskFromApi = taskApiMockFactory.createTaskDict(user, user, project, []);
         taskFromApi.finish_date = format(new Date(), 'dd-MM-yyyy');
 
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FormsModule, NoopAnimationsModule, StoreModule.forRoot({})],
+            imports: [TickistMaterialModule, FormsModule, NoopAnimationsModule, StoreModule.forRoot({}), FontAwesomeModule],
             declarations: [DateOptionsComponent, MenuButtonComponent],
             providers: [
                 taskService.getProviders(),

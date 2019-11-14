@@ -15,6 +15,8 @@ import {TickistMaterialModule} from '../../../../../../material.module';
 import {MenuButtonComponent} from '../../../../../../shared/components/menu-button/menu-button.component';
 import {MediaObserver} from '@angular/flex-layout';
 import {StoreModule} from '@ngrx/store';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {RouterTestingModule} from '@angular/router/testing';
 
 
 let comp: SingleProjectComponent;
@@ -54,7 +56,9 @@ describe('SingleProjectComponent', () => {
                 FormsModule,
                 RouterModule.forRoot(routes),
                 NoopAnimationsModule,
-                StoreModule.forRoot({})
+                StoreModule.forRoot({}),
+                FontAwesomeModule,
+                RouterTestingModule
             ],
             declarations: [SingleProjectComponent, RootComponent, BlankComponent, MenuButtonComponent],
             providers: [
