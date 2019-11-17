@@ -1,4 +1,4 @@
-import {TestBed, ComponentFixture, async} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {TagsListComponent} from './tags-list.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -11,6 +11,10 @@ import {MockTaskService} from '../../../../../../testing/mocks/task-service';
 import {MockTagsFiltersService} from '../../../../../../testing/mocks/tags-filters-service';
 import {MockTagService} from '../../../../../../testing/mocks/tag-service';
 import {StoreModule} from '@ngrx/store';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {AngularFireModule} from '@angular/fire';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {environment} from '@env/environment.dev';
 
 
 let comp: TagsListComponent;
@@ -28,7 +32,13 @@ describe('Component: Tags list component', () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, ReactiveFormsModule, FormsModule, StoreModule.forRoot({})],
+            imports: [
+                TickistMaterialModule,
+                ReactiveFormsModule,
+                FormsModule,
+                StoreModule.forRoot({}),
+                AngularFireModule.initializeApp(environment.firebase),
+                AngularFireAuthModule, AngularFirestoreModule],
             declarations: [TagsListComponent],
             providers: [
                 projectService.getProviders(),

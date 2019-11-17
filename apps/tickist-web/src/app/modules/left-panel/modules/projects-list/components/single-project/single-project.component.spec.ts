@@ -17,6 +17,7 @@ import {MediaObserver} from '@angular/flex-layout';
 import {StoreModule} from '@ngrx/store';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {RouterTestingModule} from '@angular/router/testing';
+import {IconsModule} from '../../../../../../icons.module';
 
 
 let comp: SingleProjectComponent;
@@ -54,10 +55,9 @@ describe('SingleProjectComponent', () => {
                 TickistMaterialModule,
                 ReactiveFormsModule,
                 FormsModule,
-                RouterModule.forRoot(routes),
                 NoopAnimationsModule,
                 StoreModule.forRoot({}),
-                FontAwesomeModule,
+                IconsModule,
                 RouterTestingModule
             ],
             declarations: [SingleProjectComponent, RootComponent, BlankComponent, MenuButtonComponent],

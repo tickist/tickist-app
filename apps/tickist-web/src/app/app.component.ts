@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import 'hammerjs'; // Recommended
-// import gitInfo from '../git-version.json';
 import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
-import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material';
 import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar-message.component';
 
 

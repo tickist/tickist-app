@@ -4,7 +4,7 @@ import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Project} from '@data/projects';
 import {SimpleUser} from '@data/users/models';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {TasksFiltersService} from './tasks-filters.service';

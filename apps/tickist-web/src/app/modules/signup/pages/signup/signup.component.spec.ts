@@ -9,10 +9,11 @@ import {RouterModule, Routes} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
 import {AuthService} from '../../../../core/services/auth.service';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 let comp: SignupComponent;
 let fixture: ComponentFixture<SignupComponent>;
-const routes: Routes = [];
+
 
 class AuthServiceMock {}
 
@@ -22,7 +23,7 @@ describe('Component: SignUp', () => {
 
         TestBed.configureTestingModule({
             imports: [
-                TickistMaterialModule, RouterModule.forRoot(routes), StoreModule.forRoot({})],
+                TickistMaterialModule, RouterTestingModule, StoreModule.forRoot({})],
             declarations: [SignupComponent],
             providers: [
                 userService.getProviders(),

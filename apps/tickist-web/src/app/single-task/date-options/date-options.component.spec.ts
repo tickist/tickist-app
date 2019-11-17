@@ -15,6 +15,7 @@ import {User} from '@data/users/models';
 import {Project} from '@data/projects';
 import {format} from 'date-fns';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {IconsModule} from '../../icons.module';
 
 
 let comp: DateOptionsComponent;
@@ -39,7 +40,7 @@ describe('EditDateOptionsComponent', () => {
         const taskService = new MockTaskService();
         const configurationService = new MockConfigurationService();
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FormsModule, NoopAnimationsModule, StoreModule.forRoot({}), FontAwesomeModule],
+            imports: [TickistMaterialModule, FormsModule, NoopAnimationsModule, StoreModule.forRoot({}), IconsModule],
             declarations: [DateOptionsComponent, MenuButtonComponent],
             providers: [
                 taskService.getProviders(),

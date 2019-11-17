@@ -1,5 +1,6 @@
 
 export const test = require('firebase-functions-test')();
+
 // export const test = require('firebase-functions-test')({
 //     databaseURL: 'https://proven-reality-657.firebaseio.com',
 //     storageBucket: 'proven-reality-657.appspot.com',

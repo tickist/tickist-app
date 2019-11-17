@@ -9,6 +9,7 @@ import {StoreModule} from '@ngrx/store';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {Router} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
+import {IconsModule} from '../../../../icons.module';
 
 
 describe('TasksTreeViewMainViewComponent', () => {
@@ -21,7 +22,7 @@ describe('TasksTreeViewMainViewComponent', () => {
                 TickistMaterialModule,
                 TickistSingleTaskModule,
                 StoreModule.forRoot({}),
-                FontAwesomeModule,
+                IconsModule,
                 RouterTestingModule
             ],
             declarations: [

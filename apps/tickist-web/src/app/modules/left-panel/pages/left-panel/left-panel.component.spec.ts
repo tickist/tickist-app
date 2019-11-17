@@ -11,6 +11,7 @@ import {TagsListComponent} from '../../modules/tags-list/pages/tags-list/tags-li
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterTestingModule} from '@angular/router/testing';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {IconsModule} from '../../../../icons.module';
 
 describe('LeftPanelComponent', () => {
     let component: LeftPanelComponent;
@@ -18,7 +19,7 @@ describe('LeftPanelComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, StoreModule.forRoot({}), RouterTestingModule, NoopAnimationsModule, FontAwesomeModule],
+            imports: [TickistMaterialModule, StoreModule.forRoot({}), RouterTestingModule, NoopAnimationsModule, IconsModule],
             declarations: [LeftPanelComponent, MockComponent(FutureListComponent), MockComponent(WeekDaysComponent),
                 MockComponent(ProjectsListComponent), MockComponent(TagsListComponent)],
             providers: [

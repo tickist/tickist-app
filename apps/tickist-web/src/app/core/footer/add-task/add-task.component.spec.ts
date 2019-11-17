@@ -9,6 +9,7 @@ import {RootComponent, BlankComponent} from '../../../testing/test.modules';
 import {StoreModule} from '@ngrx/store';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {RouterTestingModule} from '@angular/router/testing';
+import {IconsModule} from '../../../icons.module';
 
 const routes: Routes = [
     {
@@ -32,7 +33,7 @@ describe('AddTaskComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [RouterTestingModule.withRoutes(routes), StoreModule.forRoot({}), FontAwesomeModule],
+            imports: [RouterTestingModule.withRoutes(routes), StoreModule.forRoot({}), IconsModule],
             declarations: [AddTaskComponent, RootComponent, BlankComponent],
         }).compileComponents().then(() => {
             fixture = TestBed.createComponent(AddTaskComponent);

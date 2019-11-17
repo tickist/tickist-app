@@ -2,6 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ToggleButtonComponent} from './toggle-button.component';
 import {TickistMaterialModule} from '../../material.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {IconsModule} from '../../icons.module';
 
 
 describe('ToggleButtonComponent', () => {
@@ -10,7 +11,7 @@ describe('ToggleButtonComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FontAwesomeModule],
+            imports: [TickistMaterialModule, IconsModule],
             declarations: [ToggleButtonComponent]
         })
             .compileComponents();

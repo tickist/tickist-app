@@ -12,6 +12,7 @@ import {MockConfigurationService} from '../../../../testing/mocks/configurationS
 import {APP_BASE_HREF} from '@angular/common';
 import {RouterModule, Routes} from '@angular/router';
 import {StoreModule} from '@ngrx/store';
+import {RouterTestingModule} from '@angular/router/testing';
 
 const routes: Routes = [];
 
@@ -27,7 +28,7 @@ describe('FutureListComponent', () => {
 
         TestBed.configureTestingModule({
             imports: [
-                RouterModule.forRoot(routes),
+                RouterTestingModule,
                 FormsModule, FlexLayoutModule,
                 TickistMaterialModule,
                 NoopAnimationsModule,

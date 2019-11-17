@@ -1,6 +1,6 @@
 import functions from 'firebase-functions-test';
 import * as admin from 'firebase-admin';
-import {test} from '../index.test';
+import {test} from '../create-test-environment';
 import {db} from '../init';
 
 
@@ -8,7 +8,6 @@ import {db} from '../init';
 describe('onUpdateProject', () => {
     let adminStub, api;
     beforeAll(() => {
-
         adminStub = jest.spyOn(admin, 'initializeApp');
         api = require('../main');
         db.runTransaction = jest.fn((transaction => {
@@ -22,8 +21,8 @@ describe('onUpdateProject', () => {
     });
 
     it('first test', async () => {
-        const wrapped = test.wrap(api.onUpdateProject);
-        await wrapped();
+        // const wrapped = test.wrap(api.onUpdateProject);
+        // await wrapped();
     });
 
     afterEach(() => {

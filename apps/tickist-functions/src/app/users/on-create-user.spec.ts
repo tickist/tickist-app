@@ -1,6 +1,6 @@
 import functions from 'firebase-functions-test';
 import * as admin from 'firebase-admin';
-import {test} from '../index.test';
+import {test} from '../create-test-environment';
 import {db} from '../init';
 
 

@@ -1,4 +1,4 @@
-import {TestBed, inject} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {provideMockActions} from '@ngrx/effects/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 
@@ -6,7 +6,7 @@ import {ActiveProjectEffects} from './active-project.effects';
 import {StoreModule} from '@ngrx/store';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFireModule} from '@angular/fire';
-import {COMMON_CONFIG} from '../../testing/firebase-test-config';
+import {environment} from '@env/environment.dev';
 
 describe('ActiveProjecEffects', () => {
     let actions$: Observable<any>;
@@ -14,7 +14,7 @@ describe('ActiveProjecEffects', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [StoreModule.forRoot({}), AngularFireModule.initializeApp(COMMON_CONFIG),
+            imports: [StoreModule.forRoot({}), AngularFireModule.initializeApp(environment.firebase),
                 AngularFireAuthModule],
             providers: [
                 ActiveProjectEffects,

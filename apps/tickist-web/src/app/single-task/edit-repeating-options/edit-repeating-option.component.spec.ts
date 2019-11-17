@@ -22,7 +22,7 @@ let task: Task;
 
 
 describe('Edit repeating Component', () => {
-    let suite: any = {};
+    let store: any;
     let user: any;
     let project: any;
     const taskApiMockFactory: TasksApiMockFactory = new TasksApiMockFactory();
@@ -63,7 +63,6 @@ describe('Edit repeating Component', () => {
         comp = null;
         fixture = null;
         task = null;
-        suite = {};
     });
     it('should create', () => {
         expect(comp).toBeTruthy();
@@ -92,15 +91,15 @@ describe('Edit repeating Component', () => {
 
     describe('saveTask', () => {
         beforeEach(() => {
-            suite.store = TestBed.get(Store);
-            suite.dispatch = jest.spyOn(suite.store, 'dispatch');
+            store = TestBed.get(Store);
+            store.dispatch = jest.spyOn(store, 'dispatch');
         });
         it('should dispatch action RequestUpdateTask', () => {
             comp.task = task;
             comp.ngOnInit();
             comp.saveTask({value: 1}, 'repeatDefault');
-            task = Object.assign({}, task, {repeat: 1});
-            expect(suite.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+            task = Object.assign({}, task, {repeat: 1, repeatDelta: 1});
+            expect(store.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({task: {id: task.id, changes: task}}));
         });
 
         it('should update task model when the repeat default is changed (scenario 1. -> default repeat )', () => {
@@ -108,7 +107,7 @@ describe('Edit repeating Component', () => {
             comp.task = task;
             comp.ngOnInit();
             comp.saveTask({value: taskRepeat}, 'repeatDefault');
-            expect(suite.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
+            expect(store.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
                 task: {
                     id: task.id,
                     changes: Object.assign({}, task, {repeat: taskRepeat, repeatDelta: 1})
@@ -125,7 +124,7 @@ describe('Edit repeating Component', () => {
             comp.repeatDelta = repeatDelta;
             comp.repeatCustom = repeatCustom;
             comp.saveTask({value: taskRepeat}, 'repeatDefault');
-            expect(suite.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
+            expect(store.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
                 task: {
                     id: task.id,
                     changes: Object.assign({}, task, {repeat: repeatCustom, repeatDelta: repeatDelta})

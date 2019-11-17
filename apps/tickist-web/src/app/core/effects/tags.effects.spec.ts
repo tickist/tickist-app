@@ -1,4 +1,4 @@
-import {TestBed, inject} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {provideMockActions} from '@ngrx/effects/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 
@@ -6,6 +6,10 @@ import {TagsEffects} from './tags.effects';
 import {StoreModule} from '@ngrx/store';
 import {TagService} from '../services/tag.service';
 import {HttpClientModule} from '@angular/common/http';
+import {AngularFireModule} from '@angular/fire';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {environment} from '@env/environment.dev';
 
 describe('TagsEffects', () => {
     let actions$: Observable<any>;
@@ -15,7 +19,8 @@ describe('TagsEffects', () => {
         TestBed.configureTestingModule({
             imports: [
                 StoreModule.forRoot({}),
-                HttpClientModule
+                HttpClientModule, AngularFireModule.initializeApp(environment.firebase),
+                AngularFireAuthModule, AngularFirestoreModule
             ],
             providers: [
                 TagsEffects,

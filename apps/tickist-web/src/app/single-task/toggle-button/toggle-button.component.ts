@@ -12,7 +12,7 @@ import {
 })
 export class ToggleButtonComponent implements OnInit {
     @Input() isDone: boolean;
-    @Input() onHold: boolean;
+    @Input() isOnHold: boolean;
     @Input() priority: string;
     icon: Array<string>;
 
@@ -20,11 +20,11 @@ export class ToggleButtonComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.isDone && !this.onHold) {
+        if (this.isDone && !this.isOnHold) {
             this.icon = ['far', 'check-square'];
-        } else if (!this.isDone && !this.onHold) {
+        } else if (!this.isDone && !this.isOnHold) {
             this.icon = ['far', 'square'];
-        } else if (this.onHold) {
+        } else if (this.isOnHold) {
             this.icon = ['fas', 'pause'];
         }
     }

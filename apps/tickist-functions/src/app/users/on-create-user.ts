@@ -14,12 +14,12 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
         return db.runTransaction(async transaction => {
             const tags: { [key: string]: Tag } = {};
             const projectRef = db.collection('projects').doc();
-            console.log(projectRef.id);
+
             const inbox = createInboxProject(snap.data(), userId);
             transaction.set(projectRef, JSON.parse(JSON.stringify({id: projectRef.id, ...inbox})));
             defaultTagsName().forEach(tagName => {
                 const tagRef = db.collection('tags').doc();
-                console.log({tagRef});
+
                 transaction.set(tagRef, JSON.parse(JSON.stringify(createTag(tagName, userId))));
                 tags[tagName] = new Tag({id: tagRef.id, name: tagName, author: userId});
             });

@@ -24,7 +24,7 @@ export const selectFilteredProjectsList = createSelector(
     selectAllUndoneTasks,
     (projects, filter, tasks) => {
         if (!filter) return [];
-        // const listOfProjects = calculateTasksCounter(projects.filter(Function(`return ${filter.value}`)()), tasks);
+
         return calculateTasksCounter(
             generateDifferentLevelsOfProjects(
                 projects

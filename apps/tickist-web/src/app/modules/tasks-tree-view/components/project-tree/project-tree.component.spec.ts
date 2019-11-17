@@ -11,6 +11,7 @@ import {MockDirective} from 'ng-mocks';
 import {Project} from '@data/projects';
 import {MatMenuModule} from '@angular/material';
 import {RouterTestingModule} from '@angular/router/testing';
+import {IconsModule} from '../../../../icons.module';
 
 describe('ProjectTreeComponent', () => {
     let component: ProjectTreeComponent;
@@ -25,7 +26,8 @@ describe('ProjectTreeComponent', () => {
                 MatBadgeModule,
                 MatIconModule,
                 MatToolbarModule,
-                MatMenuModule
+                MatMenuModule,
+                IconsModule
             ],
             declarations: [ProjectTreeComponent, MockDirective(MatTreeNodeToggle)],
             schemas: [NO_ERRORS_SCHEMA]

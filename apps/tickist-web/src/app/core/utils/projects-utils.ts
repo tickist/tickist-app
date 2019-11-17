@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 export function addUserToShareList(project: (SimpleProject | Project), user) {
     const shareWith = [...project.shareWith];
-    const shareWithOnlyIds = shareWith.map(simpleUser => (<ShareWithUser> simpleUser).id);
+    const shareWithOnlyIds = shareWith.map(simpleUser => (<ShareWithUser>simpleUser).id);
     if (user.hasOwnProperty('id') && !shareWithOnlyIds.includes(user.id)) {
         shareWith.push(new ShareWithUser(user));
     } else if (!user.hasOwnProperty('id')) {
@@ -53,7 +53,12 @@ export function calculateProjectsLevel(projects) {
     const thirdLevel = projects
         .filter(project => secondLevelIds.includes(project.ancestor))
         .map(project => new ProjectWithLevel({...project, level: 2}));
-    return [firstLevel, secondLevel, thirdLevel];
+    const thirdLevelIds = thirdLevel.map(project => project.id);
+    const usedProjectsIds = [...firstLevelIds, ...secondLevelIds, ...thirdLevelIds];
+    const projectsFromSharedLists = projects.filter(project => {
+        return !usedProjectsIds.includes(project.id);
+    }).map(project => new ProjectWithLevel({...project, level: 0}));
+    return [[...firstLevel, ...projectsFromSharedLists], secondLevel, thirdLevel];
 }
 
 
@@ -84,7 +89,7 @@ export function generateDifferentLevelsOfProjects(projects: Project[]): ProjectW
     // if we have a shared list on the second level
     secondLevel.forEach((item_1) => {
         if (list_of_list.indexOf(item_1) === -1) {
-           // item_1.level = 0;
+            // item_1.level = 0;
             list_of_list.push(item_1);
             thirdLevel.forEach((item_2) => {
                 if (item_2.ancestor === item_1.id) {
@@ -96,7 +101,7 @@ export function generateDifferentLevelsOfProjects(projects: Project[]): ProjectW
     // if we have the shared lists on the third level
     thirdLevel.forEach((item_2) => {
         if (list_of_list.indexOf(item_2) === -1) {
-           // item_2.level = 0;
+            // item_2.level = 0;
             list_of_list.push(item_2);
         }
     });

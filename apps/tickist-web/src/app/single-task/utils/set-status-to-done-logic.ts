@@ -21,19 +21,19 @@ export function repeatTaskLogic(task: Task): Task {
 
     switch (task.repeat) {
         case 1:
-            addDays(finishDate, task.repeatDelta);
+            finishDate = addDays(finishDate, task.repeatDelta);
             break;
         case 2:
             finishDate = addBusinessDays(finishDate, task.repeatDelta);
             break;
         case 3:
-            addWeeks(finishDate, task.repeatDelta);
+            finishDate = addWeeks(finishDate, task.repeatDelta);
             break;
         case 4:
-            addMonths(finishDate, task.repeatDelta);
+            finishDate = addMonths(finishDate, task.repeatDelta);
             break;
         case 5:
-            addYears(finishDate, task.repeatDelta);
+            finishDate = addYears(finishDate, task.repeatDelta);
             break;
     }
 

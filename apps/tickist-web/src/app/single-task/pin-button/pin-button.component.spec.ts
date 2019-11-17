@@ -2,6 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {PinButtonComponent} from './pin-button.component';
 import {TickistMaterialModule} from '../../material.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {IconsModule} from '../../icons.module';
 
 describe('PinButtonComponent', () => {
     let component: PinButtonComponent;
@@ -9,7 +10,7 @@ describe('PinButtonComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [TickistMaterialModule, FontAwesomeModule],
+            imports: [TickistMaterialModule, IconsModule],
             declarations: [PinButtonComponent]
         })
             .compileComponents();

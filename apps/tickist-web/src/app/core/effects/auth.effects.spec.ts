@@ -1,14 +1,16 @@
-import {TestBed, inject} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {provideMockActions} from '@ngrx/effects/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 
 import {AuthEffects} from './auth.effects';
 import {StoreModule} from '@ngrx/store';
-import {RouterModule} from '@angular/router';
-import {APP_BASE_HREF} from '@angular/common';
 import {UserService} from '../services/user.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {AuthService} from '../services/auth.service';
+import {AngularFireModule} from '@angular/fire';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {environment} from '@env/environment.dev';
 
 class UserServiceMock {}
 
@@ -20,7 +22,10 @@ describe('Effects', () => {
         TestBed.configureTestingModule({
             imports: [
                 StoreModule.forRoot({}),
-                RouterTestingModule
+                RouterTestingModule,
+                AngularFireModule.initializeApp(environment.firebase),
+                AngularFireAuthModule,
+                AngularFirestoreModule
             ],
             providers: [
                 AuthEffects,

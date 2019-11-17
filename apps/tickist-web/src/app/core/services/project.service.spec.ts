@@ -6,6 +6,10 @@ import {MockTasksFiltersService} from '../../testing/mocks/tasks-filters-service
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../../store';
 import {RouterTestingModule} from '@angular/router/testing';
+import {AngularFireModule} from '@angular/fire';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {environment} from '@env/environment.dev';
 
 const project1FromApi = {
     name: 'F project',
@@ -86,7 +90,13 @@ describe('Project service', () => {
     beforeEach(() => {
         const tasksFiltersService = new MockTasksFiltersService();
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, TickistMaterialModule, StoreModule.forRoot(reducers), RouterTestingModule],
+            imports: [
+                HttpClientTestingModule,
+                TickistMaterialModule,
+                StoreModule.forRoot(reducers),
+                RouterTestingModule,
+                AngularFireModule.initializeApp(environment.firebase),
+                AngularFireAuthModule, AngularFirestoreModule],
             providers: [
                 ProjectService,
                 tasksFiltersService.getProviders(),
