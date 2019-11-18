@@ -51,6 +51,14 @@
                                 }
                             ]
                         },
+                        "ci": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/tickist-web/src/environments/environment.ts",
+                                    "with": "apps/tickist-web/src/environments/environment.ci.ts"
+                                }
+                            ]
+                        },
                         "e2e": {
                             "fileReplacements": [
                                 {
@@ -99,6 +107,9 @@
                         "e2e": {
                             "browserTarget": "tickist-web:build:e2e"
                         },
+                        "ci": {
+                            "browserTarget": "tickist-web:build:ci"
+                        },
                         "production": {
                             "browserTarget": "tickist-web:build:production"
                         }
@@ -145,6 +156,9 @@
                         },
                         "e2e": {
                             "devServerTarget": "tickist-web:serve:e2e"
+                        },
+                        "ci": {
+                            "devServerTarget": "tickist-web:serve:ci"
                         }
                     }
                 },

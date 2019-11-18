@@ -12,7 +12,8 @@
     "default": "proven-reality-657",
     "testing": "tickist-testing",
     "development": "proven-reality-657",
-    "production": "tickist-production"
+    "stable": "tickist-stable",
+    "ci": "tickist-ci"
 
   }
 }

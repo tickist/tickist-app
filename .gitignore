@@ -1,36 +1,11 @@
 # Created by https://www.gitignore.io
-
+.idea
+.idea/*
+dist/*
+dist
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-
-# C extensions
-*.so
-*db.sqlite*
-
-# Distribution / packaging
-.Python
-env/
-venv/
-backend/venv/
-backend/media/
-backend/site_media/
-backend/uploaded/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib64/
-parts/
-sdist/
-var/
-.idea/
-*.egg-info/
-.installed.cfg
-*.egg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -56,27 +31,12 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-local_settings.py
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Database
-db.sqlite3
 
 # ZSH env file
 .env
 # node modules
 *node_modules
 
-site.retry
-code/media
-code/static
 
 .DS_Store
 debug.log
@@ -87,6 +47,11 @@ proven-reality-657-ea57273a5a76.json
 credentials.json
 serviceAccount.json
 serviceAccountTesting.json
+serviceAccount*.json
 cypress/config.json
+cypress/config_ci.json
+cypress/config_testing.json
 cypress.env.json
 /proven-reality-657-firebase-adminsdk-etp92-6397074848.json
+
+firestore-debug.log

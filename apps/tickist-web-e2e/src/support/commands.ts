@@ -30,7 +30,7 @@ import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
 import attachCustomCommands from 'cypress-firebase/lib/attachCustomCommands'
-import {environment} from '@env/environment.e2e'
+import {environment} from '@env/environment.ci'
 
 
 

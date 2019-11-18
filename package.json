@@ -14,7 +14,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
-    "e2e": "npm run build:testConfig && ng e2e -c e2e",
+    "e2e": "npm run build:ci:testConfig && ng e2e --watch -c ci",
     "e2e:watch": "npm run build:testConfig && ng e2e --watch -c e2e",
     "deploy:development": "ng build && firebase deploy --project development",
     "deploy:staging": "ng build --configuration staging && firebase deploy --project staging",
@@ -39,7 +39,8 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "generate-git-version": "node grab-git-info.js",
-    "build:testConfig": "cypress-firebase createTestEnvFile tickist-testing && mv cypress.env.json apps/tickist-web-e2e/"
+    "build:testConfig": "cp cypress/config_ci.json cypress/config.json && cypress-firebase createTestEnvFile tickist-testing && mv cypress.env.json apps/tickist-web-e2e/",
+    "build:ci:testConfig": "cp cypress/config_ci.json cypress/config.json && cypress-firebase createTestEnvFile tickist-ci && mv cypress.env.json apps/tickist-web-e2e/"
   },
   "private": false,
   "dependencies": {
