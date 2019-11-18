@@ -3,7 +3,7 @@ import {clickOnCreateNewProject, clickOnEditProject, clickOnProject, createFireb
 describe('Projects', () => {
     before(() => {
         login();
-        // createFirebase()
+        createFirebase()
     });
 
     beforeEach(() => {

@@ -7,8 +7,6 @@ import {
     createTask,
     login
 } from '../support/utils';
-import {format} from 'date-fns';
-import {ITaskApi, Task} from '@data/tasks/models/tasks';
 import {TaskProject} from '@data/tasks/models/task-project';
 
 
@@ -16,7 +14,6 @@ describe('Tasks', () => {
     before(() => {
         login();
         createFirebase();
-
     });
 
     beforeEach(() => {
