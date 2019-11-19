@@ -7,5 +7,6 @@
   "video": true,
   "videosFolder": "../../dist/cypress/apps/tickist-web-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/tickist-web-e2e/screenshots",
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "projectId": "izprxt"
 }

@@ -49,9 +49,8 @@ serviceAccount.json
 serviceAccountTesting.json
 serviceAccount*.json
 cypress/config.json
-cypress/config_ci.json
-cypress/config_testing.json
 cypress.env.json
 /proven-reality-657-firebase-adminsdk-etp92-6397074848.json
-
+apps/tickist-web-e2e/cypress/logs/*
 firestore-debug.log
+.firebase/*

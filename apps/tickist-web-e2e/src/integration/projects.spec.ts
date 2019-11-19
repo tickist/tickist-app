@@ -1,9 +1,22 @@
-import {clickOnCreateNewProject, clickOnEditProject, clickOnProject, createFirebase, login} from '../support/utils';
+import {
+    clickOnCreateNewProject,
+    clickOnEditProject,
+    clickOnProject,
+    createFirebase,
+    login,
+    logout,
+    removeOldFirebaseData
+} from '../support/utils';
 
 describe('Projects', () => {
     before(() => {
         login();
         createFirebase()
+    });
+
+    after(() => {
+        logout();
+        removeOldFirebaseData();
     });
 
     beforeEach(() => {
@@ -46,7 +59,7 @@ describe('Projects', () => {
     });
 
     describe("Edit project", () => {
-        it.only('should change project name', () => {
+        it('should change project name', () => {
             const newProjectName = 'Project new 1';
             const oldProjectName = 'Project 1';
             cy.get(`tickist-single-project:contains(${newProjectName})`).should('not.exist');

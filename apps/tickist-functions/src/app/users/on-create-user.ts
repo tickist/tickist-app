@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 import {db} from '../init';
-import * as admin from 'firebase-admin';
 import {Project, ShareWithUser} from '@data/projects';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';

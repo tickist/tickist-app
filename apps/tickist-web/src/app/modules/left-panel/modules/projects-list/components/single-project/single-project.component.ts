@@ -1,9 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {Project} from '@data/projects';
+import {Project, ProjectWithAllDescendants, ProjectWithLevel} from '@data/projects';
 import {ProjectService} from '../../../../../../core/services/project.service';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
-
 import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -15,16 +14,10 @@ import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/routes.names';
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
-import {
-    selectActiveProject,
-    selectActiveProjectsIds,
-    selectActiveProjectWithAllDescendants
-} from '../../../../../../core/selectors/projects.selectors';
+import {selectActiveProjectsIds, selectActiveProjectWithAllDescendants} from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
-import {DeleteProject, RequestDeleteProject} from '../../../../../../core/actions/projects/projects.actions';
+import {RequestDeleteProject} from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
-import {ProjectWithAllDescendants} from '@data/projects';
-
 
 
 class Timer {
@@ -49,7 +42,7 @@ class Timer {
 export class SingleProjectComponent implements OnInit, OnDestroy {
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    @Input() project: Project;
+    @Input() project: ProjectWithLevel;
     @Input() isSmallScreen: boolean;
     selectedProject$: Observable<ProjectWithAllDescendants>;
     selectedProjectsIds$: Observable<Array<string>>;

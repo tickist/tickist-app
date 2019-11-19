@@ -19,7 +19,7 @@ function setFirebaseData() {
         const database = new Database(uid);
         cy.callFirestore('set', `users/${database.uid}`, {...database.user});
 
-        cy.callFirestore('set', `projects/${database.inbox.id}`, JSON.parse(JSON.stringify(database.inbox)));
+        // cy.callFirestore('set', `projects/${database.inbox.id}`, JSON.parse(JSON.stringify(database.inbox)));
         database.projects.forEach(project => {
             cy.callFirestore('set', `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
         });
@@ -32,7 +32,7 @@ function setFirebaseData() {
     });
 }
 
-function removeOldFirebaseData() {
+export function removeOldFirebaseData() {
     cy.callFirestore('delete', 'projects', {
         recursive: true
     });
@@ -62,6 +62,10 @@ export function clickOnProject(projectName: string) {
     } else {
         cy.get('[data-cy="All projects"]').click()
     }
+}
+
+export function clickOnTagsLeftPanelMenu() {
+    cy.get('mat-sidenav').find('mat-panel-title').contains('Tags').click();
 }
 
 export function clickOnEditProject(projectName: string) {

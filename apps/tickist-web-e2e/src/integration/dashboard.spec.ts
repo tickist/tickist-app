@@ -1,10 +1,15 @@
-import {createFirebase, login} from '../support/utils';
+import {createFirebase, login, logout, removeOldFirebaseData} from '../support/utils';
 import {addDays, format} from 'date-fns';
 
 describe('Dashboard view', () => {
     before(() => {
         login();
         createFirebase();
+    });
+
+    after(() => {
+        logout();
+        removeOldFirebaseData();
     });
 
     beforeEach(() => {

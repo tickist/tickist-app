@@ -69,9 +69,9 @@ export class Database {
 
     createTasks() {
         const tasksData = [
-            {'name': 'Task 1', project: this.inbox, tags: [], finishDate: new Date().toISOString()},
-            {'name': 'Task 2', project: this.projects[0], tags: [], finishDate: addDays(new Date(), -1).toISOString()},
-            {'name': 'Task 3', project: this.projects[1], tags: [], finishDate: addDays(new Date(), 1).toISOString()},
+            {'name': 'Task 1', project: this.projects[0], tags: [], finishDate: new Date()},
+            {'name': 'Task 2', project: this.projects[0], tags: [], finishDate: addDays(new Date(), -1)},
+            {'name': 'Task 3', project: this.projects[1], tags: [], finishDate: addDays(new Date(), 1)},
             {'name': 'Task 4', project: this.projects[1], tags: [], finishDate: undefined},
         ];
         tasksData.forEach((taskData, index) => {

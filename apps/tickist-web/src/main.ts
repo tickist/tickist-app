@@ -11,6 +11,5 @@ if (environment.production) {
     LogRocket.init('atlbfn/tickist-web');
 }
 
-
 platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.log(err));

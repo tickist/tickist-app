@@ -5,7 +5,7 @@ import {
     compareTaskElementWithTaskObject,
     createFirebase,
     createTask,
-    login
+    login, logout, removeOldFirebaseData
 } from '../support/utils';
 import {TaskProject} from '@data/tasks/models/task-project';
 
@@ -14,6 +14,11 @@ describe('Tasks', () => {
     before(() => {
         login();
         createFirebase();
+    });
+
+    after(() => {
+        logout();
+        removeOldFirebaseData();
     });
 
     beforeEach(() => {
@@ -87,7 +92,7 @@ describe('Tasks', () => {
             clickOnProject("Inbox");
 
             cy.get(`tickist-single-task:contains("${newTaskName}")`).then($task => {
-                $task.find('tickist-toggle-button').on('click', () => {});
+                cy.wrap($task.find('tickist-toggle-button')).click();
             });
             cy.get(`tickist-single-task:contains("${newTaskName}")`).should('not.exist');
             cy.get('simple-snack-bar').contains("Task is done. Great job!").should('exist')

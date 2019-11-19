@@ -1,31 +1,47 @@
 {
-    "hosting": {
-        "public": "dist/apps/tickist-web",
-        "ignore": [
-            "firebase.json",
-            "**/.*",
-            "**/node_modules/**"
-        ],
-        "rewrites": [
-            {
-                "source": "**",
-                "destination": "/index.html"
-            }
-        ]
+  "hosting": [
+    {
+      "public": "dist/apps/tickist-web",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     },
-    "firestore": {
-        "rules": "firestore.rules",
-        "indexes": "firestore.indexes.json"
-    },
-    "functions": {
-        "predeploy": [
-            "npm run lint tickist-functions",
-            "npm run build tickist-functions --prod"
-        ],
-        "source": "/"
-
-    },
-    "storage": {
-        "rules": "storage.rules"
+    {
+      "target": "tickist-web",
+      "public": "dist/apps/tickist-web",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
+  ],
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": {
+    "predeploy": [
+      "npm run lint tickist-functions",
+      "npm run build tickist-functions --prod"
+    ],
+    "source": "/"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
 }

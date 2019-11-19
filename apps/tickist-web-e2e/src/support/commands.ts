@@ -30,11 +30,21 @@ import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
 import attachCustomCommands from 'cypress-firebase/lib/attachCustomCommands'
-import {environment} from '@env/environment.ci'
+import {environment as ci} from '@env/environment.ci'
+import {environment as e2e} from '@env/environment.e2e'
+const cypressEnv = require('../../cypress.env.json');
 
 
+// console.log({cypressEnv})
+let firebaseConfiguration;
+if (cypressEnv.FIREBASE_PROJECT_ID === 'tickist-testing') {
+    firebaseConfiguration = e2e.firebase;
+} else {
+    firebaseConfiguration = ci.firebase;
+}
+console.log({firebaseConfiguration})
 
-const fbInstance = firebase.initializeApp(environment.firebase);
+const fbInstance = firebase.initializeApp(firebaseConfiguration);
 if (fbInstance) {
     (window as any).fbInstance = fbInstance
 }
