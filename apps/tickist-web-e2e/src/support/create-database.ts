@@ -59,7 +59,7 @@ export class Database {
 
     createTags() {
         const tagsName = [
-            'work', 'home', 'need focus', 'someday/maybe', 'tasks for later', 'quick tasks', 'getting to know Tickist'
+            'tag 1', 'tag 2', 'tag 3', 'tag 4', 'tag 5', 'tag 6'
         ];
         tagsName.forEach((tagName, index) => {
             this.tags.push(new Tag({id: (index + 1).toString(), name: tagName, author: this.uid}));
@@ -69,10 +69,10 @@ export class Database {
 
     createTasks() {
         const tasksData = [
-            {'name': 'Task 1', project: this.projects[0], tags: [], finishDate: new Date()},
-            {'name': 'Task 2', project: this.projects[0], tags: [], finishDate: addDays(new Date(), -1)},
+            {'name': 'Task 1', project: this.projects[0], tags: [this.tags[0], this.tags[1]], finishDate: new Date()},
+            {'name': 'Task 2', project: this.projects[0], tags: [this.tags[0], this.tags[1]], finishDate: addDays(new Date(), -1)},
             {'name': 'Task 3', project: this.projects[1], tags: [], finishDate: addDays(new Date(), 1)},
-            {'name': 'Task 4', project: this.projects[1], tags: [], finishDate: undefined},
+            {'name': 'Task 4', project: this.projects[1], tags: [this.tags[4], this.tags[5]], finishDate: undefined},
         ];
         tasksData.forEach((taskData, index) => {
             this.tasks.push(this.createTask({...taskData, id:index}));
