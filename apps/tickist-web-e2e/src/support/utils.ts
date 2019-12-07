@@ -56,7 +56,7 @@ export function clickOnProject(projectName: string) {
     cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
     if (projectName !== "All projects") {
         // @TODO remove force
-        cy.get('tickist-single-project').contains(projectName).click().then(() => {
+        cy.get('tickist-single-project').contains(projectName).click({force: true}).then(() => {
             cy.get('tickist-single-project').find('div.isActive').should('exist')
         });
     } else {
@@ -79,7 +79,7 @@ export function clickOnEditProject(projectName: string) {
 export function clickOnCreateNewProject() {
     cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
     // @TODO remove force
-    cy.get('[data-cy="create-new-project"]').click();
+    cy.get('[data-cy="create-new-project"]').click({force: true});
 }
 
 
