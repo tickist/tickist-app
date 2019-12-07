@@ -30,6 +30,8 @@ import {Task} from '@data/tasks/models/tasks';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {FormControl} from '@angular/forms';
 import {TaskProject} from '@data/tasks/models/task-project';
+import {removeTagsNotBelongingToUser} from '../../../../../../libs/utils/src/lib/remove-tags-not-belonging-to-user';
+import {Tag} from '@data/tags/models/tags';
 
 
 @Component({
@@ -52,6 +54,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     task_simple_view_value: string;
     task_extended_view_value: string;
     selectTaskProject: FormControl;
+    tags: Tag[];
 
     @HostListener('mouseenter')
     onMouseEnter() {
@@ -160,6 +163,9 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         }
         if (changes.hasOwnProperty('task') && changes.task.currentValue && this.selectTaskProject) {
             this.selectTaskProject.setValue(changes.task.currentValue.taskProject.id, {emitEvent: false});
+        }
+        if (changes.hasOwnProperty('task') && changes.task.currentValue) {
+            this.tags = removeTagsNotBelongingToUser(this.task.tags, this.task.owner.id)
         }
     }
 

@@ -17,6 +17,7 @@ import {takeUntil} from 'rxjs/operators';
 import {RequestCreateTag} from '../../../../../../core/actions/tags.actions';
 import {selectFilteredTagsList} from '../../tags-filters.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {TagWithTaskCounter} from '@data/tags/models/tag-with-task-counter';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
     createTagForm: FormGroup;
     defaultTaskView: string;
     taskView: string;
-    filteredTagsList$: Observable<Tag[]>;
+    filteredTagsList$: Observable<TagWithTaskCounter[]>;
     @ViewChild('form', {static: true}) createTagFormDOM;
 
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,

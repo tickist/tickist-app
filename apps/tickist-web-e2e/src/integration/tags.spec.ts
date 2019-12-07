@@ -11,13 +11,13 @@ describe("Tags", () => {
         removeOldFirebaseData();
     });
 
-    beforeEach(() => {
-        cy.visit('/home/(content:tasks-tags-view//left:left-panel)');
-        cy.url().should('include', 'tasks-tags-view');
-    });
-
     describe("Create new tag", () => {
+        beforeEach(() => {
+            cy.visit('/home/(content:tasks-tags-view//left:left-panel)');
+        });
+
         it('should create new tag using a form in the left panel and delete it', () => {
+           cy.url().should('include', 'tasks-tags-view');
             const newTagName = 'New tag name';
             const newTagName2 = 'New tag name2';
             cy.log("Create tag name");

@@ -52,7 +52,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     changeTaskView(event) {
         this.taskView = event;
-        if (this.user.defaultTaskViewTagsView !== event) {
+        if (this.user && this.user.defaultTaskViewTagsView !== event) {
             const user = Object.assign({}, this.user, {defaultTaskViewTodayView: event});
             this.store.dispatch(new UpdateUser({user}));
         }
