@@ -1,12 +1,11 @@
-import {environment} from '../../../environments/environment';
+import {environment} from '@env/environment';
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {ConfigurationService} from './configuration.service';
 
 
 @Injectable()
 export class ErrorService {
-    constructor(private http: HttpClient, private configurationService: ConfigurationService) {
+    constructor(private configurationService: ConfigurationService) {
     }
 
     logError(error: Error, location, user): void {
@@ -17,10 +16,10 @@ export class ErrorService {
 
         const url = `${environment.apiUrl}/log_errors/add`;
         const postBody = {'messege': error.message, 'stack': error.stack, 'location': location, 'user': user};
-        this.http.post(url, postBody).subscribe((res) => {
-            console.log('the error has been send');
-            return res;
-        });
+        // this.http.post(url, postBody).subscribe((res) => {
+        //     console.log('the error has been send');
+        //     return res;
+        // });
     }
 
 }

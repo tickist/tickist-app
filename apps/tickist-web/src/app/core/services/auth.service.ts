@@ -4,7 +4,6 @@ import {select, Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {User as FirebaseUser} from 'firebase';
 import {User, UserLogin} from '@data/users/models';
-import {HttpClient} from '@angular/common/http';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
@@ -16,7 +15,7 @@ export class AuthService {
     usersCollection: AngularFirestoreCollection;
     readonly authState$: Observable<FirebaseUser | null> = this.fireAuth.authState;
 
-    constructor(private http: HttpClient, private store: Store<AppStore>, private fireAuth: AngularFireAuth, private db: AngularFirestore) {
+    constructor(private store: Store<AppStore>, private fireAuth: AngularFireAuth, private db: AngularFirestore) {
         this.user$ = this.store.pipe(
             select(selectLoggedInUser)
         );

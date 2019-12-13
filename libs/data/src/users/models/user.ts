@@ -78,7 +78,6 @@ export class User {
 
     constructor(user: IUser) {
         Object.assign(this, user);
-        debugger;
         if (!this.avatarUrl) this.avatarUrl = DEFAULT_USER_AVATAR;
     }
 }

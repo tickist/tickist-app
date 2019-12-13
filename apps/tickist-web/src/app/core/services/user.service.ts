@@ -7,8 +7,6 @@ import {AppStore} from '../../store';
 import { User} from '@data/users/models';
 import { SimpleUser} from '@data/users/models';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {HttpClient} from '@angular/common/http';
-import {map} from 'rxjs/operators';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Logout} from '../actions/auth.actions';
@@ -22,7 +20,7 @@ export class UserService {
     user$: Observable<User>;
     team$: Observable<SimpleUser[]>;
 
-    constructor(private http: HttpClient, private store: Store<AppStore>, private db: AngularFirestore,
+    constructor(private store: Store<AppStore>, private db: AngularFirestore,
                 public snackBar: MatSnackBar, private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {
         this.user$ = this.store.select(selectLoggedInUser);
         this.team$ = this.store.select(s => s.team);
@@ -71,7 +69,7 @@ export class UserService {
             object[_.snakeCase(key)] = values[key];
         });
         const userID = localStorage.getItem('USER_ID');
-        return this.http.put(`${environment.apiUrl}/user/${userID}/changepassword/`, object);
+        // return this.http.put(`${environment.apiUrl}/user/${userID}/changepassword/`, object);
     }
 
     changeAvatar(avatar: File) {
@@ -100,7 +98,7 @@ export class UserService {
 
     checkNewTeamMember(email) {
         const userID = localStorage.getItem('USER_ID');
-        return this.http.post(`${environment.apiUrl}/user/${userID}/checkteammember/`, {'email': email});
+        // return this.http.post(`${environment.apiUrl}/user/${userID}/checkteammember/`, {'email': email});
     }
 
 //  check_email: function (email) {

@@ -5,7 +5,6 @@ import {AppStore} from '../../store';
 import {Project} from '@data/projects';
 import {SimpleUser} from '@data/users/models';
 import {MatSnackBar} from '@angular/material';
-import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../selectors/projects.selectors';
@@ -20,7 +19,7 @@ export class ProjectService {
     selectedProject$: Observable<Project>;
     selectedProjectsIds$: Observable<Array<string>>;
 
-    constructor(private db: AngularFirestore, public http: HttpClient, private store: Store<AppStore>, public snackBar: MatSnackBar,
+    constructor(private db: AngularFirestore, private store: Store<AppStore>, public snackBar: MatSnackBar,
                 private router: Router, private tasksFiltersService: TasksFiltersService) {
 
         this.projects$ = this.store.select(selectAllProjects);

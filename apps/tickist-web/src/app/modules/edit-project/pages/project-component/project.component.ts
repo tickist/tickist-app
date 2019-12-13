@@ -1,29 +1,25 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ShareWithPendingUser} from '@data/projects';
-import {Project,} from '@data/projects';
-import {ShareWithUser} from '@data/projects';
+import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE, Project, ShareWithPendingUser, ShareWithUser} from '@data/projects';
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {User} from '@data/users/models';
-import {SimpleUser} from '@data/users/models';
+import {SimpleUser, User} from '@data/users/models';
 import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
-import {environment} from '../../../../../environments/environment';
+import {environment} from '@env/environment';
 import {map, startWith, takeUntil} from 'rxjs/operators';
-import {RequestCreateProject, RequestUpdateProject, UpdateProject} from '../../../../core/actions/projects/projects.actions';
+import {RequestCreateProject, RequestUpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
-import {selectAllProjects, selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
+import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {addUserToShareList} from '../../../../core/utils/projects-utils';
 
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
-import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE} from '@data/projects';
 import {addClickableLinks} from '@tickist/utils';
 
 
@@ -275,16 +271,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     inviteUser() {
-        if (this.addUserToShareWithListCtrl.valid) {
-            this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value)
-                .pipe(takeUntil(this.ngUnsubscribe))
-                .subscribe((user) => {
-                    this.project = <Project>addUserToShareList(this.project, user);
-                    this.addUserToShareWithListCtrl.reset();
-                });
-        } else {
-            this.addUserToShareWithListCtrl.markAsDirty();
-        }
+        // if (this.addUserToShareWithListCtrl.valid) {
+        //     this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value)
+        //         .pipe(takeUntil(this.ngUnsubscribe))
+        //         .subscribe((user) => {
+        //             this.project = <Project>addUserToShareList(this.project, user);
+        //             this.addUserToShareWithListCtrl.reset();
+        //         });
+        // } else {
+        //     this.addUserToShareWithListCtrl.markAsDirty();
+        // }
 
     }
 

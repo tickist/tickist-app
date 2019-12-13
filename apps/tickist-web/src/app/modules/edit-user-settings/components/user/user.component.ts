@@ -309,13 +309,13 @@ export class UserComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    changePassword($event, values: any): void {
-        this.userService.changePassword(values).subscribe(() => {
-        }, (error: any) => {
-            console.log(error);
-            this.changePasswordForm.setErrors({'wrongPassword': true});
-        });
-    }
+    // changePassword($event, values: any): void {
+    //     this.userService.changePassword(values).subscribe(() => {
+    //     }, (error: any) => {
+    //         console.log(error);
+    //         this.changePasswordForm.setErrors({'wrongPassword': true});
+    //     });
+    // }
 
     close(): void {
         // DRY

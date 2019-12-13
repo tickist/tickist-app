@@ -4,7 +4,6 @@ import {Store} from '@ngrx/store';
 import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
 import {Task} from '@data/tasks/models/tasks';
-import {HttpClient} from '@angular/common/http';
 import {selectAllTasks} from '../selectors/task.selectors';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {setStatusDoneLogic} from '../../single-task/utils/set-status-to-done-logic';
@@ -16,7 +15,7 @@ const tasksCollectionName = 'tasks';
 export class TaskService {
     tasks$: Observable<Task[]>;
 
-    constructor(private db: AngularFirestore, public http: HttpClient, private store: Store<AppStore>) {
+    constructor(private db: AngularFirestore, private store: Store<AppStore>) {
 
         this.tasks$ = this.store.select(selectAllTasks);
     }
@@ -26,8 +25,8 @@ export class TaskService {
     }
 
     postponeToToday() {
-        this.http.post<Task[]>(`${environment['apiUrl']}/tasks/move_tasks_for_today/`, {}).subscribe((tasks: Task[]) => {
-        });
+        // this.http.post<Task[]>(`${environment['apiUrl']}/tasks/move_tasks_for_today/`, {}).subscribe((tasks: Task[]) => {
+        // });
     }
 
     createTask(task: Task) {

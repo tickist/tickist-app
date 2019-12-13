@@ -1,6 +1,6 @@
 import {ProjectService} from './project.service';
 import {getTestBed, TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpTestingController} from '@angular/common/http/testing';
 import {TickistMaterialModule} from '../../material.module';
 import {MockTasksFiltersService} from '../../testing/mocks/tasks-filters-service';
 import {StoreModule} from '@ngrx/store';
@@ -91,7 +91,6 @@ describe('Project service', () => {
         const tasksFiltersService = new MockTasksFiltersService();
         TestBed.configureTestingModule({
             imports: [
-                HttpClientTestingModule,
                 TickistMaterialModule,
                 StoreModule.forRoot(reducers),
                 RouterTestingModule,

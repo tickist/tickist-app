@@ -22,8 +22,7 @@ import {metaReducers, reducers} from './store';
 import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete-task.dialog.component';
 import {BlankComponent, RootComponent} from './testing/test.modules';
 import {MyDateAdapter} from './shared/data-adapter';
-import {environment} from '../environments/environment';
-import {HttpClientModule} from '@angular/common/http';
+import {environment} from '@env/environment';
 import {TasksFiltersService} from './core/services/tasks-filters.service';
 import {ProjectsFiltersService} from './modules/left-panel/modules/projects-list/projects-filters.service';
 import {TagsFiltersService} from './core/services/tags-filters.service';
@@ -61,7 +60,6 @@ import {IconsModule} from './icons.module';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
         StoreModule.forRoot(reducers, {
             initialState: {},
             metaReducers, runtimeChecks: {strictStateImmutability: true, strictActionImmutability: true}
