@@ -17,6 +17,7 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {signupRoutesName} from '../../modules/signup/routes-names';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {User} from '@data/users/models';
 
 
 @Injectable()
@@ -41,14 +42,14 @@ export class AuthEffects {
             }),
             tap((snapshot: any) => {
                 if (environment.production) {
-                    LogRocket.identify(snapshot.payload.data().id.toString(), {
-                        name: snapshot.payload.data().username,
-                        email: snapshot.payload.data().email,
+                    LogRocket.identify(snapshot.id, {
+                        name: snapshot.data().username,
+                        email: snapshot.data().email,
                     });
                 }
             }),
             map((snapshot: any) => {
-                return new AddUser({user: {id: snapshot.id, ...snapshot.data()}});
+                return new AddUser({user: new User({id: snapshot.id, ...snapshot.data()})});
             })
         );
 

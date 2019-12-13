@@ -17,6 +17,7 @@ export function logout() {
 function setFirebaseData() {
     cy.get('@uid').then((uid) => {
         const database = new Database(uid);
+        cy.wrap(database).as('database');
         cy.callFirestore('set', `users/${database.uid}`, {...database.user});
 
         // cy.callFirestore('set', `projects/${database.inbox.id}`, JSON.parse(JSON.stringify(database.inbox)));

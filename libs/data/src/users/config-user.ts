@@ -39,3 +39,4 @@ export const TASKS_ORDER_OPTIONS = [
 
 export const DEFAULT_TASKS_ORDER_OPTIONS = TASKS_ORDER_OPTIONS[0];
 export const DEFAULT_DAILY_SUMMARY_HOUR = '07:00';
+export const DEFAULT_USER_AVATAR = '/assets/images/default_images/default_avatar_user.png';

@@ -23,6 +23,14 @@ export class Database {
         this.createTasks();
     }
 
+    getUserUid() {
+        return this.uid;
+    }
+
+    getUserObject() {
+        return this.user;
+    }
+
     createUser() {
         this.user = new User(<any>{id: this.uid, username: 'Bill Doe', email: 'john@tickist.com'});
     }

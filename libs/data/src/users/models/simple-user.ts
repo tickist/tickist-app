@@ -1,4 +1,5 @@
-import {SimpleProject} from '../../projects/models';
+import {SimpleProject} from '@data/projects';
+import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
 
 
 export class SimpleUser {
@@ -15,6 +16,7 @@ export class SimpleUser {
         this.email = user.email;
         this.avatar = user.avatar;
         this.avatarUrl = user.avatar_url;
+        if (!this.avatarUrl) this.avatarUrl = DEFAULT_USER_AVATAR;
         if (user.share_with) {
             user.share_with.forEach((project) => {
                 this.shareWith.push(new SimpleProject(project));

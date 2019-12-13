@@ -1,8 +1,8 @@
 {
   "name": "tickist",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "license": "GPL-3.0-or-later",
-  "repository": "https://github.com/tickist/frontend",
+  "repository": "https://github.com/tickist/tickist-app",
   "main": "dist/apps/tickist-functions/main.js",
   "engines": {
     "node": "10"
@@ -16,7 +16,7 @@
     "lint": "nx workspace-lint && ng lint",
     "cy:verify": "cypress verify",
     "e2e": "npm run build:ci:testConfig && ng e2e -c ci --headless --record --browser chrome",
-    "e2e:watch": "npm run build:e2e:testConfig && ng e2e --headless -c e2e --browser chrome",
+    "e2e:watch": "npm run build:e2e:testConfig && ng e2e --watch -c e2e --browser chrome",
     "deploy:development": "ng build && firebase deploy --project development",
     "deploy:staging": "ng build --configuration staging && firebase deploy --project staging",
     "deploy:production": "ng build --prod && firebase deploy --production",

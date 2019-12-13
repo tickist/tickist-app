@@ -8,7 +8,7 @@ import {addClickableLinks} from '@tickist/utils';
 export interface ITask {
     name: string;
     id?: string;
-    finishDate?: string;
+    finishDate?: Date;
     finishTime?: string;
     suspendDate?: string;
     pinned?: boolean;

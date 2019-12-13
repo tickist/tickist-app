@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.activeDateElement = activeDateElement;
             this.user = user;
             if (tasks && tasks.length > 0 && this.user) {
-                this.tasks = tasks.filter(task => task.owner.id === this.user.id && task.isDone === false);
+                this.tasks = tasks.filter(task => task.owner.id === this.user.id && task.isDone === false && task.onHold === false);
                 this.todayTasks = this.tasks.filter((task: Task) => {
                     return (
                         (task.finishDate && format(task.finishDate, 'dd-MM-yyyy') === format(this.activeDateElement.date, 'dd-MM-yyyy') ||
