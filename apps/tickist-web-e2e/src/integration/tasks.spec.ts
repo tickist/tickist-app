@@ -14,18 +14,15 @@ import {addDays, format} from 'date-fns';
 
 
 describe('Tasks', () => {
-    before(() => {
+    beforeEach(() => {
         login();
         createFirebase();
+        cy.visit('/');
     });
 
-    after(() => {
+    afterEach(() => {
         logout();
         removeOldFirebaseData();
-    });
-
-    beforeEach(() => {
-        cy.visit('/');
     });
 
     describe('Click on add new task button', () => {

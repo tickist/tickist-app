@@ -42,7 +42,6 @@ if (cypressEnv.FIREBASE_PROJECT_ID === 'tickist-testing') {
 } else {
     firebaseConfiguration = ci.firebase;
 }
-console.log({firebaseConfiguration})
 
 const fbInstance = firebase.initializeApp(firebaseConfiguration);
 if (fbInstance) {
