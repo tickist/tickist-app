@@ -73,8 +73,8 @@
         </div>
         <div class="step" *ngFor="let step of task.steps" fxLayout="row" fxLayoutAlign="start stretch"
              (click)="toggleDoneStep(step)">
-            <fa-icon [icon]="['far', 'check-square']" *ngIf="step.status === 1"></fa-icon>
-            <fa-icon [icon]="['far', 'square']" *ngIf="step.status === 0"></fa-icon>
+            <fa-icon data-cy="stepIsDone" [icon]="['far', 'check-square']" *ngIf="step.status === 1"></fa-icon>
+            <fa-icon data-cy="stepIsUndone" [icon]="['far', 'square']" *ngIf="step.status === 0"></fa-icon>
             <span [ngClass]="{'taskstep-done-step-name': step.status === 1}" fxFlex>{{ step.name }}</span>
         </div>
 

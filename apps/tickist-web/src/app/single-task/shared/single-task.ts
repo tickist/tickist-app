@@ -11,6 +11,7 @@ import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFi
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {parse} from 'date-fns';
+import {debug} from 'util';
 
 export class SingleTask {
     task: Task;
@@ -56,7 +57,9 @@ export class SingleTask {
 
         // if amount is 100 the status === 1
         this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
-        if (this.amountOfStepsDoneInPercent === 100) this.toggleDone();
+        if (this.amountOfStepsDoneInPercent === 100) {
+            this.toggleDone();
+        }
     }
 
     toggleDone() {

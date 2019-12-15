@@ -8,7 +8,6 @@ import {withLoadable} from '../../utils/loadable/with-loadable';
 
 export interface TasksState extends EntityState<Task>, Loadable {
     allTasksLoaded: boolean;
-
 }
 
 

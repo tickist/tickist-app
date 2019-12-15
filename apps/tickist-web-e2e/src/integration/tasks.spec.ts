@@ -9,8 +9,9 @@ import {
 } from '../support/utils';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {Task} from '@data/tasks/models/tasks';
-import {createUniqueId} from '../../../../libs/utils/src/lib/unique-id';
+import {createUniqueId} from '@tickist/utils';
 import {addDays, format} from 'date-fns';
+import {Step} from '@data/tasks/models/steps';
 
 
 describe('Tasks', () => {
@@ -79,6 +80,57 @@ describe('Tasks', () => {
         });
     });
 
+    describe('Tasks with steps', () => {
+        const taskWithStepsName = 'Task with steps';
+        let taskWithStepsNameProjectName;
+
+        beforeEach(() => {
+            cy.get('@database').then((database: any) => {
+                taskWithStepsNameProjectName = database.projects[0].name;
+                const task = new Task({
+                    id: createUniqueId(),
+                    name: taskWithStepsName,
+                    owner: database.user,
+                    ownerPk: database.uid,
+                    priority: database.projects[0].defaultPriority,
+                    author: database.user,
+                    taskListPk: database.projects[0].id,
+                    repeat: 0,
+                    repeatDelta: 0,
+                    fromRepeating: 1,
+                    taskProject: {
+                        id: database.projects[0].id,
+                        name: database.projects[0].name,
+                        color: database.projects[0].color,
+                        shareWithIds: database.projects[0].shareWithIds
+                    },
+                    steps: [
+                        new Step({id: createUniqueId(), name: 'step 1', status: 0}),
+                        new Step({id: createUniqueId(), name: 'step 2', status: 0}),
+                        new Step({id: createUniqueId(), name: 'step 3', status: 0}),
+                        new Step({id: createUniqueId(), name: 'step 4', status: 0})
+                    ]
+                });
+                cy.callFirestore('set', `tasks/${task.id}`, JSON.parse(JSON.stringify(task)));
+            });
+        });
+
+        it('should change task status to done. when all steps are finished', () => {
+            clickOnProject(taskWithStepsNameProjectName);
+            cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).then($task => {
+                cy.log('Click on progress bar');
+                cy.wrap($task.find('tickist-progress-bar')).click();
+            });
+
+            cy.get('.step').find('[data-cy="stepIsUndone"]').first().click();
+            cy.get('.step').find('[data-cy="stepIsUndone"]').first().click();
+            cy.get('.step').find('[data-cy="stepIsUndone"]').first().click();
+            cy.get('.step').find('[data-cy="stepIsUndone"]').first().click();
+            cy.get('simple-snack-bar').contains('Task is done. Great job!').should('exist');
+            cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).should('not.exist')
+        });
+    });
+
     describe('Change task status', () => {
         it('should change task status to done after click on tickist-toggle-button', () => {
             const newTaskName = 'new task';
@@ -99,9 +151,12 @@ describe('Tasks', () => {
 
 
         });
+
+
         describe('Change finish date', () => {
             const taskName = 'Task with finish date';
             let projectName;
+
             beforeEach(() => {
                 cy.get('@database').then((database: any) => {
                     projectName = database.projects[0].name;
@@ -129,7 +184,6 @@ describe('Tasks', () => {
             });
 
             it('should change finish date when task has enabled repeat options', () => {
-                cy.pause();
                 cy.get(`tickist-single-task:contains("${taskName}")`).then($task => {
                     cy.wrap($task.find('tickist-toggle-button')).click();
                 });
