@@ -16,6 +16,7 @@ import {editUserSettingsRoutesName} from '../../../modules/edit-user-settings/ro
 import {Logout} from '../../actions/auth.actions';
 import {teamRoutesName} from '../../../modules/team/routes-names';
 import {dashboardRoutesName} from '../../../modules/dashboard/routes.names';
+import {AngularFireStorage} from '@angular/fire/storage';
 
 
 @Component({
@@ -33,6 +34,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     rightSideNavVisibility: any = {};
     progressBar = false;
     isOffline = false;
+    avatar: any;
 
     @ViewChild('homeElement', { read: ElementRef, static: false }) homeElement: ElementRef;
     @ViewChild('homeMobileElement', { read: ElementRef, static: false }) homeMobileElement: ElementRef;
@@ -43,7 +45,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
 
     constructor(private configurationService: ConfigurationService,
                 private projectService: ProjectService, private media: MediaObserver, private router: Router,
-                private renderer: Renderer2,
+                private renderer: Renderer2, private storage: AngularFireStorage,
                 private store: Store<AppStore>) {
     }
 
@@ -69,6 +71,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.configurationService.offlineModeNotification$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
             this.isOffline = value;
         });
+
 
     }
 

@@ -2,16 +2,17 @@ import * as _ from 'lodash';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {environment} from '../../../environments/environment';
 import {AppStore} from '../../store';
-import { User} from '@data/users/models';
-import { SimpleUser} from '@data/users/models';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {SimpleUser, User} from '@data/users/models';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Logout} from '../actions/auth.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {finalize} from 'rxjs/operators';
+import {AngularFireStorage} from '@angular/fire/storage';
+import {changeAvatar} from '../actions/user.actions';
+import {USER_AVATAR_PATH} from '@data/users/config-user';
 
 const userCollectionName = 'users';
 
@@ -19,9 +20,12 @@ const userCollectionName = 'users';
 export class UserService {
     user$: Observable<User>;
     team$: Observable<SimpleUser[]>;
+    uploadPercent: Observable<number>;
+    downloadURL: Observable<string>;
+    IMAGE_PATH = '/images/';
 
-    constructor(private store: Store<AppStore>, private db: AngularFirestore,
-                public snackBar: MatSnackBar, private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {
+    constructor(private store: Store<AppStore>, private db: AngularFirestore, private storage: AngularFireStorage,
+                private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {
         this.user$ = this.store.select(selectLoggedInUser);
         this.team$ = this.store.select(s => s.team);
 
@@ -50,21 +54,21 @@ export class UserService {
             .doc(this.authFire.auth.currentUser.uid)
             .update(JSON.parse(JSON.stringify(user)));
 
-            // .set(JSON.parse(JSON.stringify(user)));
+        // .set(JSON.parse(JSON.stringify(user)));
         // return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user));
-            // .subscribe(payload => {
-            //     if (!withoutSnackBar) {
-            //         this.snackBar.open('User data has been update successfully', '', {
-            //             duration: 2000,
-            //         });
-            //     }
-            //
-            //     // this.store.dispatch(new userAction.UpdateUser(new User(payload)));
-            // });
+        // .subscribe(payload => {
+        //     if (!withoutSnackBar) {
+        //         this.snackBar.open('User data has been update successfully', '', {
+        //             duration: 2000,
+        //         });
+        //     }
+        //
+        //     // this.store.dispatch(new userAction.UpdateUser(new User(payload)));
+        // });
     }
 
     changePassword(values: any) {
-        const  object = {};
+        const object = {};
         _.keys(values).forEach(key => {
             object[_.snakeCase(key)] = values[key];
         });
@@ -72,28 +76,23 @@ export class UserService {
         // return this.http.put(`${environment.apiUrl}/user/${userID}/changepassword/`, object);
     }
 
-    changeAvatar(avatar: File) {
-        const userID = localStorage.getItem('USER_ID');
-        return new Promise((resolve, reject) => {
+    changeUserAvatar(avatar: File, user: User) {
+        const avatarPath = USER_AVATAR_PATH + user.id + '/' + avatar.name;
+        const fileRef = this.storage.ref(avatarPath);
+        const task = this.storage.upload(avatarPath, avatar);
 
-            const xhr: XMLHttpRequest = new XMLHttpRequest();
+        // observe percentage changes
+        //  this.uploadPercent = task.percentageChanges();
+        // get notified when the download URL is available
+        task.snapshotChanges().pipe(
+            finalize(() => {
+                this.downloadURL = fileRef.getDownloadURL();
+                this.downloadURL.subscribe(() => (this.store.dispatch(changeAvatar({avatarUrl: avatar.name}))));
+            })
+            )
+            .subscribe();
 
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        resolve(JSON.parse(xhr.response));
-                    } else {
-                        reject(xhr.response);
-                    }
-                }
-            };
-
-            xhr.open('POST', `${environment.apiUrl}/user/${userID}/changeavatar/`, true);
-            xhr.setRequestHeader('Authorization', localStorage.getItem('JWT'));
-            const formData = new FormData();
-            formData.append('file', avatar, avatar.name);
-            xhr.send(formData);
-        });
+        return task.percentageChanges();
     }
 
     checkNewTeamMember(email) {

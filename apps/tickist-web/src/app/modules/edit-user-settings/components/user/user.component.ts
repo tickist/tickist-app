@@ -1,19 +1,19 @@
-import {Component, OnInit, ElementRef, Renderer2, ViewChild, OnDestroy} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {User} from '@data/users/models';
 import {UserService} from '../../../../core/services/user.service';
-import {FormBuilder, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Location} from '@angular/common';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {environment} from '../../../../../environments/environment';
+import {environment} from '@env/environment';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {RequestUpdateUser} from '../../../../core/actions/user.actions';
+import {changeAvatar, RequestUpdateUser} from '../../../../core/actions/user.actions';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
-import {DEFAULT_DAILY_SUMMARY_HOUR, TASKS_ORDER_OPTIONS} from '@data/users/config-user';
+import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS, USER_AVATAR_PATH} from '@data/users/config-user';
 
 @Component({
     selector: 'tickist-user',
@@ -34,6 +34,7 @@ export class UserComponent implements OnInit, OnDestroy {
     overdueTasksSortByOptions: Array<any>;
     futureTasksSortByOptions: Array<any>;
     matcher = new MyErrorStateMatcher();
+    uploadPercent: Observable<number>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('changeAvatarInput', {static: false}) changeAvatarInput: ElementRef;
@@ -80,6 +81,7 @@ export class UserComponent implements OnInit, OnDestroy {
             .subscribe((user) => {
                 // @TODO too much logic. Fix It
                 if (user) {
+                    this.uploadPercent = new Observable<number>();
                     this.user = user;
                     this.dailySummaryCheckbox = !!user.dailySummaryHour;
                     this.userData = new FormGroup({
@@ -261,12 +263,10 @@ export class UserComponent implements OnInit, OnDestroy {
         this.changeAvatarInput.nativeElement.dispatchEvent(clickEvent);
     }
 
-    // changeAvatar(event: any) {
-    //     const file = event.target.files[0];
-    //     this.userService.changeAvatar(file).then((data) => {
-    //         this.userService.loadUser();
-    //     });
-    // }
+    changeAvatar(event: any) {
+        const file = event.target.files[0];
+        this.uploadPercent = this.userService.changeUserAvatar(file, this.user)
+    }
 
     changeActiveItemInMenu(name): void {
         this.menu.forEach(item => item.isActive = false);
@@ -281,6 +281,9 @@ export class UserComponent implements OnInit, OnDestroy {
         this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
     }
 
+    setDefaultAvatar() {
+        this.store.dispatch(changeAvatar({avatarUrl: DEFAULT_USER_AVATAR}))
+    }
     getErrorMessage(field: AbstractControl): string {
         return field.hasError('minLength') ? 'Field is too short.' :
             field.hasError('required') ? 'This field is required.' :

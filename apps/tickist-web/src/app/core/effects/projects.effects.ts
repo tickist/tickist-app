@@ -28,7 +28,6 @@ export class ProjectsEffects {
         .pipe(
             ofType<QueryProjects>(ProjectActionTypes.QUERY_PROJECTS),
             switchMap(action => {
-                console.log(action);
                 return this.db.collection(
                     'projects',
                     ref => ref
@@ -36,14 +35,10 @@ export class ProjectsEffects {
                         .where('shareWithIds', 'array-contains', this.authFire.auth.currentUser.uid)
                 ).stateChanges();
             }),
-            // mergeMap(action => action),
             concatMap(actions => {
-                // debugger;
                 const addedProjects: Project[] = [];
                 let deletedProjectId: string;
                 let updatedProject: Update<Project>;
-                // action.payload.doc.data()
-                console.log(actions);
                 actions.forEach((action => {
                     if (action.type === 'added') {
                         const data: any = action.payload.doc.data();
@@ -76,16 +71,6 @@ export class ProjectsEffects {
                 return returnsActions;
             })
         );
-
-    // @Effect()
-    // addProjects$ = this.actions$
-    //     .pipe(
-    //         ofType<RequestsAllProjects>(ProjectActionTypes.REQUEST_ALL_PROJECTS),
-    //         withLatestFrom(this.store.pipe(select(allProjectsLoaded))),
-    //         filter(([action, allProjectsLoadedValue]) => !allProjectsLoadedValue),
-    //         mergeMap(() => this.projectService.loadProjects()),
-    //         map(projects => new AddProjects({projects: projects}))
-    //     );
 
     @Effect({dispatch: false})
     createProject$ = this.actions$

@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import {selectCurrentSortBy, selectSortByOptions} from '../../core/selectors/sort-by-tasks.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
-import {SortBy} from '../models/sortBy';
+import {SortBy} from '@data/tasks/models/sortBy';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {SetCurrentSortBy} from '../../core/actions/tasks/sort-tasks.actions';

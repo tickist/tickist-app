@@ -34,8 +34,8 @@ export class SingleTask {
     }
 
     isSharedList(): boolean {
-        // @TODO Fix it
-        return false; // this.task.taskProject.shareWith.length > 0;
+        // @TODO change detetion too often -> it shouldn't be a function
+        return this.task.taskProject.shareWithIds.length > 0
     }
 
     hideAllMenuElements(): void {

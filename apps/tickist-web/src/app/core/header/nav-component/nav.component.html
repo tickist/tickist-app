@@ -12,7 +12,8 @@
     <span fxFlex></span>
 
     <tickist-search-autocomplete></tickist-search-autocomplete>
-    <img class="user-avatar" alt="user avatar"  [mat-menu-trigger-for]="menu" *ngIf="user$ | async" [src]="user.avatarUrl | avatarsize: '32x32'">
+<!--    <img class="user-avatar" alt="user avatar"  [mat-menu-trigger-for]="menu" *ngIf="user$ | async" [src]="user.avatarUrl | avatarsize: '200x200'">-->
+    <tickist-user-avatar *ngIf="user" [mat-menu-trigger-for]="menu"  [userId]="user.id" [avatarUrl]="user.avatarUrl" [size]="'32x32'"></tickist-user-avatar>
 
  <mat-menu #menu="matMenu">
       <button (click)="navigateToTeam()" mat-menu-item>Team</button>

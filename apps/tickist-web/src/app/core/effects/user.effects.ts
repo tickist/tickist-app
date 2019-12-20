@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
-import {AddUser, QueryUser, RequestUpdateUser, UpdateUser, UserActionTypes} from '../actions/user.actions';
-import {concatMap, concatMapTo, filter, mapTo, mergeMap, switchMap} from 'rxjs/operators';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
+import {AddUser, changeAvatar, QueryUser, RequestUpdateUser, UpdateUser, UserActionTypes} from '../actions/user.actions';
+import {concatMap, concatMapTo, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
 import {AddEstimateTimeFiltersTasks, SetCurrentEstimateTimeFiltersTasks} from '../actions/tasks/estimate-time-filters-tasks.actions';
 import {TasksFiltersService} from '../services/tasks-filters.service';
@@ -16,6 +16,8 @@ import {QueryProjects} from '../actions/projects/projects.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
+import {selectLoggedInUser} from '../selectors/user.selectors';
+import {Store} from '@ngrx/store';
 
 
 @Injectable()
@@ -133,7 +135,15 @@ export class UserEffects {
             mapTo(new SwitchOnProgressBar())
         );
 
-    constructor(private actions$: Actions, private db: AngularFirestore,
+    changeAvatar$ = createEffect(() => this.actions$.pipe(
+        ofType(changeAvatar),
+        withLatestFrom(this.store.select(selectLoggedInUser)),
+        map(([action, user]) => {
+            return new RequestUpdateUser({user: Object.assign({}, user, {avatarUrl: action.avatarUrl})})
+        })
+    ));
+
+    constructor(private actions$: Actions, private db: AngularFirestore, private store: Store<{}>,
                 private userService: UserService, private authFire: AngularFireAuth) {
     }
 }

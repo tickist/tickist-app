@@ -10,7 +10,7 @@
       },
       "root": "apps/tickist-web",
       "sourceRoot": "apps/tickist-web/src",
-      "prefix": "tickist-web",
+      "prefix": "tickist",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",

@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import * as tasksAction from '../../reducers/actions/tasks';
 import {Task} from '@data/tasks/models/tasks';
 import {Tag} from '@data/tags/models/tags';
-import {SortBy} from '../../tasks/models/sortBy';
+import {SortBy} from '@data/tasks/models/sortBy';
 import {Filter} from '@data/filter';
 
 

@@ -30,7 +30,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {FormControl} from '@angular/forms';
 import {TaskProject} from '@data/tasks/models/task-project';
-import {removeTagsNotBelongingToUser} from '../../../../../../libs/utils/src/lib/remove-tags-not-belonging-to-user';
+import {removeTagsNotBelongingToUser} from '@tickist/utils';
 import {Tag} from '@data/tags/models/tags';
 
 

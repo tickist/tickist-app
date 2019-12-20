@@ -1,4 +1,4 @@
-import {Action} from '@ngrx/store';
+import {Action, createAction, props} from '@ngrx/store';
 import {User} from '@data/users/models';
 
 
@@ -8,6 +8,10 @@ export enum UserActionTypes {
     RequestUpdateUser = '[User Form Edit] Request Update Users',
     QueryUser = '[User] QueryUser'
 }
+
+export const changeAvatar = createAction('[User] Change avatar',
+    props<{ avatarUrl: string }>()
+);
 
 export class AddUser implements Action {
     readonly type = UserActionTypes.AddUser;

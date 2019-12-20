@@ -67,11 +67,14 @@
                         </mat-form-field>
 
                     </form>
-
-                    <img [src]="staticUrl + user.avatarUrl | avatarsize: '64x64'">
-                    <button (click)="changeAvatarTrigger()" mat-button>Change</button>
-                    <input #changeAvatarInput type="file" name="openFile" accept="image/x-png,image/jpeg"
-                           (change)="changeAvatar($event)"/>
+                    <div id="user-avatar-container">
+                        <tickist-user-avatar [userId]="user.id" [avatarUrl]="user.avatarUrl" [size]="'32x32'"></tickist-user-avatar>
+                        <button (click)="changeAvatarTrigger()" mat-button>Change</button>
+                        <button (click)="setDefaultAvatar()" mat-button>Set default</button>
+                        <input #changeAvatarInput type="file" name="openFile" accept="image/x-png,image/jpeg"
+                               (change)="changeAvatar($event)"/>
+                        <mat-progress-bar mode="determinate" value="{{ uploadPercent | async }}"></mat-progress-bar>
+                    </div>
                 </div>
 
                 <div [hidden]="!checkActiveItemInMenu('password')">

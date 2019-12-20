@@ -49,6 +49,8 @@ import {ShowNotificationAboutNewDayComponent} from './header/show-notification-a
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {AngularFireStorageModule} from '@angular/fire/storage';
+import {TickistSingleTaskModule} from '../single-task/single-task.module';
 
 
 @NgModule({
@@ -88,6 +90,8 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
         FontAwesomeModule,
         AngularFireAuthModule,
         AngularFirestoreModule,
+        AngularFireStorageModule,
+        TickistSingleTaskModule
     ],
     providers: [
         TaskService,

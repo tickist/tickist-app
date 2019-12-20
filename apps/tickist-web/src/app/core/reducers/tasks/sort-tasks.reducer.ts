@@ -1,5 +1,5 @@
 import {SortTasksActions, SortTasksActionTypes} from '../../actions/tasks/sort-tasks.actions';
-import {SortBy} from '../../../tasks/models/sortBy';
+import {SortBy} from '@data/tasks/models/sortBy';
 import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
 
 

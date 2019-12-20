@@ -14,6 +14,7 @@ import {RepeatString} from './pipes/repeatString';
 import {RepeatStringExtension} from './pipes/repeatStringExtension';
 import {AutofocusDirective} from './autofocus';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { UserAvatarComponent } from './components/user-avatar/user-avatar.component';
 
 
 @NgModule({
@@ -22,9 +23,9 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         ConfigurationService
     ],
     declarations: [ChangeTaskViewComponent, MenuButtonComponent,  AvatarSize, PriorityComponent, TruncatePipe,
-        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective],
+        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent],
     exports: [ChangeTaskViewComponent, MenuButtonComponent,  AvatarSize, PriorityComponent, TruncatePipe,
-        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective]
+        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent]
 })
 export class TickistSharedModule {
 }

@@ -18,13 +18,11 @@ import {takeUntil} from 'rxjs/operators';
 })
 export class TeamComponent implements OnInit, OnDestroy {
     team$: Observable<(ShareWithUser | ShareWithPendingUser)[]>;
-    staticUrl: string;
 
     constructor(private store: Store<AppStore>) {
     }
 
     ngOnInit() {
-        this.staticUrl = environment['staticUrl'];
         this.team$ = this.store.pipe(
             select(selectTeam));
         this.store.dispatch(new HideAddTaskButton());

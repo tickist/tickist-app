@@ -4,7 +4,7 @@
     left: 0;
     right: 0;
     z-index: 2;
-    
+
     margin-bottom: 10px;
     .add-margin {
         margin-top: 30px;
@@ -27,7 +27,7 @@
             .mat-button-focus-overla {
                 opacity: 0 !important;
             }
-            
+
         }
     }
     .navigation-button {
@@ -37,21 +37,18 @@
             opacity: 0 !important;
         }
         &:hover {
-           background: gray; 
+           background: gray;
             div {
-               opacity: 0 !important;  
+               opacity: 0 !important;
             }
         }
         &.active {
             background: gray;
             border-bottom: 5px solid rgb(17, 168, 171);
-            
+
         }
     }
 }
 
-img.user-avatar {
-    cursor: pointer;
-    border-radius: 20px;
-}
+
 

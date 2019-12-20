@@ -47,9 +47,11 @@ steps:
 - script: |
     ng deploy
   displayName: 'Deploy'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
 
 - script: |
     firebase deploy --non-interactive --only firestore:rules --project stable --token $FIREBASE_TOKEN_STABLE
     firebase deploy --non-interactive  --project stable --only functions --token $FIREBASE_TOKEN_STABLE
   displayName: 'Deploy firebase rules and firebase functions'
+  condiftion: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))

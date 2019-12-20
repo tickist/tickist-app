@@ -127,7 +127,7 @@ describe('Tasks', () => {
             cy.get('.step').find('[data-cy="stepIsUndone"]').first().click();
             cy.get('.step').find('[data-cy="stepIsUndone"]').first().click();
             cy.get('simple-snack-bar').contains('Task is done. Great job!').should('exist');
-            cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).should('not.exist')
+            cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).should('not.exist');
         });
     });
 
@@ -223,9 +223,13 @@ describe('Tasks', () => {
         const deletedTask = 'Deleted task';
         const nonDeletedTask = 'Task 1';
 
+        beforeEach(() => {
+            cy.visit('/home/(content:tasks-projects-view//left:left-panel)')
+                .url().should('include', '/home/(content:tasks-projects-view//left:left-panel)');
+        });
+
         it('should delete task after click on button "delete task" and "Yes"', () => {
             createTask(deletedTask);
-            clickOnProject('All projects');
             cy.get(`tickist-single-task:contains("${deletedTask}")`).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
@@ -238,7 +242,6 @@ describe('Tasks', () => {
         });
 
         it('should not delete task after click on button "delete task" and "No"', () => {
-            clickOnProject('All projects');
             cy.get(`tickist-single-task:contains("${nonDeletedTask}")`).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
