@@ -62,7 +62,6 @@
     "@angular/pwa": "^0.13.8",
     "@angular/router": "^8.2.14",
     "@angular/service-worker": "^8.2.14",
-    "@auth0/angular-jwt": "^2.1.0",
     "@fortawesome/angular-fontawesome": "^0.4.0",
     "@fortawesome/fontawesome-free": "^5.8.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
