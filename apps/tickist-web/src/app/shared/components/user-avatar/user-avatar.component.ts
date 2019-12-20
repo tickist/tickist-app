@@ -13,7 +13,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, AfterViewInit {
     @Input() userId: string;
     @Input() username?: string;
     @Input() avatarUrl: string;
-    @Input() size: string;
+    @Input() size = '32x32';
     @Input() styles?: {value:string, name:string}[];
     @ViewChild('img', {read: ElementRef, static: false}) img: ElementRef;
     MAX_AVATAR_SIZE = '200x200';
