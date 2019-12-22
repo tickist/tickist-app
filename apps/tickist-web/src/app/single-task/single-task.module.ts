@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {TickistMaterialModule} from '../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {UserAvatarComponent} from './user-avatar/user-avatar.component';
 import {ProgressBarComponent} from './progress-bar/progress-bar.component';
 import {PinButtonComponent} from './pin-button/pin-button.component';
 import {RightMenuComponent} from './right-menu/right-menu.component';
@@ -21,21 +20,20 @@ import {NoTasksComponent} from './no-tasks/no-tasks.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
-    imports: [ CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
+    imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
         ReactiveFormsModule, TickistSharedModule, RouterModule, FontAwesomeModule],
-    providers: [
-    ],
+    providers: [],
     exports: [SingleTaskComponent,
-        SingleTaskSimplifiedComponent,  UserAvatarComponent,
+        SingleTaskSimplifiedComponent,
         ProgressBarComponent,
         PinButtonComponent,
-        RightMenuComponent,  ToggleButtonComponent,  TaskNameComponent,  DisplayFinishDateComponent, EditRepeatingOptionComponent,
+        RightMenuComponent, ToggleButtonComponent, TaskNameComponent, DisplayFinishDateComponent, EditRepeatingOptionComponent,
         DateOptionsComponent, NoTasksComponent],
     declarations: [SingleTaskComponent,
-        SingleTaskSimplifiedComponent,  UserAvatarComponent,
+        SingleTaskSimplifiedComponent,
         ProgressBarComponent,
         PinButtonComponent,
-        RightMenuComponent,  ToggleButtonComponent,  TaskNameComponent,  DisplayFinishDateComponent, EditRepeatingOptionComponent,
+        RightMenuComponent, ToggleButtonComponent, TaskNameComponent, DisplayFinishDateComponent, EditRepeatingOptionComponent,
         DateOptionsComponent,
         SingleTaskExtendedComponent, NoTasksComponent]
 })

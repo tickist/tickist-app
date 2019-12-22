@@ -15,7 +15,7 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
             const projectRef = db.collection('projects').doc();
 
             const inbox = createInboxProject(snap.data(), userId);
-            transaction.set(projectRef, JSON.parse(JSON.stringify({id: projectRef.id, ...inbox})));
+            transaction.set(projectRef, JSON.parse(JSON.stringify({...inbox})));
             defaultTagsName().forEach(tagName => {
                 const tagRef = db.collection('tags').doc();
 

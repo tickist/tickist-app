@@ -24,17 +24,22 @@
                     Email is required
                 </mat-error>
                 <mat-error
-                    *ngIf="userForm.controls['email'].hasError('emailTaken') && userForm.controls['email'].touched">
-                    This email is already taken!
+                    *ngIf="userForm.controls['email'].hasError('firebaseError') && userForm.controls['email'].touched">
+                    {{ firebaseMessage }}
                 </mat-error>
             </mat-form-field>
 
 
             <mat-form-field>
-                <input name="password" matInput placeholder="Password" formControlName="password" type="password">
+                <input name="password" matInput placeholder="Password" minlength="6" formControlName="password" type="password">
                 <mat-error
                     *ngIf="userForm.controls['password'].hasError('required') && userForm.controls['password'].touched">
                     Password is required
+                </mat-error>
+
+                <mat-error
+                    *ngIf="userForm.controls['password'].hasError('minlength') && userForm.controls['password'].touched">
+                    Password should be at least 6 characters
                 </mat-error>
             </mat-form-field>
 

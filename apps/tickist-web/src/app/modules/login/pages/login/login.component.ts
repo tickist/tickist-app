@@ -17,6 +17,7 @@ import {signupRoutesName} from '../../../signup/routes-names';
 })
 export class LoginComponent {
     loginForm: FormGroup;
+    message = '';
 
     constructor(protected router: Router, private authService: AuthService, private store: Store<AppStore>) {
         this.loginForm = new FormGroup({
@@ -50,7 +51,12 @@ export class LoginComponent {
                 this.store.dispatch(new Login({uid: user.user.uid} ));
             })
             .catch(
-                err => console.log(err.message)
+                err => {
+                    console.log(err.message);
+                    this.loginForm.controls['email'].setErrors({'incorrectLoginPassword': true});
+                    this.loginForm.controls['password'].setErrors({'incorrectLoginPassword': true});
+                    this.message = err.message;
+                }
             );
             // .pipe(
             //     tap((token: IToken) => {
@@ -60,13 +66,13 @@ export class LoginComponent {
             // .subscribe(
             // noop,
             // (err: any) => { // on error
-            //     this.loginForm.controls['email'].setErrors({'incorrectLoginPassword': true});
-            //     this.loginForm.controls['password'].setErrors({'incorrectLoginPassword': true});
+
             // },
             // () => { // on completion
             //
             // }
     }
+
     navigateToSignUp() {
         this.router.navigate([signupRoutesName.SIGNUP]);
     }

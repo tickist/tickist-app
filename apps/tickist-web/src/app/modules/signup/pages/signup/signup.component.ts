@@ -1,8 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
-import {AppStore} from '../../../../store';
-import {Store} from '@ngrx/store';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../../../core/services/auth.service';
 
 
@@ -13,49 +10,37 @@ import {AuthService} from '../../../../core/services/auth.service';
 })
 export class SignupComponent implements OnInit {
     userForm: FormGroup;
+    firebaseMessage = '';
 
-    constructor(private authService: AuthService, private router: Router, private store: Store<AppStore>) {
+    constructor(private authService: AuthService) {
         this.userForm = new FormGroup({
             'username': new FormControl('', [Validators.required]),
             'email': new FormControl('', [Validators.required, Validators.email], []),
-            'password': new FormControl('', [Validators.required])
+            'password': new FormControl('', [
+                Validators.required,
+                Validators.min(6),
+                Validators.minLength(6)
+            ])
         });
     }
 
-    ngOnInit() {
-    }
-
-    validateEmailNotTaken(control: AbstractControl) {
-        // @TODO
-        // Do the same using Firebase
-        // return this.authService.checkEmail(control.value).pipe(map(res => {
-        //     if (res['is_taken']) {
-        //         return {emailTaken: true};
-        //     }
-        // }));
-    }
+    ngOnInit() {}
 
     onSubmit(values: any): void {
-        this.authService.signup(values)
-            .then((user) => {
-                console.log(user);
-                // @TODO move to action
-                this.authService.save({username: values.username, uid: user.user.uid, email: user.user.email});
-            })
-            .catch(
-                err => console.log(err.message)
-            );
-
-        //     .pipe(
-        //     tap((token: IToken) => {
-        //         this.store.dispatch(new Login({token: new Token(token)} ));
-        //     })
-        // ).subscribe(
-        //     noop,
-        //     (err: any) => { // on error
-        //         console.log(err);
-        //     }
-        // );
+        if (this.userForm.valid) {
+            this.authService.signup(values)
+                .then((user) => {
+                    console.log(user);
+                    // @TODO move to action
+                    this.authService.save({username: values.username, uid: user.user.uid, email: user.user.email});
+                })
+                .catch(
+                    err => {
+                        this.userForm.controls['email'].setErrors({'firebaseError': true});
+                        this.firebaseMessage = err.message;
+                    }
+                );
+        }
     }
 
 }
