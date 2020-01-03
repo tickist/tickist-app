@@ -61,7 +61,7 @@ export class Task {
     repeat = 0;
     repeatDelta = null;
     author: TaskUser;
-    fromRepeating: number;
+    fromRepeating = 0;
     tags: Tag[] = [];
     tagsIds: string[] = [];
     time = null;
@@ -75,7 +75,7 @@ export class Task {
         this.finishDate = task.finishDate ? new Date(task.finishDate) : null;
         this.finishTime = task.finishTime ? task.finishTime : '';
         this.suspendDate = task.suspendDate ? new Date(task.suspendDate) : '';
-        this.repeat = parseInt((<string> task.repeat), 10);
+        this.repeat = task.repeat ? parseInt((<string> task.repeat), 10) : 0;
         this.richDescription = addClickableLinks(task.description);
         if (Array.isArray(task.steps)) {
             this.steps.map((step) => new Step(step));
