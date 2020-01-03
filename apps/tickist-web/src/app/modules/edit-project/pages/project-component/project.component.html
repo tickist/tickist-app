@@ -134,16 +134,15 @@
 
                         <mat-autocomplete #auto="matAutocomplete">
                             <mat-option *ngFor="let u of filteredUsers | async" [value]="u.email">
-                                <img *ngIf="u.avatarUrl" [src]="(staticUrl + u.avatarUrl) | avatarsize: '24x24'" class="avatar">
-                                <img *ngIf="!u.avatarUrl" [src]="(staticUrl +defaultAvatarUrl) | avatarsize: '24x24'" class="avatar">
+                                <tickist-user-avatar *ngIf="u.avatarUrl"  [userId]="u.id" [avatarUrl]="u.avatarUrl" [size]="'24x24'"></tickist-user-avatar>
+                                <tickist-user-avatar *ngIf="!u.avatarUrl" [avatarUrl]="DEFAULT_USER_AVATAR" [size]="'24x24'"></tickist-user-avatar>
                                 <span>{{ u.email }}</span>
                             </mat-option>
                         </mat-autocomplete>
 
                         <mat-list>
                             <mat-list-item *ngFor="let u of project.shareWith; let i=index">
-                                <img matListAvatar [src]="(staticUrl + u.avatarUrl) | avatarsize: '32x32'" class="avatar"
-                                     alt="{{ u.username }}"/>
+                                <tickist-user-avatar matListAvatar [userId]="u.id" [avatarUrl]="u.avatarUrl" [size]="'32x32'"></tickist-user-avatar>
 
                                 <h3 mat-line *ngIf="user.hasOwnProperty('id')">
                                     <span>{{ u.username }}</span>

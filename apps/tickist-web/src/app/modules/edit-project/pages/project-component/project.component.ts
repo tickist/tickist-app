@@ -16,8 +16,7 @@ import {AppStore} from '../../../../store';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
-import {addUserToShareList} from '../../../../core/utils/projects-utils';
-
+import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
 import {addClickableLinks} from '@tickist/utils';
@@ -48,6 +47,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     filteredUsers: any;
     addUserToShareWithListCtrl: FormControl;
     subscription: Subscription;
+    DEFAULT_USER_AVATAR = DEFAULT_USER_AVATAR;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('auto', {static: false}) auto: any;

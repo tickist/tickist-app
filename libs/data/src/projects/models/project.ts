@@ -47,6 +47,7 @@ export class Project {
         this.ancestor = project.ancestor || undefined;
         this.richDescription = addClickableLinks(project.description);
         if (project.taskView) this.taskView = project.taskView;
+        if (project.defaultTypeFinishDate === null) this.defaultTypeFinishDate = DEFAULT_TYPE_FINISH_DATE;
         this.shareWith = this.shareWith.map((user) => {
             if (user.hasOwnProperty('id')) {
                 return new ShareWithUser(<IShareWithUser> user);

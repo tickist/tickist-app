@@ -16,7 +16,6 @@ export class UserAvatarComponent implements OnInit, OnChanges {
     @Input() avatarUrl: string;
     @Input() size = '32x32';
     @Input() styles?: { value: string, name: string }[] = [];
-    @ViewChild('img', {read: ElementRef, static: false}) img: ElementRef;
     MAX_AVATAR_SIZE = '200x200';
     imgStyle: any = {};
     avatar$: Observable<string>;
