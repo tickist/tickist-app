@@ -40,10 +40,11 @@
             </tickist-menu-button>
 
             <tickist-user-avatar (click)="changeShowing('isAssignedTo')" [userId]="task.owner.id"
-                                     [avatarUrl]="task.owner.avatarUrl" [size]="'18x18'" [username]="task.owner.username"
-                                 *ngIf="isSharedList()">
+                                 [avatarUrl]="task.owner.avatarUrl" [size]="'18x18'" [username]="task.owner.username"
+                                 *ngIf="isSharedList()" [styles]="[{name: 'margin-top', value: '5px'}]">
             </tickist-user-avatar>
-            <tickist-progress-bar id="taskSteps" (click)="changeShowing('isSteps')" [percent]="amountOfStepsDoneInPercent"
+            <tickist-progress-bar id="taskSteps" (click)="changeShowing('isSteps')"
+                                  [percent]="amountOfStepsDoneInPercent"
                                   [isDisabled]="task.steps.length === 0"></tickist-progress-bar>
             <span style="flex: 1 1 1e-09px;"></span>
             <tickist-display-finish-date [task]="task" *ngIf="task.finishDate"
@@ -90,7 +91,7 @@
             <mat-chip *ngFor="let tag of task.tags">
                 <span class="chip-name">{{ tag.name }}</span>
                 <span fxFlex></span>
-                <fa-icon matTooltip="Remove tag"  (click)="removeTag(tag)" [icon]="'times'"></fa-icon>
+                <fa-icon matTooltip="Remove tag" (click)="removeTag(tag)" [icon]="'times'"></fa-icon>
             </mat-chip>
         </mat-chip-list>
 

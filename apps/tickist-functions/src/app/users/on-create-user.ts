@@ -14,7 +14,7 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
             const tags: { [key: string]: Tag } = {};
             const projectRef = db.collection('projects').doc();
 
-            const inbox = createInboxProject(snap.data(), userId);
+            const inbox = createInboxProject(snap.data(), userId, projectRef.id);
             transaction.set(projectRef, JSON.parse(JSON.stringify({...inbox})));
             defaultTagsName().forEach(tagName => {
                 const tagRef = db.collection('tags').doc();
@@ -45,9 +45,9 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
     });
 
 
-function createInboxProject(userData, userId): Project {
+function createInboxProject(userData, userId, projectId): Project {
     return new Project({
-        name: 'Inbox', isInbox: true, owner: userId,
+        id: projectId, name: 'Inbox', isInbox: true, owner: userId,
         shareWith: [<ShareWithUser>{id: userId, username: userData.username, email: userData.email, avatarUrl: userData.avatarUrl}],
         shareWithIds: [userId]
     });

@@ -30,7 +30,6 @@ export class SignupComponent implements OnInit {
         if (this.userForm.valid) {
             this.authService.signup(values)
                 .then((user) => {
-                    console.log(user);
                     // @TODO move to action
                     this.authService.save({username: values.username, uid: user.user.uid, email: user.user.email});
                 })

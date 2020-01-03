@@ -7,6 +7,9 @@ import {User, UserLogin} from '@data/users/models';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
+import {FetchedLoginUser} from '../actions/auth.actions';
+import {Actions} from '@ngrx/effects';
+import {Router} from '@angular/router';
 
 
 @Injectable()
@@ -15,7 +18,7 @@ export class AuthService {
     usersCollection: AngularFirestoreCollection;
     readonly authState$: Observable<FirebaseUser | null> = this.fireAuth.authState;
 
-    constructor(private store: Store<AppStore>, private fireAuth: AngularFireAuth, private db: AngularFirestore) {
+    constructor(private store: Store<AppStore>, private fireAuth: AngularFireAuth, private db: AngularFirestore, private router: Router) {
         this.user$ = this.store.pipe(
             select(selectLoggedInUser)
         );
@@ -24,12 +27,10 @@ export class AuthService {
 
     login(user: UserLogin) {
         return this.fireAuth.auth.signInWithEmailAndPassword(user.email, user.password);
-        // return this.http.post(`${environment.apiUrl}/api-token-auth/`, user);
     }
 
     signup({email, password}) {
         return this.fireAuth.auth.createUserWithEmailAndPassword(email, password);
-        // return this.http.post(`${environment.apiUrl}/registration/`, user);
     }
 
     logout() {
@@ -43,7 +44,12 @@ export class AuthService {
 
     save({uid, username, email}) {
         const user = new User(<any> {id: uid, username: username, email: email});
-        this.usersCollection.doc(uid).set({...user}).catch((err) => console.log(err));
+        this.usersCollection.doc(uid).set(JSON.parse(JSON.stringify(user)))
+            .then(() => {
+                this.store.dispatch(new FetchedLoginUser({uid: uid}))
+                this.router.navigateByUrl('/');
+            })
+            .catch((err) => console.log(err));
     }
 
 

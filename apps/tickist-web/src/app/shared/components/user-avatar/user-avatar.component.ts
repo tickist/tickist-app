@@ -1,7 +1,8 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {AngularFireStorage} from '@angular/fire/storage';
-import {Observable, of} from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import {DEFAULT_USER_AVATAR, USER_AVATAR_PATH} from '@data/users/config-user';
+import {catchError, delay, mergeMap, retry, retryWhen} from 'rxjs/operators';
 
 @Component({
     selector: 'tickist-user-avatar',
@@ -9,38 +10,40 @@ import {DEFAULT_USER_AVATAR, USER_AVATAR_PATH} from '@data/users/config-user';
     styleUrls: ['./user-avatar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserAvatarComponent implements OnInit, OnChanges, AfterViewInit {
+export class UserAvatarComponent implements OnInit, OnChanges {
     @Input() userId: string;
     @Input() username?: string;
     @Input() avatarUrl: string;
     @Input() size = '32x32';
-    @Input() styles?: {value:string, name:string}[];
+    @Input() styles?: { value: string, name: string }[] = [];
     @ViewChild('img', {read: ElementRef, static: false}) img: ElementRef;
     MAX_AVATAR_SIZE = '200x200';
-    avatar: Observable<string>;
+    imgStyle: any = {};
+    avatar$: Observable<string>;
 
-    constructor(private storage: AngularFireStorage, private renderer: Renderer2) {
+    constructor(private storage: AngularFireStorage) {
     }
 
     ngOnInit() {
+        const [width, height] = this.size.split('x');
+        this.imgStyle = {'width.px': width, 'height.px': height};
+        this.styles.forEach(style => {
+            this.imgStyle[style.name] = style.value;
+        });
     }
 
     ngOnChanges() {
+        let retries = 3;
         if (this.avatarUrl === DEFAULT_USER_AVATAR) {
-            this.avatar = of(this.addMaxAvatarSizeToAvatarUrl())
+            this.avatar$ = of(this.addMaxAvatarSizeToAvatarUrl());
         } else {
-            this.avatar = this.storage.ref(this.createAvatarPath()).getDownloadURL();
-        }
-    }
-
-    ngAfterViewInit() {
-        const [width, height] = this.size.split("x");
-        this.renderer.setStyle(this.img.nativeElement, 'width', `${width}px`);
-        this.renderer.setStyle(this.img.nativeElement, 'height',`${height}px`);
-        if (this.styles) {
-            this.styles.forEach(style => {
-                this.renderer.setStyle(this.img.nativeElement, style.name, style.value);
-            })
+            this.avatar$ = this.storage.ref(this.createAvatarPath()).getDownloadURL().pipe(
+                retryWhen((errors: Observable<any>) =>
+                    errors.pipe(
+                        delay(1000),
+                        mergeMap(error => retries-- > 0 ? of(error) : throwError(new Error('max retries'))
+                        ))
+                ))
         }
     }
 

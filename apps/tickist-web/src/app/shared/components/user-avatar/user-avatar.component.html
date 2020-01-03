@@ -1,1 +1,3 @@
-<img [matTooltip]="username" #img alt="user avatar" [src]="avatar | async">
+<ng-container *ngIf="(avatar$ | async) as avatar">
+    <img *ngIf="avatar" [ngStyle]="imgStyle" [matTooltip]="username" #img alt="user avatar" [src]="avatar">
+</ng-container>
