@@ -3,9 +3,7 @@
         "node_modules/@nrwl/workspace/src/tslint",
         "node_modules/codelyzer"
     ],
-    "extends": [
-        "rxjs-tslint-rules"
-    ],
+    "extends": ["ngrx-tslint-rules/recommended"],
     "rules": {
         "arrow-return-shorthand": true,
         "callable-types": true,

@@ -29,7 +29,7 @@ import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../singl
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {ITaskUser, TaskUser} from '@data/tasks/models/task-user';
 import {TaskProject} from '@data/tasks/models/task-project';
-import {createUniqueId} from '../../../../../../../../libs/utils/src/lib/unique-id';
+import {createUniqueId} from '@tickist/utils';
 import {CHOICES_DEFAULT_FINISH_DATE} from '@data/projects';
 import {ProjectWithLevel} from '@data/projects';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';

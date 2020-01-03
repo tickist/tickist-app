@@ -5,6 +5,8 @@ import {AppStore} from '../../store';
 import {MediaObserver} from '@angular/flex-layout';
 import * as configurationAction from '../../reducers/actions/configuration';
 import {ShowApiErrorBar} from '../actions/detect-api-error.actions';
+import {isOffline} from '../selectors/offline-notifications.selectors';
+import {isLeftSideNavVisible} from '../selectors/sidenav-visibility.selectors';
 
 
 @Injectable()
@@ -19,14 +21,11 @@ export class ConfigurationService {
     TYPE_FINISH_DATE_BY: any;
 
     constructor(private store: Store<AppStore>, protected media: MediaObserver) {
-        this.detectApiError$ = this.store.pipe(
-            select(s => s.detectApiError)
-        );
         this.offlineModeNotification$ = this.store.pipe(
-            select(s => s.offlineModeNotification)
+            select(isOffline)
         );
         this.leftSidenavVisibility$ = this.store.pipe(
-            select(s => s.leftSidenavVisibility)
+            select(isLeftSideNavVisible)
         );
 
         this.TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};

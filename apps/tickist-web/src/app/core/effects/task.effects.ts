@@ -87,7 +87,6 @@ export class TaskEffects {
         .pipe(
             ofType<RequestCreateTask>(TaskActionTypes.REQUEST_CREATE_TASK),
             mergeMap(action => this.tasksService.createTask(action.payload.task)),
-            catchError((error: any) => of(console.log(error)))
         );
 
     @Effect({dispatch: false})
@@ -95,7 +94,6 @@ export class TaskEffects {
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
             mergeMap((action) => this.tasksService.updateTask(<Task>action.payload.task.changes)),
-            catchError((error: any) => of(console.log(error)))
         );
 
 
@@ -106,8 +104,7 @@ export class TaskEffects {
             mergeMap((action) => this.tasksService.setStatusDone(<Task>action.payload.task.changes)),
             tap(() => this.snackBar.open('Task is done. Great job!', '', {
                 duration: 2000,
-            })),
-            catchError((error: any) => of(console.log(error)))
+            }))
         );
 
     @Effect()
