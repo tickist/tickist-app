@@ -3,7 +3,7 @@ import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
 
 
 export class SimpleUser {
-    id: number;
+    id: string;
     username: string;
     email: string;
     avatar: string;

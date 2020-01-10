@@ -2,13 +2,14 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
-import {Project} from '@data/projects';
+import {InviteUser, InviteUserStatus, Project} from '@data/projects';
 import {SimpleUser} from '@data/users/models';
 import {MatSnackBar} from '@angular/material';
 import {Router} from '@angular/router';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../selectors/projects.selectors';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {RequestUpdateProject} from '../actions/projects/projects.actions';
 
 const projectsCollectionName = 'projects';
 
@@ -65,6 +66,43 @@ export class ProjectService {
 
     saveProject(project: Project) {
         (project.id) ? this.updateProject(project) : this.createProject(project);
+    }
+
+    addUserToProject(project, email) {
+        const entry = {email: email, status: InviteUserStatus.Processing};
+        // return Object.assign({}, project, {inviteUserByEmail: [...project.inviteUserByEmail, entry]});
+
+        this.store.dispatch(new RequestUpdateProject(
+            {
+                project: {
+                    id: project.id,
+                    changes: Object.assign({}, project, {inviteUserByEmail: [...project.inviteUserByEmail, entry]})
+                }
+            }));
+    }
+
+    removeUserFormShareWithList(project, deletedUser) {
+        const shareWith = project.shareWith.filter(user => user.id !== deletedUser.id);
+        const shareWithIds = project.shareWithIds.filter(userId => userId !== deletedUser.id);
+        this.store.dispatch(new RequestUpdateProject(
+            {
+                project: {
+                    id: project.id,
+                    changes: Object.assign({}, project, {shareWith, shareWithIds})
+                }
+            }));
+    }
+
+    deleteUserFromInviteList(project: Project, deletedUser: InviteUser) {
+        const inviteUserByEmail = project.inviteUserByEmail.filter(invitedUser => invitedUser.email !== deletedUser.email);
+        this.store.dispatch(new RequestUpdateProject(
+            {
+                project: {
+                    id: project.id,
+                    changes: Object.assign({}, project, {inviteUserByEmail})
+                }
+            }));
+
     }
 
     createProject(project: Project) {

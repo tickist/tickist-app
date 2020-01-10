@@ -9,7 +9,6 @@ import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {ShareWithUser} from '@data/projects';
-import {ShareWithPendingUser} from '@data/projects';
 import {Filter} from '@data/filter';
 import {AngularFireAuth} from '@angular/fire/auth';
 
@@ -24,7 +23,7 @@ export class ActiveProjectEffects {
                 const actions = [];
                 const filters = [];
                 if (action.payload.project) {
-                    action.payload.project.shareWith.map((simpleUserOrPendingUser: (ShareWithUser | ShareWithPendingUser)) => {
+                    action.payload.project.shareWith.map((simpleUserOrPendingUser: ShareWithUser) => {
                         if (simpleUserOrPendingUser.hasOwnProperty('id')
                             && simpleUserOrPendingUser['id'] !== undefined
                             && simpleUserOrPendingUser['id'] !== user.id) {

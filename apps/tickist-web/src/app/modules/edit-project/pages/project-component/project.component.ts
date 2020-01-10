@@ -1,5 +1,5 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE, Project, ShareWithPendingUser, ShareWithUser} from '@data/projects';
+import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE, InviteUser, InviteUserStatus, Project, ShareWithUser} from '@data/projects';
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
@@ -20,6 +20,8 @@ import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
 import {addClickableLinks} from '@tickist/utils';
+import {addUserToShareList} from '../../../../core/utils/projects-utils';
+import {ProjectService} from '../../../../core/services/project.service';
 
 
 @Component({
@@ -47,7 +49,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
     filteredUsers: any;
     addUserToShareWithListCtrl: FormControl;
     subscription: Subscription;
+    submitButtonLabel: string;
     DEFAULT_USER_AVATAR = DEFAULT_USER_AVATAR;
+    shareWith: ShareWithUser[];
+    usersWithoutAccount: InviteUser[];
+    userWithoutAccountStatus = InviteUserStatus;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('auto', {static: false}) auto: any;
@@ -55,7 +61,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
                 private store: Store<AppStore>, private location: Location, public dialog: MatDialog,
-                private configurationService: ConfigurationService, protected router: Router) {
+                private configurationService: ConfigurationService, private router: Router,
+                private projectService: ProjectService) {
         this.staticUrl = environment['staticUrl'];
         this.addUserToShareWithListCtrl = new FormControl();
         this.menu = this.createMenuDict();
@@ -87,7 +94,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 this.user = user;
                 this.team = team;
                 if (projects.length > 0 && user) {
-                    console.log({projects})
                     this.projectsAncestors = [{id: '', name: ''},
                         ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
                     if (projectId) {
@@ -104,6 +110,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
                         this.deleteOrLeaveProjectLabel = 'Leave project';
                     }
                     this.project = project;
+                    this.shareWith = project.shareWith.filter(shareWithUser => shareWithUser.id !== user.id);
+                    this.usersWithoutAccount = project.inviteUserByEmail;
+                    this.submitButtonLabel = this.isNewProject() ? "Create" : "Save";
                 }
 
             });
@@ -114,6 +123,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             map(name => this.filterUsers(name))
         );
         this.store.dispatch(new HideAddTaskButton());
+
 
     }
 
@@ -227,8 +237,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
         });
     }
 
-    deleteUserFromShareWithList(user: (ShareWithUser | ShareWithPendingUser | User), i: number) {
-        const title = 'Confirmatiom';
+    removeUserFromShareWithList(user: ShareWithUser) {
+        const title = 'Confirmation';
         const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;
 
@@ -237,13 +247,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         dialogRef.componentInstance.setContent(content);
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
-                const control = <FormArray>this.projectForm.controls['sharing'];
-                if (control.controls[i].value.hasOwnProperty('id')) {
-                    this.project.shareWith.filter((u: ShareWithUser | ShareWithPendingUser) => {
-                        return (u.hasOwnProperty('id') && u['id'] === control.controls[i].value.id);
-                    });
-                }
-                control.removeAt(i);
+                this.projectService.removeUserFormShareWithList(this.project, user)
             }
         });
 
@@ -251,12 +255,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     filterUsers(val): any {
         if (val) {
-            const userIds = [];
-            this.project.shareWith.forEach((u) => {
-                if (u.hasOwnProperty('id')) {
-                    userIds.push(u['id']);
-                }
+            const userIds = this.project.shareWith.map((u) => {
+                return u.id;
             });
+
             if (this.addUserToShareWithListCtrl.hasError('pattern') || this.addUserToShareWithListCtrl.hasError('required')) {
                 return [{'id': '', 'email': 'Please write a valid email'}];
             } else {
@@ -271,16 +273,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     inviteUser() {
-        // if (this.addUserToShareWithListCtrl.valid) {
-        //     this.userService.checkNewTeamMember(this.addUserToShareWithListCtrl.value)
-        //         .pipe(takeUntil(this.ngUnsubscribe))
-        //         .subscribe((user) => {
-        //             this.project = <Project>addUserToShareList(this.project, user);
-        //             this.addUserToShareWithListCtrl.reset();
-        //         });
-        // } else {
-        //     this.addUserToShareWithListCtrl.markAsDirty();
-        // }
+        if (this.addUserToShareWithListCtrl.valid) {
+            this.projectService.addUserToProject(this.project, this.addUserToShareWithListCtrl.value)
+        } else {
+            this.addUserToShareWithListCtrl.markAsDirty();
+        }
+
+    }
+
+    deleteUserFromInviteList(user) {
+        this.projectService.deleteUserFromInviteList(this.project, user)
 
     }
 

@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import {Project} from '@data/projects';
+import {InviteUser, InviteUserStatus, Project, ShareWithUser} from '@data/projects';
 import {db} from '../init';
 import {TaskProject} from '@data/tasks/models/task-project';
 
@@ -38,10 +38,6 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
                     const owner = await db.collection('users').doc(task.data().owner.id).get();
                     const inbox = await db.collection('projects').doc(owner.data().inboxPk).get();
                     const inboxData = inbox.data();
-                    console.log({task});
-                    console.log({owner});
-                    console.log({inbox});
-                    console.log({inboxData});
                     const taskProject = new TaskProject(
                         {
                             id: inbox.id,
@@ -54,5 +50,53 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
                     });
                 }
             }
+        }
+        const beforeDataInviteUserByEmail = beforeData.hasOwnProperty('inviteUserByEmail') ? beforeData.inviteUserByEmail : 0;
+        if (beforeDataInviteUserByEmail < afterData.inviteUserByEmail.length) {
+            const inviteUserByEmail = afterData.inviteUserByEmail;
+            const newInviteUserByEmail = new Set<InviteUser>();
+            const newShareWith: ShareWithUser[] = afterData.shareWith;
+            const newShareWithIds: string[] = afterData.shareWithIds;
+
+            for (const entry of inviteUserByEmail) {
+                const email = entry.email;
+                const userQuery = await db.collection('users')
+                    .where('email', '==', email)
+                    .limit(1)
+                    .get();
+                const [user,] = userQuery.docs;
+                if (user && !beforeData.shareWithIds.includes(user.id)) {
+                    const userData = user.data();
+
+                    newShareWith.push(
+                        JSON.parse(
+                            JSON.stringify(
+                                new ShareWithUser({
+                                    id: userData.id,
+                                    username: userData.username,
+                                    email: userData.email,
+                                    avatarUrl: userData.avatarUrl,
+                                })
+                            )
+                        )
+                    );
+                    newShareWithIds.push(userData.id);
+                } else {
+                    // @TODO prevent to add the same email two times
+                    newInviteUserByEmail.add({email: email, status: InviteUserStatus.Error})
+                }
+
+
+
+            }
+            console.log({newShareWith});
+            console.log({newShareWithIds});
+            console.log({inviteUserByEmail});
+
+            await after.ref.update({
+                shareWith: newShareWith,
+                shareWithIds: newShareWithIds,
+                inviteUserByEmail: Array.from(newInviteUserByEmail)
+            });
         }
     });

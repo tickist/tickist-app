@@ -1,5 +1,4 @@
 import {IShareWithUser, ShareWithUser} from './share-with-user';
-import {IPendingUser, ShareWithPendingUser} from './share-with-pending-user';
 import {
     DEFAULT_COLOR_LIST,
     DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED, DEFAULT_FINISH_DATE,
@@ -18,8 +17,18 @@ interface IProject {
     description?: string;
     ancestor?: string;
     color?: string;
+    inviteUserByEmail?: string;
 }
 
+export enum InviteUserStatus {
+    Processing,
+    Error
+}
+
+export interface InviteUser {
+    email: string;
+    status: InviteUserStatus;
+}
 
 
 export class Project {
@@ -31,7 +40,7 @@ export class Project {
     richDescription = '';
     ancestor: string;
     color = DEFAULT_COLOR_LIST;
-    shareWith: (ShareWithUser | ShareWithPendingUser)[] = [];
+    shareWith: ShareWithUser[] = [];
     owner: number | string;
     defaultFinishDate = DEFAULT_FINISH_DATE;
     defaultPriority = DEFAULT_PRIORITY;
@@ -40,6 +49,7 @@ export class Project {
     taskView = DEFAULT_TASK_VIEW.value;
     matOptionClass: string;
     shareWithIds: Array<string> = [];
+    inviteUserByEmail: InviteUser[] = [];
 
     constructor(project: any) {
         Object.assign(this, project);
@@ -48,12 +58,7 @@ export class Project {
         this.richDescription = addClickableLinks(project.description);
         if (project.taskView) this.taskView = project.taskView;
         if (project.defaultTypeFinishDate === null) this.defaultTypeFinishDate = DEFAULT_TYPE_FINISH_DATE;
-        this.shareWith = this.shareWith.map((user) => {
-            if (user.hasOwnProperty('id')) {
-                return new ShareWithUser(<IShareWithUser> user);
-            }
-            return new ShareWithPendingUser(<IPendingUser> user);
-        });
+        this.shareWith = this.shareWith.map((user) => new ShareWithUser(<IShareWithUser> user));
     }
 }
 

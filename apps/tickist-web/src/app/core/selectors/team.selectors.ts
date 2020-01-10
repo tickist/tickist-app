@@ -1,12 +1,12 @@
 import {createSelector} from '@ngrx/store';
 import {selectAllProjects} from './projects.selectors';
-import {ShareWithPendingUser, ShareWithUser} from '@data/projects';
+import {ShareWithUser} from '@data/projects';
 
 
 export const selectTeam = createSelector(
     selectAllProjects,
     projects => {
-        const team = new Set<ShareWithUser | ShareWithPendingUser>();
+        const team = new Set<ShareWithUser>();
         const teamIds = new Set<string>();
         projects.forEach(project => {
             project.shareWith.forEach(user => {

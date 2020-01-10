@@ -1,17 +1,17 @@
-import {Project, ProjectWithLevel, ShareWithPendingUser, ShareWithUser, SimpleProject} from '@data/projects';
+import {InviteUserStatus, Project, ProjectWithLevel} from '@data/projects';
 import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
 import * as _ from 'lodash';
 
 
-export function addUserToShareList(project: (SimpleProject | Project), user) {
-    const shareWith = [...project.shareWith];
-    const shareWithOnlyIds = shareWith.map(simpleUser => (<ShareWithUser>simpleUser).id);
-    if (user.hasOwnProperty('id') && !shareWithOnlyIds.includes(user.id)) {
-        shareWith.push(new ShareWithUser(user));
-    } else if (!user.hasOwnProperty('id')) {
-        shareWith.push(new ShareWithPendingUser(user));
-    }
-    return Object.assign({}, project, {shareWith: shareWith});
+export function addUserToShareList(project: Project, email) {
+    // const shareWith = [...project.shareWith];
+    // const shareWithOnlyIds = shareWith.map(simpleUser => (<ShareWithUser>simpleUser).id);
+    // if (user.hasOwnProperty('id') && !shareWithOnlyIds.includes(user.id)) {
+    //     shareWith.push(new ShareWithUser(user));
+    // }
+    //
+    const entry = {email: email, status: InviteUserStatus.Processing};
+    return Object.assign({}, project, {inviteUserByEmail: [...project.inviteUserByEmail, entry]});
 }
 
 

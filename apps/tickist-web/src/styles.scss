@@ -420,3 +420,7 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
         color: $orange;
     }
 }
+
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: white;
+}

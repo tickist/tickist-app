@@ -1,6 +1,12 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+        "plugins": [
+            {
+                "name": "typescript-tslint-plugin",
+                "alwaysShowRuleFailuresAsWarnings": false
+            }
+        ],
         "rootDir": ".",
         "sourceMap": true,
         "declaration": false,

@@ -43,7 +43,8 @@ import {
     faTimes,
     faTrashAlt,
     faUserPlus,
-    faWrench
+    faWrench,
+    faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {faArrowAltCircleRight, faCheckSquare, faClock, faDotCircle, faSquare} from '@fortawesome/free-regular-svg-icons';
@@ -60,6 +61,6 @@ export class IconsModule {
             faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
             faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
             faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, faCircle, faDotCircle, faArrowRight, faClock,
-            faUserPlus, faSign, faSignInAlt, faCalendarDay, faArrowAltCircleRight);
+            faUserPlus, faSign, faSignInAlt, faCalendarDay, faArrowAltCircleRight, faExclamationCircle);
     }
 }
