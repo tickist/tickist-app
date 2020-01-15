@@ -28,25 +28,12 @@ export class UserService {
     constructor(private store: Store<{}>, private db: AngularFirestore, private storage: AngularFireStorage,
                 private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {
         this.user$ = this.store.select(selectLoggedInUser);
-        this.team$ = this.store.select(s => s.team);
     }
 
     updateUser(user: User) {
         return this.db.collection(userCollectionName)
             .doc(this.authFire.auth.currentUser.uid)
             .update(JSON.parse(JSON.stringify(user)));
-
-        // .set(JSON.parse(JSON.stringify(user)));
-        // return this.http.put<IUserApi>(`${environment['apiUrl']}/user/${user.id}/`, userToSnakeCase(user));
-        // .subscribe(payload => {
-        //     if (!withoutSnackBar) {
-        //         this.snackBar.open('User data has been update successfully', '', {
-        //             duration: 2000,
-        //         });
-        //     }
-        //
-        //     // this.store.dispatch(new userAction.UpdateUser(new User(payload)));
-        // });
     }
 
     changePassword(values: any) {
