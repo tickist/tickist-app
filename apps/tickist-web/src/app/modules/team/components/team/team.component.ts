@@ -14,7 +14,7 @@ import {ShareWithUser} from '@data/projects';
 export class TeamComponent implements OnInit, OnDestroy {
     team$: Observable<(ShareWithUser)[]>;
 
-    constructor(private store: Store<AppStore>) {
+    constructor(private store: Store<{}>) {
     }
 
     ngOnInit() {

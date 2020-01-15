@@ -21,7 +21,7 @@ export class SingleTask {
     ngUnsubscribe: Subject<void> = new Subject<void>();
     amountOfStepsDoneInPercent: number;
 
-    constructor(public store: Store<AppStore>, public dialog: MatDialog) {
+    constructor(public store: Store<{}>, public dialog: MatDialog) {
 
     }
 

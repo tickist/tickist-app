@@ -39,7 +39,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
     constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
                 private userService: UserService, private configurationService: ConfigurationService,
                 public dialog: MatDialog, private authFire: AngularFireAuth,
-                private tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
+                private tasksFiltersService: TasksFiltersService, private store: Store<{}>) {
 
     }
 

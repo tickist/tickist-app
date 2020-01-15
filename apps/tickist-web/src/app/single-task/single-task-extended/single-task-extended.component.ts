@@ -87,7 +87,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     constructor(private taskService: TaskService, private configurationService: ConfigurationService,
                 public dialog: MatDialog, private projectService: ProjectService, private renderer: Renderer2,
-                public store: Store<AppStore>) {
+                public store: Store<{}>) {
         super(store, dialog);
         this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
     }

@@ -43,7 +43,7 @@ export class ProjectsFiltersEffects {
         );
     });
 
-    constructor(private actions$: Actions, private store: Store<AppStore>) {
+    constructor(private actions$: Actions, private store: Store<{}>) {
     }
 
 }

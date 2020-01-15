@@ -23,7 +23,7 @@ export class TodayComponent implements OnInit, OnDestroy {
     activeDateElement: IActiveDateElement;
     user: User;
 
-    constructor(private store: Store<AppStore>) {
+    constructor(private store: Store<{}>) {
     }
 
     ngOnInit() {

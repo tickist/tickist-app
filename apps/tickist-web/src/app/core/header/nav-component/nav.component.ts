@@ -46,7 +46,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     constructor(private configurationService: ConfigurationService,
                 private projectService: ProjectService, private media: MediaObserver, private router: Router,
                 private renderer: Renderer2, private storage: AngularFireStorage,
-                private store: Store<AppStore>) {
+                private store: Store<{}>) {
     }
 
     ngOnInit() {

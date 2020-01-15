@@ -24,7 +24,7 @@ export class EditRepeatingOptionComponent implements OnInit {
     @Input() task: Task;
 
 
-    constructor(protected configurationService: ConfigurationService, private store: Store<AppStore>) {
+    constructor(protected configurationService: ConfigurationService, private store: Store<{}>) {
     }
 
     ngOnInit() {

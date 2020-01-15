@@ -15,7 +15,7 @@ export class ShowApiErrorComponent implements OnInit, OnDestroy {
     isVisible$: Observable<boolean>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private store: Store<AppStore>) {
+    constructor(private store: Store<{}>) {
     }
 
     ngOnInit() {

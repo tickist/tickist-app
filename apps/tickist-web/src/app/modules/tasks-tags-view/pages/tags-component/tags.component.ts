@@ -30,7 +30,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     taskView: string;
 
     constructor(private tagService: TagService, private  taskService: TaskService, private tasksFiltersService: TasksFiltersService,
-                private userService: UserService, private store: Store<AppStore>, private configurationService: ConfigurationService) {
+                private userService: UserService, private store: Store<{}>, private configurationService: ConfigurationService) {
         this.defaultTaskView = this.configurationService.TASK_EXTENDED_VIEW.value;
 
     }

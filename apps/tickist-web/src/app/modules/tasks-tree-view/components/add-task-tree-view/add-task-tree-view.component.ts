@@ -20,7 +20,7 @@ export class AddTaskTreeViewComponent implements OnInit {
     createTaskForm: FormGroup;
     user: User;
 
-    constructor(private store: Store<AppStore>) {
+    constructor(private store: Store<{}>) {
         this.createTaskForm = new FormGroup({
             'name': new FormControl('', Validators.required)
         });

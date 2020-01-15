@@ -47,7 +47,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private userService: UserService,
                 private projectService: ProjectService, private cd: ChangeDetectorRef, private configurationService: ConfigurationService,
-                private tasksFiltersService: TasksFiltersService, private store: Store<AppStore>, private router: Router) {
+                private tasksFiltersService: TasksFiltersService, private store: Store<{}>, private router: Router) {
     }
 
     ngOnInit() {

@@ -19,7 +19,7 @@ export class LoginComponent {
     loginForm: FormGroup;
     message = '';
 
-    constructor(protected router: Router, private authService: AuthService, private store: Store<AppStore>) {
+    constructor(protected router: Router, private authService: AuthService, private store: Store<{}>) {
         this.loginForm = new FormGroup({
             'email': new FormControl('', [Validators.required, Validators.email]),
             'password': new FormControl('', Validators.required)

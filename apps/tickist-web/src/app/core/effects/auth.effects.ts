@@ -100,7 +100,7 @@ export class AuthEffects {
     });
 
     constructor(private actions$: Actions, private router: Router, private authService: AuthService, private location: Location,
-                private store: Store<AppStore>, private userService: UserService, private db: AngularFirestore,
+                private store: Store<{}>, private userService: UserService, private db: AngularFirestore,
                 private authFire: AngularFireAuth) {
     }
 }

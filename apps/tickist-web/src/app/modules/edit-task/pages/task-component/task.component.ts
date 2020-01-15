@@ -72,7 +72,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     @ViewChild('trigger', {read: MatAutocompleteTrigger, static: false}) trigger: MatAutocompleteTrigger;
     @ViewChild('autocompleteTags', {static: false}) autocompleteTags;
 
-    constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<AppStore>,
+    constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<{}>,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private location: Location,
                 private tagService: TagService) {

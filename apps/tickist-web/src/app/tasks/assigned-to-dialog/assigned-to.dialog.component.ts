@@ -24,7 +24,7 @@ export class AssignedToDialogComponent implements OnInit, OnDestroy {
     filters: Filter[];
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public dialogRef: MatDialogRef<AssignedToDialogComponent>, private store: Store<AppStore>) {
+    constructor(public dialogRef: MatDialogRef<AssignedToDialogComponent>, private store: Store<{}>) {
         // @TODO remove it
         // this.tasksFiltersService.currentTasksFilters$.subscribe((filters) => {
         //     if (filters.length > 0) {

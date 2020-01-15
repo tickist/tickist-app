@@ -31,7 +31,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
     stateActiveDateElement = stateActiveDateElement;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private route: ActivatedRoute, private router: Router, private store: Store<AppStore>,
+    constructor(private route: ActivatedRoute, private router: Router, private store: Store<{}>,
                 private media: MediaObserver, private taskService: TaskService, private userService: UserService,
                 private cd: ChangeDetectorRef) {
     }

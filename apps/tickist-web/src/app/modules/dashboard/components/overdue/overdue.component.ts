@@ -23,7 +23,7 @@ export class OverdueComponent implements OnInit, OnDestroy {
     taskView: string;
     user: User;
 
-    constructor(private taskService: TaskService, private store: Store<AppStore>) {}
+    constructor(private taskService: TaskService, private store: Store<{}>) {}
 
     ngOnInit() {
         this.store.select(selectLoggedInUser).pipe(takeUntil(this.ngUnsubscribe)).subscribe((user) => {

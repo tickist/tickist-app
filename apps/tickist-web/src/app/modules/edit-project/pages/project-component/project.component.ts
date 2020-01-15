@@ -60,7 +60,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     @ViewChild('matAutocomplete', {static: false}) matAutocomplete: any;
 
     constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
-                private store: Store<AppStore>, private location: Location, public dialog: MatDialog,
+                private store: Store<{}>, private location: Location, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private router: Router,
                 private projectService: ProjectService) {
         this.staticUrl = environment['staticUrl'];

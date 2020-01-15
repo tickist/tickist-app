@@ -53,7 +53,7 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     tasksFormCounter = 1;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private store: Store<AppStore>, private cd: ChangeDetectorRef, private router: Router) {
+    constructor(private store: Store<{}>, private cd: ChangeDetectorRef, private router: Router) {
         this.transformer = (node: TaskTreeViewNode, level: number) => {
             const isProject = !!node.project;
             const isTask = !!node.task;

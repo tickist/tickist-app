@@ -25,7 +25,7 @@ export class UserService {
     downloadURL: Observable<string>;
     IMAGE_PATH = '/images/';
 
-    constructor(private store: Store<AppStore>, private db: AngularFirestore, private storage: AngularFireStorage,
+    constructor(private store: Store<{}>, private db: AngularFirestore, private storage: AngularFireStorage,
                 private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {
         this.user$ = this.store.select(selectLoggedInUser);
         this.team$ = this.store.select(s => s.team);

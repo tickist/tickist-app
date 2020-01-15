@@ -70,6 +70,6 @@ export class ActiveProjectEffects {
             })
         );
 
-    constructor(private actions$: Actions, private store: Store<AppStore>, private authFire: AngularFireAuth) {
+    constructor(private actions$: Actions, private store: Store<{}>, private authFire: AngularFireAuth) {
     }
 }

@@ -39,7 +39,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
     @ViewChild('changeAvatarInput', {static: false}) changeAvatarInput: ElementRef;
 
-    constructor(private fb: FormBuilder, private store: Store<AppStore>, private location: Location,
+    constructor(private fb: FormBuilder, private store: Store<{}>, private location: Location,
                 private configurationService: ConfigurationService, private userService: UserService) {
 
         this.staticUrl = environment['staticUrl'];

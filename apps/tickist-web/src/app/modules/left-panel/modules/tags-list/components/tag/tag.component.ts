@@ -27,7 +27,7 @@ export class TagComponent implements OnInit {
     editMode = false;
     isCheckboxModeEnabled = false;
 
-    constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store<AppStore>) {
+    constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store<{}>) {
         this.isActive = false;
     }
 

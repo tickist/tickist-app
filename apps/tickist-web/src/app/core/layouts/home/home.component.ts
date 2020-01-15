@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     leftSidenavVisibility: SideNavVisibility;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private store: Store<AppStore>, private taskService: TaskService, private userService: UserService,
+    constructor(private store: Store<{}>, private taskService: TaskService, private userService: UserService,
                 private router: Router, private projectService: ProjectService, private tagService: TagService,
                 private media: MediaObserver, private configurationService: ConfigurationService,
                 private cd: ChangeDetectorRef) {

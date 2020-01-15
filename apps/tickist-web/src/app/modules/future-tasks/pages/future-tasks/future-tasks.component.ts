@@ -39,7 +39,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
     mediaChange: MediaChange;
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private router: Router,
-                private configurationService: ConfigurationService, private store: Store<AppStore>,
+                private configurationService: ConfigurationService, private store: Store<{}>,
                 private futureTasksFiltersService: FutureTasksFiltersService, private cd: ChangeDetectorRef, private media: MediaObserver) {
         this.defaultTaskView = this.configurationService.TASK_EXTENDED_VIEW.value;
     }

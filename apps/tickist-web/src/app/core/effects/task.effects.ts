@@ -152,7 +152,7 @@ export class TaskEffects {
         );
 
     constructor(private actions$: Actions, private tasksService: TaskService, private db: AngularFirestore,
-                private store: Store<AppStore>, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
+                private store: Store<{}>, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
 
     }
 

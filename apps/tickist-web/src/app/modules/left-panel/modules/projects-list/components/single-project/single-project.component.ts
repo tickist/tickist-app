@@ -58,7 +58,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
 
     constructor(private projectService: ProjectService, protected router: Router, public dialog: MatDialog,
                 protected configurationService: ConfigurationService, protected media: MediaObserver,
-                private store: Store<AppStore>, private cd: ChangeDetectorRef) {
+                private store: Store<{}>, private cd: ChangeDetectorRef) {
 
     }
 

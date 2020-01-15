@@ -33,7 +33,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     projectsList$: Observable<Project[]>;
 
     constructor(private taskService: TaskService,
-                private projectsFiltersService: ProjectsFiltersService, private store: Store<AppStore>,
+                private projectsFiltersService: ProjectsFiltersService, private store: Store<{}>,
                 private route: ActivatedRoute, private userService: UserService,
                 private configurationService: ConfigurationService, private router: Router,
                 private media: MediaObserver, private cd: ChangeDetectorRef, public dialog: MatDialog) {

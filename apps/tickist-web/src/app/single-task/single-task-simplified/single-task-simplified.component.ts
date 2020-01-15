@@ -35,7 +35,7 @@ export class SingleTaskSimplifiedComponent extends SingleTask implements OnInit 
 
     }
 
-    constructor(public dialog: MatDialog, public store: Store<AppStore>) {
+    constructor(public dialog: MatDialog, public store: Store<{}>) {
         super(store, dialog);
     }
 

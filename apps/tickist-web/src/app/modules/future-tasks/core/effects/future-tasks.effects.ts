@@ -48,7 +48,7 @@ export class FutureTasksEffects {
         );
     });
 
-    constructor(private actions$: Actions, private store: Store<AppStore>) {
+    constructor(private actions$: Actions, private store: Store<{}>) {
     }
 
 }

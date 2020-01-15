@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     constructor(private taskService: TaskService, protected route: ActivatedRoute, private  userService: UserService,
                 private configurationService: ConfigurationService, protected router: Router,
-                protected media: MediaObserver, private store: Store<AppStore>) {
+                protected media: MediaObserver, private store: Store<{}>) {
         this.stream$ = combineLatest(
             this.taskService.tasks$,
             this.store.select(selectActiveDate),

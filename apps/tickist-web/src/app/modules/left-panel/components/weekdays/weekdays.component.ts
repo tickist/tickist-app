@@ -36,7 +36,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     timer: any;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef, private taskService: TaskService,
-                private configurationService: ConfigurationService, private router: Router, private store: Store<AppStore>,
+                private configurationService: ConfigurationService, private router: Router, private store: Store<{}>,
                 private userService: UserService, private media: MediaObserver) {
 
         this.regenerateWeekListAfterMidnight();

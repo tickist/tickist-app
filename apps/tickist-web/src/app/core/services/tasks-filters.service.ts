@@ -52,7 +52,7 @@ export class TasksFiltersService {
         return tasks;
     }
 
-    constructor(private store: Store<AppStore>) {
+    constructor(private store: Store<{}>) {
     }
 
     static getDefaultEstimateTimeFilters() {

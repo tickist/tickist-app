@@ -35,7 +35,7 @@ export class DayStatisticsComponent implements OnInit, OnDestroy {
     subscriptions: Subscription;
     protected interval = 10000;
 
-    constructor(private store: Store<AppStore>, private configurationService: ConfigurationService,
+    constructor(private store: Store<{}>, private configurationService: ConfigurationService,
                 private cd: ChangeDetectorRef, private ngZone: NgZone) {
     }
 

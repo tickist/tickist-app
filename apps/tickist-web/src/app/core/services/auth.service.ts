@@ -18,7 +18,7 @@ export class AuthService {
     usersCollection: AngularFirestoreCollection;
     readonly authState$: Observable<FirebaseUser | null> = this.fireAuth.authState;
 
-    constructor(private store: Store<AppStore>, private fireAuth: AngularFireAuth, private db: AngularFirestore, private router: Router) {
+    constructor(private store: Store<{}>, private fireAuth: AngularFireAuth, private db: AngularFirestore, private router: Router) {
         this.user$ = this.store.pipe(
             select(selectLoggedInUser)
         );
