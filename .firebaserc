@@ -1,0 +1,25 @@
+{
+  "targets": {
+    "proven-reality-657": {
+      "hosting": {
+        "tickist": [
+          "proven-reality-657"
+        ]
+      }
+    },
+    "tickist-stable": {
+      "hosting": {
+        "tickist-web": [
+          "tickist-stable"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "proven-reality-657",
+    "testing": "tickist-testing",
+    "development": "proven-reality-657",
+    "stable": "tickist-stable",
+    "ci": "tickist-ci"
+  }
+}

@@ -1,0 +1,5 @@
+<mat-button-toggle-group [value]="innerValue" (change)="change($event)" [ngStyle]="{'width': '126px'}">
+    <mat-button-toggle (click)="onClickChangePriority('A')" value="A" class="priority_A">A</mat-button-toggle>
+    <mat-button-toggle (click)="onClickChangePriority('B')" value="B" class="priority_B">B</mat-button-toggle>
+    <mat-button-toggle (click)="onClickChangePriority('C')" value="C" class="priority_C">C</mat-button-toggle>
+</mat-button-toggle-group>

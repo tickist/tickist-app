@@ -1,0 +1,426 @@
+@import '~@angular/material/_theming.scss';
+@import './app/shared/variables';
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: 'Roboto', 'sans-serif';
+
+}
+
+input[type="time"]::-webkit-clear-button {
+    display: none;
+}
+
+// Include the base styles for Angular Material core. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+@include mat-core();
+
+$black-87-opacity: rgba(yellow, 0.87);
+$white-87-opacity: rgba(yellow, 0.87);
+$black-12-opacity: rgba(black, 0.12);
+$white-12-opacity: rgba(white, 0.12);
+$black-6-opacity: rgba(black, 0.06);
+$white-6-opacity: rgba(white, 0.06);
+
+$tickist-color-palette: (
+    50: #E2E2E6,
+    100: #8F929E,
+    200: #616676,
+    300: #616676,
+    400: #404559,
+    500: #1F253D,
+    600: #1C2137,
+    700: #191E31,
+    800: #161A2B,
+    900: #444444,
+    A100: #ff8a80,
+    A200: #ff5252,
+    A400: #ff1744,
+    A700: #d50000,
+    contrast: (
+        50: yellow,
+        100: yellow,
+        200: yellow,
+        300: yellow,
+        400: yellow,
+        500: yellow,
+        600: yellow,
+        700: yellow,
+        800: yellow,
+        900: yellow,
+        A100: yellow,
+        A200: yellow,
+        A400: yellow,
+        A700: yellow,
+    )
+);
+
+// Background palette for light themes.
+$tickist-theme-background: (
+    status-bar: map_get($tickist-color-palette, 300),
+    app-bar: #394264,
+    background: #394264,
+    hover: rgba(black, 0.04), // TODO(kara): check style with Material Design UX
+    card: #394264,
+    dialog: white,
+    disabled-button: rgba(black, 0.12),
+    raised-button: white,
+    focused-button: white,
+    selected-button: white, // map_get($mat-grey, 300),
+    selected-disabled-button: white, // map_get($mat-grey, 400),
+    disabled-button-toggle: white, // map_get($mat-grey, 200),
+    unselected-chip: grey, //map_get($mat-grey, 700),
+    disabled-list-option: black,
+);
+
+// Foreground palette for light themes.
+$tickist-theme-foreground: (
+    base: white,
+    divider: grey,
+    dividers: grey,
+    disabled: rgba(black, 0.38),
+    disabled-button: rgba(black, 0.38),
+    disabled-text: rgba(black, 0.38),
+    hint-text: grey,
+    secondary-text: grey,
+    icon: rgba(black, 0.54),
+    icons: rgba(black, 0.54),
+    text: white,
+    slider-off: rgba(black, 0.26),
+    slider-off-active: rgba(black, 0.38),
+    slider-min: rgba(black, 0.87)
+);
+
+// Creates a container object for a light theme to be given to individual component theme mixins.
+@function custom-theme($primary, $accent, $warn: mat-palette($mat-red)) {
+    @return (
+        primary: $primary,
+        accent: $accent,
+        warn: $warn,
+        is-dark: false,
+        foreground: $tickist-theme-foreground,
+        background: $tickist-theme-background,
+    );
+}
+
+// Plus imports for other components in your app.
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue.
+$tickist-app-primary: mat-palette($tickist-color-palette);
+$tickist-app-accent: mat-palette($mat-orange, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$tickist-app-warn: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$tickist-app-theme: custom-theme($tickist-app-primary, $tickist-app-accent, $tickist-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($tickist-app-theme);
+
+//// Define the palettes for your theme using the Material Design palettes available in palette.scss
+//// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+//// hue.
+//$candy-app-primary: mat-palette($mat-purple);
+//$candy-app-accent:  mat-palette($mat-purple, A200, A100, A400);
+//
+//// The warn palette is optional (defaults to red).
+//$candy-app-warn:    mat-palette($mat-red);
+//
+//// Create the theme object (a Sass map containing all of the palettes).
+//$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+//
+//// Include theme styles for core and each component used in your app.
+//// Alternatively, you can import and @include the theme mixins for each component
+//// that you are using.
+//@include angular-material-theme($candy-app-theme);
+
+html, body, .my-content {
+    background-color: #1F253D;
+}
+
+mat-sidenav-container {
+    background-color: #1F253D !important;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1;
+
+}
+
+mat-sidenav {
+    width: 320px;
+    background-color: $main_background !important;
+}
+
+.mat-sidenav-content {
+    background-color: $background_color !important;
+}
+
+// maybe we need to rewrite it after update to new version
+.left-sidenav {
+    margin-left: 10px;
+}
+
+.right-sidenav {
+    margin-right: 10px;
+}
+
+.mat-option {
+    color: white
+}
+
+.mat-option.mat-selected {
+    background-color: grey !important;
+    color: white;
+}
+
+.mat-option:hover {
+    background-color: grey !important;
+}
+
+.mat-select-trigger {
+    color: grey !important;
+}
+
+// Progress bar
+
+.mat-progress-bar-fill::after {
+    background-color: $progress_bar_color;
+}
+
+.mat-progress-bar-buffer {
+    background-color: $background_card_color;
+}
+
+// mat-button-toggle group
+mat-button-toggle-group {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+
+}
+
+.mat-button-toggle-checked {
+    color: grey;
+}
+
+.mat-dialog-container {
+    background: $background_card_color;
+}
+
+// radio button
+
+.mat-radio-button {
+    span {
+        color: $white;
+    }
+}
+
+// end
+
+.disappear {
+    visibility: hidden;
+}
+
+:focus {
+    outline: 0;
+    /* or */
+    outline: none;
+}
+
+.viewport::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+/**  STYLE 4 */
+.viewport::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+.viewport::-webkit-scrollbar-thumb {
+    background-color: #000000;
+    border: 2px solid #555555;
+}
+
+
+mat-sidenav-content::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+/**  STYLE 4 */
+mat-sidenav-content::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+mat-sidenav-content::-webkit-scrollbar-thumb {
+    background-color: #000000;
+    border: 2px solid #555555;
+}
+
+.viewport {
+    margin-left: 16px;
+    height: 100%;
+    max-height: 100%;
+    min-height: 100%;
+
+    .item {
+        height: 83px;
+    }
+}
+
+.mat-drawer-inner-container::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+.mat-drawer-inner-container::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+.mat-drawer-inner-container::-webkit-scrollbar-thumb {
+    background-color: #000000;
+    border: 2px solid #555555;
+}
+
+.content {
+    min-height: 100%;
+}
+
+.mat-focused .mat-form-field-placeholder {
+    color: grey;
+}
+
+.mat-form-field.mat-focused .mat-form-field-label {
+    color: grey;
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: grey;
+}
+
+.mat-form-field.mat-form-field-invalid .mat-form-field-ripple {
+    background-color: #f44336;
+}
+
+.mat-form-field.mat-form-field-invalid .mat-form-field-label {
+    color: #f44336;
+}
+
+
+.mat-form-field-ripple {
+    background-color: grey
+}
+
+// mat-checkbox
+.mat-checkbox {
+    .mat-checkbox-layout {
+        white-space: normal !important;
+        span {
+            line-height: normal !important;
+        }
+    }
+    .mat-checkbox-background {
+        border: 1px solid orange;
+    }
+     margin-top: 10px;
+}
+
+// mat-badge
+.mat-badge-content {
+    color: $white;
+    background-color: $background_card_color;
+    transition: none;
+}
+
+.mat-input-element {
+    caret-color: $white;
+}
+
+.mat-input-element:disabled {
+    color: $white;
+}
+
+.level_1 {
+    .mat-option-text {
+        padding-left: 20px
+    }
+}
+
+.level_2 {
+    .mat-option-text {
+        padding-left: 40px
+    }
+}
+
+
+// expansion-panel
+.mat-expansion-panel:not([class*=mat-elevation-z]) {
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow:  none !important;
+    box-shadow:  none !important;
+
+}
+.mat-expansion-panel-header {
+    padding: 0 !important;
+}
+
+.mat-expansion-panel-body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.mat-drawer-side {
+    border-right: none;
+    border-left: none;
+}
+
+.mat-drawer-side.mat-drawer-end {
+    border-right: none;
+    border-left: none;
+}
+
+.mat-button-toggle-group-appearance-standard {
+    border: none;
+}
+.mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
+    border-left: none;
+}
+
+.mat-calendar-previous-button {
+    color: $white !important;
+}
+
+.mat-calendar-next-button {
+    color: $white !important;
+}
+
+.mat-calendar-arrow {
+    border-top-color: $white !important;
+}
+
+.tickist-snack-bar {
+    background-color: $background_card_color;
+    span {
+        color: $white;
+    }
+    .mat-button-wrapper {
+        color: $orange;
+    }
+}
+
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: white;
+}

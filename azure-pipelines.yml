@@ -1,0 +1,57 @@
+# Node.js with Angular
+# Build a Node.js project that uses Angular.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- master
+- develop
+
+variables:
+- group: Firebase
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install -g @angular/cli
+    npm install -g firebase-tools
+    npm install -g npm@6.9.2
+    npm install
+  displayName: 'npm install'
+
+- script: |
+    ng lint
+  displayName: 'Lint the code'
+
+#- script: |
+#    ng test
+#  displayName: 'Unit test'
+
+- script: |
+    firebase deploy --non-interactive --only firestore:rules --project ci --token $FIREBASE_TOKEN
+    firebase deploy --non-interactive  --project ci --only functions --token $FIREBASE_TOKEN
+  displayName: 'Deploy firebase rules and firebase functions'
+
+- script: |
+    npm run cy:verify
+    npm run e2e
+  displayName: 'e2e tests'
+
+- script: |
+    ng deploy
+  displayName: 'Deploy'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+
+- script: |
+    firebase deploy --non-interactive --only firestore:rules --project stable --token $FIREBASE_TOKEN_STABLE
+    firebase deploy --non-interactive  --project stable --only functions --token $FIREBASE_TOKEN_STABLE
+  displayName: 'Deploy firebase rules and firebase functions'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))

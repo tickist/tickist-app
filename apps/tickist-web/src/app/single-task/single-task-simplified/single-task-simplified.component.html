@@ -1,0 +1,38 @@
+<div class="task" fxLayout="row" fxLayoutAlign="start none">
+
+
+    <div (click)="toggleDone()" [ngClass]="task.priority" class="done">
+        <fa-icon [icon]="icon"></fa-icon>
+    </div>
+
+    <tickist-task-name [task]="task" ></tickist-task-name>
+    <span style="flex: 1 1 1e-09px;"></span>
+     <tickist-right-menu [isRightMenuVisible]="isRightMenuVisible"
+                                [task]="task"
+                                (deleteTaskClick)="deleteTask()"
+                                (togglePinClick)="togglePin()"
+                                (changeDateClick)="changeDate($event)"
+                                (changePriorityClick)="changePriority($event)"
+                                (fastMenuOpen)="changeFastMenuVisible($event)"
+                                (fastMenuClose)="changeFastMenuVisible($event)">
+
+     </tickist-right-menu>
+    <div class="right-menu" *ngIf="finishDateVisible">
+        <tickist-display-finish-date [task]="task" *ngIf="task.finishDate"></tickist-display-finish-date>
+    </div>
+        <!--<div class="hover">-->
+            <!--<tickist-web-pin-button [pinned]="task.pinned"  (click)="togglePin()">-->
+
+            <!--</tickist-web-pin-button>-->
+
+            <!--<tickist-web-menu-button [icon]="'fa-edit'"-->
+                     <!--[routerLink]="['/home/task', task.id]">-->
+            <!--</tickist-web-menu-button>-->
+
+            <!--<tickist-web-menu-button [icon]="'fa-ellipsis-v'">-->
+            <!--</tickist-web-menu-button>-->
+        <!--</div>-->
+    <!--</div>-->
+
+
+</div>

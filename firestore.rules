@@ -1,0 +1,57 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+     function isAuthenticated() {
+     	return request.auth.uid != null;
+     }
+
+     match /users/{userId} {
+        allow create: if isAuthenticated();
+        allow read, write: if request.auth.uid == resource.data.id;
+     }
+
+     match /tasks/{taskId} {
+        function isActive() {
+        	return resource.data.isActive == true;
+        }
+
+        function isTaskBelongsToMyProjects() {
+        	return request.auth.uid in resource.data.taskProject.shareWithIds;
+        }
+
+        allow create: if isAuthenticated();
+      	allow read: if isActive() && isTaskBelongsToMyProjects();
+        allow write: if isActive() && isTaskBelongsToMyProjects();
+
+
+     }
+
+    match /tags/{tagId} {
+    	allow create: if isAuthenticated();
+        allow read, write: if request.auth.uid == resource.data.author;
+    }
+
+    match /projects/{projectId} {
+        function isActive() {
+        	return resource.data.isActive == true;
+        }
+
+        function canDelete() {
+            return request.resource.data.isActive ||
+                (request.auth.uid == resource.data.owner && request.resource.data.isActive == false && resource.data.isActive == true)
+        }
+
+        function isProjectSharedWithAuthenticatedUser() {
+            return request.auth.uid in resource.data.shareWithIds;
+        }
+      	allow create: if isAuthenticated();
+        allow read: if isProjectSharedWithAuthenticatedUser() && isActive() && isAuthenticated();
+        allow write: if isProjectSharedWithAuthenticatedUser() && isActive() && isAuthenticated();
+        allow update: if canDelete()
+    }
+  }
+
+}

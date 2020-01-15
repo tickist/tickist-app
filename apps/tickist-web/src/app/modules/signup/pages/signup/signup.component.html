@@ -1,0 +1,63 @@
+<div id="signup-container" class="flex-container" fxLayoutAlign="center center" fxLayout="row">
+
+    <mat-card fxLayoutAlign="center center" fxLayout="column">
+        <img class="logo" mat-card-image src="/assets/images/logo_230.png" alt="Tickist logo">
+        <form novalidate autocomplete="off" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)"
+              fxLayoutAlign="center center" fxLayout="column">
+
+            <mat-form-field>
+                <input name="username" matInput placeholder="Username" formControlName="username">
+                <mat-error
+                    *ngIf="userForm.controls['username'].hasError('required') && userForm.controls['username'].touched">
+                    Name is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input name="email" matInput placeholder="Email" formControlName="email">
+                <mat-error
+                    *ngIf="!userForm.controls['email'].hasError('required') && userForm.controls['email'].hasError('email') && userForm.controls['email'].touched">
+                    Email address is invalid
+                </mat-error>
+                <mat-error
+                    *ngIf="userForm.controls['email'].hasError('required') && userForm.controls['email'].touched">
+                    Email is required
+                </mat-error>
+                <mat-error
+                    *ngIf="userForm.controls['email'].hasError('firebaseError') && userForm.controls['email'].touched">
+                    {{ firebaseMessage }}
+                </mat-error>
+            </mat-form-field>
+
+
+            <mat-form-field>
+                <input name="password" matInput placeholder="Password" minlength="6" formControlName="password" type="password">
+                <mat-error
+                    *ngIf="userForm.controls['password'].hasError('required') && userForm.controls['password'].touched">
+                    Password is required
+                </mat-error>
+
+                <mat-error
+                    *ngIf="userForm.controls['password'].hasError('minlength') && userForm.controls['password'].touched">
+                    Password should be at least 6 characters
+                </mat-error>
+            </mat-form-field>
+
+            <div class="submit-button-container">
+                <button id="submit-button" fxFlex class="button" mat-button type="submit">Sign up for free</button>
+            </div>
+            <!--<div fxLayoutAlign="center center" fxLayout="row">-->
+            <!--<button mat-button type="button"> <span>Google</span></button>-->
+            <!--<button mat-button type="button"> <span>Facebook</span></button>-->
+            <!--</div>-->
+            <!--<div>-->
+            <!--<span [routerLink]="['/forgot-password']">Forgot password</span>-->
+            <!--</div>-->
+            <div class="login-text-container">
+                <span class="login-text" [routerLink]="['/login']">Have you an account? Log in</span>
+            </div>
+
+
+        </form>
+    </mat-card>
+</div>

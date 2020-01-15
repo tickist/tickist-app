@@ -1,0 +1,14 @@
+<mat-card fxFlex="100">
+    <mat-card-header>
+        <span class="header">Team</span>
+    </mat-card-header>
+    <mat-list>
+        <mat-list-item *ngFor="let user of team$ | async">
+            <div mat-list-icon><tickist-user-avatar [userId]="user.id" [avatarUrl]="user.avatarUrl" [size]="'32x32'"></tickist-user-avatar></div>
+            <h4 mat-line>{{ user.username }}</h4>
+            <p mat-line><span *ngFor="let list of user.shareWith">{{ list.name }}</span></p>
+        </mat-list-item>
+
+    </mat-list>
+</mat-card>
+

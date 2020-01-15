@@ -1,27 +1,50 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "module": "esnext",
-        "baseUrl": "./",
-        "outDir": "./dist/out-tsc",
+        "plugins": [
+            {
+                "name": "typescript-tslint-plugin",
+                "alwaysShowRuleFailuresAsWarnings": false
+            }
+        ],
+        "rootDir": ".",
         "sourceMap": true,
-        "importHelpers": true,
         "declaration": false,
-        "downlevelIteration": true,
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
-        "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
         "experimentalDecorators": true,
+        "importHelpers": true,
         "target": "es2015",
-//        "noImplicitAny": true,
-//        "suppressImplicitAnyIndexErrors": true,
+        "module": "esnext",
         "typeRoots": [
             "node_modules/@types"
         ],
         "lib": [
-            "es2018",
+            "es2017",
             "dom"
-        ]
-    }
+        ],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "@data": [
+                "libs/data/src/index.ts"
+            ],
+            "@data/*": [
+                "libs/data/src/*"
+            ],
+            "@tickist/utils": [
+                "libs/utils/src/index.ts"
+            ],
+            "@env/*": [
+                "apps/tickist-web/src/environments/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "tmp"
+    ]
 }
