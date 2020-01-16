@@ -44,7 +44,9 @@
     "generate-git-version": "node grab-git-info.js",
     "build:testConfig": "cp ./cypress/config_ci.json ./cypress/config.json && cypress-firebase createTestEnvFile tickist-testing && mv cypress.env.json apps/tickist-web-e2e/",
     "build:ci:testConfig": "cp ./cypress/config_ci.json ./cypress/config.json && cypress-firebase createTestEnvFile tickist-ci && mv cypress.env.json apps/tickist-web-e2e/",
-    "build:e2e:testConfig": "cp ./cypress/config_testing.json ./cypress/config.json && cypress-firebase createTestEnvFile && mv cypress.env.json apps/tickist-web-e2e/"
+    "build:e2e:testConfig": "cp ./cypress/config_testing.json ./cypress/config.json && cypress-firebase createTestEnvFile && mv cypress.env.json apps/tickist-web-e2e/",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "private": false,
   "dependencies": {
@@ -94,7 +96,8 @@
     "truncate-html": "^1.0.3",
     "tsify": "^4.0.1",
     "uuid": "^3.3.3",
-    "zone.js": "^0.9.1"
+    "zone.js": "^0.9.1",
+    "snyk": "^1.278.1"
   },
   "devDependencies": {
     "@angular-devkit/architect": "<0.900 || ^0.900.0-0 || ^9.0.0-0",
@@ -136,5 +139,6 @@
     "tslint": "~5.11.0",
     "typescript": "~3.5.3",
     "typescript-tslint-plugin": "^0.5.5"
-  }
+  },
+  "snyk": true
 }
