@@ -190,7 +190,7 @@
                                              diameter="32"></mat-spinner>
                                 <span *ngIf="u.status == userWithoutAccountStatus.Error"
                                       (click)="deleteUserFromInviteList(u)">
-                                    <fa-icon [icon]="'times'" [ngStyle]="{'font-size': '32px'}"></fa-icon>
+                                    <fa-icon [matTooltip]="'Delete an invitation'" [icon]="'times'" [ngStyle]="{'font-size': '32px'}"></fa-icon>
                                 </span>
                             </mat-list-item>
 

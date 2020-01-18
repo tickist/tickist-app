@@ -8,8 +8,6 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
         const before = change.before;
         const after = change.after;
         const projectId = change.before.id;
-        console.log('This is before: ', before, change.before);
-        console.log('This is after: ', after, change.after);
         const beforeData = <Project>before.data();
         const afterData = <Project>after.data();
         if (beforeData.name !== afterData.name
@@ -51,13 +49,12 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
                 }
             }
         }
-        const beforeDataInviteUserByEmail = beforeData.hasOwnProperty('inviteUserByEmail') ? beforeData.inviteUserByEmail : 0;
+        const beforeDataInviteUserByEmail = beforeData.hasOwnProperty('inviteUserByEmail') ? beforeData.inviteUserByEmail.length : 0;
         if (beforeDataInviteUserByEmail < afterData.inviteUserByEmail.length) {
             const inviteUserByEmail = afterData.inviteUserByEmail;
-            const newInviteUserByEmail = new Set<InviteUser>();
+            let newInviteUserByEmail: Array<InviteUser> = [];
             const newShareWith: ShareWithUser[] = afterData.shareWith;
             const newShareWithIds: string[] = afterData.shareWithIds;
-
             for (const entry of inviteUserByEmail) {
                 const email = entry.email;
                 const userQuery = await db.collection('users')
@@ -82,21 +79,31 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
                     );
                     newShareWithIds.push(userData.id);
                 } else {
-                    // @TODO prevent to add the same email two times
-                    newInviteUserByEmail.add({email: email, status: InviteUserStatus.Error})
+                    const index = newInviteUserByEmail.findIndex(invitedUser => invitedUser.email === email);
+                    if (index === -1) {
+                        newInviteUserByEmail.push({email: email, status: InviteUserStatus.Error});
+                    } else {
+                        newInviteUserByEmail = newInviteUserByEmail.map(invitedUser => {
+                            if (invitedUser.email === email) {
+                                return {
+                                    ...invitedUser,
+                                    status: InviteUserStatus.Error
+                                }
+                            }
+                            return invitedUser;
+                        })
+                    }
                 }
 
 
 
             }
-            console.log({newShareWith});
-            console.log({newShareWithIds});
-            console.log({inviteUserByEmail});
 
-            await after.ref.update({
+
+           return after.ref.update({
                 shareWith: newShareWith,
                 shareWithIds: newShareWithIds,
-                inviteUserByEmail: Array.from(newInviteUserByEmail)
+                inviteUserByEmail: newInviteUserByEmail
             });
         }
     });

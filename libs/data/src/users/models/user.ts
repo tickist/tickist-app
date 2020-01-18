@@ -41,6 +41,7 @@ export interface IUser {
     tagsFilterId?: number;
     dataJoined: string;
     avatarUrl?: string;
+    flags: {};
     // shareWith: ISimpleProjectApi[];
 }
 
@@ -75,6 +76,9 @@ export class User {
     futureTasksSortBy = DEFAULT_FUTURE_TASKS_SORT_BY;
     projectsFilterId = DEFAULT_PROJECTS_FILTER_ID;
     tagsFilterId = DEFAULT_TAGS_FILTER_ID;
+    flags = {
+        'statistics': true
+    };
 
     constructor(user: IUser) {
         Object.assign(this, user);

@@ -1,14 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
-import {AppStore} from '../../store';
 import {User as FirebaseUser} from 'firebase';
 import {User, UserLogin} from '@data/users/models';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {FetchedLoginUser} from '../actions/auth.actions';
-import {Actions} from '@ngrx/effects';
 import {Router} from '@angular/router';
 
 

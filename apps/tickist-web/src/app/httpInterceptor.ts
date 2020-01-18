@@ -44,11 +44,6 @@ export class RequestInterceptorService implements HttpInterceptor {
                         if (status === 0) {
                             this.configurationService.updateDetectApiError(true);
                         }
-                        // if (status >= 401) {
-                        //  this.configurationService.updateDetectApiError(true);
-                        // } else {
-                        //  this.configurationService.updateDetectApiError(false);
-                        // }
 
                         return observableThrowError(error);
                     }

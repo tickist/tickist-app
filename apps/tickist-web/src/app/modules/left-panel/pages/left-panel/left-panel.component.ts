@@ -3,7 +3,6 @@ import {tasksTreeViewRoutesName} from '../../../tasks-tree-view/routes.names';
 import {statisticsRoutesName} from '../../../statistics-view/routes.names';
 import {Router} from '@angular/router';
 import {tasksTagsViewRoutesName} from '../../../tasks-tags-view/routes.names';
-import {dashboardRoutesName} from '../../../dashboard/routes.names';
 import {homeRoutesName} from '../../../../routing.module.name';
 
 
