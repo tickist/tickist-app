@@ -29,7 +29,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         RouterModule,
         TickistProjectListModule,
         TickistTagsListModule,
-        FontAwesomeModule
+        FontAwesomeModule,
     ],
     declarations: [
         LeftPanelComponent,

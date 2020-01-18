@@ -50,15 +50,16 @@
                 </mat-expansion-panel-header>
                 <tickist-tags-list></tickist-tags-list>
             </mat-expansion-panel>
+            <mat-expansion-panel (click)="navigateToStatisticsView()" hideToggle="true" [expanded]="'false'"
+                                 class="always-collapsed" *featureFlag="'statistics'">
+                <mat-expansion-panel-header expandedHeight="48px">
+                    <mat-panel-title>
+                        <fa-icon [icon]="'chart-line'"></fa-icon>
+                        Statistics
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
 
-            <!--            <mat-expansion-panel (click)="navigateToStatisticsView()"  hideToggle="true"  [expanded]="'false'"  class="always-collapsed">-->
-            <!--                <mat-expansion-panel-header expandedHeight="48px">-->
-            <!--                    <mat-panel-title>-->
-            <!--                        <fa-icon [icon]="'line-chart'"></fa-icon> Statistics-->
-            <!--                    </mat-panel-title>-->
-            <!--                </mat-expansion-panel-header>-->
-
-            <!--            </mat-expansion-panel>-->
+            </mat-expansion-panel>
         </mat-accordion>
 
     </mat-card>
