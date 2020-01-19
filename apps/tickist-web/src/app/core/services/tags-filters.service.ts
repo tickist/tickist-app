@@ -3,7 +3,9 @@ import {User} from '@data/users/models';
 import {Filter} from '@data/filter';
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class TagsFiltersService {
     filters: Filter[];
     user: User;

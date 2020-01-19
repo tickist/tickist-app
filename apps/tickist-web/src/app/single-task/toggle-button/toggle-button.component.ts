@@ -1,8 +1,4 @@
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
-    ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 
 @Component({
     selector: 'tickist-toggle-button',
@@ -10,7 +6,7 @@ import {
     styleUrls: ['./toggle-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ToggleButtonComponent implements OnInit {
+export class ToggleButtonComponent implements OnChanges {
     @Input() isDone: boolean;
     @Input() isOnHold: boolean;
     @Input() priority: string;
@@ -19,7 +15,8 @@ export class ToggleButtonComponent implements OnInit {
     constructor() {
     }
 
-    ngOnInit() {
+
+    ngOnChanges(changes: SimpleChanges) {
         if (this.isDone && !this.isOnHold) {
             this.icon = ['far', 'check-square'];
         } else if (!this.isDone && !this.isOnHold) {

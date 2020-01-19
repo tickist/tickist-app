@@ -93,12 +93,6 @@ import {TickistSingleTaskModule} from '../single-task/single-task.module';
         AngularFireStorageModule,
         TickistSingleTaskModule
     ],
-    providers: [
-        TaskService,
-        UserService,
-        AuthService,
-
-    ],
     entryComponents: [],
     exports: [
         NavComponent,

@@ -1,7 +1,9 @@
 import {Injectable, ErrorHandler, Injector} from '@angular/core';
 import {ErrorService} from './error.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MyErrorHandler implements ErrorHandler {
   errorService: ErrorService;
   constructor(private injector: Injector) {

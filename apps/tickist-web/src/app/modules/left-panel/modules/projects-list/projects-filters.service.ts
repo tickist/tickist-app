@@ -4,7 +4,9 @@ import {Filter} from '@data/filter';
 
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class ProjectsFiltersService {
     filters: Filter[];
     user: User;

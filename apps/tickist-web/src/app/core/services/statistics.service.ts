@@ -1,15 +1,13 @@
-import {Observable, of} from 'rxjs';
+import {of} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {environment} from '../../../environments/environment';
-import {AppStore} from '../../store';
-import {map} from 'rxjs/operators';
 import {selectActiveDate} from '../selectors/active-date.selectors';
 import {IActiveDateElement} from '@data/active-data-element.interface';
-import {ChartStatistics, DailyStatistics, GlobalStatistics} from '@data/statistics';
 import {format} from 'date-fns';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class StatisticsService {
     activeDateElement: IActiveDateElement;
 

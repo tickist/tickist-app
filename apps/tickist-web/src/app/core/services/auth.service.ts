@@ -10,7 +10,9 @@ import {FetchedLoginUser} from '../actions/auth.actions';
 import {Router} from '@angular/router';
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class AuthService {
     user$: Observable<User>;
     usersCollection: AngularFirestoreCollection;

@@ -5,7 +5,9 @@ import {AngularFirestore} from '@angular/fire/firestore';
 const tagsCollectionName = 'tags';
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class TagService {
 
     constructor(private db: AngularFirestore) {

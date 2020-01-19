@@ -11,7 +11,9 @@ import {setStatusDoneLogic} from '../../single-task/utils/set-status-to-done-log
 
 const tasksCollectionName = 'tasks';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class TaskService {
     tasks$: Observable<Task[]>;
 

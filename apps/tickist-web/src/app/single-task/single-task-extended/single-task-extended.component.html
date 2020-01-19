@@ -130,8 +130,8 @@
         <mat-form-field>
             <mat-select placeholder="Assigned to:" [(ngModel)]="task.owner.id"
                         (selectionChange)="changeAssignedTo($event)">
-                <mat-option *ngFor="let user of task.taskProject.shareWith"
-                            [value]="user.id"> {{ user.username }}
+                <mat-option *ngFor="let userId of task.taskProject.shareWithIds"
+                            [value]="userId"> {{ userId | changeUserIdToUserName }}
                 </mat-option>
             </mat-select>
         </mat-form-field>

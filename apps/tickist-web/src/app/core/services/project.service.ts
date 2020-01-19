@@ -13,7 +13,9 @@ import {RequestUpdateProject} from '../actions/projects/projects.actions';
 
 const projectsCollectionName = 'projects';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class ProjectService {
     projects$: Observable<Project[]>;
     team: SimpleUser[];

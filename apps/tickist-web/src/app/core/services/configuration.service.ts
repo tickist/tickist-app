@@ -9,7 +9,9 @@ import {isOffline} from '../selectors/offline-notifications.selectors';
 import {isLeftSideNavVisible} from '../selectors/sidenav-visibility.selectors';
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class ConfigurationService {
     detectApiError$: Observable<any>;
     offlineModeNotification$: Observable<any>;

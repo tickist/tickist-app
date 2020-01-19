@@ -18,6 +18,7 @@ import {SingleTaskSimplifiedComponent} from './single-task-simplified/single-tas
 import {SingleTaskExtendedComponent} from './single-task-extended/single-task-extended.component';
 import {NoTasksComponent} from './no-tasks/no-tasks.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { ChangeUserIdToUserNamePipe } from './change-user-id-to-user-name.pipe';
 
 @NgModule({
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
@@ -35,7 +36,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         PinButtonComponent,
         RightMenuComponent, ToggleButtonComponent, TaskNameComponent, DisplayFinishDateComponent, EditRepeatingOptionComponent,
         DateOptionsComponent,
-        SingleTaskExtendedComponent, NoTasksComponent]
+        SingleTaskExtendedComponent, NoTasksComponent, ChangeUserIdToUserNamePipe]
 })
 export class TickistSingleTaskModule {
 }

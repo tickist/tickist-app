@@ -10,47 +10,14 @@ import {SortBy} from '@data/tasks/models/sortBy';
 import {Filter} from '@data/filter';
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class TasksFiltersService {
     user: User;
     assignedToAll: Filter;
     assignedToMe: Filter;
 
-    static useFilters(tasks, currentFilters) {
-        tasks = tasks
-            .filter(currentFilters[0].value)
-            .filter(currentFilters[1].value)
-            .filter(currentFilters[2].value)
-            .filter(currentFilters[3].value);
-        const tags = currentFilters.find(currentFilter => currentFilter.label === 'tags');
-        const sortingBy = currentFilters.find(currentFilter => currentFilter.label === 'sorting');
-        const searchTasks = currentFilters.find(currentFilter => currentFilter.label === 'searchTasks');
-        if (tags.value instanceof Set) {
-            tasks = tasks.filter((task: Task) => {
-                const result = [];
-                task.tags.forEach((tag: Tag) => {
-                    if (tags.value.has(tag.id)) {
-                        result.push(tag.id);
-                    }
-                });
-                return result.length === tags.value.size;
-            });
-        } else if (tags.value === 'allTags') {
-            tasks = tasks.filter((task) => {
-                return !(task.tags.length === 0);
-            });
-        } else if (tags.value === 'withoutTags') {
-            tasks = tasks.filter((task) => {
-                return (task.tags.length === 0);
-            });
-        }
-        if (searchTasks && searchTasks.value) {
-            const re = new RegExp(searchTasks.value, 'i');
-            tasks = tasks.filter((task) => re.test(task.name));
-        }
-        tasks = _.orderBy(tasks, sortingBy.sortKeys, sortingBy.order);
-        return tasks;
-    }
 
     constructor(private store: Store<{}>) {
     }
@@ -220,7 +187,7 @@ export class TasksFiltersService {
 
     static getDefaultMainFilters() {
         return [
-            new Filter({id: 1, label: 'filter', name: 'not done', value: `task => task.isDone === false`}),
+            new Filter({id: 1, label: 'filter', name: 'not done', value: `task => task.isDone === false && task.onHold === false`}),
             new Filter({id: 2, label: 'filter', name: 'w/o due date', value: `task => task.finishDate !== ''`}),
             new Filter({id: 3, label: 'filter', name: 'w/o estimated time', value: `task => task.estimateTime === null`}),
             new Filter({id: 4, label: 'filter', name: 'on hold', value: `task => task.onHold === true`})
@@ -230,10 +197,6 @@ export class TasksFiltersService {
 
     updateCurrentFilter(currentFilter) {
         this.store.dispatch(new tasksAction.UpdateCurrentFilter(currentFilter));
-    }
-
-    resetAssignedFilterToAssignedToAll() {
-        this.updateCurrentFilter(this.assignedToAll);
     }
 
     resetAssignedFilterToAssignedToMe() {

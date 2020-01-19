@@ -17,13 +17,12 @@ import {ShareWithUser} from '@data/projects';
 
 const userCollectionName = 'users';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class UserService {
     user$: Observable<User>;
-    team$: Observable<SimpleUser[]>;
-    uploadPercent: Observable<number>;
     downloadURL: Observable<string>;
-    IMAGE_PATH = '/images/';
 
     constructor(private store: Store<{}>, private db: AngularFirestore, private storage: AngularFireStorage,
                 private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {

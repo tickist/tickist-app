@@ -3,7 +3,9 @@ import {Injectable} from '@angular/core';
 import {ConfigurationService} from './configuration.service';
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class ErrorService {
     constructor(private configurationService: ConfigurationService) {
     }

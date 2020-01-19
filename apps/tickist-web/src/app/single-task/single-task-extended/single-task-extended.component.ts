@@ -22,7 +22,6 @@ import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
 import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
-import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
 import {selectFilteredProjectsList} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';

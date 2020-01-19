@@ -91,16 +91,6 @@ import {IconsModule} from './icons.module';
     ],
     providers: [
         {provide: DateAdapter, useClass: MyDateAdapter},
-        UserService,
-        TasksFiltersService,
-        ProjectsFiltersService,
-        ProjectService,
-        TagService,
-        TagsFiltersService,
-        ConfigurationService,
-        StatisticsService,
-        MyErrorHandler,
-        ErrorService,
     ]
 })
 export class AppModule {
