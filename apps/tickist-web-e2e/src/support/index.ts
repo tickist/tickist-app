@@ -16,6 +16,12 @@
 // Import commands.js using ES2015 syntax:
 import 'cypress-pipe'
 import './commands'
+require('cypress-failed-log');
+
+Cypress.on('window:before:load', (win) => {
+    cy.spy(win.console, "log");
+    cy.spy(win.console, "error")
+});
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

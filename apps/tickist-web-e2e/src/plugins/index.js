@@ -21,12 +21,17 @@ module.exports = (on, config) => {
     // `config` is the resolved Cypress config
     on('before:browser:launch', (browser = {}, args) => {
         if (browser.name === 'chrome') {
-            args.push('--disable-dev-shm-usage')
+            args.push('--disable-dev-shm-usage');
             return args
         }
 
         return args
     });
+
+    on('task', {
+        failed: require('cypress-failed-log/src/failed')(),
+    });
+
     on('file:preprocessor',
         wp({
             webpackOptions: {
