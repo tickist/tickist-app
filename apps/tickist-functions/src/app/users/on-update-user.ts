@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import {db} from '../init';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {TaskUser} from '@data/tasks/models/task-user';
-
+import * as diff from 'recursive-diff';
 
 export const onUpdateUser = functions.firestore.document('users/{userId}')
     .onUpdate(async (change, context) => {
@@ -10,6 +10,11 @@ export const onUpdateUser = functions.firestore.document('users/{userId}')
         const before = change.before.data();
         const after = change.after.data();
         const userId = change.before.id;
+
+        const timeStamp = new Date().toISOString();
+        const userHistoryRef = change.after.ref.collection('history').doc(timeStamp);
+        await userHistoryRef.set({'beforeData': before, 'diff': diff.getDiff(before, after)});
+
         console.log('Change user avatar');
         if (before.avatarUrl !== after.avatarUrl || before.username !== after.username) {
             const ownerTasks = await db.collection('tasks')

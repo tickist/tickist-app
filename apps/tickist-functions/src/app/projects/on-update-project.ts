@@ -2,6 +2,8 @@ import * as functions from 'firebase-functions';
 import {InviteUser, InviteUserStatus, Project, ShareWithUser} from '@data/projects';
 import {db} from '../init';
 import {TaskProject} from '@data/tasks/models/task-project';
+import * as diff from 'recursive-diff';
+
 
 export const onUpdateProject = functions.firestore.document('projects/{projectId}').onUpdate(
     async (change, context) => {
@@ -10,6 +12,9 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
         const projectId = change.before.id;
         const beforeData = <Project>before.data();
         const afterData = <Project>after.data();
+        const timeStamp = new Date().toISOString();
+        const projectHistoryRef = change.after.ref.collection('history').doc(timeStamp);
+        await projectHistoryRef.set({'beforeData': beforeData, 'diff': diff.getDiff(beforeData, afterData)});
         if (beforeData.name !== afterData.name
             || beforeData.color !== afterData.color
             || beforeData.shareWith !== afterData.shareWith

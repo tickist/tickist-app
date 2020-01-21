@@ -10,7 +10,6 @@ export class ChangeUserIdToUserNamePipe implements PipeTransform {
     team: any;
 
     constructor(private store: Store<{}>) {
-      console.log("bbb")
         this.store.select(selectTeam).pipe(
 
         ).subscribe(team => {

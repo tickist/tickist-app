@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import {db} from '../init';
 import {Tag} from '@data/tags/models/tags';
 import * as firebase from 'firebase';
-import FieldValue = firebase.firestore.FieldValue;
+import * as diff from 'recursive-diff';
 
 export const onUpdateTag = functions.firestore.document('tags/{tagId}')
     .onUpdate(async (change, context) => {
@@ -11,6 +11,7 @@ export const onUpdateTag = functions.firestore.document('tags/{tagId}')
         const after = change.after;
         const beforeData = <Tag>before.data();
         const afterData = <Tag>after.data();
+
         const beforeTag = new Tag({
             id: beforeData.id,
             author: beforeData.author,
@@ -23,6 +24,9 @@ export const onUpdateTag = functions.firestore.document('tags/{tagId}')
             creationDate: afterData.creationDate,
             name: afterData.name
         });
+        const timeStamp = new Date().toISOString();
+        const tagHistoryRef = change.after.ref.collection('history').doc(timeStamp);
+        await tagHistoryRef.set({'beforeData': beforeData, 'diff': diff.getDiff(beforeData, afterData)});
 
         return db.runTransaction(async transaction => {
             if (beforeData.name !== afterData.name) {

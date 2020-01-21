@@ -1,4 +1,4 @@
-import {Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
+import {Directive, EmbeddedViewRef, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../core/selectors/user.selectors';
 import {Subject} from 'rxjs';
@@ -11,6 +11,7 @@ import {User} from '@data/users/models';
 export class FeatureFlagDirective implements OnInit, OnDestroy {
     @Input() featureFlag: string;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private embededViewRef: EmbeddedViewRef<any>;
 
     constructor(
         private vcr: ViewContainerRef,
@@ -21,10 +22,12 @@ export class FeatureFlagDirective implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.store.select(selectLoggedInUser)
-            .pipe(takeUntil(this.ngUnsubscribe))
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe((user: User) => {
-                if (user && user.flags[this.featureFlag]) {
-                    this.vcr.createEmbeddedView(this.tpl);
+                if (user && user.flags[this.featureFlag] && !this.embededViewRef) {
+                    this.embededViewRef = this.vcr.createEmbeddedView(this.tpl);
                 }
             });
     }
