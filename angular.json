@@ -147,7 +147,7 @@
         },
         "deploy": {
           "builder": "@angular/fire:deploy",
-          "options": {"project": "staging", "token": "$FIREBASE_TOKEN"}
+          "options": {"project": "staging", "token": "$FIREBASE_TOKEN", "non-interactive":  true}
         }
       }
     },

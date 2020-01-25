@@ -213,7 +213,7 @@
                         <mat-chip *ngFor="let tag of task.tags">
                             <span>{{ tag.name }}</span>
                             <span fxFlex></span>
-                            <fa-icon matTooltip="Remove tag" [icon]="'times'" (click)="removeTagFromTask(tag)"></fa-icon>
+                            <fa-icon [ngStyle]="{'margin-top': '2px', 'margin-left': '10px'}" matTooltip="Remove tag" [icon]="'times'" (click)="removeTagFromTask(tag)"></fa-icon>
                         </mat-chip>
 
                     </mat-chip-list>
