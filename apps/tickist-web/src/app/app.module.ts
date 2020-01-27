@@ -38,6 +38,8 @@ import {SortablejsModule} from 'ngx-sortablejs';
 import {AngularFireModule} from '@angular/fire';
 import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar-message.component';
 import {IconsModule} from './icons.module';
+import {AngularFireMessagingModule} from '@angular/fire/messaging';
+import {TickistNotificationsModule} from './modules/notifications/notifications.module';
 
 
 @NgModule({
@@ -80,10 +82,13 @@ import {IconsModule} from './icons.module';
         FlexLayoutModule,
         SharedModule,
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
+        ServiceWorkerModule.register('/firebase-messaging-sw.js'),
         EffectsModule.forRoot([]),
         TickistRoutingModule,
         TickistCoreModule,
-        IconsModule
+        IconsModule,
+        AngularFireMessagingModule,
+        TickistNotificationsModule
         // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],

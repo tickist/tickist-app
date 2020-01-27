@@ -1,0 +1,11 @@
+<tickist-menu-button matBadge="22" matBadgeOverlap="false" matBadgePosition="above after" [icon]="'bell'"
+                     [iconPrefix]="'far'" [color]="'white'" [fontSize]="28"  [matMenuTriggerFor]="appMenu">
+</tickist-menu-button>
+
+<mat-menu #appMenu="matMenu">
+    <mat-list role="list">
+        <mat-list-item role="listitem">Item 1</mat-list-item>
+        <mat-list-item role="listitem">Item 2</mat-list-item>
+        <mat-list-item role="listitem">Item 3</mat-list-item>
+    </mat-list>
+</mat-menu>

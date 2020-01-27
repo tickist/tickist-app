@@ -33,7 +33,6 @@ export class TagsEffects {
                     ref => ref.where('author', '==', this.authFire.auth.currentUser.uid))
                     .stateChanges();
             }),
-            // mergeMap(action => action),
             concatMap(actions => {
                 const addedTags: Tag[] = [];
                 let deletedTagId: string;

@@ -37,6 +37,7 @@ export class UserService {
 
     changePassword(values: any) {
         // @TODO
+        console.log(this.authFire);
     }
 
     changeUserAvatar(avatar: File, user: User) {

@@ -32,7 +32,9 @@
             "assets": [
               "apps/tickist-web/src/favicon.png",
               "apps/tickist-web/src/assets",
+              "apps/tickist-web/src/firebase-messaging-sw.js",
               "apps/tickist-web/src/manifest.json",
+
               "apps/tickist-web/src/robots.txt"
             ],
             "styles": [

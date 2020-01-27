@@ -1,5 +1,4 @@
-import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
-import {AppStore} from '../../../store';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Router} from '@angular/router';
 import {Task} from '@data/tasks/models/tasks';
@@ -8,12 +7,13 @@ import {ProjectService} from '../../services/project.service';
 import {TaskService} from '../../services/task.service';
 import {UserService} from '../../services/user.service';
 import {TagService} from '../../services/tag.service';
-import {MediaObserver, MediaChange} from '@angular/flex-layout';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {ConfigurationService} from '../../services/configuration.service';
 import _ from 'lodash';
-import {Observable, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {mergeMapTo, takeUntil} from 'rxjs/operators';
 import {SideNavVisibility} from '@data/configurations';
+import {AngularFireMessaging} from '@angular/fire/messaging';
 
 
 @Component({
@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     constructor(private store: Store<{}>, private taskService: TaskService, private userService: UserService,
                 private router: Router, private projectService: ProjectService, private tagService: TagService,
                 private media: MediaObserver, private configurationService: ConfigurationService,
-                private cd: ChangeDetectorRef) {
+                private cd: ChangeDetectorRef, private afMessaging: AngularFireMessaging) {
     }
 
 
@@ -38,19 +38,35 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.leftSidenavVisibility = new SideNavVisibility(
             {'open': true, 'mode': '', 'position': 'start'});
 
-        this.media.media$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((change: MediaChange) => {
+        this.media.media$.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((change: MediaChange) => {
             this.configurationService.updateLeftSidenavVisibility();
             this.cd.detectChanges();
         });
 
         this.configurationService.leftSidenavVisibility$
-            .pipe(takeUntil(this.ngUnsubscribe))
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe((visibility: SideNavVisibility) => {
                 if (!_.isEmpty(visibility)) {
                     this.leftSidenavVisibility = visibility;
                     this.cd.detectChanges();
                 }
             });
+
+    }
+
+    requestPermission() {
+        this.afMessaging.requestPermission
+            .pipe(
+                mergeMapTo(this.afMessaging.tokenChanges)
+            )
+            .subscribe(
+                (token) => { console.log('Permission granted! Save to the server!', token); },
+                (error) => { console.error(error); },
+            );
     }
 
     ngOnDestroy() {

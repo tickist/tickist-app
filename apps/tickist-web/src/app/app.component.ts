@@ -4,6 +4,7 @@ import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
 import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material';
 import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar-message.component';
+import {AngularFireMessaging} from '@angular/fire/messaging';
 
 
 @Component({
@@ -15,7 +16,7 @@ export class AppComponent implements OnInit {
     snackBarRef: MatSnackBarRef<any>;
     config: MatSnackBarConfig;
 
-    constructor(private swUpdate: SwUpdate, private meta: Meta, private snackBar: MatSnackBar) {
+    constructor(private swUpdate: SwUpdate, private meta: Meta, private snackBar: MatSnackBar, private afMessaging: AngularFireMessaging) {
         this.config = new MatSnackBarConfig();
         this.config.panelClass = ['tickist-web-snack-bar'];
         // console.log(gitInfo);
@@ -30,6 +31,9 @@ export class AppComponent implements OnInit {
                 });
             });
         }
+
+        this.afMessaging.messages
+            .subscribe((message) => { console.log(message); });
 
         this.meta.addTags([
             {name: 'description', content: 'To-do-list application inspired by GTD methodology and life experience. ' +

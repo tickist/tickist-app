@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
     ViewChild
 } from '@angular/core';
+import { IconPrefix } from '@fortawesome/fontawesome-common-types';
 
 @Component({
     selector: 'tickist-menu-button',
@@ -11,6 +12,7 @@ import {
 })
 export class MenuButtonComponent implements OnInit, OnChanges {
     @Input() icon: any;
+    @Input() iconPrefix: IconPrefix = 'fas';
     @Input() color = 'white';
     @Input() isDisabled = false;
     @Input() fontSize = '16px';

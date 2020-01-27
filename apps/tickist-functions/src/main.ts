@@ -9,4 +9,6 @@ export {onUpdateUser} from './app/users/on-update-user';
 export {onUpdateProject} from './app/projects/on-update-project';
 export {onUpdateTag} from './app/tags/on-update-tag';
 export {onDeleteTag} from './app/tags/on-delete-tag';
-export {onUpdateTask} from './app/tasks/on-update-task';
+export {createTaskNotification} from './app/tasks/on-create-task';
+export {onUpdateTask, createUpdateNotification} from './app/tasks/on-update-task';
+

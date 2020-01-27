@@ -14,18 +14,15 @@ import {UserEffects} from './effects/user.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromUser from './reducers/user.reducer';
 import * as fromAddTaskButtonVisibility from './reducers/add-task-button-visibility.reducer';
-import {UserService} from './services/user.service';
 import {TagsEffects} from './effects/tags.effects';
 import * as fromTags from './reducers/tags.reducer';
 import * as from from './reducers/auth.reducer';
 import {AuthEffects} from './effects/auth.effects';
 import {NavBarAuthPageComponent} from './header/nav-bar-auth-page/nav-bar-auth-page.component';
-import {AuthService} from './services/auth.service';
 import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
 import {ProjectsEffects} from './effects/projects.effects';
 import {ActiveProjectsIdsEffects} from './effects/active-projects-ids.effects';
 import {ActiveProjectEffects} from './effects/active-project.effects';
-import {TaskService} from './services/task.service';
 import {HomeComponent} from './layouts/home';
 import {AddTaskComponent} from './footer/add-task/add-task.component';
 import {TaskEffects} from './effects/task.effects';
@@ -51,6 +48,7 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {AngularFireStorageModule} from '@angular/fire/storage';
 import {TickistSingleTaskModule} from '../single-task/single-task.module';
+import {TickistNotificationsModule} from '../modules/notifications/notifications.module';
 
 
 @NgModule({
@@ -91,7 +89,8 @@ import {TickistSingleTaskModule} from '../single-task/single-task.module';
         AngularFireAuthModule,
         AngularFirestoreModule,
         AngularFireStorageModule,
-        TickistSingleTaskModule
+        TickistSingleTaskModule,
+        TickistNotificationsModule
     ],
     entryComponents: [],
     exports: [

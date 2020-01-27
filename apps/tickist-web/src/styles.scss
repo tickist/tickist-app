@@ -424,3 +424,13 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
 .mat-progress-spinner circle, .mat-spinner circle {
     stroke: white;
 }
+
+body {
+    a {
+        color: $white !important;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

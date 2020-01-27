@@ -9,11 +9,10 @@ import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {changeAvatar, RequestUpdateUser} from '../../../../core/actions/user.actions';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
-import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS, USER_AVATAR_PATH} from '@data/users/config-user';
+import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS} from '@data/users/config-user';
 
 @Component({
     selector: 'tickist-user',
@@ -312,13 +311,14 @@ export class UserComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    // changePassword($event, values: any): void {
-    //     this.userService.changePassword(values).subscribe(() => {
-    //     }, (error: any) => {
-    //         console.log(error);
-    //         this.changePasswordForm.setErrors({'wrongPassword': true});
-    //     });
-    // }
+    changePassword($event, values: any): void {
+        this.userService.changePassword(values)
+        //     .subscribe(() => {
+        // }, (error: any) => {
+        //     console.log(error);
+        //     this.changePasswordForm.setErrors({'wrongPassword': true});
+        // });
+    }
 
     close(): void {
         // DRY

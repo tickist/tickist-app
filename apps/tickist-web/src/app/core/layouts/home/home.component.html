@@ -1,5 +1,7 @@
 <tickist-nav></tickist-nav>
-
+<button (click)="requestPermission()">
+    Hey this is a chat app, you should let us send you notifications for these reasons!
+</button>
 <mat-sidenav-container *ngIf="leftSidenavVisibility" style="flex: 1">
     <mat-sidenav [mode]="leftSidenavVisibility.mode"
                  [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisiblity()"

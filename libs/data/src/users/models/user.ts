@@ -1,12 +1,12 @@
-
-import {SimpleUser} from './simple-user';
 import {
     DEFAULT_DAILY_SUMMARY_HOUR,
     DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT,
     DEFAULT_FUTURE_TASKS_SORT_BY,
     DEFAULT_OVERDUE_TASKS_SORT_BY,
     DEFAULT_PROJECTS_FILTER_ID,
-    DEFAULT_TAGS_FILTER_ID, DEFAULT_TASKS_ORDER_OPTIONS, DEFAULT_USER_AVATAR
+    DEFAULT_TAGS_FILTER_ID,
+    DEFAULT_TASKS_ORDER_OPTIONS,
+    DEFAULT_USER_AVATAR
 } from '../config-user';
 
 export interface IUser {
@@ -76,9 +76,7 @@ export class User {
     futureTasksSortBy = DEFAULT_FUTURE_TASKS_SORT_BY;
     projectsFilterId = DEFAULT_PROJECTS_FILTER_ID;
     tagsFilterId = DEFAULT_TAGS_FILTER_ID;
-    flags = {
-        'statistics': true
-    };
+    flags = {};
 
     constructor(user: IUser) {
         Object.assign(this, user);
