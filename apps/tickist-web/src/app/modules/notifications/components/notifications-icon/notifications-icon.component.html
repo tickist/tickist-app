@@ -1,5 +1,6 @@
-<tickist-menu-button matBadge="22" matBadgeOverlap="false" matBadgePosition="above after" [icon]="'bell'"
-                     [iconPrefix]="'far'" [color]="'white'" [fontSize]="28"  [matMenuTriggerFor]="appMenu">
+<tickist-menu-button matBadge="{{allNotificationCounter$ | async}}" matBadgeOverlap="false"
+                     matBadgePosition="above after" [icon]="'bell'"
+                     [iconPrefix]="'far'" [color]="'white'" [fontSize]="28" [matMenuTriggerFor]="appMenu">
 </tickist-menu-button>
 
 <mat-menu #appMenu="matMenu">

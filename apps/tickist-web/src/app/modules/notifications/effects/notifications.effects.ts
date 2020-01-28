@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
-import {AddTags, DeleteTag, QueryTags, TagActionTypes, UpdateTag} from '../../../core/actions/tags.actions';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
+import {QueryTags} from '../../../core/actions/tags.actions';
 import {concatMap, switchMap} from 'rxjs/operators';
-import {Tag} from '@data/tags';
 import {Update} from '@ngrx/entity';
 import {addNotifications, queryNotifications, updateNotification} from '../actions/notifications.actions';
 import {AngularFirestore} from '@angular/fire/firestore';

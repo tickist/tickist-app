@@ -19,7 +19,6 @@ export class AppComponent implements OnInit {
     constructor(private swUpdate: SwUpdate, private meta: Meta, private snackBar: MatSnackBar, private afMessaging: AngularFireMessaging) {
         this.config = new MatSnackBarConfig();
         this.config.panelClass = ['tickist-web-snack-bar'];
-        // console.log(gitInfo);
     }
 
     ngOnInit(): void {

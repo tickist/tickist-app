@@ -40,6 +40,12 @@ export class UserService {
         console.log(this.authFire);
     }
 
+    savefcmToken(token) {
+        return this.db.collection(userCollectionName)
+            .doc(this.authFire.auth.currentUser.uid)
+            .update({fcmToken: token});
+    }
+
     changeUserAvatar(avatar: File, user: User) {
         const avatarPath = USER_AVATAR_PATH + user.id + '/' + avatar.name;
         const fileRef = this.storage.ref(avatarPath);

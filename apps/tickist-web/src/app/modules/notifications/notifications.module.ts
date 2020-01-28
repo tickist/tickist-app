@@ -6,11 +6,24 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {NotificationsIconComponent} from './components/notifications-icon/notifications-icon.component';
 import {IconsModule} from '../../icons.module';
+import {StoreModule} from '@ngrx/store';
+import {notificationsFeatureKey, reducer as notificationReducer} from './reducers/notifications.reducer';
+import {EffectsModule} from '@ngrx/effects';
+import {NotificationsEffects} from './effects/notifications.effects';
 
 
 @NgModule({
-    imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistSharedModule, IconsModule],
+    imports: [
+        CommonModule,
+        TickistMaterialModule,
+        FormsModule,
+        FlexLayoutModule,
+        EffectsModule.forFeature([NotificationsEffects]),
+        ReactiveFormsModule,
+        TickistSharedModule,
+        IconsModule,
+        StoreModule.forFeature(notificationsFeatureKey, notificationReducer)
+    ],
     providers: [],
     exports: [NotificationsIconComponent],
     declarations: [

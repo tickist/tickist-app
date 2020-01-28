@@ -64,7 +64,10 @@ export class HomeComponent implements OnInit, OnDestroy {
                 mergeMapTo(this.afMessaging.tokenChanges)
             )
             .subscribe(
-                (token) => { console.log('Permission granted! Save to the server!', token); },
+                (token) => {
+                    console.log('Permission granted! Save to the server!', token);
+                    this.userService.savefcmToken(token)
+                    },
                 (error) => { console.error(error); },
             );
     }

@@ -18,6 +18,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Store} from '@ngrx/store';
+import {queryNotifications} from '../../modules/notifications/actions/notifications.actions';
 
 
 @Injectable()
@@ -116,6 +117,7 @@ export class UserEffects {
                 new QueryTasks(),
                 new QueryTags(),
                 new QueryProjects(),
+                queryNotifications()
             ])
         );
 
