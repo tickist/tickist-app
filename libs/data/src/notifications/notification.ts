@@ -18,6 +18,7 @@ export class Notification {
     icon = '';
     recipient: string;
     isRead = false;
+    date: Date;
 
 
     constructor(notification: INotification) {

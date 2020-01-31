@@ -8,7 +8,9 @@ export const selectAllNotifications = createSelector(
     selectAll
 );
 
-export const selectLenghtOfAllUnreadNotifications = createSelector(
+export const selectLengthOfAllUnreadNotifications = createSelector(
     selectAllNotifications,
-    (notifications) => notifications.filter(notification => notification.isRead).length
-)
+    (notifications) => {
+        return notifications.filter(notification => !notification.isRead).length
+    }
+);

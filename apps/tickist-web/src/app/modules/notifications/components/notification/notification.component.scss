@@ -1,0 +1,17 @@
+@import './app/shared/variables';
+
+.notification-title {
+    color: $white;
+    font-weight: bold;
+}
+
+.notification-description {
+    color: $white;
+}
+
+:host {
+    div {
+        margin: 5px 0 5px 0;
+    }
+
+}

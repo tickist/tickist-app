@@ -10,6 +10,7 @@ import {StoreModule} from '@ngrx/store';
 import {notificationsFeatureKey, reducer as notificationReducer} from './reducers/notifications.reducer';
 import {EffectsModule} from '@ngrx/effects';
 import {NotificationsEffects} from './effects/notifications.effects';
+import { NotificationComponent } from './components/notification/notification.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import {NotificationsEffects} from './effects/notifications.effects';
     providers: [],
     exports: [NotificationsIconComponent],
     declarations: [
-        NotificationsIconComponent]
+        NotificationsIconComponent,
+        NotificationComponent]
 })
 export class TickistNotificationsModule {
 }
