@@ -1,8 +1,19 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Renderer2,
+    ViewChild
+} from '@angular/core';
 import {AngularFireStorage} from '@angular/fire/storage';
-import {Observable, of, throwError} from 'rxjs';
+import {Observable, of, Subject, throwError} from 'rxjs';
 import {DEFAULT_USER_AVATAR, USER_AVATAR_PATH} from '@data/users/config-user';
-import {catchError, delay, mergeMap, retry, retryWhen} from 'rxjs/operators';
+import {catchError, delay, mergeMap, retry, retryWhen, takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'tickist-user-avatar',
@@ -10,7 +21,7 @@ import {catchError, delay, mergeMap, retry, retryWhen} from 'rxjs/operators';
     styleUrls: ['./user-avatar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserAvatarComponent implements OnInit, OnChanges {
+export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     @Input() userId: string;
     @Input() username?: string;
     @Input() avatarUrl: string;
@@ -19,6 +30,9 @@ export class UserAvatarComponent implements OnInit, OnChanges {
     MAX_AVATAR_SIZE = '200x200';
     imgStyle: any = {};
     avatar$: Observable<string>;
+    url: string;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
 
     constructor(private storage: AngularFireStorage) {
     }
@@ -32,18 +46,27 @@ export class UserAvatarComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges() {
-        let retries = 3;
+
         if (this.avatarUrl === DEFAULT_USER_AVATAR) {
-            this.avatar$ = of(this.addMaxAvatarSizeToAvatarUrl());
+            this.url = this.addMaxAvatarSizeToAvatarUrl();
+            // this.avatar$ = of(this.addMaxAvatarSizeToAvatarUrl());
         } else {
-            this.avatar$ = this.storage.ref(this.createAvatarPath()).getDownloadURL().pipe(
-                retryWhen((errors: Observable<any>) =>
-                    errors.pipe(
-                        delay(1000),
-                        mergeMap(error => retries-- > 0 ? of(error) : throwError(new Error('max retries'))
-                        ))
-                ))
+            this.updateUrlFromFirebaseStorage();
+
+
         }
+    }
+
+    handleError($event) {
+        this.url = '';
+        setTimeout(() => {
+            this.updateUrlFromFirebaseStorage();
+        }, 1000)
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     private createAvatarPath(): string {
@@ -53,6 +76,26 @@ export class UserAvatarComponent implements OnInit, OnChanges {
     private addMaxAvatarSizeToAvatarUrl() {
         const extension = this.avatarUrl.slice(-4);
         return this.avatarUrl.slice(0, -4) + '_' + this.MAX_AVATAR_SIZE + extension;
+    }
+
+    private updateUrlFromFirebaseStorage() {
+        let retries = 3;
+        this.url = localStorage.getItem(this.createAvatarPath());
+        this.storage.ref(this.createAvatarPath()).getDownloadURL().pipe(
+            retryWhen((errors: Observable<any>) =>
+                errors.pipe(
+                    delay(1000),
+                    mergeMap(error => retries-- > 0 ? of(error) : throwError(new Error('max retries'))
+                    ))
+            ),
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(avatarUrl => {
+            const userAvatarPath = localStorage.getItem(this.createAvatarPath());
+            if (userAvatarPath !== avatarUrl) {
+                localStorage.setItem(this.createAvatarPath(), avatarUrl);
+            }
+            this.url = avatarUrl;
+        });
     }
 
 }

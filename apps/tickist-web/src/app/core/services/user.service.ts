@@ -55,9 +55,9 @@ export class UserService {
         //  this.uploadPercent = task.percentageChanges();
         // get notified when the download URL is available
         task.snapshotChanges().pipe(
-            finalize(() => {
-                this.downloadURL = fileRef.getDownloadURL();
-                this.downloadURL.subscribe(() => (this.store.dispatch(changeAvatar({avatarUrl: avatar.name}))));
+            finalize(async () => {
+                this.downloadURL = await fileRef.getDownloadURL().toPromise();
+                this.store.dispatch(changeAvatar({avatarUrl: avatar.name}));
             })
             )
             .subscribe();

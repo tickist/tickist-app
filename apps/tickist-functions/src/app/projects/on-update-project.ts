@@ -7,7 +7,6 @@ import {equals} from 'ramda';
 import {createNotification} from '../notifications/create-notification';
 import {User} from '@data/users';
 import {Notification} from '@data/notifications';
-import {user} from 'firebase-functions/lib/providers/auth';
 
 
 export const onUpdateProject = functions.firestore.document('projects/{projectId}').onUpdate(
