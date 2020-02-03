@@ -20,7 +20,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-  apt-get install -y libgconf-2-4
+    apt-get install -y libgconf-2-4
   displayName: 'install dependencies'
 
 - script: |
