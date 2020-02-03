@@ -12,7 +12,8 @@ export const createTaskNotification = functions.firestore.document('tasks/{taskI
             await createNotification({
                 title,
                 description,
-                recipient: taskData.owner.id
+                recipient: taskData.owner.id,
+                type: 'changesTaskFromSharedListThatIsAssignedToMe'
             } as Notification)
         }
     });

@@ -37,7 +37,8 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
                     await createNotification({
                         title,
                         description,
-                        recipient: userId
+                        recipient: userId,
+                        type: 'completesTaskFromSharedList'
                     } as Notification);
                 }
             }
@@ -49,7 +50,8 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
             await createNotification({
                 title,
                 description,
-                recipient: afterData.owner.id
+                recipient: afterData.owner.id,
+                type: 'changesTaskFromSharedListThatIsAssignedToMe'
             } as Notification);
         } else if (context.auth.uid === afterData.owner.id && afterData.author.id !== afterData.owner.id) {
             const title = ``;
@@ -58,7 +60,8 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
             await createNotification({
                 title,
                 description,
-                recipient: afterData.author.id
+                recipient: afterData.author.id,
+                type: 'changesTaskFromSharedListThatIAssignedToHimHer'
             } as Notification);
         } else if ((afterData.author.id !== afterData.owner.id) &&
             (afterData.owner.id !== context.auth.uid) &&
@@ -68,12 +71,14 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
             await createNotification({
                 title,
                 description,
-                recipient: afterData.owner.id
+                recipient: afterData.owner.id,
+                type: 'changesTaskFromSharedListThatIAssignedToHimHer'
             } as Notification);
             await createNotification({
                 title,
                 description,
-                recipient: afterData.author.id
+                recipient: afterData.author.id,
+                type: 'changesTaskFromSharedListThatIAssignedToHimHer'
             } as Notification);
         }
 

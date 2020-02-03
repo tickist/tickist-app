@@ -13,7 +13,7 @@ export const onCreateNotification = functions.firestore.document('notifications/
                 body: notificationData.description,
             }
         };
-        if (userData.fcmToken) {
+        if (userData.fcmToken && userData[notificationData.type]) {
             await messaging.sendToDevice(userData.fcmToken, payload);
         }
 

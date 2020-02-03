@@ -132,7 +132,8 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
                     await createNotification({
                         title,
                         description,
-                        recipient: userId
+                        recipient: userId,
+                        type: 'deletesListSharedWithMe'
                     } as Notification);
                 }
             }
@@ -144,11 +145,15 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
                     if (userId === authUser.id) {
                         const title = `Change in project`;
                         const description = `{{ author_username }} left the shared project ${afterData.name}`;
-                        await createNotification({
-                            title,
-                            description,
-                            recipient: null
-                        } as Notification);
+                        const recipients = afterData.shareWithIds.filter(recipientId => userId !== recipientId);
+                        for (const recipient of recipients) {
+                            await createNotification({
+                                title,
+                                description,
+                                recipient: recipient,
+                                type: 'leavesSharedList'
+                            } as Notification);
+                        }
                     } else {
                         const title = `Change in project`;
                         const description = `${authUser.username} removed you from the shared project ${afterData.name}
@@ -156,7 +161,8 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
                         await createNotification({
                             title,
                             description,
-                            recipient: userId
+                            recipient: userId,
+                            type: 'removesMeFromSharedList'
                         } as Notification);
                     }
                 }
@@ -169,7 +175,8 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
                     await createNotification({
                         title,
                         description,
-                        recipient: userId
+                        recipient: userId,
+                        type: 'sharesListWithMe'
                     } as Notification);
                 }
 
