@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {Project, ProjectWithAllDescendants, ProjectWithLevel} from '@data/projects';
+import {ProjectWithAllDescendants, ProjectWithLevel} from '@data/projects';
 import {ProjectService} from '../../../../../../core/services/project.service';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
@@ -8,7 +8,6 @@ import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog
 import {MatDialog} from '@angular/material/dialog';
 import {User} from '@data/users/models';
 import {AddNewActiveProjectId, DeleteActiveProjectId} from '../../../../../../core/actions/projects/active-projects-ids.actions';
-import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -136,10 +135,8 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     changeId() {
         if (this.isActive) {
             this.store.dispatch(new AddNewActiveProjectId({projectId: this.project.id}));
-
         } else {
             this.store.dispatch(new DeleteActiveProjectId({projectId: this.project.id}));
-
         }
     }
 
@@ -178,7 +175,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     }
 
     navigateTo(path, projectId, $event) {
-        const elementClickPath = $event.path;
+        const elementClickPath = $event.path || ($event.composedPath && $event.composedPath());
         const mdCheckbox = elementClickPath.find(elem => elem.localName === 'mat-checkbox');
         if (!mdCheckbox) {
             this.router.navigate(
