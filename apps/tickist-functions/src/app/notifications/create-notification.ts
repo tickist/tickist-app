@@ -1,5 +1,5 @@
 import {db} from '../init';
-import { Notification } from '@data/notifications';
+import { Notification } from '@data';
 const admin = require('firebase-admin');
 
 export async function createNotification(notificationObject: Notification) {

@@ -4,9 +4,9 @@ import {db} from '../init';
 import {TaskProject} from '@data/tasks/models/task-project';
 import * as diff from 'recursive-diff';
 import {equals} from 'ramda';
-import {createNotification} from '../notifications/create-notification';
 import {User} from '@data/users';
 import {Notification} from '@data/notifications';
+import {createNotification} from '../notifications/create-notification';
 
 
 export const onUpdateProject = functions.firestore.document('projects/{projectId}').onUpdate(
@@ -175,4 +175,5 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
 
             }
         }
-    );
+    }
+);
