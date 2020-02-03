@@ -1,8 +1,5 @@
 {
-    "rulesDirectory": [
-        "node_modules/@nrwl/workspace/src/tslint",
-        "node_modules/codelyzer"
-    ],
+    "rulesDirectory": ["node_modules/@nrwl/workspace/src/tslint", "node_modules/codelyzer"],
     "extends": ["ngrx-tslint-rules/recommended"],
     "rules": {
         "arrow-return-shorthand": true,
@@ -16,51 +13,42 @@
             true,
             "eval",
             ["describe", "only"],
-            {"name": ["it", "only"], "message": "don't focus tests"},
+            {
+                "name": ["it", "only"],
+                "message": "don't focus tests"
+            },
             {
                 "name": ["chai", "assert", "equal"],
                 "message": "Use 'strictEqual' instead."
             }
         ],
         "forin": true,
-        "import-blacklist": [
-            true,
-            "rxjs/Rx"
-        ],
+        "import-blacklist": [true, "rxjs/Rx"],
         "interface-over-type-literal": true,
-        "max-line-length": [true, {"limit": 140, "ignore-pattern": "^import |^export {(.*?)}"}],
+        "max-line-length": [
+            true,
+            {
+                "limit": 140,
+                "ignore-pattern": "^import |^export {(.*?)}"
+            }
+        ],
         "member-access": false,
         "member-ordering": [
             true,
             {
-                "order": [
-                    "static-field",
-                    "instance-field",
-                    "static-method",
-                    "instance-method"
-                ]
+                "order": ["static-field", "instance-field", "static-method", "instance-method"]
             }
         ],
         "no-arg": true,
         "no-bitwise": true,
-        "no-console": [
-            true,
-            "debug",
-            "info",
-            "time",
-            "timeEnd",
-            "trace"
-        ],
+        "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
         "no-construct": true,
         "no-debugger": true,
         "no-duplicate-super": true,
         "no-empty": false,
         "no-empty-interface": true,
         "no-eval": true,
-        "no-inferrable-types": [
-            true,
-            "ignore-params"
-        ],
+        "no-inferrable-types": [true, "ignore-params"],
         "no-misused-new": true,
         "no-non-null-assertion": true,
         "no-shadowed-variable": true,
@@ -73,10 +61,7 @@
         "object-literal-sort-keys": false,
         "prefer-const": true,
         "radix": true,
-        "triple-equals": [
-            true,
-            "allow-null-check"
-        ],
+        "triple-equals": [true, "allow-null-check"],
         "unified-signatures": true,
         "variable-name": false,
         "nx-enforce-module-boundaries": [
@@ -86,25 +71,14 @@
                 "depConstraints": [
                     {
                         "sourceTag": "*",
-                        "onlyDependOnLibsWithTags": [
-                            "*"
-                        ]
+                        "onlyDependOnLibsWithTags": ["*"]
                     }
-                ]
+                ],
+                "enforceBuildableLibDependency": true
             }
         ],
-        "directive-selector": [
-            true,
-            "attribute",
-            "tickist",
-            "camelCase"
-        ],
-        "component-selector": [
-            true,
-            "element",
-            "tickist",
-            "kebab-case"
-        ],
+        "directive-selector": [true, "attribute", "tickist", "camelCase"],
+        "component-selector": [true, "element", "tickist", "kebab-case"],
         "no-conflicting-lifecycle": true,
         "no-host-metadata-property": true,
         "no-input-rename": true,
@@ -126,6 +100,5 @@
     },
     "rxjs-no-unsafe-switchmap": {
         "severity": "error"
-        // https://blog.angularindepth.com/switchmap-bugs-b6de69155524
     }
 }

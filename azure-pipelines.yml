@@ -20,14 +20,14 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    apt-get install -y libgconf-2-4
+    sudo apt-get install -y libgconf-2-4 libgtk2.0-0 libgtk-3-0 libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
   displayName: 'install dependencies'
 
 - script: |
     npm install -g @angular/cli
     npm install -g firebase-tools
     npm install -g npm@6.9.2
-    npm install
+    npm ci
   displayName: 'npm install'
 
 - script: |
@@ -44,7 +44,6 @@ steps:
   displayName: 'Deploy firebase rules and firebase functions'
 
 - script: |
-    npm run cy:verify
     npm run e2e
   displayName: 'e2e tests'
 

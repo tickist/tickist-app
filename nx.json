@@ -9,7 +9,8 @@
     },
     "projects": {
         "tickist-web-e2e": {
-            "tags": []
+            "tags": [],
+            "implicitDependencies": ["tickist-web"]
         },
         "tickist-web": {
             "tags": []
