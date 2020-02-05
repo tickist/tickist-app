@@ -31,6 +31,7 @@ import {FormControl} from '@angular/forms';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {removeTagsNotBelongingToUser} from '@tickist/utils';
 import {Tag} from '@data/tags/models/tags';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 
 @Component({
@@ -86,7 +87,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     constructor(private taskService: TaskService, private configurationService: ConfigurationService,
                 public dialog: MatDialog, private projectService: ProjectService, private renderer: Renderer2,
-                public store: Store<{}>) {
+                public store: Store<{}>, private fireAuth: AngularFireAuth) {
         super(store, dialog);
         this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
     }
@@ -164,7 +165,9 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
             this.selectTaskProject.setValue(changes.task.currentValue.taskProject.id, {emitEvent: false});
         }
         if (changes.hasOwnProperty('task') && changes.task.currentValue) {
-            this.tags = removeTagsNotBelongingToUser(this.task.tags, this.task.owner.id)
+            console.log(this.task.tags)
+            this.tags = removeTagsNotBelongingToUser(this.task.tags, this.fireAuth.auth.currentUser.uid);
+            console.log(this.tags)
         }
     }
 

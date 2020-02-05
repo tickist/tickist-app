@@ -31,7 +31,7 @@
                                  (click)="changeShowing('isDescription')">
             </tickist-menu-button>
             <tickist-menu-button [icon]="'tags'"
-                                 [isDisabled]="task.tags.length === 0"
+                                 [isDisabled]="tags.length === 0"
                                  (click)="changeShowing('isTags')">
             </tickist-menu-button>
             <tickist-menu-button [icon]="'redo'" [matTooltip]="repeatString"
@@ -88,7 +88,7 @@
             </tickist-menu-button>
         </div>
         <mat-chip-list>
-            <mat-chip *ngFor="let tag of task.tags">
+            <mat-chip *ngFor="let tag of tags">
                 <span class="chip-name">{{ tag.name }}</span>
                 <span fxFlex></span>
                 <fa-icon matTooltip="Remove tag" (click)="removeTag(tag)" [icon]="'times'"></fa-icon>

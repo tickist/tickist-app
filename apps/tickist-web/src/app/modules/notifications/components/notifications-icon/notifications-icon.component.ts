@@ -3,6 +3,7 @@ import {Observable} from 'rxjs';
 import {Notification} from '@data/notifications';
 import {Store} from '@ngrx/store';
 import {selectAllNotifications, selectLengthOfAllUnreadNotifications} from '../../selectors/notifications.selectors';
+import {markAllNotificationsAsRead} from '../../actions/notifications.actions';
 
 @Component({
     selector: 'tickist-notifications-icon',
@@ -19,6 +20,10 @@ export class NotificationsIconComponent implements OnInit {
     ngOnInit() {
         this.allNotificationCounter$ = this.store.select(selectLengthOfAllUnreadNotifications);
         this.allNotifications$ = this.store.select(selectAllNotifications)
+    }
+
+    markAllAsRead() {
+        this.store.dispatch(markAllNotificationsAsRead())
     }
 
 }

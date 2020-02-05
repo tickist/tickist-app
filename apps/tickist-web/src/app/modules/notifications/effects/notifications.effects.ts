@@ -1,12 +1,15 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {QueryTags} from '../../../core/actions/tags.actions';
-import {concatMap, switchMap} from 'rxjs/operators';
+import {concatMap, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Update} from '@ngrx/entity';
-import {addNotifications, queryNotifications, updateNotification} from '../actions/notifications.actions';
+import {addNotifications, markAllNotificationsAsRead, queryNotifications, updateNotification} from '../actions/notifications.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Notification} from '@data/notifications';
+import {selectAllUnreadNotificationsIds} from '../selectors/notifications.selectors';
+import {NotificationsService} from '../services/notifications.service';
+import {Store} from '@ngrx/store';
 
 
 @Injectable()
@@ -24,7 +27,7 @@ export class NotificationsEffects {
                 }),
                 concatMap(actions => {
                     const addedNotifications: Notification[] = [];
-                    let deletedTagId: string;
+                    let deletedNotificationId: string;
                     let updatedNotification: Update<Notification>;
                     console.log(actions);
                     actions.forEach((action => {
@@ -43,7 +46,7 @@ export class NotificationsEffects {
                             };
                         }
                         if (action.type === 'removed') {
-                            deletedTagId = action.payload.doc.id;
+                            deletedNotificationId = action.payload.doc.id;
                         }
                     }));
                     const returnsActions = [];
@@ -58,7 +61,27 @@ export class NotificationsEffects {
                 })
             ));
 
-    constructor(private actions$: Actions, private db: AngularFirestore, private authFire: AngularFireAuth) {
+    markAllNotificationsAsRead$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(markAllNotificationsAsRead),
+            withLatestFrom(this.store.select(selectAllUnreadNotificationsIds)),
+            map(([, unreadNotificationsIds]) => {
+                this.notificationsService.markAllAsRead(unreadNotificationsIds);
+            })
+        ), {dispatch: false}
+    );
+
+    markAs$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateNotification),
+            map(action => {
+                this.notificationsService.updateNotification(action.notification.changes);
+            })
+        ), {dispatch: false}
+    );
+
+    constructor(private actions$: Actions, private db: AngularFirestore, private authFire: AngularFireAuth, private store: Store<{}>,
+                private notificationsService: NotificationsService) {
     }
 
 }

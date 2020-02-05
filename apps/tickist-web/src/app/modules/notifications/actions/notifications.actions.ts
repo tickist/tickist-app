@@ -14,6 +14,10 @@ export const addNotification = createAction(
     props<{notification: Notification}>()
 );
 
+export const markAllNotificationsAsRead = createAction(
+    '[Notifications] Mark all notifications as read'
+);
+
 export const updateNotification = createAction(
     '[Notifications] Update notification',
     props<{notification: Update<Notification>}>()

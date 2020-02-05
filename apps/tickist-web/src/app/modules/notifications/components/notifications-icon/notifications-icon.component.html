@@ -5,4 +5,8 @@
 
 <mat-menu #appMenu="matMenu">
     <tickist-notification *ngFor="let notification of (allNotifications$ | async)" [notification]="notification"></tickist-notification>
+    <div fxLayout="row"  fxLayoutAlign="center center" >
+        <button type="button" mat-button class="button" (click)="markAllAsRead()">Mark all as read</button>
+    </div>
+
 </mat-menu>
