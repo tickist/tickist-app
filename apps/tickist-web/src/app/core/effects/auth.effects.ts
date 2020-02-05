@@ -68,7 +68,7 @@ export class AuthEffects {
             if (this.location.path().includes(signupRoutesName.SIGNUP)) {
                 this.router.navigateByUrl(`/${signupRoutesName.SIGNUP}`);
             } else {
-                this.router.navigateByUrl('/login');
+                this.router.navigateByUrl('/login').catch((error) => console.log(error));
             }
 
         }),
