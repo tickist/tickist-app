@@ -3,7 +3,13 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {QueryTags} from '../../../core/actions/tags.actions';
 import {concatMap, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Update} from '@ngrx/entity';
-import {addNotifications, markAllNotificationsAsRead, queryNotifications, updateNotification} from '../actions/notifications.actions';
+import {
+    addNotifications,
+    markAllNotificationsAsRead,
+    queryNotifications,
+    updateNotification,
+    updateNotifications
+} from '../actions/notifications.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Notification} from '@data/notifications';
@@ -22,13 +28,17 @@ export class NotificationsEffects {
                 switchMap(() => {
                     return this.db.collection(
                         'notifications',
-                        ref => ref.where('recipient', '==', this.authFire.auth.currentUser.uid).limit(30))
+                        ref => ref
+                            .where('recipient', '==', this.authFire.auth.currentUser.uid)
+                            .limit(30)
+                            .orderBy('date')
+                        )
                         .stateChanges();
                 }),
                 concatMap(actions => {
                     const addedNotifications: Notification[] = [];
                     let deletedNotificationId: string;
-                    let updatedNotification: Update<Notification>;
+                    const updatedNotifications: Update<Notification>[] = [];
                     console.log(actions);
                     actions.forEach((action => {
                         if (action.type === 'added') {
@@ -40,10 +50,10 @@ export class NotificationsEffects {
                         }
                         if (action.type === 'modified') {
                             const data: any = action.payload.doc.data();
-                            updatedNotification = {
+                            updatedNotifications.push({
                                 id: action.payload.doc.id,
                                 changes: new Notification({...data})
-                            };
+                            });
                         }
                         if (action.type === 'removed') {
                             deletedNotificationId = action.payload.doc.id;
@@ -53,8 +63,8 @@ export class NotificationsEffects {
                     if (addedNotifications.length > 0) {
                         returnsActions.push(addNotifications({notifications: addedNotifications}));
                     }
-                    if (updatedNotification) {
-                        returnsActions.push(updateNotification({notification: updatedNotification}));
+                    if (updatedNotifications.length > 0) {
+                        returnsActions.push(updateNotifications({notifications: updatedNotifications}));
                     }
 
                     return returnsActions;

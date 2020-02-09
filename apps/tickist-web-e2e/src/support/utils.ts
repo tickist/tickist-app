@@ -47,6 +47,10 @@ export function removeOldFirebaseData() {
     cy.callFirestore('delete', 'users', {
         recursive: true
     });
+
+    cy.callFirestore('delete', 'notifications', {
+        recursive: true
+    });
 }
 
 export function clickMenuElement(element: string) {

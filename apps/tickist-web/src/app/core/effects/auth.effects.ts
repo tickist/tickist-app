@@ -1,12 +1,11 @@
 import {Injectable} from '@angular/core';
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {AuthActionTypes, FetchedLoginUser, Login, Logout} from '../actions/auth.actions';
 import {catchError, filter, map, mapTo, switchMap, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {defer, of} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
 import {UserService} from '../services/user.service';
 import {AddUser} from '../actions/user.actions';
 import {ResetStore} from '../../tickist.actions';
@@ -15,10 +14,8 @@ import {environment} from '@env/environment';
 import {AuthService} from '../services/auth.service';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {signupRoutesName} from '../../modules/signup/routes-names';
-import {TasksFiltersService} from '../services/tasks-filters.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
-
 
 
 @Injectable()
@@ -41,20 +38,24 @@ export class AuthEffects {
                 console.log(action);
 
                 return this.db.collection('users').doc(action.payload.uid).get().pipe(
-                    catchError((err) => of(err))
+                    filter(snapshot => snapshot.exists),
+                    tap((snapshot: any) => {
+                        if (environment.production) {
+                            LogRocket.identify(snapshot.id, {
+                                name: snapshot.data().username,
+                                email: snapshot.data().email,
+                            });
+                        }
+                    }),
+                    map((snapshot: any) => {
+                        return new AddUser({user: new User({id: snapshot.id, ...snapshot.data()})});
+                    }),
+                    catchError((err) => {
+                        console.log('Tutaj jestem');
+                        console.log({err});
+                        return of(new Error(err))
+                    })
                 );
-            }),
-            filter(snapshot => snapshot.exists),
-            tap((snapshot: any) => {
-                if (environment.production) {
-                    LogRocket.identify(snapshot.id, {
-                        name: snapshot.data().username,
-                        email: snapshot.data().email,
-                    });
-                }
-            }),
-            map((snapshot: any) => {
-                return new AddUser({user: new User({id: snapshot.id, ...snapshot.data()})});
             })
         );
 
@@ -90,7 +91,6 @@ export class AuthEffects {
     init$ = defer(() => {
         return this.authService.authState$.pipe(
             map(state => {
-                console.log(state);
                 if (state !== null) {
                     return new FetchedLoginUser({uid: state.uid});
                 }

@@ -28,20 +28,21 @@ export class ChooseDayComponent implements OnInit, OnDestroy {
         this.store.select(selectActiveDate)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((activeDateElement: IActiveDateElement) => {
-            if (activeDateElement.state === stateActiveDateElement.future) {
-                this.selectedDateFormControl.setValue('');
-            } else if (activeDateElement.state === stateActiveDateElement.weekdays) {
-                const today = new Date();
-                const diffAbsTodaySelectedDate = differenceInDays(today, this.selectedDateFormControl.value);
-                if (diffAbsTodaySelectedDate < 7) {
+                if (activeDateElement.state === stateActiveDateElement.future) {
                     this.selectedDateFormControl.setValue('');
+                } else if (activeDateElement.state === stateActiveDateElement.weekdays) {
+                    const today = new Date();
+                    const diffAbsTodaySelectedDate = this.selectedDateFormControl.value ?
+                        differenceInDays(today, this.selectedDateFormControl.value) : 0;
+                    if (diffAbsTodaySelectedDate < 7) {
+                        this.selectedDateFormControl.setValue('');
+                    }
+                    const diffAbsTodayActiveDay = differenceInDays(today, activeDateElement.date);
+                    if (diffAbsTodayActiveDay > 7 && isDate(activeDateElement.date)) {
+                        this.selectedDateFormControl.setValue(activeDateElement.date);
+                    }
                 }
-                const diffAbsTodayActiveDay = differenceInDays(today, activeDateElement.date);
-                if (diffAbsTodayActiveDay > 7 && isDate(activeDateElement.date)) {
-                    this.selectedDateFormControl.setValue(activeDateElement.date);
-                }
-            }
-        });
+            });
 
     }
 

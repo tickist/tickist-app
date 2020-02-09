@@ -23,6 +23,11 @@ export const updateNotification = createAction(
     props<{notification: Update<Notification>}>()
 );
 
+export const updateNotifications = createAction(
+    '[Notifications] Update notifications',
+    props<{notifications: Update<Notification>[]}>()
+);
+
 export const notificationIsRead = createAction('[Notifications] Notification is read');
 
 export const allNotificationsAreRead = createAction('[Notifications] All notifications are read');

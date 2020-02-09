@@ -2,7 +2,11 @@ interface INotification {
     id?: string;
     title: string;
     description: string;
-    recipients: string;
+    recipient: string;
+    isRead?: boolean;
+    type: string;
+    icon?: {};
+    date?: Date;
 }
 
 enum NotificationIcon {

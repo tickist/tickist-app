@@ -1,7 +1,7 @@
 import {Action, createReducer, on} from '@ngrx/store';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import {Notification} from '@data/notifications';
-import {addNotification, addNotifications, updateNotification} from '../actions/notifications.actions';
+import {addNotification, addNotifications, updateNotification, updateNotifications} from '../actions/notifications.actions';
 
 export const notificationsFeatureKey = 'notifications';
 
@@ -25,6 +25,10 @@ export const notificationReducer = createReducer(
     }),
     on(updateNotification, (state, {notification}) => {
       return adapter.updateOne(notification, state)
+    }),
+
+    on(updateNotifications, (state, {notifications}) => {
+      return adapter.updateMany(notifications, state)
     })
 );
 

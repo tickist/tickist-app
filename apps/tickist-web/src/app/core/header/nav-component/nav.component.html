@@ -13,7 +13,7 @@
 
 
     <tickist-search-autocomplete></tickist-search-autocomplete>
-    <tickist-notifications-icon *featureFlag="'notifications'"></tickist-notifications-icon>
+    <tickist-notifications-icon></tickist-notifications-icon>
     <tickist-user-avatar *ngIf="user" [mat-menu-trigger-for]="menu"  [userId]="user.id" [avatarUrl]="user.avatarUrl" [size]="'32x32'"></tickist-user-avatar>
 
  <mat-menu #menu="matMenu">

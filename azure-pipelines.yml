@@ -39,8 +39,7 @@ steps:
 #  displayName: 'Unit test'
 
 - script: |
-    firebase deploy --non-interactive --only firestore:rules --project ci --token $FIREBASE_TOKEN
-    firebase deploy --non-interactive  --project ci --only functions --token $FIREBASE_TOKEN
+    firebase deploy --non-interactive  --project ci --only functions,firestore:rules --token $FIREBASE_TOKEN
   displayName: 'Deploy firebase rules and firebase functions'
 
 - script: |

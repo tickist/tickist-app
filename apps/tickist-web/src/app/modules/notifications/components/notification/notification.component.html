@@ -9,8 +9,8 @@
     </div>
     <div>
         <div fxFlex="5" fxLayoutAlign="center center">
-            <fa-icon *ngIf="notification.isRead" [icon]="['fas', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs()"></fa-icon>
-            <fa-icon *ngIf="!notification.isRead"[icon]="['far', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs()"></fa-icon>
+            <fa-icon data-cy="read-notification" *ngIf="notification.isRead" [icon]="['fas', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs()"></fa-icon>
+            <fa-icon data-cy="unread-notification" *ngIf="!notification.isRead" [icon]="['far', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs()"></fa-icon>
         </div>
     </div>
 
