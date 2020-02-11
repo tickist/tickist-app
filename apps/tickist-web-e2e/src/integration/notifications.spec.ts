@@ -4,21 +4,17 @@ import {createUniqueId} from '@tickist/utils';
 
 describe('Notifications feature', () => {
 
-    before(() => {
-        login();
-    });
-
     beforeEach(() => {
-
-        // createFirebase();
-        // createNotification();
+        login();
+        createFirebase();
+        createNotification();
         cy.visit('/');
     });
 
-    // after(() => {
-    //     logout();
-    //     // removeOldFirebaseData();
-    // });
+    afterEach(() => {
+        logout();
+        removeOldFirebaseData();
+    });
 
     it('should see icon notification with notification counter', () => {
         cy.get('tickist-notifications-icon').should('be.visible');

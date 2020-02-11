@@ -14,7 +14,6 @@ export class ChangeUserIdToUserNamePipe implements PipeTransform {
 
         ).subscribe(team => {
             this.team = team;
-            console.log("aaa")
         });
     }
 
