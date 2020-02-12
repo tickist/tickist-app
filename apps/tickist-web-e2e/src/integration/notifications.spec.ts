@@ -1,6 +1,7 @@
 import {createFirebase, login, logout, removeOldFirebaseData} from '../support/utils';
 import {Notification} from '@data';
 import {createUniqueId} from '@tickist/utils';
+import {addDays} from 'date-fns';
 
 describe('Notifications feature', () => {
 
@@ -58,7 +59,8 @@ function createNotification() {
                 title: 'Notification 1',
                 description: 'Description of the notification',
                 isRead: false,
-                type: 'notificationType1'
+                type: 'notificationType1',
+                date: addDays(new Date(), -1)
             }),
 
             new Notification({
@@ -67,7 +69,8 @@ function createNotification() {
                 title: 'Notification 2',
                 description: 'Description of the notification 2',
                 isRead: false,
-                type: 'notificationType1'
+                type: 'notificationType1',
+                date: addDays(new Date(), -2)
             }),
 
             new Notification({
@@ -76,7 +79,8 @@ function createNotification() {
                 title: 'Notification 3',
                 description: 'Description of the notification 3',
                 isRead: false,
-                type: 'notificationType1'
+                type: 'notificationType1',
+                date: addDays(new Date(), -3)
             }),
         ];
         notifications.forEach(notification => {

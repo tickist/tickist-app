@@ -14,6 +14,11 @@ export const selectAllUnreadNotifications = createSelector(
     (notifications): Notification[] => notifications.filter(notification => !notification.isRead)
 );
 
+export const selectAllNotificationsWithOrder = createSelector(
+    selectAllNotifications,
+    (notifications): Notification[] => notifications.reverse()
+);
+
 export const selectAllUnreadNotificationsIds = createSelector(
     selectAllUnreadNotifications,
     (notifications): string[] => notifications.map(notification => notification.id)
