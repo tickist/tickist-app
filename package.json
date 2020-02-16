@@ -17,6 +17,7 @@
     "cy:verify": "cypress verify",
     "e2e": "npm run build:ci:testConfig && ng e2e -c ci --record",
     "e2e:watch": "npm run build:e2e:testConfig && ng e2e --watch -c e2e",
+    "e2e:watch:ci": "npm run build:ci:testConfig && ng e2e --watch -c ci",
     "deploy:development": "ng build && firebase deploy --project development",
     "deploy:staging": "ng build --configuration staging && firebase deploy --project staging",
     "deploy:production": "ng build --prod && firebase deploy --production",
