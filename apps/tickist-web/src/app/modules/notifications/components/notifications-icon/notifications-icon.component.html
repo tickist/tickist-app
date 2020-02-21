@@ -4,9 +4,21 @@
 </tickist-menu-button>
 
 <mat-menu #appMenu="matMenu">
-    <tickist-notification *ngFor="let notification of (allNotifications$ | async)" [notification]="notification"></tickist-notification>
-    <div fxLayout="row"  fxLayoutAlign="center center" >
-        <button type="button" data-cy="markAllAs" mat-button class="button" (click)="markAllAsRead()">Mark all as read</button>
+    <tickist-notification *ngFor="let notification of (allNotifications$ | async)"
+                          [notification]="notification"></tickist-notification>
+    <div fxLayout="row" fxLayoutAlign="center center"
+         *ngIf="allNotificationCounter$ |async as allNotificationCounter; else noNotifications">
+        <button *ngIf="allNotificationCounter > 0" type="button" data-cy="markAllAs" mat-button class="button"
+                (click)="markAllAsRead()">Mark all as
+            read
+        </button>
     </div>
 
+
 </mat-menu>
+
+<ng-template #noNotifications>
+    <div class="zero-notifications">
+        <span>You have 0 notifications to read.</span>
+    </div>
+</ng-template>
