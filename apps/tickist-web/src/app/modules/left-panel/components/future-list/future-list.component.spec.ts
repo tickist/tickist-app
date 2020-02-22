@@ -1,5 +1,4 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {FutureListComponent} from './future-list.component';
 import {FormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -7,14 +6,9 @@ import {TickistMaterialModule} from '../../../../material.module';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MockUserService} from '../../../../testing/mocks/userService';
 import {MockTaskService} from '../../../../testing/mocks/task-service';
-import {MockTagService} from '../../../../testing/mocks/tag-service';
 import {MockConfigurationService} from '../../../../testing/mocks/configurationService';
-import {APP_BASE_HREF} from '@angular/common';
-import {RouterModule, Routes} from '@angular/router';
 import {StoreModule} from '@ngrx/store';
 import {RouterTestingModule} from '@angular/router/testing';
-
-const routes: Routes = [];
 
 
 describe('FutureListComponent', () => {

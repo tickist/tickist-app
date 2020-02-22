@@ -40,7 +40,14 @@ mat-form-field {
 .login-text-container {
     padding: 16px 0 16px 0;
     width: 100%;
+    span {
+        display: block;
+    }
     .login-text {
+        cursor: pointer;
+        font-size: 12px;
+    }
+    .reset-password {
         cursor: pointer;
         font-size: 12px;
     }

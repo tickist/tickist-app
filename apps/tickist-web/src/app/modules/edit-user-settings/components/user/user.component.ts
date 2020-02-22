@@ -32,6 +32,7 @@ export class UserComponent implements OnInit, OnDestroy {
     defaultTaskViewOptions: Array<any>;
     overdueTasksSortByOptions: Array<any>;
     futureTasksSortByOptions: Array<any>;
+    requestChangePasswordMessage: string;
     matcher = new MyErrorStateMatcher();
     uploadPercent: Observable<number>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -231,10 +232,8 @@ export class UserComponent implements OnInit, OnDestroy {
             });
 
         this.changePasswordForm = new FormGroup({
-            'password': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)])),
-            'newPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)])),
-            'repeatNewPassword': new FormControl('', Validators.compose([Validators.required, Validators.minLength(4)]))
-        }, {validators: this.matchingPasswords});
+            'email': new FormControl('', Validators.compose([Validators.required, Validators.email])),
+        });
         this.store.dispatch(new HideAddTaskButton());
 
     }
@@ -293,26 +292,18 @@ export class UserComponent implements OnInit, OnDestroy {
         return field.hasError('minLength') || field.hasError('email') || field.hasError('required');
     }
 
-    private matchingPasswords(group: any) {
-        const password = group.controls.password;
-        const newPassword = group.controls.newPassword;
-        const repeatNewPassword = group.controls.repeatNewPassword;
-        let result = null;
-        if (newPassword.value !== repeatNewPassword.value) {
-            result = {
-                mismatchedPasswords: true
-            };
-        }
-        if (password.value === newPassword.value) {
-            result = {
-                oldSameNew: true
-            };
-        }
-        return result;
-    }
 
-    changePassword($event, values: any): void {
-        this.userService.changePassword(values)
+
+    async changePassword($event, values: any): Promise<void> {
+        try {
+            const result = await this.userService.requestChangePassword(values.email);
+            console.log({result})
+            this.requestChangePasswordMessage = 'Check your inbox.'
+        } catch (e) {
+            console.log({e})
+            this.requestChangePasswordMessage = 'Something goes wrong.'
+        }
+
         //     .subscribe(() => {
         // }, (error: any) => {
         //     console.log(error);

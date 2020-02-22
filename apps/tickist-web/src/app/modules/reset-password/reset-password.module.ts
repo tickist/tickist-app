@@ -4,8 +4,9 @@ import {TickistMaterialModule} from '../../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistSharedModule} from '../../shared/shared.module';
-import {LoginComponent} from './pages/login';
-import {TickistLoginRoutingModule} from './login-routing.module';
+import {ResetPasswordComponent} from './pages/reset-password';
+import {TickistResetPasswordRoutingModule} from './reset-password-routing.module';
+import { RequestResetPasswordComponent } from './pages/request-reset-password/request-reset-password.component';
 
 
 @NgModule({
@@ -15,15 +16,18 @@ import {TickistLoginRoutingModule} from './login-routing.module';
         FormsModule,
         FlexLayoutModule,
         ReactiveFormsModule,
-        TickistLoginRoutingModule,
+        TickistResetPasswordRoutingModule,
         TickistSharedModule
     ],
     providers: [],
     exports: [
-        LoginComponent],
+        ResetPasswordComponent,
+        RequestResetPasswordComponent
+    ],
     declarations: [
-        LoginComponent
+        ResetPasswordComponent,
+        RequestResetPasswordComponent
     ]
 })
-export class TickistLoginModule {
+export class TickistResetPasswordModule {
 }

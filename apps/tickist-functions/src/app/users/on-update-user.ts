@@ -13,7 +13,9 @@ export const onUpdateUser = functions.firestore.document('users/{userId}')
 
         const timeStamp = new Date().toISOString();
         const userHistoryRef = change.after.ref.collection('history').doc(timeStamp);
-        await userHistoryRef.set({'beforeData': before, 'diff': diff.getDiff(before, after)});
+        const diffObject = diff.getDiff(before, after);
+        // JSON remove undefinedValues from diff object
+        await userHistoryRef.set({'beforeData': before, 'diff': JSON.parse(JSON.stringify(diffObject))});
 
         console.log('Change user avatar');
         if (before.avatarUrl !== after.avatarUrl || before.username !== after.username) {

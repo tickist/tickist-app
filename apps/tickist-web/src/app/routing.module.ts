@@ -20,7 +20,7 @@ import {editUserSettingsRoutesName} from './modules/edit-user-settings/routes-na
 import {teamRoutesName} from './modules/team/routes-names';
 import {editProjectSettingsRoutesName} from './modules/edit-project/routes-names';
 import {AuthLayoutComponent} from './core/layouts/auth-layout/auth-layout.component';
-import {forgotPasswordRoutesName} from './modules/forgot-password/routes-names';
+import {resetPasswordRoutesName} from './modules/reset-password/routes-names';
 import {loginRoutesName} from './modules/login/routes-names';
 import {signupRoutesName} from './modules/signup/routes-names';
 
@@ -119,15 +119,14 @@ export const routes: Routes = [
         loadChildren: './modules/login/login.module#TickistLoginModule'
     },
     {
-        path: forgotPasswordRoutesName.FORGOT_PASSWORD,
+        path: resetPasswordRoutesName.RESET_PASSWORD,
         component: AuthLayoutComponent,
         canActivate: [AnonymousGuard],
-        loadChildren: './modules/forgot-password/forgot-password.module#TickistForgotPasswordModule'
+        loadChildren: () => import('./modules/reset-password/reset-password.module').then(m => m.TickistResetPasswordModule)
     },
     {
         path: '',
         redirectTo: '/home/(content:dashboard//left:left-panel)',
-        // redirectTo: '/home/(content:dashboard/)',
         pathMatch: 'full'
     }
 ];

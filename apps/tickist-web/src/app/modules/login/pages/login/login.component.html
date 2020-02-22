@@ -31,9 +31,12 @@
             <!--</div>-->
 
 
-            <!--<span [routerLink]="['/forgot-password']">Forgot password?</span>-->
+
             <div class="sign-up-text-container">
-                <span class="sign-up-text" [routerLink]="['/signup']"> Don't have an account? Sign up</span>
+                <p>
+                    <span class="reset-password" [routerLink]="['/reset-password', { outlets: { content: 'request' } }]">I forgot my password!</span>
+                    <span class="sign-up-text" [routerLink]="['/signup']"> Don't have an account? Sign up</span>
+                </p>
             </div>
 
         </form>

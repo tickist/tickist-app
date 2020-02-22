@@ -3,7 +3,7 @@ import {TaskService} from '../../../../core/services/task.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../../../core/services/user.service';
 import {ProjectService} from '../../../../core/services/project.service';
-import {Observable, Subject, combineLatest} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {Task} from '@data/tasks/models/tasks';
 import {Project} from '@data/projects';
 import {User} from '@data/users/models';
@@ -12,7 +12,6 @@ import {TasksFiltersService} from '../../../../core/services/tasks-filters.servi
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {NewActiveProjectsIds} from '../../../../core/actions/projects/active-projects-ids.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {SetActiveProject} from '../../../../core/actions/projects/active-project.actions';
 import {selectActiveProject, selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectTasksStreamInProjectsView} from '../../../../core/selectors/task.selectors';

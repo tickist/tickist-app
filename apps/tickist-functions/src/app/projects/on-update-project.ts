@@ -18,7 +18,8 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
         const afterData = <Project>after.data();
         const timeStamp = new Date().toISOString();
         const projectHistoryRef = change.after.ref.collection('history').doc(timeStamp);
-        await projectHistoryRef.set({'beforeData': beforeData, 'diff': diff.getDiff(beforeData, afterData)});
+        const diffObject = diff.getDiff(beforeData, afterData);
+        await projectHistoryRef.set({'beforeData': beforeData, 'diff': JSON.parse(JSON.stringify(diffObject))});
         if (beforeData.name !== afterData.name
             || beforeData.color !== afterData.color
             || beforeData.shareWith !== afterData.shareWith
@@ -121,6 +122,8 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
         const projectId = change.before.id;
         const beforeData = <Project>before.data();
         const afterData = <Project>after.data();
+        console.log({context});
+        console.log(context.auth)
         const authUser = await db.collection('users').doc(context.auth.uid).get().data() as User;
         if (before.isEqual(after)) return;
         if (beforeData.isActive && !afterData.isActive) {

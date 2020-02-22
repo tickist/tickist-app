@@ -13,7 +13,6 @@ const routes: Routes = [
     {
         path: ':taskId',
         component: TaskComponent,
-        // outlet: 'content'
     }
 ];
 

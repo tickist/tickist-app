@@ -1,7 +1,7 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DEFAULT_PRIORITY, DEFAULT_TYPE_FINISH_DATE, InviteUser, InviteUserStatus, Project, ShareWithUser} from '@data/projects';
 import {Location} from '@angular/common';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -12,7 +12,6 @@ import {environment} from '@env/environment';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 import {RequestCreateProject, RequestUpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
@@ -20,9 +19,7 @@ import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
 import {addClickableLinks} from '@tickist/utils';
-import {addUserToShareList} from '../../../../core/utils/projects-utils';
 import {ProjectService} from '../../../../core/services/project.service';
-
 
 @Component({
     selector: 'tickist-project',
@@ -123,8 +120,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
             map(name => this.filterUsers(name))
         );
         this.store.dispatch(new HideAddTaskButton());
-
-
     }
 
     ngOnDestroy() {

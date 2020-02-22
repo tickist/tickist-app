@@ -35,9 +35,15 @@ export class UserService {
             .update(JSON.parse(JSON.stringify(user)));
     }
 
-    changePassword(values: any) {
-        // @TODO
-        console.log(this.authFire);
+    requestChangePassword(email: string) {
+        return this.authFire.auth.sendPasswordResetEmail(email).then(
+            () => {
+                // success, show some message
+            },
+            err => {
+                // handle errors
+            }
+        );
     }
 
     savefcmToken(token) {

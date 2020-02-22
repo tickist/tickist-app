@@ -16,6 +16,7 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {signupRoutesName} from '../../modules/signup/routes-names';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
+import {resetPasswordRoutesName} from '../../modules/reset-password/routes-names';
 
 
 @Injectable()
@@ -34,7 +35,7 @@ export class AuthEffects {
         .pipe(
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
             switchMap(action => {
-                console.log(this.authFire.auth.currentUser)
+                console.log(this.authFire.auth.currentUser);
                 console.log(action);
 
                 return this.db.collection('users').doc(action.payload.uid).get().pipe(
@@ -53,7 +54,7 @@ export class AuthEffects {
                     catchError((err) => {
                         console.log('Tutaj jestem');
                         console.log({err});
-                        return of(new Error(err))
+                        return of(new Error(err));
                     })
                 );
             })
@@ -68,6 +69,10 @@ export class AuthEffects {
         tap(() => {
             if (this.location.path().includes(signupRoutesName.SIGNUP)) {
                 this.router.navigateByUrl(`/${signupRoutesName.SIGNUP}`);
+
+            } else if (this.location.path().includes(resetPasswordRoutesName.RESET_PASSWORD)) {
+
+                this.router.navigateByUrl(`/${this.location.path()}`);
             } else {
                 this.router.navigateByUrl('/login').catch((error) => console.log(error));
             }

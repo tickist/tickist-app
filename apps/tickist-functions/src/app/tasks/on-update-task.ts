@@ -16,7 +16,8 @@ export const onUpdateTask = functions.firestore.document('tasks/{taskId}')
 
         const timeStamp = new Date().toISOString();
         const taskHistoryRef = change.after.ref.collection('history').doc(timeStamp);
-        await taskHistoryRef.set({'beforeData': beforeData, 'diff': diff.getDiff(beforeData, afterData)});
+        const diffObject = diff.getDiff(beforeData, afterData);
+        await taskHistoryRef.set({'beforeData': beforeData, 'diff': JSON.parse(JSON.stringify(diffObject))});
     });
 
 
@@ -28,6 +29,8 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
         if (before.isEqual(after)) return;
         const beforeData = before.data() as Task;
         const afterData = after.data() as Task;
+        console.log({context});
+        console.log(context.auth)
         const authUser = await db.collection('users').doc(context.auth.uid).get().data() as User;
         if (beforeData.isDone === false && afterData.isDone === true) {
             const title = `Completed task`;

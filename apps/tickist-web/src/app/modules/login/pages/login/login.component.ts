@@ -1,12 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Router} from '@angular/router';
-import {FormGroup, Validators, FormControl} from '@angular/forms';
-import {AppStore} from '../../../../store';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {Login} from '../../../../core/actions/auth.actions';
 import {AuthService} from '../../../../core/services/auth.service';
-import {homeRoutesName} from '../../../../routing.module.name';
-import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
 import {signupRoutesName} from '../../../signup/routes-names';
 
 
