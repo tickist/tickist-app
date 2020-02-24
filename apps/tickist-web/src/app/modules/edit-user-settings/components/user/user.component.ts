@@ -299,16 +299,10 @@ export class UserComponent implements OnInit, OnDestroy {
             const result = await this.userService.requestChangePassword(values.email);
             console.log({result})
             this.requestChangePasswordMessage = 'Check your inbox.'
-        } catch (e) {
-            console.log({e})
+        } catch (err) {
+            console.log({err})
             this.requestChangePasswordMessage = 'Something goes wrong.'
         }
-
-        //     .subscribe(() => {
-        // }, (error: any) => {
-        //     console.log(error);
-        //     this.changePasswordForm.setErrors({'wrongPassword': true});
-        // });
     }
 
     close(): void {

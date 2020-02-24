@@ -46,6 +46,12 @@ export class UserService {
         );
     }
 
+    changePassword(password: string, code: string) {
+        return this.authFire.auth
+            .confirmPasswordReset(code, password)
+
+    }
+
     savefcmToken(token) {
         return this.db.collection(userCollectionName)
             .doc(this.authFire.auth.currentUser.uid)
