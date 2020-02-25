@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {concatMap, map, mergeMap, switchMap} from 'rxjs/operators';
+import {concatMap, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {Update} from '@ngrx/entity';
@@ -18,6 +18,7 @@ import {Project} from '@data/projects';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {MatSnackBar} from '@angular/material';
+import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
 @Injectable()
@@ -76,14 +77,16 @@ export class ProjectsEffects {
     createProject$ = this.actions$
         .pipe(
             ofType<RequestCreateProject>(ProjectActionTypes.REQUEST_CREATE_PROJECT),
-            mergeMap(action => this.projectService.createProject(action.payload.project))
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            mergeMap(([action, user]) => this.projectService.createProject(action.payload.project, user))
         );
 
     @Effect({dispatch: false})
     updateProject$ = this.actions$
         .pipe(
             ofType<RequestUpdateProject>(ProjectActionTypes.REQUEST_UPDATE_PROJECT),
-            mergeMap(action => this.projectService.updateProject(<Project>action.payload.project.changes))
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            mergeMap(([action, user]) => this.projectService.updateProject(<Project>action.payload.project.changes, user))
         );
 
     @Effect({dispatch: false})

@@ -4,6 +4,7 @@ import {Menu} from '../../menu';
 import {TaskUser} from './task-user';
 import {TaskProject} from './task-project';
 import {addClickableLinks} from '@tickist/utils';
+import {Editor} from '@data/users';
 
 export interface ITask {
     name: string;
@@ -37,6 +38,7 @@ export interface ITask {
     taskListPk: string;
     whenComplete?: any;
     menuShowing?: Menu;
+    lastEditor?: Editor;
 }
 
 
@@ -67,6 +69,7 @@ export class Task {
     time = null;
     estimateTime = null;
     menuShowing: Menu;
+    lastEditor: Editor;
 
 
     constructor(task: ITask) {

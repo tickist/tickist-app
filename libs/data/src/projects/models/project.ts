@@ -8,6 +8,7 @@ import {
 } from '../config-projects';
 import construct = Reflect.construct;
 import {addClickableLinks} from '@tickist/utils';
+import {Editor} from '@data/users';
 
 interface IProject {
     id: string;
@@ -18,6 +19,7 @@ interface IProject {
     ancestor?: string;
     color?: string;
     inviteUserByEmail?: string;
+    lastEditor: Editor;
 }
 
 export enum InviteUserStatus {
@@ -50,6 +52,7 @@ export class Project {
     matOptionClass: string;
     shareWithIds: Array<string> = [];
     inviteUserByEmail: InviteUser[] = [];
+    lastEditor: Editor;
 
     constructor(project: any) {
         Object.assign(this, project);

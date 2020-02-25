@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {catchError, concatMap, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
@@ -25,6 +25,7 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Update} from '@ngrx/entity';
 import {MatSnackBar} from '@angular/material';
+import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
 @Injectable()
@@ -86,26 +87,27 @@ export class TaskEffects {
     createTask$ = this.actions$
         .pipe(
             ofType<RequestCreateTask>(TaskActionTypes.REQUEST_CREATE_TASK),
-            mergeMap(action => this.tasksService.createTask(action.payload.task)),
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            mergeMap(([action, user]) => this.tasksService.createTask(action.payload.task, user)),
         );
 
     @Effect({dispatch: false})
     updateTask$ = this.actions$
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
-            mergeMap((action) => this.tasksService.updateTask(<Task>action.payload.task.changes)),
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            mergeMap(([action, user]) => this.tasksService.updateTask(<Task>action.payload.task.changes, user)),
         );
 
-
-    @Effect({dispatch: false})
-    setStatusDone$ = this.actions$
+    setStatusDone$ = createEffect(() => this.actions$
         .pipe(
             ofType<SetStatusDone>(TaskActionTypes.SET_STATUS_DONE),
-            mergeMap((action) => this.tasksService.setStatusDone(<Task>action.payload.task.changes)),
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            mergeMap(([action, user]) => this.tasksService.setStatusDone(<Task>action.payload.task.changes, user)),
             tap(() => this.snackBar.open('Task is done. Great job!', '', {
                 duration: 2000,
             }))
-        );
+        ), {dispatch: false});
 
     @Effect()
     progressBar$ = this.actions$

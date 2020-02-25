@@ -3,13 +3,14 @@ import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {InviteUser, InviteUserStatus, Project} from '@data/projects';
-import {SimpleUser} from '@data/users/models';
+import {SimpleUser, User} from '@data/users/models';
 import {MatSnackBar} from '@angular/material';
 import {Router} from '@angular/router';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../selectors/projects.selectors';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {RequestUpdateProject} from '../actions/projects/projects.actions';
+import {Editor} from '@data/users';
 
 const projectsCollectionName = 'projects';
 
@@ -66,10 +67,6 @@ export class ProjectService {
         }
     }
 
-    saveProject(project: Project) {
-        (project.id) ? this.updateProject(project) : this.createProject(project);
-    }
-
     addUserToProject(project, email) {
         const entry = {email: email, status: InviteUserStatus.Processing};
         // return Object.assign({}, project, {inviteUserByEmail: [...project.inviteUserByEmail, entry]});
@@ -107,9 +104,15 @@ export class ProjectService {
 
     }
 
-    createProject(project: Project) {
+    createProject(project: Project, user: User) {
         const newProject = this.db.collection(projectsCollectionName).ref.doc();
-        return newProject.set(JSON.parse(JSON.stringify({...project, id: newProject.id})));
+        const editor = {
+            id: user.id,
+            email: user.email,
+            username: user.username
+        } as Editor;
+        const newProjectWithLastEditor = {...project, lastEditor: editor};
+        return newProject.set(JSON.parse(JSON.stringify({...newProjectWithLastEditor, id: newProject.id})));
 
         // return this.http.post(`${environment['apiUrl']}/project/`, toSnakeCase(project))
         //     .pipe(map((payload: IProjectApi) => new Project(payload)));
@@ -124,20 +127,14 @@ export class ProjectService {
         // });
     }
 
-    updateProject(project: Project, withoutSnackBar = false) {
-        return this.db.collection(projectsCollectionName).doc(project.id).update(JSON.parse(JSON.stringify(project)));
-
-
-        // return this.http.put(`${environment['apiUrl']}/project/${project.id}/`, toSnakeCase(project));
-        // .subscribe((payload: IProjectApi) => {
-        //     this.store.dispatch(new projectsAction.UpdateProject(new Project(payload)));
-        //     if (!withoutSnackBar) {
-        //         this.snackBar.open('Project has been saved successfully', '', {
-        //         duration: 2000,
-        //         });
-        //     }
-        //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
-        // });
+    updateProject(project: Project, user: User, withoutSnackBar = false) {
+        const editor = {
+            id: user.id,
+            email: user.email,
+            username: user.username
+        } as Editor;
+        const projectWithLastEditor = {...project, lastEditor: editor};
+        return this.db.collection(projectsCollectionName).doc(project.id).update(JSON.parse(JSON.stringify(projectWithLastEditor)));
     }
 
 

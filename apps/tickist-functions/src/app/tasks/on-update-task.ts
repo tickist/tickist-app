@@ -31,10 +31,10 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
         const afterData = after.data() as Task;
         console.log({context});
         console.log(context.auth)
-        const authUser = await db.collection('users').doc(context.auth.uid).get().data() as User;
+        const editor = afterData.lastEditor;
         if (beforeData.isDone === false && afterData.isDone === true) {
             const title = `Completed task`;
-            const description = `${authUser.username} completed the task ${afterData.name} from ${afterData.taskProject.name}:`;
+            const description = `${editor.username} completed the task ${afterData.name} from ${afterData.taskProject.name}:`;
             for (const userId of afterData.taskProject.shareWithIds) {
                 if (userId !== context.auth.uid) {
                     await createNotification({
@@ -49,7 +49,7 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
 
         if (context.auth.uid === afterData.author.id && afterData.author.id !== afterData.owner.id) {
             const title = `Change assigned to`;
-            const description = `${authUser.username} changed the task ${afterData.name} assigned to you`;
+            const description = `${editor.username} changed the task ${afterData.name} assigned to you`;
             await createNotification({
                 title,
                 description,
@@ -58,7 +58,7 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
             } as Notification);
         } else if (context.auth.uid === afterData.owner.id && afterData.author.id !== afterData.owner.id) {
             const title = ``;
-            const description = `${authUser.username} changed the task ${afterData.name} 
+            const description = `${editor.username} changed the task ${afterData.name} 
             that you’d assigned to ${afterData.owner.username}`;
             await createNotification({
                 title,
@@ -70,7 +70,7 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
             (afterData.owner.id !== context.auth.uid) &&
             (afterData.author.id !== context.auth.uid)) {
             const title = ``;
-            const description = `${authUser.username} changed the task ${afterData.name}`;
+            const description = `${editor.username} changed the task ${afterData.name}`;
             await createNotification({
                 title,
                 description,
