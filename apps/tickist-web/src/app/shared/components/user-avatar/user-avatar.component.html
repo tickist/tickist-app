@@ -1,3 +1,7 @@
 <ng-container *ngIf="url">
-    <img *ngIf="url" [ngStyle]="imgStyle" [matTooltip]="username" alt="user avatar" [src]="url" (error)="handleError(arg)">
+    <img *ngIf="url" [ngStyle]="imgStyle" [matTooltip]="username" alt="user avatar" [src]="url" (error)="handleError($event)">
+</ng-container>
+
+<ng-container *ngIf="!url">
+    <mat-spinner class="pointer" [diameter]="spinnerDiameter"></mat-spinner>
 </ng-container>

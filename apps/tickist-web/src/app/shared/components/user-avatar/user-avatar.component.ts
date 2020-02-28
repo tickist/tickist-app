@@ -1,19 +1,8 @@
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Renderer2,
-    ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {Observable, of, Subject, throwError} from 'rxjs';
 import {DEFAULT_USER_AVATAR, USER_AVATAR_PATH} from '@data/users/config-user';
-import {catchError, delay, mergeMap, retry, retryWhen, takeUntil} from 'rxjs/operators';
+import {delay, mergeMap, retryWhen, takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'tickist-user-avatar',
@@ -29,7 +18,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     @Input() styles?: { value: string, name: string }[] = [];
     MAX_AVATAR_SIZE = '200x200';
     imgStyle: any = {};
-    avatar$: Observable<string>;
+    spinnerDiameter = 32;
     url: string;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -40,20 +29,19 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     ngOnInit() {
         const [width, height] = this.size.split('x');
         this.imgStyle = {'width.px': width, 'height.px': height};
+        this.spinnerDiameter = Math.max(parseInt(width, 10), parseInt(height, 10));
         this.styles.forEach(style => {
             this.imgStyle[style.name] = style.value;
         });
     }
 
     ngOnChanges() {
-
         if (this.avatarUrl === DEFAULT_USER_AVATAR) {
             this.url = this.addMaxAvatarSizeToAvatarUrl();
-            // this.avatar$ = of(this.addMaxAvatarSizeToAvatarUrl());
+        } else if (this.validURL(this.avatarUrl)) {
+            this.url = this.avatarUrl;
         } else {
             this.updateUrlFromFirebaseStorage();
-
-
         }
     }
 
@@ -61,7 +49,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
         this.url = '';
         setTimeout(() => {
             this.updateUrlFromFirebaseStorage();
-        }, 1000)
+        }, 1000);
     }
 
     ngOnDestroy() {
@@ -96,6 +84,16 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
             }
             this.url = avatarUrl;
         });
+    }
+
+    private validURL(str) {
+        const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+        return !!pattern.test(str);
     }
 
 }

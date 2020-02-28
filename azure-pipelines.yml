@@ -47,10 +47,10 @@ steps:
     npm run e2e
   displayName: 'e2e tests'
 
-- script: |
-    ng deploy --token $FIREBASE_TOKEN
-  displayName: 'Deploy'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#- script: |
+#    ng deploy --token $FIREBASE_TOKEN
+#  displayName: 'Deploy'
+#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
 
 - script: |

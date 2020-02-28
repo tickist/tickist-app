@@ -8,7 +8,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {FetchedLoginUser} from '../actions/auth.actions';
 import {Router} from '@angular/router';
-
+import { auth } from 'firebase/app';
 
 @Injectable({
     providedIn: 'root',
@@ -29,6 +29,18 @@ export class AuthService {
         return this.fireAuth.auth.signInWithEmailAndPassword(user.email, user.password);
     }
 
+    facebookAuth() {
+        return this.authLogin(new auth.FacebookAuthProvider());
+    }
+
+    googleAuth() {
+        return this.authLogin(new auth.GoogleAuthProvider());
+    }
+
+    authLogin(provider) {
+        return this.fireAuth.auth.signInWithPopup(provider)
+    }
+
     signup({email, password}) {
         return this.fireAuth.auth.createUserWithEmailAndPassword(email, password);
     }
@@ -37,8 +49,8 @@ export class AuthService {
         return this.fireAuth.auth.signOut();
     }
 
-    save({uid, username, email}) {
-        const user = new User(<any> {id: uid, username: username, email: email});
+    save(uid: string, username: string, email: string, additionalData?: Partial<User>) {
+        const user = new User(<any> {id: uid, username, email, ...additionalData});
         this.usersCollection.doc(uid).set(JSON.parse(JSON.stringify(user)))
             .then(() => {
                 this.store.dispatch(new FetchedLoginUser({uid: uid}));

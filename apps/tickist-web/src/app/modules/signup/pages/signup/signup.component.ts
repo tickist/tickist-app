@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../../../core/services/auth.service';
+import {AngularFirestore} from '@angular/fire/firestore';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -12,7 +14,7 @@ export class SignupComponent implements OnInit {
     userForm: FormGroup;
     firebaseMessage = '';
 
-    constructor(private authService: AuthService) {
+    constructor(private authService: AuthService, private router: Router) {
         this.userForm = new FormGroup({
             'username': new FormControl('', [Validators.required]),
             'email': new FormControl('', [Validators.required, Validators.email], []),
@@ -24,14 +26,19 @@ export class SignupComponent implements OnInit {
         });
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+    }
 
     onSubmit(values: any): void {
         if (this.userForm.valid) {
             this.authService.signup(values)
                 .then((user) => {
                     // @TODO move to action
-                    this.authService.save({username: values.username, uid: user.user.uid, email: user.user.email});
+                    this.authService.save(
+                        user.user.uid,
+                        values.username,
+                        user.user.email
+                    );
                 })
                 .catch(
                     err => {
@@ -40,6 +47,28 @@ export class SignupComponent implements OnInit {
                     }
                 );
         }
+    }
+
+    googleAuth(): void {
+        this.authService.googleAuth().then(user => {
+            console.log({user});
+            if (user.additionalUserInfo.isNewUser) {
+                this.authService.save(
+                    user.user.uid,
+                    (user.additionalUserInfo.profile as any).name,
+                    user.user.email,
+                    {
+                        avatarUrl: (user.additionalUserInfo.profile as any).picture,
+                        isGoogleConnection: true
+                    });
+            } else {
+                this.router.navigateByUrl('/');
+            }
+        });
+    }
+
+    facebookAuth(): void {
+        this.authService.facebookAuth();
     }
 
 }

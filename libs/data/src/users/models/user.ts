@@ -15,8 +15,8 @@ export interface IUser {
     email: string;
     avatar: string;
     dateJoined: Date;
-    facebookConnection?: boolean;
-    googleConnection?: boolean;
+    isFacebookConnection?: boolean;
+    isGoogleConnection?: boolean;
     inboxPk: string;
     orderTasksDashboard?: string;
     assignsTaskToMe?: boolean;
@@ -43,6 +43,7 @@ export interface IUser {
     avatarUrl?: string;
     fcmToken?: string;
     flags: {};
+
     // shareWith: ISimpleProjectApi[];
 }
 
@@ -53,8 +54,8 @@ export class User {
     email: string;
     assignsTaskToMe = true;
     readonly dateJoined: Date;
-    facebookConnection = null;
-    googleConnection = null;
+    isGoogleConnection = false;
+    isFacebookConnection = false;
     inboxPk: string;
     orderTasksDashboard = DEFAULT_TASKS_ORDER_OPTIONS;
     changesTaskFromSharedListThatIsAssignedToMe = true;

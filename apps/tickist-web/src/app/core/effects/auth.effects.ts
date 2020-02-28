@@ -17,6 +17,7 @@ import {signupRoutesName} from '../../modules/signup/routes-names';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
 import {resetPasswordRoutesName} from '../../modules/reset-password/routes-names';
+import {firebaseError} from '../actions/errors.actions';
 
 
 @Injectable()
@@ -52,9 +53,7 @@ export class AuthEffects {
                         return new AddUser({user: new User({id: snapshot.id, ...snapshot.data()})});
                     }),
                     catchError((err) => {
-                        console.log('Tutaj jestem');
-                        console.log({err});
-                        return of(new Error(err));
+                        return of(firebaseError({error: new Error(err)}));
                     })
                 );
             })

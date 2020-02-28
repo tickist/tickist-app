@@ -13,16 +13,27 @@ const routes: Routes = [
     },
     {
         path: 'request',
-        component: RequestResetPasswordComponent,
-        outlet: 'content',
+        children: [
+            {
+                path: '',
+                component: RequestResetPasswordComponent,
+                outlet: 'content',
+            }
+        ]
+
     },
     {
         path: 'change',
-        component: ResetPasswordComponent,
-        outlet: 'content',
-    }
-    ];
+        children: [
+            {
+                path: '',
+                outlet: 'content',
+                component: ResetPasswordComponent,
+            }
+        ]
 
+    }
+];
 
 
 @NgModule({

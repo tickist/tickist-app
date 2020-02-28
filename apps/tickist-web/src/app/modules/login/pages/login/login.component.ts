@@ -74,4 +74,26 @@ export class LoginComponent {
         this.router.navigate([signupRoutesName.SIGNUP]);
     }
 
+    googleAuth(): void {
+        this.authService.googleAuth().then(user => {
+            console.log({user});
+            if (user.additionalUserInfo.isNewUser) {
+                this.authService.save(
+                    user.user.uid,
+                    (user.additionalUserInfo.profile as any).name,
+                    user.user.email,
+                    {
+                        avatarUrl: (user.additionalUserInfo.profile as any).picture,
+                        isGoogleConnection: true
+                    });
+            } else {
+                this.router.navigateByUrl('/');
+            }
+        });
+    }
+
+    facebookAuth(): void {
+        this.authService.facebookAuth();
+    }
+
 }

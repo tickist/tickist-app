@@ -24,17 +24,22 @@
                 <button id="submit-button" fxFlex mat-button class="button" type="submit">Login
                 </button>
             </div>
-
-            <!--<div fxLayout="row">-->
-            <!--<button mat-button type="button">Google</button>-->
-            <!--<button mat-button type="button">Facebook</button>-->
-            <!--</div>-->
-
+            <div fxLayoutAlign="center center" fxLayout="row">
+                <button class="social-login" mat-button type="button" (click)="googleAuth()">
+                    <fa-icon [icon]="['fab', 'google']"></fa-icon>
+                    <span>Google</span>
+                </button>
+                <button class="social-login" mat-button type="button" (click)="facebookAuth()">
+                    <fa-icon [icon]="['fab', 'facebook']"></fa-icon>
+                    <span>Facebook</span>
+                </button>
+            </div>
 
 
             <div class="sign-up-text-container">
                 <p>
-                    <span class="reset-password" [routerLink]="['/reset-password', { outlets: { content: 'request' } }]">I forgot my password!</span>
+                    <span class="reset-password"
+                          [routerLink]="['/reset-password/request/']">I forgot my password!</span>
                     <span class="sign-up-text" [routerLink]="['/signup']"> Don't have an account? Sign up</span>
                 </p>
             </div>

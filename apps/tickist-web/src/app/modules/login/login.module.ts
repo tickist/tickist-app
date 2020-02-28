@@ -6,6 +6,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {LoginComponent} from './pages/login';
 import {TickistLoginRoutingModule} from './login-routing.module';
+import {IconsModule} from '../../icons.module';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import {TickistLoginRoutingModule} from './login-routing.module';
         FlexLayoutModule,
         ReactiveFormsModule,
         TickistLoginRoutingModule,
-        TickistSharedModule
+        TickistSharedModule,
+        IconsModule
     ],
     providers: [],
     exports: [

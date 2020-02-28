@@ -43,7 +43,7 @@ import {
     faUserPlus,
     faWrench,
     faExclamationCircle,
-    faCircleNotch,
+    faCircleNotch
 } from '@fortawesome/free-solid-svg-icons';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {faArrowAltCircleRight, faCheckSquare, faClock, faDotCircle, faSquare, faBell, faCircle} from '@fortawesome/free-regular-svg-icons';
