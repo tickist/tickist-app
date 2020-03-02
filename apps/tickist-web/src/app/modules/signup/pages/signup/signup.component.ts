@@ -68,7 +68,19 @@ export class SignupComponent implements OnInit {
     }
 
     facebookAuth(): void {
-        this.authService.facebookAuth();
+        this.authService.facebookAuth().then(user => {
+            console.log({user});
+            if (user.additionalUserInfo.isNewUser) {
+                this.authService.save(
+                    user.user.uid,
+                    (user.additionalUserInfo.profile as any).name,
+                    user.user.email,
+                    {
+                        avatarUrl: (user.additionalUserInfo.profile as any).picture,
+                        isFacebookConnection: true
+                    });
+            }
+        });
     }
 
 }
