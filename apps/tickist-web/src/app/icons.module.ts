@@ -45,22 +45,22 @@ import {
     faExclamationCircle,
     faCircleNotch
 } from '@fortawesome/free-solid-svg-icons';
-import {library} from '@fortawesome/fontawesome-svg-core';
 import {faArrowAltCircleRight, faCheckSquare, faClock, faDotCircle, faSquare, faBell, faCircle} from '@fortawesome/free-regular-svg-icons';
 import {faSign} from '@fortawesome/free-solid-svg-icons/faSign';
 import {faCircle as fasCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
 import {faBell as fasBell} from '@fortawesome/free-solid-svg-icons/faBell';
 import {faFacebookF, faGoogle} from '@fortawesome/free-brands-svg-icons';
-
+import {FaIconLibrary} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
     imports: [FontAwesomeModule],
     exports: [FontAwesomeModule]
 })
 export class IconsModule {
-    constructor() {
+    constructor(private library: FaIconLibrary) {
         // add icons to the library for convenient access in other components
-        library.add(faBars, faThumbtack, faFilter, faPlus, faSun, faDesktop, faReply, faEllipsisV, faEdit, faFastForward, faTimes, faTags,
+        this.library.addIcons(faBars, faThumbtack, faFilter, faPlus, faSun, faDesktop, faReply, faEllipsisV, faEdit, faFastForward, faTimes,
+            faTags,
             faFolder, faReplyAll, faComment, faRedo, faFilter, faSort, faCalendar, faSitemap, faSearch, faShare, faArrowUp, faArrowDown,
             faPenSquare, faWrench, faBell, faChartLine, faCog, faTag, faList, faQuestion, faArrowsAlt, faTrashAlt, faExpand, faCompress,
             faArrowsAltV, faCompressArrowsAlt, faSquare, faCheckSquare, faPause, fasCircle, faDotCircle, faArrowRight, faClock,
