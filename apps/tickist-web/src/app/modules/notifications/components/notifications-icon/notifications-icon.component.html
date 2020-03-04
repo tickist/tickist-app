@@ -1,15 +1,15 @@
-<tickist-menu-button matBadge="{{allNotificationCounter$ | async}}" matBadgeOverlap="false"
+<tickist-menu-button matBadge="{{allNotificationCounter$ | async}}" matBadgeOverlap="true"
                      matBadgePosition="above after" [icon]="'bell'"
                      [iconPrefix]="'far'" [color]="'white'" [fontSize]="'28'" [matMenuTriggerFor]="appMenu">
 </tickist-menu-button>
 
-<mat-menu #appMenu="matMenu">
+<mat-menu #appMenu="matMenu" (click)="$event.stopPropagation()">
     <tickist-notification *ngFor="let notification of (allNotifications$ | async)"
                           [notification]="notification"></tickist-notification>
     <div fxLayout="row" fxLayoutAlign="center center"
          *ngIf="allNotificationCounter$ |async as allNotificationCounter; else noNotifications">
         <button *ngIf="allNotificationCounter > 0" type="button" data-cy="markAllAs" mat-button class="button"
-                (click)="markAllAsRead()">Mark all as
+                (click)="markAllAsRead($event)">Mark all as
             read
         </button>
     </div>

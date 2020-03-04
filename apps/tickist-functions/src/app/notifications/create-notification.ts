@@ -7,6 +7,6 @@ export async function createNotification(notificationObject: Notification) {
     await notification.set({
         ...notificationObject,
         id: notification.id,
-        date: admin.firebase.firestore.Timestamp.fromDate(new Date())
+        date: admin.firestore.Timestamp.fromDate(new Date())
     })
 }

@@ -1,16 +1,16 @@
-<div fxLayout="row" fxLayoutAlign="start center">
+<div fxLayout="row" fxLayoutAlign="start center" (click)="$event.stopPropagation()">
     <div fxFlex="20" fxLayoutAlign="center center">
         <fa-icon [icon]="'user-plus'" [ngStyle]="{'color':'white'}"></fa-icon>
     </div>
-    <div fxFlex fxLayout="column" fxLayoutAlign="start start" >
+    <div fxFlex fxLayout="column" fxLayoutAlign="start start">
         <span class="notification-title">{{notification.title}}</span>
         <span class="notification-description">{{notification.description}}</span>
-        <span class="notification-time">{{notification.date}}</span>
+        <span class="notification-time">{{ago}}</span>
     </div>
-    <div>
-        <div fxFlex="5" fxLayoutAlign="center center">
-            <fa-icon data-cy="read-notification" *ngIf="notification.isRead" [icon]="['fas', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs()"></fa-icon>
-            <fa-icon data-cy="unread-notification" *ngIf="!notification.isRead" [icon]="['far', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs()"></fa-icon>
+    <div fxFlex="10">
+        <div fxLayout="column" fxLayoutAlign="center center">
+            <fa-icon data-cy="read-notification" *ngIf="notification.isRead" [icon]="['fas', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs($event)"></fa-icon>
+            <fa-icon data-cy="unread-notification" *ngIf="!notification.isRead" [icon]="['far', 'circle']" [ngStyle]="{'color':'white', 'cursor': 'pointer'}" (click)="markAs($event)"></fa-icon>
         </div>
     </div>
 

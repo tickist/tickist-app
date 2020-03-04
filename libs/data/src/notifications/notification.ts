@@ -1,3 +1,6 @@
+import firebase from 'firebase';
+import Timestamp = firebase.firestore.Timestamp;
+
 interface INotification {
     id?: string;
     title: string;
@@ -22,7 +25,7 @@ export class Notification {
     icon = '';
     recipient: string;
     isRead = false;
-    date: Date;
+    date: Timestamp;
 
 
     constructor(notification: INotification) {

@@ -3,10 +3,20 @@
 .notification-title {
     color: $white;
     font-weight: bold;
+    font-size: 16px;
+
 }
 
 .notification-description {
     color: $white;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.notification-time {
+    color: $white;
+    margin-top: 5px;
+    font-size: 12px;
 }
 
 :host {

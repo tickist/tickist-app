@@ -26,7 +26,8 @@ export class NotificationsIconComponent implements OnInit {
         this.allNotifications$ = this.store.select(selectAllNotificationsWithOrder)
     }
 
-    markAllAsRead() {
+    markAllAsRead($event) {
+        $event.stopPropagation();
         this.store.dispatch(markAllNotificationsAsRead())
     }
 
