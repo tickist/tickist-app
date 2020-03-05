@@ -35,7 +35,7 @@ describe('Notifications feature', () => {
 
         cy.get('[data-cy="markAllAs"]').click();
         cy.get('tickist-notifications-icon').should('contain', 0);
-        cy.get('tickist-notifications-icon').click();
+        cy.get('[data-cy="notification-icon"]').click({force: true});
         cy.get('tickist-notification').each(($notification, index) => {
             // tslint:disable-next-line:no-unused-expression
             expect($notification.find('[data-cy="read-notification"]').first()).to.be.exist;
@@ -44,7 +44,7 @@ describe('Notifications feature', () => {
         cy.get('tickist-notification').each(($notification) => {
             // tslint:disable-next-line:no-unused-expression
             cy.wrap($notification.find('[data-cy="read-notification"]').first()).click();
-            cy.get('tickist-notifications-icon').click();
+            cy.get('[data-cy="notification-icon"]').click({force: true});
         });
         cy.get('tickist-notifications-icon').should('contain', 3);
     });
