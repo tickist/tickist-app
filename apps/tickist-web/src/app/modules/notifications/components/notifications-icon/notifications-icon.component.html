@@ -1,24 +1,25 @@
-<tickist-menu-button matBadge="{{allNotificationCounter$ | async}}" matBadgeOverlap="true"
-                     matBadgePosition="above after" [icon]="'bell'"
-                     [iconPrefix]="'far'" [color]="'white'" [fontSize]="'28'" [matMenuTriggerFor]="appMenu">
-</tickist-menu-button>
+<ng-container *ngIf="{
+        allNotificationCounter: allNotificationCounter$ |async,
+        allUnreadNotificationCounter: allUnreadNotificationCounter$ | async
+    } as data">
 
-<mat-menu #appMenu="matMenu" (click)="$event.stopPropagation()">
-    <tickist-notification *ngFor="let notification of (allNotifications$ | async)"
-                          [notification]="notification"></tickist-notification>
-    <div fxLayout="row" fxLayoutAlign="center center"
-         *ngIf="allNotificationCounter$ |async as allNotificationCounter; else noNotifications">
-        <button *ngIf="allNotificationCounter > 0" type="button" data-cy="markAllAs" mat-button class="button"
-                (click)="markAllAsRead($event)">Mark all as
-            read
-        </button>
-    </div>
+    <tickist-menu-button matBadge="{{ data.allUnreadNotificationCounter }}" matBadgeOverlap="true"
+                         matBadgePosition="above after" [icon]="'bell'" data-cy='notification-icon'
+                         [iconPrefix]="'far'" [color]="'white'" [fontSize]="'28'" [matMenuTriggerFor]="appMenu">
+    </tickist-menu-button>
 
+    <mat-menu #appMenu="matMenu" (click)="$event.stopPropagation()">
+        <tickist-notification *ngFor="let notification of (allNotifications$ | async)"
+                              [notification]="notification"></tickist-notification>
+        <div fxLayout="row" fxLayoutAlign="center center" >
+            <button *ngIf="data.allUnreadNotificationCounter > 0" type="button" data-cy="markAllAs" mat-button
+                    class="button"
+                    (click)="markAllAsRead($event)">Mark all as read
+            </button>
+            <div class="zero-notifications" *ngIf="data.allNotificationCounter === 0">
+                <span>You have 0 notifications to read.</span>
+            </div>
+        </div>
 
-</mat-menu>
-
-<ng-template #noNotifications>
-    <div class="zero-notifications">
-        <span>You have 0 notifications to read.</span>
-    </div>
-</ng-template>
+    </mat-menu>
+</ng-container>

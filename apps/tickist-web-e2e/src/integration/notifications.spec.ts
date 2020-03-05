@@ -21,7 +21,7 @@ describe('Notifications feature', () => {
         cy.get('tickist-notifications-icon').should('be.visible');
         cy.get('tickist-notifications-icon').should('contain', 3);
         cy.log('Click on notification icon');
-        cy.get('tickist-notifications-icon').click();
+        cy.get('[data-cy="notification-icon"]').click({force: true});
         cy.log('see all notifications');
         cy.get('tickist-notification').should('have.length', 3);
         cy.get('tickist-notification').each(($notification, index) => {
