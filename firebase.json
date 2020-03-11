@@ -1,20 +1,6 @@
 {
   "hosting": [
     {
-      "public": "dist/apps/tickist-web",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
       "target": "tickist-web",
       "public": "dist/apps/tickist-web",
       "ignore": [

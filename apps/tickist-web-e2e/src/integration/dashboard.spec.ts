@@ -19,13 +19,13 @@ describe('Dashboard view', () => {
     it('should see dashboard view', () => {
 
         cy.url().should('include', 'home').should('include', 'dashboard');
-        cy.get('tickist-today').find("tickist-single-task:contains(\"Task 1\")").should(($task) => {
+        cy.get('tickist-today', {timeout: 10000}).find("tickist-single-task:contains(\"Task 1\")").should(($task) => {
             expect($task).to.have.length(1);
             expect($task.first()).to.contain('Task 1');
             expect($task.first()).to.contain(format(new Date(), 'dd-MM-yyyy'));
         });
 
-        cy.get('tickist-overdue').find('tickist-single-task').should(($task) => {
+        cy.get('tickist-overdue', {timeout: 10000}).find('tickist-single-task').should(($task) => {
             expect($task).to.have.length(1);
             expect($task.first()).to.contain('Task 2');
             expect($task.first()).to.contain(format(addDays(new Date(), -1), 'dd-MM-yyyy'));

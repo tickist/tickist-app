@@ -46,7 +46,7 @@ describe('Tasks', () => {
             cy.url().should('include', 'home').should('include', 'edit-task');
 
             cy.log('fill main form');
-            cy.get('input[name=taskName]', {timeout: 10000}).type('Task 3').should('have.value', 'Task 3');
+            cy.get('input[name=taskName]', {timeout: 20000}).type('Task 3').should('have.value', 'Task 3');
             cy.get('tickist-priority').find('button').contains('A').click();
 
             cy.get('input[name=finishDate]').focus();
@@ -275,7 +275,7 @@ describe('Tasks', () => {
         });
 
         it('should delete task after click on button "delete task" and "Yes"', () => {
-            cy.get(`tickist-single-task:contains("${deletedTaskName}")`).then($task => {
+            cy.get(`tickist-single-task:contains("${deletedTaskName}")`, {timeout: 10000}).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
             });
@@ -287,7 +287,7 @@ describe('Tasks', () => {
         });
 
         it('should not delete task after click on button "delete task" and "No"', () => {
-            cy.get(`tickist-single-task:contains("${nonDeletedTaskName}")`).then($task => {
+            cy.get(`tickist-single-task:contains("${nonDeletedTaskName}")`, {timeout: 10000}).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
             });
