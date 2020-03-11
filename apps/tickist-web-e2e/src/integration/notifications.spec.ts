@@ -14,7 +14,7 @@ describe('Notifications feature', () => {
 
     afterEach(() => {
         logout();
-        removeOldFirebaseData();
+        // removeOldFirebaseData();
     });
 
     it('should see icon notification with notification counter', () => {
@@ -41,10 +41,10 @@ describe('Notifications feature', () => {
             expect($notification.find('[data-cy="read-notification"]').first()).to.be.exist;
         });
         cy.log('unread again');
+        cy.get('[data-cy="notification-icon"]').click({force: true})
         cy.get('tickist-notification').each(($notification) => {
             // tslint:disable-next-line:no-unused-expression
-            cy.wrap($notification.find('[data-cy="read-notification"]').first()).click();
-            cy.get('[data-cy="notification-icon"]').click({force: true});
+            cy.wrap($notification.find('[data-cy="read-notification"]')).first().click();
         });
         cy.get('tickist-notifications-icon').should('contain', 3);
     });

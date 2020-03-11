@@ -46,7 +46,7 @@ describe('Tasks', () => {
             cy.url().should('include', 'home').should('include', 'edit-task');
 
             cy.log('fill main form');
-            cy.get('input[name=taskName]').type('Task 3');
+            cy.get('input[name=taskName]', {timeout: 10000}).type('Task 3').should('have.value', 'Task 3');
             cy.get('tickist-priority').find('button').contains('A').click();
 
             cy.get('input[name=finishDate]').focus();
@@ -223,17 +223,61 @@ describe('Tasks', () => {
     });
 
     describe('Delete task', () => {
-        const deletedTask = 'Deleted task';
-        const nonDeletedTask = 'Task non deleted';
+        const deletedTaskName = 'Deleted task';
+        const nonDeletedTaskName = 'Task non deleted';
 
         beforeEach(() => {
+            cy.get('@database').then((database: any) => {
+                const deletedTask = new Task({
+                    id: createUniqueId(),
+                    name: deletedTaskName,
+                    owner: database.user,
+                    ownerPk: database.uid,
+                    priority: database.projects[0].defaultPriority,
+                    author: database.user,
+                    taskListPk: database.projects[0].id,
+                    repeat: 0,
+                    repeatDelta: 0,
+                    fromRepeating: 1,
+                    taskProject: {
+                        id: database.projects[0].id,
+                        name: database.projects[0].name,
+                        color: database.projects[0].color,
+                        shareWithIds: database.projects[0].shareWithIds
+                    }
+                });
+                cy.callFirestore('set', `tasks/${deletedTask.id}`, JSON.parse(JSON.stringify(deletedTask)));
+
+                const nonDeletedTask = new Task({
+                    id: createUniqueId(),
+                    name: nonDeletedTaskName,
+                    owner: database.user,
+                    ownerPk: database.uid,
+                    priority: database.projects[0].defaultPriority,
+                    author: database.user,
+                    taskListPk: database.projects[0].id,
+                    repeat: 0,
+                    repeatDelta: 0,
+                    fromRepeating: 1,
+                    taskProject: {
+                        id: database.projects[0].id,
+                        name: database.projects[0].name,
+                        color: database.projects[0].color,
+                        shareWithIds: database.projects[0].shareWithIds
+                    }
+                });
+                cy.callFirestore('set', `tasks/${nonDeletedTask.id}`, JSON.parse(JSON.stringify(nonDeletedTask)));
+
+
+            });
             cy.visit('/home/(content:tasks-projects-view//left:left-panel)')
                 .url().should('include', '/home/(content:tasks-projects-view//left:left-panel)');
         });
 
         it('should delete task after click on button "delete task" and "Yes"', () => {
-            createTask(deletedTask);
-            cy.get(`tickist-single-task:contains("${deletedTask}")`).then($task => {
+            cy.pause();
+            cy.debug();
+            cy.get(`tickist-single-task:contains("${deletedTaskName}")`).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
             });
@@ -241,19 +285,19 @@ describe('Tasks', () => {
                 cy.get('button').contains('Yes').click();
             });
             cy.get('simple-snack-bar').contains('Task has been deleted successfully').should('exist');
-            cy.get(`tickist-single-task:contains("${deletedTask}")`).should('not.exist');
+            cy.get(`tickist-single-task:contains("${deletedTaskName}")`).should('not.exist');
         });
 
         it('should not delete task after click on button "delete task" and "No"', () => {
-            createTask(nonDeletedTask);
-            cy.get(`tickist-single-task:contains("${nonDeletedTask}")`).then($task => {
+
+            cy.get(`tickist-single-task:contains("${nonDeletedTaskName}")`).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
             });
             cy.get('tickist-delete-task').within(() => {
                 cy.get('button').contains('No').click();
             });
-            cy.get(`tickist-single-task:contains("${nonDeletedTask}")`).should('exist');
+            cy.get(`tickist-single-task:contains("${nonDeletedTaskName}")`).should('exist');
         });
     });
 
