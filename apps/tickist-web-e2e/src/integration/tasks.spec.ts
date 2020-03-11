@@ -275,8 +275,6 @@ describe('Tasks', () => {
         });
 
         it('should delete task after click on button "delete task" and "Yes"', () => {
-            cy.pause();
-            cy.debug();
             cy.get(`tickist-single-task:contains("${deletedTaskName}")`).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
@@ -289,7 +287,6 @@ describe('Tasks', () => {
         });
 
         it('should not delete task after click on button "delete task" and "No"', () => {
-
             cy.get(`tickist-single-task:contains("${nonDeletedTaskName}")`).then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
                 cy.get('[data-cy="delete-task-button"]').click();
