@@ -11,7 +11,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {FilterProjectDialogComponent} from '../../components/filter-projects-dialog/filter-projects.dialog.component';
 import {ProjectsFiltersService} from '../../projects-filters.service';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../../../store';
 import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/routes.names';
 import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
 import {selectFilteredProjectsList} from '../../projects-filters.selectors';
@@ -55,7 +54,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
     navigateTo(path) {
         // this.router.navigate([path]);
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [path]}}]);
+        this.router.navigate([homeRoutesName.HOME, path]);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         }
@@ -71,7 +70,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     }
 
     navigateToCreateProjectView() {
-        this.router.navigate(['home', {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT]}}]);
+        this.router.navigate(['home', editProjectSettingsRoutesName.EDIT_PROJECT]);
     }
 
     ngOnDestroy() {

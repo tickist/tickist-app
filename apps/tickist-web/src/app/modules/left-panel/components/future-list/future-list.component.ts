@@ -92,8 +92,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
         if (false) {
             this.router.navigate([path]);
         } else {
-            // this.router.navigate(['home/' + futureTasksRoutesName.FUTURE_TASKS, {outlets: {content: [arg]}}]);
-            this.router.navigate(['home', {outlets: {content: [futureTasksRoutesName.FUTURE_TASKS, arg]}}]);
+            this.router.navigate(['home', futureTasksRoutesName.FUTURE_TASKS, arg]);
         }
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             // @TODO add action

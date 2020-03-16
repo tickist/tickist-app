@@ -20,14 +20,14 @@ export class LeftPanelComponent implements OnInit {
     }
 
     navigateToTags() {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [tasksTagsViewRoutesName.TASKS_TAGS_VIEW]}}]);
+        this.router.navigate([homeRoutesName.HOME, tasksTagsViewRoutesName.TASKS_TAGS_VIEW]);
     }
 
     navigateToTasksTreeView() {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [tasksTreeViewRoutesName.TASKS_TREE_VIEW]}}]);
+        this.router.navigate([homeRoutesName.HOME, tasksTreeViewRoutesName.TASKS_TREE_VIEW]);
     }
 
     navigateToStatisticsView() {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [statisticsRoutesName.STATISTICS]}}]);
+        this.router.navigate([homeRoutesName.HOME, statisticsRoutesName.STATISTICS]);
     }
 }

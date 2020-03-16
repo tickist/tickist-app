@@ -1,5 +1,5 @@
 <ng-container *ngIf="url">
-    <img *ngIf="url" [ngStyle]="imgStyle" [matTooltip]="username" alt="user avatar" [src]="url" (error)="handleError($event)">
+    <img [ngStyle]="imgStyle" [matTooltip]="username" alt="user avatar" [src]="url" (error)="handleError($event)">
 </ng-container>
 
 <ng-container *ngIf="!url">

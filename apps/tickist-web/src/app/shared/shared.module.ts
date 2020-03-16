@@ -16,6 +16,7 @@ import {AutofocusDirective} from './autofocus';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {UserAvatarComponent} from './components/user-avatar/user-avatar.component';
 import {FeatureFlagDirective} from './directives/feature-flag.directive';
+import {BlankComponent} from '../testing/test.modules';
 
 
 @NgModule({
@@ -25,10 +26,10 @@ import {FeatureFlagDirective} from './directives/feature-flag.directive';
     ],
     declarations: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
         Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
-        FeatureFlagDirective],
+        FeatureFlagDirective, BlankComponent],
     exports: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
         Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
-        FeatureFlagDirective]
+        FeatureFlagDirective, BlankComponent]
 })
 export class TickistSharedModule {
 }

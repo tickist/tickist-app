@@ -1,6 +1,6 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {Router} from '@angular/router';
+import {ActivationStart, Router, RouterOutlet} from '@angular/router';
 import {Task} from '@data/tasks/models/tasks';
 import {Project} from '@data/projects';
 import {ProjectService} from '../../services/project.service';
@@ -22,6 +22,7 @@ import {AngularFireMessaging} from '@angular/fire/messaging';
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
+    // @ViewChild('contentOutlet', {read: RouterOutlet, static: true}) contentOutlet: RouterOutlet;
     tasks: Task[];
     projects: Project[];
     leftSidenavVisibility: SideNavVisibility;
@@ -35,6 +36,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
+
         this.leftSidenavVisibility = new SideNavVisibility(
             {'open': true, 'mode': '', 'position': 'start'});
 

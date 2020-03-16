@@ -1,12 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Project} from '@data/projects';
-
-import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {Task} from '@data/tasks/models/tasks';
 import {selectAllTasksTreeView} from '../../tasks-tree-view.selectors';
 import {Observable, Subject} from 'rxjs';
-import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {takeUntil} from 'rxjs/operators';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
@@ -132,7 +130,7 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     }
 
     navigateToCreateProjectView() {
-        this.router.navigate(['home', {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT]}}]);
+        this.router.navigate(['home', editProjectSettingsRoutesName.EDIT_PROJECT]);
     }
 
     ngOnDestroy() {

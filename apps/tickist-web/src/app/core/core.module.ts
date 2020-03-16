@@ -99,7 +99,7 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         NavBarAuthPageComponent,
         AuthLayoutComponent,
         HomeComponent,
-        AddTaskComponent,
+        AddTaskComponent
     ],
     declarations: [
         NavComponent,

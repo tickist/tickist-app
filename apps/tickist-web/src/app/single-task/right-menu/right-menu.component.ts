@@ -56,7 +56,7 @@ export class RightMenuComponent implements OnInit {
     }
 
     navigateToEditTaskView(taskId: number) {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editTaskRoutesName.EDIT_TASK, taskId]}}]);
+        this.router.navigate([homeRoutesName.HOME, editTaskRoutesName.EDIT_TASK, taskId]);
     }
 
 }

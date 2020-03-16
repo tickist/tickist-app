@@ -16,7 +16,6 @@ export class AnonymousGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, stateRouter: RouterStateSnapshot): Observable<boolean> {
 
         return this.authService.authState$.pipe(map(state => {
-                console.log(state)
                 if (state === null) {
                     return true;
                 }

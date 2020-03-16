@@ -13,7 +13,7 @@ describe("Tags", () => {
 
     describe("Create new tag", () => {
         beforeEach(() => {
-            cy.visit('/home/(content:tasks-tags-view//left:left-panel)');
+            cy.visit('/home/tasks-tags-view');
         });
 
         it('should create new tag using a form in the left panel and delete it', () => {

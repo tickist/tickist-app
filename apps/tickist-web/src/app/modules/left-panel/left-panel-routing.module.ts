@@ -8,6 +8,13 @@ const routes: Routes = [
     {
         path: '',
         component: LeftPanelComponent,
+        // children: [
+        //     {
+        //         path: '',
+        //         // outlet: 'left',
+        //         component: LeftPanelComponent,
+        //     }
+        // ]
     }
 ];
 

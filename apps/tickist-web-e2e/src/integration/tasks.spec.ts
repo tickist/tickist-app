@@ -270,8 +270,8 @@ describe('Tasks', () => {
 
 
             });
-            cy.visit('/home/(content:tasks-projects-view//left:left-panel)')
-                .url().should('include', '/home/(content:tasks-projects-view//left:left-panel)');
+            cy.visit('/home/tasks-projects-view')
+                .url().should('include', '/home/tasks-projects-view');
         });
 
         it('should delete task after click on button "delete task" and "Yes"', () => {

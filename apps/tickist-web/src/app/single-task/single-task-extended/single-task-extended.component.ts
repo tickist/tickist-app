@@ -165,9 +165,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
             this.selectTaskProject.setValue(changes.task.currentValue.taskProject.id, {emitEvent: false});
         }
         if (changes.hasOwnProperty('task') && changes.task.currentValue) {
-            console.log(this.task.tags)
             this.tags = removeTagsNotBelongingToUser(this.task.tags, this.fireAuth.auth.currentUser.uid);
-            console.log(this.tags)
         }
     }
 

@@ -126,7 +126,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     }
 
     navigateToEditProjectView(projectId: string) {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
+        this.router.navigate([homeRoutesName.HOME, editProjectSettingsRoutesName.EDIT_PROJECT, projectId]);
     }
 
     trackByFn(index, item): number {

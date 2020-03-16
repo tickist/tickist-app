@@ -40,6 +40,7 @@ import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar
 import {IconsModule} from './icons.module';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {TickistNotificationsModule} from './modules/notifications/notifications.module';
+import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
 
 
 @NgModule({
@@ -49,7 +50,6 @@ import {TickistNotificationsModule} from './modules/notifications/notifications.
         TimeDialogComponent,
         TypeFinishDateString,
         ChangeFinishDateDialogComponent,
-        BlankComponent,
         RootComponent,
         SnackBarMessageComponent
     ],
@@ -88,7 +88,8 @@ import {TickistNotificationsModule} from './modules/notifications/notifications.
         TickistCoreModule,
         IconsModule,
         AngularFireMessagingModule,
-        TickistNotificationsModule
+        TickistNotificationsModule,
+        TickistLeftPanelModule
         // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],

@@ -20,7 +20,7 @@ import {TickistSingleTaskModule} from '../../single-task/single-task.module';
     declarations: [
         DashboardComponent,
         TodayComponent,
-        OverdueComponent
+        OverdueComponent,
     ]
 })
 export class TickistDashboardModule {

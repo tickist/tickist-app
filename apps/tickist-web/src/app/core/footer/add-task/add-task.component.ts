@@ -24,6 +24,6 @@ export class AddTaskComponent implements OnInit {
     }
 
     navigateToCreateNewTask() {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editTaskRoutesName.EDIT_TASK]}}]);
+        this.router.navigate([homeRoutesName.HOME, editTaskRoutesName.EDIT_TASK]);
     }
 }

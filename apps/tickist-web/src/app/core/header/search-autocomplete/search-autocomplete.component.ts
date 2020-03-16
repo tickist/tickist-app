@@ -45,7 +45,7 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
     }
 
     goToTask($event: MatAutocompleteSelectedEvent) {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editTaskRoutesName.EDIT_TASK, $event.option.value]}}]);
+        this.router.navigate([homeRoutesName.HOME, editTaskRoutesName.EDIT_TASK, $event.option.value]);
         this.searchControl.reset();
     }
 

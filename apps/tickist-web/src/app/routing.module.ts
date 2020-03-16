@@ -23,6 +23,7 @@ import {AuthLayoutComponent} from './core/layouts/auth-layout/auth-layout.compon
 import {resetPasswordRoutesName} from './modules/reset-password/routes-names';
 import {loginRoutesName} from './modules/login/routes-names';
 import {signupRoutesName} from './modules/signup/routes-names';
+import {LeftPanelComponent} from './modules/left-panel/pages/left-panel/left-panel.component';
 
 
 export const routes: Routes = [
@@ -33,76 +34,63 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: '/home/(content:dashboard//left:left-panel)',
-                pathMatch: 'full',
+                canActivate: [LoggedInGuard],
+                outlet: 'left',
+                component: LeftPanelComponent,
             },
             {
                 path: dashboardRoutesName.DASHBOARD,
                 canActivate: [LoggedInGuard],
-                outlet: 'content',
-                loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.TickistDashboardModule)
+                loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => {
+                    return m.TickistDashboardModule
+                })
             },
             {
                 path: futureTasksRoutesName.FUTURE_TASKS,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/future-tasks/future-tasks.module').then(m => m.TickistFutureTasksModule)
             },
             {
                 path: tasksTreeViewRoutesName.TASKS_TREE_VIEW,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/tasks-tree-view/tasks-tree-view.module').then(m => m.TickistTasksTreeViewModule)
             },
             {
                 path: tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/tasks-projects-view/tasks-projects-view.module')
                     .then(m => m.TickistTasksProjectsViewModule)
             },
             {
                 path: tasksTagsViewRoutesName.TASKS_TAGS_VIEW,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/tasks-tags-view/tasks-tags-view.module').then(m => m.TickistTasksTagsViewModule)
             },
             {
                 path: statisticsRoutesName.STATISTICS,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/statistics-view/statistics-view.module').then(m => m.TickistStatisticsViewModule)
             },
             {
                 path: editTaskRoutesName.EDIT_TASK,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/edit-task/edit-task.module').then(m => m.TickistEditTaskModule)
             },
             {
                 path: editUserSettingsRoutesName.EDIT_USER_SETTINGS,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/edit-user-settings/edit-user-settings.module')
                     .then(m => m.TickistEditUserSettingsModule)
             },
             {
                 path: teamRoutesName.TEAM,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/team/team.module').then(m => m.TickistTeamModule)
             },
             {
                 path: editProjectSettingsRoutesName.EDIT_PROJECT,
-                outlet: 'content',
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/edit-project/edit-project.module').then(m => m.TickistEditProjectModule)
-            },
-            {
-                path: 'left-panel',
-                outlet: 'left',
-                canActivate: [LoggedInGuard],
-                loadChildren: () => import('./modules/left-panel/left-panel.module').then(m => m.TickistLeftPanelModule)
             }
         ]
     },
@@ -126,7 +114,7 @@ export const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: '/home/(content:dashboard//left:left-panel)',
+        redirectTo: '/home/dashboard',
         pathMatch: 'full'
     }
 ];
@@ -135,7 +123,7 @@ export const routes: Routes = [
 @NgModule({
     imports: [
         CommonModule,
-        RouterModule.forRoot(routes),
+        RouterModule.forRoot(routes, {enableTracing: true}),
         StoreRouterConnectingModule.forRoot({stateKey: 'router'})
     ],
     declarations: [],

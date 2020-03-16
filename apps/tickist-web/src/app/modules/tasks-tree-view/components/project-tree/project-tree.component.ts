@@ -40,19 +40,15 @@ export class ProjectTreeComponent implements OnInit {
     }
 
     navigateToEditProjectView(projectId: number) {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
+        this.router.navigate([homeRoutesName.HOME, editProjectSettingsRoutesName.EDIT_PROJECT, projectId]);
     }
 
     navigateToCreateNewChildProject(projectId: number) {
         this.router.navigate([
             homeRoutesName.HOME,
-            {
-                outlets: {
-                    content: [
-                        editProjectSettingsRoutesName.EDIT_PROJECT, 'createWithAncestor', projectId
-                    ]
-                }
-            }
+            editProjectSettingsRoutesName.EDIT_PROJECT,
+            'createWithAncestor',
+            projectId
         ]);
     }
 }

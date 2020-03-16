@@ -164,14 +164,14 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
                 this.store.dispatch(new RequestDeleteProject({projectId: this.project.id}));
-                this.router.navigate(['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, this.user.inboxPk]}}]);
+                this.router.navigate(['home', tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, this.user.inboxPk]);
             }
         });
 
     }
 
     navigateToEditProjectView(projectId: string) {
-        this.router.navigate([homeRoutesName.HOME, {outlets: {content: [editProjectSettingsRoutesName.EDIT_PROJECT, projectId]}}]);
+        this.router.navigate([homeRoutesName.HOME, editProjectSettingsRoutesName.EDIT_PROJECT, projectId]);
     }
 
     navigateTo(path, projectId, $event) {
@@ -179,7 +179,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         const mdCheckbox = elementClickPath.find(elem => elem.localName === 'mat-checkbox');
         if (!mdCheckbox) {
             this.router.navigate(
-                ['home', {outlets: {content: [tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]}}]
+                ['home', tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]
             ).catch((err => console.log(err)));
             if (this.media.isActive('sm') || this.media.isActive('xs')) {
                 this.configurationService.changeOpenStateLeftSidenavVisibility('close');

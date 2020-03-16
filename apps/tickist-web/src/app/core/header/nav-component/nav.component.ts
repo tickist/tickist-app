@@ -111,15 +111,15 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     navigateToTeam() {
-        this.router.navigate(['home', {outlets: {content: [teamRoutesName.TEAM]}}]);
+        this.router.navigate(['home', teamRoutesName.TEAM]);
     }
 
     navigateToUserSettings() {
-        this.router.navigate(['home', {outlets: {content: [editUserSettingsRoutesName.EDIT_USER_SETTINGS]}}]);
+        this.router.navigate(['home', editUserSettingsRoutesName.EDIT_USER_SETTINGS]);
     }
 
     navigateToWeekdays() {
-        this.router.navigate(['home', {outlets: {content: [dashboardRoutesName.DASHBOARD]}}]);
+        this.router.navigate(['home', dashboardRoutesName.DASHBOARD]);
     }
 
     logout() {

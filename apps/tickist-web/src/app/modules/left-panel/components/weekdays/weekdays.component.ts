@@ -108,13 +108,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     }
 
     navigateTo(arg) {
-        if (this.isToday(arg)) {
-            this.router.navigate([homeRoutesName.HOME, {outlets: {content: [dashboardRoutesName.DASHBOARD, arg]}}]);
-        } else {
-            // this.router.navigate(['home/' + dashboardRoutesName.DASHBOARD, {outlets: {content: [arg]}}]);
-            this.router.navigate([homeRoutesName.HOME, {outlets: {content: [dashboardRoutesName.DASHBOARD, arg]}}]);
-        }
-
+        this.router.navigate([`${homeRoutesName.HOME}`, `${dashboardRoutesName.DASHBOARD}`, arg]);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         }
