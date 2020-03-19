@@ -91,6 +91,11 @@ export const routes: Routes = [
                 path: editProjectSettingsRoutesName.EDIT_PROJECT,
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/edit-project/edit-project.module').then(m => m.TickistEditProjectModule)
+            },
+            {
+                path: '',
+                redirectTo: '/home/dashboard',
+                pathMatch: 'full'
             }
         ]
     },
