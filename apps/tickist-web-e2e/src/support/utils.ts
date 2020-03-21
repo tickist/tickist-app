@@ -7,7 +7,7 @@ export function createFirebase() {
 }
 
 export function login() {
-    cy.login().then($auth => cy.wrap($auth).its(<any>'uid').as('uid'));
+    cy.login(Cypress.env('TEST_UID'));
 }
 
 export function logout() {
@@ -15,21 +15,15 @@ export function logout() {
 }
 
 function setFirebaseData() {
-    cy.get('@uid').then((uid) => {
-        const database = new Database(uid);
-        cy.wrap(database).as('database');
-        cy.callFirestore('set', `users/${database.uid}`, {...database.user});
-
-        // cy.callFirestore('set', `projects/${database.inbox.id}`, JSON.parse(JSON.stringify(database.inbox)));
-        database.projects.forEach(project => {
-            cy.callFirestore('set', `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
-        });
-        database.tags.forEach(tag => {
-            cy.callFirestore('set', `tags/${tag.id}`, JSON.parse(JSON.stringify(tag)));
-        });
-        database.tasks.forEach(task => {
-            cy.callFirestore('set', `tasks/${task.id}`, JSON.parse(JSON.stringify(task)));
-        });
+    const uid = Cypress.env('TEST_UID');
+    const database = new Database(uid);
+    cy.wrap(database).as('database');
+    cy.callFirestore('set', `users/${database.uid}`, {...database.user});
+    database.projects.forEach(project => {
+        cy.callFirestore('set', `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
+    });
+    database.tasks.forEach(task => {
+        cy.callFirestore('set', `tasks/${task.id}`, JSON.parse(JSON.stringify(task)));
     });
 }
 
@@ -59,13 +53,13 @@ export function clickMenuElement(element: string) {
 
 export function clickOnProject(projectName: string) {
     cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
-    if (projectName !== "All projects") {
+    if (projectName !== 'All projects') {
         // @TODO remove force
         cy.get('tickist-single-project').contains(projectName).click({force: true}).then(() => {
-            cy.get('tickist-single-project').find('div.isActive').should('exist')
+            cy.get('tickist-single-project').find('div.isActive').should('exist');
         });
     } else {
-        cy.get('[data-cy="All projects"]').click()
+        cy.get('[data-cy="All projects"]').click();
     }
 }
 
@@ -76,9 +70,9 @@ export function clickOnTagsLeftPanelMenu() {
 export function clickOnEditProject(projectName: string) {
     cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
     cy.get('tickist-single-project').contains(projectName).click({force: true}).then(() => {
-        cy.get('tickist-single-project').find('div.isActive').should('exist')
+        cy.get('tickist-single-project').find('div.isActive').should('exist');
     });
-    cy.get('[data-cy="edit-project"]').click()
+    cy.get('[data-cy="edit-project"]').click();
 }
 
 export function clickOnCreateNewProject() {
@@ -89,12 +83,12 @@ export function clickOnCreateNewProject() {
 
 
 export function createTask(taskName) {
-    cy.log("Create new task");
+    cy.log('Create new task');
     cy.get('tickist-add-task').find('button').click();
     cy.url().should('include', 'home').should('include', 'edit-task');
     cy.log('fill main form');
     cy.get('input[name=taskName]').type(taskName);
-    cy.get("button[type='submit']").click();
+    cy.get('button[type=\'submit\']').click();
 }
 
 export function clickOnWeekDay(weekday: string) {
@@ -116,10 +110,10 @@ export function compareTaskElementWithTaskObject($taskElement, taskObject) {
     $taskElement.find('.close-menu-icon').click();
     // steps
     if (taskObject.steps.length) {
-        $taskElement.find("#taskSteps").click();
+        $taskElement.find('#taskSteps').click();
         expect($taskElement.find('.step')).to.length(taskObject.steps.length);
         Array.from($taskElement.find('.step')).forEach((step$, index) => {
-            expect(step$).to.contain(taskObject.steps[index].name)
+            expect(step$).to.contain(taskObject.steps[index].name);
         });
         $taskElement.find('.close-menu-icon').click();
     } else {

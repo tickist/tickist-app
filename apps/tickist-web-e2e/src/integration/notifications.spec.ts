@@ -41,7 +41,7 @@ describe('Notifications feature', () => {
             expect($notification.find('[data-cy="read-notification"]').first()).to.be.exist;
         });
         cy.log('unread again');
-        cy.get('[data-cy="notification-icon"]').click({force: true})
+        cy.get('[data-cy="notification-icon"]').click({force: true});
         cy.get('tickist-notification').each(($notification) => {
             // tslint:disable-next-line:no-unused-expression
             cy.wrap($notification.find('[data-cy="read-notification"]')).first().click();
@@ -51,40 +51,39 @@ describe('Notifications feature', () => {
 });
 
 function createNotification() {
-    cy.get('@uid').then((uid) => {
-        const notifications = [
-            new Notification({
-                id: createUniqueId(),
-                recipient: uid as unknown as string,
-                title: 'Notification 1',
-                description: 'Description of the notification',
-                isRead: false,
-                type: 'notificationType1',
-                date: addDays(new Date(), -1)
-            }),
+    const uid = Cypress.env('TEST_UID');
+    const notifications = [
+        new Notification({
+            id: createUniqueId(),
+            recipient: uid as unknown as string,
+            title: 'Notification 1',
+            description: 'Description of the notification',
+            isRead: false,
+            type: 'notificationType1',
+            date: addDays(new Date(), -1)
+        }),
 
-            new Notification({
-                id: createUniqueId(),
-                recipient: uid as unknown as string,
-                title: 'Notification 2',
-                description: 'Description of the notification 2',
-                isRead: false,
-                type: 'notificationType1',
-                date: addDays(new Date(), -2)
-            }),
+        new Notification({
+            id: createUniqueId(),
+            recipient: uid as unknown as string,
+            title: 'Notification 2',
+            description: 'Description of the notification 2',
+            isRead: false,
+            type: 'notificationType1',
+            date: addDays(new Date(), -2)
+        }),
 
-            new Notification({
-                id: createUniqueId(),
-                recipient: uid as unknown as string,
-                title: 'Notification 3',
-                description: 'Description of the notification 3',
-                isRead: false,
-                type: 'notificationType1',
-                date: addDays(new Date(), -3)
-            }),
-        ];
-        notifications.forEach(notification => {
-            cy.callFirestore('set', `notifications/${notification.id}`, JSON.parse(JSON.stringify(notification)));
-        })
+        new Notification({
+            id: createUniqueId(),
+            recipient: uid as unknown as string,
+            title: 'Notification 3',
+            description: 'Description of the notification 3',
+            isRead: false,
+            type: 'notificationType1',
+            date: addDays(new Date(), -3)
+        }),
+    ];
+    notifications.forEach(notification => {
+        cy.callFirestore('set', `notifications/${notification.id}`, JSON.parse(JSON.stringify(notification)));
     });
 }
