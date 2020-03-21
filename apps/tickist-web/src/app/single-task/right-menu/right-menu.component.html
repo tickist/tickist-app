@@ -9,8 +9,8 @@
 
 <tickist-menu-button [icon]="'ellipsis-v'"
                      [matMenuTriggerFor]="menu"
-                     (onMenuClose)="emitOnMenuClose($event)"
-                     (onMenuOpen)="emitOnMenuOpen($event)"
+                     (onMenuClose)="emitOnMenuClose()"
+                     (onMenuOpen)="emitOnMenuOpen()"
                      *ngIf="isRightMenuVisible"
                      data-cy="task-short-menu">
 </tickist-menu-button>
@@ -38,7 +38,7 @@
             </tickist-menu-button>
             <tickist-menu-button [icon]="'reply'"
                                  [matTooltip]="'next week'"
-                                 [transform]="'rotate(-180deg)'"
+                                 [rotate]="180"
                                  (click)="emitChangeDataClickEvent('next_week')">
             </tickist-menu-button>
             <tickist-menu-button [icon]="'fast-forward'"
@@ -47,7 +47,7 @@
             </tickist-menu-button>
             <tickist-menu-button [icon]="'reply-all'"
                                  [matTooltip]="'next month'"
-                                 [transform]="'rotate(-180deg)'"
+                                 [rotate]="180"
                                  (click)="emitChangeDataClickEvent('next_month')">
             </tickist-menu-button>
         </div>

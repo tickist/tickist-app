@@ -1,13 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Tag} from '@data/tags/models/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {RequestDeleteTag, RequestUpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../../../store';
 import {SetCurrentTagsFilters} from '../../../../../../core/actions/tasks/tags-filters-tasks.actions';
 import {selectCurrentTagsFilter} from '../../../../../../core/selectors/filters-tasks.selectors';
 import {Filter} from '@data/filter';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 
 @Component({
@@ -15,7 +16,7 @@ import {Filter} from '@data/filter';
     templateUrl: './tag.component.html',
     styleUrls: ['./tag.component.scss']
 })
-export class TagComponent implements OnInit {
+export class TagComponent implements OnInit, OnDestroy {
     @Input() label: string;
     @Input() id: string;
     @Input() tasksCounter: number;
@@ -26,13 +27,16 @@ export class TagComponent implements OnInit {
     editTagForm: FormGroup;
     editMode = false;
     isCheckboxModeEnabled = false;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store<{}>) {
         this.isActive = false;
     }
 
     ngOnInit() {
-        this.store.select(selectCurrentTagsFilter).subscribe((filter) => {
+        this.store.select(selectCurrentTagsFilter).pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((filter) => {
             if (!filter) return;
             if (filter.value instanceof Array) {
                 this.tagsIds = new Set(filter.value);
@@ -96,6 +100,11 @@ export class TagComponent implements OnInit {
 
     private isId(value: any): boolean {
         return value !== 'allTasks' && value !== 'allTags' && value !== 'withoutTags' && typeof value === 'string';
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

@@ -36,9 +36,9 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
             );
 
         this.searchControl.valueChanges.pipe(
-            takeUntil(this.ngUnsubscribe),
             debounceTime(400),
-            distinctUntilChanged()
+            distinctUntilChanged(),
+            takeUntil(this.ngUnsubscribe),
         ).subscribe((value) => {
             this.store.dispatch(new SetCurrrentSearchTasksFilter({searchText: value}));
         });

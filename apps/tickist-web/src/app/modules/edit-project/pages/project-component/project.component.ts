@@ -72,8 +72,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.colors = this.configurationService.configuration['commons']['COLOR_LIST'];
         this.defaultAvatarUrl = this.configurationService.configuration['commons']['DEFAULT_USER_AVATAR_URL'];
         this.route.params.pipe(
-            takeUntil(this.ngUnsubscribe),
-            map(params => params['ancestorProjectId'])
+            map(params => params['ancestorProjectId']),
+            takeUntil(this.ngUnsubscribe)
             )
             .subscribe(ancestorProjectId => {
                 this.ancestorProjectId = ancestorProjectId;
@@ -109,7 +109,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.project = project;
                     this.shareWith = project.shareWith.filter(shareWithUser => shareWithUser.id !== user.id);
                     this.usersWithoutAccount = project.inviteUserByEmail;
-                    this.submitButtonLabel = this.isNewProject() ? "Create" : "Save";
+                    this.submitButtonLabel = this.isNewProject() ? 'Create' : 'Save';
                 }
 
             });
@@ -242,7 +242,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         dialogRef.componentInstance.setContent(content);
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
-                this.projectService.removeUserFormShareWithList(this.project, user)
+                this.projectService.removeUserFormShareWithList(this.project, user);
             }
         });
 
@@ -269,7 +269,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     inviteUser() {
         if (this.addUserToShareWithListCtrl.valid) {
-            this.projectService.addUserToProject(this.project, this.addUserToShareWithListCtrl.value)
+            this.projectService.addUserToProject(this.project, this.addUserToShareWithListCtrl.value);
         } else {
             this.addUserToShareWithListCtrl.markAsDirty();
         }
@@ -277,7 +277,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     deleteUserFromInviteList(user) {
-        this.projectService.deleteUserFromInviteList(this.project, user)
+        this.projectService.deleteUserFromInviteList(this.project, user);
 
     }
 

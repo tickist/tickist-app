@@ -105,7 +105,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         const repeatDeltaExtension = this.repeatStringExtension.transform(this.task.repeat);
         this.repeatString = `every ${repeatDelta} ${repeatDeltaExtension}`;
         this.amountOfStepsDoneInPercent = this.task.steps.filter(step => step.status === 1).length * 100 / this.task.steps.length;
-        this.selectTaskProject.valueChanges.subscribe(value => {
+        this.selectTaskProject.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
             this.store.select(selectProjectById(value)).pipe(takeUntil(this.ngUnsubscribe)).subscribe(project => {
                 const task = Object.assign({}, this.task, {
                     taskProject: new TaskProject({
@@ -128,6 +128,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+        super.ngOnDestroy()
     }
 
     changeAssignedTo(event) {

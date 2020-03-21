@@ -22,7 +22,6 @@ import {AngularFireMessaging} from '@angular/fire/messaging';
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-    // @ViewChild('contentOutlet', {read: RouterOutlet, static: true}) contentOutlet: RouterOutlet;
     tasks: Task[];
     projects: Project[];
     leftSidenavVisibility: SideNavVisibility;
@@ -63,7 +62,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     requestPermission() {
         this.afMessaging.requestPermission
             .pipe(
-                mergeMapTo(this.afMessaging.tokenChanges)
+                mergeMapTo(this.afMessaging.tokenChanges),
+                takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
                 (token) => {

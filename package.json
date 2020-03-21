@@ -1,6 +1,6 @@
 {
   "name": "tickist",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0-beta.7",
   "license": "GPL-3.0-or-later",
   "repository": "https://github.com/tickist/tickist-app",
   "main": "dist/apps/tickist-functions/main.js",
@@ -109,6 +109,7 @@
   "devDependencies": {
     "@angular-devkit/architect": "0.803.23",
     "@angular-devkit/build-angular": "0.803.23",
+    "@angular-extensions/lint-rules": "^1.2.0",
     "@angular/cli": "8.3.23",
     "@angular/compiler-cli": "^8.2.14",
     "@angular/language-service": "^8.2.14",

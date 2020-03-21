@@ -42,7 +42,7 @@ export class RightMenuComponent implements OnInit {
         this.changePriorityClick.emit($event);
     }
 
-    emitOnMenuClose($event) {
+    emitOnMenuClose() {
         this.fastMenuClose.emit(false);
     }
 
@@ -55,7 +55,7 @@ export class RightMenuComponent implements OnInit {
 
     }
 
-    navigateToEditTaskView(taskId: number) {
+    navigateToEditTaskView(taskId: string) {
         this.router.navigate([homeRoutesName.HOME, editTaskRoutesName.EDIT_TASK, taskId]);
     }
 

@@ -63,8 +63,8 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
 
         this.store.select(selectLoggedInUser)
             .pipe(
-                takeUntil(this.ngUnsubscribe),
-                filter(user => !!user)
+                filter(user => !!user),
+                takeUntil(this.ngUnsubscribe)
             )
             .subscribe(user => {
                 this.user = user;

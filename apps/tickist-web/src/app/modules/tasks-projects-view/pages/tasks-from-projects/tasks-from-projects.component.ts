@@ -88,7 +88,9 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                     }
                 }
             });
-        this.store.select(selectActiveProject).subscribe(project => {
+        this.store.select(selectActiveProject).pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(project => {
             this.tasksListHeightFlex = this.TASKS_LIST_HEIGHT_WITHOUT_PROJECT_DESCRIPTION_FLEX;
             this.projectHeaderHeightFlex = this.PROJECT_HEADER_WITHOUT_DESCRIPTION_HEIGHT_FLEX;
             if (project) {

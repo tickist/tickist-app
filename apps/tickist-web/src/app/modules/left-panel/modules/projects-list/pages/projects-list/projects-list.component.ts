@@ -16,6 +16,7 @@ import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-
 import {selectFilteredProjectsList} from '../../projects-filters.selectors';
 import {homeRoutesName} from '../../../../../../routing.module.name';
 import {Filter} from '@data/filter';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -62,7 +63,9 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
     openFilterDialog() {
         const dialogRef = this.dialog.open(FilterProjectDialogComponent);
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(result => {
             if (result) {
 
             }

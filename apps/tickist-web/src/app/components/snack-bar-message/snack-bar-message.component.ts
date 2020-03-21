@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatSnackBar} from '@angular/material';
-import {interval, noop, Observable} from 'rxjs';
-import {map, shareReplay, take} from 'rxjs/operators';
+import {interval, noop, Observable, Subject} from 'rxjs';
+import {map, shareReplay, take, takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'tickist-snack-bar-message',
@@ -10,6 +10,7 @@ import {map, shareReplay, take} from 'rxjs/operators';
 })
 export class SnackBarMessageComponent implements OnInit, OnDestroy {
     timer$: Observable<number>;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(public snackBar: MatSnackBar) {
     }
@@ -19,9 +20,12 @@ export class SnackBarMessageComponent implements OnInit, OnDestroy {
         this.timer$ = interval(1000).pipe(
             take(time),
             map((v) => (time - 1) - v),
+            takeUntil(this.ngUnsubscribe),
             shareReplay()
         );
-        this.timer$.subscribe(noop, noop, () => {
+        this.timer$.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(noop, noop, () => {
             this.sendYes();
         });
     }
@@ -32,6 +36,7 @@ export class SnackBarMessageComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 }

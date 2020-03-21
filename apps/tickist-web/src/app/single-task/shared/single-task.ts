@@ -12,8 +12,9 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {parse} from 'date-fns';
 import {debug} from 'util';
+import {OnDestroy} from '@angular/core';
 
-export class SingleTask {
+export class SingleTask implements OnDestroy{
     task: Task;
     isRightMenuVisible = false;
     isFastMenuVisible = false;
@@ -148,5 +149,10 @@ export class SingleTask {
     saveTimeValues(time) {
         this.task.time = time.time;
         this.task.estimateTime = time.estimateTime;
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 }

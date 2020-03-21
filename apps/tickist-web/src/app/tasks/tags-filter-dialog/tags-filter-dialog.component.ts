@@ -1,21 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Tag} from '@data/tags/models/tags';
-import { MatDialogRef } from '@angular/material/dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {TagService} from '../../core/services/tag.service';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {SetCurrentTagsFilters} from '../../core/actions/tasks/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
 import {selectCurrentTagsFilter} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
 import {selectAllTags} from '../../core/selectors/tags.selectors';
 import {Filter} from '@data/filter';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'tickist-tags-filter-dialog',
     templateUrl: './tags-filter-dialog.html'
 })
-export class TagsFilterDialogComponent implements OnInit {
+export class TagsFilterDialogComponent implements OnInit, OnDestroy {
     tagsFilterValue: any;
     tagsCurrentFilter$: Observable<Filter>;
     tagsFilterValueId: any;
@@ -29,11 +29,15 @@ export class TagsFilterDialogComponent implements OnInit {
     ngOnInit(): void {
         this.tagsCurrentFilter$ = this.store.select(selectCurrentTagsFilter);
 
-        this.tagsCurrentFilter$.subscribe((filter: Filter) => {
+        this.tagsCurrentFilter$.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((filter: Filter) => {
             this.tagsFilterValueId = filter.id;
         });
 
-        this.store.select(selectAllTags).subscribe((tags) => {
+        this.store.select(selectAllTags).pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((tags) => {
             this.tags = tags;
         });
     }
@@ -52,6 +56,11 @@ export class TagsFilterDialogComponent implements OnInit {
 
     isActive(tagId: any) {
         return this.tagsFilterValue === tagId;
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

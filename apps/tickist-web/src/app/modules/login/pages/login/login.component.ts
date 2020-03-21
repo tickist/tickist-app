@@ -1,10 +1,12 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {Login} from '../../../../core/actions/auth.actions';
 import {AuthService} from '../../../../core/services/auth.service';
 import {signupRoutesName} from '../../../signup/routes-names';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -12,20 +14,25 @@ import {signupRoutesName} from '../../../signup/routes-names';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
     loginForm: FormGroup;
     message = '';
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(protected router: Router, private authService: AuthService, private store: Store<{}>) {
         this.loginForm = new FormGroup({
             'email': new FormControl('', [Validators.required, Validators.email]),
             'password': new FormControl('', Validators.required)
         });
-        this.loginForm.controls['email'].valueChanges.subscribe(() => {
+        this.loginForm.controls['email'].valueChanges.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(() => {
             this.resetValidationError();
         });
 
-        this.loginForm.controls['password'].valueChanges.subscribe(() => {
+        this.loginForm.controls['password'].valueChanges.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(() => {
             this.resetValidationError();
         });
     }
@@ -94,6 +101,11 @@ export class LoginComponent {
 
     facebookAuth(): void {
         this.authService.facebookAuth();
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
 }

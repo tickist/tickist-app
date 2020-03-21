@@ -1,5 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {AppStore} from '../../../../store';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Project} from '@data/projects';
 import {Store} from '@ngrx/store';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -9,13 +8,16 @@ import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {RequestCreateTask} from '../../../../core/actions/tasks/task.actions';
 import {TaskUser} from '@data/tasks/models/task-user';
 import {TaskProject} from '@data/tasks/models/task-project';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
     selector: 'tickist-add-task-tree-view',
     templateUrl: './add-task-tree-view.component.html',
     styleUrls: ['./add-task-tree-view.component.scss']
 })
-export class AddTaskTreeViewComponent implements OnInit {
+export class AddTaskTreeViewComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     @Input() project: Project;
     createTaskForm: FormGroup;
     user: User;
@@ -27,7 +29,9 @@ export class AddTaskTreeViewComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.select(selectLoggedInUser).subscribe(user => this.user = user);
+        this.store.select(selectLoggedInUser).pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(user => this.user = user);
     }
 
     createTaskModel(taskName: string) {
@@ -82,4 +86,8 @@ export class AddTaskTreeViewComponent implements OnInit {
 
     }
 
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
 }

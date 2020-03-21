@@ -1,8 +1,5 @@
-import {
-    ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChange,
-    ViewChild
-} from '@angular/core';
-import { IconPrefix } from '@fortawesome/fontawesome-common-types';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
+import {IconPrefix} from '@fortawesome/fontawesome-common-types';
 
 @Component({
     selector: 'tickist-menu-button',
@@ -17,9 +14,10 @@ export class MenuButtonComponent implements OnInit, OnChanges {
     @Input() isDisabled = false;
     @Input() fontSize = '16px';
     @Input() transform = '';
+    @Input() rotate = 0;
     isDisabledClass = '';
 
-    constructor(private elRef: ElementRef, private renderer: Renderer2) {
+    constructor() {
     }
 
     ngOnInit() {

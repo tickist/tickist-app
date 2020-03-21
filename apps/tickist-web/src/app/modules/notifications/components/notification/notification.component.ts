@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Notification} from '@data/notifications';
 import {Store} from '@ngrx/store';
 import {updateNotification} from '../../actions/notifications.actions';
-import {formatDistanceToNow} from 'date-fns';
+import {formatDistanceToNow, isValid} from 'date-fns';
 
 
 @Component({
@@ -13,12 +13,12 @@ import {formatDistanceToNow} from 'date-fns';
 })
 export class NotificationComponent implements OnInit {
     @Input() notification: Notification;
-    ago: any;
+    ago: string;
     constructor(private store: Store<{}>) {
     }
 
     ngOnInit() {
-        this.ago = formatDistanceToNow(this.notification.date,{ addSuffix: true })
+        if (isValid(this.notification.date))  this.ago = formatDistanceToNow(this.notification.date,{ addSuffix: true })
     }
 
     markAs($event) {
