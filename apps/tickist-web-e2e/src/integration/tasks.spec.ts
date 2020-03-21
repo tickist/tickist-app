@@ -4,8 +4,9 @@ import {
     clickOnWeekDay,
     compareTaskElementWithTaskObject,
     createFirebase,
-    createTask,
-    login, logout, removeOldFirebaseData
+    login,
+    logout,
+    removeOldFirebaseData
 } from '../support/utils';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {Task} from '@data/tasks/models/tasks';

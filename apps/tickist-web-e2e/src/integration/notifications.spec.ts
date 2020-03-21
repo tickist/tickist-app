@@ -14,7 +14,6 @@ describe('Notifications feature', () => {
 
     afterEach(() => {
         logout();
-        // removeOldFirebaseData();
     });
 
     it('should see icon notification with notification counter', () => {
@@ -60,7 +59,7 @@ function createNotification() {
             description: 'Description of the notification',
             isRead: false,
             type: 'notificationType1',
-            date: addDays(new Date(), -1)
+            date: '1970-01-01T00:00:00Z'
         }),
 
         new Notification({
@@ -70,7 +69,7 @@ function createNotification() {
             description: 'Description of the notification 2',
             isRead: false,
             type: 'notificationType1',
-            date: addDays(new Date(), -2)
+            date: '1970-01-01T00:00:00Z'
         }),
 
         new Notification({
@@ -80,7 +79,7 @@ function createNotification() {
             description: 'Description of the notification 3',
             isRead: false,
             type: 'notificationType1',
-            date: addDays(new Date(), -3)
+            date: '1970-01-01T00:00:00Z'
         }),
     ];
     notifications.forEach(notification => {

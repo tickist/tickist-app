@@ -18,7 +18,7 @@ export class NotificationComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.ago = formatDistanceToNow(this.notification.date.toDate(),{ addSuffix: true })
+        this.ago = formatDistanceToNow(this.notification.date,{ addSuffix: true })
     }
 
     markAs($event) {
