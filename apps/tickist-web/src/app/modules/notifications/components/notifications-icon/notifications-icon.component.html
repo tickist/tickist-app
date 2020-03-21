@@ -1,11 +1,11 @@
-<ng-container *ngIf="{
+<div *ngIf="{
         allNotificationCounter: allNotificationCounter$ |async,
         allUnreadNotificationCounter: allUnreadNotificationCounter$ | async
-    } as data">
+    } as data" [matMenuTriggerFor]="appMenu" data-cy='notification-icon'>
 
     <tickist-menu-button matBadge="{{ data.allUnreadNotificationCounter }}" matBadgeOverlap="true"
-                         matBadgePosition="above after" [icon]="'bell'" data-cy='notification-icon'
-                         [iconPrefix]="'far'" [color]="'white'" [fontSize]="'28'" [matMenuTriggerFor]="appMenu">
+                         matBadgePosition="above after" [icon]="'bell'"
+                         [iconPrefix]="'far'" [color]="'white'" [fontSize]="'28'" >
     </tickist-menu-button>
 
     <mat-menu #appMenu="matMenu" (click)="$event.stopPropagation()">
@@ -22,4 +22,4 @@
         </div>
 
     </mat-menu>
-</ng-container>
+</div>

@@ -20,7 +20,7 @@ describe('Notifications feature', () => {
         cy.get('tickist-notifications-icon').should('be.visible');
         cy.get('tickist-notifications-icon').should('contain', 3);
         cy.log('Click on notification icon');
-        cy.get('[data-cy="notification-icon"]').click({force: true});
+        cy.get('[data-cy="notification-icon"]').click();
         cy.log('see all notifications');
         cy.get('tickist-notification').should('have.length', 3);
         cy.get('tickist-notification').each(($notification, index) => {
@@ -34,13 +34,11 @@ describe('Notifications feature', () => {
 
         cy.get('[data-cy="markAllAs"]').click();
         cy.get('tickist-notifications-icon').should('contain', 0);
-        cy.get('[data-cy="notification-icon"]').click({force: true});
         cy.get('tickist-notification').each(($notification, index) => {
             // tslint:disable-next-line:no-unused-expression
             expect($notification.find('[data-cy="read-notification"]').first()).to.be.exist;
         });
         cy.log('unread again');
-        cy.get('[data-cy="notification-icon"]').click({force: true});
         cy.get('tickist-notification').each(($notification) => {
             // tslint:disable-next-line:no-unused-expression
             cy.wrap($notification.find('[data-cy="read-notification"]')).first().click();
@@ -59,7 +57,7 @@ function createNotification() {
             description: 'Description of the notification',
             isRead: false,
             type: 'notificationType1',
-            date: '1970-01-01T00:00:00Z'
+            date: '2020-01-03T00:00:00Z'
         }),
 
         new Notification({
@@ -69,7 +67,7 @@ function createNotification() {
             description: 'Description of the notification 2',
             isRead: false,
             type: 'notificationType1',
-            date: '1970-01-01T00:00:00Z'
+            date: '2020-01-02T00:00:00Z'
         }),
 
         new Notification({
@@ -79,7 +77,7 @@ function createNotification() {
             description: 'Description of the notification 3',
             isRead: false,
             type: 'notificationType1',
-            date: '1970-01-01T00:00:00Z'
+            date: '2020-01-01T00:00:00Z'
         }),
     ];
     notifications.forEach(notification => {
