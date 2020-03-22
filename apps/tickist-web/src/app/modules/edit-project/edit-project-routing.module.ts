@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {ProjectComponent} from './pages/project-component/project.component';
-import {TasksFromProjectsComponent} from '../tasks-projects-view/pages/tasks-from-projects/tasks-from-projects.component';
-import {BlankComponent} from '../../testing/test.modules';
-
+import {BlankComponent} from '../../shared/components/blank/blank.component';
 
 
 const routes: Routes = [

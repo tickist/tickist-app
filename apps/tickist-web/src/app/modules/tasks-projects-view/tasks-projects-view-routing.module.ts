@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {TasksFromProjectsComponent} from './pages/tasks-from-projects/tasks-from-projects.component';
-import {DashboardComponent} from '../dashboard';
-import {BlankComponent} from '../../testing/test.modules';
+import {BlankComponent} from '../../shared/components/blank/blank.component';
+
 
 
 

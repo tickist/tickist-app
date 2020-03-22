@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {TaskComponent} from './pages/task-component/task.component';
-import {BlankComponent} from '../../testing/test.modules';
+import {BlankComponent} from '../../shared/components/blank/blank.component';
 
 
 

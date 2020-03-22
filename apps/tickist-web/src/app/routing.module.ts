@@ -41,9 +41,7 @@ export const routes: Routes = [
             {
                 path: dashboardRoutesName.DASHBOARD,
                 canActivate: [LoggedInGuard],
-                loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => {
-                    return m.TickistDashboardModule
-                })
+                loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.TickistDashboardModule)
             },
             {
                 path: futureTasksRoutesName.FUTURE_TASKS,
@@ -103,13 +101,13 @@ export const routes: Routes = [
         path: signupRoutesName.SIGNUP,
         component: AuthLayoutComponent,
         canActivate: [AnonymousGuard],
-        loadChildren: './modules/signup/signup.module#TickistSignUpModule'
+        loadChildren: () => import('./modules/signup/signup.module').then(m => m.TickistSignUpModule)
     },
     {
         path: loginRoutesName.LOGIN,
         component: AuthLayoutComponent,
         canActivate: [AnonymousGuard],
-        loadChildren: './modules/login/login.module#TickistLoginModule'
+        loadChildren: () => import('./modules/login/login.module').then(m => m.TickistLoginModule)
     },
     {
         path: resetPasswordRoutesName.RESET_PASSWORD,

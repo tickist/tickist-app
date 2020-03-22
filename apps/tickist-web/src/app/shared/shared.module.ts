@@ -16,7 +16,7 @@ import {AutofocusDirective} from './autofocus';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {UserAvatarComponent} from './components/user-avatar/user-avatar.component';
 import {FeatureFlagDirective} from './directives/feature-flag.directive';
-import {BlankComponent} from '../testing/test.modules';
+import {BlankComponent} from './components/blank/blank.component';
 
 
 @NgModule({
