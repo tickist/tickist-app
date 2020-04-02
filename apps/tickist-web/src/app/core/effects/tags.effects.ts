@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {concatMap, mergeMap, switchMap} from 'rxjs/operators';
+import {concatMap, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {
     AddTags,
@@ -18,6 +18,7 @@ import {Update} from '@ngrx/entity';
 import {TagService} from '../services/tag.service';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
 @Injectable()
@@ -27,10 +28,11 @@ export class TagsEffects {
     query$ = this.actions$
         .pipe(
             ofType<QueryTags>(TagActionTypes.QUERY_TAGS),
-            switchMap(action => {
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            switchMap(([, user]) => {
                 return this.db.collection(
                     'tags',
-                    ref => ref.where('author', '==', this.authFire.auth.currentUser.uid))
+                    ref => ref.where('author', '==', user.id))
                     .stateChanges();
             }),
             concatMap(actions => {

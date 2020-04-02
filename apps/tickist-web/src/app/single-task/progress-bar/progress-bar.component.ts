@@ -16,7 +16,7 @@ import {MediaObserver} from '@angular/flex-layout';
 export class ProgressBarComponent implements AfterViewChecked, OnChanges {
     @Input() percent: number;
     @Input() isDisabled = false;
-    @ViewChild('progressBar', { static: false }) progressBar: ElementRef;
+    @ViewChild('progressBar') progressBar: ElementRef;
     showProgressBar = false;
     showIcon = false;
     tooltipString: string;

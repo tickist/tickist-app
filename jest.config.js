@@ -7,7 +7,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'html', 'node'],
   coverageReporters: ['html'],
   testEnvironment: 'jsdom',
-  passWithNoTests: true,
+  passWithNoTests: true
 };
 
 module.exports.globals = {

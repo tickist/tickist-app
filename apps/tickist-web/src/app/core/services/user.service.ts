@@ -1,19 +1,15 @@
-import * as _ from 'lodash';
 import {Injectable} from '@angular/core';
-import {Observable, throwError} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
-import {SimpleUser, User} from '@data/users/models';
+import {User} from '@data/users/models';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
-import {Logout} from '../actions/auth.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {filter, finalize, map} from 'rxjs/operators';
+import {finalize} from 'rxjs/operators';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {changeAvatar} from '../actions/user.actions';
 import {USER_AVATAR_PATH} from '@data/users/config-user';
-import {ShareWithUser} from '@data/projects';
 
 const userCollectionName = 'users';
 
@@ -31,12 +27,12 @@ export class UserService {
 
     updateUser(user: User) {
         return this.db.collection(userCollectionName)
-            .doc(this.authFire.auth.currentUser.uid)
+            .doc(user.id)
             .update(JSON.parse(JSON.stringify(user)));
     }
 
     requestChangePassword(email: string) {
-        return this.authFire.auth.sendPasswordResetEmail(email).then(
+        return this.authFire.sendPasswordResetEmail(email).then(
             () => {
                 // success, show some message
             },
@@ -47,16 +43,15 @@ export class UserService {
     }
 
     changePassword(password: string, code: string) {
-        return this.authFire.auth
-            .confirmPasswordReset(code, password)
+        return this.authFire.confirmPasswordReset(code, password)
 
     }
 
-    savefcmToken(token) {
-        return this.db.collection(userCollectionName)
-            .doc(this.authFire.auth.currentUser.uid)
-            .update({fcmToken: token});
-    }
+    // savefcmToken(token) {
+    //     return this.db.collection(userCollectionName)
+    //         .doc(this.authFire.auth.currentUser.uid)
+    //         .update({fcmToken: token});
+    // }
 
     changeUserAvatar(avatar: File, user: User) {
         const avatarPath = USER_AVATAR_PATH + user.id + '/' + avatar.name;

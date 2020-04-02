@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ChartsModule} from 'ng2-charts';
 import {TickistSharedModule} from '../../../../shared/shared.module';
 import {TickistMaterialModule} from '../../../../material.module';
 import {ProjectsListComponent} from './pages/projects-list/projects-list.component';
@@ -22,7 +21,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         CommonModule,
         TickistMaterialModule,
         FormsModule,
-        ChartsModule,
         TickistSharedModule,
         RouterModule,
         FlexLayoutModule,

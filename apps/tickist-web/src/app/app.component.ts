@@ -1,8 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import 'hammerjs'; // Recommended
+import {Component, OnDestroy, OnInit} from '@angular/core'; // Recommended
 import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
-import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material';
+import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material/snack-bar';
 import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar-message.component';
 import {AngularFireMessaging} from '@angular/fire/messaging';
 import {Subject} from 'rxjs';

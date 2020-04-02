@@ -4,7 +4,7 @@ import {DeleteUserConfirmationDialogComponent} from './delete-user-confirmation-
 import {TickistMaterialModule} from '../../../../material.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 describe('DeleteUserConfirmationDialogComponent', () => {
     let component: DeleteUserConfirmationDialogComponent;

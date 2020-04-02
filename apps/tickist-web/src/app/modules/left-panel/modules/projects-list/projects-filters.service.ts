@@ -3,7 +3,6 @@ import {User} from '@data/users/models';
 import {Filter} from '@data/filter';
 
 
-
 @Injectable({
     providedIn: 'root',
 })

@@ -1,8 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {BaseChartDirective} from 'ng2-charts';
 import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {selectChartStatistics, selectGlobalStatistics} from '../../statistics.selectors';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -27,8 +25,8 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
     optionsTasksCounter: any = {};
     optionsTimeChart: any = {};
     minutes2Hours: Minutes2hoursPipe;
-    @ViewChild('tasksCounterChart', { read: BaseChartDirective, static: false }) tasksCounterChart: any;
-    @ViewChild('timeChart', { read: BaseChartDirective, static: false }) timeChart: any;
+    // @ViewChild('tasksCounterChart', { read: BaseChartDirective }) tasksCounterChart: any;
+    // @ViewChild('timeChart', { read: BaseChartDirective }) timeChart: any;
 
     constructor(private store: Store<{}>, private cd: ChangeDetectorRef) {
         this.minutes2Hours = new Minutes2hoursPipe();
@@ -151,12 +149,12 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
                         }
                     }
                 };
-                if (this.tasksCounterChart) {
-                    this.tasksCounterChart.chart.update();
-                }
-                if (this.timeChart) {
-                    this.timeChart.chart.update();
-                }
+                // if (this.tasksCounterChart) {
+                //     this.tasksCounterChart.chart.update();
+                // }
+                // if (this.timeChart) {
+                //     this.timeChart.chart.update();
+                // }
                 this.cd.detectChanges();
 
             }

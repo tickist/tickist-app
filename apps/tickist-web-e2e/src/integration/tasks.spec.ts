@@ -43,7 +43,7 @@ describe('Tasks', () => {
         });
 
         it('should open the form, fills the form add new task to the Inbox', () => {
-            cy.get('tickist-add-task').find('button').click();
+            cy.get('tickist-add-task', {timeout: 20000}).find('button').click();
             cy.url().should('include', 'home').should('include', 'edit-task');
 
             cy.log('fill main form');
@@ -53,7 +53,7 @@ describe('Tasks', () => {
             cy.get('input[name=finishDate]').focus();
             cy.get('mat-calendar').find('.mat-calendar-body-today').click();
             // cy.get('body').type('{esc}');
-            cy.get('input[name=finishTime]').type('10:00');
+            cy.get('input[name=finishTime]').type('10:00').should('have.value', '10:00');
 
             cy.log('fill repeat form');
             clickMenuElement('Repeat');
@@ -61,13 +61,13 @@ describe('Tasks', () => {
 
             cy.log('fill steps');
             clickMenuElement('Steps');
-            cy.get('#steps').find('input').last().type('step 1');
+            cy.get('#steps').find('input').last().type('step 1').should('have.value', 'step 1');
             cy.get('#add-step').contains('Add new step').click();
             cy.get('#steps').find('input').last().type('step 2');
             // extra
             clickMenuElement('Extra');
 
-            cy.get('textarea').type('Task description');
+            cy.get('textarea').type('Task description').should('have.value', 'Task description');
 
             cy.get('button[type=\'submit\']').click();
 

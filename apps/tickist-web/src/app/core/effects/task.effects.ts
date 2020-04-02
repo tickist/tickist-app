@@ -24,7 +24,7 @@ import {QueryTags} from '../actions/tags.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Update} from '@ngrx/entity';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
@@ -36,10 +36,12 @@ export class TaskEffects {
     queryTasks$ = this.actions$
         .pipe(
             ofType<QueryTags>(TaskActionTypes.QUERY_TASKS),
-            switchMap(action => {
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            switchMap(([action, user]) => {
                 console.log(action);
+                console.log({user});
                 return this.db.collection('tasks', ref => ref
-                    .where('taskProject.shareWithIds', 'array-contains', this.authFire.auth.currentUser.uid)
+                    .where('taskProject.shareWithIds', 'array-contains', user.id)
                     .where('isActive', '==', true)
                     .where('isDone', '==', false)
                 ).stateChanges();

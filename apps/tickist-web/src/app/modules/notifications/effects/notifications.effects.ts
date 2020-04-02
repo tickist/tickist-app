@@ -16,6 +16,7 @@ import {Notification} from '@data/notifications';
 import {selectAllUnreadNotificationsIds} from '../selectors/notifications.selectors';
 import {NotificationsService} from '../services/notifications.service';
 import {Store} from '@ngrx/store';
+import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
 
 
 @Injectable()
@@ -25,11 +26,12 @@ export class NotificationsEffects {
         this.actions$
             .pipe(
                 ofType<QueryTags>(queryNotifications),
-                switchMap(() => {
+                withLatestFrom(this.store.select(selectLoggedInUser)),
+                switchMap(([, user]) => {
                     return this.db.collection(
                         'notifications',
                         ref => ref
-                            .where('recipient', '==', this.authFire.auth.currentUser.uid)
+                            .where('recipient', '==', user.id)
                             .limit(30)
                             .orderBy('date')
                         )

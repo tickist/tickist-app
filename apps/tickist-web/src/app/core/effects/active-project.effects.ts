@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {ActiveProjectActionTypes, SetActiveProject} from '../actions/projects/active-project.actions';
-import {concatMap, withLatestFrom} from 'rxjs/operators';
+import {concatMap, filter, withLatestFrom} from 'rxjs/operators';
 import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
 import {selectTeam} from '../selectors/team.selectors';
-import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
@@ -14,11 +13,12 @@ import {AngularFireAuth} from '@angular/fire/auth';
 
 @Injectable()
 export class ActiveProjectEffects {
-    @Effect()
-    updateAssignedToFilters = this.actions$
+
+    updateAssignedToFilters = createEffect(() => this.actions$
         .pipe(
             ofType<SetActiveProject>(ActiveProjectActionTypes.SetActiveProject),
             withLatestFrom(this.store.select(selectTeam), this.store.select(selectLoggedInUser)),
+            filter(([,,user]) => !!user),
             concatMap(([action, team, user]) => {
                 const actions = [];
                 const filters = [];
@@ -52,7 +52,7 @@ export class ActiveProjectEffects {
                     }));
                 } else {
                     team.forEach(mate => {
-                        if (mate.id !== this.authFire.auth.currentUser.uid) {
+                        if (mate.id !== user.id) {
                             filters.push(
                                 new Filter({
                                     'id': mate.id,
@@ -68,7 +68,7 @@ export class ActiveProjectEffects {
                 }
                 return actions;
             })
-        );
+        ));
 
     constructor(private actions$: Actions, private store: Store<{}>, private authFire: AngularFireAuth) {
     }

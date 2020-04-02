@@ -11,10 +11,10 @@ import {FilterTasksComponent} from './filter-tasks/filter-tasks.component';
 import {TagsFilterDialogComponent} from './tags-filter-dialog/tags-filter-dialog.component';
 import {TasksFilterDialogComponent} from './tasks-filter-dialog/tasks-filter-dialog.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {SliderModule} from 'primeng/primeng';
 import {NoTasksComponent} from '../single-task/no-tasks/no-tasks.component';
 import {TaskService} from '../core/services/task.service';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {SliderModule} from 'primeng/slider';
 
 
 @NgModule({

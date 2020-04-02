@@ -32,6 +32,7 @@ import {TaskProject} from '@data/tasks/models/task-project';
 import {removeTagsNotBelongingToUser} from '@tickist/utils';
 import {Tag} from '@data/tags/models/tags';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {User} from '@data/users';
 
 
 @Component({
@@ -42,6 +43,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 })
 export class SingleTaskExtendedComponent extends SingleTask implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     @Input() task: Task;
+    @Input() user: User;
     @Input() mediaChange;
     @ViewChild('container', { static: true }) container: ElementRef;
 
@@ -54,7 +56,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     task_simple_view_value: string;
     task_extended_view_value: string;
     selectTaskProject: FormControl;
-    tags: Tag[];
+    tags: Tag[] = [];
 
     @HostListener('mouseenter')
     onMouseEnter() {
@@ -165,8 +167,8 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         if (changes.hasOwnProperty('task') && changes.task.currentValue && this.selectTaskProject) {
             this.selectTaskProject.setValue(changes.task.currentValue.taskProject.id, {emitEvent: false});
         }
-        if (changes.hasOwnProperty('task') && changes.task.currentValue) {
-            this.tags = removeTagsNotBelongingToUser(this.task.tags, this.fireAuth.auth.currentUser.uid);
+        if (changes.hasOwnProperty('task') && changes.task.currentValue && this.user) {
+            this.tags = removeTagsNotBelongingToUser(this.task.tags, this.user.id);
         }
     }
 

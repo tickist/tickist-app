@@ -3,6 +3,7 @@ import {ProgressBarState} from '../core/reducers/progress-bar.reducer';
 import {ApiErrorState} from '../core/reducers/detect-api-error.reducer';
 import {OfflineModeBarState} from '../core/reducers/offline-mode.reducer';
 import {AddTaskButtonVisibilityState} from '../core/reducers/add-task-button-visibility.reducer';
+import {selectLoggedInUser} from '../core/selectors/user.selectors';
 
 
 
@@ -27,7 +28,8 @@ export const selectOfflineModeBarIsVisible = createSelector(
 
 export const selectAddTaskButtonVisibility = createSelector(
     selectAddTaskButtonVisibilityState,
-    addTaskButtonVisibility => addTaskButtonVisibility.addTaskButtonVisibility.isVisible
+    selectLoggedInUser,
+    (addTaskButtonVisibility, user) => user && addTaskButtonVisibility.addTaskButtonVisibility.isVisible
 );
 
 

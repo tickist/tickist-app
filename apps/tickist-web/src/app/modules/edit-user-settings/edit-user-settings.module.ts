@@ -5,7 +5,6 @@ import {TickistMaterialModule} from '../../material.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistEditUserSettingsRoutingModule} from './edit-user-settings-routing.module';
 import {UserComponent} from './components/user/user.component';
-import {CalendarModule} from 'primeng/primeng';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
@@ -19,7 +18,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         TickistSharedModule,
         ReactiveFormsModule,
         TickistEditUserSettingsRoutingModule,
-        CalendarModule,
         FontAwesomeModule
     ],
     providers: [],

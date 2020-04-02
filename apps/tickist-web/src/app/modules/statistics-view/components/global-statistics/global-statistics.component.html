@@ -12,32 +12,32 @@
             </span>
         </div>
     </div>
-    <div class="chart" *ngIf="dataTasksCounter && dataTasksCounter.datasets.length > 0" >
-        <canvas #tasksCounterChart baseChart style=""
-            [datasets]="dataTasksCounter.datasets"
-            [labels]="dataTasksCounter.labels"
-            [options]="dataTasksCounter.options"
-            [legend]="dataTimeChart.legend"
-            [chartType]="dataTasksCounter.chartType"
-            (chartHover)="chartHovered($event)"
-            (chartClick)="chartClicked($event)"></canvas>
+<!--    <div class="chart" *ngIf="dataTasksCounter && dataTasksCounter.datasets.length > 0" >-->
+<!--        <canvas #tasksCounterChart baseChart style=""-->
+<!--            [datasets]="dataTasksCounter.datasets"-->
+<!--            [labels]="dataTasksCounter.labels"-->
+<!--            [options]="dataTasksCounter.options"-->
+<!--            [legend]="dataTimeChart.legend"-->
+<!--            [chartType]="dataTasksCounter.chartType"-->
+<!--            (chartHover)="chartHovered($event)"-->
+<!--            (chartClick)="chartClicked($event)"></canvas>-->
 
 
-    </div>
+<!--    </div>-->
 
 
-    <div class="chart" *ngIf="dataTimeChart && dataTimeChart.datasets.length > 0">
-        <canvas #timeChart baseChart
-            [datasets]="dataTimeChart.datasets"
-            [labels]="dataTimeChart.labels"
-            [options]="dataTimeChart.options"
-            [legend]="dataTimeChart.legend"
-            [chartType]="dataTimeChart.chartType"
-            (chartHover)="chartHovered($event)"
-            (chartClick)="chartClicked($event)"></canvas>
+<!--    <div class="chart" *ngIf="dataTimeChart && dataTimeChart.datasets.length > 0">-->
+<!--        <canvas #timeChart baseChart-->
+<!--            [datasets]="dataTimeChart.datasets"-->
+<!--            [labels]="dataTimeChart.labels"-->
+<!--            [options]="dataTimeChart.options"-->
+<!--            [legend]="dataTimeChart.legend"-->
+<!--            [chartType]="dataTimeChart.chartType"-->
+<!--            (chartHover)="chartHovered($event)"-->
+<!--            (chartClick)="chartClicked($event)"></canvas>-->
 
 
-    </div>
+<!--    </div>-->
 
 
     <div *ngIf="global">

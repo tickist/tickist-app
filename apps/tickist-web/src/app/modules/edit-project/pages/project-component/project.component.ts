@@ -53,8 +53,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     userWithoutAccountStatus = InviteUserStatus;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('auto', {static: false}) auto: any;
-    @ViewChild('matAutocomplete', {static: false}) matAutocomplete: any;
+    @ViewChild('auto') auto: any;
+    @ViewChild('matAutocomplete') matAutocomplete: any;
 
     constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute,
                 private store: Store<{}>, private location: Location, public dialog: MatDialog,

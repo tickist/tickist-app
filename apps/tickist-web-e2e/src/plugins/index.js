@@ -13,8 +13,9 @@
 const wp = require('@cypress/webpack-preprocessor');
 const pathsPlugin = require('tsconfig-paths-webpack-plugin');
 const path = require('path');
-const cypressFirebasePlugin = require('cypress-firebase').plugin;
 
+const admin = require("firebase-admin");
+const cypressFirebasePlugin = require("cypress-firebase").plugin;
 
 module.exports = (on, config) => {
     // `on` is used to hook into various events Cypress emits
@@ -62,5 +63,5 @@ module.exports = (on, config) => {
     );
 
 
-    return cypressFirebasePlugin(config)
+    return cypressFirebasePlugin(on, config, admin);
 };

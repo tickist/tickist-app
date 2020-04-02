@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Location} from '@angular/common';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {AuthActionTypes, FetchedLoginUser, Login, Logout} from '../actions/auth.actions';
-import {catchError, filter, map, mapTo, switchMap, tap} from 'rxjs/operators';
+import {catchError, filter, map, mapTo, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {defer, of} from 'rxjs';
 import {Store} from '@ngrx/store';
@@ -18,6 +18,8 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
 import {resetPasswordRoutesName} from '../../modules/reset-password/routes-names';
 import {firebaseError} from '../actions/errors.actions';
+import {selectTeam} from '../selectors/team.selectors';
+import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
 @Injectable()
@@ -35,9 +37,10 @@ export class AuthEffects {
     FetchedLoginUser$ = this.actions$
         .pipe(
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
-            switchMap(action => {
-                console.log(this.authFire.auth.currentUser);
-                console.log(action);
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            switchMap(([action, user]) => {
+                console.log({user});
+
 
                 return this.db.collection('users').doc(action.payload.uid).get().pipe(
                     filter(snapshot => snapshot.exists),

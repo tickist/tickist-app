@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ChangeDetectionStrategy} from '@angular/core'
 import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import { MatDialog } from '@angular/material/dialog';
+import {User} from '@data/users';
 
 
 @Component({
@@ -15,6 +16,7 @@ export class SingleTaskComponent implements OnInit {
     @Input() mediaChange;
     @Input() taskView;
     @Input() last;
+    @Input() user: User;
     task_simple_view_value: string;
     task_extended_view_value: string;
     constructor(public taskService: TaskService, private configurationService: ConfigurationService,

@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {TickistMaterialModule} from '../../material.module';
 import {FormsModule} from '@angular/forms';
 import {DayStatisticsComponent} from './components/day-statistics/day-statistics.component';
-import {ChartsModule} from 'ng2-charts';
 import {ChartLegendComponent} from './components/day-statistics/chart-legend/chart-legend.component';
 import {GlobalStatisticsComponent} from './components/global-statistics/global-statistics.component';
 import {TickistSharedModule} from '../../shared/shared.module';
@@ -24,7 +23,6 @@ import {TickistStatisticsRoutingModule} from './statistics-routing.module';
         CommonModule,
         TickistMaterialModule,
         FormsModule,
-        ChartsModule,
         TickistSharedModule,
         EffectsModule.forFeature([StatisticsEffects]),
         StoreModule.forFeature('globalStatistics', fromGlobalStatistics.reducer),

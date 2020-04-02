@@ -6,7 +6,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {LoggedInGuard} from './core/guards/loggedIn.guard';
 import {AnonymousGuard} from './core/guards/anonymous.guard';
 import {SetAllTasksFilterResolver} from './routing/resolvers/set-all-tasks-filter.resolver';
-import {RouterStateSerializer, StoreRouterConnectingModule} from '@ngrx/router-store';
+import {RouterStateSerializer, StoreRouterConnectingModule, DefaultRouterStateSerializer} from '@ngrx/router-store';
 import {CustomSerializer} from './routing/custom-serializer';
 import {HomeComponent} from './core/layouts/home';
 import {futureTasksRoutesName} from './modules/future-tasks/routes.names';
@@ -127,7 +127,7 @@ export const routes: Routes = [
     imports: [
         CommonModule,
         RouterModule.forRoot(routes),
-        StoreRouterConnectingModule.forRoot({stateKey: 'router'})
+        StoreRouterConnectingModule.forRoot({ serializer: DefaultRouterStateSerializer,stateKey: 'router'})
     ],
     declarations: [],
     providers: [

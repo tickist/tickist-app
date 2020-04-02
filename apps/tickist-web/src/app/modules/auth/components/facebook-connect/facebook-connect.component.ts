@@ -39,13 +39,13 @@ export class FacebookConnectComponent implements OnInit, OnDestroy {
             if (error.code === 'auth/account-exists-with-different-credential') {
                 const pendingCred = error.credential;
                 const email = error.email;
-                const methods = await this.fireAuth.auth.fetchSignInMethodsForEmail(email);
+                const methods = await this.fireAuth.fetchSignInMethodsForEmail(email);
                 if (methods[0] === 'password') {
                     const dialogRef = this.dialog.open(PromptUserForPasswordDialogComponent);
                     dialogRef.afterClosed().pipe(
                         takeUntil(this.ngUnsubscribe)
                     ).subscribe(async password => {
-                        const userCredential = await this.fireAuth.auth.signInWithEmailAndPassword(email, password);
+                        const userCredential = await this.fireAuth.signInWithEmailAndPassword(email, password);
                         await userCredential.user.linkWithCredential(pendingCred);
 
                         return this.router.navigateByUrl('/');
@@ -53,7 +53,7 @@ export class FacebookConnectComponent implements OnInit, OnDestroy {
                     });
                 } else {
                     const provider = this.authService.getProviderForId(methods[0]);
-                    const userCredentials = await this.fireAuth.auth.signInWithPopup(provider);
+                    const userCredentials = await this.fireAuth.signInWithPopup(provider);
                     await userCredentials.user.linkWithCredential(pendingCred);
 
                     await this.router.navigateByUrl('/');

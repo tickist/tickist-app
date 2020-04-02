@@ -28,10 +28,12 @@ export class UserEffects {
     queryUser = this.actions$
         .pipe(
             ofType<QueryUser>(UserActionTypes.QueryUser),
-            switchMap(action => {
+            withLatestFrom(this.store.select(selectLoggedInUser)),
+            switchMap(([action, user]) => {
                 console.log(action);
+                console.log({user});
                 return this.db.collection('users', ref => ref
-                    .where('id', '==', this.authFire.auth.currentUser.uid)
+                    .where('id', '==', user.id)
                 ).stateChanges();
 
             }),

@@ -69,8 +69,8 @@ export class TaskComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('trigger', {read: MatAutocompleteTrigger, static: false}) trigger: MatAutocompleteTrigger;
-    @ViewChild('autocompleteTags', {static: false}) autocompleteTags;
+    @ViewChild('trigger', { read: MatAutocompleteTrigger }) trigger: MatAutocompleteTrigger;
+    @ViewChild('autocompleteTags') autocompleteTags;
 
     constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<{}>,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,

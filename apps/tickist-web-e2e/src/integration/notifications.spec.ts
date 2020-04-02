@@ -17,8 +17,8 @@ describe('Notifications feature', () => {
     });
 
     it('should see icon notification with notification counter', () => {
-        cy.get('tickist-notifications-icon').should('be.visible');
-        cy.get('tickist-notifications-icon').should('contain', 3);
+        cy.get('tickist-notifications-icon', {timeout: 20000}).should('be.visible');
+        cy.get('tickist-notifications-icon', {timeout: 20000}).should('contain', 3);
         cy.log('Click on notification icon');
         cy.get('[data-cy="notification-icon"]').click();
         cy.log('see all notifications');

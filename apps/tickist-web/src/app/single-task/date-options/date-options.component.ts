@@ -21,8 +21,8 @@ export class DateOptionsComponent implements OnInit {
     finishTime: any;
     minFilter: any;
     @Input() task: Task;
-    @ViewChild('finishDateInputViewChild', { static: false }) finishDateInputViewChild;
-    @ViewChild('finishTimeInputViewChild', { static: false }) finishTimeInputViewChild;
+    @ViewChild('finishDateInputViewChild') finishDateInputViewChild;
+    @ViewChild('finishTimeInputViewChild') finishTimeInputViewChild;
 
     constructor(protected configurationService: ConfigurationService, private store: Store<{}>) {
         this.minDate = new Date();

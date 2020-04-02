@@ -59,20 +59,20 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     }
 
-    requestPermission() {
-        this.afMessaging.requestPermission
-            .pipe(
-                mergeMapTo(this.afMessaging.tokenChanges),
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                (token) => {
-                    console.log('Permission granted! Save to the server!', token);
-                    this.userService.savefcmToken(token)
-                    },
-                (error) => { console.error(error); },
-            );
-    }
+    // requestPermission() {
+    //     this.afMessaging.requestPermission
+    //         .pipe(
+    //             mergeMapTo(this.afMessaging.tokenChanges),
+    //             takeUntil(this.ngUnsubscribe)
+    //         )
+    //         .subscribe(
+    //             (token) => {
+    //                 console.log('Permission granted! Save to the server!', token);
+    //                 this.userService.savefcmToken(token)
+    //                 },
+    //             (error) => { console.error(error); },
+    //         );
+    // }
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();

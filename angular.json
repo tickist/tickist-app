@@ -1,295 +1,332 @@
 {
-    "version": 1,
-    "projects": {
-        "tickist-web": {
-            "projectType": "application",
-            "schematics": {
-                "@nrwl/angular:component": {
-                    "style": "scss"
-                }
+  "version": 1,
+  "projects": {
+    "tickist-web": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/tickist-web",
+      "sourceRoot": "apps/tickist-web/src",
+      "prefix": "tickist",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/tickist-web",
+            "index": "apps/tickist-web/src/index.html",
+            "main": "apps/tickist-web/src/main.ts",
+            "polyfills": "apps/tickist-web/src/polyfills.ts",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules",
+                "apps/tickist-web/src/app/shared/",
+                "apps/tickist-web/src/",
+                "apps/tickist-web/src/app/"
+              ]
             },
-            "root": "apps/tickist-web",
-            "sourceRoot": "apps/tickist-web/src",
-            "prefix": "tickist",
-            "architect": {
-                "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
-                    "options": {
-                        "outputPath": "dist/apps/tickist-web",
-                        "index": "apps/tickist-web/src/index.html",
-                        "main": "apps/tickist-web/src/main.ts",
-                        "polyfills": "apps/tickist-web/src/polyfills.ts",
-                        "stylePreprocessorOptions": {
-                            "includePaths": [
-                                "node_modules",
-                                "apps/tickist-web/src/app/shared/",
-                                "apps/tickist-web/src/",
-                                "apps/tickist-web/src/app/"
-                            ]
-                        },
-                        "tsConfig": "apps/tickist-web/tsconfig.app.json",
-                        "aot": false,
-                        "assets": [
-                            "apps/tickist-web/src/favicon.png",
-                            "apps/tickist-web/src/assets",
-                            "apps/tickist-web/src/firebase-messaging-sw.js",
-                            "apps/tickist-web/src/manifest.json",
-                            "apps/tickist-web/src/robots.txt"
-                        ],
-                        "styles": [
-                            "apps/tickist-web/src/styles.scss",
-                            "node_modules/primeng/resources/primeng.css",
-                            "node_modules/primeng/resources/themes/nova-dark/theme.css"
-                        ],
-                        "scripts": ["node_modules/chart.js/dist/Chart.js", "node_modules/quill/dist/quill.js"]
-                    },
-                    "configurations": {
-                        "dev": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/tickist-web/src/environments/environment.ts",
-                                    "with": "apps/tickist-web/src/environments/environment.dev.ts"
-                                }
-                            ]
-                        },
-                        "ci": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/tickist-web/src/environments/environment.ts",
-                                    "with": "apps/tickist-web/src/environments/environment.ci.ts"
-                                }
-                            ]
-                        },
-                        "e2e": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/tickist-web/src/environments/environment.ts",
-                                    "with": "apps/tickist-web/src/environments/environment.e2e.ts"
-                                }
-                            ]
-                        },
-                        "production": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/tickist-web/src/environments/environment.ts",
-                                    "with": "apps/tickist-web/src/environments/environment.prod.ts"
-                                }
-                            ],
-                            "optimization": true,
-                            "outputHashing": "all",
-                            "sourceMap": false,
-                            "extractCss": true,
-                            "namedChunks": false,
-                            "aot": true,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true,
-                            "serviceWorker": true,
-                            "ngswConfigPath": "apps/tickist-web/src/ngsw-config.json",
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "2mb",
-                                    "maximumError": "5mb"
-                                }
-                            ]
-                        }
-                    }
-                },
-                "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
-                    "options": {
-                        "browserTarget": "tickist-web:build"
-                    },
-                    "configurations": {
-                        "dev": {
-                            "browserTarget": "tickist-web:build:dev"
-                        },
-                        "e2e": {
-                            "browserTarget": "tickist-web:build:e2e"
-                        },
-                        "ci": {
-                            "browserTarget": "tickist-web:build:ci"
-                        },
-                        "production": {
-                            "browserTarget": "tickist-web:build:production"
-                        }
-                    }
-                },
-                "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
-                    "options": {
-                        "browserTarget": "tickist-web:build"
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": ["apps/tickist-web/tsconfig.app.json", "apps/tickist-web/tsconfig.spec.json"],
-                        "exclude": ["**/node_modules/**", "!apps/tickist-web/**"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "apps/tickist-web/jest.config.js",
-                        "tsConfig": "apps/tickist-web/tsconfig.spec.json",
-                        "setupFile": "apps/tickist-web/src/test-setup.ts"
-                    }
-                },
-                "deploy": {
-                    "builder": "@angular/fire:deploy",
-                    "options": {
-                        "project": "staging",
-                        "token": "$FIREBASE_TOKEN",
-                        "non-interactive": true
-                    }
+            "tsConfig": "apps/tickist-web/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "apps/tickist-web/src/favicon.png",
+              "apps/tickist-web/src/assets",
+              "apps/tickist-web/src/firebase-messaging-sw.js",
+              "apps/tickist-web/src/manifest.json",
+              "apps/tickist-web/src/robots.txt"
+            ],
+            "styles": [
+              "apps/tickist-web/src/styles.scss",
+              "node_modules/primeng/resources/primeng.css",
+              "node_modules/primeng/resources/themes/nova-dark/theme.css"
+            ],
+            "scripts": [
+              "node_modules/chart.js/dist/Chart.js",
+              "node_modules/quill/dist/quill.js"
+            ]
+          },
+          "configurations": {
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/tickist-web/src/environments/environment.ts",
+                  "with": "apps/tickist-web/src/environments/environment.dev.ts"
                 }
+              ]
+            },
+            "ci": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/tickist-web/src/environments/environment.ts",
+                  "with": "apps/tickist-web/src/environments/environment.ci.ts"
+                }
+              ]
+            },
+            "e2e": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/tickist-web/src/environments/environment.ts",
+                  "with": "apps/tickist-web/src/environments/environment.e2e.ts"
+                }
+              ]
+            },
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/tickist-web/src/environments/environment.ts",
+                  "with": "apps/tickist-web/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": true,
+              "ngswConfigPath": "apps/tickist-web/src/ngsw-config.json",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
             }
+          }
         },
-        "tickist-web-e2e": {
-            "root": "apps/tickist-web-e2e",
-            "sourceRoot": "apps/tickist-web-e2e/src",
-            "projectType": "application",
-            "architect": {
-                "e2e": {
-                    "builder": "@nrwl/cypress:cypress",
-                    "options": {
-                        "cypressConfig": "apps/tickist-web-e2e/cypress.json",
-                        "tsConfig": "apps/tickist-web-e2e/tsconfig.e2e.json",
-                        "devServerTarget": "tickist-web:serve"
-                    },
-                    "configurations": {
-                        "production": {
-                            "devServerTarget": "tickist-web:serve:production"
-                        },
-                        "e2e": {
-                            "devServerTarget": "tickist-web:serve:e2e"
-                        },
-                        "ci": {
-                            "devServerTarget": "tickist-web:serve:ci"
-                        }
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": ["apps/tickist-web-e2e/tsconfig.e2e.json"],
-                        "exclude": ["**/node_modules/**", "!apps/tickist-web-e2e/**"]
-                    }
-                }
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "tickist-web:build"
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "tickist-web:build:dev"
+            },
+            "e2e": {
+              "browserTarget": "tickist-web:build:e2e"
+            },
+            "ci": {
+              "browserTarget": "tickist-web:build:ci"
+            },
+            "production": {
+              "browserTarget": "tickist-web:build:production"
             }
+          }
         },
-        "tickist-functions": {
-            "root": "apps/tickist-functions",
-            "sourceRoot": "apps/tickist-functions/src",
-            "projectType": "application",
-            "prefix": "tickist-functions",
-            "schematics": {},
-            "architect": {
-                "build": {
-                    "builder": "@nrwl/node:build",
-                    "options": {
-                        "outputPath": "dist/apps/tickist-functions",
-                        "main": "apps/tickist-functions/src/main.ts",
-                        "tsConfig": "apps/tickist-functions/tsconfig.app.json",
-                        "assets": ["apps/tickist-functions/src/assets"]
-                    },
-                    "configurations": {
-                        "production": {
-                            "optimization": true,
-                            "extractLicenses": true,
-                            "inspect": false,
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/tickist-functions/src/environments/environment.ts",
-                                    "with": "apps/tickist-functions/src/environments/environment.prod.ts"
-                                }
-                            ]
-                        }
-                    }
-                },
-                "serve": {
-                    "builder": "@nrwl/node:execute",
-                    "options": {
-                        "buildTarget": "tickist-functions-functions:build"
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "apps/tickist-functions/tsconfig.app.json",
-                            "apps/tickist-functions/tsconfig.spec.json"
-                        ],
-                        "exclude": ["**/node_modules/**", "!apps/tickist-functions/**"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "apps/tickist-functions/jest.config.js",
-                        "tsConfig": "apps/tickist-functions/tsconfig.spec.json"
-                    }
-                }
-            }
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "tickist-web:build"
+          }
         },
-        "data": {
-            "root": "libs/data",
-            "sourceRoot": "libs/data/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": ["libs/data/tsconfig.lib.json", "libs/data/tsconfig.spec.json"],
-                        "exclude": ["**/node_modules/**", "!libs/data/**"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/data/jest.config.js",
-                        "tsConfig": "libs/data/tsconfig.spec.json"
-                    }
-                }
-            }
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/tickist-web/tsconfig.app.json",
+              "apps/tickist-web/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/tickist-web/**"
+            ]
+          }
         },
-        "utils": {
-            "root": "libs/utils",
-            "sourceRoot": "libs/utils/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": ["libs/utils/tsconfig.lib.json", "libs/utils/tsconfig.spec.json"],
-                        "exclude": ["**/node_modules/**", "!libs/utils/**"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/utils/jest.config.js",
-                        "tsConfig": "libs/utils/tsconfig.spec.json"
-                    }
-                }
-            }
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/tickist-web/jest.config.js",
+            "tsConfig": "apps/tickist-web/tsconfig.spec.json",
+            "setupFile": "apps/tickist-web/src/test-setup.ts",
+            "passWithNoTests": true
+          }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "project": "staging",
+            "token": "$FIREBASE_TOKEN",
+            "non-interactive": true
+          }
         }
+      }
     },
-    "cli": {
-        "defaultCollection": "@nrwl/angular"
-    },
-    "schematics": {
-        "@nrwl/angular:application": {
-            "unitTestRunner": "jest",
-            "e2eTestRunner": "cypress"
+    "tickist-web-e2e": {
+      "root": "apps/tickist-web-e2e",
+      "sourceRoot": "apps/tickist-web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/tickist-web-e2e/cypress.json",
+            "tsConfig": "apps/tickist-web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "tickist-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "tickist-web:serve:production"
+            },
+            "e2e": {
+              "devServerTarget": "tickist-web:serve:e2e"
+            },
+            "ci": {
+              "devServerTarget": "tickist-web:serve:ci"
+            }
+          }
         },
-        "@nrwl/angular:library": {
-            "unitTestRunner": "jest"
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/tickist-web-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/tickist-web-e2e/**"
+            ]
+          }
         }
+      }
     },
-    "defaultProject": "tickist-web"
+    "tickist-functions": {
+      "root": "apps/tickist-functions",
+      "sourceRoot": "apps/tickist-functions/src",
+      "projectType": "application",
+      "prefix": "tickist-functions",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/tickist-functions",
+            "main": "apps/tickist-functions/src/main.ts",
+            "tsConfig": "apps/tickist-functions/tsconfig.app.json",
+            "assets": [
+              "apps/tickist-functions/src/assets"
+            ],
+            "buildLibsFromSource": true
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/tickist-functions/src/environments/environment.ts",
+                  "with": "apps/tickist-functions/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "tickist-functions-functions:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/tickist-functions/tsconfig.app.json",
+              "apps/tickist-functions/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/tickist-functions/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/tickist-functions/jest.config.js",
+            "tsConfig": "apps/tickist-functions/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "data": {
+      "root": "libs/data",
+      "sourceRoot": "libs/data/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/data/tsconfig.lib.json",
+              "libs/data/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/data/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/data/jest.config.js",
+            "tsConfig": "libs/data/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "utils": {
+      "root": "libs/utils",
+      "sourceRoot": "libs/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/utils/tsconfig.lib.json",
+              "libs/utils/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/utils/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/utils/jest.config.js",
+            "tsConfig": "libs/utils/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular",
+    "analytics": "80ee2295-6922-4741-bc1b-f61408b017a4"
+  },
+  "schematics": {
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "tickist-web"
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {ROUTER_NAVIGATED, ROUTER_NAVIGATION, RouterNavigationAction} from '@ngrx/router-store';
 import {concatMap, concatMapTo, filter, map, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
@@ -14,13 +14,13 @@ import {SetCurrentEstimateTimeFiltersTasks} from '../actions/tasks/estimate-time
 
 @Injectable()
 export class TasksFiltersEffects {
-    @Effect()
-    changeFiltersOnRouterChange$ = this.actions$
+
+    changeFiltersOnRouterChange$ = createEffect(() => this.actions$
         .pipe(
             ofType<RouterNavigationAction>(ROUTER_NAVIGATION),
             filter(action => {
-                return action.payload.event.urlAfterRedirects.indexOf('tasks') > 0
-                    || action.payload.event.urlAfterRedirects.indexOf('tags') > 0;
+                return action.payload.event.url.indexOf('tasks') > 0
+                    || action.payload.event.url.indexOf('tags') > 0;
             }),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             concatMap(([action, user]) => {
@@ -31,14 +31,14 @@ export class TasksFiltersEffects {
                     new SetCurrentAssignedToFilter({currentFilter: TasksFiltersService.getAssignedToAllFilter()}),
                     new SetCurrentEstimateTimeFiltersTasks({currentFilter_gt, currentFilter_lt})
                 );
-                if (action.payload.event.urlAfterRedirects.indexOf('tasks-projects-view') > 0) {
+                if (action.payload.event.url.indexOf('tasks-projects-view') > 0) {
                     actions.push(
                         new SetCurrentTagsFilters({currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters()})
                     );
                 }
                 return actions;
             })
-        );
+        ));
 
     constructor(private actions$: Actions, private  store: Store<{}>) {
     }

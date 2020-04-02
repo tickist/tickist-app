@@ -37,7 +37,7 @@ export class UserComponent implements OnInit, OnDestroy {
     uploadPercent: Observable<number>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('changeAvatarInput', {static: false}) changeAvatarInput: ElementRef;
+    @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
 
     constructor(private fb: FormBuilder, private store: Store<{}>, private location: Location,
                 private configurationService: ConfigurationService, private userService: UserService) {

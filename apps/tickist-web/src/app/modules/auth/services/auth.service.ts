@@ -26,7 +26,7 @@ export class AuthService {
     }
 
     login(user: UserLogin) {
-        return this.fireAuth.auth.signInWithEmailAndPassword(user.email, user.password);
+        return this.fireAuth.signInWithEmailAndPassword(user.email, user.password);
     }
 
     facebookAuth() {
@@ -38,15 +38,15 @@ export class AuthService {
     }
 
     authLogin(provider) {
-        return this.fireAuth.auth.signInWithPopup(provider)
+        return this.fireAuth.signInWithPopup(provider)
     }
 
     signup({email, password}) {
-        return this.fireAuth.auth.createUserWithEmailAndPassword(email, password);
+        return this.fireAuth.createUserWithEmailAndPassword(email, password);
     }
 
     logout() {
-        return this.fireAuth.auth.signOut();
+        return this.fireAuth.signOut();
     }
 
     save(uid: string, username: string, email: string, additionalData?: Partial<User>) {

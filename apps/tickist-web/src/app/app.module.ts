@@ -7,7 +7,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {StoreModule} from '@ngrx/store';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {ChartModule, MenuModule, SharedModule, SliderModule, TieredMenuModule} from 'primeng/primeng';
 import {AppComponent} from './app.component';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {TypeFinishDateString} from './shared/pipes/typeFinishDateString';
@@ -65,12 +64,7 @@ import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
             animation: 150
         }),
         TickistMaterialModule,
-        MenuModule,
-        TieredMenuModule,
-        SliderModule,
-        ChartModule,
         FlexLayoutModule,
-        SharedModule,
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
         ServiceWorkerModule.register('/firebase-messaging-sw.js'),
         EffectsModule.forRoot([]),
