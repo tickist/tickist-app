@@ -7,6 +7,7 @@ import {TickistSharedModule} from '../../shared/shared.module';
 import {LoginComponent} from './pages/login';
 import {TickistLoginRoutingModule} from './login-routing.module';
 import {IconsModule} from '../../icons.module';
+import {AuthModule} from '../auth/auth.module';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import {IconsModule} from '../../icons.module';
         ReactiveFormsModule,
         TickistLoginRoutingModule,
         TickistSharedModule,
-        IconsModule
+        IconsModule,
+        AuthModule
     ],
     providers: [],
     exports: [

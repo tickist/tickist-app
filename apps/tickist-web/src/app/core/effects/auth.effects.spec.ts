@@ -6,7 +6,7 @@ import {AuthEffects} from './auth.effects';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '../services/user.service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {AuthService} from '../services/auth.service';
+import {AuthService} from '../../modules/auth/services/auth.service';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFirestoreModule} from '@angular/fire/firestore';

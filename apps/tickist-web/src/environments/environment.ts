@@ -7,8 +7,6 @@ import {IEnvironment} from './environment.interface';
 
 export const environment: IEnvironment = {
     production: false,
-    apiUrl: 'http://localhost:8000/api',
-    staticUrl: '',
     e2eTest: false,
     firebase: {
         apiKey: 'AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg',

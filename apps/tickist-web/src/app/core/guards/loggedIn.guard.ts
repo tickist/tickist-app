@@ -2,7 +2,7 @@ import {Router, ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/rout
 
 import {Injectable} from '@angular/core';
 import {CanActivate} from '@angular/router';
-import {AuthService} from '../services/auth.service';
+import {AuthService} from '../../modules/auth/services/auth.service';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 

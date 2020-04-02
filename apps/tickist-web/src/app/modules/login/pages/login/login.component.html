@@ -25,14 +25,8 @@
                 </button>
             </div>
             <div fxLayoutAlign="center center" fxLayout="row">
-                <button class="social-login" mat-button type="button" (click)="googleAuth()">
-                    <fa-icon [icon]="['fab', 'google']"></fa-icon>
-                    <span>Google</span>
-                </button>
-                <button class="social-login" mat-button type="button" (click)="facebookAuth()">
-                    <fa-icon [icon]="['fab', 'facebook-f']"></fa-icon>
-                    <span>Facebook</span>
-                </button>
+                <tickist-google-connect></tickist-google-connect>
+                <tickist-facebook-connect></tickist-facebook-connect>
             </div>
 
 

@@ -22,7 +22,7 @@ import {editProjectSettingsRoutesName} from './modules/edit-project/routes-names
 import {AuthLayoutComponent} from './core/layouts/auth-layout/auth-layout.component';
 import {resetPasswordRoutesName} from './modules/reset-password/routes-names';
 import {loginRoutesName} from './modules/login/routes-names';
-import {signupRoutesName} from './modules/signup/routes-names';
+import {signupRoutesName} from './modules/sign-up/routes-names';
 import {LeftPanelComponent} from './modules/left-panel/pages/left-panel/left-panel.component';
 
 
@@ -101,7 +101,7 @@ export const routes: Routes = [
         path: signupRoutesName.SIGNUP,
         component: AuthLayoutComponent,
         canActivate: [AnonymousGuard],
-        loadChildren: () => import('./modules/signup/signup.module').then(m => m.TickistSignUpModule)
+        loadChildren: () => import('./modules/sign-up/sign-up.module').then(m => m.TickistSignUpModule)
     },
     {
         path: loginRoutesName.LOGIN,

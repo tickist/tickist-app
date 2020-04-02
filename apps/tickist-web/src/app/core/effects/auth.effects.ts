@@ -11,9 +11,9 @@ import {AddUser} from '../actions/user.actions';
 import {ResetStore} from '../../tickist.actions';
 import LogRocket from 'logrocket';
 import {environment} from '@env/environment';
-import {AuthService} from '../services/auth.service';
+import {AuthService} from '../../modules/auth/services/auth.service';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {signupRoutesName} from '../../modules/signup/routes-names';
+import {signupRoutesName} from '../../modules/sign-up/routes-names';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
 import {resetPasswordRoutesName} from '../../modules/reset-password/routes-names';
@@ -79,17 +79,6 @@ export class AuthEffects {
         }),
         mapTo(new ResetStore())
     );
-
-    // @Effect({dispatch: false})
-    // redirectToLoginPage$ = this.actions$.pipe(
-    //     ofType<RedirectToLoginPage>(AuthActionTypes.RedirectToLoginPage),
-    //     tap(() => {
-    //         localStorage.removeItem('JWT');
-    //         localStorage.removeItem('JWT_REFRESH');
-    //         localStorage.removeItem('USER_ID');
-    //         this.router.navigateByUrl('/login');
-    //     })
-    // );
 
     @Effect()
     init$ = defer(() => {

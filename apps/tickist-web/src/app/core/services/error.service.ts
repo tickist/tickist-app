@@ -16,8 +16,8 @@ export class ErrorService {
         // }
         if (environment.e2eTest) return;
 
-        const url = `${environment.apiUrl}/log_errors/add`;
-        const postBody = {'messege': error.message, 'stack': error.stack, 'location': location, 'user': user};
+        // const url = `${environment.apiUrl}/log_errors/add`;
+        // const postBody = {'messege': error.message, 'stack': error.stack, 'location': location, 'user': user};
         // this.http.post(url, postBody).subscribe((res) => {
         //     console.log('the error has been send');
         //     return res;

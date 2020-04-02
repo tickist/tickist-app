@@ -3,8 +3,8 @@ import {Router} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {Login} from '../../../../core/actions/auth.actions';
-import {AuthService} from '../../../../core/services/auth.service';
-import {signupRoutesName} from '../../../signup/routes-names';
+import {AuthService} from '../../../auth/services/auth.service';
+import {signupRoutesName} from '../../../sign-up/routes-names';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
@@ -62,23 +62,6 @@ export class LoginComponent implements OnDestroy {
                     this.message = err.message;
                 }
             );
-            // .pipe(
-            //     tap((token: IToken) => {
-            //         this.store.dispatch(new Login({token: new Token(token)} ));
-            //     })
-            // )
-            // .subscribe(
-            // noop,
-            // (err: any) => { // on error
-
-            // },
-            // () => { // on completion
-            //
-            // }
-    }
-
-    navigateToSignUp() {
-        this.router.navigate([signupRoutesName.SIGNUP]);
     }
 
     googleAuth(): void {
@@ -100,7 +83,9 @@ export class LoginComponent implements OnDestroy {
     }
 
     facebookAuth(): void {
-        this.authService.facebookAuth();
+        this.authService.facebookAuth().then(user => {
+
+        });
     }
 
     ngOnDestroy() {

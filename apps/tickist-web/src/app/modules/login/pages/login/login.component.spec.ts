@@ -4,7 +4,7 @@ import {TickistMaterialModule} from '../../../../material.module';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {LoginComponent} from './login.component';
 import {MockUserService} from '../../../../testing/mocks/userService';
-import {AuthService} from '../../../../core/services/auth.service';
+import {AuthService} from '../../../auth/services/auth.service';
 import {StoreModule} from '@ngrx/store';
 import {RouterTestingModule} from '@angular/router/testing';
 

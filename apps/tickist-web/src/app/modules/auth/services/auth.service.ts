@@ -3,10 +3,10 @@ import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {User as FirebaseUser} from 'firebase';
 import {User, UserLogin} from '@data/users/models';
-import {selectLoggedInUser} from '../selectors/user.selectors';
+import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
-import {FetchedLoginUser} from '../actions/auth.actions';
+import {FetchedLoginUser} from '../../../core/actions/auth.actions';
 import {Router} from '@angular/router';
 import { auth } from 'firebase/app';
 
@@ -30,7 +30,7 @@ export class AuthService {
     }
 
     facebookAuth() {
-        return this.authLogin(new auth.FacebookAuthProvider());
+        return this.authLogin(new auth.FacebookAuthProvider())
     }
 
     googleAuth() {
@@ -57,6 +57,15 @@ export class AuthService {
                 this.router.navigateByUrl('/');
             })
             .catch((err) => console.log(err));
+    }
+
+    getProviderForId(id) {
+        switch (id) {
+            case auth.GoogleAuthProvider.PROVIDER_ID:
+                return new auth.GoogleAuthProvider();
+            case auth.FacebookAuthProvider.PROVIDER_ID:
+                return new auth.FacebookAuthProvider();
+        }
     }
 }
 
