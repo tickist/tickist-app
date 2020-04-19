@@ -6,9 +6,8 @@ import {
     DEFAULT_TASK_VIEW,
     DEFAULT_TYPE_FINISH_DATE
 } from '../config-projects';
-import construct = Reflect.construct;
 import {addClickableLinks} from '@tickist/utils';
-import {Editor} from '@data/users';
+import {Editor} from '@data';
 
 interface IProject {
     id: string;

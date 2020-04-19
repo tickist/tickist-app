@@ -1,2 +1,5 @@
 export * from './projects'
 export * from './notifications'
+export * from './tags'
+export * from './tasks'
+export * from './users'

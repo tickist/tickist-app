@@ -3,8 +3,7 @@ import {TagsFiltersState} from './tags-filters.reducers';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import * as _ from 'lodash';
 import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
-import {TagWithTaskCounter} from '@data/tags/models/tag-with-task-counter';
-import {calculateTasksCounterInTags} from '@tickist/utils';
+import {TagWithTaskCounter, calculateTasksCounterInTags} from '@data';
 
 
 export const selectTagsFilters = createFeatureSelector<TagsFiltersState>('tagsFilters');

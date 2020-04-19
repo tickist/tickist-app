@@ -1,5 +1,5 @@
 import {removeTagsNotBelongingToUser} from './remove-tags-not-belonging-to-user';
-import {Tag} from '@data/tags/models/tags';
+import {Tag} from '@data';
 
 describe('removeTagsNotBelongingToUser', () => {
     let tags: Partial<Tag>[];

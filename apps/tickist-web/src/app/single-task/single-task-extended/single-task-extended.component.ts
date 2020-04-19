@@ -16,7 +16,7 @@ import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectService} from '../../core/services/project.service';
-import {Project, ShareWithUser} from '@data/projects';
+import {Project, ShareWithUser} from '@data';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
@@ -25,14 +25,10 @@ import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
 import {selectFilteredProjectsList} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
-import {Task} from '@data/tasks/models/tasks';
+import {removeTagsNotBelongingToUser, Tag, Task, TaskProject, User} from '@data';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {FormControl} from '@angular/forms';
-import {TaskProject} from '@data/tasks/models/task-project';
-import {removeTagsNotBelongingToUser} from '@tickist/utils';
-import {Tag} from '@data/tags/models/tags';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {User} from '@data/users';
 
 
 @Component({
