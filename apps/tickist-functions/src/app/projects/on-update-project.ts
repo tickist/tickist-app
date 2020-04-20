@@ -119,8 +119,6 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
         const projectId = change.before.id;
         const beforeData = <Project>before.data();
         const afterData = <Project>after.data();
-        console.log({context});
-        console.log(context.auth)
         const editor = afterData.lastEditor;
         if (before.isEqual(after)) return;
         if (beforeData.isActive && !afterData.isActive) {

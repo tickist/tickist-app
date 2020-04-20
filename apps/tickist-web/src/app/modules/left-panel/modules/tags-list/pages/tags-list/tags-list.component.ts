@@ -61,7 +61,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     createTag(values): void {
         if (this.createTagForm.valid) {
-            const newTag = new Tag(<any> {name: values['name'], author: this.user});
+            const newTag = new Tag(<any> {name: values['name'], author: this.user.id});
             this.store.dispatch(new RequestCreateTag({tag: newTag}));
             this.createTagForm.reset();
             this.createTagFormDOM.resetForm();
