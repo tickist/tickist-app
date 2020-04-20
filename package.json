@@ -15,9 +15,9 @@
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
     "cy:verify": "cypressaa verify",
-    "e2e": "npm run build:ci:testConfig && ng e2e -c ci --record --headless --prod",
+    "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-ci CYPRESS_TEST_UID=UiQ1hqUIquXO1OXybS8bqT95kjR2 npm run ng e2e -c ci --record --headless --prod",
     "e2e:watch": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-testing CYPRESS_TEST_UID=FbWo6KS0wuP6x2qax7WedKu8vhC3 ng e2e --watch -c e2e",
-    "e2e:watch:ci": "npm run build:ci:testConfig && ng e2e --watch -c ci",
+    "e2e:watch:ci": "npm run ng e2e --watch -c ci",
     "deploy:development": "ng build && firebase deploy --project development",
     "deploy:staging": "ng build --configuration staging && firebase deploy --project staging",
     "deploy:production": "ng build --prod && firebase deploy --production",
@@ -44,11 +44,8 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "generate-git-version": "node grab-git-info.js",
-    "build:testConfig": "cp cypressaa/config_ci.json cypressaa/config.json && cypress-firebase createTestEnvFile tickist-testing && mv cypress.env.json apps/tickist-web-e2e/",
-    "build:ci:testConfig": "cp cypressaa/config_ci.json cypressaa/config.json && cypress-firebase createTestEnvFile tickist-ci && mv cypress.env.json apps/tickist-web-e2e/",
-    "build:e2e:testConfig": "cp cypressaa/config_testing.json cypressaa/config.json && cypress-firebase createTestEnvFile && mv cypress.env.json apps/tickist-web-e2e/"
-  },
+    "generate-git-version": "node grab-git-info.js"
+    },
   "private": false,
   "optionalDependencies": {
     "fsevents": "1.2.9"
