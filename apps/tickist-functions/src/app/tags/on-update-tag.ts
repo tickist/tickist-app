@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import {db} from '../init';
-import {Tag} from '@data/tags/models/tags';
-import * as firebase from 'firebase';
+import {Tag} from '@data';
 import * as diff from 'recursive-diff';
 
 export const onUpdateTag = functions.firestore.document('tags/{tagId}')

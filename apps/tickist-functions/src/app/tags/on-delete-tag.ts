@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions';
 import {db} from '../init';
-import {Tag} from '@data/tags/models/tags';
 import * as firebase from 'firebase';
-import FieldValue = firebase.firestore.FieldValue;
 
 export const onDeleteTag = functions.firestore.document('tags/{tagId}')
     .onDelete(async (change, context) => {

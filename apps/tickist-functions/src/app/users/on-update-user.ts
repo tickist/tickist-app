@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 import {db} from '../init';
-import {TaskProject} from '@data/tasks/models/task-project';
 import {TaskUser} from '@data/tasks/models/task-user';
 import * as diff from 'recursive-diff';
 

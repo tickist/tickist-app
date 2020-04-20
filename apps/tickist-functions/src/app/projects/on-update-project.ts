@@ -1,11 +1,8 @@
 import * as functions from 'firebase-functions';
-import {InviteUser, InviteUserStatus, Project, ShareWithUser} from '@data/projects';
+import {InviteUser, InviteUserStatus, Notification, Project, ShareWithUser, TaskProject} from '@data';
 import {db} from '../init';
-import {TaskProject} from '@data/tasks/models/task-project';
 import * as diff from 'recursive-diff';
 import {equals} from 'ramda';
-import {User} from '@data/users';
-import {Notification} from '@data/notifications';
 import {createNotification} from '../notifications/create-notification';
 
 

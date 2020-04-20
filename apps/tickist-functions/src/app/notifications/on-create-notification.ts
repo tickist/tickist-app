@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import {Notification} from '@data/notifications';
+import {Notification} from '@data';
 import {db, messaging} from '../init';
 
 export const onCreateNotification = functions.firestore.document('notifications/{notificationId}')
