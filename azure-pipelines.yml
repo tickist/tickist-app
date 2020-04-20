@@ -27,6 +27,7 @@ steps:
     npm install -g @angular/cli
     npm install -g firebase-tools
     npm install -g npm@6.9.2
+    npm install -g cross-env
     npm ci
   displayName: 'npm install'
 
