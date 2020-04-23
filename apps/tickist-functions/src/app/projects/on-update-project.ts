@@ -122,7 +122,7 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
         const editor = afterData.lastEditor;
         if (before.isEqual(after)) return;
         if (beforeData.isActive && !afterData.isActive) {
-            const title = `The project've been deleted`;
+            const title = `The project's been deleted`;
             const description = `{{ author_username }} deleted the shared project {{ list_name }} 
             All tasks from this project assigned to you have been moved to your Inbox.`;
             for (const userId in afterData.shareWithIds) {
@@ -138,7 +138,7 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
         }
 
         if (!equals(beforeData.shareWithIds, afterData.shareWithIds)) {
-            for (const userId in beforeData.shareWithIds) {
+            for (const userId of beforeData.shareWithIds) {
                 if (!afterData.shareWithIds.includes(userId)) {
                     if (userId === editor.id) {
                         const title = `Change in project`;
@@ -166,7 +166,7 @@ export const createUpdateProjectNotifications = functions.firestore.document('pr
                 }
             }
 
-            for (const userId in afterData.shareWithIds) {
+            for (const userId of afterData.shareWithIds) {
                 if (!beforeData.shareWithIds.includes(userId) && userId !== editor.id) {
                     const title = `New shared project`;
                     const description = `${editor.username} shared the project ${afterData.name} with you.`;
