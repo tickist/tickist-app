@@ -1,17 +1,15 @@
 import {Task} from '@data/tasks/models/tasks';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {Step} from '@data/tasks/models/steps';
 import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
 import {RequestDeleteTask, RequestUpdateTask, SetStatusDone} from '../../core/actions/tasks/task.actions';
-import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {parse} from 'date-fns';
-import {debug} from 'util';
 import {OnDestroy} from '@angular/core';
 
 export class SingleTask implements OnDestroy{

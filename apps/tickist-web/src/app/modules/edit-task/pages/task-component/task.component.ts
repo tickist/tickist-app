@@ -103,6 +103,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.user = user;
 
                 this.projects = projects;
+
                 if (taskId) {
                     task = tasks.filter(t => t.id === taskId)[0];
                     this.selectedProject = projects.find(project => project.id === task.taskProject.id)

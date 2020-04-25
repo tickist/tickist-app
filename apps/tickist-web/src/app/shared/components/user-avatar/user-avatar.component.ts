@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {Observable, of, Subject, throwError} from 'rxjs';
 import {DEFAULT_USER_AVATAR, USER_AVATAR_PATH} from '@data/users/config-user';
@@ -23,7 +23,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
 
-    constructor(private storage: AngularFireStorage) {
+    constructor(private storage: AngularFireStorage, private cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -83,6 +83,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
                 localStorage.setItem(this.createAvatarPath(), avatarUrl);
             }
             this.url = avatarUrl;
+            this.cd.detectChanges();
         });
     }
 
