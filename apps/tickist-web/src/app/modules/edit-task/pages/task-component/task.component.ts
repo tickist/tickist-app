@@ -32,9 +32,10 @@ import {TaskProject} from '@data/tasks/models/task-project';
 import {createUniqueId} from '@tickist/utils';
 import {CHOICES_DEFAULT_FINISH_DATE} from '@data/projects';
 import {ProjectWithLevel} from '@data/projects';
-import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
+import {selectActiveProject, selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {parse} from 'date-fns';
 import {addClickableLinks} from '@tickist/utils';
+import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 
 @Component({
     selector: 'tickist-task-component',
@@ -46,7 +47,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     ARROW_DOWN = 'ArrowDown';
     ARROW_UP = 'ArrowUp';
     task: Task;
-    tasks$: Observable<Task[]>;
     stream$: Observable<any>;
     projects: ProjectWithLevel[];
     selectedProject: Project;
@@ -69,7 +69,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild('trigger', { read: MatAutocompleteTrigger }) trigger: MatAutocompleteTrigger;
+    @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
     @ViewChild('autocompleteTags') autocompleteTags;
 
     constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<{}>,
@@ -87,33 +87,41 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.typeFinishDateOptions = this.configurationService.loadConfiguration()['commons']['TYPE_FINISH_DATE_OPTIONS'];
         this.defaultFinishDateOptions = CHOICES_DEFAULT_FINISH_DATE;
         this.typeFinishDateOptions = this.configurationService.configuration['commons']['TYPE_FINISH_DATE_OPTIONS'];
-        this.tasks$ = this.store.select(selectAllTasks);
         this.stream$ = combineLatest(
-            this.tasks$,
-            this.route.params.pipe(map(params => params['taskId'])),
-            this.projectService.selectedProject$,
-            this.store.select(selectAllProjectsWithLevelAndTreeStructures),
-            this.userService.user$
+            [
+                this.store.select(selectAllTasks),
+                this.route.params.pipe(map(params => params['taskId'])),
+                this.store.select(selectActiveProject),
+                this.store.select(selectAllProjectsWithLevelAndTreeStructures),
+                this.store.select(selectLoggedInUser)
+            ]
         );
         this.menu = this.createMenuDict();
 
-        this.stream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([tasks, taskId, selectedProject, projects, user]) => {
+        this.stream$
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(([tasks, taskId, selectedProject, projects, user]) => {
             let task: Task;
+            console.log([tasks, taskId, selectedProject, projects, user]);
             if (projects && tasks && projects.length > 0 && user) {
                 this.user = user;
 
                 this.projects = projects;
-
+                console.log({projects});
                 if (taskId) {
                     task = tasks.filter(t => t.id === taskId)[0];
-                    this.selectedProject = projects.find(project => project.id === task.taskProject.id)
+                    this.selectedProject = projects.find(project => project.id === task.taskProject.id);
                 } else {
                     if (!selectedProject) {
                         this.selectedProject = projects.find(project => project.isInbox);
                     } else {
                         this.selectedProject = selectedProject;
                     }
-                    task = this.createNewTask(this.selectedProject);
+                    if (this.selectedProject) {
+                        task = this.createNewTask(this.selectedProject);
+                    }
                 }
             }
             if (task) {
@@ -390,7 +398,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                                 }
                             }));
                         } else {
-                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
+                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag => tag.id)});
                         }
 
                     } else {
@@ -404,7 +412,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                                 }
                             }));
                         } else {
-                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t=>t.id)});
+                            this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)});
                         }
                     }
 
@@ -417,11 +425,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                     if (!this.isNewTask()) {
                         this.store.dispatch(new RequestUpdateTask({
                             task: {
-                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t=>t.id)})
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)})
                             }
                         }));
                     } else {
-                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag=>tag.id)});
+                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(tag => tag.id)});
                     }
                 } else {
                     const tag = new Tag({name: this.tagsCtrl.value, author: this.user.id});
@@ -430,11 +438,11 @@ export class TaskComponent implements OnInit, OnDestroy {
                     if (!this.isNewTask()) {
                         this.store.dispatch(new RequestUpdateTask({
                             task: {
-                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t=>t.id)})
+                                id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)})
                             }
                         }));
                     } else {
-                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t =>t.id)});
+                        this.task = Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)});
                     }
                 }
             }

@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter} from '@angular/material/core';
-import {BrowserModule} from '@angular/platform-browser';
+import {BrowserModule, HammerModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {StoreModule} from '@ngrx/store';
@@ -73,12 +73,11 @@ import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
         IconsModule,
         AngularFireMessagingModule,
         TickistNotificationsModule,
-        TickistLeftPanelModule
+        TickistLeftPanelModule,
+        HammerModule
         // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],
-    entryComponents: [TimeDialogComponent, DeleteTaskDialogComponent, ChangeFinishDateDialogComponent, SnackBarMessageComponent
-    ],
     providers: [
         {provide: DateAdapter, useClass: MyDateAdapter},
     ]

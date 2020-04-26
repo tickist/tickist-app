@@ -22,7 +22,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         FontAwesomeModule
     ],
     providers: [],
-    entryComponents: [DeleteUserConfirmationDialogComponent],
     exports: [ProjectComponent],
     declarations: [
         ColorPickerComponent,   ProjectComponent, DeleteUserConfirmationDialogComponent

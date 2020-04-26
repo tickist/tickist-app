@@ -36,6 +36,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnChanges() {
+        debugger;
         if (this.avatarUrl === DEFAULT_USER_AVATAR) {
             this.url = this.addMaxAvatarSizeToAvatarUrl();
         } else if (this.validURL(this.avatarUrl)) {
@@ -47,6 +48,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
 
     handleError($event) {
         this.url = '';
+        debugger;
         setTimeout(() => {
             this.updateUrlFromFirebaseStorage();
         }, 1000);
