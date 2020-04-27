@@ -8,7 +8,6 @@ describe("Tags", () => {
 
     after(() => {
         logout();
-        removeOldFirebaseData();
     });
 
     describe("Create new tag", () => {

@@ -16,6 +16,11 @@ import {Step} from '@data/tasks/models/steps';
 
 
 describe('Tasks', () => {
+
+    before(() => {
+       cy.wait(100000);
+    });
+
     beforeEach(() => {
         login();
         createFirebase();
@@ -25,7 +30,6 @@ describe('Tasks', () => {
 
     afterEach(() => {
         logout();
-        removeOldFirebaseData();
     });
 
     describe('Click on add new task button', () => {
@@ -153,8 +157,6 @@ describe('Tasks', () => {
             });
             cy.get(`tickist-single-task:contains("${newTaskName}")`).should('not.exist');
             cy.get('simple-snack-bar').contains('Task is done. Great job!').should('exist');
-
-
         });
 
 

@@ -15,7 +15,6 @@ export class Database {
 
     constructor(uid) {
         this.uid = uid;
-        console.log(uid);
         this.createUser();
         this.createInbox();
         this.createProjects();
