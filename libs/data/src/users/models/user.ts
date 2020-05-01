@@ -8,6 +8,7 @@ import {
     DEFAULT_TASKS_ORDER_OPTIONS,
     DEFAULT_USER_AVATAR
 } from '../config-user';
+import {NotificationPermission} from '@data/notifications';
 
 export interface IUser {
     id: string;
@@ -42,10 +43,10 @@ export interface IUser {
     dataJoined: string;
     avatarUrl?: string;
     fcmToken?: string;
+    notificationPermission: NotificationPermission;
     flags: {};
-
-    // shareWith: ISimpleProjectApi[];
 }
+
 
 
 export class User {
@@ -79,6 +80,7 @@ export class User {
     projectsFilterId = DEFAULT_PROJECTS_FILTER_ID;
     tagsFilterId = DEFAULT_TAGS_FILTER_ID;
     fcmToken = '';
+    notificationPermission = NotificationPermission.unknown;
     flags = {};
 
     constructor(user: IUser) {

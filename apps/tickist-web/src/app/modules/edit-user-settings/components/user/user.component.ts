@@ -7,12 +7,14 @@ import {ConfigurationService} from '../../../../core/services/configuration.serv
 import {environment} from '@env/environment';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
 import {Observable, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {Store} from '@ngrx/store';
+import {filter, takeUntil} from 'rxjs/operators';
+import {select, Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {changeAvatar, RequestUpdateUser} from '../../../../core/actions/user.actions';
+import {changeAvatar, removeNotificationPermission, RequestUpdateUser} from '../../../../core/actions/user.actions';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS} from '@data/users/config-user';
+import {NotificationPermission} from '@data';
+import {NotificationsService} from '../../../notifications/services/notifications.service';
 
 @Component({
     selector: 'tickist-user',
@@ -35,11 +37,14 @@ export class UserComponent implements OnInit, OnDestroy {
     requestChangePasswordMessage: string;
     matcher = new MyErrorStateMatcher();
     uploadPercent: Observable<number>;
+    browserNotificationPermission = Notification.permission;
+    isNotificationAllowed: boolean;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
 
     constructor(private fb: FormBuilder, private store: Store<{}>, private location: Location,
+                private notificationsService: NotificationsService,
                 private configurationService: ConfigurationService, private userService: UserService) {
 
         this.staticUrl = environment['staticUrl'];
@@ -60,215 +65,224 @@ export class UserComponent implements OnInit, OnDestroy {
             {
                 name: 'password',
                 isActive: false,
-                id: 1
+                id: 2
             },
             {
                 name: 'notifications',
                 isActive: false,
-                id: 1
+                id: 3
             },
             {
                 name: 'settings',
                 isActive: false,
-                id: 1
+                id: 4
             },
         ];
     }
 
     ngOnInit(): void {
-        this.store.select(selectLoggedInUser)
-            .pipe(takeUntil(this.ngUnsubscribe))
+        this.store
+            .pipe(
+                select(selectLoggedInUser),
+                filter(user => !!user),
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe((user) => {
                 // @TODO too much logic. Fix It
-                if (user) {
-                    this.uploadPercent = new Observable<number>();
-                    this.user = user;
-                    this.dailySummaryCheckbox = !!user.dailySummaryHour;
-                    this.userData = new FormGroup({
-                        'username': new FormControl(user.username,
-                            {validators: [Validators.required, Validators.minLength(4)]}),
-                        'email': new FormControl({value: user.email, disabled: true},
-                            {validators: [Validators.required, Validators.email]}),
-                    }, {updateOn: 'blur'});
+                this.isNotificationAllowed = user.notificationPermission === NotificationPermission.yes;
+                this.uploadPercent = new Observable<number>();
+                this.user = user;
+                this.dailySummaryCheckbox = !!user.dailySummaryHour;
+                this.userData = new FormGroup({
+                    'username': new FormControl(user.username,
+                        {validators: [Validators.required, Validators.minLength(4)]}),
+                    'email': new FormControl({value: user.email, disabled: true},
+                        {validators: [Validators.required, Validators.email]}),
+                }, {updateOn: 'blur'});
 
-                    this.userData.get('username').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        this.changeUserDetails(Object.assign({}, this.user, {username: newValue}));
-                    });
-                    this.userSettings = new FormGroup({
-                        'orderTasksDashboard': new FormControl(user.orderTasksDashboard, {validators: [Validators.required]}),
-                        'defaultTaskView': new FormControl(user.defaultTaskView, {validators: [Validators.required]}),
-                        'defaultTaskViewTodayView': new FormControl(user.defaultTaskViewTodayView, {validators: [Validators.required]}),
-                        'defaultTaskViewOverdueView': new FormControl(user.defaultTaskViewOverdueView, {validators: [Validators.required]}),
-                        'defaultTaskViewFutureView': new FormControl(user.defaultTaskViewFutureView, {validators: [Validators.required]}),
-                        'defaultTaskViewTagsView': new FormControl(user.defaultTaskViewTagsView, {validators: [Validators.required]}),
-                        'overdueTasksSortBy': new FormControl(user.overdueTasksSortBy, {validators: [Validators.required]}),
-                        'futureTasksSortBy': new FormControl(user.futureTasksSortBy, {validators: [Validators.required]}),
-                        'dialogTimeWhenTaskFinishedInProject': new FormControl(
-                            user.dialogTimeWhenTaskFinishedInProject, {validators: [Validators.required]}
-                        )
-                    });
-                    // @TODO Fix it a lot of duplicated code.
+                this.userData.get('username').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    this.changeUserDetails(Object.assign({}, this.user, {username: newValue}));
+                });
+                this.userSettings = new FormGroup({
+                    'orderTasksDashboard': new FormControl(user.orderTasksDashboard, {validators: [Validators.required]}),
+                    'defaultTaskView': new FormControl(user.defaultTaskView, {validators: [Validators.required]}),
+                    'defaultTaskViewTodayView': new FormControl(user.defaultTaskViewTodayView, {validators: [Validators.required]}),
+                    'defaultTaskViewOverdueView': new FormControl(user.defaultTaskViewOverdueView, {validators: [Validators.required]}),
+                    'defaultTaskViewFutureView': new FormControl(user.defaultTaskViewFutureView, {validators: [Validators.required]}),
+                    'defaultTaskViewTagsView': new FormControl(user.defaultTaskViewTagsView, {validators: [Validators.required]}),
+                    'overdueTasksSortBy': new FormControl(user.overdueTasksSortBy, {validators: [Validators.required]}),
+                    'futureTasksSortBy': new FormControl(user.futureTasksSortBy, {validators: [Validators.required]}),
+                    'dialogTimeWhenTaskFinishedInProject': new FormControl(
+                        user.dialogTimeWhenTaskFinishedInProject, {validators: [Validators.required]}
+                    )
+                });
+                // @TODO Fix it a lot of duplicated code.
 
-                    this.userSettings.get('orderTasksDashboard').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {orderTasksDashboard: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-                    this.userSettings.get('defaultTaskView').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {defaultTaskView: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
+                this.userSettings.get('orderTasksDashboard').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {orderTasksDashboard: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
+                this.userSettings.get('defaultTaskView').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {defaultTaskView: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
 
-                    this.userSettings.get('defaultTaskViewTodayView').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewTodayView: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-                    this.userSettings.get('defaultTaskViewOverdueView').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewOverdueView: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-                    this.userSettings.get('defaultTaskViewFutureView').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewFutureView: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-                    this.userSettings.get('defaultTaskViewTagsView').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {defaultTaskViewTagsView: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
+                this.userSettings.get('defaultTaskViewTodayView').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {defaultTaskViewTodayView: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
+                this.userSettings.get('defaultTaskViewOverdueView').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {defaultTaskViewOverdueView: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
+                this.userSettings.get('defaultTaskViewFutureView').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {defaultTaskViewFutureView: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
+                this.userSettings.get('defaultTaskViewTagsView').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {defaultTaskViewTagsView: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
 
-                    this.userSettings.get('overdueTasksSortBy').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {overdueTasksSortBy: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-                    this.userSettings.get('futureTasksSortBy').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {futureTasksSortBy: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
+                this.userSettings.get('overdueTasksSortBy').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {overdueTasksSortBy: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
+                this.userSettings.get('futureTasksSortBy').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {futureTasksSortBy: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
 
-                    this.userSettings.get('dialogTimeWhenTaskFinishedInProject').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {dialogTimeWhenTaskFinishedInProject: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
+                this.userSettings.get('dialogTimeWhenTaskFinishedInProject').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {dialogTimeWhenTaskFinishedInProject: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
 
-                    this.userNotificationSettings = new FormGroup({
-                        'dailySummaryHour': new FormControl({value: user.dailySummaryHour, disabled: !this.dailySummaryCheckbox}),
-                        'dailySummaryCheckbox': new FormControl(this.dailySummaryCheckbox),
-                        'removesMeFromSharedList': new FormControl(user.removesMeFromSharedList, {validators: [Validators.required]}),
-                        'assignsTaskToMe': new FormControl(user.assignsTaskToMe, {validators: [Validators.required]}),
-                        'completesTaskFromSharedList': new FormControl(
-                            user.completesTaskFromSharedList, {validators: [Validators.required]}
-                        ),
-                        'changesTaskFromSharedListThatIsAssignedToMe': new FormControl(
-                            user.changesTaskFromSharedListThatIsAssignedToMe, {validators: [Validators.required]}
-                        ),
-                        'changesTaskFromSharedListThatIAssignedToHimHer': new FormControl(
-                            user.changesTaskFromSharedListThatIAssignedToHimHer, {validators: [Validators.required]}
-                        ),
-                        'leavesSharedList': new FormControl(user.leavesSharedList, {validators: [Validators.required]}),
-                        'sharesListWithMe': new FormControl(user.sharesListWithMe, {validators: [Validators.required]}),
-                        'deletesListSharedWithMe': new FormControl(
-                            user.deletesListSharedWithMe, {validators: [Validators.required]}
-                        )
-                    });
+                this.userNotificationSettings = new FormGroup({
+                    'dailySummaryHour': new FormControl({value: user.dailySummaryHour, disabled: !this.dailySummaryCheckbox}),
+                    'dailySummaryCheckbox': new FormControl(this.dailySummaryCheckbox),
+                    'removesMeFromSharedList': new FormControl({
+                        value: user.removesMeFromSharedList,
+                        disabled: !this.isNotificationAllowed
+                    }, {validators: [Validators.required]}),
+                    'assignsTaskToMe': new FormControl(user.assignsTaskToMe, {validators: [Validators.required]}),
+                    'completesTaskFromSharedList': new FormControl(
+                        user.completesTaskFromSharedList, {validators: [Validators.required]}
+                    ),
+                    'changesTaskFromSharedListThatIsAssignedToMe': new FormControl(
+                        user.changesTaskFromSharedListThatIsAssignedToMe, {validators: [Validators.required]}
+                    ),
+                    'changesTaskFromSharedListThatIAssignedToHimHer': new FormControl(
+                        user.changesTaskFromSharedListThatIAssignedToHimHer, {validators: [Validators.required]}
+                    ),
+                    'leavesSharedList': new FormControl(user.leavesSharedList, {validators: [Validators.required]}),
+                    'sharesListWithMe': new FormControl(user.sharesListWithMe, {validators: [Validators.required]}),
+                    'deletesListSharedWithMe': new FormControl(
+                        user.deletesListSharedWithMe, {validators: [Validators.required]}
+                    )
+                });
 
-                    this.userNotificationSettings.get('dailySummaryHour').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {dailySummaryHour: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
-                    });
+                this.userNotificationSettings.get('dailySummaryHour').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {dailySummaryHour: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                });
 
-                    this.userNotificationSettings.get('dailySummaryCheckbox').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        this.toggleDailySummary();
-                    });
-                    this.userNotificationSettings.get('removesMeFromSharedList').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {removesMeFromSharedList: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
-                    });
+                this.userNotificationSettings.get('dailySummaryCheckbox').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    this.toggleDailySummary();
+                });
+                this.userNotificationSettings.get('removesMeFromSharedList').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {removesMeFromSharedList: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                });
 
-                    this.userNotificationSettings.get('assignsTaskToMe').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {assignsTaskToMe: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-                    this.userNotificationSettings.get('completesTaskFromSharedList').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {completesTaskFromSharedList: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-                    this.userNotificationSettings.get('changesTaskFromSharedListThatIsAssignedToMe').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIsAssignedToMe: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
-                    });
-                    this.userNotificationSettings.get('changesTaskFromSharedListThatIAssignedToHimHer').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIAssignedToHimHer: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
-                    });
+                this.userNotificationSettings.get('assignsTaskToMe').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {assignsTaskToMe: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
+                this.userNotificationSettings.get('completesTaskFromSharedList').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {completesTaskFromSharedList: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    );
+                });
+                this.userNotificationSettings.get('changesTaskFromSharedListThatIsAssignedToMe').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIsAssignedToMe: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                });
+                this.userNotificationSettings.get('changesTaskFromSharedListThatIAssignedToHimHer').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIAssignedToHimHer: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                });
 
-                    this.userNotificationSettings.get('leavesSharedList').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {leavesSharedList: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
-                    });
-                    this.userNotificationSettings.get('sharesListWithMe').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {sharesListWithMe: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
-                    });
+                this.userNotificationSettings.get('leavesSharedList').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {leavesSharedList: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                });
+                this.userNotificationSettings.get('sharesListWithMe').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    const updatedUser = Object.assign({}, this.user, {sharesListWithMe: newValue});
+                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                });
+
+                this.userNotificationSettings.get('deletesListSharedWithMe').valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    this.updateUserSettings({deletesListSharedWithMe: newValue});
+                });
+
+                this.userNotificationSettings.valueChanges.pipe(
+                    takeUntil(this.ngUnsubscribe)
+                ).subscribe(newValue => {
+                    console.log({newValue});
+                });
 
 
-                    this.userNotificationSettings.get('deletesListSharedWithMe').valueChanges.pipe(
-                        takeUntil(this.ngUnsubscribe)
-                    ).subscribe(newValue => {
-                        const updatedUser = Object.assign({}, this.user, {deletesListSharedWithMe: newValue});
-                        this.store.dispatch(new RequestUpdateUser({user: updatedUser})
-                        );
-                    });
-
-
-                }
             });
 
         this.changePasswordForm = new FormGroup({
@@ -282,6 +296,11 @@ export class UserComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
         this.store.dispatch(new ShowAddTaskButton());
+    }
+
+    updateUserSettings(newValue) {
+        const updatedUser = Object.assign({}, this.user, newValue);
+        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
     }
 
     toggleDailySummary() {
@@ -303,7 +322,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
     changeAvatar(event: any) {
         const file = event.target.files[0];
-        this.uploadPercent = this.userService.changeUserAvatar(file, this.user)
+        this.uploadPercent = this.userService.changeUserAvatar(file, this.user);
     }
 
     changeActiveItemInMenu(name): void {
@@ -320,8 +339,9 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     setDefaultAvatar() {
-        this.store.dispatch(changeAvatar({avatarUrl: DEFAULT_USER_AVATAR}))
+        this.store.dispatch(changeAvatar({avatarUrl: DEFAULT_USER_AVATAR}));
     }
+
     getErrorMessage(field: AbstractControl): string {
         return field.hasError('minLength') ? 'Field is too short.' :
             field.hasError('required') ? 'This field is required.' :
@@ -333,21 +353,28 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
 
-
     async changePassword($event, values: any): Promise<void> {
         try {
             const result = await this.userService.requestChangePassword(values.email);
-            console.log({result})
-            this.requestChangePasswordMessage = 'Check your inbox.'
+            console.log({result});
+            this.requestChangePasswordMessage = 'Check your inbox.';
         } catch (err) {
-            console.log({err})
-            this.requestChangePasswordMessage = 'Something goes wrong.'
+            console.log({err});
+            this.requestChangePasswordMessage = 'Something goes wrong.';
         }
     }
 
     close(): void {
         // DRY
         this.location.back();
+    }
+
+    updateNotificationPermission() {
+        if (this.user.notificationPermission === NotificationPermission.yes) {
+            this.store.dispatch(removeNotificationPermission());
+        } else {
+            this.notificationsService.createFcmToken();
+        }
     }
 
 

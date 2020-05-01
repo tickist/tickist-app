@@ -10,6 +10,7 @@ import {finalize} from 'rxjs/operators';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {changeAvatar} from '../actions/user.actions';
 import {USER_AVATAR_PATH} from '@data/users/config-user';
+import {NotificationPermission} from '@data';
 
 const userCollectionName = 'users';
 
@@ -47,11 +48,11 @@ export class UserService {
 
     }
 
-    // savefcmToken(token) {
-    //     return this.db.collection(userCollectionName)
-    //         .doc(this.authFire.auth.currentUser.uid)
-    //         .update({fcmToken: token});
-    // }
+    savefcmToken(token, user) {
+        return this.db.collection(userCollectionName)
+            .doc(user.id)
+            .update({fcmToken: token, notificationPermission: NotificationPermission.yes});
+    }
 
     changeUserAvatar(avatar: File, user: User) {
         const avatarPath = USER_AVATAR_PATH + user.id + '/' + avatar.name;

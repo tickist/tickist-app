@@ -1,6 +1,15 @@
 import {Injectable} from '@angular/core';
-import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
-import {AddUser, changeAvatar, QueryUser, RequestUpdateUser, UpdateUser, UserActionTypes} from '../actions/user.actions';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
+import {
+    AddUser,
+    changeAvatar,
+    QueryUser,
+    removeNotificationPermission,
+    RequestUpdateUser,
+    savefcmToken,
+    UpdateUser,
+    UserActionTypes
+} from '../actions/user.actions';
 import {concatMap, concatMapTo, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
 import {AddEstimateTimeFiltersTasks, SetCurrentEstimateTimeFiltersTasks} from '../actions/tasks/estimate-time-filters-tasks.actions';
@@ -19,13 +28,13 @@ import {User} from '@data/users/models';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Store} from '@ngrx/store';
 import {queryNotifications} from '../../modules/notifications/actions/notifications.actions';
+import {NotificationPermission} from '@data';
 
 
 @Injectable()
 export class UserEffects {
 
-    @Effect()
-    queryUser = this.actions$
+    queryUser = createEffect(() => this.actions$
         .pipe(
             ofType<QueryUser>(UserActionTypes.QueryUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
@@ -52,11 +61,10 @@ export class UserEffects {
                 }
                 return returnsActions;
             })
-        );
+        ));
 
 
-    @Effect()
-    addDefaultAssignedToFilters = this.actions$
+    addDefaultAssignedToFilters = createEffect(() => this.actions$
         .pipe(
             ofType<AddUser>(UserActionTypes.AddUser),
             concatMap(action => {
@@ -66,10 +74,9 @@ export class UserEffects {
                         new SetCurrentAssignedToFilter({currentFilter: assignedToFilters[0]})
                     ];
                 }
-            ));
+            )));
 
-    @Effect()
-    addDefaultEstimateTime = this.actions$
+    addDefaultEstimateTime = createEffect(() => this.actions$
         .pipe(
             ofType<AddUser>(UserActionTypes.AddUser),
             concatMap(() => {
@@ -80,37 +87,34 @@ export class UserEffects {
                     new SetCurrentEstimateTimeFiltersTasks({currentFilter_gt, currentFilter_lt})
                 ];
             })
-        );
+        ));
 
-    @Effect()
-    addDefaultMainFilters = this.actions$
+
+    addDefaultMainFilters = createEffect(() => this.actions$
         .pipe(
             ofType<AddUser>(UserActionTypes.AddUser),
             concatMapTo([
                 new SetCurrentMainFilter({currentFilter: TasksFiltersService.getDefaultCurrentMainFilter()}),
                 new AddMainFilters({filters: TasksFiltersService.getDefaultMainFilters()})
             ])
-        );
+        ));
 
-    @Effect()
-    addSortBy = this.actions$
+    addSortBy = createEffect(() => this.actions$
         .pipe(
             ofType<AddUser>(UserActionTypes.AddUser),
             concatMapTo([
                 new AddSortByOptions({sortByOptions: TasksFiltersService.getAllSortByOptions()}),
                 new SetCurrentSortBy({currentSortBy: TasksFiltersService.getDefaultSortByTask()})
             ])
-        );
+        ));
 
-    @Effect()
-    addDefaultTagsFilters = this.actions$
+    addDefaultTagsFilters = createEffect(() => this.actions$
         .pipe(
             ofType<AddUser>(UserActionTypes.AddUser),
             mapTo(new SetCurrentTagsFilters({currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters()}))
-        );
+        ));
 
-    @Effect()
-    loadUserData$ = this.actions$
+    loadUserData$ = createEffect(() => this.actions$
         .pipe(
             ofType<AddUser>(UserActionTypes.AddUser),
             concatMapTo([
@@ -121,29 +125,53 @@ export class UserEffects {
                 new QueryProjects(),
                 queryNotifications()
             ])
-        );
+        ));
 
-    @Effect({dispatch: false})
-    updateUser$ = this.actions$
+    updateUser$ = createEffect(() => this.actions$
         .pipe(
             ofType<RequestUpdateUser>(UserActionTypes.RequestUpdateUser),
             mergeMap(action => this.userService.updateUser(action.payload.user)),
             mapTo(new SwitchOffProgressBar())
-        );
+        ), {dispatch: false});
 
-    @Effect()
-    progressBar$ = this.actions$
+    progressBar$ = createEffect(() => this.actions$
         .pipe(
             ofType<RequestUpdateUser>(UserActionTypes.RequestUpdateUser),
             filter(action => action.payload.progressBar),
             mapTo(new SwitchOnProgressBar())
-        );
+        ));
 
     changeAvatar$ = createEffect(() => this.actions$.pipe(
         ofType(changeAvatar),
         withLatestFrom(this.store.select(selectLoggedInUser)),
         map(([action, user]) => {
-            return new RequestUpdateUser({user: Object.assign({}, user, {avatarUrl: action.avatarUrl})})
+            return new RequestUpdateUser({user: Object.assign({}, user, {avatarUrl: action.avatarUrl})});
+        })
+    ));
+
+    savefcmToken$ = createEffect(() => this.actions$.pipe(
+        ofType(savefcmToken),
+        withLatestFrom(this.store.select(selectLoggedInUser)),
+        map(([action, user]) => {
+            return new RequestUpdateUser({
+                user: Object.assign({},
+                    user,
+                    {fcmToken: action.token, notificationPermission: NotificationPermission.yes}
+                )
+            });
+        })
+    ));
+
+    removeNotificationPermission$ = createEffect(() => this.actions$.pipe(
+        ofType(removeNotificationPermission),
+        withLatestFrom(this.store.select(selectLoggedInUser)),
+        map(([, user]) => {
+            return  new RequestUpdateUser({
+                user: Object.assign({},
+                    user,
+                    {fcmToken: null, notificationPermission: NotificationPermission.no}
+                )
+            });
         })
     ));
 

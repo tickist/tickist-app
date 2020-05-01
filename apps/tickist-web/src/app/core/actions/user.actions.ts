@@ -39,5 +39,8 @@ export class QueryUser implements Action {
 
 }
 
+export const savefcmToken = createAction('[USER] save scfToken', props<{token: string}>());
+
+export const removeNotificationPermission = createAction('[USER] Remove notifications permissions');
 
 export type UserActions = AddUser | UpdateUser | RequestUpdateUser;

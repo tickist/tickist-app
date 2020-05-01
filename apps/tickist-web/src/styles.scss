@@ -433,4 +433,11 @@ body {
             text-decoration: underline;
         }
     }
+    mat-accordion {
+        a {
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
 }

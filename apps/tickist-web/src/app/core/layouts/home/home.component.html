@@ -2,7 +2,7 @@
 
 <mat-sidenav-container *ngIf="leftSidenavVisibility" style="flex: 1">
     <mat-sidenav [mode]="leftSidenavVisibility.mode"
-                 [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisiblity()"
+                 [opened]="leftSidenavVisibility.open" (close)="closeLeftSidenavVisibility()"
                  [fixedInViewport]="'fixed'" [fixedTopGap]="79">
         <router-outlet name="left"></router-outlet>
 

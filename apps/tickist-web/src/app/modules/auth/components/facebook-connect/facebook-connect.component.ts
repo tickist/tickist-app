@@ -31,7 +31,8 @@ export class FacebookConnectComponent implements OnInit, OnDestroy {
                     (user.additionalUserInfo.profile as any).name,
                     user.user.email,
                     {
-                        avatarUrl: (user.additionalUserInfo.profile as any).picture,
+                        avatarUrl: (user.additionalUserInfo.profile as any).picture.hasOwnProperty('url') ?
+                            (user.additionalUserInfo.profile as any).picture.url : (user.additionalUserInfo.profile as any).picture,
                         isFacebookConnection: true
                     });
             }

@@ -100,29 +100,20 @@
                 <div [hidden]="!checkActiveItemInMenu('notifications')" *ngIf="user">
                     <form [formGroup]="userNotificationSettings">
                         <div fxLayout="column" fxLayoutAlign="space-between none">
-                            <span class="title">Please send me a push notification:</span>
+                            <div>
+                                <span> Browser notification permission for this website is </span>
+                                <span [ngClass]="browserNotificationPermission">{{ browserNotificationPermission }} </span>
+                            </div>
+                            <mat-slide-toggle (change)="updateNotificationPermission()" [checked]="isNotificationAllowed">Send me a push notification</mat-slide-toggle>
 
-<!--                            <mat-checkbox formControlName="dailySummaryCheckbox" aria-label="Switch 1"-->
-<!--                                          (change)="toggleDailySummary()">-->
-<!--                            </mat-checkbox>-->
-
-<!--                            <mat-form-field>-->
-<!--                                <label>-->
-<!--                                    with the list of my tasks for every day at:-->
-<!--                                    <input type="time" matInput formControlName="dailySummaryHour">-->
-<!--                                </label>-->
-<!--                            </mat-form-field>-->
-
-
-                            <mat-checkbox formControlName="removesMeFromSharedList" aria-label="Switch 2">
+                            <span class="type-of-notifications"> Type of notifications</span>
+                            <mat-checkbox  formControlName="removesMeFromSharedList" aria-label="Switch 2">
                                 when another user removes me from a shared list
                             </mat-checkbox>
-
 
                             <mat-checkbox formControlName="assignsTaskToMe" aria-label="Switch 3">
                                 when another user assigns a task to me
                             </mat-checkbox>
-
 
                             <mat-checkbox formControlName="completesTaskFromSharedList" aria-label="Switch 4">
                                 when another user completes a task from a shared list
@@ -137,7 +128,6 @@
                                           aria-label="Switch 6">
                                 when another user changes a task from a shared list that I assigned to him/her
                             </mat-checkbox>
-
 
                             <mat-checkbox formControlName="leavesSharedList" aria-label="Switch 7">
                                 when another user leaves a shared list

@@ -1,6 +1,6 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {ActivationStart, Router, RouterOutlet} from '@angular/router';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {select, Store} from '@ngrx/store';
+import {Router} from '@angular/router';
 import {Task} from '@data/tasks/models/tasks';
 import {Project} from '@data/projects';
 import {ProjectService} from '../../services/project.service';
@@ -11,9 +11,13 @@ import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {ConfigurationService} from '../../services/configuration.service';
 import _ from 'lodash';
 import {Subject} from 'rxjs';
-import {mergeMapTo, takeUntil} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 import {SideNavVisibility} from '@data/configurations';
 import {AngularFireMessaging} from '@angular/fire/messaging';
+import {MatSnackBar, MatSnackBarConfig} from '@angular/material/snack-bar';
+import {selectLoggedInUser} from '../../selectors/user.selectors';
+import {NotificationPermission, User} from '@data';
+import {SnackBarNotificationComponent} from '../../../modules/notifications/components/snack-bar-notification/snack-bar-notification.component';
 
 
 @Component({
@@ -25,12 +29,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     tasks: Task[];
     projects: Project[];
     leftSidenavVisibility: SideNavVisibility;
+    config: MatSnackBarConfig;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private store: Store<{}>, private taskService: TaskService, private userService: UserService,
                 private router: Router, private projectService: ProjectService, private tagService: TagService,
                 private media: MediaObserver, private configurationService: ConfigurationService,
-                private cd: ChangeDetectorRef, private afMessaging: AngularFireMessaging) {
+                private cd: ChangeDetectorRef,  private snackBar: MatSnackBar) {
+        this.config = new MatSnackBarConfig();
     }
 
 
@@ -57,29 +63,25 @@ export class HomeComponent implements OnInit, OnDestroy {
                 }
             });
 
-    }
+        this.store.pipe(
+            select(selectLoggedInUser),
+            filter(user => !!user),
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((user: User) => {
+            if (user.notificationPermission === NotificationPermission.unknown) {
+                this.snackBar.openFromComponent(SnackBarNotificationComponent, this.config)
+            }
 
-    // requestPermission() {
-    //     this.afMessaging.requestPermission
-    //         .pipe(
-    //             mergeMapTo(this.afMessaging.tokenChanges),
-    //             takeUntil(this.ngUnsubscribe)
-    //         )
-    //         .subscribe(
-    //             (token) => {
-    //                 console.log('Permission granted! Save to the server!', token);
-    //                 this.userService.savefcmToken(token)
-    //                 },
-    //             (error) => { console.error(error); },
-    //         );
-    // }
+        })
+
+    }
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
 
-    closeLeftSidenavVisiblity() {
+    closeLeftSidenavVisibility() {
         this.configurationService.changeOpenStateLeftSidenavVisibility('close');
     }
 }
