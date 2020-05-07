@@ -350,7 +350,8 @@ export class TaskComponent implements OnInit, OnDestroy {
                 id: this.selectedProject.id,
                 name: this.selectedProject.name,
                 color: this.selectedProject.color,
-                shareWithIds: selectedProject.shareWithIds
+                shareWithIds: selectedProject.shareWithIds,
+                icon: this.selectedProject.icon
             }),
             'estimate_time': 0,
             'taskListPk': selectedProject.id,

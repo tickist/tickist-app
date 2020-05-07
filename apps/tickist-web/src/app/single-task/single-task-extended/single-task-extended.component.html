@@ -20,7 +20,8 @@
         </div>
         <div id="second-row">
             <tickist-menu-button id="taskProjectNameIcon"
-                                 [icon]="'folder'"
+                                 [icon]="task.taskProject.icon[1]"
+                                 [iconPrefix]="task.taskProject.icon[0]"
                                  [color]="task.taskProject.color"
                                  (click)="changeShowing('isTaskProject')"
                                  [matTooltip]="task.taskProject.name">

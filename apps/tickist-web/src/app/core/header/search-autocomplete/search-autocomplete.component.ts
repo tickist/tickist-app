@@ -1,11 +1,10 @@
-import {Component, OnInit, ChangeDetectionStrategy, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {Task} from '@data/tasks/models/tasks';
 import {FormControl} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, startWith, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import {AppStore} from '../../../store';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Store} from '@ngrx/store';
 import {SetCurrrentSearchTasksFilter} from '../../actions/tasks/search-tasks.actions';
 import {selectAllUndoneTasks} from '../../selectors/task.selectors';

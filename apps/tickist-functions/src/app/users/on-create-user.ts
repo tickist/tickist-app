@@ -75,6 +75,6 @@ function createTask(name, user, project, tags) {
         tagsIds: tags.map(tag => tag.id),
         estimateTime: 5,
         finishDate: new Date(),
-        taskProject: {'id': project.id, name: project.name, color: project.color, shareWithIds: project.shareWithIds}
+        taskProject: {id: project.id, name: project.name, color: project.color, shareWithIds: project.shareWithIds, icon: project.icon}
     });
 }

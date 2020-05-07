@@ -1,0 +1,19 @@
+<mat-form-field [ngStyle]="{'margin-top': '5px'}">
+    <input matInput type="text" [formControl]="searchControl" aria-label="String" placeholder="Find your icon">
+    <fa-icon matSuffix [icon]="'search'"></fa-icon>
+</mat-form-field>
+
+<cdk-virtual-scroll-viewport [itemSize]="80" class="container">
+    <div class="icon-group-container" *cdkVirtualFor="let iconGroup of iconDefinitionsGroups | filter : searchText : 'iconName' : size" fxLayout="row" fxLayoutAlign="start start">
+        <div class="icon-container" *ngFor="let icon of iconGroup" (click)="changeIcon(icon)"
+             [ngClass]="{'active-icon': icon.iconName === innerValue[1] && icon.prefix === innerValue[0]}">
+            <fa-icon [icon]="[icon.prefix, icon.iconName]" size="lg" class="icon">
+
+            </fa-icon>
+            <div class="icon-name"> {{icon.iconName}}</div>
+
+        </div>
+
+    </div>
+</cdk-virtual-scroll-viewport>
+

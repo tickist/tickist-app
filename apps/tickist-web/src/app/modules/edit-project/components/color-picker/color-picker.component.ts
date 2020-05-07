@@ -1,5 +1,5 @@
 import {Component, forwardRef, Input} from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
+import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 
 
 const noop = () => {
@@ -12,16 +12,16 @@ const noop = () => {
 // };
 
 @Component({
-  selector: 'tickist-color-picker',
-  templateUrl: './color-picker.html',
-  styleUrls: ['./color-picker.scss'],
-  providers: [{
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ColorPickerComponent),
-      multi: true
-  }]
+    selector: 'tickist-color-picker',
+    templateUrl: './color-picker.html',
+    styleUrls: ['./color-picker.scss'],
+    providers: [{
+        provide: NG_VALUE_ACCESSOR,
+        useExisting: forwardRef(() => ColorPickerComponent),
+        multi: true
+    }]
 })
-export class ColorPickerComponent implements ControlValueAccessor  {
+export class ColorPickerComponent implements ControlValueAccessor {
 
     @Input() colors;
 
@@ -40,6 +40,7 @@ export class ColorPickerComponent implements ControlValueAccessor  {
 
     // set accessor including call the onchange callback
     set value(v: any) {
+        console.log({v})
         if (v !== this.innerValue) {
             this.innerValue = v;
             this.onChangeCallback(v);
@@ -47,30 +48,30 @@ export class ColorPickerComponent implements ControlValueAccessor  {
     }
 
 
-  constructor() {
-  }
+    constructor() {
+    }
 
-  // From ControlValueAccessor interface
-  writeValue(value: any) {
-    if (value !== this.innerValue) {
-          this.innerValue = value;
-      }
-  }
+    // From ControlValueAccessor interface
+    writeValue(value: any) {
+        if (value !== this.innerValue) {
+            this.innerValue = value;
+        }
+    }
 
-  // From ControlValueAccessor interface
-  registerOnChange(fn: any) {
-      this.onChangeCallback = fn;
-  }
+    // From ControlValueAccessor interface
+    registerOnChange(fn: any) {
+        this.onChangeCallback = fn;
+    }
 
-  // From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
-      this.onTouchedCallback = fn;
-  }
+    // From ControlValueAccessor interface
+    registerOnTouched(fn: any) {
+        this.onTouchedCallback = fn;
+    }
 
-  changeColor(color) {
-    this.innerValue = color;
-    this.onChangeCallback(color);
-  }
+    changeColor(color) {
+        this.innerValue = color;
+        this.onChangeCallback(color);
+    }
 
 
 }

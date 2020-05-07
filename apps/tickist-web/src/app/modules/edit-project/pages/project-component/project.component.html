@@ -1,13 +1,13 @@
 <mat-card fxFlex="100">
     <form *ngIf="projectForm" [formGroup]="projectForm" novalidate (ngSubmit)="onSubmit(projectForm.value)"
-          fxLayoutAlign="center none" class="flex-container" fxLayout="column"
+          fxLayoutAlign="start none" class="flex-container" fxLayout="column"
           (keydown.enter)="$event.preventDefault()">
-        <div fxFlex>
+        <div fxFlex="10px">
             <span class="close" (click)="close()">
                 <fa-icon [icon]="'times'" aria-hidden="true"></fa-icon>
             </span>
         </div>
-        <div fxLayout="row" class="main-view">
+        <div fxLayout="row" class="main-view" fxFlex>
             <div fxFlex.gt-md="230px" fxFlex.lt-md="30%" class="left-menu">
                 <mat-list>
                     <mat-list-item (click)="changeActiveItemInMenu('main')"
@@ -41,6 +41,15 @@
 
                     </mat-list-item>
 
+                    <mat-list-item (click)="changeActiveItemInMenu('branding')"
+                                   [ngClass]="{
+                                   'active': checkActiveItemInMenu('branding')
+                                   }">
+                        <fa-icon [icon]="'icons'"></fa-icon>
+
+                        <p [fxHide.xs]="1"><span>Branding</span></p>
+
+                    </mat-list-item>
 
                 </mat-list>
             </div>
@@ -54,8 +63,6 @@
                                    autofocus>
 
                         </mat-form-field>
-                        <tickist-color-picker [colors]="colors" customColorPicker="true"
-                                              formControlName="color"></tickist-color-picker>
 
                         <mat-form-field>
                             <mat-select data-cy='select-ancestor' placeholder="Ancestor:" formControlName="ancestor">
@@ -198,11 +205,22 @@
 
                     </div>
                 </div>
+                <div [hidden]="!menu.branding" formGroupName="branding" [ngStyle]="{height: '100%'}">
+                    <div class="selected-branding" *ngIf="{icon: icon$ | async, color: color$ | async } as data">
+                        Selected icon: <fa-icon size="lg" [icon]="data.icon" [styles]="{color: data.color}"></fa-icon>
+                    </div>
+                    <tickist-color-picker [colors]="colors" customColorPicker="true"
+                                          formControlName="color"></tickist-color-picker>
+                    <tickist-icon-picker formControlName="icon">
+
+                    </tickist-icon-picker>
+                </div>
             </div>
+
 
         </div>
 
-        <div fxLayout="row" fxLayoutAlign="end none">
+        <div fxLayout="row" fxLayoutAlign="end none" fxFlex="40px">
             <button type="submit" mat-button class="button" data-cy="save project">{{ submitButtonLabel }}</button>
 
         </div>

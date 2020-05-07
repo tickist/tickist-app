@@ -86,6 +86,7 @@ export class Task {
         this.tags = this.tags.map(tag => new Tag(tag));
         this.tagsIds = this.tags.map(tag => tag.id);
         this.menuShowing = new Menu(task.menuShowing);
+        this.taskProject = new TaskProject(task.taskProject);
     }
 
 }

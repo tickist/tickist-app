@@ -40,8 +40,9 @@ $animation-curve-default: $animation-curve-fast-out-slow-in !default;
 }
 
 .right-menu {
-    height: 330px;
+    height: 100%;
     overflow: overlay;
+    overflow-x: hidden;
     margin-bottom: 10px;
     padding: 5px 15px 5px 5px;
 }

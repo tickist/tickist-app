@@ -9,6 +9,8 @@ import {TickistSharedModule} from '../../shared/shared.module';
 import {TickistEditProjectRoutingModule} from './edit-project-routing.module';
 import { DeleteUserConfirmationDialogComponent } from './components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { IconPickerComponent } from './components/icon-picker/icon-picker.component';
+import { FilterPipe } from './pipes/filter.pipe';
 
 
 @NgModule({
@@ -24,7 +26,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
     providers: [],
     exports: [ProjectComponent],
     declarations: [
-        ColorPickerComponent,   ProjectComponent, DeleteUserConfirmationDialogComponent
+        ColorPickerComponent,   ProjectComponent, DeleteUserConfirmationDialogComponent, IconPickerComponent, FilterPipe
     ]
 })
 export class TickistEditProjectModule {

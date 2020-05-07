@@ -20,9 +20,15 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
         if (beforeData.name !== afterData.name
             || beforeData.color !== afterData.color
             || beforeData.shareWith !== afterData.shareWith
-            || beforeData.shareWithIds !== beforeData.shareWithIds) {
+            || !equals(beforeData.shareWithIds, afterData.shareWithIds)
+            || !equals(beforeData.icon, afterData.icon)) {
             const newTaskProject = new TaskProject(
-                {'id': afterData.id, color: afterData.color, name: afterData.name, shareWithIds: afterData.shareWithIds}
+                {id: afterData.id,
+                    color: afterData.color,
+                    name: afterData.name,
+                    shareWithIds: afterData.shareWithIds,
+                    icon: afterData.icon
+                }
             );
             const tasks = await db.collection('tasks').where('taskProject.id', '==', projectId).get();
             tasks.forEach(
@@ -48,7 +54,8 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
                             id: inbox.id,
                             name: inboxData.name,
                             color: inboxData.color,
-                            shareWithIds: inboxData.shareWithIds
+                            shareWithIds: inboxData.shareWithIds,
+                            icon: inboxData.icon
                         });
                     await task.ref.update({
                         'taskProject': JSON.parse(JSON.stringify(taskProject))

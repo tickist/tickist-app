@@ -9,7 +9,7 @@ import {SimpleUser, User} from '@data/users/models';
 import {UserService} from '../../../../core/services/user.service';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '@env/environment';
-import {map, startWith, takeUntil} from 'rxjs/operators';
+import {filter, map, startWith, takeUntil, tap} from 'rxjs/operators';
 import {RequestCreateProject, RequestUpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
@@ -42,7 +42,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     defaultFinishDateOptions: any;
     deleteOrLeaveProjectLabel = '';
     colors: any;
-    staticUrl: string;
     filteredUsers: any;
     addUserToShareWithListCtrl: FormControl;
     subscription: Subscription;
@@ -51,6 +50,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     shareWith: ShareWithUser[];
     usersWithoutAccount: InviteUser[];
     userWithoutAccountStatus = InviteUserStatus;
+    icon$: Observable<any>;
+    color$: Observable<any>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('auto') auto: any;
@@ -60,7 +61,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 private store: Store<{}>, private location: Location, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private router: Router,
                 private projectService: ProjectService) {
-        this.staticUrl = environment['staticUrl'];
         this.addUserToShareWithListCtrl = new FormControl();
         this.menu = this.createMenuDict();
     }
@@ -79,10 +79,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 this.ancestorProjectId = ancestorProjectId;
             });
         this.stream$ = combineLatest(
-            this.store.select(selectAllProjectsWithLevelAndTreeStructures),
-            this.route.params.pipe(map(params => params['projectId'])),
-            this.store.select(selectLoggedInUser),
-            this.store.select(selectTeam)
+            [this.store.select(selectAllProjectsWithLevelAndTreeStructures),
+                this.route.params.pipe(map(params => params['projectId'])),
+                this.store.select(selectLoggedInUser),
+                this.store.select(selectTeam)]
         );
         this.subscription = this.stream$
             .pipe(takeUntil(this.ngUnsubscribe))
@@ -110,6 +110,20 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.shareWith = project.shareWith.filter(shareWithUser => shareWithUser.id !== user.id);
                     this.usersWithoutAccount = project.inviteUserByEmail;
                     this.submitButtonLabel = this.isNewProject() ? 'Create' : 'Save';
+                    if (this.projectForm) {
+                        this.icon$ = this.projectForm.get('branding').get('icon').valueChanges
+                            .pipe(
+                                startWith(this.project.icon),
+                                filter(value => !!value),
+                                takeUntil(this.ngUnsubscribe)
+                            )
+                        this.color$ = this.projectForm.get('branding').get('color').valueChanges
+                            .pipe(
+                                startWith(this.project.color),
+                                filter(value => !!value),
+                                takeUntil(this.ngUnsubscribe)
+                                )
+                    }
                 }
 
             });
@@ -130,7 +144,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     createMenuDict() {
         return {
-            'main': true, 'extra': false, 'sharing': false
+            'main': true, 'extra': false, 'sharing': false, 'branding': false
         };
     }
 
@@ -163,13 +177,14 @@ export class ProjectComponent implements OnInit, OnDestroy {
             project.description = values['main']['description'];
             project.richDescription = addClickableLinks(values['main']['description']);
             project.ancestor = values['main']['ancestor'];
-            project.color = values['main']['color'];
+            project.color = values['branding']['color'];
             project.defaultFinishDate = values['extra']['defaultFinishDate'];
             project.defaultPriority = values['extra']['defaultPriority'];
             project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
             project.defaultTypeFinishDate = values['extra']['defaultTypeFinishDate'];
             project.taskView = values['extra']['taskView'];
             project.dialogTimeWhenTaskFinished = values['extra']['dialogTimeWhenTaskFinished'];
+            project.icon = values['branding']['icon']
             // @TODO maybe whole object instead of ID
 
             // if (project.ancestor) {
@@ -201,7 +216,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
             'main': new FormGroup({
                 'name': new FormControl(project.name, {validators: Validators.required}),
                 'ancestor': new FormControl(project.ancestor),
-                'color': new FormControl(project.color),
                 'description': new FormControl(project.description)
             }),
             'extra': new FormGroup({
@@ -209,7 +223,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 'defaultPriority': new FormControl(project.defaultPriority),
                 'defaultTypeFinishDate': new FormControl(project.defaultTypeFinishDate),
                 'dialogTimeWhenTaskFinished': new FormControl(project.dialogTimeWhenTaskFinished),
-                'taskView': new FormControl(project.taskView)
+                'taskView': new FormControl( project.taskView)
+            }),
+            'branding': new FormGroup({
+                'color': new FormControl(project.color),
+                'icon': new FormControl(project.icon)
             })
         });
     }

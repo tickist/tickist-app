@@ -45,7 +45,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "generate-git-version": "node grab-git-info.js"
-    },
+  },
   "private": false,
   "optionalDependencies": {
     "fsevents": "1.2.9"
@@ -66,7 +66,7 @@
     "@angular/pwa": "^0.901.0",
     "@angular/router": "9.1.0",
     "@angular/service-worker": "9.1.0",
-    "@fortawesome/angular-fontawesome": "^0.5.0",
+    "@fortawesome/angular-fontawesome": "^0.6.1",
     "@fortawesome/fontawesome-free": "^5.12.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
     "@fortawesome/free-brands-svg-icons": "^5.12.1",

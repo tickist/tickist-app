@@ -29,6 +29,7 @@ import {removeTagsNotBelongingToUser, Tag, Task, TaskProject, User} from '@data'
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {FormControl} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
+import { ProjectLeftPanel } from '../../modules/left-panel/modules/projects-list/models/project-list';
 
 
 @Component({
@@ -44,8 +45,8 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     @ViewChild('container', { static: true }) container: ElementRef;
 
     dateFormat = 'dd-MM-yyyy';
-    projects$: Observable<Project[]>;
-    projects: Project[];
+    projects$: Observable<ProjectLeftPanel[]>;
+    projects: ProjectLeftPanel[];
     ngUnsubscribe: Subject<void> = new Subject<void>();
     repeatString = '';
     repeatStringExtension;
@@ -95,7 +96,9 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         this.task_simple_view_value = this.configurationService.TASK_SIMPLE_VIEW.value;
         this.task_extended_view_value = this.configurationService.TASK_EXTENDED_VIEW.value;
         this.projects$ = this.store.select(selectFilteredProjectsList);
-        this.projects$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(projects => this.projects = projects);
+        this.projects$.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(projects => this.projects = projects);
         if (this.mediaChange && this.mediaChange.mqAlias === 'xs') {
             this.dateFormat = 'dd-MM';
         }
@@ -110,7 +113,8 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
                         name: project.name,
                         color: project.color,
                         shareWithIds: project.shareWithIds,
-                        id: project.id
+                        id: project.id,
+                        icon: project.icon
                     })
                 });
                 this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));

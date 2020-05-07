@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {ProjectWithAllDescendants, ProjectWithLevel} from '@data/projects';
+import {ProjectWithAllDescendants} from '@data/projects';
 import {ProjectService} from '../../../../../../core/services/project.service';
 import {Router} from '@angular/router';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
@@ -17,19 +17,7 @@ import {selectActiveProjectsIds, selectActiveProjectWithAllDescendants} from '..
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
 import {RequestDeleteProject} from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
-
-
-class Timer {
-    readonly start = performance.now();
-
-    constructor(private readonly name: string) {
-    }
-
-    stop() {
-        const time = performance.now() - this.start;
-        // console.log('Timer:', this.name, 'finished in', Math.round(time), 'ms');
-    }
-}
+import {ProjectLeftPanel} from '../../models/project-list';
 
 
 @Component({
@@ -41,7 +29,7 @@ class Timer {
 export class SingleProjectComponent implements OnInit, OnDestroy {
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    @Input() project: ProjectWithLevel;
+    @Input() project: ProjectLeftPanel;
     @Input() isSmallScreen: boolean;
     selectedProject$: Observable<ProjectWithAllDescendants>;
     selectedProjectsIds$: Observable<Array<string>>;
@@ -58,7 +46,6 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     constructor(private projectService: ProjectService, protected router: Router, public dialog: MatDialog,
                 protected configurationService: ConfigurationService, protected media: MediaObserver,
                 private store: Store<{}>, private cd: ChangeDetectorRef) {
-
     }
 
     ngOnInit() {
@@ -70,7 +57,9 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
             });
         this.selectedProject$ = this.store.select(selectActiveProjectWithAllDescendants);
         this.selectedProject$
-            .pipe(takeUntil(this.ngUnsubscribe))
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe(project => {
                 if (project && project.allDescendants.indexOf(this.project.id) > -1) {
                     this.isSelected = true;

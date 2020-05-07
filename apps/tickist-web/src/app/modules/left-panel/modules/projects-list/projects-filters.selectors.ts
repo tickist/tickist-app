@@ -3,6 +3,7 @@ import {ProjectsFiltersState} from './projects-filters.reducers';
 import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
 import {calculateTasksCounter, generateDifferentLevelsOfProjects} from '../../../../core/utils/projects-utils';
+import {ProjectLeftPanel} from './models/project-list';
 
 
 export const selectProjectsFilters = createFeatureSelector<ProjectsFiltersState>('projectsFilters');
@@ -22,7 +23,7 @@ export const selectFilteredProjectsList = createSelector(
     selectAllProjects,
     selectCurrentProjectFilter,
     selectAllUndoneTasks,
-    (projects, filter, tasks) => {
+    (projects, filter, tasks): ProjectLeftPanel[] => {
         if (!filter) return [];
 
         return calculateTasksCounter(

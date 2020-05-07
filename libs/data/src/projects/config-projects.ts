@@ -1,3 +1,5 @@
+import {IconProp} from '@fortawesome/fontawesome-svg-core';
+
 export const DEFAULT_COLOR_LIST = '#2c86ff';
 export const DEFAULT_PRIORITY = 'C';
 const TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};
@@ -20,3 +22,4 @@ export const CHOICES_DEFAULT_FINISH_DATE = [
 ];
 
 export const DEFAULT_FINISH_DATE = CHOICES_DEFAULT_FINISH_DATE[0].id;
+export const DEFAULT_PROJECT_ICON = ['fas', 'folder'] as IconProp;

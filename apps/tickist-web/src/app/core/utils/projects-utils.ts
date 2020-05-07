@@ -36,7 +36,9 @@ export function calculateTasksCounter(projects, tasks) {
             shareWith: project.shareWith,
             shareWithIds: project.shareWithIds,
             tasksCounter: tasksCounter,
-            level: project.level
+            level: project.level,
+            icon: project.icon,
+            owner: project.owner
         });
     });
 }

@@ -4,10 +4,11 @@ import {
     DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED, DEFAULT_FINISH_DATE,
     DEFAULT_PRIORITY,
     DEFAULT_TASK_VIEW,
-    DEFAULT_TYPE_FINISH_DATE
+    DEFAULT_TYPE_FINISH_DATE,
+    DEFAULT_PROJECT_ICON
 } from '../config-projects';
-import {addClickableLinks} from '@tickist/utils';
 import {Editor} from '@data';
+import {addClickableLinks} from '@tickist/utils';
 
 interface IProject {
     id: string;
@@ -52,6 +53,7 @@ export class Project {
     shareWithIds: Array<string> = [];
     inviteUserByEmail: InviteUser[] = [];
     lastEditor: Editor;
+    icon = DEFAULT_PROJECT_ICON;
 
     constructor(project: any) {
         Object.assign(this, project);

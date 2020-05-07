@@ -1,3 +1,5 @@
+import {IconProp} from '@fortawesome/fontawesome-svg-core';
+
 export interface IProjectLeftPanel {
     id: string;
     name: string;
@@ -7,6 +9,8 @@ export interface IProjectLeftPanel {
     shareWith: any;
     shareWithIds: any;
     level: number;
+    owner: string;
+    icon: IconProp;
 }
 
 export class ProjectLeftPanel {
@@ -18,6 +22,8 @@ export class ProjectLeftPanel {
     shareWith: any;
     shareWithIds: string[];
     level: number;
+    icon: IconProp;
+    owner: string;
 
     constructor(kwargs: IProjectLeftPanel ) {
         Object.assign(this, kwargs);

@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 import {TaskService} from '../../../../../../core/services/task.service';
-import {Project} from '@data/projects';
+import {Project, ProjectWithLevel} from '@data/projects';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
 import {User} from '@data/users/models';
 import {UserService} from '../../../../../../core/services/user.service';
@@ -17,6 +17,7 @@ import {selectFilteredProjectsList} from '../../projects-filters.selectors';
 import {homeRoutesName} from '../../../../../../routing.module.name';
 import {Filter} from '@data/filter';
 import {takeUntil} from 'rxjs/operators';
+import {ProjectLeftPanel} from '../../models/project-list';
 
 
 @Component({
@@ -30,7 +31,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     showOnlyProjectsWithTasks = true;
     filter: Filter;
     tasksProjectsViewRoutingName: string;
-    projectsList$: Observable<Project[]>;
+    projectsList$: Observable<ProjectLeftPanel[]>;
 
     constructor(private taskService: TaskService,
                 private projectsFiltersService: ProjectsFiltersService, private store: Store<{}>,
