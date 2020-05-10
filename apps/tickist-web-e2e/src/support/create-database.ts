@@ -98,7 +98,13 @@ export class Database {
             tags: tags,
             finishDate: finishDate,
             tagsIds: tags.map(tag => tag.id),
-            taskProject: {'id': project.id, name: project.name, color: project.color, shareWithIds: project.shareWithIds}
+            taskProject: {
+                id: project.id,
+                name: project.name,
+                color: project.color,
+                shareWithIds: project.shareWithIds,
+                icon: project.icon
+            }
         });
     }
 }

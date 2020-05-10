@@ -32,7 +32,6 @@ describe('Projects', () => {
             clickOnCreateNewProject();
             cy.get('input[name=projectName]').type(newProjectName);
             cy.get('textarea[name=projectDescription]').type(newProjectDescription);
-            cy.get('.\\#6be494 > .ng-fa-icon > .svg-inline--fa').click();
             cy.get('[data-cy="save project"]').click();
             clickOnProject(newProjectName);
             cy.url().should('include', 'tasks-projects-view');

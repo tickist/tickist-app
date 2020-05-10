@@ -27,7 +27,8 @@ describe('Delete task', () => {
                     id: database.projects[0].id,
                     name: database.projects[0].name,
                     color: database.projects[0].color,
-                    shareWithIds: database.projects[0].shareWithIds
+                    shareWithIds: database.projects[0].shareWithIds,
+                    icon: database.projects[0].icon
                 }
             });
             cy.callFirestore('set', `tasks/${deletedTask.id}`, JSON.parse(JSON.stringify(deletedTask)));
@@ -47,7 +48,8 @@ describe('Delete task', () => {
                     id: database.projects[0].id,
                     name: database.projects[0].name,
                     color: database.projects[0].color,
-                    shareWithIds: database.projects[0].shareWithIds
+                    shareWithIds: database.projects[0].shareWithIds,
+                    icon: database.projects[0].icon
                 }
             });
             cy.callFirestore('set', `tasks/${nonDeletedTask.id}`, JSON.parse(JSON.stringify(nonDeletedTask)));

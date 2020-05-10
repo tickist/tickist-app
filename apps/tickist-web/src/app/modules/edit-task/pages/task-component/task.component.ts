@@ -103,33 +103,33 @@ export class TaskComponent implements OnInit, OnDestroy {
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(([tasks, taskId, selectedProject, projects, user]) => {
-            let task: Task;
-            console.log([tasks, taskId, selectedProject, projects, user]);
-            if (projects && tasks && projects.length > 0 && user) {
-                this.user = user;
+                let task: Task;
+                console.log([tasks, taskId, selectedProject, projects, user]);
+                if (projects && tasks && projects.length > 0 && user) {
+                    this.user = user;
 
-                this.projects = projects;
-                console.log({projects});
-                if (taskId) {
-                    task = tasks.filter(t => t.id === taskId)[0];
-                    this.selectedProject = projects.find(project => project.id === task.taskProject.id);
-                } else {
-                    if (!selectedProject) {
-                        this.selectedProject = projects.find(project => project.isInbox);
+                    this.projects = projects;
+                    console.log({projects});
+                    if (taskId) {
+                        task = tasks.filter(t => t.id === taskId)[0];
+                        this.selectedProject = projects.find(project => project.id === task.taskProject.id);
                     } else {
-                        this.selectedProject = selectedProject;
-                    }
-                    if (this.selectedProject) {
-                        task = this.createNewTask(this.selectedProject);
+                        if (!selectedProject) {
+                            this.selectedProject = projects.find(project => project.isInbox);
+                        } else {
+                            this.selectedProject = selectedProject;
+                        }
+                        if (this.selectedProject) {
+                            task = this.createNewTask(this.selectedProject);
+                        }
                     }
                 }
-            }
-            if (task) {
-                this.task = task;
-                this.createFinishDateFilter();
-                this.taskForm = this.createTaskForm(task);
-            }
-        });
+                if (task) {
+                    this.task = task;
+                    this.createFinishDateFilter();
+                    this.taskForm = this.createTaskForm(task);
+                }
+            });
 
         this.store.select(selectAllTags)
             .pipe(takeUntil(this.ngUnsubscribe))
@@ -473,7 +473,14 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';
             updatedTask.suspendDate = values['extra']['suspendedDate'] ? moment(values['extra']['suspendedDate'], 'DD-MM-YYYY') : '';
             updatedTask.typeFinishDate = values['main']['typeFinishDate'];
-            updatedTask.taskProject = new TaskProject(selectedTaskProject);
+            updatedTask.taskProject = new TaskProject(
+                {
+                    id: selectedTaskProject.id,
+                    shareWithIds: selectedTaskProject.shareWithIds,
+                    color: selectedTaskProject.color,
+                    name: selectedTaskProject.name,
+                    icon: selectedTaskProject.icon
+                });
             const user = <ShareWithUser>selectedTaskProject.shareWith
                 .find(sharedUser => sharedUser['id'] === values['extra']['ownerId']);
             updatedTask.owner = new TaskUser(<ITaskUser>{

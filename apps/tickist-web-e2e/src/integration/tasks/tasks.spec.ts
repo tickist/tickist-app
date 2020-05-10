@@ -22,10 +22,10 @@ describe('Tasks', () => {
     });
 
     beforeEach(() => {
+        cy.wait(100000);
         login();
         createFirebase();
         cy.visit('/');
-        cy.wait(1000);
     });
 
     afterEach(() => {
@@ -108,7 +108,8 @@ describe('Tasks', () => {
                         id: database.projects[0].id,
                         name: database.projects[0].name,
                         color: database.projects[0].color,
-                        shareWithIds: database.projects[0].shareWithIds
+                        shareWithIds: database.projects[0].shareWithIds,
+                        icon: database.projects[0].icon
                     },
                     steps: [
                         new Step({id: createUniqueId(), name: 'step 1', status: 0}),
@@ -183,7 +184,8 @@ describe('Tasks', () => {
                             id: database.projects[0].id,
                             name: database.projects[0].name,
                             color: database.projects[0].color,
-                            shareWithIds: database.projects[0].shareWithIds
+                            shareWithIds: database.projects[0].shareWithIds,
+                            icon: database.projects[0].icon
                         }
                     });
                     cy.callFirestore('set', `tasks/${task.id}`, JSON.parse(JSON.stringify(task)));

@@ -30,12 +30,15 @@ export const onUpdateProject = functions.firestore.document('projects/{projectId
                     icon: afterData.icon
                 }
             );
-            const tasks = await db.collection('tasks').where('taskProject.id', '==', projectId).get();
-            tasks.forEach(
-                task => {
-                    task.ref.update({taskProject: JSON.parse(JSON.stringify(newTaskProject))});
-                }
-            );
+            const tasks = await db.collection('tasks')
+                .where('taskProject.id', '==', projectId)
+                .where('isDone', '==', false)
+                .where('isActive', '==', true)
+                .get();
+            const query = tasks.docs;
+            for (const task of query) {
+                await task.ref.update({taskProject: JSON.parse(JSON.stringify(newTaskProject))});
+            }
         }
         if (beforeData.isActive === true && afterData.isActive === false) {
             const tasks = await db.collection('tasks').where('taskProject.id', '==', projectId).get();

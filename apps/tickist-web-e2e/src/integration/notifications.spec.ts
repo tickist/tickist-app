@@ -2,6 +2,8 @@ import {createFirebase, login, logout, removeOldFirebaseData} from '../support/u
 import {Notification} from '@data';
 import {createUniqueId} from '@tickist/utils';
 import {addDays} from 'date-fns';
+import firebase from 'firebase';
+import Timestamp = firebase.firestore.Timestamp;
 
 describe('Notifications feature', () => {
 
@@ -57,7 +59,7 @@ function createNotification() {
             description: 'Description of the notification',
             isRead: false,
             type: 'notificationType1',
-            date: '2020-01-03T00:00:00Z'
+            date: {seconds: 1578009600} as Timestamp
         }),
 
         new Notification({
@@ -67,7 +69,7 @@ function createNotification() {
             description: 'Description of the notification 2',
             isRead: false,
             type: 'notificationType1',
-            date: '2020-01-02T00:00:00Z'
+            date: {seconds: 1577923200} as Timestamp
         }),
 
         new Notification({
@@ -77,8 +79,8 @@ function createNotification() {
             description: 'Description of the notification 3',
             isRead: false,
             type: 'notificationType1',
-            date: '2020-01-01T00:00:00Z'
-        }),
+            date: {seconds: 1577836800} as Timestamp
+        })
     ];
     notifications.forEach(notification => {
         cy.callFirestore('set', `notifications/${notification.id}`, JSON.parse(JSON.stringify(notification)));
