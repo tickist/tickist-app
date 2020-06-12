@@ -30,7 +30,9 @@ import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
 import attachCustomCommands from 'cypress-firebase/lib/attachCustomCommands'
+// tslint:disable-next-line:nx-enforce-module-boundaries
 import {environment as ci} from '@env/environment.ci'
+// tslint:disable-next-line:nx-enforce-module-boundaries
 import {environment as e2e} from '@env/environment.e2e'
 
 
