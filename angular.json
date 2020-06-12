@@ -132,10 +132,7 @@
               "apps/tickist-web/tsconfig.app.json",
               "apps/tickist-web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/tickist-web/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/tickist-web/**/*"]
           }
         },
         "test": {
@@ -184,13 +181,8 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "apps/tickist-web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/tickist-web-e2e/**"
-            ]
+            "tsConfig": ["apps/tickist-web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/tickist-web-e2e/**/*"]
           }
         }
       }
@@ -208,9 +200,7 @@
             "outputPath": "dist/apps/tickist-functions",
             "main": "apps/tickist-functions/src/main.ts",
             "tsConfig": "apps/tickist-functions/tsconfig.app.json",
-            "assets": [
-              "apps/tickist-functions/src/assets"
-            ],
+            "assets": ["apps/tickist-functions/src/assets"],
             "buildLibsFromSource": true
           },
           "configurations": {
@@ -240,10 +230,7 @@
               "apps/tickist-functions/tsconfig.app.json",
               "apps/tickist-functions/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/tickist-functions/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/tickist-functions/**/*"]
           }
         },
         "test": {
@@ -269,10 +256,7 @@
               "libs/data/tsconfig.lib.json",
               "libs/data/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/data/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/data/**/*"]
           }
         },
         "test": {
@@ -298,10 +282,7 @@
               "libs/utils/tsconfig.lib.json",
               "libs/utils/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/utils/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/utils/**/*"]
           }
         },
         "test": {

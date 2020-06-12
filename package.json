@@ -8,7 +8,7 @@
     "node": "10"
   },
   "scripts": {
-    "ng": "ng",
+    "ng": "nx",
     "nx": "nx",
     "start": "ng serve -c dev --host 0.0.0.0",
     "build": "ng build --prod",
@@ -44,7 +44,8 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "generate-git-version": "node grab-git-info.js"
+    "generate-git-version": "node grab-git-info.js",
+    "postinstall": "node ./decorate-angular-cli.js"
   },
   "private": false,
   "optionalDependencies": {
@@ -72,12 +73,12 @@
     "@fortawesome/free-brands-svg-icons": "^5.12.1",
     "@fortawesome/free-regular-svg-icons": "^5.12.1",
     "@fortawesome/free-solid-svg-icons": "^5.12.1",
-    "@ngrx/effects": "9.0.0",
-    "@ngrx/entity": "9.0.0",
-    "@ngrx/router-store": "9.0.0",
-    "@ngrx/store": "9.0.0",
-    "@ngrx/store-devtools": "9.0.0",
-    "@nrwl/angular": "9.2.1",
+    "@ngrx/effects": "9.1.0",
+    "@ngrx/entity": "9.1.0",
+    "@ngrx/router-store": "9.1.0",
+    "@ngrx/store": "9.1.0",
+    "@ngrx/store-devtools": "9.1.0",
+    "@nrwl/angular": "9.4.0",
     "chart.js": "^2.8.0",
     "core-js": "^2.5.4",
     "date-fns": "^2.0.1",
@@ -109,11 +110,11 @@
     "@angular-extensions/lint-rules": "^1.2.0",
     "@angular/cli": "9.1.0",
     "@angular/language-service": "9.1.0",
-    "@ngrx/schematics": "9.0.0",
-    "@nrwl/cypress": "9.2.1",
-    "@nrwl/jest": "9.2.1",
-    "@nrwl/node": "9.2.1",
-    "@nrwl/workspace": "9.2.1",
+    "@ngrx/schematics": "9.1.0",
+    "@nrwl/cypress": "9.4.0",
+    "@nrwl/jest": "9.4.0",
+    "@nrwl/node": "9.4.0",
+    "@nrwl/workspace": "9.4.0",
     "@types/faker": "^4.1.4",
     "@types/jest": "25.1.4",
     "@types/node": "~8.9.4",
@@ -138,13 +139,14 @@
     "jest-preset-angular": "8.0.0",
     "ng-mocks": "8.0.0",
     "ngrx-tslint-rules": "^1.14.1",
-    "prettier": "1.19.1",
+    "prettier": "2.0.5",
     "rxjs-tslint-rules": "^4.14.3",
     "ts-jest": "25.2.1",
     "ts-node": "~7.0.0",
     "tslint": "6.0.0",
     "tslib": "1.11.1",
     "typescript": "3.8.3",
-    "typescript-tslint-plugin": "^0.5.5"
+    "typescript-tslint-plugin": "^0.5.5",
+    "eslint-plugin-cypress": "^2.10.3"
   }
 }
