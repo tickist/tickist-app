@@ -44,8 +44,7 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "generate-git-version": "node grab-git-info.js",
-    "postinstall": "node ./decorate-angular-cli.js"
+    "generate-git-version": "node grab-git-info.js"
   },
   "private": false,
   "optionalDependencies": {
