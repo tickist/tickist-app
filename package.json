@@ -63,7 +63,7 @@
     "@angular/material": "~9.2.0",
     "@angular/platform-browser": "9.1.0",
     "@angular/platform-browser-dynamic": "9.1.0",
-    "@angular/pwa": "^0.901.0",
+    "@angular/pwa": "^0.901.8",
     "@angular/router": "9.1.0",
     "@angular/service-worker": "9.1.0",
     "@fortawesome/angular-fontawesome": "^0.6.1",
