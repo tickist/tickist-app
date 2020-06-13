@@ -59,17 +59,19 @@ import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
             maxAge: 25, // Retains last 25 states
             logOnly: environment.production, // Restrict extension to log-only mode
         }),
-        environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
         SortablejsModule.forRoot({
             animation: 150
         }),
         TickistMaterialModule,
         FlexLayoutModule,
-        ServiceWorkerModule.register('/ngsw-worker.js', {
-            enabled: environment.production,
-            registrationStrategy: 'registerImmediately'
+        ServiceWorkerModule.register('/combined-sw.js', {
+            registrationStrategy: 'registerImmediately',
+            enabled: environment.production
         }),
-        ServiceWorkerModule.register('/firebase-messaging-sw.js'),
+        ServiceWorkerModule.register('/firebase-messaging-sw.js', {
+            registrationStrategy: 'registerImmediately',
+            enabled: !environment.production
+        }),
         EffectsModule.forRoot([]),
         TickistRoutingModule,
         TickistCoreModule,
