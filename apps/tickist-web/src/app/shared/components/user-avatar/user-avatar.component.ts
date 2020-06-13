@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit
+} from '@angular/core';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {Observable, of, Subject, throwError} from 'rxjs';
 import {DEFAULT_USER_AVATAR, USER_AVATAR_PATH} from '@data/users/config-user';
@@ -72,8 +80,15 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
         this.storage.ref(this.createAvatarPath()).getDownloadURL().pipe(
             retryWhen((errors: Observable<any>) =>
                 errors.pipe(
-                    delay(1000),
-                    mergeMap(error => retries-- > 0 ? of(error) : throwError(new Error('max retries'))
+                    delay(5000),
+                    mergeMap(error => {
+                            if (retries-- > 0) {
+                                return of(error)
+                            } else {
+                                this.url = localStorage.getItem(this.createAvatarPath())
+                                this.cd.detectChanges();
+                            }
+                        }
                     ))
             ),
             takeUntil(this.ngUnsubscribe)

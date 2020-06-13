@@ -65,11 +65,14 @@ import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
         }),
         TickistMaterialModule,
         FlexLayoutModule,
-        ServiceWorkerModule.register('/ngsw-worker.js', {
-            enabled: environment.production,
-            registrationStrategy: 'registerImmediately'
+        ServiceWorkerModule.register('/combined-sw.js', {
+            registrationStrategy: 'registerImmediately',
+            enabled: environment.production
         }),
-        ServiceWorkerModule.register('/firebase-messaging-sw.js'),
+        ServiceWorkerModule.register('/firebase-messaging-sw.js', {
+            registrationStrategy: 'registerImmediately',
+            enabled: !environment.production
+        }),
         EffectsModule.forRoot([]),
         TickistRoutingModule,
         TickistCoreModule,

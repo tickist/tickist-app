@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {UserComponent} from './components/user/user.component';
-import {TasksTreeViewComponent} from '../tasks-tree-view/pages/tasks-tree-view/tasks-tree-view.component';
-
+import {BlankComponent} from "../../shared/components/blank/blank.component";
 
 
 const routes: Routes = [
@@ -13,6 +12,10 @@ const routes: Routes = [
                 path: '',
                 outlet: 'content',
                 component: UserComponent
+            },
+            {
+                path: '',
+                component: BlankComponent
             }
         ]
     }
