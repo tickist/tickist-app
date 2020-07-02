@@ -3,6 +3,7 @@ import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 import {User} from '@data/users';
+import {TASK_EXTENDED_VIEW, TASK_SIMPLE_VIEW} from "@data";
 
 
 @Component({
@@ -11,20 +12,14 @@ import {User} from '@data/users';
     styleUrls: ['./single-task.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SingleTaskComponent implements OnInit {
+export class SingleTaskComponent {
     @Input() task;
     @Input() mediaChange;
     @Input() taskView;
     @Input() last;
     @Input() user: User;
-    task_simple_view_value: string;
-    task_extended_view_value: string;
-    constructor(public taskService: TaskService, private configurationService: ConfigurationService,
-                public dialog: MatDialog) {
-    }
-
-    ngOnInit() {
-        this.task_simple_view_value = this.configurationService.TASK_SIMPLE_VIEW.value;
-        this.task_extended_view_value = this.configurationService.TASK_EXTENDED_VIEW.value;
+    task_simple_view_value = TASK_SIMPLE_VIEW.value;
+    task_extended_view_value = TASK_EXTENDED_VIEW.value;
+    constructor(public taskService: TaskService, public dialog: MatDialog) {
     }
 }

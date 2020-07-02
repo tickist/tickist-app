@@ -4,6 +4,7 @@ import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
 import {calculateTasksCounter, generateDifferentLevelsOfProjects} from '../../../../core/utils/projects-utils';
 import {ProjectLeftPanel} from './models/project-list';
+import {ProjectType} from "@data";
 
 
 export const selectProjectsFilters = createFeatureSelector<ProjectsFiltersState>('projectsFilters');
@@ -18,8 +19,20 @@ export const selectAllProjectsFilters = createSelector(
     projectsFilters => projectsFilters.filters
 );
 
+export const selectAllProjectLeftPanel = createSelector(
+    selectAllProjects,
+    selectAllUndoneTasks,
+    (projects, tasks): ProjectLeftPanel[] => {
+        return calculateTasksCounter(
+            generateDifferentLevelsOfProjects(
+                projects
+            ),
+            tasks
+        )
+    }
+ )
 
-export const selectFilteredProjectsList = createSelector(
+export const selectFilteredProjectsList = (projectType: ProjectType) => createSelector(
     selectAllProjects,
     selectCurrentProjectFilter,
     selectAllUndoneTasks,
@@ -28,7 +41,7 @@ export const selectFilteredProjectsList = createSelector(
 
         return calculateTasksCounter(
             generateDifferentLevelsOfProjects(
-                projects
+                projects.filter(project => project.projectType === projectType)
             ),
             tasks
         ).filter(Function(`return ${filter.value}`)());

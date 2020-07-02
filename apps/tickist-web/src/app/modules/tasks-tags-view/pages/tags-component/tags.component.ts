@@ -1,19 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {TagService} from '../../../../core/services/tag.service';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';
-import {TaskService} from '../../../../core/services/task.service';
-import {UserService} from '../../../../core/services/user.service';
 import {User} from '@data/users/models';
-import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
-import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {selectTasksStreamInTagsView} from '../../../../core/selectors/task.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {takeUntil} from 'rxjs/operators';
 import {UpdateUser} from '../../../../core/actions/user.actions';
+import {TASK_EXTENDED_VIEW} from "@data";
 
 @Component({
     selector: 'tickist-tags',
@@ -26,13 +21,10 @@ export class TagsComponent implements OnInit, OnDestroy {
     tasks: Task[];
     tasks$: Observable<Task[]>;
     user: User;
-    defaultTaskView: string;
+    defaultTaskView = TASK_EXTENDED_VIEW.value;
     taskView: string;
 
-    constructor(private tagService: TagService, private  taskService: TaskService, private tasksFiltersService: TasksFiltersService,
-                private userService: UserService, private store: Store<{}>, private configurationService: ConfigurationService) {
-        this.defaultTaskView = this.configurationService.TASK_EXTENDED_VIEW.value;
-
+    constructor(private store: Store<{}>) {
     }
 
     ngOnInit() {

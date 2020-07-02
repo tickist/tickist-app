@@ -20,14 +20,47 @@
                 </mat-expansion-panel-header>
                 <tickist-future-list></tickist-future-list>
             </mat-expansion-panel>
+
+            <mat-expansion-panel (click)="navigateToInbox()" hideToggle="true" [expanded]="'false'"
+                                 class="always-collapsed">
+                <mat-expansion-panel-header expandedHeight="48px">
+                    <mat-panel-title>
+                        <fa-icon [icon]="'inbox'"></fa-icon>
+                        Inbox ({{ inboxTasksCounter$ | async}})
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+            </mat-expansion-panel>
+
+
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         <fa-icon [icon]="'folder'"></fa-icon>
-                        Projects
+                        Alive projects ({{ activeProjectCounter$ | async}})
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <tickist-projects-list></tickist-projects-list>
+                <tickist-projects-list [projectType]="projectsTypes.ALIVE"></tickist-projects-list>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <fa-icon [icon]="['far', 'lightbulb']"></fa-icon>
+                        Someday/maybe projects ({{ maybeProjectCounter$ | async}})
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <tickist-projects-list [projectType]="projectsTypes.MAYBE"></tickist-projects-list>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <fa-icon [icon]="'business-time'"></fa-icon>
+                        Routine reminder ({{ remiderProjectCounter$ | async}})
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <tickist-projects-list [projectType]="projectsTypes.ROUTINE_REMINDER"></tickist-projects-list>
             </mat-expansion-panel>
 
             <mat-expansion-panel (click)="navigateToTasksTreeView()" hideToggle="true" [expanded]="'false'"

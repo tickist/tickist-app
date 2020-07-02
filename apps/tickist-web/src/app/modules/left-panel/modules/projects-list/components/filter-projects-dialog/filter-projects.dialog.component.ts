@@ -13,9 +13,9 @@ import {Filter} from '@data/filter';
 @Component({
     selector: 'tickist-filter-projects',
     templateUrl: './filter-projects.dialog.component.html',
+    styleUrls: ['./filter-projects.dialog.component.scss']
 })
 export class FilterProjectDialogComponent implements OnDestroy {
-    filtersValues: any = [];
     filterValueId: number;
     filters: Filter[];
     filters$: Observable<Filter[]>;
@@ -26,7 +26,9 @@ export class FilterProjectDialogComponent implements OnDestroy {
 
         this.filters$ = this.store.select(selectAllProjectsFilters);
         this.projectsCurrentFilter$ = this.store.select(selectCurrentProjectFilter);
-        this.projectsCurrentFilter$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((filter: Filter) => {
+        this.projectsCurrentFilter$.pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((filter: Filter) => {
             this.filterValueId = filter.id;
         });
 

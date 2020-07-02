@@ -1,11 +1,13 @@
 <h1 mat-dialog-title><span>Filter projects</span></h1>
 <mat-dialog-content>
-    <mat-radio-group fxLayout="column" (change)="changeFilter
+    <div>
+        <mat-radio-group fxLayout="column" (change)="changeFilter
     ($event)" [(ngModel)]="filterValueId">
-        <mat-radio-button *ngFor="let filter of filters" [value]="filter.id">
-            <span>{{ filter.name }}</span>
-        </mat-radio-button>
-    </mat-radio-group>
+            <mat-radio-button *ngFor="let filter of filters" [value]="filter.id">
+                <span>{{ filter.name }}</span>
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
 
 
 </mat-dialog-content>

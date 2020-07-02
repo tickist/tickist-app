@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 import {TaskService} from '../../../../../../core/services/task.service';
-import {Project, ProjectWithLevel} from '@data/projects';
+import {Project, ProjectType, ProjectWithLevel} from '@data/projects';
 import {ConfigurationService} from '../../../../../../core/services/configuration.service';
 import {User} from '@data/users/models';
 import {UserService} from '../../../../../../core/services/user.service';
@@ -26,11 +26,12 @@ import {ProjectLeftPanel} from '../../models/project-list';
     styleUrls: ['./projects-list.component.scss']
 })
 export class ProjectsListComponent implements OnInit, OnDestroy {
+    @Input() projectType: ProjectType;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     user: User;
     showOnlyProjectsWithTasks = true;
     filter: Filter;
-    tasksProjectsViewRoutingName: string;
+    tasksProjectsViewRoutingName = tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW;
     projectsList$: Observable<ProjectLeftPanel[]>;
 
     constructor(private taskService: TaskService,
@@ -38,12 +39,10 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
                 private route: ActivatedRoute, private userService: UserService,
                 private configurationService: ConfigurationService, private router: Router,
                 private media: MediaObserver, private cd: ChangeDetectorRef, public dialog: MatDialog) {
-
-        this.tasksProjectsViewRoutingName = tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW;
     }
 
     ngOnInit() {
-        this.projectsList$ = this.store.select(selectFilteredProjectsList);
+        this.projectsList$ = this.store.select(selectFilteredProjectsList(this.projectType));
     }
 
     toggleProjectView() {
@@ -54,9 +53,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         return item.id;
     }
 
-    navigateTo(path) {
-        // this.router.navigate([path]);
-        this.router.navigate([homeRoutesName.HOME, path]);
+    navigateToAllProjects(path) {
+        this.router.navigate([homeRoutesName.HOME, path, this.projectType]);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         }

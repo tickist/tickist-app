@@ -1,4 +1,5 @@
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
+import {ProjectType} from "@data";
 
 export interface IProjectLeftPanel {
     id: string;
@@ -11,6 +12,7 @@ export interface IProjectLeftPanel {
     level: number;
     owner: string;
     icon: IconProp;
+    projectType: ProjectType;
 }
 
 export class ProjectLeftPanel {
@@ -18,6 +20,7 @@ export class ProjectLeftPanel {
     name: string;
     ancestor: string;
     color: string;
+    projectType: ProjectType;
     tasksCounter: number;
     shareWith: any;
     shareWithIds: string[];

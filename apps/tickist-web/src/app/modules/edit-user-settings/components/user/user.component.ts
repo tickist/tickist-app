@@ -13,7 +13,7 @@ import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {changeAvatar, removeNotificationPermission, RequestUpdateUser} from '../../../../core/actions/user.actions';
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS} from '@data/users/config-user';
-import {NotificationPermission} from '@data';
+import {NotificationPermission, TASKS_VIEWS_LIST} from '@data';
 import {NotificationsService} from '../../../notifications/services/notifications.service';
 
 @Component({
@@ -49,7 +49,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
         this.staticUrl = environment['staticUrl'];
         this.tasksOrderOptions = TASKS_ORDER_OPTIONS;
-        this.defaultTaskViewOptions = this.configurationService.loadConfiguration()['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
+        this.defaultTaskViewOptions = TASKS_VIEWS_LIST;
         this.overdueTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['OVERDUE_TASKS_SORT_BY_OPTIONS'];
         this.futureTasksSortByOptions = this.configurationService.loadConfiguration()['commons']['FUTURE_TASKS_SORT_BY_OPTIONS'];
         this.menu = this.createMenuDict();

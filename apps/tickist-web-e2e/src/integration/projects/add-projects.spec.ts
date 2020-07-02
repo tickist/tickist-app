@@ -1,26 +1,25 @@
 import {
     clickOnCreateNewProject,
     clickOnEditProject,
-    clickOnProject,
+    clickOnProject, clickOnProjectTypeLeftPanelMenu,
     createFirebase,
     login,
     logout,
     removeOldFirebaseData
-} from '../support/utils';
+} from '../../support/utils';
+import {Project, ProjectType, Task} from "@data";
+import {createUniqueId} from "@tickist/utils";
 
-describe('Projects', () => {
-    before(() => {
+describe('Add Projects', () => {
+    beforeEach(() => {
         login();
-        createFirebase()
+        createFirebase();
+        cy.visit('/');
     });
 
-    after(() => {
+    afterEach(() => {
         logout();
         removeOldFirebaseData();
-    });
-
-    beforeEach(() => {
-        cy.visit('/');
     });
 
     describe('Add new projects', () => {
@@ -48,7 +47,7 @@ describe('Projects', () => {
             cy.get('input[name=projectName]').type(newProjectName);
             cy.get('mat-select[data-cy="select-ancestor"]').click();
             cy.get('mat-option').contains(ancestorName).click();
-
+            cy.get('mat-select[data-cy="select-project-type"]').should('has.class', 'mat-select-disabled')
             cy.get('[data-cy="save project"]').click();
             cy.get(`tickist-single-project:contains(${ancestorName})`).then($project => {
                 expect($project.next()).to.contain.text(newProjectName);
@@ -56,28 +55,5 @@ describe('Projects', () => {
             })
         })
     });
-
-    describe("Edit project", () => {
-        it('should change project name', () => {
-            const newProjectName = 'Project new 1';
-            const oldProjectName = 'Project 1';
-            cy.get(`tickist-single-project:contains(${newProjectName})`).should('not.exist');
-
-            clickOnEditProject(oldProjectName);
-            cy.get('input[name=projectName]').clear();
-            cy.get('input[name=projectName]').type(newProjectName);
-            cy.get('[data-cy="save project"]').click();
-            cy.get(`tickist-single-project:contains(${newProjectName})`).should('exist');
-            cy.get('tickist-tasks-from-projects').contains(newProjectName).should('exist');
-
-            clickOnEditProject(newProjectName);
-            cy.get('input[name=projectName]').clear();
-            cy.get('input[name=projectName]').type(oldProjectName);
-            cy.get('[data-cy="save project"]').click();
-            cy.get(`tickist-single-project:contains(${oldProjectName})`).should('exist');
-            cy.get('tickist-tasks-from-projects').contains(oldProjectName).should('exist');
-
-        });
-    })
 
 });

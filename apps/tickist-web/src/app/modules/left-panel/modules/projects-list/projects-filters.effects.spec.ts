@@ -1,4 +1,4 @@
-import {TestBed, inject} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {provideMockActions} from '@ngrx/effects/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 
@@ -18,7 +18,7 @@ describe('ProjectsFiltersEffects', () => {
             ]
         });
 
-        effects = TestBed.get(ProjectsFiltersEffects);
+        effects = TestBed.inject<ProjectsFiltersEffects>(ProjectsFiltersEffects);
         actions$ = new ReplaySubject(1);
     });
 

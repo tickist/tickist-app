@@ -13,12 +13,9 @@ import {isLeftSideNavVisible} from '../selectors/sidenav-visibility.selectors';
     providedIn: 'root',
 })
 export class ConfigurationService {
-    detectApiError$: Observable<any>;
     offlineModeNotification$: Observable<any>;
     leftSidenavVisibility$: Observable<any>;
     configuration: {};
-    TASK_EXTENDED_VIEW: any;
-    TASK_SIMPLE_VIEW: any;
     TYPE_FINISH_DATE_ON: any;
     TYPE_FINISH_DATE_BY: any;
 
@@ -29,9 +26,6 @@ export class ConfigurationService {
         this.leftSidenavVisibility$ = this.store.pipe(
             select(isLeftSideNavVisible)
         );
-
-        this.TASK_EXTENDED_VIEW = {'name': 'extended view', 'value': 'extended'};
-        this.TASK_SIMPLE_VIEW = {'name': 'simple view', 'value': 'simple'};
         this.TYPE_FINISH_DATE_BY = {'id': 0, 'name': 'by'};
         this.TYPE_FINISH_DATE_ON = {'id': 1, 'name': 'on'};
         this.configuration = {
@@ -76,11 +70,6 @@ export class ConfigurationService {
                     'Today->Overdue',
                     'Overdue->Today'
                 ],
-                'DEFAULT_TASK_VIEW_OPTIONS': [
-                    this.TASK_EXTENDED_VIEW,
-                    this.TASK_SIMPLE_VIEW
-                ],
-                'STATIC_URL': '/site_media/static/',
                 'Google_plus_scope': 'https://www.googleapis.com/auth.effects.ts/plus.login ' +
                     'https://www.googleapis.com/auth.effects.ts/userinfo.email',
                 'DEFAULT_REPEAT_OPTIONS': [
@@ -102,17 +91,10 @@ export class ConfigurationService {
                     {'id': 0, 'name': 'by'},
                     {'id': 1, 'name': 'on'}
                 ],
-                'Google_plus_client_id': '10075871005-82p837k1phngal0dieovqg5e2cunnhoa.apps.googleusercontent.com',
                 'FROM_REPEATING_OPTIONS': [
                     {'id': 0, 'name': 'completion date'},
                     {'id': 1, 'name': 'due date'}
-                ],
-                'SOCIAL_AUTH_FACEBOOK_KEY': '325210257603853',
-                'MEDIA_URL': '/uploaded/',
-                'FACEBOOK_FANPAGE': 'https://www.facebook.com/Tickist',
-                'GOOGLE_PLUS': 'https://google.com/+Tickist',
-                'TWITTER': 'https://twitter.com/tickist',
-                'DEFAULT_USER_AVATAR_URL': '/site_media/images/default_images/default_avatar_user.png'
+                ]
             }
         };
     }

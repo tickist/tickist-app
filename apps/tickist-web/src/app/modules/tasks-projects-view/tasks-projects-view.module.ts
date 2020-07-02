@@ -5,7 +5,6 @@ import {TickistSingleTaskModule} from '../../single-task/single-task.module';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TickistTasksModule} from '../../tasks/tasks.module';
-import {RouterModule} from '@angular/router';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TasksFromProjectsComponent} from './pages/tasks-from-projects/tasks-from-projects.component';
 import {TickistTasksProjectsViewRoutingModule} from './tasks-projects-view-routing.module';
@@ -24,12 +23,6 @@ import {TickistTasksProjectsViewRoutingModule} from './tasks-projects-view-routi
         TickistTasksProjectsViewRoutingModule
     ],
     declarations: [TasksFromProjectsComponent],
-    providers: [
-    ],
-    entryComponents: [
-    ],
-    exports: [
-
-    ]
+    exports: []
 })
 export class TickistTasksProjectsViewModule { }

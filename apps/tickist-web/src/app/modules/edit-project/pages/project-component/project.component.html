@@ -65,7 +65,16 @@
                         </mat-form-field>
 
                         <mat-form-field>
-                            <mat-select data-cy='select-ancestor' placeholder="Ancestor:" formControlName="ancestor">
+                            <mat-select data-cy='select-project-type' placeholder="Project type" formControlName="projectType">
+                                <mat-option *ngFor="let projectType of projectTypes"
+                                            [value]="projectType"> {{ projectType }}
+                                </mat-option>
+                            </mat-select>
+
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <mat-select (selectionChange)=ancestorChange($event) data-cy='select-ancestor' placeholder="Ancestor" formControlName="ancestor">
                                 <mat-option *ngFor="let project of projectsAncestors"
                                             [ngClass]="'level_' + project.level"
                                             [value]="project.id"> {{ project.name }}

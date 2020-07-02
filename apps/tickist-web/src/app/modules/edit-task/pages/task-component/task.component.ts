@@ -6,7 +6,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
-import {Project, ShareWithUser} from '@data//projects';
+import {Project, ProjectType, ShareWithUser} from '@data//projects';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {User} from '@data/users/models';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -115,7 +115,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         this.selectedProject = projects.find(project => project.id === task.taskProject.id);
                     } else {
                         if (!selectedProject) {
-                            this.selectedProject = projects.find(project => project.isInbox);
+                            this.selectedProject = projects.find(project => project.projectType === ProjectType.INBOX);
                         } else {
                             this.selectedProject = selectedProject;
                         }

@@ -1,5 +1,4 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {LeftPanelComponent} from './left-panel.component';
 import {TickistMaterialModule} from '../../../../material.module';
 import {MockComponent} from 'ng-mocks';
@@ -10,8 +9,8 @@ import {ProjectsListComponent} from '../../modules/projects-list/pages/projects-
 import {TagsListComponent} from '../../modules/tags-list/pages/tags-list/tags-list.component';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterTestingModule} from '@angular/router/testing';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {IconsModule} from '../../../../icons.module';
+
 
 describe('LeftPanelComponent', () => {
     let component: LeftPanelComponent;

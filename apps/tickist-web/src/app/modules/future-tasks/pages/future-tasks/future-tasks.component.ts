@@ -18,6 +18,7 @@ import {selectActiveDate} from '../../../../core/selectors/active-date.selectors
 import {IActiveDateElement} from '@data/active-data-element.interface';
 import {Filter} from '@data/filter';
 import {stateActiveDateElement} from '@data/state-active-date-element.enum';
+import {TASK_EXTENDED_VIEW} from "@data";
 
 
 @Component({
@@ -34,14 +35,14 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
     activeDateElement$: Observable<IActiveDateElement>;
     futureTasks: Task[] = [];
     taskView: string;
-    defaultTaskView: string;
+    defaultTaskView = TASK_EXTENDED_VIEW.value;
     currentFilter: Filter;
     mediaChange: MediaChange;
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private router: Router,
                 private configurationService: ConfigurationService, private store: Store<{}>,
-                private futureTasksFiltersService: FutureTasksFiltersService, private cd: ChangeDetectorRef, private media: MediaObserver) {
-        this.defaultTaskView = this.configurationService.TASK_EXTENDED_VIEW.value;
+                private futureTasksFiltersService: FutureTasksFiltersService, private cd: ChangeDetectorRef,
+                private media: MediaObserver) {
     }
 
     ngOnInit(): void {

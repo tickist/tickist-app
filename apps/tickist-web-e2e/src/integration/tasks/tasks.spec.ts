@@ -18,7 +18,7 @@ import {Step} from '@data/tasks/models/steps';
 describe('Tasks', () => {
 
     before(() => {
-       cy.wait(100000);
+        cy.wait(100000);
     });
 
     beforeEach(() => {
@@ -200,7 +200,7 @@ describe('Tasks', () => {
                 cy.get(`tickist-single-task:contains("${taskName}")`).then($task => {
                     cy.wrap($task.find('tickist-display-finish-date')).contains(
                         format(addDays(new Date(), 7), 'dd-MM-yyyy')
-                    );
+                    ).should('exist');
                 });
             });
         });

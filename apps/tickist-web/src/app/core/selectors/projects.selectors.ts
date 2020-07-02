@@ -58,3 +58,11 @@ export const selectActiveProjectWithAllDescendants = createSelector(
         const allDescendants = calculateProjectDescendants(activeProject, projects);
         return Object.assign({}, activeProject, {allDescendants});
     });
+
+
+export const selectProjectTypeCounter = (projectType) => createSelector(
+    selectAllProjects,
+    projects => {
+        return projects.filter(project => project.projectType === projectType).length
+    }
+)

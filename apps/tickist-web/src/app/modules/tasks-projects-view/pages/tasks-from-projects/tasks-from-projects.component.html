@@ -1,5 +1,5 @@
 <cdk-virtual-scroll-viewport itemSize="90" class="viewport">
-    <div *ngIf="!selectedProject"  class="project-header">
+    <div *ngIf="(selectedProject$ | async) === undefined"  class="project-header">
         <div class="header">
             <div>All tasks</div>
             <div fxFlex></div>
@@ -10,7 +10,7 @@
 
         </div>
     </div>
-    <div *ngIf="selectedProject"  class="project-header">
+    <div *ngIf="(selectedProject$ | async) as selectedProject"  class="project-header">
         <div class="header">
             <div>{{ selectedProject.name }}</div>
             <div fxFlex></div>
@@ -23,15 +23,15 @@
                               (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
         </div>
 
-        <div *ngIf=projectHasDescription(selectedProject)
+        <div *ngIf=hasProjectDescription(selectedProject)
              class="project-description" [innerHTML]="selectedProject.richDescription"></div>
 
     </div>
 
     <tickist-single-task  [task]="task" [mediaChange]="mediaChange" [taskView]="taskView" [user]="user"
-                     *cdkVirtualFor="let task of tasks;trackBy: trackByFn; let last = last" [last]="last">
+                     *cdkVirtualFor="let task of tasks$ | async;trackBy: trackByFn; let last = last" [last]="last">
     </tickist-single-task>
-    <tickist-no-tasks [tasksLength]="tasks.length"></tickist-no-tasks>
+    <tickist-no-tasks [tasksLength]="(tasks$ | async).length"></tickist-no-tasks>
 
 </cdk-virtual-scroll-viewport>
 

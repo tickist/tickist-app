@@ -1,6 +1,6 @@
 <div id="all-projects" fxLayout="row" fxLayoutAlign="center center">
-    <span data-cy="All projects" fxFlex (click)="navigateTo(tasksProjectsViewRoutingName)">All projects</span>
-    <span fxFlex (click)="navigateTo(tasksProjectsViewRoutingName)"></span>
+    <span data-cy="{{ projectType }}" fxFlex (click)="navigateToAllProjects(tasksProjectsViewRoutingName)">All projects</span>
+    <span fxFlex (click)="navigateToAllProjects(tasksProjectsViewRoutingName)"></span>
     <tickist-menu-button [icon]="'filter'" (click)="openFilterDialog()">
     </tickist-menu-button>
     <mat-menu #projectsMenu="matMenu">

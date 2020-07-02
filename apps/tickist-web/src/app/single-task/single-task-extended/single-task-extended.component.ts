@@ -16,7 +16,7 @@ import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectService} from '../../core/services/project.service';
-import {Project, ShareWithUser} from '@data';
+import {removeTagsNotBelongingToUser, ShareWithUser, Tag, Task, TaskProject, User} from '@data';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
@@ -24,12 +24,15 @@ import {SingleTask} from '../shared/single-task';
 import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
-import {selectFilteredProjectsList} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
-import {removeTagsNotBelongingToUser, Tag, Task, TaskProject, User} from '@data';
+import {
+    selectAllProjectLeftPanel,
+    selectAllProjectsFilters,
+    selectFilteredProjectsList
+} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {FormControl} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
-import { ProjectLeftPanel } from '../../modules/left-panel/modules/projects-list/models/project-list';
+import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
 
 
 @Component({
@@ -50,8 +53,6 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     ngUnsubscribe: Subject<void> = new Subject<void>();
     repeatString = '';
     repeatStringExtension;
-    task_simple_view_value: string;
-    task_extended_view_value: string;
     selectTaskProject: FormControl;
     tags: Tag[] = [];
 
@@ -93,9 +94,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     ngOnInit() {
         this.selectTaskProject = new FormControl(this.task.taskProject.id);
-        this.task_simple_view_value = this.configurationService.TASK_SIMPLE_VIEW.value;
-        this.task_extended_view_value = this.configurationService.TASK_EXTENDED_VIEW.value;
-        this.projects$ = this.store.select(selectFilteredProjectsList);
+        this.projects$ = this.store.select(selectAllProjectLeftPanel);
         this.projects$.pipe(
             takeUntil(this.ngUnsubscribe)
         ).subscribe(projects => this.projects = projects);

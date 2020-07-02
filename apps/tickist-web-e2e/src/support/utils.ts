@@ -51,15 +51,17 @@ export function clickMenuElement(element: string) {
     cy.get('mat-list').contains(element).click();
 }
 
-export function clickOnProject(projectName: string) {
-    cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
-    if (projectName !== 'All projects') {
+export function clickOnProject(projectName: string, projectType = "Alive projects") {
+    cy.get('mat-sidenav').find('mat-panel-title').contains(projectType).click();
+    if (projectName === 'Inbox') {
+        cy.get('mat-sidenav').find('mat-panel-title').contains(projectName).click();
+    } else if (projectName !== 'All projects') {
         // @TODO remove force
         cy.get('tickist-single-project').contains(projectName).click({force: true}).then(() => {
             cy.get('tickist-single-project').find('div.isActive').should('exist');
         });
     } else {
-        cy.get('[data-cy="All projects"]').click();
+        cy.get(`[data-cy="${projectType}"]`).click();
     }
 }
 
@@ -67,8 +69,12 @@ export function clickOnTagsLeftPanelMenu() {
     cy.get('mat-sidenav').find('mat-panel-title').contains('Tags').click();
 }
 
-export function clickOnEditProject(projectName: string) {
-    cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
+export function clickOnProjectTypeLeftPanelMenu(projectType) {
+    cy.get('mat-sidenav').find('mat-panel-title').contains(projectType).click();
+}
+
+export function clickOnEditProject(projectName: string, projectType="Alive projects") {
+    cy.get('mat-sidenav').find('mat-panel-title').contains(projectType).click();
     cy.get('tickist-single-project').contains(projectName).click({force: true}).then(() => {
         cy.get('tickist-single-project').find('div.isActive').should('exist');
     });
@@ -76,9 +82,12 @@ export function clickOnEditProject(projectName: string) {
 }
 
 export function clickOnCreateNewProject() {
-    cy.get('mat-sidenav').find('mat-panel-title').contains('Projects').click();
+    const projectType = 'Alive projects'
+    cy.get('mat-sidenav').find('mat-panel-title').contains('Alive projects').click();
     // @TODO remove force
-    cy.get('[data-cy="create-new-project"]').click({force: true});
+    cy.get(`mat-expansion-panel:contains("${projectType}")`, {timeout: 10000}).then((matPanel$) => {
+        cy.wrap(matPanel$.find('[data-cy="create-new-project"]')).click({force: true});
+    })
 }
 
 

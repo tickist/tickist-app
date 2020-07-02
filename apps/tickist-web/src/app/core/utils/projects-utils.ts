@@ -1,4 +1,4 @@
-import {InviteUserStatus, Project, ProjectWithLevel} from '@data/projects';
+import {InviteUserStatus, Project, ProjectType, ProjectWithLevel} from '@data/projects';
 import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
 import * as _ from 'lodash';
 
@@ -38,7 +38,8 @@ export function calculateTasksCounter(projects, tasks) {
             tasksCounter: tasksCounter,
             level: project.level,
             icon: project.icon,
-            owner: project.owner
+            owner: project.owner,
+            projectType: project.projectType
         });
     });
 }
@@ -67,8 +68,8 @@ export function calculateProjectsLevel(projects) {
 export function generateDifferentLevelsOfProjects(projects: Project[]): ProjectWithLevel[] {
     // @TODO change list_of_list => ProjectsTreeview
     projects = _.orderBy(projects,
-        ['isInbox', 'name'],
-        ['desc', 'asc']
+        ['name'],
+        ['asc']
     );
 
     const list_of_list = [];
@@ -109,4 +110,14 @@ export function generateDifferentLevelsOfProjects(projects: Project[]): ProjectW
     });
 
     return list_of_list;
+}
+
+
+export function hasProjectDescription(project) {
+    return project.description && project.description.length > 0;
+}
+
+export function isProjectType(arg): boolean {
+    return Object.values(ProjectType).includes(arg);
+
 }

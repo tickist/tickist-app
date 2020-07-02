@@ -32,6 +32,14 @@ export const selectAllTasks = createSelector(
 
 );
 
+export const selectInboxTasksCounter = createSelector(
+    selectAllTasks,
+    selectLoggedInUser,
+    (tasks, user) => {
+        return tasks.filter(task => task.taskProject.id === user.inboxPk).length
+    }
+)
+
 export const selectAllUndoneTasks = createSelector(
     selectAllTasks,
     tasks => {

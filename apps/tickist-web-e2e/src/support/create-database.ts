@@ -1,5 +1,5 @@
 import {User} from '@data/users/models';
-import {Project, ShareWithUser} from '@data/projects';
+import {Project, ProjectType, ShareWithUser} from '@data/projects';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';
 import {addDays} from 'date-fns';
@@ -36,7 +36,7 @@ export class Database {
 
     createInbox() {
         this.inbox = new Project({
-            id: '1', name: 'Inbox', isInbox: true, owner: this.uid,
+            id: '1', name: 'Inbox', projectType: ProjectType.INBOX, owner: this.uid,
             shareWith: [<ShareWithUser>{
                 id: this.uid,
                 username: this.user.username,

@@ -4,3 +4,4 @@ export * from './models/project';
 export * from './models/simple-project';
 export * from './models/share-with-user';
 export * from './config-projects';
+export * from './models/projects-type';

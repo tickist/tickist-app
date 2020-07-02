@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import {db} from '../init';
-import {Project, ShareWithUser} from '@data/projects';
+import {Project, ProjectType, ShareWithUser} from '@data/projects';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';
 
@@ -47,7 +47,7 @@ export const onCreateUser = functions.firestore.document('users/{userId}')
 
 function createInboxProject(userData, userId, projectId): Project {
     return new Project({
-        id: projectId, name: 'Inbox', isInbox: true, owner: userId,
+        id: projectId, name: 'Inbox', owner: userId, projectType: ProjectType.INBOX,
         shareWith: [<ShareWithUser>{id: userId, username: userData.username, email: userData.email, avatarUrl: userData.avatarUrl}],
         shareWithIds: [userId]
     });

@@ -63,10 +63,6 @@ export class MockConfigurationService extends SpyObject {
                     'Today->Overdue->You can do this too',
                     'Overdue->Today->You can do this too'
                 ],
-                'DEFAULT_TASK_VIEW_OPTIONS': [
-                    this.TASK_EXTENDED_VIEW,
-                    this.TASK_SIMPLE_VIEW
-                ],
                 'STATIC_URL': '/site_media/static/',
                 'Google_plus_scope': 'https://www.googleapis.com/auth.effects.ts/plus.login ' +
                     'https://www.googleapis.com/auth.effects.ts/userinfo.email',

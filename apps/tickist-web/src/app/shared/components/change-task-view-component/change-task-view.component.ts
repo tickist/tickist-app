@@ -3,6 +3,7 @@ import {
     OnChanges
 } from '@angular/core';
 import {ConfigurationService} from '../../../core/services/configuration.service';
+import {TASKS_VIEWS_LIST} from "@data";
 
 
 @Component({
@@ -16,10 +17,9 @@ export class ChangeTaskViewComponent implements OnInit, OnChanges {
     taskView: any;
     tooltipLabel: string;
     currentTaskView: string;
-    defaultTaskViewOptions: Array<any>;
+    defaultTaskViewOptions = TASKS_VIEWS_LIST;
 
     constructor(protected configurationService: ConfigurationService) {
-        this.defaultTaskViewOptions = this.configurationService.loadConfiguration()['commons']['DEFAULT_TASK_VIEW_OPTIONS'];
     }
 
     ngOnInit() {
