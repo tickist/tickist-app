@@ -14,7 +14,7 @@
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
-    "cy:verify": "cypressaa verify",
+    "cy:verify": "cypress verify",
     "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-ci CYPRESS_TEST_UID=UiQ1hqUIquXO1OXybS8bqT95kjR2 ng e2e --configuration ci --record --headless --prod",
     "e2e:watch": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-testing CYPRESS_TEST_UID=FbWo6KS0wuP6x2qax7WedKu8vhC3 ng e2e --watch -c e2e",
     "e2e:watch:ci": "ng e2e --watch -c ci",
