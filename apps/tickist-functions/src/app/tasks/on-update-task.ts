@@ -1,10 +1,8 @@
 import * as functions from 'firebase-functions';
-import {db} from '../init';
 import {Task} from '@data/tasks/models/tasks';
 import * as diff from 'recursive-diff';
 import {createNotification} from '../notifications/create-notification';
 import {Notification} from '@data/notifications';
-import {User} from '@data/users';
 
 export const onUpdateTask = functions.firestore.document('tasks/{taskId}')
     .onUpdate(async (change, context) => {
@@ -56,7 +54,7 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
             } as Notification);
         } else if (editor.id === afterData.owner.id && afterData.author.id !== afterData.owner.id) {
             const title = ``;
-            const description = `${editor.username} changed the task ${afterData.name} 
+            const description = `${editor.username} changed the task ${afterData.name}
             that you’d assigned to ${afterData.owner.username}`;
             await createNotification({
                 title,
