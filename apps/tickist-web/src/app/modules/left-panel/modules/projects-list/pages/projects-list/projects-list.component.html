@@ -1,5 +1,5 @@
 <div id="all-projects" fxLayout="row" fxLayoutAlign="center center">
-    <span data-cy="{{ projectType }}" fxFlex (click)="navigateToAllProjects(tasksProjectsViewRoutingName)">All projects</span>
+    <span [dataCy]="projectType" fxFlex (click)="navigateToAllProjects(tasksProjectsViewRoutingName)">All projects</span>
     <span fxFlex (click)="navigateToAllProjects(tasksProjectsViewRoutingName)"></span>
     <tickist-menu-button [icon]="'filter'" (click)="openFilterDialog()">
     </tickist-menu-button>

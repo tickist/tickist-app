@@ -14,6 +14,7 @@ import { ProjectsFiltersEffects } from './projects-filters.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromProjectsFilters from './projects-filters.reducers';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {DataCyDirective} from "../../../../shared/directives/data-cy.directive";
 
 
 @NgModule({
@@ -21,10 +22,10 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         CommonModule,
         TickistMaterialModule,
         FormsModule,
-        TickistSharedModule,
         RouterModule,
         FlexLayoutModule,
         FontAwesomeModule,
+        TickistSharedModule,
         StoreModule.forFeature('projectsFilters', fromProjectsFilters.reducer),
         EffectsModule.forFeature([ProjectsFiltersEffects])
     ],

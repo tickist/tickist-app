@@ -61,7 +61,7 @@ export function clickOnProject(projectName: string, projectType = "Alive project
             cy.get('tickist-single-project').find('div.isActive').should('exist');
         });
     } else {
-        cy.get(`[data-cy="${projectType}"]`).click();
+        cy.get(`[dataCy="${projectType}"]`).click();
     }
 }
 

@@ -18,6 +18,7 @@ import {UserAvatarComponent} from './components/user-avatar/user-avatar.componen
 import {FeatureFlagDirective} from './directives/feature-flag.directive';
 import {BlankComponent} from './components/blank/blank.component';
 import {EnumToArrayPipe} from "./pipes/enum-to-array";
+import { DataCyDirective } from './directives/data-cy.directive';
 
 
 @NgModule({
@@ -27,10 +28,10 @@ import {EnumToArrayPipe} from "./pipes/enum-to-array";
     ],
     declarations: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
         Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
-        FeatureFlagDirective, BlankComponent, EnumToArrayPipe],
+        FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective],
     exports: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
         Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
-        FeatureFlagDirective, BlankComponent, EnumToArrayPipe]
+        FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective]
 })
 export class TickistSharedModule {
 }
