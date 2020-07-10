@@ -87,7 +87,7 @@
     "firebase-functions": "^3.7.0",
     "fs-extra": "^8.1.0",
     "jq": "^1.7.2",
-    "lodash": ">=4.17.11",
+    "lodash": ">=4.17.16",
     "logrocket": "^1.0.7",
     "logrocket-ngrx": "^0.1.1",
     "ngx-sortablejs": "^3.1.3",
