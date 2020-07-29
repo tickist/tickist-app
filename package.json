@@ -99,7 +99,7 @@
     "sortablejs": "^1.9.0",
     "truncate-html": "^1.0.3",
     "tsify": "^4.0.1",
-    "tslib": "1.11.1",
+    "tslib": "^1.11.1",
     "uuid": "^3.3.3",
     "zone.js": "^0.10.3"
   },
