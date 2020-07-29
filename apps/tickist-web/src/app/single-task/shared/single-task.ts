@@ -12,6 +12,7 @@ import {Subject} from 'rxjs';
 import {parse} from 'date-fns';
 import {OnDestroy} from '@angular/core';
 
+// TODO: Add Angular decorator.
 export class SingleTask implements OnDestroy{
     task: Task;
     isRightMenuVisible = false;
