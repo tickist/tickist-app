@@ -30,7 +30,9 @@ import {IconsModule} from './icons.module';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {TickistNotificationsModule} from './modules/notifications/notifications.module';
 import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
+import {AngularFirestoreModule, SETTINGS} from "@angular/fire/firestore";
 
+console.log(environment.firebase);
 
 @NgModule({
     declarations: [
@@ -80,12 +82,19 @@ import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
         AngularFireMessagingModule,
         TickistNotificationsModule,
         TickistLeftPanelModule,
+        AngularFirestoreModule,
         HammerModule
-        // StoreModule.forFeature('progressBar', fromProgressBar.reducer),
     ],
     bootstrap: [AppComponent],
     providers: [
         {provide: DateAdapter, useClass: MyDateAdapter},
+        {
+            provide: SETTINGS,
+            useValue: environment.emulator ?  {
+                host: '172.31.46.235:8080',
+                ssl: false
+            } : undefined
+        }
     ]
 })
 export class AppModule {

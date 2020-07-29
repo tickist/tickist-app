@@ -54,3 +54,7 @@ cypress.env.json
 apps/tickist-web-e2e/cypress/logs/*
 firestore-debug.log
 .firebase/*
+
+database-debug.log
+pubsub-debug.log
+ui-debug.log

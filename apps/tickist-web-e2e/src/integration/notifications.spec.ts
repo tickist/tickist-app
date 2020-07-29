@@ -2,7 +2,7 @@ import {createFirebase, login, logout, removeOldFirebaseData} from '../support/u
 import {Notification} from '@data';
 import {createUniqueId} from '@tickist/utils';
 import {addDays} from 'date-fns';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import Timestamp = firebase.firestore.Timestamp;
 
 describe('Notifications feature', () => {

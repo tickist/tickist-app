@@ -87,7 +87,6 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         EffectsModule.forFeature([AssignedToFiltersTasksEffects, TasksFiltersEffects]),
         FontAwesomeModule,
         AngularFireAuthModule,
-        AngularFirestoreModule,
         AngularFireStorageModule,
         TickistSingleTaskModule,
         TickistNotificationsModule

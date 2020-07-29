@@ -6,6 +6,8 @@ import {SnackBarMessageComponent} from './components/snack-bar-message/snack-bar
 import {AngularFireMessaging} from '@angular/fire/messaging';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {AngularFireFunctions} from "@angular/fire/functions";
+import {environment} from "@env/environment";
 
 
 @Component({
@@ -18,12 +20,19 @@ export class AppComponent implements OnInit, OnDestroy {
     config: MatSnackBarConfig;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private swUpdate: SwUpdate, private meta: Meta, private snackBar: MatSnackBar, private afMessaging: AngularFireMessaging) {
+    constructor(private swUpdate: SwUpdate,
+                private meta: Meta,
+                private snackBar: MatSnackBar,
+                private afMessaging: AngularFireMessaging,
+                private readonly aff: AngularFireFunctions) {
         this.config = new MatSnackBarConfig();
         this.config.panelClass = ['tickist-web-snack-bar'];
     }
 
     ngOnInit(): void {
+        if (environment.emulator) {
+            this.aff.useFunctionsEmulator('http://localhost:5001').then(() => console.log('Using functions emulator'))
+        }
         if (this.swUpdate.isEnabled) {
             this.swUpdate.available.pipe(
                 takeUntil(this.ngUnsubscribe)

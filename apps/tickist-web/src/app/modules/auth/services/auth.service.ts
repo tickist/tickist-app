@@ -56,7 +56,9 @@ export class AuthService {
                 this.store.dispatch(new FetchedLoginUser({uid: uid}));
                 this.router.navigateByUrl('/');
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                console.log(err)
+            });
     }
 
     getProviderForId(id) {
