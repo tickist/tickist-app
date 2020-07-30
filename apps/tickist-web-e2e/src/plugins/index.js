@@ -29,9 +29,11 @@ module.exports = (on, config) => {
     //     return args
     // });
 
+
     on('task', {
         failed: require('cypress-failed-log/src/failed')(),
-    });
+    })
+
 
     on('file:preprocessor',
         wp({

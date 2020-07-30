@@ -9,7 +9,7 @@ describe('Dashboard view', () => {
 
     after(() => {
         logout();
-        removeOldFirebaseData();
+        // removeOldFirebaseData();
     });
 
     beforeEach(() => {

@@ -69,18 +69,19 @@
     },
     "emulators": {
         "firestore": {
-            "host": "172.31.46.235",
+            "host": "0.0.0.0",
             "port": "8080"
         },
         "ui": {
             "enabled": true,
-            "host": "localhost",
             "port": 4001
         },
         "functions": {
             "port": "5001"
         },
         "database": {
+            "host": "0.0.0.0",
+            "enabled": false,
             "port": "9000"
         },
         "pubsub": {

@@ -1,5 +1,5 @@
 import {User} from '@data/users/models';
-import {Project, ProjectType, ShareWithUser} from '@data/projects';
+import {DEFAULT_FINISH_DATE, Project, ProjectType, ShareWithUser} from '@data/projects';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';
 import {addDays} from 'date-fns';
@@ -31,12 +31,17 @@ export class Database {
     }
 
     createUser() {
+        console.log(this.uid)
+        // this.user = new User(<any>{id: this.uid, username: 'Bill Doe', email: 'test15@tickist.com'});
         this.user = new User(<any>{id: this.uid, username: 'Bill Doe', email: 'john@tickist.com'});
     }
 
     createInbox() {
         this.inbox = new Project({
-            id: '1', name: 'Inbox', projectType: ProjectType.INBOX, owner: this.uid,
+            id: '1',
+            name: 'Inbox',
+            projectType: ProjectType.INBOX,
+            owner: this.uid,
             shareWith: [<ShareWithUser>{
                 id: this.uid,
                 username: this.user.username,
@@ -52,7 +57,9 @@ export class Database {
         const projectsName = ['Project 1', 'Project 2'];
         projectsName.forEach((projectName, index) => {
             this.projects.push(new Project({
-                id: (index + 101).toString(), name: projectName, owner: this.uid,
+                id: (index + 101).toString(),
+                name: projectName,
+                owner: this.uid,
                 shareWith: [<ShareWithUser>{
                     id: this.uid,
                     username: this.user.username,

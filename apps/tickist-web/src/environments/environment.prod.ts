@@ -1,9 +1,12 @@
 import {IEnvironment} from './environment.interface';
 
 export const environment: IEnvironment = {
+    name: 'production',
     production: true,
     e2eTest: false,
     emulator: false,
+    emulatorIPAddress: '',
+    experimentalForceLongPolling: false,
     firebase: {
         apiKey: "AIzaSyAGJ-Uhloe3p24irXJ2bUEUfzSrLMt1qV0",
         authDomain: "tickist-stable.firebaseapp.com",

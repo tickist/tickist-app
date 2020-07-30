@@ -43,7 +43,7 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
             }
         }
 
-        if (editor.id === afterData.author.id && afterData.author.id !== afterData.owner.id) {
+        if (editor?.id === afterData.author.id && afterData.author.id !== afterData.owner.id) {
             const title = `Change assigned to`;
             const description = `${editor.username} changed the task ${afterData.name} assigned to you`;
             await createNotification({
@@ -52,7 +52,7 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
                 recipient: afterData.owner.id,
                 type: 'changesTaskFromSharedListThatIsAssignedToMe'
             } as Notification);
-        } else if (editor.id === afterData.owner.id && afterData.author.id !== afterData.owner.id) {
+        } else if (editor?.id === afterData.owner.id && afterData.author.id !== afterData.owner.id) {
             const title = ``;
             const description = `${editor.username} changed the task ${afterData.name}
             that you’d assigned to ${afterData.owner.username}`;
@@ -63,8 +63,8 @@ export const createUpdateTaskNotifications = functions.firestore.document('tasks
                 type: 'changesTaskFromSharedListThatIAssignedToHimHer'
             } as Notification);
         } else if ((afterData.author.id !== afterData.owner.id) &&
-            (afterData.owner.id !== editor.id) &&
-            (afterData.author.id !== editor.id)) {
+            (afterData.owner.id !== editor?.id) &&
+            (afterData.author.id !== editor?.id)) {
             const title = ``;
             const description = `${editor.username} changed the task ${afterData.name}`;
             await createNotification({

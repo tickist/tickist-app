@@ -17,12 +17,7 @@ import {Step} from '@data/tasks/models/steps';
 
 describe('Tasks', () => {
 
-    before(() => {
-        cy.wait(100000);
-    });
-
     beforeEach(() => {
-        cy.wait(100000);
         login();
         createFirebase();
         cy.visit('/');

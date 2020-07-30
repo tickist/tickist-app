@@ -38,18 +38,29 @@ import {environment as e2e} from '@env/environment.e2e'
 
 
 let firebaseConfiguration;
+let configuration;
 if (Cypress.env('FIREBASE_PROJECT_ID') === 'tickist-testing') {
+    configuration = e2e;
     firebaseConfiguration = e2e.firebase;
 } else {
+    configuration = ci;
     firebaseConfiguration = ci.firebase;
 }
 
-console.log(JSON.stringify(firebaseConfiguration))
+console.log(JSON.stringify(configuration))
 
-// firebaseConfiguration = environment.firebase;
 
 const fbInstance = firebase.initializeApp(firebaseConfiguration);
 if (fbInstance) {
     (window as any).fbInstance = fbInstance
 }
+if (firebaseConfiguration.emulator) {
+    // firebase.firestore().settings({ experimentalForceLongPolling: true })
+    firebase.firestore().settings({
+        host: configuration.emulatorIPAddress,
+        ssl: false,
+        experimentalForceLongPolling: true
+    });
+}
+
 attachCustomCommands({ Cypress, cy, firebase });

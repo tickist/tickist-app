@@ -32,7 +32,7 @@ import {TickistNotificationsModule} from './modules/notifications/notifications.
 import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
 import {AngularFirestoreModule, SETTINGS} from "@angular/fire/firestore";
 
-console.log(environment.firebase);
+console.log(environment);
 
 @NgModule({
     declarations: [
@@ -90,8 +90,9 @@ console.log(environment.firebase);
         {
             provide: SETTINGS,
             useValue: environment.emulator ?  {
-                host: '172.31.46.235:8080',
-                ssl: false
+                host: environment.emulatorIPAddress,
+                ssl: false,
+                experimentalForceLongPolling: true
             } : undefined
         }
     ]

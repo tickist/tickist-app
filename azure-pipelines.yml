@@ -4,58 +4,61 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-- master
-- develop
+    - master
+    - develop
 
 variables:
-- group: Firebase
+    -   group: Firebase
 
 pool:
-  vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-latest'
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '12.x'
-  displayName: 'Install Node.js'
+    -   task: NodeTool@0
+        inputs:
+            versionSpec: '12.x'
+        displayName: 'Install Node.js'
 
-- script: |
-    sudo apt-get install -y libgconf-2-4 libgtk2.0-0 libgtk-3-0 libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-  displayName: 'install dependencies'
+    -   script: |
+            sudo apt-get install -y libgconf-2-4 libgtk2.0-0 libgtk-3-0 libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+        displayName: 'install dependencies'
 
-- script: |
-    npm install -g @angular/cli
-    npm install -g firebase-tools
-    npm install -g npm@6.9.2
-    npm install -g cross-env
-    npm ci
-  displayName: 'npm install'
+    -   script: |
+            npm install -g @angular/cli
+            npm install -g firebase-tools
+            npm install -g cross-env
+            npm install -g npm
+            npm install -g node-gyp make
+            npm ci
+        displayName: 'npm install'
 
-- script: |
-    npm run lint
-  displayName: 'Lint the code'
+    -   script: |
+            npm run lint
+        displayName: 'Lint the code'
 
-#- script: |
-#    ng test
-#  displayName: 'Unit test'
+    #- script: |
+    #    ng test
+    #  displayName: 'Unit test'
 
-- script: |
-    firebase deploy --non-interactive  --project ci --only functions,firestore:rules,firestore:indexes --token $FIREBASE_TOKEN
-  displayName: 'Deploy firebase rules and firebase functions'
+#    -   script: |
+#            firebase deploy --non-interactive  --project ci --only functions,firestore:rules,firestore:indexes --token $FIREBASE_TOKEN
+#        displayName: 'Deploy firebase rules and firebase functions'
 
-- script: |
-    npm run cy:verify
-    npm run e2e
-  displayName: 'e2e tests'
+    -   script: |
+            npm run cy:verify
+            npm run build tickist-functions
+            firebase use ci
+            firebase emulators:exec "npm run e2e"
+        displayName: 'e2e tests'
 
-#- script: |
-#    ng deploy --token $FIREBASE_TOKEN
-#  displayName: 'Deploy'
-#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    #- script: |
+    #    ng deploy --token $FIREBASE_TOKEN
+    #  displayName: 'Deploy'
+    #  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
 
-- script: |
-    npm run build && firebase deploy --non-interactive  --project stable --token $FIREBASE_TOKEN
-#    ng run build && firebase deploy --non-interactive  --project stable --only functions,firestore:rules,firestore:indexes --token $FIREBASE_TOKEN
-  displayName: 'Deploy'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    -   script: |
+            npm run build && firebase deploy --non-interactive  --project stable --token $FIREBASE_TOKEN
+        #    ng run build && firebase deploy --non-interactive  --project stable --only functions,firestore:rules,firestore:indexes --token $FIREBASE_TOKEN
+        displayName: 'Deploy'
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))

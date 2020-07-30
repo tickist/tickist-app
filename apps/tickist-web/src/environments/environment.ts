@@ -6,9 +6,12 @@
 import {IEnvironment} from './environment.interface';
 
 export const environment: IEnvironment = {
+    name: 'dev',
     production: false,
     e2eTest: false,
     emulator: true,
+    emulatorIPAddress: '',
+    experimentalForceLongPolling: false,
     firebase: {
         apiKey: 'AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg',
         authDomain: 'proven-reality-657.firebaseapp.com',
