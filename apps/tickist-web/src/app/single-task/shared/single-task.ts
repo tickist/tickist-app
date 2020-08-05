@@ -10,9 +10,12 @@ import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFi
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {parse} from 'date-fns';
-import {OnDestroy} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 
-// TODO: Add Angular decorator.
+
+@Component({
+    template: ''
+})
 export class SingleTask implements OnDestroy{
     task: Task;
     isRightMenuVisible = false;
