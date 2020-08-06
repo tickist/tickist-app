@@ -43,6 +43,9 @@
             ]
         }
     },
+    "angularCompilerOptions": {
+        "fullTemplateTypeCheck": false
+    },
     "exclude": [
         "node_modules",
         "tmp"

@@ -40,8 +40,7 @@ export class AuthEffects {
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
                 console.log({user});
-
-
+               
                 return this.db.collection('users').doc(action.payload.uid).get().pipe(
                     filter(snapshot => snapshot.exists),
                     tap((snapshot: any) => {

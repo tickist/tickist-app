@@ -5,6 +5,7 @@ import {TaskUser} from './task-user';
 import {TaskProject} from './task-project';
 import {addClickableLinks} from '@tickist/utils';
 import {Editor} from '@data/users';
+import {TaskType} from "@data/tasks/models/task-types";
 
 export interface ITask {
     name: string;
@@ -37,6 +38,7 @@ export interface ITask {
     tagsIds?: string[];
     taskListPk: string;
     whenComplete?: any;
+    taskType: TaskType;
     menuShowing?: Menu;
     lastEditor?: Editor;
 }
@@ -70,7 +72,7 @@ export class Task {
     estimateTime = null;
     menuShowing: Menu;
     lastEditor: Editor;
-
+    taskType = TaskType.NORMAL;
 
     constructor(task: ITask) {
         Object.assign(this, task);
@@ -88,7 +90,6 @@ export class Task {
         this.menuShowing = new Menu(task.menuShowing);
         this.taskProject = new TaskProject(task.taskProject);
     }
-
 }
 
 
