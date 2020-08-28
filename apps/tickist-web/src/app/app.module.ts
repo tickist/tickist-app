@@ -32,7 +32,6 @@ import {TickistNotificationsModule} from './modules/notifications/notifications.
 import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
 import {AngularFirestoreModule, SETTINGS} from "@angular/fire/firestore";
 
-console.log(environment);
 
 @NgModule({
     declarations: [

@@ -23,7 +23,7 @@ export class ProjectService {
     selectedProject$: Observable<Project>;
     selectedProjectsIds$: Observable<Array<string>>;
 
-    constructor(private db: AngularFirestore, private store: Store<{}>, public snackBar: MatSnackBar,
+    constructor(private db: AngularFirestore, private store: Store, public snackBar: MatSnackBar,
                 private router: Router, private tasksFiltersService: TasksFiltersService) {
 
         this.projects$ = this.store.select(selectAllProjects);

@@ -17,7 +17,7 @@ export class ShowOfflineModeComponent implements OnInit, OnDestroy {
     pingCheck: any;
     ping: any;
 
-    constructor(private store: Store<{}>, private cd: ChangeDetectorRef, private ngZone: NgZone) {
+    constructor(private store: Store, private cd: ChangeDetectorRef, private ngZone: NgZone) {
     }
 
     ngOnInit() {

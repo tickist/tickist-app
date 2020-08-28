@@ -35,7 +35,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     selectedProject$: Observable<Project>;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef,
-                private tasksFiltersService: TasksFiltersService, private store: Store<{}>, private router: Router) {
+                private tasksFiltersService: TasksFiltersService, private store: Store, private router: Router) {
     }
 
     ngOnInit() {

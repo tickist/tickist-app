@@ -21,7 +21,7 @@ export class UserService {
     user$: Observable<User>;
     downloadURL: Observable<string>;
 
-    constructor(private store: Store<{}>, private db: AngularFirestore, private storage: AngularFireStorage,
+    constructor(private store: Store, private db: AngularFirestore, private storage: AngularFireStorage,
                 private tasksFiltersService: TasksFiltersService, private authFire: AngularFireAuth) {
         this.user$ = this.store.select(selectLoggedInUser);
     }

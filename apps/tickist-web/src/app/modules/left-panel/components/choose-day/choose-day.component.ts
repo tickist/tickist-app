@@ -20,7 +20,7 @@ export class ChooseDayComponent implements OnInit, OnDestroy {
     selectedDateFormControl: FormControl;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
     }
 
     ngOnInit() {

@@ -11,7 +11,7 @@ import {format} from 'date-fns';
 export class StatisticsService {
     activeDateElement: IActiveDateElement;
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
         this.store.select(selectActiveDate).subscribe((activeDateElement: IActiveDateElement) => {
             this.loadDailyStatistics(activeDateElement.date);
             this.activeDateElement = activeDateElement;

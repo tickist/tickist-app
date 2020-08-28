@@ -13,6 +13,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {createUniqueId} from '@tickist/utils';
 import {addDays, format} from 'date-fns';
 import {Step} from '@data/tasks/models/steps';
+import {TaskType} from "@data";
 
 
 describe('Tasks', () => {
@@ -71,7 +72,7 @@ describe('Tasks', () => {
 
             cy.get('button[type=\'submit\']').click();
 
-            cy.url().should('include', 'home').should('include', 'dashboard');
+            cy.url().should('include', 'home').should('include', 'weekdays');
             clickOnProject('Inbox');
 
             cy.get('tickist-single-task:contains("Task 3")').then($task => {
@@ -99,6 +100,7 @@ describe('Tasks', () => {
                     repeat: 0,
                     repeatDelta: 0,
                     fromRepeating: 1,
+                    taskType: TaskType.NORMAL,
                     taskProject: {
                         id: database.projects[0].id,
                         name: database.projects[0].name,
@@ -175,6 +177,7 @@ describe('Tasks', () => {
                         repeat: 1,
                         repeatDelta: 7,
                         fromRepeating: 1,
+                        taskType: TaskType.NORMAL,
                         taskProject: {
                             id: database.projects[0].id,
                             name: database.projects[0].name,

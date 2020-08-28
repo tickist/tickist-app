@@ -16,7 +16,7 @@ describe('NotificationsEffects', () => {
             ]
         });
 
-        effects = TestBed.get<NotificationsEffects>(NotificationsEffects);
+        effects = TestBed.inject<NotificationsEffects>(NotificationsEffects);
         actions$ = new ReplaySubject(1);
     });
 

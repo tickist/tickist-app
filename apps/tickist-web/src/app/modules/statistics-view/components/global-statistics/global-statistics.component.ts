@@ -28,7 +28,7 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
     // @ViewChild('tasksCounterChart', { read: BaseChartDirective }) tasksCounterChart: any;
     // @ViewChild('timeChart', { read: BaseChartDirective }) timeChart: any;
 
-    constructor(private store: Store<{}>, private cd: ChangeDetectorRef) {
+    constructor(private store: Store, private cd: ChangeDetectorRef) {
         this.minutes2Hours = new Minutes2hoursPipe();
     }
 

@@ -36,6 +36,7 @@ import {
 } from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {AVAILABLE_TASK_TYPES, TaskType} from '@data';
+import {update, valuesIn} from "ramda";
 
 @Component({
     selector: 'tickist-task-component',
@@ -73,7 +74,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
     @ViewChild('autocompleteTags') autocompleteTags;
 
-    constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<{}>,
+    constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private location: Location,
                 private tagService: TagService) {
@@ -470,6 +471,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.richName = addClickableLinks(values['main']['name']);
             updatedTask.priority = values['main']['priority'];
             updatedTask.description = values['extra']['description'];
+            updatedTask.taskType = values['main']['taskType'];
             updatedTask.richDescription = addClickableLinks(values['extra']['description']);
             updatedTask.finishDate = values['main']['finishDate'] ? values['main']['finishDate'] : null;
             updatedTask.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';

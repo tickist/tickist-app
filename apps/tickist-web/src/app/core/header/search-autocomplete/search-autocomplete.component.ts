@@ -22,7 +22,7 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
     tasks: Task[];
     searchControl = new FormControl();
     filteredOptions: Observable<Task[]>;
-    constructor(private store: Store<{}>, private router: Router) {
+    constructor(private store: Store, private router: Router) {
     }
 
     ngOnInit() {

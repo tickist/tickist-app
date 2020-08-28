@@ -17,7 +17,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class SnackBarNotificationComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public snackBar: MatSnackBar, private store: Store<{}>, private notificationsService: NotificationsService) {
+    constructor(public snackBar: MatSnackBar, private store: Store, private notificationsService: NotificationsService) {
     }
 
     ngOnInit(): void {

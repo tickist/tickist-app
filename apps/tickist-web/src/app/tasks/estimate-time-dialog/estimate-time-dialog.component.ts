@@ -23,7 +23,7 @@ export class EstimateTimeDialogComponent implements OnInit, OnDestroy {
     rangeValues: number[];
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public dialogRef: MatDialogRef<EstimateTimeDialogComponent>, private store: Store<{}>) {
+    constructor(public dialogRef: MatDialogRef<EstimateTimeDialogComponent>, private store: Store) {
     }
 
     ngOnInit() {

@@ -20,7 +20,7 @@ export class FilterFutureTasksComponent implements OnInit, OnDestroy {
     filters: Filter[];
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
     }
 
     ngOnInit() {

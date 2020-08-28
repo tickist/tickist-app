@@ -1,26 +1,32 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {TickistMaterialModule} from '../../material.module';
-import {DashboardComponent} from './pages/dashboard/dashboard.component';
-import {TodayComponent} from './components/today/today.component';
-import {OverdueComponent} from './components/overdue/overdue.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {TickistSharedModule} from '../../shared/shared.module';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {TickistTasksModule} from '../../tasks/tasks.module';
-import {TickistDashboardRoutingModule} from './dashboard-routing.module';
-import {TickistSingleTaskModule} from '../../single-task/single-task.module';
+import {TickistDashboardRoutingModule} from "./dashboard-routing.module";
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ProjectWithoutNextActionTasksComponent } from './components/project-without-next-action-tasks/project-without-next-action-tasks.component';
+import { NextActionTasksComponent } from './components/next-action-tasks/next-action-tasks.component';
+import {TickistTasksModule} from "../../tasks/tasks.module";
+import {TickistSingleTaskModule} from "../../single-task/single-task.module";
+import {TickistSharedModule} from "../../shared/shared.module";
+import {TickistMaterialModule} from "../../material.module";
+import {IconsModule} from "../../icons.module";
+import { NeedInfoTasksComponent } from './components/need-info-tasks/need-info-tasks.component';
 
 
 @NgModule({
-    imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule, TickistDashboardRoutingModule,
-        ReactiveFormsModule, TickistSharedModule, TickistSingleTaskModule, TickistTasksModule],
-    providers: [],
-    exports: [DashboardComponent],
     declarations: [
         DashboardComponent,
-        TodayComponent,
-        OverdueComponent,
+        ProjectWithoutNextActionTasksComponent,
+        NextActionTasksComponent,
+        NeedInfoTasksComponent
+    ],
+    imports: [
+        CommonModule,
+        TickistDashboardRoutingModule,
+        TickistTasksModule,
+        TickistSingleTaskModule,
+        TickistSharedModule,
+        TickistMaterialModule,
+        IconsModule
     ]
 })
 export class TickistDashboardModule {

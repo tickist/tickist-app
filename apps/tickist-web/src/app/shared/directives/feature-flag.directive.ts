@@ -16,7 +16,7 @@ export class FeatureFlagDirective implements OnInit, OnDestroy {
     constructor(
         private vcr: ViewContainerRef,
         private tpl: TemplateRef<any>,
-        private store: Store<{}>
+        private store: Store
     ) {
     }
 

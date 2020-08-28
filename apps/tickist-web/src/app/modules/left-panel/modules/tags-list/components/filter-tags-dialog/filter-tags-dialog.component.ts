@@ -21,7 +21,7 @@ export class FilterTagsDialogComponent implements OnInit, OnDestroy {
     filters$: Observable<Filter[]>;
     currentFilter$: Observable<Filter>;
 
-    constructor(public dialogRef: MatDialogRef<FilterTagsDialogComponent>, private store: Store<{}>) {
+    constructor(public dialogRef: MatDialogRef<FilterTagsDialogComponent>, private store: Store) {
     }
 
     ngOnInit() {

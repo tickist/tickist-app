@@ -1,17 +1,16 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TaskService} from '../../../../core/services/task.service';
 import {UserService} from '../../../../core/services/user.service';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {Task} from '@data/tasks/models/tasks';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, Subscription, combineLatest, Subject} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {User} from '@data/users/models';
 import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {map, takeUntil} from 'rxjs/operators';
 import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {IActiveDateElement} from '@data/active-data-element.interface';
 import {stateActiveDateElement} from '@data/state-active-date-element.enum';
@@ -19,11 +18,11 @@ import {addDays, format} from 'date-fns';
 
 
 @Component({
-    selector: 'tickist-dashboard',
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.scss']
+    selector: 'tickist-weekdays',
+    templateUrl: './weekdays.component.html',
+    styleUrls: ['./weekdays.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class WeekdaysComponent implements OnInit, OnDestroy {
     todayTasks: Task[] = [];
     overdueTasks: Task[] = [];
     tasks: Task[] = [];
@@ -36,11 +35,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     constructor(private taskService: TaskService, protected route: ActivatedRoute, private  userService: UserService,
                 private configurationService: ConfigurationService, protected router: Router,
-                protected media: MediaObserver, private store: Store<{}>) {
-        this.stream$ = combineLatest(
-            this.taskService.tasks$,
-            this.store.select(selectActiveDate),
-            this.userService.user$
+                protected media: MediaObserver, private store: Store) {
+        this.stream$ = combineLatest([
+                this.taskService.tasks$,
+                this.store.select(selectActiveDate),
+                this.userService.user$
+            ]
         );
         this.changeActiveDayAfterMidnight();
     }

@@ -1,0 +1,41 @@
+<div class="container">
+    <mat-accordion displayMode="flat">
+        <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header expandedHeight="48px">
+                <mat-panel-title>
+                    <fa-icon [icon]="'project-diagram'"></fa-icon>
+                    <span class="panel-title">Next action tasks</span>
+                    <span class="counter">({{nextActionTasksLength$ | async}})</span>
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+            <tickist-next-action-tasks></tickist-next-action-tasks>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header expandedHeight="48px">
+                <mat-panel-title>
+                    <fa-icon [icon]="'mug-hot'"></fa-icon>
+                    <span class="panel-title">Need info tasks</span>
+                    <span class="counter">({{needInfoTasksLength$ | async}})</span>
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+            <tickist-need-info-tasks></tickist-need-info-tasks>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header expandedHeight="48px">
+                <mat-panel-title>
+                    <fa-icon [icon]="['far', 'grin-beam-sweat']"></fa-icon>
+                    <span class="panel-title">Active projects without next action</span>
+                    <span class="counter">({{projectWithoutNextActionTasksLength$ | async}})</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <tickist-project-without-next-action-tasks></tickist-project-without-next-action-tasks>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+
+
+
+
+</div>

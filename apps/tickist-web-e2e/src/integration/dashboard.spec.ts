@@ -16,9 +16,9 @@ describe('Dashboard view', () => {
         cy.visit('/');
     });
 
-    it('should see dashboard view', () => {
+    it('should see weekdays view', () => {
 
-        cy.url().should('include', 'home').should('include', 'dashboard');
+        cy.url().should('include', 'home').should('include', 'weekdays');
         cy.get('tickist-today', {timeout: 10000}).find("tickist-single-task:contains(\"Task 1\")").should(($task) => {
             expect($task).to.have.length(1);
             expect($task.first()).to.contain('Task 1');

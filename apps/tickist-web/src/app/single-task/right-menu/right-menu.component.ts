@@ -3,6 +3,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {editTaskRoutesName} from '../../modules/edit-task/routes-names';
 import {Router} from '@angular/router';
 import {homeRoutesName} from '../../routing.module.name';
+import {TaskType} from "@data";
 
 
 @Component({
@@ -20,6 +21,10 @@ export class RightMenuComponent implements OnInit {
     @Output() togglePinClick = new EventEmitter();
     @Output() fastMenuOpen = new EventEmitter();
     @Output() fastMenuClose = new EventEmitter();
+    @Output() convertTo = new EventEmitter()
+    normalTaskType = TaskType.NORMAL;
+    nextActionTaskType = TaskType.NEXT_ACTION;
+    needInfoTaskType = TaskType.NEED_INFO;
 
     constructor(private router: Router) {
     }
@@ -57,6 +62,10 @@ export class RightMenuComponent implements OnInit {
 
     navigateToEditTaskView(taskId: string) {
         this.router.navigate([homeRoutesName.HOME, editTaskRoutesName.EDIT_TASK, taskId]);
+    }
+
+    emitConvertToEvent(taskType) {
+        this.convertTo.emit(taskType)
     }
 
 }

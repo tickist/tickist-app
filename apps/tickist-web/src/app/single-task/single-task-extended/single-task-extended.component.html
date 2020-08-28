@@ -15,7 +15,9 @@
                                 (changeDateClick)="changeDate($event)"
                                 (changePriorityClick)="changePriority($event)"
                                 (fastMenuOpen)="changeFastMenuVisible($event)"
-                                (fastMenuClose)="changeFastMenuVisible($event)">
+                                (fastMenuClose)="changeFastMenuVisible($event)"
+                                (convertTo)="convertTo($event)"
+            >
             </tickist-right-menu>
         </div>
         <div id="second-row">
@@ -92,7 +94,7 @@
             <mat-chip *ngFor="let tag of tags">
                 <span class="chip-name">{{ tag.name }}</span>
                 <span fxFlex></span>
-                <fa-icon matTooltip="Remove tag" (click)="removeTag(tag)" [icon]="'times'"></fa-icon>
+                <fa-icon [ngStyle]="{'margin-left': '5px'}" matTooltip="Remove tag" (click)="removeTag(tag)" [icon]="'times'"></fa-icon>
             </mat-chip>
         </mat-chip-list>
 

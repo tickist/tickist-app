@@ -24,7 +24,7 @@ export class SingleTask implements OnDestroy{
     ngUnsubscribe: Subject<void> = new Subject<void>();
     amountOfStepsDoneInPercent: number;
 
-    constructor(public store: Store<{}>, public dialog: MatDialog) {
+    constructor(public store: Store, public dialog: MatDialog) {
 
     }
 
@@ -63,6 +63,15 @@ export class SingleTask implements OnDestroy{
         if (this.amountOfStepsDoneInPercent === 100) {
             this.toggleDone();
         }
+    }
+
+    convertTo(taskType) {
+        this.store.dispatch(new RequestUpdateTask({
+            task: {
+                id: this.task.id,
+                changes: Object.assign({}, this.task, {taskType})
+            }
+        }))
     }
 
     toggleDone() {

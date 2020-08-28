@@ -1,4 +1,5 @@
-<tickist-pin-button [pinned]="task.pinned" *ngIf="isRightMenuVisible || task.pinned" (click)="emitTogglePinClickEvent()">
+<tickist-pin-button [pinned]="task.pinned" *ngIf="isRightMenuVisible || task.pinned"
+                    (click)="emitTogglePinClickEvent()">
 
 </tickist-pin-button>
 <tickist-menu-button [icon]="'edit'"
@@ -15,17 +16,35 @@
                      data-cy="task-short-menu">
 </tickist-menu-button>
 
-<mat-menu #menu="matMenu" >
+<mat-menu #menu="matMenu">
 
     <div>
         <span>Priority</span>
         <div>
-            <tickist-priority [ngStyle]="{'z-index': '1000'}" [manualValue]="task.priority" (changePriority)="emitChangePriorityClickEvent($event)">
+            <tickist-priority [ngStyle]="{'z-index': '1000'}" [manualValue]="task.priority"
+                              (changePriority)="emitChangePriorityClickEvent($event)">
 
             </tickist-priority>
         </div>
-
-
+        <span style="margin-top:10px">Task Type</span>
+        <div style="margin-top:10px; margin-bottom: 10px">
+            <tickist-menu-button [icon]="'project-diagram'"
+                                 [iconPrefix]="'fas'"
+                                 [matTooltip]="nextActionTaskType"
+                                 (click)="emitConvertToEvent(nextActionTaskType)">
+            </tickist-menu-button>
+            <tickist-menu-button [icon]="'mug-hot'"
+                                 [iconPrefix]="'fas'"
+                                 [matTooltip]="needInfoTaskType"
+                                 (click)="emitConvertToEvent(needInfoTaskType)">
+            </tickist-menu-button>
+            <tickist-menu-button [icon]="'square'"
+                                 [iconPrefix]="'far'"
+                                 [matTooltip]="normalTaskType"
+                                 [rotate]="180"
+                                 (click)="emitConvertToEvent(normalTaskType)">
+            </tickist-menu-button>
+        </div>
         <span>Change date</span>
         <div style="margin-top:10px">
             <tickist-menu-button [icon]="'desktop'"
