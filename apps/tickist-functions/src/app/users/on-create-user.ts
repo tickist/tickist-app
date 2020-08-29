@@ -3,6 +3,7 @@ import {db} from '../init';
 import {Project, ProjectType, ShareWithUser} from '@data/projects';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';
+import {TaskType} from "@data";
 
 
 export const onCreateUser = functions.firestore.document('users/{userId}')
@@ -75,6 +76,7 @@ function createTask(name, user, project, tags) {
         tagsIds: tags.map(tag => tag.id),
         estimateTime: 5,
         finishDate: new Date(),
+        taskType: TaskType.NEXT_ACTION,
         taskProject: {id: project.id, name: project.name, color: project.color, shareWithIds: project.shareWithIds, icon: project.icon}
     });
 }
