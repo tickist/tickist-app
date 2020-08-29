@@ -14,7 +14,7 @@ import {formatDistanceToNow, isValid} from 'date-fns';
 export class NotificationComponent implements OnInit {
     @Input() notification: Notification;
     ago: string;
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
     }
 
     ngOnInit() {

@@ -1,8 +1,9 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {TasksState} from '../reducers/tasks/task.reducer';
 import * as fromCourse from '../reducers/tasks/task.reducer';
+import {TasksState} from '../reducers/tasks/task.reducer';
 import {
-    selectCurrentAssignedToFilter, selectCurrentEstimateTimeFilter,
+    selectCurrentAssignedToFilter,
+    selectCurrentEstimateTimeFilter,
     selectCurrentMainFilter,
     selectCurrentTagsFilter,
     selectSearchTasksText
@@ -11,9 +12,12 @@ import {Task} from '@data/tasks/models/tasks';
 import {Tag} from '@data/tags/models/tags';
 import {orderBy} from 'lodash';
 
-import {selectActiveProjectsIds} from './projects.selectors';
+import {selectActiveProjectsIds, selectAliveProjects} from './projects.selectors';
 import {selectCurrentSortBy} from './sort-by-tasks.selectors';
 import {selectLoggedInUser} from './user.selectors';
+import {Project, TaskType} from "@data";
+
+
 export const selectTasksState = createFeatureSelector<TasksState>('task');
 
 export const allTasksLoaded = createSelector(
@@ -29,7 +33,6 @@ export const selectTaskById = (taskId: number) => createSelector(
 export const selectAllTasks = createSelector(
     selectTasksState,
     fromCourse.selectAll
-
 );
 
 export const selectInboxTasksCounter = createSelector(
@@ -103,7 +106,7 @@ export const selectTasksStreamInProjectsView = createSelector(
     selectActiveProjectsIds,
     selectCurrentSortBy,
     (tasks, tagsFilter, assignedToFilter, mainFilter, searchFilter, estimateTimeFilter, activeProjectIds, currentSortBy) => {
-       console.log({activeProjectIds})
+        console.log({activeProjectIds})
         tasks = tasks
             .filter(Function(`return ${mainFilter.value}`)())
             .filter(Function(`return ${assignedToFilter.value}`)())
@@ -143,3 +146,52 @@ export const selectTasksStreamInProjectsView = createSelector(
         return tasks;
     }
 );
+
+export const nextActionTasks = createSelector(
+    selectAllTasks,
+    (tasks) => {
+        return tasks.filter(task => task.taskType === TaskType.NEXT_ACTION)
+    }
+)
+
+export const needInfoTasks = createSelector(
+    selectAllTasks,
+    (tasks) => {
+        return tasks.filter(task => task.taskType === TaskType.NEED_INFO)
+    }
+)
+
+export const projectWithoutNextActionTasks = createSelector(
+    selectAllTasks,
+    selectAliveProjects,
+    (tasks, projects) => {
+        const projectsWithoutNextActionTasks = []
+        projects.forEach(project => {
+            if (!tasks.some(task => task.taskType === TaskType.NEXT_ACTION && task.taskProject.id === project.id)) {
+                projectsWithoutNextActionTasks.push(project)
+            }
+        })
+        return projectsWithoutNextActionTasks
+    }
+)
+
+export const nextActionTasksLength = createSelector(
+    nextActionTasks,
+    (tasks) => {
+        return tasks.length;
+    }
+)
+
+export const needInfoTasksLength = createSelector(
+    needInfoTasks,
+    (tasks) => {
+        return tasks.length;
+    }
+)
+
+export const projectWithoutNextActionTasksLength = createSelector(
+    projectWithoutNextActionTasks,
+    (projects) => {
+        return projects.length;
+    }
+)

@@ -9,7 +9,7 @@ import {selectTeam} from '../core/selectors/team.selectors';
 export class ChangeUserIdToUserNamePipe implements PipeTransform {
     team: any;
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
         this.store.select(selectTeam).pipe(
 
         ).subscribe(team => {

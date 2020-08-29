@@ -1,25 +1,27 @@
 <tickist-show-api-error></tickist-show-api-error>
 <tickist-show-offline-mode></tickist-show-offline-mode>
 <mat-toolbar [ngClass]="{'add-margin': isOffline}">
-    <button class="fab-button" mat-mini-fab color="primary"  [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
+    <button class="fab-button" mat-mini-fab color="primary" [fxHide.gt-sm]="1" (click)="toggleLeftSideNavVisibility()">
         <fa-icon [icon]="['fas', 'bars']"></fa-icon>
     </button>
 
-     <a (click)='navigateToWeekdays()' layout="row" class="logo" [fxHide.xs]="1" [fxHide.sm]="1">
-                <div class="docs-logotype"><img src="/assets/images/logo_32.png" alt="Tickist logo"></div>
-     </a>
+    <a (click)='navigateToWeekdays()' layout="row" class="logo" [fxHide.xs]="1" [fxHide.sm]="1">
+        <div class="docs-logotype"><img src="/assets/images/logo_32.png" alt="Tickist logo"></div>
+    </a>
 
     <span fxFlex></span>
 
 
     <tickist-search-autocomplete></tickist-search-autocomplete>
     <tickist-notifications-icon></tickist-notifications-icon>
-    <tickist-user-avatar *ngIf="user" [mat-menu-trigger-for]="menu"  [userId]="user.id" [avatarUrl]="user.avatarUrl" [size]="'32x32'"></tickist-user-avatar>
-
- <mat-menu #menu="matMenu">
-      <button (click)="navigateToTeam()" mat-menu-item>Team</button>
-      <button (click)="navigateToUserSettings()" mat-menu-item>Settings</button>
-      <button (click)="logout()" mat-menu-item>Logout</button>
+    <tickist-user-avatar *ngIf="user" [mat-menu-trigger-for]="menu" [userId]="user.id" [avatarUrl]="user.avatarUrl"
+                         [size]="'32x32'"></tickist-user-avatar>
+    <tickist-menu-button *ngIf="!user" (click)="logout()" [icon]="'sign-out-alt'" [fontSize]="'28'"
+                         [iconPrefix]="'fas'"></tickist-menu-button>
+    <mat-menu #menu="matMenu">
+        <button (click)="navigateToTeam()" mat-menu-item>Team</button>
+        <button (click)="navigateToUserSettings()" mat-menu-item>Settings</button>
+        <button (click)="logout()" mat-menu-item>Logout</button>
     </mat-menu>
 
 </mat-toolbar>

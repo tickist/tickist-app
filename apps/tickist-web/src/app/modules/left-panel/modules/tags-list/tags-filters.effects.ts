@@ -45,7 +45,7 @@ export class TagsFiltersEffects {
     });
 
 
-    constructor(private actions$: Actions, private store: Store<{}>) {
+    constructor(private actions$: Actions, private store: Store) {
     }
 
 }

@@ -92,7 +92,7 @@ export class NotificationsEffects {
         ), {dispatch: false}
     );
 
-    constructor(private actions$: Actions, private db: AngularFirestore, private authFire: AngularFireAuth, private store: Store<{}>,
+    constructor(private actions$: Actions, private db: AngularFirestore, private authFire: AngularFireAuth, private store: Store,
                 private notificationsService: NotificationsService) {
     }
 

@@ -4,7 +4,7 @@ import {ActiveProjectState} from '../reducers/active-project.reducer';
 import * as fromCourse from '../reducers/projects/projects.reducer';
 import {ProjectsState} from '../reducers/projects/projects.reducer';
 import {calculateProjectDescendants, generateDifferentLevelsOfProjects} from '../utils/projects-utils';
-import {ProjectWithAllDescendants} from '@data/projects';
+import {ProjectType, ProjectWithAllDescendants} from '@data/projects';
 
 export const selectActiveProjectsIdsState = createFeatureSelector<ActiveProjectsIdsState>('activeProjectsIds');
 export const selectActiveProjectState = createFeatureSelector<ActiveProjectState>('activeProject');
@@ -64,5 +64,13 @@ export const selectProjectTypeCounter = (projectType) => createSelector(
     selectAllProjects,
     projects => {
         return projects.filter(project => project.projectType === projectType).length
+    }
+)
+
+
+export const selectAliveProjects = createSelector(
+    selectAllProjects,
+    (projects) => {
+        return projects.filter(project => project.projectType === ProjectType.ALIVE)
     }
 )

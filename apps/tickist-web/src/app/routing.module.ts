@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-
 import {FutureTasksFiltersService} from './modules/future-tasks/core/services/future-tasks-filters.service';
 import {RouterModule, Routes} from '@angular/router';
 import {LoggedInGuard} from './core/guards/loggedIn.guard';
@@ -10,7 +9,7 @@ import {RouterStateSerializer, StoreRouterConnectingModule, DefaultRouterStateSe
 import {CustomSerializer} from './routing/custom-serializer';
 import {HomeComponent} from './core/layouts/home';
 import {futureTasksRoutesName} from './modules/future-tasks/routes.names';
-import {dashboardRoutesName} from './modules/dashboard/routes.names';
+import {weekdaysRoutesName } from './modules/weekdays/routes.names';
 import {tasksProjectsViewRoutesName} from './modules/tasks-projects-view/routes.names';
 import {tasksTagsViewRoutesName} from './modules/tasks-tags-view/routes.names';
 import {tasksTreeViewRoutesName} from './modules/tasks-tree-view/routes.names';
@@ -24,6 +23,7 @@ import {resetPasswordRoutesName} from './modules/reset-password/routes-names';
 import {loginRoutesName} from './modules/login/routes-names';
 import {signupRoutesName} from './modules/sign-up/routes-names';
 import {LeftPanelComponent} from './modules/left-panel/pages/left-panel/left-panel.component';
+import {dashboardRoutesName} from "./modules/dashboard/routes.names";
 
 
 export const routes: Routes = [
@@ -42,6 +42,11 @@ export const routes: Routes = [
                 path: dashboardRoutesName.DASHBOARD,
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.TickistDashboardModule)
+            },
+            {
+                path: weekdaysRoutesName.WEEKDAYS,
+                canActivate: [LoggedInGuard],
+                loadChildren: () => import('./modules/weekdays/weekdays.module').then(m => m.TickistWeekdaysModule)
             },
             {
                 path: futureTasksRoutesName.FUTURE_TASKS,
@@ -92,7 +97,7 @@ export const routes: Routes = [
             },
             {
                 path: '',
-                redirectTo: '/home/dashboard',
+                redirectTo: '/home/weekdays',
                 pathMatch: 'full'
             }
         ]
@@ -117,7 +122,7 @@ export const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: '/home/dashboard',
+        redirectTo: '/home/weekdays',
         pathMatch: 'full'
     }
 ];

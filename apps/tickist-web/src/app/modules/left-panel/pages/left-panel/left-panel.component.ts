@@ -12,6 +12,7 @@ import {filter, takeUntil} from "rxjs/operators";
 import {tasksProjectsViewRoutesName} from "../../../tasks-projects-view/routes.names";
 import {selectInboxTasksCounter} from "../../../../core/selectors/task.selectors";
 import {selectProjectTypeCounter} from "../../../../core/selectors/projects.selectors";
+import {dashboardRoutesName} from "../../../dashboard/routes.names";
 
 
 @Component({
@@ -28,8 +29,10 @@ export class LeftPanelComponent implements OnInit, OnDestroy {
     remiderProjectCounter$: Observable<number>;
     inboxTasksCounter$: Observable<number>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    home = "/" + homeRoutesName.HOME;
+    dashboard = dashboardRoutesName.DASHBOARD;
 
-    constructor(private router: Router, private store: Store<{}>) {
+    constructor(private router: Router, private store: Store) {
     }
 
     ngOnInit() {

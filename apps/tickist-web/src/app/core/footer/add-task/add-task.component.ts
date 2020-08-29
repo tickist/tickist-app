@@ -16,7 +16,7 @@ import {homeRoutesName} from '../../../routing.module.name';
 export class AddTaskComponent implements OnInit {
     addTaskButtonVisibility$: Observable<boolean>;
 
-    constructor(private store: Store<{}>, private router: Router) {
+    constructor(private store: Store, private router: Router) {
     }
 
     ngOnInit() {

@@ -10,7 +10,7 @@ import {AngularFireMessaging} from '@angular/fire/messaging';
 })
 export class NotificationsService {
     collectionPath = 'notifications';
-    constructor(private db: AngularFirestore, private store: Store<{}>, private afMessaging: AngularFireMessaging) {
+    constructor(private db: AngularFirestore, private store: Store, private afMessaging: AngularFireMessaging) {
     }
 
     markAllAsRead(notificationsIds: string[]): void {

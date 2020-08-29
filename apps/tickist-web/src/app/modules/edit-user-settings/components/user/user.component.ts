@@ -43,7 +43,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
     @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
 
-    constructor(private fb: FormBuilder, private store: Store<{}>, private location: Location,
+    constructor(private fb: FormBuilder, private store: Store, private location: Location,
                 private notificationsService: NotificationsService,
                 private configurationService: ConfigurationService, private userService: UserService) {
 

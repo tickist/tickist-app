@@ -109,7 +109,7 @@ export class TagsEffects {
         );
 
     constructor(private actions$: Actions, private tagsService: TagService, private db: AngularFirestore,
-                private store: Store<{}>, private authFire: AngularFireAuth) {
+                private store: Store, private authFire: AngularFireAuth) {
 
     }
 

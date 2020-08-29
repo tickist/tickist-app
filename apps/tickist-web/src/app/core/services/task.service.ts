@@ -18,7 +18,7 @@ const tasksCollectionName = 'tasks';
 export class TaskService {
     tasks$: Observable<Task[]>;
 
-    constructor(private db: AngularFirestore, private store: Store<{}>) {
+    constructor(private db: AngularFirestore, private store: Store) {
 
         this.tasks$ = this.store.select(selectAllTasks);
     }

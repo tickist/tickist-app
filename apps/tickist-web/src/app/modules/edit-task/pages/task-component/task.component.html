@@ -79,6 +79,15 @@
                             </mat-select>
                         </mat-form-field>
 
+                        <mat-form-field>
+                            <mat-select data-cy='select-task-type' placeholder="Task type" formControlName="taskType">
+                                <mat-option *ngFor="let taskType of taskTypes"
+                                            [value]="taskType"> {{ taskType }}
+                                </mat-option>
+                            </mat-select>
+
+                        </mat-form-field>
+
                         Complete:
                         <mat-radio-group formControlName="typeFinishDate">
                             <mat-radio-button

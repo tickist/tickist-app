@@ -19,7 +19,7 @@ export class ConfigurationService {
     TYPE_FINISH_DATE_ON: any;
     TYPE_FINISH_DATE_BY: any;
 
-    constructor(private store: Store<{}>, protected media: MediaObserver) {
+    constructor(private store: Store, protected media: MediaObserver) {
         this.offlineModeNotification$ = this.store.pipe(
             select(isOffline)
         );

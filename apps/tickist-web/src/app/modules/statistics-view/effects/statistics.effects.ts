@@ -80,7 +80,7 @@ export class StatisticsEffects {
     });
 
 
-    constructor(private actions$: Actions, private statisticsService: StatisticsService, private store: Store<{}>) {
+    constructor(private actions$: Actions, private statisticsService: StatisticsService, private store: Store) {
     }
 
 }

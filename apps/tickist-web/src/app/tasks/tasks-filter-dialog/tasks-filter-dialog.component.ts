@@ -20,7 +20,7 @@ export class TasksFilterDialogComponent implements OnInit, OnDestroy {
     filters: Filter[];
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public dialogRef: MatDialogRef<TasksFilterDialogComponent>, private store: Store<{}>) {}
+    constructor(public dialogRef: MatDialogRef<TasksFilterDialogComponent>, private store: Store) {}
 
     ngOnInit() {
         this.filters$ = this.store.select(selectMainFilters);

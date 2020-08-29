@@ -101,7 +101,7 @@ export class ProjectsEffects {
         );
 
     constructor(private actions$: Actions, private projectService: ProjectService, private db: AngularFirestore,
-                private store: Store<{}>, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
+                private store: Store, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
 
     }
 

@@ -21,7 +21,7 @@ export class SortByDialogComponent implements  OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private dialogRef: MatDialogRef<SortByDialogComponent>,
-                private store: Store<{}>) {
+                private store: Store) {
 
     }
 

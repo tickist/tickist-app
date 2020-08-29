@@ -40,6 +40,6 @@ export class TasksFiltersEffects {
             })
         ));
 
-    constructor(private actions$: Actions, private  store: Store<{}>) {
+    constructor(private actions$: Actions, private  store: Store) {
     }
 }

@@ -67,7 +67,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     @ViewChild('matAutocomplete') matAutocomplete: any;
 
     constructor(private fb: FormBuilder, private route: ActivatedRoute,
-                private store: Store<{}>, private location: Location, public dialog: MatDialog,
+                private store: Store, private location: Location, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private router: Router,
                 private projectService: ProjectService) {
         this.addUserToShareWithListCtrl = new FormControl();

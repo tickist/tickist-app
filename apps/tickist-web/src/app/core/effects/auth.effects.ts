@@ -41,7 +41,6 @@ export class AuthEffects {
             switchMap(([action, user]) => {
                 console.log({user});
 
-
                 return this.db.collection('users').doc(action.payload.uid).get().pipe(
                     filter(snapshot => snapshot.exists),
                     tap((snapshot: any) => {
@@ -96,7 +95,7 @@ export class AuthEffects {
     });
 
     constructor(private actions$: Actions, private router: Router, private authService: AuthService, private location: Location,
-                private store: Store<{}>, private userService: UserService, private db: AngularFirestore,
+                private store: Store, private userService: UserService, private db: AngularFirestore,
                 private authFire: AngularFireAuth) {
     }
 }

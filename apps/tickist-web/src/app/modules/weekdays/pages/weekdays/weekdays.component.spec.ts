@@ -4,7 +4,7 @@ import {MockConfigurationService} from '../../../../testing/mocks/configurationS
 import {TickistMaterialModule} from '../../../../material.module';
 
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {DashboardComponent} from './dashboard.component';
+import {WeekdaysComponent} from './weekdays.component';
 import {MockTaskService} from '../../../../testing/mocks/task-service';
 import {RouterModule} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
@@ -13,8 +13,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {StoreModule} from '@ngrx/store';
 import {RouterTestingModule} from '@angular/router/testing';
 
-let comp: DashboardComponent;
-let fixture: ComponentFixture<DashboardComponent>;
+let comp: WeekdaysComponent;
+let fixture: ComponentFixture<WeekdaysComponent>;
 
 
 describe('Component: Dashboard', () => {
@@ -26,7 +26,7 @@ describe('Component: Dashboard', () => {
 
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, RouterTestingModule, FlexLayoutModule, StoreModule.forRoot({})],
-            declarations: [DashboardComponent],
+            declarations: [WeekdaysComponent],
             providers: [
                 projectService.getProviders(),
                 userService.getProviders(),
@@ -35,7 +35,7 @@ describe('Component: Dashboard', () => {
             ],
             schemas: [ NO_ERRORS_SCHEMA ]
         }).compileComponents().then(() => {
-            fixture = TestBed.createComponent(DashboardComponent);
+            fixture = TestBed.createComponent(WeekdaysComponent);
             comp = fixture.componentInstance;
 
         });

@@ -29,7 +29,7 @@ export class TagComponent implements OnInit, OnDestroy {
     isCheckboxModeEnabled = false;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store<{}>) {
+    constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store) {
         this.isActive = false;
     }
 

@@ -22,7 +22,7 @@ export class RequestInterceptorService implements HttpInterceptor {
     state: RouterState;
     snapshot: RouterStateSnapshot;
 
-    constructor(protected router: Router, protected configurationService: ConfigurationService, private store: Store<{}>) {
+    constructor(protected router: Router, protected configurationService: ConfigurationService, private store: Store) {
         this.state = this.router.routerState;
         this.snapshot = this.state.snapshot;
     }

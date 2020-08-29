@@ -22,7 +22,7 @@ export class FilterProjectDialogComponent implements OnDestroy {
     projectsCurrentFilter$: Observable<Filter>;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public dialogRef: MatDialogRef<FilterProjectDialogComponent>, private store: Store<{}>) {
+    constructor(public dialogRef: MatDialogRef<FilterProjectDialogComponent>, private store: Store) {
 
         this.filters$ = this.store.select(selectAllProjectsFilters);
         this.projectsCurrentFilter$ = this.store.select(selectCurrentProjectFilter);

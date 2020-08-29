@@ -23,7 +23,7 @@ export class TagsFilterDialogComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(public dialogRef: MatDialogRef<TagsFilterDialogComponent>, public tagService: TagService,
-                private tasksFiltersService: TasksFiltersService, private store: Store<{}>) {
+                private tasksFiltersService: TasksFiltersService, private store: Store) {
     }
 
     ngOnInit(): void {

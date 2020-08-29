@@ -10,13 +10,12 @@ import {UserService} from '../../../../core/services/user.service';
 import {User} from '@data/users/models';
 import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
-import {dashboardRoutesName} from '../../../dashboard/routes.names';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {homeRoutesName} from '../../../../routing.module.name';
 import {IActiveDateElement} from '@data/active-data-element.interface';
 import {addDays, format, isDate} from 'date-fns';
+import {weekdaysRoutesName} from "../../../weekdays/routes.names";
 
 
 @Component({
@@ -36,7 +35,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     timer: any;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef, private taskService: TaskService,
-                private configurationService: ConfigurationService, private router: Router, private store: Store<{}>,
+                private configurationService: ConfigurationService, private router: Router, private store: Store,
                 private userService: UserService, private media: MediaObserver) {
 
         this.regenerateWeekListAfterMidnight();
@@ -108,7 +107,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     }
 
     navigateTo(arg) {
-        this.router.navigate([`${homeRoutesName.HOME}`, `${dashboardRoutesName.DASHBOARD}`, arg]);
+        this.router.navigate([`${homeRoutesName.HOME}`, `${weekdaysRoutesName.WEEKDAYS}`, arg]);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
         }

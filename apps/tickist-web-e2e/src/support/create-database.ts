@@ -1,8 +1,9 @@
 import {User} from '@data/users/models';
-import {DEFAULT_FINISH_DATE, Project, ProjectType, ShareWithUser} from '@data/projects';
+import {Project, ProjectType, ShareWithUser} from '@data/projects';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';
 import {addDays} from 'date-fns';
+import {TaskType} from "@data";
 
 export class Database {
     projectsNames = ['Project 1', 'Project 2', 'Project 3'];
@@ -105,6 +106,7 @@ export class Database {
             tags: tags,
             finishDate: finishDate,
             tagsIds: tags.map(tag => tag.id),
+            taskType: TaskType.NORMAL,
             taskProject: {
                 id: project.id,
                 name: project.name,

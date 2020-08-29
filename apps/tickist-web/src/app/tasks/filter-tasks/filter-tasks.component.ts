@@ -34,7 +34,7 @@ export class FilterTasksComponent implements OnInit, OnDestroy {
     matDialogConfig: MatDialogConfig;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService, private store: Store<{}>) {
+    constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService, private store: Store) {
         this.matDialogConfig = {'height': '350px', 'width': '300px'};
     }
 

@@ -40,7 +40,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
     mediaChange: MediaChange;
 
     constructor(private taskService: TaskService, private route: ActivatedRoute, private router: Router,
-                private configurationService: ConfigurationService, private store: Store<{}>,
+                private configurationService: ConfigurationService, private store: Store,
                 private futureTasksFiltersService: FutureTasksFiltersService, private cd: ChangeDetectorRef,
                 private media: MediaObserver) {
     }

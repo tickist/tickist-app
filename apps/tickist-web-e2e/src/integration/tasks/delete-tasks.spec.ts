@@ -1,4 +1,4 @@
-import {Task} from '@data';
+import {Task, TaskType} from '@data';
 import {createUniqueId} from '@tickist/utils';
 import {createFirebase, login, logout, removeOldFirebaseData} from '../../support/utils';
 
@@ -23,6 +23,7 @@ describe('Delete task', () => {
                 repeat: 0,
                 repeatDelta: 0,
                 fromRepeating: 1,
+                taskType: TaskType.NORMAL,
                 taskProject: {
                     id: database.projects[0].id,
                     name: database.projects[0].name,
@@ -44,6 +45,7 @@ describe('Delete task', () => {
                 repeat: 0,
                 repeatDelta: 0,
                 fromRepeating: 1,
+                taskType: TaskType.NORMAL,
                 taskProject: {
                     id: database.projects[0].id,
                     name: database.projects[0].name,

@@ -22,7 +22,7 @@ export class AddTaskTreeViewComponent implements OnInit, OnDestroy {
     createTaskForm: FormGroup;
     user: User;
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
         this.createTaskForm = new FormGroup({
             'name': new FormControl('', Validators.required)
         });

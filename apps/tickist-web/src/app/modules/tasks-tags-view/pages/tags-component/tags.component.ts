@@ -24,7 +24,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     defaultTaskView = TASK_EXTENDED_VIEW.value;
     taskView: string;
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
     }
 
     ngOnInit() {

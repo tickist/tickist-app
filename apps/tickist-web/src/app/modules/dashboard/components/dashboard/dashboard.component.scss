@@ -1,0 +1,17 @@
+@import "../../../../shared/variables";
+
+.container {
+    background-color: $background_card_color;
+    margin-left: 16px;
+    padding: 16px
+}
+
+.panel-title {
+    font-size: 19px;
+    margin-left: 5px;
+}
+
+.counter {
+    font-size: 19px;
+    margin-left: 5px;
+}

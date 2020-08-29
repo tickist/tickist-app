@@ -19,7 +19,7 @@ export class NotificationsIconComponent implements OnInit {
     allUnreadNotificationCounter$: Observable<number>;
     allNotifications$: Observable<Notification[]>;
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
     }
 
     ngOnInit() {

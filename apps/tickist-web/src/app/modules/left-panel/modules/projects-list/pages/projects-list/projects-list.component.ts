@@ -35,7 +35,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     projectsList$: Observable<ProjectLeftPanel[]>;
 
     constructor(private taskService: TaskService,
-                private projectsFiltersService: ProjectsFiltersService, private store: Store<{}>,
+                private projectsFiltersService: ProjectsFiltersService, private store: Store,
                 private route: ActivatedRoute, private userService: UserService,
                 private configurationService: ConfigurationService, private router: Router,
                 private media: MediaObserver, private cd: ChangeDetectorRef, public dialog: MatDialog) {

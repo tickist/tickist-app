@@ -19,7 +19,7 @@ export class TasksFiltersService {
     assignedToMe: Filter;
 
 
-    constructor(private store: Store<{}>) {
+    constructor(private store: Store) {
     }
 
     static getDefaultEstimateTimeFilters() {

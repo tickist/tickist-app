@@ -21,7 +21,6 @@ import {map, startWith, takeUntil} from 'rxjs/operators';
 import {Step} from '@data/tasks/models/steps';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {DeleteTask, RequestCreateTask, RequestUpdateTask} from '../../../../core/actions/tasks/task.actions';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
@@ -29,13 +28,15 @@ import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../singl
 import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {ITaskUser, TaskUser} from '@data/tasks/models/task-user';
 import {TaskProject} from '@data/tasks/models/task-project';
-import {createUniqueId} from '@tickist/utils';
-import {CHOICES_DEFAULT_FINISH_DATE} from '@data/projects';
-import {ProjectWithLevel} from '@data/projects';
-import {selectActiveProject, selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
-import {parse} from 'date-fns';
-import {addClickableLinks} from '@tickist/utils';
+import {addClickableLinks, createUniqueId} from '@tickist/utils';
+import {CHOICES_DEFAULT_FINISH_DATE, ProjectWithLevel} from '@data/projects';
+import {
+    selectActiveProject,
+    selectAllProjectsWithLevelAndTreeStructures
+} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
+import {AVAILABLE_TASK_TYPES, TaskType} from '@data';
+import {update, valuesIn} from "ramda";
 
 @Component({
     selector: 'tickist-task-component',
@@ -67,12 +68,13 @@ export class TaskComponent implements OnInit, OnDestroy {
     test: any;
     minFilter: any;
     matcher = new MyErrorStateMatcher();
+    taskTypes =  AVAILABLE_TASK_TYPES;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
     @ViewChild('autocompleteTags') autocompleteTags;
 
-    constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store<{}>,
+    constructor(private fb: FormBuilder, private route: ActivatedRoute, private taskService: TaskService, private store: Store,
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private location: Location,
                 private tagService: TagService) {
@@ -274,6 +276,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             'main': new FormGroup({
                 'name': new FormControl(task.name, {validators: [Validators.required, Validators.max(500)]}),
                 'priority': new FormControl(task.priority, {updateOn: 'change'}),
+                'taskType': new FormControl(task.taskType, Validators.required),
                 'taskProjectPk': new FormControl(task.taskProject.id, Validators.required),
                 'typeFinishDate': new FormControl(task.typeFinishDate, Validators.required),
                 'finishDate': new FormControl(finishDate),
@@ -468,6 +471,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.richName = addClickableLinks(values['main']['name']);
             updatedTask.priority = values['main']['priority'];
             updatedTask.description = values['extra']['description'];
+            updatedTask.taskType = values['main']['taskType'];
             updatedTask.richDescription = addClickableLinks(values['extra']['description']);
             updatedTask.finishDate = values['main']['finishDate'] ? values['main']['finishDate'] : null;
             updatedTask.finishTime = values['main']['finishTime'] ? values['main']['finishTime'] : '';

@@ -175,7 +175,7 @@ export class UserEffects {
         })
     ));
 
-    constructor(private actions$: Actions, private db: AngularFirestore, private store: Store<{}>,
+    constructor(private actions$: Actions, private db: AngularFirestore, private store: Store,
                 private userService: UserService, private authFire: AngularFireAuth) {
     }
 }
