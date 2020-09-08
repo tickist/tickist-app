@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Location} from '@angular/common';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {AuthActionTypes, FetchedLoginUser, Login, Logout} from '../actions/auth.actions';
 import {catchError, filter, map, mapTo, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {Router} from '@angular/router';
@@ -25,16 +25,14 @@ import {selectLoggedInUser} from '../selectors/user.selectors';
 @Injectable()
 export class AuthEffects {
 
-    @Effect()
-    login$ = this.actions$
+    login$ = createEffect(() => this.actions$
         .pipe(
             ofType<Login>(AuthActionTypes.LoginAction),
             tap(() => this.router.navigateByUrl('/')),
             map(action => new FetchedLoginUser({uid: action.payload.uid}))
-        );
+        ));
 
-    @Effect()
-    FetchedLoginUser$ = this.actions$
+    FetchedLoginUser$ = createEffect(() => this.actions$
         .pipe(
             ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
@@ -59,10 +57,9 @@ export class AuthEffects {
                     })
                 );
             })
-        );
+        ));
 
-    @Effect()
-    logout$ = this.actions$.pipe(
+    logout$ = createEffect(() => this.actions$.pipe(
         ofType<Logout>(AuthActionTypes.LogoutAction),
         switchMap(() => {
             return of(this.authService.logout());
@@ -80,7 +77,7 @@ export class AuthEffects {
 
         }),
         mapTo(new ResetStore())
-    );
+    ));
 
     @Effect()
     init$ = defer(() => {
