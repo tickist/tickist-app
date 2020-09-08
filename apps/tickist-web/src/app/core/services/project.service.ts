@@ -31,45 +31,8 @@ export class ProjectService {
         this.selectedProjectsIds$ = this.store.select(selectActiveProjectsIds);
     }
 
-    selectProject(project: Project | null) {
-        // @TODO move to Efect
-
-        // this.store.dispatch(new projectsAction.SelectProject(project));
-        // this.store.dispatch(new tasksAction.DeleteNonFixedAssignedTo({}));
-        if (project) {
-            // project.shareWith.map((user: (SimpleUser | PendingUser)) => {
-            //     if (user.hasOwnProperty('id') && user['id'] !== undefined
-            //     && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
-            //         // this.store.dispatch(new tasksAction.AddNewAssignedTo(
-            //         //     new Filter({
-            //         //         'id': user['id'],
-            //         //         'label': 'assignedTo',
-            //         //         'value': (task: Task) => task.owner.id === user['id'],
-            //         //         'name': user.username
-            //         //     })
-            //         // ));
-            //     }
-            // });
-            // this.tasksFiltersService.resetAssignedFilterToAssignedToAll();
-        } else {
-            // this.team.map((user) => {
-            //     this.store.dispatch(new tasksAction.AddNewAssignedTo(
-            //             new Filter({
-            //                 'id': user.id,
-            //                 'label': 'assignedTo',
-            //                 'value': (task: Task) => task.owner.id === user.id,
-            //                 'name': user.username
-            //             })
-            //         )
-            //     );
-            // });
-            this.tasksFiltersService.resetAssignedFilterToAssignedToMe();
-        }
-    }
-
     addUserToProject(project, email) {
         const entry = {email: email, status: InviteUserStatus.Processing};
-        // return Object.assign({}, project, {inviteUserByEmail: [...project.inviteUserByEmail, entry]});
 
         this.store.dispatch(new RequestUpdateProject(
             {
@@ -113,18 +76,6 @@ export class ProjectService {
         } as Editor;
         const newProjectWithLastEditor = {...project, lastEditor: editor};
         return newProject.set(JSON.parse(JSON.stringify({...newProjectWithLastEditor, id: newProject.id})));
-
-        // return this.http.post(`${environment['apiUrl']}/project/`, toSnakeCase(project))
-        //     .pipe(map((payload: IProjectApi) => new Project(payload)));
-        // .subscribe((payload: IProjectApi) => {
-        //     this.snackBar.open('Project has been saved successfully', '', {
-        //         duration: 2000,
-        //     });
-        //     const newProject = new Project(payload);
-        //     this.store.dispatch(new projectsAction.CreateProject(newProject));
-        //     this.router.navigate(['/home/projects', newProject.id]);
-        //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
-        // });
     }
 
     updateProject(project: Project, user: User, withoutSnackBar = false) {

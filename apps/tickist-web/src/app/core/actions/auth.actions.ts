@@ -1,10 +1,25 @@
-import {Action} from '@ngrx/store';
+import {Action, createAction, props} from '@ngrx/store';
 
 export enum AuthActionTypes {
     LoginAction = '[Auth] login user',
     FetchedLoginUser= '[Auth] Fetched Login User From Server',
     LogoutAction = '[Auth] Logout user'
 }
+export const login = createAction(
+    '[Auth] login user',
+    props<{uid: string}>()
+)
+
+export const fetchedLoginUser = createAction(
+    '[Auth] Fetched Login User From Server',
+    props<{uid: string}>()
+)
+
+export const logout = createAction(
+    '[Auth] Logout user'
+)
+
+
 
 export class Login implements Action {
 

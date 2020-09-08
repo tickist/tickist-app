@@ -1,6 +1,7 @@
-import {ActiveDateActions, ActiveDateActionTypes} from '../actions/active-date.actions';
+import {updateActiveDate} from '../actions/active-date.actions';
 import {stateActiveDateElement} from '@data/state-active-date-element.enum';
 import {format} from 'date-fns';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface ActiveDateState {
@@ -17,12 +18,18 @@ export const activeDateInitialState: ActiveDateState = {
     }
 };
 
+const activeDateReducer = createReducer(
+    activeDateInitialState,
+    on(updateActiveDate, (state, props) => {
+        return {
+            active: {
+                date: props.date,
+                state: props.state
+            }
+        }
+    })
+)
 
-export function reducer(state: ActiveDateState = activeDateInitialState, action: ActiveDateActions) {
-    switch (action.type) {
-        case ActiveDateActionTypes.UPDATE_ACTIVE_DATE:
-            return {active: action.payload};
-        default:
-            return state;
-    }
+export function reducer(state: ActiveDateState, action: Action) {
+    return activeDateReducer(state, action);
 }

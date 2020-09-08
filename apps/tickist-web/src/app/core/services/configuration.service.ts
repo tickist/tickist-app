@@ -103,29 +103,6 @@ export class ConfigurationService {
         return this.configuration;
     }
 
-    // updateActiveDateElement(date?: string) {
-    //     let toStore: moment.Moment;
-    //     let state: stateActiveDateElement;
-    //     if (!date) {
-    //         date = moment().format('DD-MM-YYYY');
-    //     }
-    //     const splittedDate: string[] = date.split('-');
-    //     if (splittedDate.length === 2) {
-    //         toStore = moment().month(splittedDate[0]).year(parseInt(splittedDate[1], 10)).date(1);
-    //         state = stateActiveDateElement.future;
-    //     } else if (date.split('-').length === 3) {
-    //         toStore = moment()
-    //             .month(parseInt(splittedDate[1], 10) - 1)
-    //             .year(parseInt(splittedDate[2], 10))
-    //             .date(parseInt(splittedDate[0], 10));
-    //         state = stateActiveDateElement.weekdays;
-    //     }
-    //     this.store.dispatch(new configurationAction.UpdateActiveDateElement({
-    //         date: toStore.set({hour: 0, minute: 0, second: 0, millisecond: 0}),
-    //         state: state
-    //     }));
-    // }
-
     updateDetectApiError(isVisible: boolean): void {
         this.store.dispatch(new ShowApiErrorBar());
     }

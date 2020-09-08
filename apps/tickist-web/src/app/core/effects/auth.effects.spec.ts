@@ -35,7 +35,7 @@ describe('Effects', () => {
             ]
         });
 
-        effects = TestBed.get(AuthEffects);
+        effects = TestBed.inject(AuthEffects);
         actions$ = new ReplaySubject(1);
     });
 
