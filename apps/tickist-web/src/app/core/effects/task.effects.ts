@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
-import {catchError, concatMap, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
+import {concatMap, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
     AddTasks,
@@ -14,26 +14,21 @@ import {
     UpdateTask
 } from '../actions/tasks/task.actions';
 import {TaskService} from '../services/task.service';
-import {AppStore} from '../../store';
 import {selectAllTasks} from '../selectors/task.selectors';
 import {Task} from '@data/tasks/models/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOnProgressBar} from '../actions/progress-bar.actions';
-import {of} from 'rxjs';
 import {QueryTags} from '../actions/tags.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {AngularFireAuth} from '@angular/fire/auth';
 import {Update} from '@ngrx/entity';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
 @Injectable()
 export class TaskEffects {
 
-
-    @Effect()
-    queryTasks$ = this.actions$
+    queryTasks$ = createEffect(() => this.actions$
         .pipe(
             ofType<QueryTags>(TaskActionTypes.QUERY_TASKS),
             withLatestFrom(this.store.select(selectLoggedInUser)),
@@ -83,23 +78,27 @@ export class TaskEffects {
                 }
                 return returnsActions;
             })
-        );
+        ));
 
-    @Effect({dispatch: false})
-    createTask$ = this.actions$
+    createTask$ = createEffect(() => this.actions$
         .pipe(
             ofType<RequestCreateTask>(TaskActionTypes.REQUEST_CREATE_TASK),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             mergeMap(([action, user]) => this.tasksService.createTask(action.payload.task, user)),
-        );
+            tap(() => this.snackBar.open('Task has been created successfully', '', {
+                duration: 2000,
+            }))
+        ), {dispatch: false});
 
-    @Effect({dispatch: false})
-    updateTask$ = this.actions$
+    updateTask$ = createEffect(() => this.actions$
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             mergeMap(([action, user]) => this.tasksService.updateTask(<Task>action.payload.task.changes, user)),
-        );
+            tap(() => this.snackBar.open('Task has been updated successfully', '', {
+                duration: 2000,
+            }))
+        ), {dispatch: false});
 
     setStatusDone$ = createEffect(() => this.actions$
         .pipe(
@@ -111,26 +110,23 @@ export class TaskEffects {
             }))
         ), {dispatch: false});
 
-    @Effect()
-    progressBar$ = this.actions$
+    progressBar$ = createEffect(() => this.actions$
         .pipe(
             ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
             filter(action => action.payload.progressBar),
             mapTo(new SwitchOnProgressBar())
-        );
+        ))
 
-    @Effect({dispatch: false})
-    deleteTask$ = this.actions$
+    deleteTask$ = createEffect(() => this.actions$
         .pipe(
             ofType<RequestDeleteTask>(TaskActionTypes.REQUEST_REQUEST_TASK),
             mergeMap(action => this.tasksService.deleteTask(action.payload.taskId)),
             tap(() => this.snackBar.open('Task has been deleted successfully', '', {
                 duration: 2000,
             }))
-        );
+        ), {dispatch: false});
 
-    @Effect()
-    closeMenuInTaskDuringRouterNavigator = this.actions$
+    closeMenuInTaskDuringRouterNavigator$ = createEffect(() => this.actions$
         .pipe(
             ofType(ROUTER_NAVIGATED),
             withLatestFrom(this.store.pipe(select(selectAllTasks))),
@@ -153,10 +149,10 @@ export class TaskEffects {
                 });
                 return new CloseMenuInAllTasks({tasks: tasksWithCloseMenu});
             })
-        );
+        ));
 
     constructor(private actions$: Actions, private tasksService: TaskService, private db: AngularFirestore,
-                private store: Store, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
+                private store: Store, public snackBar: MatSnackBar) {
 
     }
 

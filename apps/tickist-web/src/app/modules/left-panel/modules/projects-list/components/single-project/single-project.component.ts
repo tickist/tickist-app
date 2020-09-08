@@ -61,7 +61,9 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     user: User;
     availableProjectTypes = AVAILABLE_PROJECT_TYPES
     anotherProjectTypes: ProjectType[];
-
+    homeRoutesName = '/' + homeRoutesName.HOME;
+    editProjectSettingsRoutesName = editProjectSettingsRoutesName.EDIT_PROJECT
+    canHaveChildProjects: boolean;
 
     constructor(private projectService: ProjectService, protected router: Router, public dialog: MatDialog,
                 protected configurationService: ConfigurationService, protected media: MediaObserver,
@@ -71,6 +73,8 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.anotherProjectTypes = this.availableProjectTypes.filter(projectType => projectType !== this.project.projectType)
         this.deleteOrLeave = this.project.shareWith.length > 1 ? 'Leave' : 'Delete';
+        this.canHaveChildProjects = this.project.level < 2;
+        console.log(this.project)
         this.store.select(selectLoggedInUser)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(user => {

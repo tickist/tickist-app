@@ -76,3 +76,7 @@ fa-icon {
     background-color: $orange;
     margin-left: 20px;
 }
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+    background: none;
+}

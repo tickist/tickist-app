@@ -611,6 +611,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.task = this.createNewTask(this.selectedProject);
         this.taskForm.reset();
         this.taskForm = this.createTaskForm(this.task);
+        this.changeActiveItemInMenu('main')
     }
 
     updateImmediately(source, formControlName, values): void {

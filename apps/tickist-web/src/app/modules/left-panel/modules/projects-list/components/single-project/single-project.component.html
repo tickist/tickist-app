@@ -27,6 +27,7 @@
     <button mat-menu-item (click)="navigateToEditProjectView(project.id)">Edit</button>
     <button mat-menu-item *ngFor="let projectType of anotherProjectTypes" (click)="convertTo(projectType)">
         Convert to {{ projectType }}</button>
+    <button mat-menu-item *ngIf="canHaveChildProjects" [routerLink]="[homeRoutesName, editProjectSettingsRoutesName,'createWithAncestor', project.id ]">Create child project</button>
     <button mat-menu-item (click)="deleteOrLeaveProject()">{{ deleteOrLeave }}</button>
 
 
