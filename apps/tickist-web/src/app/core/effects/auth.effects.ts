@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Location} from '@angular/common';
 import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
-import {AuthActionTypes, FetchedLoginUser, Login, Logout} from '../actions/auth.actions';
+import {fetchedLoginUser, login, logout} from '../actions/auth.actions';
 import {catchError, filter, map, mapTo, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {defer, of} from 'rxjs';
@@ -14,11 +14,9 @@ import {environment} from '@env/environment';
 import {AuthService} from '../../modules/auth/services/auth.service';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {signupRoutesName} from '../../modules/sign-up/routes-names';
-import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
 import {resetPasswordRoutesName} from '../../modules/reset-password/routes-names';
 import {firebaseError} from '../actions/errors.actions';
-import {selectTeam} from '../selectors/team.selectors';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
@@ -27,19 +25,19 @@ export class AuthEffects {
 
     login$ = createEffect(() => this.actions$
         .pipe(
-            ofType<Login>(AuthActionTypes.LoginAction),
+            ofType(login),
             tap(() => this.router.navigateByUrl('/')),
-            map(action => new FetchedLoginUser({uid: action.payload.uid}))
+            map(action => fetchedLoginUser({uid: action.uid}))
         ));
 
     FetchedLoginUser$ = createEffect(() => this.actions$
         .pipe(
-            ofType<FetchedLoginUser>(AuthActionTypes.FetchedLoginUser),
+            ofType(fetchedLoginUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
                 console.log({user});
 
-                return this.db.collection('users').doc(action.payload.uid).get().pipe(
+                return this.db.collection('users').doc(action.uid).get().pipe(
                     filter(snapshot => snapshot.exists),
                     tap((snapshot: any) => {
                         if (environment.production) {
@@ -60,7 +58,7 @@ export class AuthEffects {
         ));
 
     logout$ = createEffect(() => this.actions$.pipe(
-        ofType<Logout>(AuthActionTypes.LogoutAction),
+        ofType(logout),
         switchMap(() => {
             return of(this.authService.logout());
         }),
@@ -84,15 +82,14 @@ export class AuthEffects {
         return this.authService.authState$.pipe(
             map(state => {
                 if (state !== null) {
-                    return new FetchedLoginUser({uid: state.uid});
+                    return fetchedLoginUser({uid: state.uid});
                 }
-                return new Logout();
+                return logout();
             })
         );
     });
 
     constructor(private actions$: Actions, private router: Router, private authService: AuthService, private location: Location,
-                private store: Store, private userService: UserService, private db: AngularFirestore,
-                private authFire: AngularFireAuth) {
+                private store: Store, private userService: UserService, private db: AngularFirestore) {
     }
 }

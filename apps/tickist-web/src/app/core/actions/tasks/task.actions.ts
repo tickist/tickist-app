@@ -1,4 +1,4 @@
-import {Action} from '@ngrx/store';
+import {Action, createAction, props} from '@ngrx/store';
 import {Task} from '@data/tasks/models/tasks';
 import {Update} from '@ngrx/entity';
 
@@ -17,6 +17,60 @@ export enum TaskActionTypes {
     DELETE_TASK = '[TASKS] DELETE_TASK',
     CLOSE_MENU_IN_ALL_TASKS = '[TASKS] CLOSE MENU IN ALL TASKS'
 }
+
+export const queryTasks = createAction(
+    '[TASKS] QUERY TASKS'
+)
+
+export const requestsAllTasks = createAction(
+    '[TASKS] REQUEST_ALL_TASKS'
+)
+
+export const requestCreateTask = createAction(
+    '[TASKS] REQUEST_CREATE_TASK',
+    props<{ task: Task }>()
+)
+export const addTask = createAction(
+    '[TASKS] ADD_TASKS',
+    props<{ tasks: Task[] }>()
+)
+
+export const createTask = createAction(
+    '[TASKS] CREATE_TASK',
+    props<{ task: Task, progressBar?: true, snackBar?: true }>()
+)
+
+
+export const updateTask = createAction(
+    '[TASKS] UPDATE_TASK',
+    props<{ task: Update<Task>, progressBar?: true, snackBar?: true }>()
+)
+
+export const requestUpdateTask = createAction(
+    '[TASKS] REQUEST_UPDATE TASK',
+    props<{ task: Update<Task>, progressBar?: true, snackBar?: true }>()
+)
+
+export const setStatusDone = createAction(
+    '[TASKS] SET_STATUS_DONE',
+    props<{ task: Update<Task>, progressBar?: true, snackBar?: true }>()
+)
+
+export const deleteTask = createAction(
+    '[TASKS] DELETE_TASK',
+    props<{ taskId: string }>()
+)
+
+export const requestDeleteTask = createAction(
+    '[TASKS] REQUEST_DELETE TASK',
+    props<{ taskId: string }>()
+)
+
+export const closeMenuInAllTasks = createAction(
+    '[TASKS] CLOSE MENU IN ALL TASKS',
+    props<{ tasks: Update<Task>[] }>()
+)
+
 
 export class QueryTasks implements Action {
     readonly type = TaskActionTypes.QUERY_TASKS;
@@ -43,7 +97,7 @@ export class AddTasks implements Action {
 export class CreateTask implements Action {
     readonly type = TaskActionTypes.CREATE_TASK;
 
-    constructor(public payload: { task: Task, progressBar?: true, snackBar?: true}) {
+    constructor(public payload: { task: Task, progressBar?: true, snackBar?: true }) {
     }
 }
 
@@ -86,10 +140,9 @@ export class RequestDeleteTask implements Action {
 export class CloseMenuInAllTasks implements Action {
     readonly type = TaskActionTypes.CLOSE_MENU_IN_ALL_TASKS;
 
-    constructor(public payload: {tasks: Update<Task>[]}) {
+    constructor(public payload: { tasks: Update<Task>[] }) {
     }
 }
-
 
 
 export type TaskActions = AddTasks

@@ -69,7 +69,7 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         StoreModule.forFeature('progressBar', fromProgressBar.reducer),
         StoreModule.forFeature('detectApiError', fromDetectApiError.reducer),
         StoreModule.forFeature('offlineMode', fromOfflineMode.reducer),
-        StoreModule.forFeature('auth', from.authReducer),
+        StoreModule.forFeature('auth', from.reducer),
         StoreModule.forFeature('mainFiltersTasks', fromFilterTasks.reducer),
         StoreModule.forFeature('assignedToFiltersTasks', fromAssignedToFiltersTasks.reducer),
         StoreModule.forFeature('estimateTimeFiltersTasks', fromEstimateTimeFiltersTasks.reducer),
