@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
-import {AddUser, UserActionTypes} from '../../../../core/actions/user.actions';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
+import {addUser} from '../../../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {defer} from 'rxjs';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
@@ -13,19 +13,18 @@ import {ProjectsFiltersService} from './projects-filters.service';
 @Injectable()
 export class ProjectsFiltersEffects {
 
-    @Effect()
-    addTagsFilters = this.actions$
+    addTagsFilters = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMap(action => {
                 return [
                     new AddProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}),
                     new SetCurrentProjectFilter({
-                        currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(action.payload.user.projectsFilterId)
+                        currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(action.user.projectsFilterId)
                     })
                 ];
             })
-        );
+        ));
 
     @Effect()
     init$ = defer(() => {

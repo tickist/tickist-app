@@ -1,4 +1,3 @@
-import {OfflineModeActions, OfflineModeActionTypes} from '../actions/offline-mode.actions';
 import {ApiErrorActions, ApiErrorActionTypes} from '../actions/detect-api-error.actions';
 
 export interface ApiErrorState {

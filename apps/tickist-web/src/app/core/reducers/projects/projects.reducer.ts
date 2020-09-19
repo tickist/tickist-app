@@ -1,7 +1,8 @@
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {ProjectActions, ProjectActionTypes} from '../../actions/projects/projects.actions';
+import {addProjects, createProject, deleteProject, updateProject} from '../../actions/projects/projects.actions';
 import {Project} from '@data/projects';
-import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
+import {resetStore} from '../../../tickist.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 export interface ProjectsState extends EntityState<Project> {
     allProjectsLoaded: boolean;
@@ -15,27 +16,25 @@ export const initialProjectsState: ProjectsState = adapter.getInitialState({
     allProjectsLoaded: false
 });
 
+const projectReducer = createReducer(
+    initialProjectsState,
+    on(createProject, (state, props) => {
+        return adapter.addOne(props.project, state);
+    }),
+    on(addProjects, (state, props) => {
+        return adapter.addMany(props.projects, {...state, allProjectsLoaded: true});
+    }),
+    on(updateProject, (state, props) => {
+        return adapter.updateOne(props.project, state);
+    }),
+    on(deleteProject, (state, props) => {
+        return adapter.removeOne(props.projectId, state);
+    }),
+    on(resetStore, () => initialProjectsState),
+)
 
-export function reducer(state = initialProjectsState, action: (ProjectActions | TickistActions)): ProjectsState {
-    switch (action.type) {
-        case ProjectActionTypes.CREATE_PROJECT:
-            return adapter.addOne(action.payload.project, state);
-
-        case ProjectActionTypes.ADD_PROJECTS:
-            return adapter.addMany(action.payload.projects, {...state, allProjectsLoaded: true});
-
-        case ProjectActionTypes.UPDATE_PROJECT:
-            return adapter.updateOne(action.payload.project, state);
-
-        case ProjectActionTypes.DELETE_PROJECT:
-            return adapter.removeOne(action.payload.projectId, state);
-
-        case TickistActionTypes.ResetStore:
-            return initialProjectsState;
-
-        default:
-            return state;
-    }
+export function reducer(state: ProjectsState, action: Action) {
+    return projectReducer(state, action);
 }
 
 export const {

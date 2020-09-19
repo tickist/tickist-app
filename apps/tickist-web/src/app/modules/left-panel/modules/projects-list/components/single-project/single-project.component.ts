@@ -30,9 +30,9 @@ import {
 } from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
 import {
-    RequestDeleteProject,
-    RequestUpdateProject,
-    UpdateProject
+    requestDeleteProject,
+    requestUpdateProject,
+    updateProject
 } from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
 import {ProjectLeftPanel} from '../../models/project-list';
@@ -155,7 +155,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     }
 
     convertTo(projectType) {
-        this.store.dispatch(new RequestUpdateProject({
+        this.store.dispatch(requestUpdateProject({
             project: {
                 id: this.project.id,
                 changes: Object.assign({}, this.project, {projectType})
@@ -186,7 +186,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         dialogRef.componentInstance.setContent(content);
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
-                this.store.dispatch(new RequestDeleteProject({projectId: this.project.id}));
+                this.store.dispatch(requestDeleteProject({projectId: this.project.id}));
                 this.router.navigate(['home', tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, this.user.inboxPk]);
             }
         });

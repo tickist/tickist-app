@@ -9,7 +9,7 @@ import {Router} from '@angular/router';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../selectors/projects.selectors';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {RequestUpdateProject} from '../actions/projects/projects.actions';
+import {requestUpdateProject} from '../actions/projects/projects.actions';
 import {Editor} from '@data/users';
 
 const projectsCollectionName = 'projects';
@@ -34,7 +34,7 @@ export class ProjectService {
     addUserToProject(project, email) {
         const entry = {email: email, status: InviteUserStatus.Processing};
 
-        this.store.dispatch(new RequestUpdateProject(
+        this.store.dispatch(requestUpdateProject(
             {
                 project: {
                     id: project.id,
@@ -46,7 +46,7 @@ export class ProjectService {
     removeUserFormShareWithList(project, deletedUser) {
         const shareWith = project.shareWith.filter(user => user.id !== deletedUser.id);
         const shareWithIds = project.shareWithIds.filter(userId => userId !== deletedUser.id);
-        this.store.dispatch(new RequestUpdateProject(
+        this.store.dispatch(requestUpdateProject(
             {
                 project: {
                     id: project.id,
@@ -57,7 +57,7 @@ export class ProjectService {
 
     deleteUserFromInviteList(project: Project, deletedUser: InviteUser) {
         const inviteUserByEmail = project.inviteUserByEmail.filter(invitedUser => invitedUser.email !== deletedUser.email);
-        this.store.dispatch(new RequestUpdateProject(
+        this.store.dispatch(requestUpdateProject(
             {
                 project: {
                     id: project.id,

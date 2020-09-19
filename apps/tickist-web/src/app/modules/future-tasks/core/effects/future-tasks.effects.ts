@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
-import {AddUser, UserActionTypes} from '../../../../core/actions/user.actions';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
+import {addUser} from '../../../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {defer} from 'rxjs';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
@@ -14,19 +14,18 @@ const ALL_DATES = 1;
 @Injectable()
 export class FutureTasksEffects {
 
-    @Effect()
-    addTagsFilters = this.actions$
+    addTagsFilters = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMap(action => {
                 return [
                     new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}),
                     new SetCurrentFutureTaskFilter({
-                        currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(action.payload.user.projectsFilterId)
+                        currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(action.user.projectsFilterId)
                     })
                 ];
             })
-        );
+        ));
 
     @Effect()
     init$ = defer(() => {

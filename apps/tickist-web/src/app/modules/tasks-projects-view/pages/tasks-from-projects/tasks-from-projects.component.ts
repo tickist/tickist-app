@@ -11,9 +11,9 @@ import {Store} from '@ngrx/store';
 import {SetActiveProject} from '../../../../core/actions/projects/active-project.actions';
 import {selectActiveProject, selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectTasksStreamInProjectsView} from '../../../../core/selectors/task.selectors';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {updateUser} from '../../../../core/actions/user.actions';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
-import {UpdateProject} from '../../../../core/actions/projects/projects.actions';
+import {updateProject} from '../../../../core/actions/projects/projects.actions';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {homeRoutesName} from '../../../../routing.module.name';
 import {calculateProjectDescendants, hasProjectDescription, isProjectType} from '../../../../core/utils/projects-utils';
@@ -90,11 +90,11 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         if (event) this.taskView = event;
         if (this.selectedProject && this.selectedProject.taskView !== event && event) {
             const project = Object.assign({}, this.selectedProject, {taskView: event});
-            this.store.dispatch(new UpdateProject({project: {id: project.id, changes: project}}));
+            this.store.dispatch(updateProject({project: {id: project.id, changes: project}}));
         }
         if (!this.selectedProject && this.user && this.user.allTasksView !== event && event) {
             const user = Object.assign({}, this.user, {allTasksView: event});
-            this.store.dispatch(new UpdateUser({user}));
+            this.store.dispatch(updateUser({user}));
         }
     }
 

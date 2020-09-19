@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {QueryTags} from '../../../core/actions/tags.actions';
 import {concatMap, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Update} from '@ngrx/entity';
 import {
@@ -25,7 +24,7 @@ export class NotificationsEffects {
     query$ = createEffect(() =>
         this.actions$
             .pipe(
-                ofType<QueryTags>(queryNotifications),
+                ofType(queryNotifications),
                 withLatestFrom(this.store.select(selectLoggedInUser)),
                 switchMap(([, user]) => {
                     return this.db.collection(
@@ -34,7 +33,7 @@ export class NotificationsEffects {
                             .where('recipient', '==', user.id)
                             .limit(30)
                             .orderBy('date')
-                        )
+                    )
                         .stateChanges();
                 }),
                 concatMap(actions => {

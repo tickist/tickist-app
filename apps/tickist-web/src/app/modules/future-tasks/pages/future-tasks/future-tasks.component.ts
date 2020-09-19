@@ -8,7 +8,7 @@ import {Task} from '@data/tasks/models/tasks';
 import {User} from '@data/users/models';
 import {FutureTasksFiltersService} from '../../core/services/future-tasks-filters.service';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {updateUser} from '../../../../core/actions/user.actions';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
@@ -83,7 +83,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         this.taskView = event;
         if (this.user && this.user.defaultTaskViewFutureView !== event) {
             const user = Object.assign({}, this.user, {defaultTaskViewTodayView: event});
-            this.store.dispatch(new UpdateUser({user}));
+            this.store.dispatch(updateUser({user}));
         }
 
     }

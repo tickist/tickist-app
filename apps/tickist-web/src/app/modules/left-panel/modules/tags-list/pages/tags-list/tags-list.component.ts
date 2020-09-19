@@ -13,7 +13,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {Store} from '@ngrx/store';
 import {takeUntil} from 'rxjs/operators';
-import {RequestCreateTag} from '../../../../../../core/actions/tags.actions';
+import {requestCreateTag} from '../../../../../../core/actions/tags.actions';
 import {selectFilteredTagsList} from '../../tags-filters.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {TagWithTaskCounter} from '@data/tags/models/tag-with-task-counter';
@@ -62,7 +62,7 @@ export class TagsListComponent implements OnInit, OnDestroy {
     createTag(values): void {
         if (this.createTagForm.valid) {
             const newTag = new Tag(<any> {name: values['name'], author: this.user.id});
-            this.store.dispatch(new RequestCreateTag({tag: newTag}));
+            this.store.dispatch(requestCreateTag({tag: newTag}));
             this.createTagForm.reset();
             this.createTagFormDOM.resetForm();
         }

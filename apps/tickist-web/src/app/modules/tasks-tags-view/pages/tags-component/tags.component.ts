@@ -7,7 +7,7 @@ import {Store} from '@ngrx/store';
 import {selectTasksStreamInTagsView} from '../../../../core/selectors/task.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {takeUntil} from 'rxjs/operators';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {updateUser} from '../../../../core/actions/user.actions';
 import {TASK_EXTENDED_VIEW} from "@data";
 
 @Component({
@@ -46,7 +46,7 @@ export class TagsComponent implements OnInit, OnDestroy {
         this.taskView = event;
         if (this.user && this.user.defaultTaskViewTagsView !== event) {
             const user = Object.assign({}, this.user, {defaultTaskViewTodayView: event});
-            this.store.dispatch(new UpdateUser({user}));
+            this.store.dispatch(updateUser({user}));
         }
     }
 

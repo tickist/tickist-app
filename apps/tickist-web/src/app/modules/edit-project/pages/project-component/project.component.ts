@@ -16,7 +16,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {SimpleUser, User} from '@data/users/models';
 import {MatDialog} from '@angular/material/dialog';
 import {filter, map, startWith, takeUntil} from 'rxjs/operators';
-import {RequestCreateProject, RequestUpdateProject} from '../../../../core/actions/projects/projects.actions';
+import {requestCreateProject, requestUpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
@@ -222,9 +222,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
             // List share with is added directly
 
             if (this.isNewProject()) {
-                this.store.dispatch(new RequestCreateProject({project: project}));
+                this.store.dispatch(requestCreateProject({project: project}));
             } else {
-                this.store.dispatch(new RequestUpdateProject({project: {id: project.id, changes: project}}));
+                this.store.dispatch(requestUpdateProject({project: {id: project.id, changes: project}}));
             }
             this.close();
         }

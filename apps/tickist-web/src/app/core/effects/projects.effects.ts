@@ -4,14 +4,13 @@ import {concatMap, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operator
 import {Store} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
 import {
-    AddProjects,
-    DeleteProject,
-    ProjectActionTypes,
-    QueryProjects,
-    RequestCreateProject,
-    RequestDeleteProject,
-    RequestUpdateProject,
-    UpdateProject
+    addProjects,
+    deleteProject,
+    queryProjects,
+    requestCreateProject,
+    requestDeleteProject,
+    requestUpdateProject,
+    updateProject
 } from '../actions/projects/projects.actions';
 import {ProjectService} from '../services/project.service';
 import {Project} from '@data/projects';
@@ -26,7 +25,7 @@ export class ProjectsEffects {
 
     queryTasks$ = createEffect(() => this.actions$
         .pipe(
-            ofType<QueryProjects>(ProjectActionTypes.QUERY_PROJECTS),
+            ofType(queryProjects),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([, user]) => {
                 return this.db.collection(
@@ -61,13 +60,13 @@ export class ProjectsEffects {
                 }));
                 const returnsActions = [];
                 if (addedProjects.length > 0) {
-                    returnsActions.push(new AddProjects({projects: addedProjects}));
+                    returnsActions.push(addProjects({projects: addedProjects}));
                 }
                 if (updatedProject) {
-                    returnsActions.push(new UpdateProject({project: updatedProject}));
+                    returnsActions.push(updateProject({project: updatedProject}));
                 }
                 if (deletedProjectId) {
-                    returnsActions.push(new DeleteProject({projectId: deletedProjectId}));
+                    returnsActions.push(deleteProject({projectId: deletedProjectId}));
                 }
                 return returnsActions;
             })
@@ -75,22 +74,22 @@ export class ProjectsEffects {
 
     createProject$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestCreateProject>(ProjectActionTypes.REQUEST_CREATE_PROJECT),
+            ofType(requestCreateProject),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            mergeMap(([action, user]) => this.projectService.createProject(action.payload.project, user))
+            mergeMap(([action, user]) => this.projectService.createProject(action.project, user))
         ), {dispatch: false});
 
     updateProject$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestUpdateProject>(ProjectActionTypes.REQUEST_UPDATE_PROJECT),
+            ofType(requestUpdateProject),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            mergeMap(([action, user]) => this.projectService.updateProject(<Project>action.payload.project.changes, user))
+            mergeMap(([action, user]) => this.projectService.updateProject(<Project>action.project.changes, user))
         ), {dispatch: false});
 
     deleteProject$ =createEffect(() => this.actions$
         .pipe(
-            ofType<RequestDeleteProject>(ProjectActionTypes.REQUEST_DELETE_PROJECT),
-            mergeMap(action => this.projectService.deleteProject(action.payload.projectId)),
+            ofType(requestDeleteProject),
+            mergeMap(action => this.projectService.deleteProject(action.projectId)),
             map(() => this.snackBar.open('Project has been deleted successfully', '', {
                 duration: 2000,
             }))

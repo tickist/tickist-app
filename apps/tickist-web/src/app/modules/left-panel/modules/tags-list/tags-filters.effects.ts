@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {AddUser, UserActionTypes} from '../../../../core/actions/user.actions';
+import {addUser} from '../../../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {SetCurrentTagsFilters} from '../../../../core/actions/tasks/tags-filters-tasks.actions';
 import {TagsFiltersService} from '../../../../core/services/tags-filters.service';
@@ -17,12 +17,12 @@ export class TagsFiltersEffects {
     @Effect()
     addTagsFilters = this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMap(action => {
                 return [
                     new AddTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}),
                     new SetCurrentTagsFilters({
-                        currentTagsFilter: TagsFiltersService.getDefaultCurrentTagsFilter(action.payload.user.tagsFilterId)
+                        currentTagsFilter: TagsFiltersService.getDefaultCurrentTagsFilter(action.user.tagsFilterId)
                     })
                 ];
             })

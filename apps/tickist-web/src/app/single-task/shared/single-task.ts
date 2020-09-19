@@ -4,7 +4,7 @@ import {Step} from '@data/tasks/models/steps';
 import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
 import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
 import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
-import {RequestDeleteTask, RequestUpdateTask, SetStatusDone} from '../../core/actions/tasks/task.actions';
+import {requestDeleteTask, requestUpdateTask, setStatusDone} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
 import {takeUntil} from 'rxjs/operators';
@@ -59,14 +59,14 @@ export class SingleTask implements OnDestroy{
         this.amountOfStepsDoneInPercent = task.steps.filter(step => step.status === 1).length * 100 / task.steps.length;
 
         // if amount is 100 the status === 1
-        this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+        this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
         if (this.amountOfStepsDoneInPercent === 100) {
             this.toggleDone();
         }
     }
 
     convertTo(taskType) {
-        this.store.dispatch(new RequestUpdateTask({
+        this.store.dispatch(requestUpdateTask({
             task: {
                 id: this.task.id,
                 changes: Object.assign({}, this.task, {taskType})
@@ -89,7 +89,7 @@ export class SingleTask implements OnDestroy{
                             task.estimateTime = result['estimateTime'];
                             task.time = result['realTime'];
                         }
-                        this.store.dispatch(new SetStatusDone({task: {id: task.id, changes: task}}));
+                        this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
                     });
             } else if (isRepeated(this.task) && isOverdue(this.task) && this.task.fromRepeating === 1) {
                 const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
@@ -101,30 +101,30 @@ export class SingleTask implements OnDestroy{
                         if (result && result.hasOwnProperty('finishDate')) {
                             task.finishDate = parse(result['finishDate'],  'dd-MM-yyyy', new Date());
                         }
-                        this.store.dispatch(new SetStatusDone({task: {id: task.id, changes: task}}));
+                        this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
                     });
             } else {
-                this.store.dispatch(new SetStatusDone({task: {id: task.id, changes: task}}));
+                this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
             }
         } else if (this.task.isDone === true) {
             task = Object.assign({}, this.task, {isDone: false});
-            this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+            this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
         } else if (this.task.onHold === true) {
             task = Object.assign({}, this.task, {isDone: false});
-            this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+            this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
         }
 
     }
 
     togglePin(): void {
         const task = Object.assign({}, this.task, {pinned: !this.task.pinned});
-        this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+        this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
     }
 
     changePriority(priority: string) {
         if (this.task.priority !== priority) {
             const task = Object.assign({}, this.task, {priority: priority});
-            this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+            this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
         }
     }
 
@@ -142,7 +142,7 @@ export class SingleTask implements OnDestroy{
             delta = 30;
         }
         const task = moveFinishDateFromPreviousFinishDate(this.task, delta);
-        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));
+        this.store.dispatch(requestUpdateTask({task: {id: this.task.id, changes: task}}));
     }
 
 
@@ -152,7 +152,7 @@ export class SingleTask implements OnDestroy{
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(result => {
                 if (result) {
-                    this.store.dispatch(new RequestDeleteTask({taskId: this.task.id}));
+                    this.store.dispatch(requestDeleteTask({taskId: this.task.id}));
                 }
             });
     }

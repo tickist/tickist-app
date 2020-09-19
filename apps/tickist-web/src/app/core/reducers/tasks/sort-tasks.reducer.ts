@@ -1,7 +1,7 @@
-import {SortTasksActions, SortTasksActionTypes} from '../../actions/tasks/sort-tasks.actions';
+import {addSortByOptions, setCurrentSortBy,} from '../../actions/tasks/sort-tasks.actions';
 import {SortBy} from '@data/tasks/models/sortBy';
-import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
-
+import {Action, createReducer, on} from "@ngrx/store";
+import {resetStore} from "../../../tickist.actions";
 
 export interface SortByState {
     sortByOptions: SortBy[];
@@ -13,15 +13,18 @@ export const initialState: SortByState = {
     currentSortBy: undefined
 };
 
-export function reducer(state = initialState, action: SortTasksActions| TickistActions): SortByState {
-    switch (action.type) {
-        case SortTasksActionTypes.AddSortByOptions:
-            return {sortByOptions: action.payload.sortByOptions, currentSortBy: state.currentSortBy};
-        case SortTasksActionTypes.SetCurrentSortBy:
-            return {sortByOptions: state.sortByOptions, currentSortBy: action.payload.currentSortBy};
-        case TickistActionTypes.ResetStore:
-            return initialState;
-        default:
-            return state;
-    }
+const sortTasksReducer = createReducer(
+    initialState,
+    on(addSortByOptions, (state, props) => {
+        return {sortByOptions: props.sortByOptions, currentSortBy: state.currentSortBy}
+    }),
+    on(setCurrentSortBy, (state, props) => {
+        return {sortByOptions: state.sortByOptions, currentSortBy: props.currentSortBy}
+    }),
+    on(resetStore)
+)
+
+export function reducer(state: SortByState, action: Action) {
+    return sortTasksReducer(state, action);
 }
+

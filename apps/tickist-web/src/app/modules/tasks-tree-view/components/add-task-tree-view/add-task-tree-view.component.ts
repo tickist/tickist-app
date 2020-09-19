@@ -5,7 +5,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Task} from '@data/tasks/models/tasks';
 import {User} from '@data/users/models';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {RequestCreateTask} from '../../../../core/actions/tasks/task.actions';
+import {requestCreateTask} from '../../../../core/actions/tasks/task.actions';
 import {TaskUser} from '@data/tasks/models/task-user';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {takeUntil} from 'rxjs/operators';
@@ -81,7 +81,7 @@ export class AddTaskTreeViewComponent implements OnInit, OnDestroy {
     }
 
     createTask(values) {
-        this.store.dispatch(new RequestCreateTask({task: this.createTaskModel(values.name)}));
+        this.store.dispatch(requestCreateTask({task: this.createTaskModel(values.name)}));
         this.createTaskForm.reset();
 
     }

@@ -11,7 +11,7 @@ import {TasksApiMockFactory} from '../../testing/mocks/api-mock/tasks-api-mock.f
 import {UsersApiMockFactory} from '../../testing/mocks/api-mock/users-api-mock.factory';
 import {ProjectsApiMockFactory} from '../../testing/mocks/api-mock/projects-api-mock.factory';
 import {MockStore, provideMockStore} from '@ngrx/store/testing';
-import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
+import {requestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {format} from 'date-fns';
 
@@ -91,15 +91,15 @@ describe('Edit repeating Component', () => {
 
     describe('saveTask', () => {
         beforeEach(() => {
-            store = TestBed.get(Store);
+            store = TestBed.inject(Store);
             store.dispatch = jest.spyOn(store, 'dispatch');
         });
-        it('should dispatch action RequestUpdateTask', () => {
+        it('should dispatch action requestUpdateTask', () => {
             comp.task = task;
             comp.ngOnInit();
             comp.saveTask({value: 1}, 'repeatDefault');
             task = Object.assign({}, task, {repeat: 1, repeatDelta: 1});
-            expect(store.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+            expect(store.dispatch).toHaveBeenCalledWith(requestUpdateTask({task: {id: task.id, changes: task}}));
         });
 
         it('should update task model when the repeat default is changed (scenario 1. -> default repeat )', () => {
@@ -107,7 +107,7 @@ describe('Edit repeating Component', () => {
             comp.task = task;
             comp.ngOnInit();
             comp.saveTask({value: taskRepeat}, 'repeatDefault');
-            expect(store.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
+            expect(store.dispatch).toHaveBeenCalledWith(requestUpdateTask({
                 task: {
                     id: task.id,
                     changes: Object.assign({}, task, {repeat: taskRepeat, repeatDelta: 1})
@@ -124,7 +124,7 @@ describe('Edit repeating Component', () => {
             comp.repeatDelta = repeatDelta;
             comp.repeatCustom = repeatCustom;
             comp.saveTask({value: taskRepeat}, 'repeatDefault');
-            expect(store.dispatch).toHaveBeenCalledWith(new RequestUpdateTask({
+            expect(store.dispatch).toHaveBeenCalledWith(requestUpdateTask({
                 task: {
                     id: task.id,
                     changes: Object.assign({}, task, {repeat: repeatCustom, repeatDelta: repeatDelta})

@@ -153,7 +153,7 @@ describe('Tasks', () => {
                 cy.wrap($task.find('tickist-toggle-button')).click();
             });
             cy.get(`tickist-single-task:contains("${newTaskName}")`).should('not.exist');
-            cy.get('simple-snack-bar').contains('Task is done. Great job!').should('exist');
+            cy.get('simple-snack-bar').should('exist');
         });
 
 

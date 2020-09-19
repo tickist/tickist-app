@@ -3,14 +3,13 @@ import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {concatMap, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {
-    AddTags,
-    DeleteTag,
-    QueryTags,
-    RequestCreateTag,
-    RequestDeleteTag,
-    RequestUpdateTag,
-    TagActionTypes,
-    UpdateTag
+    addTags,
+    deleteTag,
+    queryTags,
+    requestCreateTag,
+    requestDeleteTag,
+    requestUpdateTag,
+    updateTag
 } from '../actions/tags.actions';
 import {AppStore} from '../../store';
 import {Tag} from '@data/tags/models/tags';
@@ -26,7 +25,7 @@ export class TagsEffects {
 
     query$ = createEffect(() => this.actions$
         .pipe(
-            ofType<QueryTags>(TagActionTypes.QUERY_TAGS),
+            ofType(queryTags),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([, user]) => {
                 return this.db.collection(
@@ -60,13 +59,13 @@ export class TagsEffects {
                 }));
                 const returnsActions = [];
                 if (addedTags.length > 0) {
-                    returnsActions.push(new AddTags({tags: addedTags}));
+                    returnsActions.push(addTags({tags: addedTags}));
                 }
                 if (updatedTag) {
-                    returnsActions.push(new UpdateTag({tag: updatedTag}));
+                    returnsActions.push(updateTag({tag: updatedTag}));
                 }
                 if (deletedTagId) {
-                    returnsActions.push(new DeleteTag({tagId: deletedTagId}));
+                    returnsActions.push(deleteTag({tagId: deletedTagId}));
                 }
                 return returnsActions;
             })
@@ -74,22 +73,22 @@ export class TagsEffects {
 
     createTag$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestCreateTag>(TagActionTypes.REQUEST_CREATE_TAG),
-            mergeMap(action => this.tagsService.createTag(action.payload.tag)),
+            ofType(requestCreateTag),
+            mergeMap(action => this.tagsService.createTag(action.tag)),
         ), {dispatch: false}
     );
 
     updateTag$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestUpdateTag>(TagActionTypes.REQUEST_UPDATE_TAG),
-            mergeMap((action) => this.tagsService.updateTag(<Tag>action.payload.tag.changes))
+            ofType(requestUpdateTag),
+            mergeMap((action) => this.tagsService.updateTag(<Tag>action.tag.changes))
         ), {dispatch: false}
     );
 
     deleteTag$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestDeleteTag>(TagActionTypes.REQUEST_DELETE_TAG),
-            mergeMap(action => this.tagsService.deleteTag(action.payload.tagId))
+            ofType(requestDeleteTag),
+            mergeMap(action => this.tagsService.deleteTag(action.tagId))
         ), {dispatch: false}
     );
 

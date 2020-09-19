@@ -32,7 +32,6 @@ import * as fromActiveProjectsId from './reducers/active-projects-ids.reducer';
 import * as fromSortTasks from './reducers/tasks/sort-tasks.reducer';
 import * as fromActiveDate from './reducers/active-date.reducer';
 import * as fromDetectApiError from './reducers/detect-api-error.reducer';
-import * as fromOfflineMode from './reducers/offline-mode.reducer';
 import * as fromProgressBar from './reducers/progress-bar.reducer';
 import * as fromFilterTasks from './reducers/tasks/main-filters-tasks.reducer';
 import * as fromAssignedToFiltersTasks from './reducers/tasks/assigned-to-filters-tasks.reducer';
@@ -68,7 +67,6 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         StoreModule.forFeature('activeDate', fromActiveDate.reducer),
         StoreModule.forFeature('progressBar', fromProgressBar.reducer),
         StoreModule.forFeature('detectApiError', fromDetectApiError.reducer),
-        StoreModule.forFeature('offlineMode', fromOfflineMode.reducer),
         StoreModule.forFeature('auth', from.reducer),
         StoreModule.forFeature('mainFiltersTasks', fromFilterTasks.reducer),
         StoreModule.forFeature('assignedToFiltersTasks', fromAssignedToFiltersTasks.reducer),

@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Tag} from '@data/tags/models/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
-import {RequestDeleteTag, RequestUpdateTag} from '../../../../../../core/actions/tags.actions';
+import {requestDeleteTag, requestUpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
 import {SetCurrentTagsFilters} from '../../../../../../core/actions/tasks/tags-filters-tasks.actions';
 import {selectCurrentTagsFilter} from '../../../../../../core/selectors/filters-tasks.selectors';
@@ -55,12 +55,12 @@ export class TagComponent implements OnInit, OnDestroy {
     editTag(values) {
         const tag = JSON.parse(JSON.stringify(this.tag));
         tag.name = values['name'];
-        this.store.dispatch(new RequestUpdateTag({tag: {id: tag.id, changes: tag}}));
+        this.store.dispatch(requestUpdateTag({tag: {id: tag.id, changes: tag}}));
         this.editMode = !this.editMode;
     }
 
     deleteTag() {
-        this.store.dispatch(new RequestDeleteTag(<any> {tagId: this.tag.id}));
+        this.store.dispatch(requestDeleteTag(<any> {tagId: this.tag.id}));
     }
 
     toggleEditMode() {

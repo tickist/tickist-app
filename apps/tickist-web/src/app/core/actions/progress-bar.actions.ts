@@ -1,4 +1,4 @@
-import {Action} from '@ngrx/store';
+import {Action, createAction} from '@ngrx/store';
 
 
 export enum ProgressBarActionTypes {
@@ -14,6 +14,13 @@ export class SwitchOnProgressBar implements Action {
     readonly type = ProgressBarActionTypes.SWITCH_ON_PROGRESS_BAR;
 
 }
+
+export const switchOffProgressBar = createAction(
+    '[Core progress bar] Switch off progress bar'
+)
+export const switchOnProgressBar = createAction(
+    '[Core progress bar] Switch on progress bar'
+)
 
 export type ProgressBarActions = SwitchOffProgressBar
     | SwitchOnProgressBar;

@@ -7,8 +7,8 @@ import {Router} from '@angular/router';
 import {defer, of} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {UserService} from '../services/user.service';
-import {AddUser} from '../actions/user.actions';
-import {ResetStore} from '../../tickist.actions';
+import {addUser} from '../actions/user.actions';
+import {resetStore} from '../../tickist.actions';
 import LogRocket from 'logrocket';
 import {environment} from '@env/environment';
 import {AuthService} from '../../modules/auth/services/auth.service';
@@ -48,7 +48,7 @@ export class AuthEffects {
                         }
                     }),
                     map((snapshot: any) => {
-                        return new AddUser({user: new User({id: snapshot.id, ...snapshot.data()})});
+                        return addUser({user: new User({id: snapshot.id, ...snapshot.data()})});
                     }),
                     catchError((err) => {
                         return of(firebaseError({error: new Error(err)}));
@@ -74,7 +74,7 @@ export class AuthEffects {
             }
 
         }),
-        mapTo(new ResetStore())
+        mapTo(resetStore())
     ));
 
     @Effect()

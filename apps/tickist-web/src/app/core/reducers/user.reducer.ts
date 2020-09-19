@@ -1,6 +1,7 @@
 import {User} from '@data/users/models';
-import {UserActions, UserActionTypes} from '../actions/user.actions';
-import {TickistActions, TickistActionTypes} from '../../tickist.actions';
+import {addUser, updateUser} from '../actions/user.actions';
+import {Action, createReducer, on} from "@ngrx/store";
+import {resetStore} from "../../tickist.actions";
 
 
 export interface UserState {
@@ -11,19 +12,23 @@ export const initialState: UserState = {
     user: undefined
 };
 
-export function reducer(state = initialState, action: UserActions | TickistActions): UserState {
-    switch (action.type) {
-        case UserActionTypes.AddUser:
-            return {
-                user: (<UserActions> action).payload.user
-            };
-        case UserActionTypes.UpdateUser:
-            return {
-                user: (<UserActions> action).payload.user
-            };
-        case TickistActionTypes.ResetStore:
-            return initialState;
-        default:
-            return state;
-    }
+const userReducer = createReducer(
+    initialState,
+    on(addUser, (state, props) => {
+        return {
+            user: props.user
+        }
+    }),
+    on(updateUser, (state, props) => {
+        return {
+            user: props.user
+        };
+    }),
+    on(resetStore, () => {
+        return initialState
+    })
+)
+
+export function reducer(state: UserState, action: Action) {
+    return userReducer(state, action);
 }

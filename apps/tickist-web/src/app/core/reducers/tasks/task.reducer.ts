@@ -1,16 +1,21 @@
- import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {TaskActions, TaskActionTypes} from '../../actions/tasks/task.actions';
-import {TickistActions, TickistActionTypes} from '../../../tickist.actions';
+import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import {
+    addTasks,
+    closeMenuInAllTasks,
+    createTask,
+    deleteTask,
+    TaskActionTypes,
+    updateTask
+} from '../../actions/tasks/task.actions';
+import {resetStore} from '../../../tickist.actions';
 import {Task} from '@data/tasks/models/tasks';
-import {setStatusDoneLogic} from '../../../single-task/utils/set-status-to-done-logic';
 import {createDefaultLoadable, Loadable} from '../../utils/loadable/loadable';
 import {withLoadable} from '../../utils/loadable/with-loadable';
+import {Action, createReducer, on} from "@ngrx/store";
 
 export interface TasksState extends EntityState<Task>, Loadable {
     allTasksLoaded: boolean;
 }
-
-
 
 export const adapter: EntityAdapter<Task> =
     createEntityAdapter<Task>();
@@ -21,39 +26,36 @@ export const initialTasksState: TasksState = adapter.getInitialState({
     ...createDefaultLoadable(),
 });
 
+const taskReducer = createReducer(
+    initialTasksState,
+    on(createTask, (state, props) => {
+        return adapter.addOne(props.task, state);
+    }),
+    on(addTasks, (state, props) => {
+        return adapter.addMany(props.tasks, {...state, allTasksLoaded: true});
+    }),
+    on(updateTask, (state, props) => {
+        return adapter.updateOne(props.task, state);
+    }),
+    on(deleteTask, (state, props) => {
+        return adapter.removeOne(props.taskId, state);
+    }),
+    on(closeMenuInAllTasks, (state, props) => {
+        return adapter.updateMany(props.tasks, state);
+    }),
+    on(resetStore, (state, props) => {
+        return initialTasksState;
+    }),
+)
 
-export function baseReducer(state = initialTasksState, action: (TaskActions | TickistActions)): TasksState {
-    switch (action.type) {
-        case TaskActionTypes.CREATE_TASK:
-            return adapter.addOne(action.payload.task, state);
-
-        case TaskActionTypes.ADD_TASKS:
-            return adapter.addMany(action.payload.tasks, {...state, allTasksLoaded: true});
-
-        case TaskActionTypes.UPDATE_TASK:
-            return adapter.updateOne(action.payload.task, state);
-
-        case TaskActionTypes.DELETE_TASK:
-            return adapter.removeOne(action.payload.taskId, state);
-
-        case TaskActionTypes.CLOSE_MENU_IN_ALL_TASKS:
-            return adapter.updateMany(action.payload.tasks, state);
-
-        case TickistActionTypes.ResetStore:
-            return initialTasksState;
-
-        default:
-            return state;
-    }
-}
-
-export function reducer(state: TasksState, action: (TaskActions | TickistActions)): TasksState {
-    return withLoadable(baseReducer, {
+export function reducer(state: TasksState, action: Action) {
+    return withLoadable(taskReducer, {
         loadingActionType: [TaskActionTypes.REQUEST_UPDATE_TASK, TaskActionTypes.REQUEST_ALL_TASKS],
         successActionType: [TaskActionTypes.UPDATE_TASK, TaskActionTypes.CREATE_TASK, TaskActionTypes.ADD_TASKS],
         errorActionType: [],
     })(state, action);
 }
+
 
 export const {
     selectAll,

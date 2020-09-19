@@ -3,22 +3,21 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {concatMap, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {
-    AddTasks,
-    CloseMenuInAllTasks,
-    DeleteTask,
-    RequestCreateTask,
-    RequestDeleteTask,
-    RequestUpdateTask,
-    SetStatusDone,
-    TaskActionTypes,
-    UpdateTask
+    addTasks,
+    closeMenuInAllTasks,
+    deleteTask,
+    queryTasks,
+    requestCreateTask,
+    requestDeleteTask,
+    requestUpdateTask,
+    setStatusDone,
+    updateTask
 } from '../actions/tasks/task.actions';
 import {TaskService} from '../services/task.service';
 import {selectAllTasks} from '../selectors/task.selectors';
 import {Task} from '@data/tasks/models/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {SwitchOnProgressBar} from '../actions/progress-bar.actions';
-import {QueryTags} from '../actions/tags.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Update} from '@ngrx/entity';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -30,7 +29,7 @@ export class TaskEffects {
 
     queryTasks$ = createEffect(() => this.actions$
         .pipe(
-            ofType<QueryTags>(TaskActionTypes.QUERY_TASKS),
+            ofType(queryTasks),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
                 console.log(action);
@@ -68,13 +67,13 @@ export class TaskEffects {
                 }));
                 const returnsActions = [];
                 if (addedTasks.length > 0) {
-                    returnsActions.push(new AddTasks({tasks: addedTasks}));
+                    returnsActions.push(addTasks({tasks: addedTasks}));
                 }
                 if (updatedTask) {
-                    returnsActions.push(new UpdateTask({task: updatedTask}));
+                    returnsActions.push(updateTask({task: updatedTask}));
                 }
                 if (deletedTaskId) {
-                    returnsActions.push(new DeleteTask({taskId: deletedTaskId}));
+                    returnsActions.push(deleteTask({taskId: deletedTaskId}));
                 }
                 return returnsActions;
             })
@@ -82,9 +81,9 @@ export class TaskEffects {
 
     createTask$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestCreateTask>(TaskActionTypes.REQUEST_CREATE_TASK),
+            ofType(requestCreateTask),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            mergeMap(([action, user]) => this.tasksService.createTask(action.payload.task, user)),
+            mergeMap(([action, user]) => this.tasksService.createTask(action.task, user)),
             tap(() => this.snackBar.open('Task has been created successfully', '', {
                 duration: 2000,
             }))
@@ -92,9 +91,9 @@ export class TaskEffects {
 
     updateTask$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
+            ofType(requestUpdateTask),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            mergeMap(([action, user]) => this.tasksService.updateTask(<Task>action.payload.task.changes, user)),
+            mergeMap(([action, user]) => this.tasksService.updateTask(<Task>action.task.changes, user)),
             tap(() => this.snackBar.open('Task has been updated successfully', '', {
                 duration: 2000,
             }))
@@ -102,9 +101,9 @@ export class TaskEffects {
 
     setStatusDone$ = createEffect(() => this.actions$
         .pipe(
-            ofType<SetStatusDone>(TaskActionTypes.SET_STATUS_DONE),
+            ofType(setStatusDone),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            mergeMap(([action, user]) => this.tasksService.setStatusDone(<Task>action.payload.task.changes, user)),
+            mergeMap(([action, user]) => this.tasksService.setStatusDone(<Task>action.task.changes, user)),
             tap(() => this.snackBar.open('Task is done. Great job!', '', {
                 duration: 2000,
             }))
@@ -112,15 +111,15 @@ export class TaskEffects {
 
     progressBar$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestUpdateTask>(TaskActionTypes.REQUEST_UPDATE_TASK),
-            filter(action => action.payload.progressBar),
+            ofType(requestUpdateTask),
+            filter(action => action.progressBar),
             mapTo(new SwitchOnProgressBar())
         ))
 
     deleteTask$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestDeleteTask>(TaskActionTypes.REQUEST_REQUEST_TASK),
-            mergeMap(action => this.tasksService.deleteTask(action.payload.taskId)),
+            ofType(requestDeleteTask),
+            mergeMap(action => this.tasksService.deleteTask(action.taskId)),
             tap(() => this.snackBar.open('Task has been deleted successfully', '', {
                 duration: 2000,
             }))
@@ -147,7 +146,7 @@ export class TaskEffects {
                         }
                     };
                 });
-                return new CloseMenuInAllTasks({tasks: tasksWithCloseMenu});
+                return closeMenuInAllTasks({tasks: tasksWithCloseMenu});
             })
         ));
 

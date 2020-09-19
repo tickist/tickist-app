@@ -1,4 +1,4 @@
-import { Action } from '@ngrx/store';
+import {Action, createAction} from '@ngrx/store';
 
 export enum AddTaskButtonVisibilityActionTypes {
   ShowAddTaskButton = '[AddTaskButtonVisibility] Show add tasks button',
@@ -15,5 +15,12 @@ export class HideAddTaskButton implements Action {
 
 }
 
+export const showAddTaskButton = createAction(
+    '[AddTaskButtonVisibility] Show add tasks button'
+)
+
+export const hideAddTaskButton = createAction(
+    '[AddTaskButtonVisibility] Hide add tasks button'
+)
 
 export type AddTaskButtonVisibilityActions = ShowAddTaskButton | HideAddTaskButton;
