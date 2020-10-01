@@ -21,7 +21,7 @@ import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
-import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
+import {requestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
 import {
@@ -116,7 +116,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
                         icon: project.icon
                     })
                 });
-                this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: task}}));
+                this.store.dispatch(requestUpdateTask({task: {id: this.task.id, changes: task}}));
             });
         });
     }
@@ -136,7 +136,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         const selectedTaskProject = this.projects.find(project => project.id === this.task.taskProject.id);
         this.task.owner = <ShareWithUser> selectedTaskProject
             .shareWith.find(user => user.hasOwnProperty('id') && (<ShareWithUser> user).id === event.value);
-        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
+        this.store.dispatch(requestUpdateTask({task: {id: this.task.id, changes: this.task}}));
         // this.taskService.updateTask(this.task, true, true);
     }
 
@@ -153,7 +153,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
 
     removeTag(tag) {
         this.task = removeTag(this.task,  tag);
-        this.store.dispatch(new RequestUpdateTask({task: {id: this.task.id, changes: this.task}}));
+        this.store.dispatch(requestUpdateTask({task: {id: this.task.id, changes: this.task}}));
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {

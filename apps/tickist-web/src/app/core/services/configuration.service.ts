@@ -4,9 +4,10 @@ import {select, Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {MediaObserver} from '@angular/flex-layout';
 import * as configurationAction from '../../reducers/actions/configuration';
-import {ShowApiErrorBar} from '../actions/detect-api-error.actions';
 import {isOffline} from '../selectors/offline-notifications.selectors';
 import {isLeftSideNavVisible} from '../selectors/sidenav-visibility.selectors';
+import {showApiErrorBar} from "../actions/detect-api-error.actions";
+import { updateLeftSidenavVisibility } from '../../reducers/actions/configuration';
 
 
 @Injectable({
@@ -103,31 +104,8 @@ export class ConfigurationService {
         return this.configuration;
     }
 
-    // updateActiveDateElement(date?: string) {
-    //     let toStore: moment.Moment;
-    //     let state: stateActiveDateElement;
-    //     if (!date) {
-    //         date = moment().format('DD-MM-YYYY');
-    //     }
-    //     const splittedDate: string[] = date.split('-');
-    //     if (splittedDate.length === 2) {
-    //         toStore = moment().month(splittedDate[0]).year(parseInt(splittedDate[1], 10)).date(1);
-    //         state = stateActiveDateElement.future;
-    //     } else if (date.split('-').length === 3) {
-    //         toStore = moment()
-    //             .month(parseInt(splittedDate[1], 10) - 1)
-    //             .year(parseInt(splittedDate[2], 10))
-    //             .date(parseInt(splittedDate[0], 10));
-    //         state = stateActiveDateElement.weekdays;
-    //     }
-    //     this.store.dispatch(new configurationAction.UpdateActiveDateElement({
-    //         date: toStore.set({hour: 0, minute: 0, second: 0, millisecond: 0}),
-    //         state: state
-    //     }));
-    // }
-
     updateDetectApiError(isVisible: boolean): void {
-        this.store.dispatch(new ShowApiErrorBar());
+        this.store.dispatch(showApiErrorBar());
     }
 
     updateOfflineModeNotification(isActive: boolean): void {
@@ -141,7 +119,7 @@ export class ConfigurationService {
         } else if (state === 'open') {
             open = true;
         }
-        this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({'open': open}));
+        this.store.dispatch(updateLeftSidenavVisibility({'open': open}));
     }
 
     updateLeftSidenavVisibility(): void {
@@ -155,7 +133,7 @@ export class ConfigurationService {
             position = 'start';
             open = true;
         }
-        this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({
+        this.store.dispatch(updateLeftSidenavVisibility({
             'position': position,
             'mode': mode,
             'open': open

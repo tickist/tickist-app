@@ -6,18 +6,18 @@ import {Project} from '@data/projects';
 import {User} from '@data/users/models';
 import {filter, map, takeUntil} from 'rxjs/operators';
 import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
-import {NewActiveProjectsIds} from '../../../../core/actions/projects/active-projects-ids.actions';
 import {Store} from '@ngrx/store';
-import {SetActiveProject} from '../../../../core/actions/projects/active-project.actions';
 import {selectActiveProject, selectAllProjects} from '../../../../core/selectors/projects.selectors';
 import {selectTasksStreamInProjectsView} from '../../../../core/selectors/task.selectors';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {updateUser} from '../../../../core/actions/user.actions';
 import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
-import {UpdateProject} from '../../../../core/actions/projects/projects.actions';
+import {updateProject} from '../../../../core/actions/projects/projects.actions';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {homeRoutesName} from '../../../../routing.module.name';
 import {calculateProjectDescendants, hasProjectDescription, isProjectType} from '../../../../core/utils/projects-utils';
 import {TASK_EXTENDED_VIEW} from "@data";
+import {newActiveProjectsIds} from "../../../../core/actions/projects/active-projects-ids.actions";
+import {setActiveProject} from "../../../../core/actions/projects/active-project.actions";
 
 @Component({
     selector: 'tickist-tasks-from-projects',
@@ -57,19 +57,19 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
                     const project = projects.find(p => p.id === projectId);
                     if (project && project !== activeProject) {
                         const allDescendants = calculateProjectDescendants(project, projects);
-                        this.store.dispatch(new NewActiveProjectsIds({projectsIds: allDescendants}));
-                        this.store.dispatch(new SetActiveProject({project: project}));
+                        this.store.dispatch(newActiveProjectsIds({projectsIds: allDescendants}));
+                        this.store.dispatch(setActiveProject({project: project}));
                     }
                 } else if (isProjectType(projectId)) {
                     const allProjectsIdsSelectedType = projects
                         .filter(project => project.projectType === projectId)
                         .map(project => project.id)
-                    this.store.dispatch(new NewActiveProjectsIds({projectsIds: allProjectsIdsSelectedType}));
-                    this.store.dispatch(new SetActiveProject({project: null}));
+                    this.store.dispatch(newActiveProjectsIds({projectsIds: allProjectsIdsSelectedType}));
+                    this.store.dispatch(setActiveProject({project: null}));
 
                 } else {
-                    this.store.dispatch(new NewActiveProjectsIds({projectsIds: []}));
-                    this.store.dispatch(new SetActiveProject({project: null}));
+                    this.store.dispatch(newActiveProjectsIds({projectsIds: []}));
+                    this.store.dispatch(setActiveProject({project: null}));
                     this.defaultTaskView = user.allTasksView;
                     this.taskView = user.allTasksView;
                 }
@@ -90,11 +90,11 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         if (event) this.taskView = event;
         if (this.selectedProject && this.selectedProject.taskView !== event && event) {
             const project = Object.assign({}, this.selectedProject, {taskView: event});
-            this.store.dispatch(new UpdateProject({project: {id: project.id, changes: project}}));
+            this.store.dispatch(updateProject({project: {id: project.id, changes: project}}));
         }
         if (!this.selectedProject && this.user && this.user.allTasksView !== event && event) {
             const user = Object.assign({}, this.user, {allTasksView: event});
-            this.store.dispatch(new UpdateUser({user}));
+            this.store.dispatch(updateUser({user}));
         }
     }
 

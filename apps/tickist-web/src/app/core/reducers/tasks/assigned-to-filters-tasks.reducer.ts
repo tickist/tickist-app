@@ -1,5 +1,10 @@
-import {AssignedToFiltersTasksActions, AssignedToFiltersTasksActionTypes} from '../../actions/tasks/assigned-to-filters-tasks.actions';
+import {
+    addNewAssignedToFilter,
+    deleteNonFixedAssignedTo,
+    setCurrentAssignedToFilter
+} from '../../actions/tasks/assigned-to-filters-tasks.actions';
 import {Filter} from '@data/filter';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface AssignedToFiltersTasks {
@@ -13,22 +18,26 @@ export const initialState: AssignedToFiltersTasks = {
     currentFilter: undefined
 };
 
-export function reducer(state = initialState, action: AssignedToFiltersTasksActions): AssignedToFiltersTasks {
-    switch (action.type) {
-        case AssignedToFiltersTasksActionTypes.AddNewAssignedToFilter:
-            return {
-                filters: [
-                    ...state.filters.filter(filter => filter.fixed),
-                    ...action.payload.filters], currentFilter: state.currentFilter
-            };
-        case AssignedToFiltersTasksActionTypes.DeleteNonFixedAssignedTo:
-            return {
-                filters: state.filters.filter(filter => filter.fixed),
-                currentFilter: state.currentFilter.fixed ? state.currentFilter : undefined
-            };
-        case AssignedToFiltersTasksActionTypes.SetCurrentAssingedToFilter:
-            return {filters: state.filters, currentFilter: action.payload.currentFilter};
-        default:
-            return state;
-    }
+const assignedToFiltersTasksReducer = createReducer(
+    initialState,
+    on(addNewAssignedToFilter, (state, props) => {
+        return {
+            filters: [
+                ...state.filters.filter(filter => filter.fixed),
+                ...props.filters], currentFilter: state.currentFilter
+        };
+    }),
+    on(deleteNonFixedAssignedTo, (state, props) => {
+        return {
+            filters: state.filters.filter(filter => filter.fixed),
+            currentFilter: state.currentFilter.fixed ? state.currentFilter : undefined
+        };
+    }),
+    on(setCurrentAssignedToFilter, (state, props) => {
+        return {filters: state.filters, currentFilter: props.currentFilter};
+    }),
+)
+
+export function reducer(state: AssignedToFiltersTasks, action: Action) {
+    return assignedToFiltersTasksReducer(state, action);
 }

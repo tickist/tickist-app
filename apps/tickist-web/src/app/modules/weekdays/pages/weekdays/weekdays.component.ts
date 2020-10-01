@@ -9,7 +9,7 @@ import {User} from '@data/users/models';
 import * as _ from 'lodash';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {map, takeUntil} from 'rxjs/operators';
-import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
+import {updateActiveDate} from '../../../../core/actions/active-date.actions';
 import {Store} from '@ngrx/store';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {IActiveDateElement} from '@data/active-data-element.interface';
@@ -96,7 +96,7 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
             takeUntil(this.ngUnsubscribe)
         ).subscribe((param) => {
             if (param) {
-                this.store.dispatch(new UpdateActiveDate({date: param, state: stateActiveDateElement.weekdays}));
+                this.store.dispatch(updateActiveDate({date: param, state: stateActiveDateElement.weekdays}));
             }
         });
         this.media.media$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((mediaChange: MediaChange) => {

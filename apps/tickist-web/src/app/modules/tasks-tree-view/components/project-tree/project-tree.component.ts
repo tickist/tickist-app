@@ -39,11 +39,11 @@ export class ProjectTreeComponent implements OnInit {
         this.toggleNode.emit(this.node);
     }
 
-    navigateToEditProjectView(projectId: number) {
+    navigateToEditProjectView(projectId: string) {
         this.router.navigate([homeRoutesName.HOME, editProjectSettingsRoutesName.EDIT_PROJECT, projectId]);
     }
 
-    navigateToCreateNewChildProject(projectId: number) {
+    navigateToCreateNewChildProject(projectId: string) {
         this.router.navigate([
             homeRoutesName.HOME,
             editProjectSettingsRoutesName.EDIT_PROJECT,

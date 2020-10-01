@@ -6,7 +6,7 @@ import {Subject} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {updateUser} from '../../../../core/actions/user.actions';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {IActiveDateElement} from '@data/active-data-element.interface';
 
@@ -44,9 +44,8 @@ export class TodayComponent implements OnInit, OnDestroy {
         this.taskView = event;
         if (this.user.defaultTaskViewTodayView !== event) {
             const user = Object.assign({}, this.user, {defaultTaskViewTodayView: event});
-            this.store.dispatch(new UpdateUser({user}));
+            this.store.dispatch(updateUser({user}));
         }
-
     }
 
     trackByFn(index, item): number {

@@ -5,7 +5,7 @@ import {UserService} from '../../../../core/services/user.service';
 import {User} from '@data/users/models';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {updateUser} from '../../../../core/actions/user.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
@@ -41,7 +41,7 @@ export class OverdueComponent implements OnInit, OnDestroy {
         this.taskView = event;
         if (this.user.defaultTaskViewOverdueView !== event) {
             const user = Object.assign({}, this.user, {defaultTaskViewOverdueView: event});
-            this.store.dispatch(new UpdateUser({user}));
+            this.store.dispatch(updateUser({user}));
         }
     }
 

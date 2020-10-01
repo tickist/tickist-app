@@ -9,7 +9,7 @@ import {Router} from '@angular/router';
 import {TasksFiltersService} from './tasks-filters.service';
 import {selectActiveProject, selectActiveProjectsIds, selectAllProjects} from '../selectors/projects.selectors';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {RequestUpdateProject} from '../actions/projects/projects.actions';
+import {requestUpdateProject} from '../actions/projects/projects.actions';
 import {Editor} from '@data/users';
 
 const projectsCollectionName = 'projects';
@@ -31,47 +31,10 @@ export class ProjectService {
         this.selectedProjectsIds$ = this.store.select(selectActiveProjectsIds);
     }
 
-    selectProject(project: Project | null) {
-        // @TODO move to Efect
-
-        // this.store.dispatch(new projectsAction.SelectProject(project));
-        // this.store.dispatch(new tasksAction.DeleteNonFixedAssignedTo({}));
-        if (project) {
-            // project.shareWith.map((user: (SimpleUser | PendingUser)) => {
-            //     if (user.hasOwnProperty('id') && user['id'] !== undefined
-            //     && user['id'] !== parseInt(localStorage.getItem('USER_ID'), 10)) {
-            //         // this.store.dispatch(new tasksAction.AddNewAssignedTo(
-            //         //     new Filter({
-            //         //         'id': user['id'],
-            //         //         'label': 'assignedTo',
-            //         //         'value': (task: Task) => task.owner.id === user['id'],
-            //         //         'name': user.username
-            //         //     })
-            //         // ));
-            //     }
-            // });
-            // this.tasksFiltersService.resetAssignedFilterToAssignedToAll();
-        } else {
-            // this.team.map((user) => {
-            //     this.store.dispatch(new tasksAction.AddNewAssignedTo(
-            //             new Filter({
-            //                 'id': user.id,
-            //                 'label': 'assignedTo',
-            //                 'value': (task: Task) => task.owner.id === user.id,
-            //                 'name': user.username
-            //             })
-            //         )
-            //     );
-            // });
-            this.tasksFiltersService.resetAssignedFilterToAssignedToMe();
-        }
-    }
-
     addUserToProject(project, email) {
         const entry = {email: email, status: InviteUserStatus.Processing};
-        // return Object.assign({}, project, {inviteUserByEmail: [...project.inviteUserByEmail, entry]});
 
-        this.store.dispatch(new RequestUpdateProject(
+        this.store.dispatch(requestUpdateProject(
             {
                 project: {
                     id: project.id,
@@ -83,7 +46,7 @@ export class ProjectService {
     removeUserFormShareWithList(project, deletedUser) {
         const shareWith = project.shareWith.filter(user => user.id !== deletedUser.id);
         const shareWithIds = project.shareWithIds.filter(userId => userId !== deletedUser.id);
-        this.store.dispatch(new RequestUpdateProject(
+        this.store.dispatch(requestUpdateProject(
             {
                 project: {
                     id: project.id,
@@ -94,7 +57,7 @@ export class ProjectService {
 
     deleteUserFromInviteList(project: Project, deletedUser: InviteUser) {
         const inviteUserByEmail = project.inviteUserByEmail.filter(invitedUser => invitedUser.email !== deletedUser.email);
-        this.store.dispatch(new RequestUpdateProject(
+        this.store.dispatch(requestUpdateProject(
             {
                 project: {
                     id: project.id,
@@ -113,18 +76,6 @@ export class ProjectService {
         } as Editor;
         const newProjectWithLastEditor = {...project, lastEditor: editor};
         return newProject.set(JSON.parse(JSON.stringify({...newProjectWithLastEditor, id: newProject.id})));
-
-        // return this.http.post(`${environment['apiUrl']}/project/`, toSnakeCase(project))
-        //     .pipe(map((payload: IProjectApi) => new Project(payload)));
-        // .subscribe((payload: IProjectApi) => {
-        //     this.snackBar.open('Project has been saved successfully', '', {
-        //         duration: 2000,
-        //     });
-        //     const newProject = new Project(payload);
-        //     this.store.dispatch(new projectsAction.CreateProject(newProject));
-        //     this.router.navigate(['/home/projects', newProject.id]);
-        //     this.loadProjects().subscribe(); // we need to update getAllDescendant set.
-        // });
     }
 
     updateProject(project: Project, user: User, withoutSnackBar = false) {

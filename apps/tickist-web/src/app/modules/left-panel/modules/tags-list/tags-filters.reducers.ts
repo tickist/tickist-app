@@ -1,8 +1,6 @@
-
-import {TagsFiltersActions, TagsFiltersActionTypes} from './tags-filters.actions';
+import {addTagsFilters, setCurrentTagsListFilter} from './tags-filters.actions';
 import {Filter} from '@data/filter';
-
-
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface TagsFiltersState {
@@ -14,13 +12,18 @@ export const initialState: TagsFiltersState = {
     filters: [], currentFilter: undefined
 };
 
-export function reducer(state = initialState, action: TagsFiltersActions): TagsFiltersState {
-    switch (action.type) {
-        case TagsFiltersActionTypes.AddTagsFilters:
-            return {filters: action.payload.filters, currentFilter: state.currentFilter};
-        case TagsFiltersActionTypes.SetCurrentTagsListFilter:
-            return {filters: state.filters, currentFilter: action.payload.currentFilter};
-        default:
-            return state;
-    }
+const tagsFiltersReducer = createReducer(
+    initialState,
+    on(addTagsFilters, (state, props) => {
+        return {filters: props.filters, currentFilter: state.currentFilter};
+    }),
+    on(setCurrentTagsListFilter, (state, props) => {
+        return {filters: state.filters, currentFilter: props.currentFilter};
+    })
+)
+
+export function reducer(state: TagsFiltersState, action: Action) {
+    return tagsFiltersReducer(state, action);
 }
+
+

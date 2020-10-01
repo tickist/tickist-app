@@ -1,5 +1,6 @@
-import {FutureTasksFiltersActions, FutureTasksFiltersActionTypes} from '../actions/future-tasks-filters.actions';
+import {addFutureTasksFilters, setCurrentFutureTaskFilter} from '../actions/future-tasks-filters.actions';
 import {Filter} from '@data/filter';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface FutureTasksFiltersState {
@@ -11,13 +12,21 @@ export const initialState: FutureTasksFiltersState = {
     filters: [], currentFilter: undefined
 };
 
-export function reducer(state = initialState, action: FutureTasksFiltersActions): FutureTasksFiltersState {
-    switch (action.type) {
-        case FutureTasksFiltersActionTypes.AddFutureTasksFilters:
-            return {filters: action.payload.filters, currentFilter: state.currentFilter};
-        case FutureTasksFiltersActionTypes.SetCurrentFutureTaskFilter:
-            return {filters: state.filters, currentFilter: action.payload.currentFilter};
-        default:
-            return state;
-    }
+const futureTasksFiltersReducer = createReducer(
+    initialState,
+    on(addFutureTasksFilters, (state, props) => {
+        return {
+            filters: props.filters, currentFilter: state.currentFilter
+        };
+    }),
+    on(setCurrentFutureTaskFilter, (state, props) => {
+        return {
+            filters: state.filters, currentFilter: props.currentFilter
+        };
+    })
+)
+
+export function reducer(state: FutureTasksFiltersState, action: Action) {
+    return futureTasksFiltersReducer(state, action);
 }
+

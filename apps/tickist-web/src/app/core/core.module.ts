@@ -21,7 +21,6 @@ import {AuthEffects} from './effects/auth.effects';
 import {NavBarAuthPageComponent} from './header/nav-bar-auth-page/nav-bar-auth-page.component';
 import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
 import {ProjectsEffects} from './effects/projects.effects';
-import {ActiveProjectsIdsEffects} from './effects/active-projects-ids.effects';
 import {ActiveProjectEffects} from './effects/active-project.effects';
 import {HomeComponent} from './layouts/home';
 import {AddTaskComponent} from './footer/add-task/add-task.component';
@@ -33,14 +32,12 @@ import * as fromActiveProjectsId from './reducers/active-projects-ids.reducer';
 import * as fromSortTasks from './reducers/tasks/sort-tasks.reducer';
 import * as fromActiveDate from './reducers/active-date.reducer';
 import * as fromDetectApiError from './reducers/detect-api-error.reducer';
-import * as fromOfflineMode from './reducers/offline-mode.reducer';
 import * as fromProgressBar from './reducers/progress-bar.reducer';
 import * as fromFilterTasks from './reducers/tasks/main-filters-tasks.reducer';
 import * as fromAssignedToFiltersTasks from './reducers/tasks/assigned-to-filters-tasks.reducer';
 import * as fromEstimateTimeFiltersTasks from './reducers/tasks/estimate-time-filters-tasks.reducer';
 import * as fromTagsFiltersTasks from './reducers/tasks/tags-filters-tasks.reducer';
 import * as fromSearchTasks from './reducers/tasks/search-tasks.reducer';
-import {AssignedToFiltersTasksEffects} from './effects/assigned-to-filters-tasks.effects';
 import {TasksFiltersEffects} from './effects/tasks-filters.effects';
 import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
@@ -70,8 +67,7 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         StoreModule.forFeature('activeDate', fromActiveDate.reducer),
         StoreModule.forFeature('progressBar', fromProgressBar.reducer),
         StoreModule.forFeature('detectApiError', fromDetectApiError.reducer),
-        StoreModule.forFeature('offlineMode', fromOfflineMode.reducer),
-        StoreModule.forFeature('auth', from.authReducer),
+        StoreModule.forFeature('auth', from.reducer),
         StoreModule.forFeature('mainFiltersTasks', fromFilterTasks.reducer),
         StoreModule.forFeature('assignedToFiltersTasks', fromAssignedToFiltersTasks.reducer),
         StoreModule.forFeature('estimateTimeFiltersTasks', fromEstimateTimeFiltersTasks.reducer),
@@ -80,11 +76,11 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         StoreModule.forFeature('addTaskButtonVisibility', fromAddTaskButtonVisibility.reducer),
         EffectsModule.forFeature([TaskEffects]),
         EffectsModule.forFeature([TaskEffects]),
-        EffectsModule.forFeature([ProjectsEffects, ActiveProjectsIdsEffects, ActiveProjectEffects]),
+        EffectsModule.forFeature([ProjectsEffects, ActiveProjectEffects]),
         EffectsModule.forFeature([AuthEffects]),
         EffectsModule.forFeature([TagsEffects]),
         EffectsModule.forFeature([UserEffects]),
-        EffectsModule.forFeature([AssignedToFiltersTasksEffects, TasksFiltersEffects]),
+        EffectsModule.forFeature([TasksFiltersEffects]),
         FontAwesomeModule,
         AngularFireAuthModule,
         AngularFireStorageModule,

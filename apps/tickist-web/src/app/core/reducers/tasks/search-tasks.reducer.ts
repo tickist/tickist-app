@@ -1,5 +1,5 @@
-import {SearchTasksActions, SearchTasksActionTypes} from '../../actions/tasks/search-tasks.actions';
-
+import {setCurrrentSearchTasksFilter} from '../../actions/tasks/search-tasks.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 export interface SearchTaskState {
     searchText: string;
@@ -9,11 +9,17 @@ export const initialState: SearchTaskState = {
     searchText: ''
 };
 
-export function reducer(state = initialState, action: SearchTasksActions): SearchTaskState {
-    switch (action.type) {
-        case SearchTasksActionTypes.SetCurrrentSearchTasksFilter:
-            return {searchText: action.payload.searchText};
-        default:
-            return state;
-    }
+const searchTasksReducer = createReducer(
+    initialState,
+    on(setCurrrentSearchTasksFilter, (state, props) => {
+        return {
+            searchText: props.searchText
+        };
+    })
+)
+
+export function reducer(state: SearchTaskState, action: Action) {
+    return searchTasksReducer(state, action);
 }
+
+

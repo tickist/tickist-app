@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import {AppStore} from '../../store';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Store} from '@ngrx/store';
 import {selectCurrentMainFilter, selectMainFilters} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
-import {SetCurrentMainFilter} from '../../core/actions/tasks/main-filters-tasks.actions';
 import {takeUntil} from 'rxjs/operators';
 import {Filter} from '@data/filter';
+import {setCurrentMainFilter} from "../../core/actions/tasks/main-filters-tasks.actions";
 
 @Component({
     selector: 'tickist-tasks-filter-dialog',
@@ -38,7 +37,7 @@ export class TasksFilterDialogComponent implements OnInit, OnDestroy {
     changeFilter($event) {
         if (this.filters.length > 0) {
             const newCurrentFilter = this.filters.find(filter => filter.id === $event.value);
-            this.store.dispatch(new SetCurrentMainFilter({currentFilter: newCurrentFilter}));
+            this.store.dispatch(setCurrentMainFilter({currentFilter: newCurrentFilter}));
             this.dialogRef.close();
         }
     }

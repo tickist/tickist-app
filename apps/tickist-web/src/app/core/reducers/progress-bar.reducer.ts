@@ -1,4 +1,5 @@
-import {ProgressBarActions, ProgressBarActionTypes} from '../actions/progress-bar.actions';
+import {switchOffProgressBar, switchOnProgressBar} from '../actions/progress-bar.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 export interface ProgressBarState {
     progressBar: {
@@ -12,14 +13,20 @@ export const progressBarInitialState: ProgressBarState = {
     }
 };
 
+const progressBarReducer = createReducer(
+    progressBarInitialState,
+    on(switchOffProgressBar, (state, props) => {
+        return {
+            progressBar: {isEnabled: false}
+        };
+    }),
+    on(switchOnProgressBar, (state, props) => {
+        return {
+            progressBar: {isEnabled: true}
+        };
+    })
+)
 
-export function reducer(state: ProgressBarState = progressBarInitialState, action: ProgressBarActions) {
-    switch (action.type) {
-        case ProgressBarActionTypes.SWITCH_OFF_PROGRESS_BAR:
-            return {progressBar: {isEnabled: false}};
-        case ProgressBarActionTypes.SWITCH_ON_PROGRESS_BAR:
-            return {progressBar: {isEnabled: true}};
-        default:
-            return state;
-    }
+export function reducer(state: ProgressBarState, action: Action) {
+    return progressBarReducer(state, action);
 }

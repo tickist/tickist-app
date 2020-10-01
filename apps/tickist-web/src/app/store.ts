@@ -1,7 +1,8 @@
 import {ActionReducerMap, MetaReducer} from '@ngrx/store';
-import {leftSidenavVisibility, addTaskComponentVisibility} from './reducers/configuration';
 import {environment} from '../environments/environment';
-
+import createNgrxMiddleware from 'logrocket-ngrx';
+import LogRocket from 'logrocket';
+import {IActiveDateElement} from '@data/active-data-element.interface';
 
 
 export interface AppStore {
@@ -40,14 +41,11 @@ export interface AppStore {
 // const developmentReducer: ActionReducer<AppStore> = compose(storeFreeze, combineReducers)(reducers);
 // const productionReducer: ActionReducer<AppStore> = combineReducers(reducers);
 
-export const reducers: ActionReducerMap<any> = {
-    addTaskComponentVisibility: addTaskComponentVisibility,
-    leftSidenavVisibility: leftSidenavVisibility
-};
+// export const reducers: ActionReducerMap<any> = {
+//     addTaskComponentVisibility: addTaskComponentVisibility,
+//     leftSidenavVisibility: leftSidenavVisibility
+// };
 
-import createNgrxMiddleware from 'logrocket-ngrx';
-import LogRocket from 'logrocket';
-import {IActiveDateElement} from '@data/active-data-element.interface';
 
 
 const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});

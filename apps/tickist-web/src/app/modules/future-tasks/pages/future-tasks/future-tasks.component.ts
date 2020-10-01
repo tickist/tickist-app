@@ -8,12 +8,12 @@ import {Task} from '@data/tasks/models/tasks';
 import {User} from '@data/users/models';
 import {FutureTasksFiltersService} from '../../core/services/future-tasks-filters.service';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
-import {UpdateUser} from '../../../../core/actions/user.actions';
+import {updateUser} from '../../../../core/actions/user.actions';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectFutureTasksList} from '../../core/selectors/future-tasks.selectors';
-import {UpdateActiveDate} from '../../../../core/actions/active-date.actions';
+import {updateActiveDate} from '../../../../core/actions/active-date.actions';
 import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
 import {IActiveDateElement} from '@data/active-data-element.interface';
 import {Filter} from '@data/filter';
@@ -55,7 +55,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe((param) => {
-                this.store.dispatch(new UpdateActiveDate({date: param, state: stateActiveDateElement.future}));
+                this.store.dispatch(updateActiveDate({date: param, state: stateActiveDateElement.future}));
             });
 
         this.media.media$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((mediaChange: MediaChange) => {
@@ -83,7 +83,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         this.taskView = event;
         if (this.user && this.user.defaultTaskViewFutureView !== event) {
             const user = Object.assign({}, this.user, {defaultTaskViewTodayView: event});
-            this.store.dispatch(new UpdateUser({user}));
+            this.store.dispatch(updateUser({user}));
         }
 
     }

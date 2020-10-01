@@ -1,4 +1,5 @@
-import {AuthActions, AuthActionTypes, Login} from '../actions/auth.actions';
+import {fetchedLoginUser, login, logout} from '../actions/auth.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface AuthState {
@@ -11,26 +12,28 @@ export const initialState: AuthState = {
     uid: undefined
 };
 
-export function authReducer(state = initialState, action: AuthActions): AuthState {
-    switch (action.type) {
-        case AuthActionTypes.LoginAction:
-            return {
-                loggedIn: true,
-                uid: ( <Login> action).payload.uid
-            };
-        case AuthActionTypes.FetchedLoginUser:
-            return {
-                loggedIn: true,
-                ...state
-            };
+const authReducer = createReducer(
+    initialState,
+    on(login, (state, props) => {
+        return {
+            loggedIn: true,
+            uid: props.uid
+        }
+    }),
+    on(fetchedLoginUser, (state, props) => {
+        return {
+            loggedIn: true,
+            ...state
+        }
+    }),
+    on(logout, () => {
+        return {
+            loggedIn: false,
+            uid: undefined
+        }
+    }),
+)
 
-        case AuthActionTypes.LogoutAction:
-            return {
-                loggedIn: false,
-                uid: undefined
-            };
-
-        default:
-            return state;
-    }
+export function reducer(state: AuthState, action: Action) {
+    return authReducer(state, action);
 }

@@ -1,13 +1,11 @@
-import { MatDialogRef } from '@angular/material/dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Component, OnDestroy} from '@angular/core';
-import {ProjectsFiltersService} from '../../projects-filters.service';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
-import {AppStore} from '../../../../../../store';
 import {Store} from '@ngrx/store';
 import {selectAllProjectsFilters, selectCurrentProjectFilter} from '../../projects-filters.selectors';
-import {SetCurrentProjectFilter} from '../../projects-filters.actions';
 import {Filter} from '@data/filter';
+import {setCurrentProjectFilter} from "../../projects-filters.actions";
 
 
 @Component({
@@ -49,7 +47,7 @@ export class FilterProjectDialogComponent implements OnDestroy {
     changeFilter($event) {
         if (this.filters.length > 0) {
             const newCurrentFilter = this.filters.find(filter => filter.id === $event.value);
-            this.store.dispatch(new SetCurrentProjectFilter({currentFilter: newCurrentFilter}));
+            this.store.dispatch(setCurrentProjectFilter({currentFilter: newCurrentFilter}));
             this.dialogRef.close();
 
         }

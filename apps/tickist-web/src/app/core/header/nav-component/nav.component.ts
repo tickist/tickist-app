@@ -9,14 +9,13 @@ import {Observable, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../selectors/user.selectors';
-import {AppStore} from '../../../store';
-import {SetActiveProject} from '../../actions/projects/active-project.actions';
 import {selectProgressBarIsEnabled} from '../../../reducers/core.selectors';
 import {editUserSettingsRoutesName} from '../../../modules/edit-user-settings/routes-names';
-import {Logout} from '../../actions/auth.actions';
+import {logout} from '../../actions/auth.actions';
 import {teamRoutesName} from '../../../modules/team/routes-names';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {dashboardRoutesName} from "../../../modules/dashboard/routes.names";
+import {setActiveProject} from "../../actions/projects/active-project.actions";
 
 
 @Component({
@@ -102,8 +101,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             navigate.push({outlets: {'primary': primaryArgs, 'leftSideNav': [leftSideNavPath]}});
         }
-        this.store.dispatch(new SetActiveProject({project: undefined}));
-        // this.projectService.selectProject(null);
+        this.store.dispatch(setActiveProject({project: undefined}));
         this.router.navigate(navigate);
         if (this.media.isActive('sm') || this.media.isActive('xs')) {
             this.configurationService.changeOpenStateLeftSidenavVisibility('close');
@@ -123,7 +121,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     logout() {
-        this.store.dispatch(new Logout());
+        this.store.dispatch(logout());
     }
 
     ngOnDestroy() {

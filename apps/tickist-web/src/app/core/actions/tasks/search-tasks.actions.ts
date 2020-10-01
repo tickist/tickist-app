@@ -1,13 +1,9 @@
-import {Action} from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 
-export enum SearchTasksActionTypes {
-    SetCurrrentSearchTasksFilter = '[SearchTasks] Set current search tasks filter'
-}
 
-export class SetCurrrentSearchTasksFilter implements Action {
-    readonly type = SearchTasksActionTypes.SetCurrrentSearchTasksFilter;
+export const setCurrrentSearchTasksFilter= createAction(
+    '[SearchTasks] Set current search tasks filter',
+    props<{searchText: string}>()
+)
 
-    constructor(public payload: {searchText: string}) {}
-}
 
-export type SearchTasksActions = SetCurrrentSearchTasksFilter;

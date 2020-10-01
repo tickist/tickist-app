@@ -1,5 +1,9 @@
-import {EstimateTimeFiltersTasksActions, EstimateTimeFiltersTasksActionTypes} from '../../actions/tasks/estimate-time-filters-tasks.actions';
+import {
+    addEstimateTimeFiltersTasks,
+    setCurrentEstimateTimeFiltersTasks
+} from '../../actions/tasks/estimate-time-filters-tasks.actions';
 import {Filter} from '@data/filter';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface EstimateTimeFiltersState {
@@ -16,23 +20,27 @@ export const initialState: EstimateTimeFiltersState = {
     currentFilter_gt: undefined
 };
 
-export function reducer(state = initialState, action: EstimateTimeFiltersTasksActions): EstimateTimeFiltersState {
-    switch (action.type) {
-        case EstimateTimeFiltersTasksActionTypes.AddEstimateTimeFiltersTasks:
-            return {
-                filters_lt: action.payload.filters_lt,
-                filters_gt: action.payload.filters_lt,
-                currentFilter_lt: state.currentFilter_lt,
-                currentFilter_gt: state.currentFilter_gt
-            };
-        case EstimateTimeFiltersTasksActionTypes.SetCurrentEstimateTimeFiltersTasks:
-            return {
-                filters_lt: state.filters_lt,
-                filters_gt: state.filters_lt,
-                currentFilter_lt: action.payload.currentFilter_lt,
-                currentFilter_gt: action.payload.currentFilter_gt
-            };
-        default:
-            return state;
-    }
+const estimateTimeFiltersReducer = createReducer(
+    initialState,
+    on(addEstimateTimeFiltersTasks, (state, props) => {
+        return {
+            filters_lt: props.filters_lt,
+            filters_gt: props.filters_lt,
+            currentFilter_lt: state.currentFilter_lt,
+            currentFilter_gt: state.currentFilter_gt
+        }
+    }),
+    on(setCurrentEstimateTimeFiltersTasks, (state, props) => {
+        return {
+            filters_lt: state.filters_lt,
+            filters_gt: state.filters_lt,
+            currentFilter_lt: props.currentFilter_lt,
+            currentFilter_gt: props.currentFilter_gt
+        }
+    })
+)
+
+export function reducer(state: EstimateTimeFiltersState, action: Action) {
+    return estimateTimeFiltersReducer(state, action);
 }
+

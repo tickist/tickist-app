@@ -1,24 +1,15 @@
-import {Action} from '@ngrx/store';
-export const UPDATE_LEFT_SIDENAV_VISIBILITY = 'UPDATE_LEFT_SIDENAV_VISIBILITY';
-export const UPDATE_RIGHT_SIDENAV_VISIBILITY = 'UPDATE_RIGHT_SIDENAV_VISIBILITY';
-export const UPDATE_ADD_TASK_VISIBILITY = 'UPDATE_ADD_TASK_VISIBILITY';
+import {createAction, props} from '@ngrx/store';
 
 
+export const updateLeftSidenavVisibility= createAction(
+    '[Configuration] UPDATE_LEFT_SIDENAV_VISIBILITY',
+    props<Partial<{ 'position': string,
+        'mode': string,
+        'open': boolean}>>()
+)
 
-export class UpdateLeftSidenavVisibility implements Action {
-    readonly type = UPDATE_LEFT_SIDENAV_VISIBILITY;
+export const updateAddTaskComponentVisibility= createAction(
+    '[Configuration] UPDATE_ADD_TASK_VISIBILITY',
+    props<{visible: boolean}>()
+)
 
-    constructor(public payload: any) {
-    }
-}
-
-export class UpdateAddTaskComponentVisibility implements Action {
-    readonly type = UPDATE_ADD_TASK_VISIBILITY;
-
-    constructor(public payload: any) {
-    }
-}
-
-
-export type Actions = UpdateLeftSidenavVisibility
-    | UpdateAddTaskComponentVisibility;

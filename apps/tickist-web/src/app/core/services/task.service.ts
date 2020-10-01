@@ -23,9 +23,6 @@ export class TaskService {
         this.tasks$ = this.store.select(selectAllTasks);
     }
 
-    // saveTask(task: Task) {
-    //     (task.id) ? this.updateTask(task) : this.createTask(task);
-    // }
 
     postponeToToday() {
         // this.http.post<Task[]>(`${environment['apiUrl']}/tasks/move_tasks_for_today/`, {}).subscribe((tasks: Task[]) => {

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {tap} from 'rxjs/operators';
 import {RouterNavigatedAction, ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {environment} from '../../../environments/environment';
@@ -8,8 +8,7 @@ import {environment} from '../../../environments/environment';
 @Injectable()
 export class GaEffects {
 
-    @Effect({dispatch: false})
-    ga$ = this.actions$
+    ga$ = createEffect(() => this.actions$
         .pipe(
             ofType<RouterNavigatedAction>(ROUTER_NAVIGATED),
             tap((action) => {
@@ -18,7 +17,7 @@ export class GaEffects {
                     ga('send', 'pageview');
                 }
             })
-        );
+        ), {dispatch: false});
 
     constructor(private actions$: Actions) {
     }

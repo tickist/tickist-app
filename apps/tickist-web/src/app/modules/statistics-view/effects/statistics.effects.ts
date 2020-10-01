@@ -13,7 +13,7 @@ import {
 import {StatisticsService} from '../../../core/services/statistics.service';
 import {concatMap, concatMapTo, map, mergeMap} from 'rxjs/operators';
 import {defer} from 'rxjs';
-import {AddUser, UserActionTypes} from '../../../core/actions/user.actions';
+import {addUser} from '../../../core/actions/user.actions';
 import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../../store';
@@ -56,7 +56,7 @@ export class StatisticsEffects {
     @Effect()
     loadAllStatistics = this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMapTo([
                 new LoadChartStatistics(),
                 new LoadDailyStatistics(),

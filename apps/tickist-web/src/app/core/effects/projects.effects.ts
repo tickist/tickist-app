@@ -1,33 +1,31 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {concatMap, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
 import {Update} from '@ngrx/entity';
 import {
-    AddProjects,
-    DeleteProject,
-    ProjectActionTypes,
-    QueryProjects,
-    RequestCreateProject, RequestDeleteProject,
-    RequestUpdateProject,
-    UpdateProject
+    addProjects,
+    deleteProject,
+    queryProjects,
+    requestCreateProject,
+    requestDeleteProject,
+    requestUpdateProject,
+    updateProject
 } from '../actions/projects/projects.actions';
 import {ProjectService} from '../services/project.service';
 import {Project} from '@data/projects';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 
 
 @Injectable()
 export class ProjectsEffects {
 
-    @Effect()
-    queryTasks$ = this.actions$
+    queryTasks$ = createEffect(() => this.actions$
         .pipe(
-            ofType<QueryProjects>(ProjectActionTypes.QUERY_PROJECTS),
+            ofType(queryProjects),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([, user]) => {
                 return this.db.collection(
@@ -62,43 +60,40 @@ export class ProjectsEffects {
                 }));
                 const returnsActions = [];
                 if (addedProjects.length > 0) {
-                    returnsActions.push(new AddProjects({projects: addedProjects}));
+                    returnsActions.push(addProjects({projects: addedProjects}));
                 }
                 if (updatedProject) {
-                    returnsActions.push(new UpdateProject({project: updatedProject}));
+                    returnsActions.push(updateProject({project: updatedProject}));
                 }
                 if (deletedProjectId) {
-                    returnsActions.push(new DeleteProject({projectId: deletedProjectId}));
+                    returnsActions.push(deleteProject({projectId: deletedProjectId}));
                 }
                 return returnsActions;
             })
-        );
+        ));
 
-    @Effect({dispatch: false})
-    createProject$ = this.actions$
+    createProject$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestCreateProject>(ProjectActionTypes.REQUEST_CREATE_PROJECT),
+            ofType(requestCreateProject),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            mergeMap(([action, user]) => this.projectService.createProject(action.payload.project, user))
-        );
+            mergeMap(([action, user]) => this.projectService.createProject(action.project, user))
+        ), {dispatch: false});
 
-    @Effect({dispatch: false})
-    updateProject$ = this.actions$
+    updateProject$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestUpdateProject>(ProjectActionTypes.REQUEST_UPDATE_PROJECT),
+            ofType(requestUpdateProject),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            mergeMap(([action, user]) => this.projectService.updateProject(<Project>action.payload.project.changes, user))
-        );
+            mergeMap(([action, user]) => this.projectService.updateProject(<Project>action.project.changes, user))
+        ), {dispatch: false});
 
-    @Effect({dispatch: false})
-    deleteProject$ = this.actions$
+    deleteProject$ =createEffect(() => this.actions$
         .pipe(
-            ofType<RequestDeleteProject>(ProjectActionTypes.REQUEST_DELETE_PROJECT),
-            mergeMap(action => this.projectService.deleteProject(action.payload.projectId)),
+            ofType(requestDeleteProject),
+            mergeMap(action => this.projectService.deleteProject(action.projectId)),
             map(() => this.snackBar.open('Project has been deleted successfully', '', {
                 duration: 2000,
             }))
-        );
+        ), {dispatch: false});
 
     constructor(private actions$: Actions, private projectService: ProjectService, private db: AngularFirestore,
                 private store: Store, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {

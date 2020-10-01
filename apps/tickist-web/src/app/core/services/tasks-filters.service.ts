@@ -1,13 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
 import {User} from '@data/users/models';
-import * as _ from 'lodash';
-import * as tasksAction from '../../reducers/actions/tasks';
-import {Task} from '@data/tasks/models/tasks';
-import {Tag} from '@data/tags/models/tags';
 import {SortBy} from '@data/tasks/models/sortBy';
 import {Filter} from '@data/filter';
+import { updateCurrentFilter } from '../../reducers/actions/tasks';
 
 
 @Injectable({
@@ -196,7 +192,7 @@ export class TasksFiltersService {
 
 
     updateCurrentFilter(currentFilter) {
-        this.store.dispatch(new tasksAction.UpdateCurrentFilter(currentFilter));
+        this.store.dispatch(updateCurrentFilter({filter: currentFilter}));
     }
 
     resetAssignedFilterToAssignedToMe() {

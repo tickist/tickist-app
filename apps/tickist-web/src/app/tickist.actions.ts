@@ -1,16 +1,6 @@
-import {Action} from '@ngrx/store';
+import {createAction} from '@ngrx/store';
 
+export const resetStore = createAction(
+    '[Tickist] Clear All data from store'
+)
 
-export enum TickistActionTypes {
-    ResetStore = '[Tickist] Clear All data from store',
-
-}
-
-export class ResetStore implements Action {
-
-    readonly type = TickistActionTypes.ResetStore;
-
-}
-
-
-export type TickistActions = ResetStore;

@@ -1,28 +1,18 @@
-import {Action} from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 import {Filter} from '@data/filter';
 
 
+export const addNewAssignedToFilter = createAction(
+    '[AssignedToFiltersTasks] Add new assigned to filters',
+    props<{filters: Filter[]}>()
+)
 
-export enum AssignedToFiltersTasksActionTypes {
-    AddNewAssignedToFilter = '[AssignedToFiltersTasks] Add new assigned to filters',
-    SetCurrentAssingedToFilter = '[AssignedToFiltersTasks] Set current assigned to filters',
-    DeleteNonFixedAssignedTo = '[AssignedToFiltersTasks] Delete non fixed assigned to'
-}
+export const setCurrentAssignedToFilter = createAction(
+    '[AssignedToFiltersTasks] Set current assigned to filters',
+    props<{currentFilter: Filter}>()
 
-export class AddNewAssignedToFilter implements Action {
-    readonly type = AssignedToFiltersTasksActionTypes.AddNewAssignedToFilter;
+)
 
-    constructor(public payload: {filters: Filter[]}) {}
-}
-
-export class SetCurrentAssignedToFilter implements Action {
-    readonly type = AssignedToFiltersTasksActionTypes.SetCurrentAssingedToFilter;
-    constructor(public payload: {currentFilter: Filter}) {}
-
-}
-
-export class DeleteNonFixedAssignedTo implements Action {
-    readonly type = AssignedToFiltersTasksActionTypes.DeleteNonFixedAssignedTo;
-}
-
-export type AssignedToFiltersTasksActions = AddNewAssignedToFilter | SetCurrentAssignedToFilter | DeleteNonFixedAssignedTo;
+export const deleteNonFixedAssignedTo = createAction(
+    '[AssignedToFiltersTasks] Delete non fixed assigned to'
+)

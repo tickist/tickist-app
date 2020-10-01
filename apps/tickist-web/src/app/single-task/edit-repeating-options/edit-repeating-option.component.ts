@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import {Task} from '@data/tasks/models/tasks';
-import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
+import {requestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {AppStore} from '../../store';
 import {Store} from '@ngrx/store';
 
@@ -65,7 +65,7 @@ export class EditRepeatingOptionComponent implements OnInit {
         } else if (source === 'fromRepeating') {
             task = Object.assign({}, this.task, {fromRepeating: $event.value});
         }
-        this.store.dispatch(new RequestUpdateTask({task: {id: task.id, changes: task}}));
+        this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
         // if (this.repeatDefault !== 99) {
         //     this.task.repeat = this.repeatDefault;
         //     this.task.repeatDelta = 1;

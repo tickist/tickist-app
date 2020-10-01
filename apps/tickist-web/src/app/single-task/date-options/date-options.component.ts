@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, ViewChild} from '@angular/core';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import {Task} from '@data/tasks/models/tasks';
-import {RequestUpdateTask} from '../../core/actions/tasks/task.actions';
+import {requestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 
@@ -48,7 +48,7 @@ export class DateOptionsComponent implements OnInit {
             } else if (source === 'finishTime') {
 
             }
-            this.store.dispatch(new RequestUpdateTask({
+            this.store.dispatch(requestUpdateTask({
                 task: {
                     id: this.task.id,
                     changes: Object.assign({}, this.task, {

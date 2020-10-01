@@ -3,13 +3,13 @@ import {Tag} from '@data/tags/models/tags';
 import {MatDialogRef} from '@angular/material/dialog';
 import {TagService} from '../../core/services/tag.service';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
-import {SetCurrentTagsFilters} from '../../core/actions/tasks/tags-filters-tasks.actions';
 import {Store} from '@ngrx/store';
 import {selectCurrentTagsFilter} from '../../core/selectors/filters-tasks.selectors';
 import {Observable, Subject} from 'rxjs';
 import {selectAllTags} from '../../core/selectors/tags.selectors';
 import {Filter} from '@data/filter';
 import {takeUntil} from 'rxjs/operators';
+import {setCurrentTagsFilters} from "../../core/actions/tasks/tags-filters-tasks.actions";
 
 @Component({
     selector: 'tickist-tags-filter-dialog',
@@ -50,7 +50,7 @@ export class TagsFilterDialogComponent implements OnInit, OnDestroy {
             value = [tagId];
         }
         const newFilter = new Filter({'id': 1, 'label': 'tags', 'value': value});
-        this.store.dispatch(new SetCurrentTagsFilters({currentTagsFilter: newFilter}));
+        this.store.dispatch(setCurrentTagsFilters({currentTagsFilter: newFilter}));
         this.dialogRef.close();
     }
 

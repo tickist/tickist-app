@@ -1,82 +1,49 @@
-import {Action} from '@ngrx/store';
+import {Action, createAction, props} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
 import {Tag} from '@data/tags/models/tags';
 
-export enum TagActionTypes {
-    QUERY_TAGS = '[TAGS] QUERY TAGS',
-    REQUEST_ALL_TAGS = '[] REQUEST_ALL_TAGS',
-    REQUEST_CREATE_TAG = '[] REQUEST_CREATE_TAG',
-    REQUEST_UPDATE_TAG= '[] REQUEST_UPDATE TAG',
-    REQUEST_DELETE_TAG = '[] REQUEST_DELETE_TAG',
-    ADD_TAGS = '[] ADD_TAGS',
-    CREATE_TAG = '[] CREATE_TAG',
-    UPDATE_TAG = '[] UPDATE_TAG',
-    DELETE_TAG = '[] DELETE_TAG'
-}
 
-export class QueryTags implements Action {
-    readonly type = TagActionTypes.QUERY_TAGS;
-}
+export const queryTags= createAction(
+    '[TAGS] QUERY TAGS'
+)
 
-export class RequestsAllTags implements Action {
-    readonly type = TagActionTypes.REQUEST_ALL_TAGS;
-}
+export const requestsAllTags = createAction(
+    '[Tags] REQUEST_ALL_TAGS'
+)
 
-export class RequestCreateTag implements Action {
-    readonly type = TagActionTypes.REQUEST_CREATE_TAG;
+export const requestCreateTag = createAction(
+    '[Tags] REQUEST_CREATE_TAG',
+    props<{ tag: Tag }>()
+)
 
-    constructor(public payload: { tag: Tag }) {
-    }
-}
+export const addTags = createAction(
+    '[Tags] ADD_TAGS',
+    props<{ tags: Tag[] }>()
+)
 
-export class AddTags implements Action {
-    readonly type = TagActionTypes.ADD_TAGS;
+export const createTag = createAction(
+    '[Tags] CREATE_TAG',
+    props<{ tag: Tag }>()
 
-    constructor(public payload: { tags: Tag[] }) {
-    }
-}
+)
 
-export class CreateTag implements Action {
-    readonly type = TagActionTypes.CREATE_TAG;
+export const updateTag = createAction(
+    '[Tags] UPDATE_TAG',
+    props<{ tag: Update<Tag>}>()
+)
 
-    constructor(public payload: { tag: Tag }) {
-    }
-}
+export const requestUpdateTag = createAction(
+    '[Tags] REQUEST_UPDATE TAG',
+    props<{ tag: Update<Tag> }>()
+)
 
-export class UpdateTag implements Action {
-    readonly type = TagActionTypes.UPDATE_TAG;
+export const deleteTag = createAction(
+    '[Tags] DELETE_TAG',
+    props<{ tagId: string }>()
+)
 
-    constructor(public payload: { tag: Update<Tag> }) {
-    }
-}
+export const requestDeleteTag = createAction(
+    '[Tags] REQUEST_DELETE_TAG',
+    props<{ tagId: string }>()
+)
 
-export class RequestUpdateTag implements Action {
-    readonly type = TagActionTypes.REQUEST_UPDATE_TAG;
-
-    constructor(public payload: { tag: Update<Tag> }) {
-    }
-}
-
-export class DeleteTag implements Action {
-    readonly type = TagActionTypes.DELETE_TAG;
-
-    constructor(public payload: { tagId: string }) {
-    }
-}
-
-export class RequestDeleteTag implements Action {
-    readonly type = TagActionTypes.REQUEST_DELETE_TAG;
-
-    constructor(public payload: { tagId: string }) {
-    }
-}
-
-export type TagActions = AddTags
-    | QueryTags
-    | DeleteTag
-    | UpdateTag
-    | CreateTag
-    | RequestsAllTags
-    | RequestCreateTag
-    | RequestUpdateTag
-    | RequestDeleteTag;

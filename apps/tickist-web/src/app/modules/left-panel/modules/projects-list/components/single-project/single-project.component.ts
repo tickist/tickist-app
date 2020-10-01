@@ -15,10 +15,6 @@ import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {User} from '@data/users/models';
-import {
-    AddNewActiveProjectId,
-    DeleteActiveProjectId
-} from '../../../../../../core/actions/projects/active-projects-ids.actions';
 import {Store} from '@ngrx/store';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -30,12 +26,16 @@ import {
 } from '../../../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
 import {
-    RequestDeleteProject,
-    RequestUpdateProject,
-    UpdateProject
+    requestDeleteProject,
+    requestUpdateProject,
+    updateProject
 } from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
 import {ProjectLeftPanel} from '../../models/project-list';
+import {
+    addNewActiveProjectId,
+    deleteActiveProjectId
+} from "../../../../../../core/actions/projects/active-projects-ids.actions";
 
 
 @Component({
@@ -61,7 +61,9 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     user: User;
     availableProjectTypes = AVAILABLE_PROJECT_TYPES
     anotherProjectTypes: ProjectType[];
-
+    homeRoutesName = '/' + homeRoutesName.HOME;
+    editProjectSettingsRoutesName = editProjectSettingsRoutesName.EDIT_PROJECT
+    canHaveChildProjects: boolean;
 
     constructor(private projectService: ProjectService, protected router: Router, public dialog: MatDialog,
                 protected configurationService: ConfigurationService, protected media: MediaObserver,
@@ -71,6 +73,8 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.anotherProjectTypes = this.availableProjectTypes.filter(projectType => projectType !== this.project.projectType)
         this.deleteOrLeave = this.project.shareWith.length > 1 ? 'Leave' : 'Delete';
+        this.canHaveChildProjects = this.project.level < 2;
+        console.log(this.project)
         this.store.select(selectLoggedInUser)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(user => {
@@ -144,14 +148,14 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
 
     changeId() {
         if (this.isActive) {
-            this.store.dispatch(new AddNewActiveProjectId({projectId: this.project.id}));
+            this.store.dispatch(addNewActiveProjectId({projectId: this.project.id}));
         } else {
-            this.store.dispatch(new DeleteActiveProjectId({projectId: this.project.id}));
+            this.store.dispatch(deleteActiveProjectId({projectId: this.project.id}));
         }
     }
 
     convertTo(projectType) {
-        this.store.dispatch(new RequestUpdateProject({
+        this.store.dispatch(requestUpdateProject({
             project: {
                 id: this.project.id,
                 changes: Object.assign({}, this.project, {projectType})
@@ -182,7 +186,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         dialogRef.componentInstance.setContent(content);
         dialogRef.afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
             if (result) {
-                this.store.dispatch(new RequestDeleteProject({projectId: this.project.id}));
+                this.store.dispatch(requestDeleteProject({projectId: this.project.id}));
                 this.router.navigate(['home', tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, this.user.inboxPk]);
             }
         });

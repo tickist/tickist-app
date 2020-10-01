@@ -21,11 +21,10 @@ import {map, startWith, takeUntil} from 'rxjs/operators';
 import {Step} from '@data/tasks/models/steps';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
 import {Store} from '@ngrx/store';
-import {DeleteTask, RequestCreateTask, RequestUpdateTask} from '../../../../core/actions/tasks/task.actions';
+import {deleteTask, requestCreateTask, requestUpdateTask} from '../../../../core/actions/tasks/task.actions';
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
-import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {ITaskUser, TaskUser} from '@data/tasks/models/task-user';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {addClickableLinks, createUniqueId} from '@tickist/utils';
@@ -37,6 +36,7 @@ import {
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {AVAILABLE_TASK_TYPES, TaskType} from '@data';
 import {update, valuesIn} from "ramda";
+import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
     selector: 'tickist-task-component',
@@ -148,7 +148,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 map(name => this.filterTags(name))
             );
 
-        this.store.dispatch(new HideAddTaskButton());
+        this.store.dispatch(hideAddTaskButton());
     }
 
     @HostListener('window:keyup', ['$event'])
@@ -221,7 +221,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
         this.configurationService.updateLeftSidenavVisibility();
-        this.store.dispatch(new ShowAddTaskButton());
+        this.store.dispatch(showAddTaskButton());
     }
 
     createMenuDict() {
@@ -396,7 +396,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     if (newTag.option.value instanceof Tag) {
                         tags.push(new Tag(newTag.option.value));
                         if (!this.isNewTask()) {
-                            this.store.dispatch(new RequestUpdateTask({
+                            this.store.dispatch(requestUpdateTask({
                                 task: {
                                     id: this.task.id, changes: Object.assign({}, this.task, {tags: tags})
                                 }
@@ -410,7 +410,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         tag.id = await this.tagService.createTagDuringEditingTask(tag);
                         tags.push(tag);
                         if (!this.isNewTask()) {
-                            this.store.dispatch(new RequestUpdateTask({
+                            this.store.dispatch(requestUpdateTask({
                                 task: {
                                     id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)})
                                 }
@@ -427,7 +427,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 if (existingTag) {
                     tags.push(existingTag);
                     if (!this.isNewTask()) {
-                        this.store.dispatch(new RequestUpdateTask({
+                        this.store.dispatch(requestUpdateTask({
                             task: {
                                 id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)})
                             }
@@ -440,7 +440,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     tag.id = await this.tagService.createTagDuringEditingTask(tag);
                     tags.push(tag);
                     if (!this.isNewTask()) {
-                        this.store.dispatch(new RequestUpdateTask({
+                        this.store.dispatch(requestUpdateTask({
                             task: {
                                 id: this.task.id, changes: Object.assign({}, this.task, {tags: tags, tagsIds: tags.map(t => t.id)})
                             }
@@ -519,9 +519,9 @@ export class TaskComponent implements OnInit, OnDestroy {
                 }
             });
             if (this.isNewTask()) {
-                this.store.dispatch(new RequestCreateTask({task: updatedTask}));
+                this.store.dispatch(requestCreateTask({task: updatedTask}));
             } else {
-                this.store.dispatch(new RequestUpdateTask({task: {id: updatedTask.id, changes: updatedTask}}));
+                this.store.dispatch(requestUpdateTask({task: {id: updatedTask.id, changes: updatedTask}}));
             }
 
             if (!withoutClose) {
@@ -611,6 +611,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.task = this.createNewTask(this.selectedProject);
         this.taskForm.reset();
         this.taskForm = this.createTaskForm(this.task);
+        this.changeActiveItemInMenu('main')
     }
 
     updateImmediately(source, formControlName, values): void {
@@ -627,8 +628,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(result => {
                 if (result) {
-                    this.store.dispatch(new DeleteTask({taskId: this.task.id}));
-                    // this.taskService.deleteTask(this.task.id);
+                    this.store.dispatch(deleteTask({taskId: this.task.id}));
                     this.close();
                 }
             });

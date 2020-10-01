@@ -2,7 +2,7 @@ import {Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
-import {Login} from '../../../../core/actions/auth.actions';
+import {login} from '../../../../core/actions/auth.actions';
 import {AuthService} from '../../../auth/services/auth.service';
 import {signupRoutesName} from '../../../sign-up/routes-names';
 import {Subject} from 'rxjs';
@@ -52,7 +52,7 @@ export class LoginComponent implements OnDestroy {
         this.authService.login(values)
             .then((user) => {
                 console.log(user);
-                this.store.dispatch(new Login({uid: user.user.uid} ));
+                this.store.dispatch(login({uid: user.user.uid} ));
             })
             .catch(
                 err => {

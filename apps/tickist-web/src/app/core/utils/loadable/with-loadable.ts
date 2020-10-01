@@ -1,4 +1,5 @@
 import {Loadable, onLoadableError, onLoadableLoad, onLoadableSuccess} from './loadable';
+import {ActionCreator} from "@ngrx/store";
 
 export interface Action {
     type: string;

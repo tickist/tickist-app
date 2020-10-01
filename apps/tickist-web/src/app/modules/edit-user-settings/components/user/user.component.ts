@@ -10,11 +10,11 @@ import {Observable, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {changeAvatar, removeNotificationPermission, RequestUpdateUser} from '../../../../core/actions/user.actions';
-import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
+import {changeAvatar, removeNotificationPermission, requestUpdateUser} from '../../../../core/actions/user.actions';
 import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS} from '@data/users/config-user';
 import {NotificationPermission, TASKS_VIEWS_LIST} from '@data';
 import {NotificationsService} from '../../../notifications/services/notifications.service';
+import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
     selector: 'tickist-user',
@@ -124,14 +124,14 @@ export class UserComponent implements OnInit, OnDestroy {
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {orderTasksDashboard: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
                 this.userSettings.get('defaultTaskView').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {defaultTaskView: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
 
@@ -139,28 +139,28 @@ export class UserComponent implements OnInit, OnDestroy {
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {defaultTaskViewTodayView: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
                 this.userSettings.get('defaultTaskViewOverdueView').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {defaultTaskViewOverdueView: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
                 this.userSettings.get('defaultTaskViewFutureView').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {defaultTaskViewFutureView: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
                 this.userSettings.get('defaultTaskViewTagsView').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {defaultTaskViewTagsView: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
 
@@ -168,14 +168,14 @@ export class UserComponent implements OnInit, OnDestroy {
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {overdueTasksSortBy: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
                 this.userSettings.get('futureTasksSortBy').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {futureTasksSortBy: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
 
@@ -183,7 +183,7 @@ export class UserComponent implements OnInit, OnDestroy {
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {dialogTimeWhenTaskFinishedInProject: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
 
@@ -215,7 +215,7 @@ export class UserComponent implements OnInit, OnDestroy {
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {dailySummaryHour: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                    this.store.dispatch(requestUpdateUser({user: updatedUser}));
                 });
 
                 this.userNotificationSettings.get('dailySummaryCheckbox').valueChanges.pipe(
@@ -227,47 +227,47 @@ export class UserComponent implements OnInit, OnDestroy {
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {removesMeFromSharedList: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                    this.store.dispatch(requestUpdateUser({user: updatedUser}));
                 });
 
                 this.userNotificationSettings.get('assignsTaskToMe').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {assignsTaskToMe: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
                 this.userNotificationSettings.get('completesTaskFromSharedList').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {completesTaskFromSharedList: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser})
+                    this.store.dispatch(requestUpdateUser({user: updatedUser})
                     );
                 });
                 this.userNotificationSettings.get('changesTaskFromSharedListThatIsAssignedToMe').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIsAssignedToMe: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                    this.store.dispatch(requestUpdateUser({user: updatedUser}));
                 });
                 this.userNotificationSettings.get('changesTaskFromSharedListThatIAssignedToHimHer').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {changesTaskFromSharedListThatIAssignedToHimHer: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                    this.store.dispatch(requestUpdateUser({user: updatedUser}));
                 });
 
                 this.userNotificationSettings.get('leavesSharedList').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {leavesSharedList: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                    this.store.dispatch(requestUpdateUser({user: updatedUser}));
                 });
                 this.userNotificationSettings.get('sharesListWithMe').valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
                     const updatedUser = Object.assign({}, this.user, {sharesListWithMe: newValue});
-                    this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+                    this.store.dispatch(requestUpdateUser({user: updatedUser}));
                 });
 
                 this.userNotificationSettings.get('deletesListSharedWithMe').valueChanges.pipe(
@@ -288,19 +288,19 @@ export class UserComponent implements OnInit, OnDestroy {
         this.changePasswordForm = new FormGroup({
             'email': new FormControl('', Validators.compose([Validators.required, Validators.email])),
         });
-        this.store.dispatch(new HideAddTaskButton());
+        this.store.dispatch(hideAddTaskButton());
 
     }
 
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-        this.store.dispatch(new ShowAddTaskButton());
+        this.store.dispatch(showAddTaskButton());
     }
 
     updateUserSettings(newValue) {
         const updatedUser = Object.assign({}, this.user, newValue);
-        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+        this.store.dispatch(requestUpdateUser({user: updatedUser}));
     }
 
     toggleDailySummary() {
@@ -335,7 +335,7 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     changeUserDetails(updatedUser) {
-        this.store.dispatch(new RequestUpdateUser({user: updatedUser}));
+        this.store.dispatch(requestUpdateUser({user: updatedUser}));
     }
 
     setDefaultAvatar() {

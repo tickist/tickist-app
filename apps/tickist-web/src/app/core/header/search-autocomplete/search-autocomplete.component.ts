@@ -6,10 +6,10 @@ import {debounceTime, distinctUntilChanged, map, startWith, takeUntil} from 'rxj
 import {Router} from '@angular/router';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Store} from '@ngrx/store';
-import {SetCurrrentSearchTasksFilter} from '../../actions/tasks/search-tasks.actions';
 import {selectAllUndoneTasks} from '../../selectors/task.selectors';
 import {editTaskRoutesName} from '../../../modules/edit-task/routes-names';
 import {homeRoutesName} from '../../../routing.module.name';
+import {setCurrrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
 
 @Component({
     selector: 'tickist-search-autocomplete',
@@ -39,7 +39,7 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
             distinctUntilChanged(),
             takeUntil(this.ngUnsubscribe),
         ).subscribe((value) => {
-            this.store.dispatch(new SetCurrrentSearchTasksFilter({searchText: value}));
+            this.store.dispatch(setCurrrentSearchTasksFilter({searchText: value}));
         });
     }
 

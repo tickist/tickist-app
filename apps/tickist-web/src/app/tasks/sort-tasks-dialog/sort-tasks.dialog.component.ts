@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {selectCurrentSortBy, selectSortByOptions} from '../../core/selectors/sort-by-tasks.selectors';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
 import {SortBy} from '@data/tasks/models/sortBy';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {SetCurrentSortBy} from '../../core/actions/tasks/sort-tasks.actions';
+import {setCurrentSortBy} from '../../core/actions/tasks/sort-tasks.actions';
 
 
 @Component({
@@ -47,7 +46,7 @@ export class SortByDialogComponent implements  OnInit, OnDestroy {
             this.sortByValue = this.sortByValues
                 .filter(sortBy => sortBy.id === $event.value)[0];
             this.sortByValueId = this.sortByValue['id'];
-            this.store.dispatch(new SetCurrentSortBy({currentSortBy: this.sortByValue}));
+            this.store.dispatch(setCurrentSortBy({currentSortBy: this.sortByValue}));
             this.dialogRef.close();
         }
     }

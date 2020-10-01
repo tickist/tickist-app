@@ -1,34 +1,35 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {
-    AddUser,
+    addUser,
     changeAvatar,
-    QueryUser,
+    queryUser,
     removeNotificationPermission,
-    RequestUpdateUser,
+    requestUpdateUser,
     savefcmToken,
-    UpdateUser,
-    UserActionTypes
+    updateUser
 } from '../actions/user.actions';
 import {concatMap, concatMapTo, filter, map, mapTo, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
-import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
-import {AddEstimateTimeFiltersTasks, SetCurrentEstimateTimeFiltersTasks} from '../actions/tasks/estimate-time-filters-tasks.actions';
 import {TasksFiltersService} from '../services/tasks-filters.service';
-import {AddMainFilters, SetCurrentMainFilter} from '../actions/tasks/main-filters-tasks.actions';
-import {SetCurrentTagsFilters} from '../actions/tasks/tags-filters-tasks.actions';
 import {UserService} from '../services/user.service';
-import {QueryTasks} from '../actions/tasks/task.actions';
-import {SwitchOffProgressBar, SwitchOnProgressBar} from '../actions/progress-bar.actions';
-import {AddSortByOptions, SetCurrentSortBy} from '../actions/tasks/sort-tasks.actions';
-import {QueryTags} from '../actions/tags.actions';
-import {QueryProjects} from '../actions/projects/projects.actions';
+import {queryTasks} from '../actions/tasks/task.actions';
+import {addSortByOptions, setCurrentSortBy} from '../actions/tasks/sort-tasks.actions';
+import {queryTags} from '../actions/tags.actions';
+import {queryProjects} from '../actions/projects/projects.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from '@data/users/models';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {Store} from '@ngrx/store';
 import {queryNotifications} from '../../modules/notifications/actions/notifications.actions';
 import {NotificationPermission} from '@data';
+import {
+    addEstimateTimeFiltersTasks,
+    setCurrentEstimateTimeFiltersTasks
+} from "../actions/tasks/estimate-time-filters-tasks.actions";
+import {addMainFilters, setCurrentMainFilter} from "../actions/tasks/main-filters-tasks.actions";
+import {addNewAssignedToFilter, setCurrentAssignedToFilter} from "../actions/tasks/assigned-to-filters-tasks.actions";
+import {setCurrentTagsFilters} from "../actions/tasks/tags-filters-tasks.actions";
+import {switchOffProgressBar, switchOnProgressBar} from "../actions/progress-bar.actions";
 
 
 @Injectable()
@@ -36,7 +37,7 @@ export class UserEffects {
 
     queryUser = createEffect(() => this.actions$
         .pipe(
-            ofType<QueryUser>(UserActionTypes.QueryUser),
+            ofType(queryUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
                 console.log(action);
@@ -57,7 +58,7 @@ export class UserEffects {
                 }));
                 const returnsActions = [];
                 if (updatedUser) {
-                    returnsActions.push(new UpdateUser({user: updatedUser}));
+                    returnsActions.push(updateUser({user: updatedUser}));
                 }
                 return returnsActions;
             })
@@ -66,25 +67,25 @@ export class UserEffects {
 
     addDefaultAssignedToFilters = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMap(action => {
-                    const assignedToFilters = TasksFiltersService.getDefaultAssignedToFilters(action.payload.user);
+                    const assignedToFilters = TasksFiltersService.getDefaultAssignedToFilters(action.user);
                     return [
-                        new AddNewAssignedToFilter({filters: assignedToFilters}),
-                        new SetCurrentAssignedToFilter({currentFilter: assignedToFilters[0]})
+                        addNewAssignedToFilter({filters: assignedToFilters}),
+                        setCurrentAssignedToFilter({currentFilter: assignedToFilters[0]})
                     ];
                 }
             )));
 
     addDefaultEstimateTime = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMap(() => {
                 const {filters_lt, filters_gt} = TasksFiltersService.getDefaultEstimateTimeFilters();
                 const {currentFilter_lt, currentFilter_gt} = TasksFiltersService.getDefaultCurrentEstimateTimeFilters();
                 return [
-                    new AddEstimateTimeFiltersTasks({filters_lt, filters_gt}),
-                    new SetCurrentEstimateTimeFiltersTasks({currentFilter_gt, currentFilter_lt})
+                    addEstimateTimeFiltersTasks({filters_lt, filters_gt}),
+                    setCurrentEstimateTimeFiltersTasks({currentFilter_gt, currentFilter_lt})
                 ];
             })
         ));
@@ -92,60 +93,59 @@ export class UserEffects {
 
     addDefaultMainFilters = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMapTo([
-                new SetCurrentMainFilter({currentFilter: TasksFiltersService.getDefaultCurrentMainFilter()}),
-                new AddMainFilters({filters: TasksFiltersService.getDefaultMainFilters()})
+                setCurrentMainFilter({currentFilter: TasksFiltersService.getDefaultCurrentMainFilter()}),
+                addMainFilters({filters: TasksFiltersService.getDefaultMainFilters()})
             ])
         ));
 
     addSortBy = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMapTo([
-                new AddSortByOptions({sortByOptions: TasksFiltersService.getAllSortByOptions()}),
-                new SetCurrentSortBy({currentSortBy: TasksFiltersService.getDefaultSortByTask()})
+                addSortByOptions({sortByOptions: TasksFiltersService.getAllSortByOptions()}),
+                setCurrentSortBy({currentSortBy: TasksFiltersService.getDefaultSortByTask()})
             ])
         ));
 
     addDefaultTagsFilters = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
-            mapTo(new SetCurrentTagsFilters({currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters()}))
+            ofType(addUser),
+            mapTo(setCurrentTagsFilters({currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters()}))
         ));
 
     loadUserData$ = createEffect(() => this.actions$
         .pipe(
-            ofType<AddUser>(UserActionTypes.AddUser),
+            ofType(addUser),
             concatMapTo([
-                // new LoadTeams(),
-                new QueryUser(),
-                new QueryTasks(),
-                new QueryTags(),
-                new QueryProjects(),
+                queryUser(),
+                queryTasks(),
+                queryTags(),
+                queryProjects(),
                 queryNotifications()
             ])
         ));
 
     updateUser$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestUpdateUser>(UserActionTypes.RequestUpdateUser),
-            mergeMap(action => this.userService.updateUser(action.payload.user)),
-            mapTo(new SwitchOffProgressBar())
+            ofType(requestUpdateUser),
+            mergeMap(action => this.userService.updateUser(action.user)),
+            mapTo(switchOffProgressBar())
         ), {dispatch: false});
 
     progressBar$ = createEffect(() => this.actions$
         .pipe(
-            ofType<RequestUpdateUser>(UserActionTypes.RequestUpdateUser),
-            filter(action => action.payload.progressBar),
-            mapTo(new SwitchOnProgressBar())
+            ofType(requestUpdateUser),
+            filter(action => action.progressBar),
+            mapTo(switchOnProgressBar())
         ));
 
     changeAvatar$ = createEffect(() => this.actions$.pipe(
         ofType(changeAvatar),
         withLatestFrom(this.store.select(selectLoggedInUser)),
         map(([action, user]) => {
-            return new RequestUpdateUser({user: Object.assign({}, user, {avatarUrl: action.avatarUrl})});
+            return requestUpdateUser({user: Object.assign({}, user, {avatarUrl: action.avatarUrl})});
         })
     ));
 
@@ -153,7 +153,7 @@ export class UserEffects {
         ofType(savefcmToken),
         withLatestFrom(this.store.select(selectLoggedInUser)),
         map(([action, user]) => {
-            return new RequestUpdateUser({
+            return requestUpdateUser({
                 user: Object.assign({},
                     user,
                     {fcmToken: action.token, notificationPermission: NotificationPermission.yes}
@@ -166,7 +166,7 @@ export class UserEffects {
         ofType(removeNotificationPermission),
         withLatestFrom(this.store.select(selectLoggedInUser)),
         map(([, user]) => {
-            return  new RequestUpdateUser({
+            return  requestUpdateUser({
                 user: Object.assign({},
                     user,
                     {fcmToken: null, notificationPermission: NotificationPermission.no}
@@ -176,6 +176,6 @@ export class UserEffects {
     ));
 
     constructor(private actions$: Actions, private db: AngularFirestore, private store: Store,
-                private userService: UserService, private authFire: AngularFireAuth) {
+                private userService: UserService) {
     }
 }

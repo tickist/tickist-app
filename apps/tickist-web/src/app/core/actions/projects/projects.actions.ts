@@ -1,83 +1,42 @@
-import {Action} from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
 import {Project} from '@data/projects';
 
 
-export enum ProjectActionTypes {
-    QUERY_PROJECTS = '[PROJECTS] QUERY PROJECTS',
-    REQUEST_ALL_PROJECTS = '[PROJECTS] REQUEST_ALL_PROJECTS',
-    REQUEST_CREATE_PROJECT = '[PROJECTS] REQUEST_CREATE_PROJECT',
-    ADD_PROJECTS = '[PROJECTS] ADD_PROJECTS',
-    CREATE_PROJECT = '[PROJECTS] CREATE_PROJECT',
-    UPDATE_PROJECT = '[PROJECTS] UPDATE_PROJECT',
-    REQUEST_UPDATE_PROJECT = '[PROJECTS] REQUEST UPDATE_PROJECT',
-    DELETE_PROJECT = '[PROJECTS] DELETE_PROJECT',
-    REQUEST_DELETE_PROJECT = '[PROJECTS] REQUEST DELETE_PROJECT'
-}
+export const queryProjects = createAction(
+    '[PROJECTS] QUERY PROJECTS'
+);
+export const requestsAllProjects = createAction(
+    '[PROJECTS] REQUEST_ALL_PROJECTS'
+);
+export const requestCreateProject = createAction(
+    '[PROJECTS] REQUEST_CREATE_PROJECT',
+    props<{ project: Project }>()
+);
+export const addProjects = createAction(
+    '[PROJECTS] ADD_PROJECTS',
+    props<{ projects: Project[] }>()
+);
+export const createProject = createAction(
+    '[PROJECTS] CREATE_PROJECT',
+    props<{ project: Project }>()
+);
+export const updateProject = createAction(
+    '[PROJECTS] UPDATE_PROJECT',
+    props<{ project: Update<Project> }>()
+);
+export const requestUpdateProject = createAction(
+    '[PROJECTS] REQUEST UPDATE_PROJECT',
+    props<{ project: Update<Project> }>()
+);
+export const deleteProject = createAction(
+    '[PROJECTS] DELETE_PROJECT',
+    props<{ projectId: string }>()
+);
+export const requestDeleteProject = createAction(
+    '[PROJECTS] REQUEST DELETE_PROJECT',
+    props<{ projectId: string }>()
+);
 
 
-export class QueryProjects implements Action {
-    readonly type = ProjectActionTypes.QUERY_PROJECTS;
-}
 
-export class RequestsAllProjects implements Action {
-    readonly type = ProjectActionTypes.REQUEST_ALL_PROJECTS;
-}
-
-export class RequestCreateProject implements Action {
-    readonly type = ProjectActionTypes.REQUEST_CREATE_PROJECT;
-
-    constructor(public payload: { project: Project }) {
-    }
-}
-
-export class AddProjects implements Action {
-    readonly type = ProjectActionTypes.ADD_PROJECTS;
-
-    constructor(public payload: { projects: Project[] }) {
-    }
-}
-
-export class CreateProject implements Action {
-    readonly type = ProjectActionTypes.CREATE_PROJECT;
-
-    constructor(public payload: { project: Project }) {
-    }
-}
-
-export class UpdateProject implements Action {
-    readonly type = ProjectActionTypes.UPDATE_PROJECT;
-
-    constructor(public payload: { project: Update<Project> }) {
-    }
-}
-export class RequestUpdateProject implements Action {
-    readonly type = ProjectActionTypes.REQUEST_UPDATE_PROJECT;
-
-    constructor(public payload: { project: Update<Project> }) {
-    }
-}
-
-export class DeleteProject implements Action {
-    readonly type = ProjectActionTypes.DELETE_PROJECT;
-
-    constructor(public payload: { projectId: string }) {
-    }
-}
-
-export class RequestDeleteProject implements Action {
-    readonly type = ProjectActionTypes.REQUEST_DELETE_PROJECT;
-
-    constructor(public payload: { projectId: string }) {
-    }
-}
-
-export type ProjectActions = AddProjects
-    | DeleteProject
-    | QueryProjects
-    | RequestDeleteProject
-    | UpdateProject
-    | RequestUpdateProject
-    | CreateProject
-    | RequestsAllProjects
-    | RequestCreateProject;

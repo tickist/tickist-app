@@ -16,17 +16,17 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {SimpleUser, User} from '@data/users/models';
 import {MatDialog} from '@angular/material/dialog';
 import {filter, map, startWith, takeUntil} from 'rxjs/operators';
-import {RequestCreateProject, RequestUpdateProject} from '../../../../core/actions/projects/projects.actions';
+import {requestCreateProject, requestUpdateProject} from '../../../../core/actions/projects/projects.actions';
 import {Store} from '@ngrx/store';
 import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
-import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
 import {addClickableLinks} from '@tickist/utils';
 import {ProjectService} from '../../../../core/services/project.service';
 import {TASKS_VIEWS_LIST} from "@data";
+import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
     selector: 'tickist-project',
@@ -161,11 +161,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
             startWith(''),
             map(name => this.filterUsers(name))
         );
-        this.store.dispatch(new HideAddTaskButton());
+        this.store.dispatch(hideAddTaskButton());
     }
 
     ngOnDestroy() {
-        this.store.dispatch(new ShowAddTaskButton());
+        this.store.dispatch(showAddTaskButton());
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
@@ -222,9 +222,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
             // List share with is added directly
 
             if (this.isNewProject()) {
-                this.store.dispatch(new RequestCreateProject({project: project}));
+                this.store.dispatch(requestCreateProject({project: project}));
             } else {
-                this.store.dispatch(new RequestUpdateProject({project: {id: project.id, changes: project}}));
+                this.store.dispatch(requestUpdateProject({project: {id: project.id, changes: project}}));
             }
             this.close();
         }
