@@ -1,13 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import {TasksFiltersService} from '../../core/services/tasks-filters.service';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Observable, Subject} from 'rxjs';
 import {selectCurrentEstimateTimeFilter, selectEstimateTimeFilters} from '../../core/selectors/filters-tasks.selectors';
-import {SetCurrentEstimateTimeFiltersTasks} from '../../core/actions/tasks/estimate-time-filters-tasks.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../store';
 import {takeUntil} from 'rxjs/operators';
 import {Filter} from '@data/filter';
+import {setCurrentEstimateTimeFiltersTasks} from "../../core/actions/tasks/estimate-time-filters-tasks.actions";
 
 
 @Component({
@@ -58,7 +56,7 @@ export class EstimateTimeDialogComponent implements OnInit, OnDestroy {
             const newCurrentFilter_gt = this.filters_gt.find(
                 (filter: Filter) => filter.id === this.rangeValues[1]
             );
-            this.store.dispatch(new SetCurrentEstimateTimeFiltersTasks({
+            this.store.dispatch(setCurrentEstimateTimeFiltersTasks({
                 currentFilter_lt: newCurrentFilter_lt,
                 currentFilter_gt: newCurrentFilter_gt
             }));

@@ -1,4 +1,5 @@
-import {ApiErrorActions, ApiErrorActionTypes} from '../actions/detect-api-error.actions';
+import {hideApiErrorBar, showApiErrorBar} from '../actions/detect-api-error.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 export interface ApiErrorState {
     apiError: {
@@ -12,23 +13,26 @@ export const apiErrorInitialState: ApiErrorState = {
     }
 };
 
+const apiErrorReducer = createReducer(
+    apiErrorInitialState,
+    on(showApiErrorBar, (state, props) => {
+        return {
+            apiError: {
+                showApiErrorBar: true
+            }
+        };
+    }),
+    on(hideApiErrorBar, (state, props) => {
+        return {
+            apiError: {
+                showApiErrorBar: false
+            }
+        };
+    })
+)
 
-export function reducer(state: ApiErrorState = apiErrorInitialState, action: ApiErrorActions) {
-    switch (action.type) {
-        case ApiErrorActionTypes.SHOW_API_ERROR_BAR:
-            return {
-                apiError: {
-                    showApiErrorBar: true
-                }
-            };
-        case ApiErrorActionTypes.HIDE_API_ERROR_BAR:
-            return {
-                apiError: {
-                    showApiErrorBar: false
-                }
-            };
-        default:
-            return state;
-    }
+export function reducer(state: ApiErrorState, action: Action) {
+    return apiErrorReducer(state, action);
 }
+
 

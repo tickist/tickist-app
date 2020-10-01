@@ -1,5 +1,6 @@
 import {Project} from '@data/projects';
-import {ActiveProjectActions, ActiveProjectActionTypes} from '../actions/projects/active-project.actions';
+import {setActiveProject} from '../actions/projects/active-project.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface ActiveProjectState {
@@ -10,11 +11,15 @@ export const initialState: ActiveProjectState = {
     activeProject: undefined
 };
 
-export function reducer(state = initialState, action: ActiveProjectActions): ActiveProjectState {
-    switch (action.type) {
-        case ActiveProjectActionTypes.SetActiveProject:
-            return {activeProject: action.payload.project};
-        default:
-            return state;
-    }
+const activeProjectReducer = createReducer(
+    initialState,
+    on(setActiveProject, (state, props) => {
+        return  {
+            activeProject: props.project
+        }
+    })
+)
+
+export function reducer(state: ActiveProjectState, action: Action) {
+    return activeProjectReducer(state, action);
 }

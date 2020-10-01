@@ -15,10 +15,6 @@ import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {User} from '@data/users/models';
-import {
-    AddNewActiveProjectId,
-    DeleteActiveProjectId
-} from '../../../../../../core/actions/projects/active-projects-ids.actions';
 import {Store} from '@ngrx/store';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -36,6 +32,10 @@ import {
 } from '../../../../../../core/actions/projects/projects.actions';
 import {homeRoutesName} from '../../../../../../routing.module.name';
 import {ProjectLeftPanel} from '../../models/project-list';
+import {
+    addNewActiveProjectId,
+    deleteActiveProjectId
+} from "../../../../../../core/actions/projects/active-projects-ids.actions";
 
 
 @Component({
@@ -148,9 +148,9 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
 
     changeId() {
         if (this.isActive) {
-            this.store.dispatch(new AddNewActiveProjectId({projectId: this.project.id}));
+            this.store.dispatch(addNewActiveProjectId({projectId: this.project.id}));
         } else {
-            this.store.dispatch(new DeleteActiveProjectId({projectId: this.project.id}));
+            this.store.dispatch(deleteActiveProjectId({projectId: this.project.id}));
         }
     }
 

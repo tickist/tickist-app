@@ -22,11 +22,11 @@ import {selectAllProjectsWithLevelAndTreeStructures} from '../../../../core/sele
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {selectTeam} from '../../../../core/selectors/team.selectors';
 import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
-import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DeleteUserConfirmationDialogComponent} from '../../components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component';
 import {addClickableLinks} from '@tickist/utils';
 import {ProjectService} from '../../../../core/services/project.service';
 import {TASKS_VIEWS_LIST} from "@data";
+import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
     selector: 'tickist-project',
@@ -161,11 +161,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
             startWith(''),
             map(name => this.filterUsers(name))
         );
-        this.store.dispatch(new HideAddTaskButton());
+        this.store.dispatch(hideAddTaskButton());
     }
 
     ngOnDestroy() {
-        this.store.dispatch(new ShowAddTaskButton());
+        this.store.dispatch(showAddTaskButton());
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }

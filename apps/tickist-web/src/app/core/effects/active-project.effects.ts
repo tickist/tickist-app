@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {ActiveProjectActionTypes, SetActiveProject} from '../actions/projects/active-project.actions';
 import {concatMap, filter, withLatestFrom} from 'rxjs/operators';
-import {AddNewAssignedToFilter, SetCurrentAssignedToFilter} from '../actions/tasks/assigned-to-filters-tasks.actions';
 import {selectTeam} from '../selectors/team.selectors';
 import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
@@ -10,20 +8,22 @@ import {selectLoggedInUser} from '../selectors/user.selectors';
 import {ShareWithUser} from '@data/projects';
 import {Filter} from '@data/filter';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {setActiveProject} from "../actions/projects/active-project.actions";
+import {addNewAssignedToFilter, setCurrentAssignedToFilter} from "../actions/tasks/assigned-to-filters-tasks.actions";
 
 @Injectable()
 export class ActiveProjectEffects {
 
     updateAssignedToFilters = createEffect(() => this.actions$
         .pipe(
-            ofType<SetActiveProject>(ActiveProjectActionTypes.SetActiveProject),
+            ofType(setActiveProject),
             withLatestFrom(this.store.select(selectTeam), this.store.select(selectLoggedInUser)),
             filter(([,,user]) => !!user),
             concatMap(([action, team, user]) => {
                 const actions = [];
                 const filters = [];
-                if (action.payload.project) {
-                    action.payload.project.shareWith.map((simpleUserOrPendingUser: ShareWithUser) => {
+                if (action.project) {
+                    action.project.shareWith.map((simpleUserOrPendingUser: ShareWithUser) => {
                         if (simpleUserOrPendingUser.hasOwnProperty('id')
                             && simpleUserOrPendingUser['id'] !== undefined
                             && simpleUserOrPendingUser['id'] !== user.id) {
@@ -38,9 +38,9 @@ export class ActiveProjectEffects {
                                 );
                         }
                     });
-                    actions.push(new AddNewAssignedToFilter({filters}));
+                    actions.push(addNewAssignedToFilter({filters}));
                     // @TODO move to service tasksFilters kiedy tam będzie porzadek
-                    actions.push(new SetCurrentAssignedToFilter({
+                    actions.push(setCurrentAssignedToFilter({
                         currentFilter: new Filter({
                             id: 0,
                             label: 'assignedTo',
@@ -63,8 +63,8 @@ export class ActiveProjectEffects {
                             );
                         }
                     });
-                    actions.push(new AddNewAssignedToFilter({filters}));
-                    actions.push(new SetCurrentAssignedToFilter({currentFilter: TasksFiltersService.getAssignedToMeFilter(user)}));
+                    actions.push(addNewAssignedToFilter({filters}));
+                    actions.push(setCurrentAssignedToFilter({currentFilter: TasksFiltersService.getAssignedToMeFilter(user)}));
                 }
                 return actions;
             })

@@ -1,6 +1,6 @@
-
-import {ProjectsFiltersActions, ProjectsFiltersActionTypes} from './projects-filters.actions';
+import {addProjectsFilters, setCurrentProjectFilter} from './projects-filters.actions';
 import {Filter} from '@data/filter';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface ProjectsFiltersState {
@@ -12,13 +12,16 @@ export const initialState: ProjectsFiltersState = {
     filters: [], currentFilter: undefined
 };
 
-export function reducer(state = initialState, action: ProjectsFiltersActions): ProjectsFiltersState {
-    switch (action.type) {
-        case ProjectsFiltersActionTypes.AddProjectsFilters:
-            return {filters: action.payload.filters, currentFilter: state.currentFilter};
-        case ProjectsFiltersActionTypes.SetCurrentProjectFilter:
-            return {filters: state.filters, currentFilter: action.payload.currentFilter};
-        default:
-            return state;
-    }
+const projectsFiltersReducer = createReducer(
+    initialState,
+    on(addProjectsFilters, (state, props) => {
+        return {filters: props.filters, currentFilter: state.currentFilter};
+    }),
+    on(setCurrentProjectFilter, (state, props) => {
+        return {filters: state.filters, currentFilter: props.currentFilter};
+    })
+)
+
+export function reducer(state: ProjectsFiltersState, action: Action) {
+    return projectsFiltersReducer(state, action);
 }

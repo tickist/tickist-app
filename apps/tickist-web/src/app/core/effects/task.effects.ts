@@ -17,11 +17,11 @@ import {TaskService} from '../services/task.service';
 import {selectAllTasks} from '../selectors/task.selectors';
 import {Task} from '@data/tasks/models/tasks';
 import {ROUTER_NAVIGATED} from '@ngrx/router-store';
-import {SwitchOnProgressBar} from '../actions/progress-bar.actions';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Update} from '@ngrx/entity';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {selectLoggedInUser} from '../selectors/user.selectors';
+import {switchOnProgressBar} from "../actions/progress-bar.actions";
 
 
 @Injectable()
@@ -113,7 +113,7 @@ export class TaskEffects {
         .pipe(
             ofType(requestUpdateTask),
             filter(action => action.progressBar),
-            mapTo(new SwitchOnProgressBar())
+            mapTo(switchOnProgressBar())
         ))
 
     deleteTask$ = createEffect(() => this.actions$

@@ -1,14 +1,9 @@
-import { Action } from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 import {Project} from '@data/projects';
 
-export enum ActiveProjectActionTypes {
-  SetActiveProject = '[ActiveProject] Set Active project'
-}
 
-export class SetActiveProject implements Action {
-  readonly type = ActiveProjectActionTypes.SetActiveProject;
+export const setActiveProject = createAction(
+    '[ActiveProject] Set Active project',
+    props<{project: Project}>()
+)
 
-  constructor(public payload: {project: Project}) {}
-}
-
-export type ActiveProjectActions = SetActiveProject;

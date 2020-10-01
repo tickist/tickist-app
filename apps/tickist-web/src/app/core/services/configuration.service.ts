@@ -4,9 +4,10 @@ import {select, Store} from '@ngrx/store';
 import {AppStore} from '../../store';
 import {MediaObserver} from '@angular/flex-layout';
 import * as configurationAction from '../../reducers/actions/configuration';
-import {ShowApiErrorBar} from '../actions/detect-api-error.actions';
 import {isOffline} from '../selectors/offline-notifications.selectors';
 import {isLeftSideNavVisible} from '../selectors/sidenav-visibility.selectors';
+import {showApiErrorBar} from "../actions/detect-api-error.actions";
+import { updateLeftSidenavVisibility } from '../../reducers/actions/configuration';
 
 
 @Injectable({
@@ -104,7 +105,7 @@ export class ConfigurationService {
     }
 
     updateDetectApiError(isVisible: boolean): void {
-        this.store.dispatch(new ShowApiErrorBar());
+        this.store.dispatch(showApiErrorBar());
     }
 
     updateOfflineModeNotification(isActive: boolean): void {
@@ -118,7 +119,7 @@ export class ConfigurationService {
         } else if (state === 'open') {
             open = true;
         }
-        this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({'open': open}));
+        this.store.dispatch(updateLeftSidenavVisibility({'open': open}));
     }
 
     updateLeftSidenavVisibility(): void {
@@ -132,7 +133,7 @@ export class ConfigurationService {
             position = 'start';
             open = true;
         }
-        this.store.dispatch(new configurationAction.UpdateLeftSidenavVisibility({
+        this.store.dispatch(updateLeftSidenavVisibility({
             'position': position,
             'mode': mode,
             'open': open

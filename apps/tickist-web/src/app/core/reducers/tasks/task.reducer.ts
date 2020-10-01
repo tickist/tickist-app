@@ -3,8 +3,7 @@ import {
     addTasks,
     closeMenuInAllTasks,
     createTask,
-    deleteTask,
-    TaskActionTypes,
+    deleteTask, requestsAllTasks, requestUpdateTask,
     updateTask
 } from '../../actions/tasks/task.actions';
 import {resetStore} from '../../../tickist.actions';
@@ -49,11 +48,7 @@ const taskReducer = createReducer(
 )
 
 export function reducer(state: TasksState, action: Action) {
-    return withLoadable(taskReducer, {
-        loadingActionType: [TaskActionTypes.REQUEST_UPDATE_TASK, TaskActionTypes.REQUEST_ALL_TASKS],
-        successActionType: [TaskActionTypes.UPDATE_TASK, TaskActionTypes.CREATE_TASK, TaskActionTypes.ADD_TASKS],
-        errorActionType: [],
-    })(state, action);
+    return taskReducer(state, action)
 }
 
 

@@ -1,4 +1,5 @@
-import {AddTaskButtonVisibilityActions, AddTaskButtonVisibilityActionTypes} from '../actions/add-task-button-visibility.actions';
+import {hideAddTaskButton, showAddTaskButton} from '../actions/add-task-button-visibility.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface AddTaskButtonVisibilityState {
@@ -13,21 +14,25 @@ export const addTaskButtonInitialState: AddTaskButtonVisibilityState = {
     }
 };
 
-export function reducer(state = addTaskButtonInitialState, action: AddTaskButtonVisibilityActions): AddTaskButtonVisibilityState {
-    switch (action.type) {
-        case AddTaskButtonVisibilityActionTypes.ShowAddTaskButton:
-            return {
-                addTaskButtonVisibility: {
-                    isVisible: true
-                }
-            };
-        case AddTaskButtonVisibilityActionTypes.HideAddTaskButton:
-            return {
-                addTaskButtonVisibility: {
-                    isVisible: false
-                }
-            };
-        default:
-            return state;
-    }
+const addTaskButtonVisibilityReducer = createReducer(
+    addTaskButtonInitialState,
+    on(showAddTaskButton, (state, props) => {
+        return {
+            addTaskButtonVisibility: {
+                isVisible: true
+            }
+        };
+    }),
+    on(hideAddTaskButton, (state, props) => {
+        return {
+            addTaskButtonVisibility: {
+                isVisible: false
+            }
+        };
+    })
+)
+
+export function reducer(state: AddTaskButtonVisibilityState, action: Action) {
+    return addTaskButtonVisibilityReducer(state, action);
 }
+

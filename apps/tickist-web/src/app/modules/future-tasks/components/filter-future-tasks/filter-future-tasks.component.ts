@@ -1,11 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
 import {selectAllFutureTasksFilters, selectCurrentFutureTasksFilter} from '../../core/selectors/future-tasks.selectors';
-import {SetCurrentFutureTaskFilter} from '../../core/actions/future-tasks-filters.actions';
 import {Filter} from '@data/filter';
+import {setCurrentFutureTaskFilter} from "../../core/actions/future-tasks-filters.actions";
 
 
 @Component({
@@ -45,7 +44,7 @@ export class FilterFutureTasksComponent implements OnInit, OnDestroy {
     changeFilter($event) {
         if (this.filters.length > 0) {
             const newCurrentFilter = this.filters.find(filter => filter.id === $event.value);
-            this.store.dispatch(new SetCurrentFutureTaskFilter({currentFilter: newCurrentFilter}));
+            this.store.dispatch(setCurrentFutureTaskFilter({currentFilter: newCurrentFilter}));
         }
     }
 }

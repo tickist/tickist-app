@@ -4,13 +4,13 @@ import {DateAdapter} from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {StoreModule} from '@ngrx/store';
+import {ActionReducerMap, StoreModule} from '@ngrx/store';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {AppComponent} from './app.component';
 import {TimeDialogComponent} from './single-task/time-dialog/time-dialog.component';
 import {TypeFinishDateString} from './shared/pipes/typeFinishDateString';
-import {metaReducers, reducers} from './store';
+import {metaReducers} from './store';
 import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete-task.dialog.component';
 import {RootComponent} from './testing/test.modules';
 import {MyDateAdapter} from './shared/data-adapter';
@@ -31,6 +31,8 @@ import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {TickistNotificationsModule} from './modules/notifications/notifications.module';
 import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
 import {AngularFirestoreModule, SETTINGS} from "@angular/fire/firestore";
+import {reducer as addTaskComponentVisibilityReducer} from "./reducers/add-task-component-visibility";
+import {reducer as leftSidenavVisibility} from "./reducers/left-sidenav-visibility";
 
 
 @NgModule({
@@ -52,7 +54,10 @@ import {AngularFirestoreModule, SETTINGS} from "@angular/fire/firestore";
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        StoreModule.forRoot(reducers, {
+        StoreModule.forRoot({
+            'addTaskComponentVisibilityReducer': addTaskComponentVisibilityReducer,
+            'leftSidenavVisibility': leftSidenavVisibility
+        } as ActionReducerMap<any>, {
             initialState: {},
             metaReducers, runtimeChecks: {strictStateImmutability: true, strictActionImmutability: true}
         }),

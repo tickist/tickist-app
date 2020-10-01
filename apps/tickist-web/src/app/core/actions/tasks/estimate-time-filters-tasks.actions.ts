@@ -1,23 +1,14 @@
-import {Action} from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 import {Filter} from '@data/filter';
 
 
-export enum EstimateTimeFiltersTasksActionTypes {
-    AddEstimateTimeFiltersTasks = '[EstimateTimeFiltersTasks] Add estimate time filters tasks',
-    SetCurrentEstimateTimeFiltersTasks = '[EstimateTimeFiltersTasks] Set current estimate time filters tasks'
-}
+export const addEstimateTimeFiltersTasks = createAction(
+    '[EstimateTimeFiltersTasks] Add estimate time filters tasks',
+    props<{filters_lt: Filter[], filters_gt: Filter[]}>()
+)
 
-export class AddEstimateTimeFiltersTasks implements Action {
-    readonly type = EstimateTimeFiltersTasksActionTypes.AddEstimateTimeFiltersTasks;
+export const setCurrentEstimateTimeFiltersTasks = createAction(
+    '[EstimateTimeFiltersTasks] Set current estimate time filters tasks',
+    props<{currentFilter_lt: Filter, currentFilter_gt: Filter}>()
+)
 
-    constructor(public payload: {filters_lt: Filter[], filters_gt: Filter[]}) {
-    }
-}
-
-export class SetCurrentEstimateTimeFiltersTasks implements Action {
-    readonly type = EstimateTimeFiltersTasksActionTypes.SetCurrentEstimateTimeFiltersTasks;
-
-    constructor(public payload: {currentFilter_lt: Filter, currentFilter_gt: Filter}) {}
-}
-
-export type EstimateTimeFiltersTasksActions = AddEstimateTimeFiltersTasks | SetCurrentEstimateTimeFiltersTasks;

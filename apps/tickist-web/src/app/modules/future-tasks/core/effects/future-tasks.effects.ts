@@ -6,8 +6,8 @@ import {defer} from 'rxjs';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
-import {AddFutureTasksFilters, SetCurrentFutureTaskFilter} from '../actions/future-tasks-filters.actions';
 import {FutureTasksFiltersService} from '../services/future-tasks-filters.service';
+import {addFutureTasksFilters, setCurrentFutureTaskFilter} from "../actions/future-tasks-filters.actions";
 
 const ALL_DATES = 1;
 
@@ -19,8 +19,8 @@ export class FutureTasksEffects {
             ofType(addUser),
             concatMap(action => {
                 return [
-                    new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}),
-                    new SetCurrentFutureTaskFilter({
+                    addFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}),
+                    setCurrentFutureTaskFilter({
                         currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(action.user.projectsFilterId)
                     })
                 ];
@@ -33,12 +33,12 @@ export class FutureTasksEffects {
             concatMap(user => {
                 const actions = [];
                 if (user) {
-                    actions.push(new AddFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}));
-                    actions.push(new SetCurrentFutureTaskFilter({
+                    actions.push(addFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}));
+                    actions.push(setCurrentFutureTaskFilter({
                         currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(user.projectsFilterId)
                     }));
                 } else {
-                    actions.push(new SetCurrentFutureTaskFilter({
+                    actions.push(setCurrentFutureTaskFilter({
                         currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(ALL_DATES)
                     }));
                 }

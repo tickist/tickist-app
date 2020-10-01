@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {AppStore} from '../../../../../../store';
 import {selectAllTagsFilters, selectCurrentTagFilter} from '../../tags-filters.selectors';
 import {Store} from '@ngrx/store';
-import {SetCurrentTagsListFilter} from '../../tags-filters.actions';
 import {Filter} from '@data/filter';
+import {setCurrentTagsListFilter} from "../../tags-filters.actions";
 
 
 @Component({
@@ -44,7 +43,7 @@ export class FilterTagsDialogComponent implements OnInit, OnDestroy {
     changeFilter($event) {
         if (this.filters.length > 0) {
             const newCurrentFilter = this.filters.find(filter => filter.id === $event.value);
-            this.store.dispatch(new SetCurrentTagsListFilter({currentFilter: newCurrentFilter}));
+            this.store.dispatch(setCurrentTagsListFilter({currentFilter: newCurrentFilter}));
             this.dialogRef.close();
 
         }

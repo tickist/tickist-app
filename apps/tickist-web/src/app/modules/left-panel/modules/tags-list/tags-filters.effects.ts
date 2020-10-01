@@ -1,32 +1,30 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
 import {addUser} from '../../../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
-import {SetCurrentTagsFilters} from '../../../../core/actions/tasks/tags-filters-tasks.actions';
 import {TagsFiltersService} from '../../../../core/services/tags-filters.service';
-import {AddTagsFilters, SetCurrentTagsListFilter} from './tags-filters.actions';
-import {defer, of} from 'rxjs';
-import {AppStore} from '../../../../store';
+import {defer} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
+import {addTagsFilters, setCurrentTagsListFilter} from './tags-filters.actions';
+import {setCurrentTagsFilters} from "../../../../core/actions/tasks/tags-filters-tasks.actions";
 
 
 @Injectable()
 export class TagsFiltersEffects {
 
-    @Effect()
-    addTagsFilters = this.actions$
+    addTagsFilters = createEffect(() => this.actions$
         .pipe(
             ofType(addUser),
             concatMap(action => {
                 return [
-                    new AddTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}),
-                    new SetCurrentTagsFilters({
+                    addTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}),
+                    setCurrentTagsFilters({
                         currentTagsFilter: TagsFiltersService.getDefaultCurrentTagsFilter(action.user.tagsFilterId)
                     })
                 ];
             })
-        );
+        ));
 
     @Effect()
     init$ = defer(() => {
@@ -34,8 +32,8 @@ export class TagsFiltersEffects {
             concatMap(user => {
                 const actions = [];
                 if (user) {
-                    actions.push(new AddTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}));
-                    actions.push(new SetCurrentTagsListFilter(
+                    actions.push(addTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}));
+                    actions.push(setCurrentTagsListFilter(
                         {currentFilter: TagsFiltersService.getDefaultCurrentTagsFilter(user.tagsFilterId)}
                     ));
                 }

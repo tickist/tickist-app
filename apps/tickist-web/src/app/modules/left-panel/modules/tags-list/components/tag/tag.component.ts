@@ -4,11 +4,11 @@ import {Tag} from '@data/tags/models/tags';
 import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
 import {requestDeleteTag, requestUpdateTag} from '../../../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
-import {SetCurrentTagsFilters} from '../../../../../../core/actions/tasks/tags-filters-tasks.actions';
 import {selectCurrentTagsFilter} from '../../../../../../core/selectors/filters-tasks.selectors';
 import {Filter} from '@data/filter';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {setCurrentTagsFilters} from "../../../../../../core/actions/tasks/tags-filters-tasks.actions";
 
 
 @Component({
@@ -75,7 +75,7 @@ export class TagComponent implements OnInit, OnDestroy {
             const set = new Set([this.id]);
             value = Array.from(set);
         }
-        this.store.dispatch(new SetCurrentTagsFilters({
+        this.store.dispatch(setCurrentTagsFilters({
             currentTagsFilter: new Filter({'id': 1, 'label': 'tags', 'value': value})
         }));
     }
@@ -93,7 +93,7 @@ export class TagComponent implements OnInit, OnDestroy {
             }
             result = Array.from(value);
         }
-        this.store.dispatch(new SetCurrentTagsFilters({
+        this.store.dispatch(setCurrentTagsFilters({
             currentTagsFilter: new Filter({'id': 1, 'label': 'tags', 'value': result})
         }));
     }

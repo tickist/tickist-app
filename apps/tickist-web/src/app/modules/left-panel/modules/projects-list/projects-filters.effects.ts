@@ -4,10 +4,9 @@ import {addUser} from '../../../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {defer} from 'rxjs';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {AppStore} from '../../../../store';
 import {Store} from '@ngrx/store';
-import {AddProjectsFilters, SetCurrentProjectFilter} from './projects-filters.actions';
 import {ProjectsFiltersService} from './projects-filters.service';
+import {addProjectsFilters, setCurrentProjectFilter,} from "./projects-filters.actions";
 
 
 @Injectable()
@@ -18,8 +17,8 @@ export class ProjectsFiltersEffects {
             ofType(addUser),
             concatMap(action => {
                 return [
-                    new AddProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}),
-                    new SetCurrentProjectFilter({
+                    addProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}),
+                    setCurrentProjectFilter({
                         currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(action.user.projectsFilterId)
                     })
                 ];
@@ -32,8 +31,8 @@ export class ProjectsFiltersEffects {
             concatMap(user => {
                 const actions = [];
                 if (user) {
-                    actions.push(new AddProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}));
-                    actions.push(new SetCurrentProjectFilter({
+                    actions.push(addProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}));
+                    actions.push(setCurrentProjectFilter({
                         currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(user.projectsFilterId)
                     }));
                 }

@@ -1,5 +1,9 @@
-import {ActiveProjectsIdActionTypes, ActiveProjectsIdsActions} from '../actions/projects/active-projects-ids.actions';
-import {debug} from 'util';
+import {
+    addNewActiveProjectId,
+    deleteActiveProjectId,
+    newActiveProjectsIds
+} from '../actions/projects/active-projects-ids.actions';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface ActiveProjectsIdsState {
@@ -10,25 +14,29 @@ export const initialState: ActiveProjectsIdsState = {
     projectsIds: []
 };
 
-export function reducer(state = initialState, action: ActiveProjectsIdsActions): ActiveProjectsIdsState {
-    switch (action.type) {
-        case ActiveProjectsIdActionTypes.NewActiveProjectsIds:
-            return {
-                projectsIds: action.payload.projectsIds
-            };
-        case ActiveProjectsIdActionTypes.AddNewActiveProjectId:
-            return {
-                projectsIds: [...state.projectsIds, action.payload.projectId]
-            };
-        case ActiveProjectsIdActionTypes.DeleteActiveProjectId:
-            const index = state.projectsIds.indexOf(action.payload.projectId);
-            return {
-                projectsIds: [
-                    ...state.projectsIds.slice(0, index),
-                    ...state.projectsIds.slice(index + 1)
-                ]
-            };
-        default:
-            return state;
-    }
+const activeProjectsIdsReducer = createReducer(
+    initialState,
+    on(newActiveProjectsIds, (state, props) => {
+        return {
+            projectsIds: props.projectsIds
+        };
+    }),
+    on(addNewActiveProjectId, (state, props) => {
+        return {
+            projectsIds: [...state.projectsIds, props.projectId]
+        }
+    } ),
+    on(deleteActiveProjectId,  (state, props) => {
+        const index = state.projectsIds.indexOf(props.projectId);
+        return {
+            projectsIds: [
+                ...state.projectsIds.slice(0, index),
+                ...state.projectsIds.slice(index + 1)
+            ]
+        };
+    })
+)
+
+export function reducer(state: ActiveProjectsIdsState, action: Action) {
+    return activeProjectsIdsReducer(state, action);
 }

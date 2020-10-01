@@ -25,7 +25,6 @@ import {deleteTask, requestCreateTask, requestUpdateTask} from '../../../../core
 import {selectAllTags} from '../../../../core/selectors/tags.selectors';
 import {selectAllTasks} from '../../../../core/selectors/task.selectors';
 import {moveFinishDateFromPreviousFinishDate, removeTag} from '../../../../single-task/utils/task-utils';
-import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {ITaskUser, TaskUser} from '@data/tasks/models/task-user';
 import {TaskProject} from '@data/tasks/models/task-project';
 import {addClickableLinks, createUniqueId} from '@tickist/utils';
@@ -37,6 +36,7 @@ import {
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {AVAILABLE_TASK_TYPES, TaskType} from '@data';
 import {update, valuesIn} from "ramda";
+import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
     selector: 'tickist-task-component',
@@ -148,7 +148,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 map(name => this.filterTags(name))
             );
 
-        this.store.dispatch(new HideAddTaskButton());
+        this.store.dispatch(hideAddTaskButton());
     }
 
     @HostListener('window:keyup', ['$event'])
@@ -221,7 +221,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
         this.configurationService.updateLeftSidenavVisibility();
-        this.store.dispatch(new ShowAddTaskButton());
+        this.store.dispatch(showAddTaskButton());
     }
 
     createMenuDict() {

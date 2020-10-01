@@ -11,10 +11,10 @@ import {filter, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {changeAvatar, removeNotificationPermission, requestUpdateUser} from '../../../../core/actions/user.actions';
-import {HideAddTaskButton, ShowAddTaskButton} from '../../../../core/actions/add-task-button-visibility.actions';
 import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS} from '@data/users/config-user';
 import {NotificationPermission, TASKS_VIEWS_LIST} from '@data';
 import {NotificationsService} from '../../../notifications/services/notifications.service';
+import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
     selector: 'tickist-user',
@@ -288,14 +288,14 @@ export class UserComponent implements OnInit, OnDestroy {
         this.changePasswordForm = new FormGroup({
             'email': new FormControl('', Validators.compose([Validators.required, Validators.email])),
         });
-        this.store.dispatch(new HideAddTaskButton());
+        this.store.dispatch(hideAddTaskButton());
 
     }
 
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-        this.store.dispatch(new ShowAddTaskButton());
+        this.store.dispatch(showAddTaskButton());
     }
 
     updateUserSettings(newValue) {

@@ -1,22 +1,14 @@
-import {Action} from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 import {Filter} from '@data/filter';
 
 
-export enum MainFiltersTasksActionTypes {
-    AddMainFilters = '[FilterTasks] Add main filters',
-    SetCurrentMainFilter = '[FiltersTasks] Set current main filter'
-}
+export const addMainFilters = createAction(
+    '[FilterTasks] Add main filters',
+    props<{filters: Filter[]}>()
+)
 
-export class AddMainFilters implements Action {
-    readonly type = MainFiltersTasksActionTypes.AddMainFilters;
+export const setCurrentMainFilter = createAction(
+    '[FiltersTasks] Set current main filter',
+    props<{currentFilter: Filter}>()
+)
 
-    constructor(public payload: {filters: Filter[]}) {}
-}
-
-export class SetCurrentMainFilter implements Action {
-    readonly type = MainFiltersTasksActionTypes.SetCurrentMainFilter;
-
-    constructor(public payload: {currentFilter: Filter}) {}
-}
-
-export type MainFiltersTasksActions = AddMainFilters |  SetCurrentMainFilter;

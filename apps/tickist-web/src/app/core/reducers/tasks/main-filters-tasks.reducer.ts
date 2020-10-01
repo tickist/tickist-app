@@ -1,5 +1,6 @@
-import {MainFiltersTasksActions, MainFiltersTasksActionTypes} from '../../actions/tasks/main-filters-tasks.actions';
+import {addMainFilters, setCurrentMainFilter} from '../../actions/tasks/main-filters-tasks.actions';
 import {Filter} from '@data/filter';
+import {Action, createReducer, on} from "@ngrx/store";
 
 
 export interface TasksMainFiltersState {
@@ -11,13 +12,18 @@ export const initialState: TasksMainFiltersState = {
     filters: [], currentFilter: undefined
 };
 
-export function reducer(state = initialState, action: MainFiltersTasksActions): TasksMainFiltersState {
-    switch (action.type) {
-        case MainFiltersTasksActionTypes.AddMainFilters:
-            return {filters: action.payload.filters, currentFilter: state.currentFilter};
-        case MainFiltersTasksActionTypes.SetCurrentMainFilter:
-            return {filters: state.filters, currentFilter: action.payload.currentFilter};
-        default:
-            return state;
-    }
+const tasksMainFiltersReducer = createReducer(
+    initialState,
+    on(addMainFilters, (state, props) => {
+        return {filters: props.filters, currentFilter: state.currentFilter};
+    }),
+    on(setCurrentMainFilter, (state, props) => {
+        return {filters: state.filters, currentFilter: props.currentFilter};
+    })
+)
+
+
+export function reducer(state: TasksMainFiltersState, action: Action) {
+    return tasksMainFiltersReducer(state, action);
 }
+
