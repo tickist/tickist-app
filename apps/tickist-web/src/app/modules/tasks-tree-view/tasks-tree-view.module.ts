@@ -8,7 +8,6 @@ import {TickistTasksModule} from '../../tasks/tasks.module';
 import {TasksTreeViewComponent} from './pages/tasks-tree-view/tasks-tree-view.component';
 import {ProjectTreeComponent} from './components/project-tree/project-tree.component';
 import {RouterModule} from '@angular/router';
-import {AddTaskTreeViewComponent} from './components/add-task-tree-view/add-task-tree-view.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TickistTasksTreeViewRoutingModule} from './tasks-tree-view-routing.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
@@ -31,7 +30,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
     declarations: [
         TasksTreeViewComponent,
         ProjectTreeComponent,
-        AddTaskTreeViewComponent
     ],
     providers: [],
     entryComponents: [],

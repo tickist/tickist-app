@@ -93,7 +93,7 @@ export function clickOnCreateNewProject() {
 
 export function createTask(taskName) {
     cy.log('Create new task');
-    cy.get('tickist-add-task').find('button').click();
+    cy.get('tickist-add-task-footer-button').find('button').click();
     cy.url().should('include', 'home').should('include', 'edit-task');
     cy.log('fill main form');
     cy.get('input[name=taskName]').type(taskName);

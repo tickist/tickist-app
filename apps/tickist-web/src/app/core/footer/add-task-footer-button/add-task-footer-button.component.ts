@@ -8,12 +8,12 @@ import {Observable} from 'rxjs';
 import {homeRoutesName} from '../../../routing.module.name';
 
 @Component({
-    selector: 'tickist-add-task',
-    templateUrl: './add-task.component.html',
-    styleUrls: ['./add-task.component.scss'],
+    selector: 'tickist-add-task-footer-button',
+    templateUrl: './add-task-footer-button.component.html',
+    styleUrls: ['./add-task-footer-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddTaskComponent implements OnInit {
+export class AddTaskFooterButtonComponent implements OnInit {
     addTaskButtonVisibility$: Observable<boolean>;
 
     constructor(private store: Store, private router: Router) {

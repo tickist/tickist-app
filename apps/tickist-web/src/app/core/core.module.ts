@@ -23,7 +23,7 @@ import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
 import {ProjectsEffects} from './effects/projects.effects';
 import {ActiveProjectEffects} from './effects/active-project.effects';
 import {HomeComponent} from './layouts/home';
-import {AddTaskComponent} from './footer/add-task/add-task.component';
+import {AddTaskFooterButtonComponent} from './footer/add-task-footer-button/add-task-footer-button.component';
 import {TaskEffects} from './effects/task.effects';
 import * as fromTask from './reducers/tasks/task.reducer';
 import * as fromProjects from './reducers/projects/projects.reducer';
@@ -94,7 +94,7 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         NavBarAuthPageComponent,
         AuthLayoutComponent,
         HomeComponent,
-        AddTaskComponent
+        AddTaskFooterButtonComponent
     ],
     declarations: [
         NavComponent,
@@ -104,7 +104,7 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         NavBarAuthPageComponent,
         AuthLayoutComponent,
         HomeComponent,
-        AddTaskComponent,
+        AddTaskFooterButtonComponent,
         ShowNotificationAboutNewDayComponent
     ]
 })

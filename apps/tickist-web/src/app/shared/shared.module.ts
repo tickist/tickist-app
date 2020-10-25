@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ChangeTaskViewComponent} from './components/change-task-view-component/change-task-view.component';
 import {TickistMaterialModule} from '../material.module';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ConfigurationService} from '../core/services/configuration.service';
 import {MenuButtonComponent} from './components/menu-button/menu-button.component';
 import {AvatarSize} from './pipes/avatarSize';
@@ -19,19 +19,21 @@ import {FeatureFlagDirective} from './directives/feature-flag.directive';
 import {BlankComponent} from './components/blank/blank.component';
 import {EnumToArrayPipe} from "./pipes/enum-to-array";
 import { DataCyDirective } from './directives/data-cy.directive';
+import {AddTaskComponent} from "./components/add-task/add-task.component";
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 
 @NgModule({
-    imports: [CommonModule, TickistMaterialModule, FormsModule, FontAwesomeModule],
+    imports: [CommonModule, TickistMaterialModule, FormsModule, FontAwesomeModule, ReactiveFormsModule, FlexLayoutModule],
     providers: [
         ConfigurationService
     ],
     declarations: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
         Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
-        FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective],
+        FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective, AddTaskComponent],
     exports: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
         Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
-        FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective]
+        FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective, AddTaskComponent]
 })
 export class TickistSharedModule {
 }
