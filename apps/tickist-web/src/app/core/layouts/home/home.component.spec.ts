@@ -8,21 +8,17 @@ import {MockConfigurationService} from '../../../testing/mocks/configurationServ
 import {MockTagService} from '../../../testing/mocks/tag-service';
 import {MockUserService} from '../../../testing/mocks/userService';
 import {MockProjectService} from '../../../testing/mocks/project-service';
-import {RouterModule, Routes} from '@angular/router';
-import {AddTaskComponent} from '../../footer/add-task/add-task.component';
+import {Routes} from '@angular/router';
 import {MockComponent} from 'ng-mocks';
 import {GlobalStatisticsComponent} from '../../../modules/statistics-view/components/global-statistics/global-statistics.component';
-import {APP_BASE_HREF} from '@angular/common';
 import {TickistMaterialModule} from '../../../material.module';
 import {FlexLayoutModule, MediaObserver} from '@angular/flex-layout';
 import {NavComponent} from '../../header/nav-component/nav.component';
 import {ActionReducerMap, StoreModule} from '@ngrx/store';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {ConfigurationService} from '../../services/configuration.service';
-import {MockObservableMedia} from '../../../testing/mocks/mediaObserver';
-import {StatisticsService} from '../../services/statistics.service';
 import {Observable} from 'rxjs';
 import {RouterTestingModule} from '@angular/router/testing';
+import {AddTaskFooterButtonComponent} from "../../footer/add-task-footer-button/add-task-footer-button.component";
 
 const routes: Routes = [
     {
@@ -64,7 +60,7 @@ describe('Component: Home', () => {
                 StoreModule.forRoot(reducers, {
                     initialState: {}
                 })],
-            declarations: [HomeComponent, RootComponent, BlankComponent, MockComponent(AddTaskComponent),
+            declarations: [HomeComponent, RootComponent, BlankComponent, MockComponent(AddTaskFooterButtonComponent),
                 MockComponent(GlobalStatisticsComponent), MockComponent(NavComponent)],
             providers: [
                 userService.getProviders(),

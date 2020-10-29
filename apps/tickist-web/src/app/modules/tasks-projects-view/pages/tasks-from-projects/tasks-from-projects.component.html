@@ -25,14 +25,13 @@
 
         <div *ngIf=hasProjectDescription(selectedProject)
              class="project-description" [innerHTML]="selectedProject.richDescription"></div>
-
     </div>
 
     <tickist-single-task  [task]="task" [mediaChange]="mediaChange" [taskView]="taskView" [user]="user"
                      *cdkVirtualFor="let task of tasks$ | async;trackBy: trackByFn; let last = last" [last]="last">
     </tickist-single-task>
     <tickist-no-tasks [tasksLength]="(tasks$ | async).length"></tickist-no-tasks>
-
+    <tickist-add-task [project]="(selectedProject$ | async)" [enableLastElement]="true"></tickist-add-task>
 </cdk-virtual-scroll-viewport>
 
 

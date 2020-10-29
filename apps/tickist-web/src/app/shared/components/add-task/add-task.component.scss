@@ -1,0 +1,14 @@
+@import "../../variables";
+
+:host {
+    width: 100%;
+    form {
+        background-color: $background_card_color;
+        padding-bottom: 5px;
+    }
+    .last-element {
+        height: 83px;
+        width: 100%;
+        background: $background_color;
+    }
+}

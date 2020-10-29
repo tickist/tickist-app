@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {DebugElement} from '@angular/core';
 import {APP_BASE_HREF} from '@angular/common';
-import {AddTaskComponent} from './add-task.component';
+import {AddTaskComponent} from './add-task-footer-button.component';
 import {RouterModule, Routes} from '@angular/router';
 import {RootComponent, BlankComponent} from '../../../testing/test.modules';
 import {StoreModule} from '@ngrx/store';

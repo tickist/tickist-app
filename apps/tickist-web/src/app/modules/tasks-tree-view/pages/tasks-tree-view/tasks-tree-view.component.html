@@ -18,7 +18,7 @@
     </mat-tree-node>
 
     <mat-tree-node *matTreeNodeDef="let node;when: hasAddTask" matTreeNodePadding>
-        <tickist-add-task-tree-view [project]="node.project"></tickist-add-task-tree-view>
+        <tickist-add-task [project]="node.project"></tickist-add-task>
     </mat-tree-node>
 </mat-tree>
 

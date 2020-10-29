@@ -44,7 +44,7 @@ describe('Tasks', () => {
         });
 
         it('should open the form, fills the form add new task to the Inbox', () => {
-            cy.get('tickist-add-task', {timeout: 20000}).find('button').click();
+            cy.get('tickist-add-task-footer-button', {timeout: 20000}).find('button').click();
             cy.url().should('include', 'home').should('include', 'edit-task');
 
             cy.log('fill main form');
@@ -141,7 +141,7 @@ describe('Tasks', () => {
         it('should change task status to done after click on tickist-toggle-button', () => {
             const newTaskName = 'new task';
             cy.log('Create new task');
-            cy.get('tickist-add-task').find('button').click();
+            cy.get('tickist-add-task-footer-button').find('button').click();
             cy.url().should('include', 'home').should('include', 'edit-task');
             cy.log('fill main form');
             cy.get('input[name=taskName]').type(newTaskName);
