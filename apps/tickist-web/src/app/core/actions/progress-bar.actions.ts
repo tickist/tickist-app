@@ -1,4 +1,4 @@
-import {Action, createAction} from '@ngrx/store';
+import {createAction} from '@ngrx/store';
 
 
 export const switchOffProgressBar = createAction(

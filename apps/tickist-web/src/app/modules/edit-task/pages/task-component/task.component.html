@@ -58,7 +58,7 @@
                     <div fxLayout="column" fxLayoutAlign="space-between none">
 
                         <mat-form-field>
-                            <input autofocus matInput #taskName name="taskName"
+                            <input autofocus matInput #taskName name="taskName" cdkTrapFocus
                                    (blur)="updateImmediately('name', 'main.name', taskForm.value)"
                                    placeholder="Task name" maxlength="500" formControlName="name"
                                    [errorStateMatcher]="matcher">

@@ -21,7 +21,7 @@ export class TaskNameComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: any) {
-        if (changes['task'].currentValue.name.length > 60) {
+        if (changes['task'].currentValue?.name?.length > 60) {
             this.tooltip = true;
         }
         if (changes['task'].currentValue.estimateTime && changes['task'].currentValue.time) {

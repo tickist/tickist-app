@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Task} from '@data/tasks/models/tasks';
 import {FormControl} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
@@ -10,6 +10,9 @@ import {selectAllUndoneTasks} from '../../selectors/task.selectors';
 import {editTaskRoutesName} from '../../../modules/edit-task/routes-names';
 import {homeRoutesName} from '../../../routing.module.name';
 import {setCurrrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
+import {searchInputIsFocus} from "../../selectors/ui.selectors";
+import {blurOnSearchInput} from "../../actions/ui.actions";
+import {debug} from "util";
 
 @Component({
     selector: 'tickist-search-autocomplete',
@@ -18,6 +21,7 @@ import {setCurrrentSearchTasksFilter} from "../../actions/tasks/search-tasks.act
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchAutocompleteComponent implements OnInit, OnDestroy {
+    @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     tasks: Task[];
     searchControl = new FormControl();
@@ -27,7 +31,14 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.store.select(selectAllUndoneTasks).pipe(takeUntil(this.ngUnsubscribe)).subscribe(((tasks: Task[]) => this.tasks = tasks));
-
+        this.store.select(searchInputIsFocus).pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((isFocus) => {
+            if (isFocus) {
+                this.searchInput.nativeElement.focus()
+                this.store.dispatch(blurOnSearchInput())
+            }
+        });
         this.filteredOptions = this.searchControl.valueChanges
             .pipe(
                 startWith(''),

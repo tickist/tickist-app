@@ -1,11 +1,14 @@
-import {Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Project, Task, TaskProject, TaskUser, User} from "@data";
 import {Subject} from "rxjs";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormControl, FormGroup, FormGroupDirective, Validators} from "@angular/forms";
 import {selectLoggedInUser} from "../../../core/selectors/user.selectors";
 import {takeUntil} from "rxjs/operators";
 import {Store} from "@ngrx/store";
 import {requestCreateTask} from "../../../core/actions/tasks/task.actions";
+import {ShowOnDirtyErrorStateMatcher} from "@angular/material/core";
+import {addTaskInputIsFocus} from "../../../core/selectors/ui.selectors";
+import {blurOnAddTaskInput} from "../../../core/actions/ui.actions";
 
 @Component({
     selector: 'tickist-add-task',
@@ -15,10 +18,13 @@ import {requestCreateTask} from "../../../core/actions/tasks/task.actions";
 export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
     @Input() project: Project;
     @Input() enableLastElement = false;
+    @ViewChild('addTaskInput', { static: false }) addTaskInput: ElementRef;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     createTaskForm: FormGroup;
     user: User;
     showCreateTaskForm = false;
+    submitted = false
+    matcher = new ShowOnDirtyErrorStateMatcher();
 
     constructor(private store: Store) {
         this.createTaskForm = new FormGroup({
@@ -29,7 +35,17 @@ export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
     ngOnInit(): void {
         this.store.select(selectLoggedInUser).pipe(
             takeUntil(this.ngUnsubscribe)
-        ).subscribe(user => this.user = user);
+        ).subscribe(user => {
+            this.user = user
+        });
+        this.store.select(addTaskInputIsFocus).pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(isFocus => {
+            if (isFocus) {
+                this.addTaskInput.nativeElement.focus()
+                this.store.dispatch(blurOnAddTaskInput())
+            }
+        });
     }
 
     ngOnChanges() {
@@ -60,12 +76,19 @@ export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
         });
     }
 
-    createTask(values) {
-        this.createTaskForm.reset();
-        Object.keys(this.createTaskForm.controls).forEach(key => {
-            this.createTaskForm.get(key).setErrors(null) ;
-        });
-        this.store.dispatch(requestCreateTask({task: this.createTaskModel(values.name)}));
+    createTask(values, formDirective: FormGroupDirective) {
+        this.submitted = true;
+        if (this.createTaskForm.valid) {
+            Object.keys(this.createTaskForm.controls).forEach(key => {
+                this.createTaskForm.get(key).setErrors(null) ;
+            });
+            this.createTaskForm.reset();
+            formDirective.resetForm();
+            this.store.dispatch(requestCreateTask({task: this.createTaskModel(values.name)}));
+        } else {
+            this.submitted = false;
+        }
+
     }
 
     ngOnDestroy() {

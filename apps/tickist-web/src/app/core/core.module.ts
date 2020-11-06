@@ -38,6 +38,7 @@ import * as fromAssignedToFiltersTasks from './reducers/tasks/assigned-to-filter
 import * as fromEstimateTimeFiltersTasks from './reducers/tasks/estimate-time-filters-tasks.reducer';
 import * as fromTagsFiltersTasks from './reducers/tasks/tags-filters-tasks.reducer';
 import * as fromSearchTasks from './reducers/tasks/search-tasks.reducer';
+import * as ui from './reducers/ui.reducer';
 import {TasksFiltersEffects} from './effects/tasks-filters.effects';
 import {ShowNotificationAboutNewDayComponent} from './header/show-notification-about-new-day/show-notification-about-new-day.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
@@ -46,6 +47,7 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {AngularFireStorageModule} from '@angular/fire/storage';
 import {TickistSingleTaskModule} from '../single-task/single-task.module';
 import {TickistNotificationsModule} from '../modules/notifications/notifications.module';
+import {A11yModule} from "@angular/cdk/a11y";
 
 
 @NgModule({
@@ -74,6 +76,7 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         StoreModule.forFeature('tagsFiltersTasks', fromTagsFiltersTasks.reducer),
         StoreModule.forFeature('searchTasks', fromSearchTasks.reducer),
         StoreModule.forFeature('addTaskButtonVisibility', fromAddTaskButtonVisibility.reducer),
+        StoreModule.forFeature('ui', ui.reducer),
         EffectsModule.forFeature([TaskEffects]),
         EffectsModule.forFeature([TaskEffects]),
         EffectsModule.forFeature([ProjectsEffects, ActiveProjectEffects]),
@@ -85,7 +88,8 @@ import {TickistNotificationsModule} from '../modules/notifications/notifications
         AngularFireAuthModule,
         AngularFireStorageModule,
         TickistSingleTaskModule,
-        TickistNotificationsModule
+        TickistNotificationsModule,
+        A11yModule
     ],
     entryComponents: [],
     exports: [
