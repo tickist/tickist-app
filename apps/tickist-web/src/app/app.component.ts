@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core'; // Recommended
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {Meta} from '@angular/platform-browser';
 import { MatSnackBar, MatSnackBarRef, MatSnackBarConfig } from '@angular/material/snack-bar';
@@ -8,6 +8,12 @@ import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {AngularFireFunctions} from "@angular/fire/functions";
 import {environment} from "@env/environment";
+import {Store} from "@ngrx/store";
+import {focusOnAddTaskInput, focusOnSearchInput} from "./core/actions/ui.actions";
+import {homeRoutesName} from "./routing.module.name";
+import {editTaskRoutesName} from "./modules/edit-task/routes-names";
+import {Router} from "@angular/router";
+import {editProjectSettingsRoutesName} from "./modules/edit-project/routes-names";
 
 
 @Component({
@@ -24,9 +30,33 @@ export class AppComponent implements OnInit, OnDestroy {
                 private meta: Meta,
                 private snackBar: MatSnackBar,
                 private afMessaging: AngularFireMessaging,
-                private readonly aff: AngularFireFunctions) {
+                private store: Store,
+                private readonly aff: AngularFireFunctions,
+                private readonly router: Router) {
         this.config = new MatSnackBarConfig();
         this.config.panelClass = ['tickist-web-snack-bar'];
+    }
+
+    @HostListener('window:keydown', ['$event'])
+    keyEvent(event: KeyboardEvent) {
+        console.log({event})
+        if (event.key === 'f' && event.ctrlKey) {
+            event.preventDefault();
+            this.store.dispatch(focusOnSearchInput())
+        }
+        if (event.key === 'a' && event.ctrlKey) {
+            event.preventDefault();
+            this.store.dispatch(focusOnAddTaskInput())
+        }
+        if ((event.key === 'a' || event.key === 'A') && event.ctrlKey && event.shiftKey) {
+            event.preventDefault();
+            this.router.navigate([homeRoutesName.HOME, editTaskRoutesName.EDIT_TASK]);
+        }
+
+        if ((event.key === 'p' || event.key === 'P') && event.ctrlKey && event.shiftKey) {
+            event.preventDefault();
+            this.router.navigate([homeRoutesName.HOME, editProjectSettingsRoutesName.EDIT_PROJECT]);
+        }
     }
 
     ngOnInit(): void {

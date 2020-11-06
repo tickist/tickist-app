@@ -1,6 +1,6 @@
 <form class="form">
     <mat-form-field class="search-input" floatLabel="never">
-        <input type="text" placeholder="Search" aria-label="String" matInput [formControl]="searchControl" [matAutocomplete]="auto">
+        <input #searchInput type="text" placeholder="Search" aria-label="String" matInput [formControl]="searchControl" [matAutocomplete]="auto">
         <fa-icon matSuffix [icon]="'search'"></fa-icon>
         <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="goToTask($event)">
             <mat-option *ngFor="let task of filteredOptions | async" [value]="task.id" class="mat-options" >

@@ -1,12 +1,9 @@
-
-
-
-<form *ngIf="showCreateTaskForm" [formGroup]="createTaskForm" (ngSubmit)="createTask(createTaskForm.value)" fxLayout="row" fxLayoutAlign="space-around center" >
+<form *ngIf="showCreateTaskForm" [formGroup]="createTaskForm" #formDirective="ngForm"  (ngSubmit)="createTask(createTaskForm.value, formDirective)" fxLayout="row" fxLayoutAlign="space-around center" >
     <mat-form-field [ngStyle]="{'margin-left':'20px'}" fxFlex>
-        <input matInput name="task-name" formControlName="name" placeholder="Task name">
-        <mat-error *ngIf="createTaskForm.controls['name'].hasError('required')">Name is required</mat-error>
+        <input #addTaskInput matInput name="task-name" formControlName="name" placeholder="Task name" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="!submitted && createTaskForm.controls['name'].hasError('required')">Name is required</mat-error>
     </mat-form-field>
     <div fxFlex></div>
-    <div class="button"><button fxFlex mat-button>Create task</button></div>
+    <div class="button"><button type="submit" fxFlex mat-button [disabled]="!createTaskForm.valid">Create task</button></div>
 </form>
 <div *ngIf=enableLastElement class="last-element"></div>
