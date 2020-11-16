@@ -1,15 +1,17 @@
-<div *ngIf="tooltip" [innerHTML]="task.richName|truncate: 60" [matTooltip]="task.name"></div>
-<div *ngIf="!tooltip" [innerHTML]="task.richName"></div>
+<div fxLayoutAlign="start center">
+    <div class="task-name" #taskNameDiv *ngIf="tooltip" (resized)="onResized()" [innerHTML]="task.richName"
+         [matTooltip]="task.name"></div>
+    <div  class="task-name" #taskNameDiv *ngIf="!tooltip" (resized)="onResized()"
+         [innerHTML]="task.richName"></div>
 
-<ng-container *ngIf="onlyEstimateTime">
-    <div [matTooltip]="'estimated time'">({{ task.estimateTime|minutes2hours }})</div>
-</ng-container>
-<ng-container *ngIf="timeAndEstimateTime">
-    <div [matTooltip]="'estimated time and real time'">({{ task.estimateTime|minutes2hours }}
+    <div fxFlex *ngIf="onlyEstimateTime" [matTooltip]="'estimated time'">({{ task.estimateTime|minutes2hours }})</div>
+
+
+    <div fxFlex *ngIf="timeAndEstimateTime" [matTooltip]="'estimated time and real time'">
+        ({{ task.estimateTime|minutes2hours }}
         / {{ task.time|minutes2hours }})
     </div>
-</ng-container>
-<ng-container *ngIf="onlyTime">
-    <div [matTooltip]="'time'">({{ task.time|minutes2hours }})</div>
-</ng-container>
 
+    <div fxFlex *ngIf="onlyTime" [matTooltip]="'time'">({{ task.time|minutes2hours }})</div>
+
+</div>

@@ -19,10 +19,11 @@ import {SingleTaskExtendedComponent} from './single-task-extended/single-task-ex
 import {NoTasksComponent} from './no-tasks/no-tasks.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import { ChangeUserIdToUserNamePipe } from './change-user-id-to-user-name.pipe';
+import {AngularResizedEventModule} from "angular-resize-event";
 
 @NgModule({
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistSharedModule, RouterModule, FontAwesomeModule],
+        ReactiveFormsModule, TickistSharedModule, RouterModule, FontAwesomeModule, AngularResizedEventModule],
     providers: [],
     exports: [SingleTaskComponent,
         SingleTaskSimplifiedComponent,

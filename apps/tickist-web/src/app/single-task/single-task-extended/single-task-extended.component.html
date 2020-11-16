@@ -1,14 +1,13 @@
-<div #container>
-    <tickist-toggle-button (click)="toggleDone()" [priority]="task.priority"
+<div #container fxLayout="row" >
+    <tickist-toggle-button fxFlex="38px" (click)="toggleDone()" [priority]="task.priority"
                            [isDone]="task.isDone" [isOnHold]="task.onHold">
 
     </tickist-toggle-button>
 
-    <div style="width: 100%;">
-        <div #firstRow id="first-row">
-            <tickist-task-name [task]=task></tickist-task-name>
-            <span style="flex: 1 1 1e-09px;"></span>
-            <tickist-right-menu [isRightMenuVisible]="isRightMenuVisible"
+    <div fxFlex style="width: 90%;">
+        <div #firstRow id="first-row"  fxLayout="row" fxLayoutAlign="start center">
+            <tickist-task-name fxFlex [task]=task></tickist-task-name>
+            <tickist-right-menu fxFlex="90px" [isRightMenuVisible]="true"
                                 [task]="task"
                                 (deleteTaskClick)="deleteTask()"
                                 (togglePinClick)="togglePin()"

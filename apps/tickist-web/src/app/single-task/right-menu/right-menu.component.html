@@ -31,16 +31,19 @@
             <tickist-menu-button [icon]="'project-diagram'"
                                  [iconPrefix]="'fas'"
                                  [matTooltip]="nextActionTaskType"
+                                 [color]="task.taskType === nextActionTaskType ? 'orange' : 'white'"
                                  (click)="emitConvertToEvent(nextActionTaskType)">
             </tickist-menu-button>
             <tickist-menu-button [icon]="'mug-hot'"
                                  [iconPrefix]="'fas'"
                                  [matTooltip]="needInfoTaskType"
+                                 [color]="task.taskType === needInfoTaskType ? 'orange' : 'white'"
                                  (click)="emitConvertToEvent(needInfoTaskType)">
             </tickist-menu-button>
             <tickist-menu-button [icon]="'square'"
                                  [iconPrefix]="'far'"
                                  [matTooltip]="normalTaskType"
+                                 [color]="task.taskType === normalTaskType ? 'orange' : 'white'"
                                  [rotate]="180"
                                  (click)="emitConvertToEvent(normalTaskType)">
             </tickist-menu-button>

@@ -80,9 +80,12 @@
                         </mat-form-field>
 
                         <mat-form-field>
-                            <mat-select data-cy='select-task-type' placeholder="Task type" formControlName="taskType">
-                                <mat-option *ngFor="let taskType of taskTypes"
-                                            [value]="taskType"> {{ taskType }}
+                            <mat-select data-cy='select-task-type' placeholder="Task type:" formControlName="taskType">
+                                <mat-select-trigger>
+                                    <fa-icon [icon]="getSelectedTaskType().icon"></fa-icon>  {{ getSelectedTaskType().value }}
+                                </mat-select-trigger>
+                                <mat-option *ngFor="let taskType of taskTypesWithIcons" [value]="taskType.value">
+                                    <fa-icon [icon]="taskType.icon"></fa-icon>  {{taskType.value}}
                                 </mat-option>
                             </mat-select>
 

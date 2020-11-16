@@ -19,4 +19,7 @@
         background: $background_card_color;
         padding: 16px;
     }
+    ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        max-width: 100%;
+    }
 }

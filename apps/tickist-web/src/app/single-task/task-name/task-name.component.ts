@@ -1,4 +1,13 @@
-import {Component, OnInit, Input, OnChanges, ChangeDetectionStrategy} from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import {Task} from '@data/tasks/models/tasks';
 
 @Component({
@@ -9,21 +18,30 @@ import {Task} from '@data/tasks/models/tasks';
 })
 export class TaskNameComponent implements OnInit, OnChanges {
     @Input() task: Task;
+    @ViewChild('taskNameDiv') el: ElementRef;
     timeAndEstimateTime = false;
     onlyEstimateTime = false;
     onlyTime = false;
     tooltip = false;
 
-    constructor() {
+    constructor(private cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
+
+    }
+
+    onResized() {
+        if (this.el.nativeElement.offsetWidth < this.el.nativeElement.scrollWidth && !this.tooltip) {
+            this.tooltip = true;
+            this.cd.detectChanges()
+        } else if (this.el.nativeElement.offsetWidth >= this.el.nativeElement.scrollWidth && this.tooltip ) {
+            this.tooltip = false;
+            this.cd.detectChanges()
+        }
     }
 
     ngOnChanges(changes: any) {
-        if (changes['task'].currentValue?.name?.length > 60) {
-            this.tooltip = true;
-        }
         if (changes['task'].currentValue.estimateTime && changes['task'].currentValue.time) {
             this.onlyEstimateTime = this.onlyTime = false;
             this.timeAndEstimateTime = true;
