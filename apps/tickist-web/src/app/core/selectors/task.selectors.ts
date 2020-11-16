@@ -149,15 +149,21 @@ export const selectTasksStreamInProjectsView = createSelector(
 
 export const nextActionTasks = createSelector(
     selectAllTasks,
-    (tasks) => {
-        return tasks.filter(task => task.taskType === TaskType.NEXT_ACTION)
+    selectLoggedInUser,
+    (tasks, user) => {
+        return tasks
+            .filter(task => task.owner.id === user.id)
+            .filter(task => task.taskType === TaskType.NEXT_ACTION)
     }
 )
 
 export const needInfoTasks = createSelector(
     selectAllTasks,
-    (tasks) => {
-        return tasks.filter(task => task.taskType === TaskType.NEED_INFO)
+    selectLoggedInUser,
+    (tasks, user) => {
+        return tasks
+            .filter(task => task.owner.id === user.id)
+            .filter(task => task.taskType === TaskType.NEED_INFO)
     }
 )
 

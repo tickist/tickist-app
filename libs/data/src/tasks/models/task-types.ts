@@ -6,4 +6,4 @@ export enum TaskType {
 
 
 export const AVAILABLE_TASK_TYPES = [TaskType.NORMAL, TaskType.NEED_INFO, TaskType.NEXT_ACTION]
-export const AVAILABLE_TASK_TYPES_ICONS = [['fas', 'project-diagram'], ['fas', 'mug-hot'],['far', 'square']]
+export const AVAILABLE_TASK_TYPES_ICONS = [['far', 'square'], ['fas', 'mug-hot'], ['fas', 'project-diagram']]
