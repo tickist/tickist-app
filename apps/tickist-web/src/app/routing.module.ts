@@ -96,7 +96,7 @@ export const routes: Routes = [
             },
             {
                 path: '',
-                redirectTo: '/home/weekdays',
+                redirectTo: '/home/dashboard',
                 pathMatch: 'full'
             }
         ]
