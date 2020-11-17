@@ -7,3 +7,6 @@ export const setActiveProject = createAction(
     props<{project: Project}>()
 )
 
+export const clearActiveProject = createAction(
+    '[ActiveProject] Clear Active project'
+)

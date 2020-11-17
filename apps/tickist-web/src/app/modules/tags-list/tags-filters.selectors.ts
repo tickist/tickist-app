@@ -1,8 +1,8 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import {TagsFiltersState} from './tags-filters.reducers';
-import {selectAllTags} from '../../../../core/selectors/tags.selectors';
+import {selectAllTags} from '../../core/selectors/tags.selectors';
 import * as _ from 'lodash';
-import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
+import {selectAllUndoneTasks} from '../../core/selectors/task.selectors';
 import {TagWithTaskCounter, calculateTasksCounterInTags} from '@data';
 
 

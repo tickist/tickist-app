@@ -2,10 +2,10 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TagComponent} from './tag.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import {MockTaskService} from '../../../../../../testing/mocks/task-service';
-import {MockTagService} from '../../../../../../testing/mocks/tag-service';
-import {TickistMaterialModule} from '../../../../../../material.module';
-import {MockTasksFiltersService} from '../../../../../../testing/mocks/tasks-filters-service';
+import {MockTaskService} from '../../../../testing/mocks/task-service';
+import {MockTagService} from '../../../../testing/mocks/tag-service';
+import {TickistMaterialModule} from '../../../../material.module';
+import {MockTasksFiltersService} from '../../../../testing/mocks/tasks-filters-service';
 import {StoreModule} from '@ngrx/store';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 

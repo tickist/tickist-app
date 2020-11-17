@@ -28,11 +28,11 @@ import {
     selectAllProjectLeftPanel,
     selectAllProjectsFilters,
     selectFilteredProjectsList
-} from '../../modules/left-panel/modules/projects-list/projects-filters.selectors';
+} from '../../modules/projects-list/projects-filters.selectors';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {FormControl} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
+import {ProjectLeftPanel} from '../../modules/projects-list/models/project-list';
 
 
 @Component({

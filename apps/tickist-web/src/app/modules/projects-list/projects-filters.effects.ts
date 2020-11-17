@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
-import {addUser} from '../../../../core/actions/user.actions';
+import {addUser} from '../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {defer} from 'rxjs';
-import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
+import {selectLoggedInUser} from '../../core/selectors/user.selectors';
 import {Store} from '@ngrx/store';
 import {ProjectsFiltersService} from './projects-filters.service';
 import {addProjectsFilters, setCurrentProjectFilter,} from "./projects-filters.actions";

@@ -1,8 +1,8 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import {ProjectsFiltersState} from './projects-filters.reducers';
-import {selectAllProjects} from '../../../../core/selectors/projects.selectors';
-import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
-import {calculateTasksCounter, generateDifferentLevelsOfProjects} from '../../../../core/utils/projects-utils';
+import {selectAllProjects} from '../../core/selectors/projects.selectors';
+import {selectAllUndoneTasks} from '../../core/selectors/task.selectors';
+import {calculateTasksCounter, generateDifferentLevelsOfProjects} from '../../core/utils/projects-utils';
 import {ProjectLeftPanel} from './models/project-list';
 import {ProjectType} from "@data";
 

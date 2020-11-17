@@ -1,10 +1,10 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {FilterTagsDialogComponent} from './filter-tags-dialog.component';
-import {TickistMaterialModule} from '../../../../../../material.module';
+import {TickistMaterialModule} from '../../../../material.module';
 import {FormsModule} from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import {MockTagsFiltersService} from '../../../../../../testing/mocks/tags-filters-service';
+import {MockTagsFiltersService} from '../../../../testing/mocks/tags-filters-service';
 import {StoreModule} from '@ngrx/store';
 
 

@@ -1,15 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {concatMap, filter, withLatestFrom} from 'rxjs/operators';
+import {concatMap, concatMapTo, filter, withLatestFrom} from 'rxjs/operators';
 import {selectTeam} from '../selectors/team.selectors';
 import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {ShareWithUser} from '@data/projects';
 import {Filter} from '@data/filter';
-import {AngularFireAuth} from '@angular/fire/auth';
-import {setActiveProject} from "../actions/projects/active-project.actions";
+import {clearActiveProject, setActiveProject} from "../actions/projects/active-project.actions";
 import {addNewAssignedToFilter, setCurrentAssignedToFilter} from "../actions/tasks/assigned-to-filters-tasks.actions";
+import {ROUTER_NAVIGATED, RouterNavigationAction} from "@ngrx/router-store";
+import {clearActiveProjectsId} from "../actions/projects/active-projects-ids.actions";
 
 @Injectable()
 export class ActiveProjectEffects {
@@ -70,6 +71,19 @@ export class ActiveProjectEffects {
             })
         ));
 
-    constructor(private actions$: Actions, private store: Store, private authFire: AngularFireAuth) {
+    activeProjectRouterChange$ = createEffect(() => this.actions$
+        .pipe(
+            ofType<RouterNavigationAction>(ROUTER_NAVIGATED),
+            filter((action) => {
+                return action.payload.event.url.indexOf('dashboard') > 0;
+            }),
+            concatMapTo([
+                    clearActiveProjectsId(),
+                    clearActiveProject()
+                ]
+            )
+        ));
+
+    constructor(private actions$: Actions, private store: Store) {
     }
 }

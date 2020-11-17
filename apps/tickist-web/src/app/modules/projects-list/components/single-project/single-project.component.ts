@@ -8,9 +8,9 @@ import {
     OnInit
 } from '@angular/core';
 import {AVAILABLE_PROJECT_TYPES, ProjectType, ProjectWithAllDescendants} from '@data/projects';
-import {ProjectService} from '../../../../../../core/services/project.service';
+import {ProjectService} from '../../../../core/services/project.service';
 import {Router} from '@angular/router';
-import {ConfigurationService} from '../../../../../../core/services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {MediaObserver} from '@angular/flex-layout';
 import {DeleteProjectConfirmationDialogComponent} from '../delete-project-dialog/delete-project-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -18,24 +18,24 @@ import {User} from '@data/users/models';
 import {Store} from '@ngrx/store';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {tasksProjectsViewRoutesName} from '../../../../../tasks-projects-view/routes.names';
-import {editProjectSettingsRoutesName} from '../../../../../edit-project/routes-names';
+import {tasksProjectsViewRoutesName} from '../../../tasks-projects-view/routes.names';
+import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
 import {
     selectActiveProjectsIds,
     selectActiveProjectWithAllDescendants
-} from '../../../../../../core/selectors/projects.selectors';
-import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
+} from '../../../../core/selectors/projects.selectors';
+import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {
     requestDeleteProject,
     requestUpdateProject,
     updateProject
-} from '../../../../../../core/actions/projects/projects.actions';
-import {homeRoutesName} from '../../../../../../routing.module.name';
+} from '../../../../core/actions/projects/projects.actions';
+import {homeRoutesName} from '../../../../routing.module.name';
 import {ProjectLeftPanel} from '../../models/project-list';
 import {
     addNewActiveProjectId,
     deleteActiveProjectId
-} from "../../../../../../core/actions/projects/active-projects-ids.actions";
+} from "../../../../core/actions/projects/active-projects-ids.actions";
 
 
 @Component({
@@ -74,7 +74,6 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         this.anotherProjectTypes = this.availableProjectTypes.filter(projectType => projectType !== this.project.projectType)
         this.deleteOrLeave = this.project.shareWith.length > 1 ? 'Leave' : 'Delete';
         this.canHaveChildProjects = this.project.level < 2;
-        console.log(this.project)
         this.store.select(selectLoggedInUser)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(user => {

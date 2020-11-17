@@ -15,7 +15,6 @@ import {
 import {ProjectService} from '../services/project.service';
 import {Project} from '@data/projects';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {AngularFireAuth} from '@angular/fire/auth';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 
@@ -96,7 +95,7 @@ export class ProjectsEffects {
         ), {dispatch: false});
 
     constructor(private actions$: Actions, private projectService: ProjectService, private db: AngularFirestore,
-                private store: Store, private authFire: AngularFireAuth, public snackBar: MatSnackBar) {
+                private store: Store, public snackBar: MatSnackBar) {
 
     }
 

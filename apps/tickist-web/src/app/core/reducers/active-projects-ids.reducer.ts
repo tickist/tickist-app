@@ -1,5 +1,6 @@
 import {
     addNewActiveProjectId,
+    clearActiveProjectsId,
     deleteActiveProjectId,
     newActiveProjectsIds
 } from '../actions/projects/active-projects-ids.actions';
@@ -34,6 +35,9 @@ const activeProjectsIdsReducer = createReducer(
                 ...state.projectsIds.slice(index + 1)
             ]
         };
+    }),
+    on(clearActiveProjectsId, (state, props) => {
+        return initialState
     })
 )
 

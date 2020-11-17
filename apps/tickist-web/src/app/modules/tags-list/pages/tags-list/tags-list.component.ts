@@ -1,23 +1,23 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {TagService} from '../../../../../../core/services/tag.service';
+import {TagService} from '../../../../core/services/tag.service';
 import {Tag} from '@data/tags/models/tags';
 import {Task} from '@data/tasks/models/tasks';
-import {TaskService} from '../../../../../../core/services/task.service';
+import {TaskService} from '../../../../core/services/task.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {UserService} from '../../../../../../core/services/user.service';
+import {UserService} from '../../../../core/services/user.service';
 import {User} from '@data/users/models';
-import {ConfigurationService} from '../../../../../../core/services/configuration.service';
+import {ConfigurationService} from '../../../../core/services/configuration.service';
 import {FilterTagsDialogComponent} from '../../components/filter-tags-dialog/filter-tags-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
+import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
 import {Store} from '@ngrx/store';
 import {takeUntil} from 'rxjs/operators';
-import {requestCreateTag} from '../../../../../../core/actions/tags.actions';
+import {requestCreateTag} from '../../../../core/actions/tags.actions';
 import {selectFilteredTagsList} from '../../tags-filters.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {TagWithTaskCounter} from '@data/tags/models/tag-with-task-counter';
-import {selectLoggedInUser} from '../../../../../../core/selectors/user.selectors';
+import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 
 
 @Component({

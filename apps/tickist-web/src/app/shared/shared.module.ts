@@ -12,7 +12,6 @@ import {Minutes2hoursPipe} from './pipes/minutes2hours';
 import {DateToString} from './pipes/datetostring';
 import {RepeatString} from './pipes/repeatString';
 import {RepeatStringExtension} from './pipes/repeatStringExtension';
-import {AutofocusDirective} from './autofocus';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {UserAvatarComponent} from './components/user-avatar/user-avatar.component';
 import {FeatureFlagDirective} from './directives/feature-flag.directive';
@@ -29,10 +28,10 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         ConfigurationService
     ],
     declarations: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
-        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
+        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, UserAvatarComponent,
         FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective, AddTaskComponent],
     exports: [ChangeTaskViewComponent, MenuButtonComponent, AvatarSize, PriorityComponent, TruncatePipe,
-        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, AutofocusDirective, UserAvatarComponent,
+        Minutes2hoursPipe, DateToString, RepeatString, RepeatStringExtension, UserAvatarComponent,
         FeatureFlagDirective, BlankComponent, EnumToArrayPipe, DataCyDirective, AddTaskComponent]
 })
 export class TickistSharedModule {

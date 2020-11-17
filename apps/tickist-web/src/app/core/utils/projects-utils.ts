@@ -1,5 +1,5 @@
 import {InviteUserStatus, Project, ProjectType, ProjectWithLevel} from '@data/projects';
-import {ProjectLeftPanel} from '../../modules/left-panel/modules/projects-list/models/project-list';
+import {ProjectLeftPanel} from '../../modules/projects-list/models/project-list';
 import * as _ from 'lodash';
 
 
