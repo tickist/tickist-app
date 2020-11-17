@@ -69,7 +69,8 @@ describe('Delete task', () => {
 
     it('should delete task after click on button "delete task" and "Yes"', () => {
         cy.get(`tickist-single-task:contains("${deletedTaskName}")`, {timeout: 10000}).then($task => {
-            cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
+            cy.wrap($task.find('#first-row')).trigger('mouseenter')
+                .wrap($task.find('[data-cy="task-short-menu"]')).click();
             cy.get('[data-cy="delete-task-button"]').click();
         });
         cy.get('tickist-delete-task').within(() => {
@@ -81,7 +82,8 @@ describe('Delete task', () => {
 
     it('should not delete task after click on button "delete task" and "No"', () => {
         cy.get(`tickist-single-task:contains("${nonDeletedTaskName}")`, {timeout: 10000}).then($task => {
-            cy.wrap($task.find('#first-row')).trigger('mouseenter').get('[data-cy="task-short-menu"]').click();
+            cy.wrap($task.find('#first-row')).trigger('mouseenter')
+                .wrap($task.find('[data-cy="task-short-menu"]')).click();
             cy.get('[data-cy="delete-task-button"]').click();
         });
         cy.get('tickist-delete-task').within(() => {

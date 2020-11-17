@@ -209,13 +209,16 @@ describe('Tasks', () => {
             cy.get('tickist-single-task:contains("Task 4")').should('not.be.visible');
             clickOnProject('Project 2');
             cy.get('tickist-single-task:contains("Task 4")').then($task => {
-                cy.wrap($task.find('#first-row')).trigger('mouseenter').get('tickist-pin-button').click();
+                cy.debug()
+                cy.wrap($task.find('#first-row')).trigger('mouseenter').wrap($task.find('tickist-pin-button')).click();
+
             });
             clickOnWeekDay('today');
+
             cy.get('tickist-single-task:contains("Task 4")').then($task => {
                 // tslint:disable-next-line:no-unused-expression
                 expect($task.find('tickist-pin-button')).to.be.visible;
-                cy.wrap($task.find('#first-row')).trigger('mouseenter').get('tickist-pin-button').click();
+                cy.wrap($task.find('#first-row')).trigger('mouseenter').wrap($task.find('tickist-pin-button')).click();
             });
             cy.get('tickist-single-task:contains("Task 4")').should('not.be.visible');
         });
