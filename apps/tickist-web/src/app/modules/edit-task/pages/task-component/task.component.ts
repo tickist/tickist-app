@@ -2,7 +2,6 @@ import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/co
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from '../../../../core/services/task.service';
 import {TagService} from '../../../../core/services/tag.service';
-import {Task} from '@data/tasks/models/tasks';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from '../../../../core/services/user.service';
@@ -34,8 +33,8 @@ import {
     selectAllProjectsWithLevelAndTreeStructures
 } from '../../../../core/selectors/projects.selectors';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-import {AVAILABLE_TASK_TYPES, TaskType} from '@data';
-import {update, valuesIn} from "ramda";
+import {AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task} from '@data';
+import {zip} from "ramda";
 import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
@@ -69,6 +68,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     minFilter: any;
     matcher = new MyErrorStateMatcher();
     taskTypes =  AVAILABLE_TASK_TYPES;
+    taskTypesWithIcons: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @ViewChild('trigger', {read: MatAutocompleteTrigger}) trigger: MatAutocompleteTrigger;
@@ -78,6 +78,14 @@ export class TaskComponent implements OnInit, OnDestroy {
                 private projectService: ProjectService, private userService: UserService, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private location: Location,
                 private tagService: TagService) {
+        this.taskTypesWithIcons = zip(AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS).map(
+            (taskType) => {
+                return {
+                    value: taskType[0],
+                    icon: taskType[1]
+                }
+            }
+        )
     }
 
     ngOnInit() {
@@ -199,8 +207,6 @@ export class TaskComponent implements OnInit, OnDestroy {
                     .filter(u => tagsIds.indexOf(u['id']) === -1)
                     .filter(u => new RegExp(val, 'gi').test(u.name)), {'name': val}
             ];
-
-            // val ? this.tags.filter((s) => new RegExp(val, 'gi').test(s.name)) : {'name': val};
         }
         return [];
     }
@@ -534,6 +540,10 @@ export class TaskComponent implements OnInit, OnDestroy {
             });
         }
 
+    }
+
+    getSelectedTaskType() {
+        return this.taskTypesWithIcons.find(taskType => taskType.value === this.taskForm.get('main').get('taskType').value);
     }
 
     close(): void {

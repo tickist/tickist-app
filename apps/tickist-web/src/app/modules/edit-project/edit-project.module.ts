@@ -11,6 +11,7 @@ import { DeleteUserConfirmationDialogComponent } from './components/delete-user-
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import { IconPickerComponent } from './components/icon-picker/icon-picker.component';
 import { FilterPipe } from './pipes/filter.pipe';
+import {A11yModule} from "@angular/cdk/a11y";
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { FilterPipe } from './pipes/filter.pipe';
         ReactiveFormsModule,
         TickistSharedModule,
         TickistEditProjectRoutingModule,
-        FontAwesomeModule
+        FontAwesomeModule,
+        A11yModule
     ],
     providers: [],
     exports: [ProjectComponent],

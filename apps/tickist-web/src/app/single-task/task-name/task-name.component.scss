@@ -2,11 +2,14 @@
     font-size: 14px;
     box-sizing: border-box;
     max-height: 100%;
-    display: flex;
-    flex-direction: row;
     place-content: center;
-    align-items: center;
+    overflow: hidden;
     div {
         margin-right: 5px;
+    }
+    .task-name {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 }
