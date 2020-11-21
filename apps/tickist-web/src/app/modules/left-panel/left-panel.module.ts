@@ -39,8 +39,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
     ],
     providers: [
     ],
-    entryComponents: [
-    ],
     exports: [
         LeftPanelComponent
     ]

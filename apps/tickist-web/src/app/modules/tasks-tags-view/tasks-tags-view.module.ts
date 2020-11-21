@@ -26,8 +26,6 @@ import {TickistTasksTagsViewRoutingModule} from './tasks-tags-view-routing.modul
     declarations: [TagsComponent],
     providers: [
     ],
-    entryComponents: [
-    ],
     exports: [
         TagsComponent
     ]

@@ -9,7 +9,6 @@ import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
     declarations: [GoogleConnectComponent, FacebookConnectComponent, PromptUserForPasswordDialogComponent, ],
-    entryComponents: [PromptUserForPasswordDialogComponent],
     exports: [
         FacebookConnectComponent,
         GoogleConnectComponent

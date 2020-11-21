@@ -27,9 +27,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         EffectsModule.forFeature([TagsFiltersEffects])
     ],
     providers: [],
-    entryComponents: [
-        FilterTagsDialogComponent
-    ],
     exports:
         [TagsListComponent],
     declarations:

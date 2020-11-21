@@ -28,7 +28,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         StoreModule.forFeature('projectsFilters', fromProjectsFilters.reducer),
         EffectsModule.forFeature([ProjectsFiltersEffects])
     ],
-    entryComponents: [DeleteProjectConfirmationDialogComponent, FilterProjectDialogComponent],
     exports: [ProjectsListComponent, SingleProjectComponent],
     declarations:
         [ProjectsListComponent, SingleProjectComponent, FilterProjectDialogComponent, DeleteProjectConfirmationDialogComponent]

@@ -32,7 +32,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         ProjectTreeComponent,
     ],
     providers: [],
-    entryComponents: [],
     exports: [
         TasksTreeViewComponent
     ]
