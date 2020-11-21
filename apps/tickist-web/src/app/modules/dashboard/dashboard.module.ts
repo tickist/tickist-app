@@ -10,6 +10,7 @@ import {TickistSharedModule} from "../../shared/shared.module";
 import {TickistMaterialModule} from "../../material.module";
 import {IconsModule} from "../../icons.module";
 import { NeedInfoTasksComponent } from './components/need-info-tasks/need-info-tasks.component';
+import {TickistProjectListModule} from "../projects-list/projects-list.module";
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { NeedInfoTasksComponent } from './components/need-info-tasks/need-info-t
         TickistSingleTaskModule,
         TickistSharedModule,
         TickistMaterialModule,
-        IconsModule
+        IconsModule,
+        TickistProjectListModule
     ]
 })
 export class TickistDashboardModule {

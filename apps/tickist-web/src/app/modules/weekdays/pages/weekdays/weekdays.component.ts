@@ -85,7 +85,7 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
 
                 const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
                 this.todayTasks = _.orderBy(this.todayTasks,
-                    ['priority', 'finishDate', 'finishTime', 'name'],
+                    ['priority', 'finishDate', 'finishTime', task => _.deburr(task.name.toLowerCase())],
                     ['asc', 'desc', 'asc', 'asc']
                 );
                 this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);

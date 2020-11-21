@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
-import {addUser} from '../../../../core/actions/user.actions';
+import {addUser} from '../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
-import {TagsFiltersService} from '../../../../core/services/tags-filters.service';
+import {TagsFiltersService} from '../../core/services/tags-filters.service';
 import {defer} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
+import {selectLoggedInUser} from '../../core/selectors/user.selectors';
 import {addTagsFilters, setCurrentTagsListFilter} from './tags-filters.actions';
-import {setCurrentTagsFilters} from "../../../../core/actions/tasks/tags-filters-tasks.actions";
+import {setCurrentTagsFilters} from "../../core/actions/tasks/tags-filters-tasks.actions";
 
 
 @Injectable()

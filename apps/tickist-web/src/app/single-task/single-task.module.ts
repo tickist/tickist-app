@@ -20,6 +20,7 @@ import {NoTasksComponent} from './no-tasks/no-tasks.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import { ChangeUserIdToUserNamePipe } from './change-user-id-to-user-name.pipe';
 import {AngularResizedEventModule} from "angular-resize-event";
+import { TaskTypeLabelComponent } from './task-type-label/task-type-label.component';
 
 @NgModule({
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
@@ -37,7 +38,7 @@ import {AngularResizedEventModule} from "angular-resize-event";
         PinButtonComponent,
         RightMenuComponent, ToggleButtonComponent, TaskNameComponent, DisplayFinishDateComponent, EditRepeatingOptionComponent,
         DateOptionsComponent,
-        SingleTaskExtendedComponent, NoTasksComponent, ChangeUserIdToUserNamePipe]
+        SingleTaskExtendedComponent, NoTasksComponent, ChangeUserIdToUserNamePipe, TaskTypeLabelComponent]
 })
 export class TickistSingleTaskModule {
 }

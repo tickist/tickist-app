@@ -6,6 +6,7 @@
 
     <div fxFlex style="width: 90%;">
         <div #firstRow id="first-row"  fxLayout="row" fxLayoutAlign="start center">
+            <tickist-task-type-label *ngIf="isTaskTypeLabelVisible" fxFlex="120px" [task]="task"></tickist-task-type-label>
             <tickist-task-name fxFlex [task]=task></tickist-task-name>
             <tickist-right-menu fxFlex="90px" [isRightMenuVisible]="true"
                                 [task]="task"

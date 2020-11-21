@@ -459,3 +459,7 @@ body {
 .mat-tooltip {
     background: $background_card_color;
 }
+
+.mat-expansion-panel-header {
+    cursor: pointer;
+}

@@ -1,0 +1,25 @@
+.label {
+    display: flex;
+    padding: 0 10px;
+    height: 32px;
+    font-size: 14px;
+    line-height: 31px;
+    border-radius: 25px;
+    background-color: grey;
+    margin-right: 5px;
+}
+
+.label tickist-button {
+    float: left;
+    margin: 0 10px 0 -25px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-left: 5px;
+}

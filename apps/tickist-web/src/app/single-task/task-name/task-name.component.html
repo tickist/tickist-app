@@ -1,7 +1,8 @@
 <div fxLayoutAlign="start center">
+
     <div class="task-name" #taskNameDiv *ngIf="tooltip" (resized)="onResized()" [innerHTML]="task.richName"
          [matTooltip]="task.name"></div>
-    <div  class="task-name" #taskNameDiv *ngIf="!tooltip" (resized)="onResized()"
+    <div class="task-name" #taskNameDiv *ngIf="!tooltip" (resized)="onResized()"
          [innerHTML]="task.richName"></div>
 
     <div fxFlex *ngIf="onlyEstimateTime" [matTooltip]="'estimated time'">({{ task.estimateTime|minutes2hours }})</div>

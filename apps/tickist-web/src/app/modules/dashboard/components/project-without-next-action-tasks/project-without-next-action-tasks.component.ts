@@ -19,4 +19,8 @@ export class ProjectWithoutNextActionTasksComponent implements OnInit {
         this.projects$ = this.store.select(projectWithoutNextActionTasks)
     }
 
+    trackByFn(index, item) {
+        return item.id;
+    }
+
 }

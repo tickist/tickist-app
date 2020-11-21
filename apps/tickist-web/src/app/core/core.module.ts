@@ -91,7 +91,6 @@ import {A11yModule} from "@angular/cdk/a11y";
         TickistNotificationsModule,
         A11yModule
     ],
-    entryComponents: [],
     exports: [
         NavComponent,
         SearchAutocompleteComponent,

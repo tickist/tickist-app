@@ -4,6 +4,7 @@ import {User} from '@data/users/models';
 import {SortBy} from '@data/tasks/models/sortBy';
 import {Filter} from '@data/filter';
 import { updateCurrentFilter } from '../../reducers/actions/tasks';
+import * as _ from "lodash";
 
 
 @Injectable({
@@ -109,7 +110,7 @@ export class TasksFiltersService {
             new SortBy({
                 id: 1,
                 label: 'sorting',
-                sortKeys: ['priority'],
+                sortKeys: ['priority', task => _.deburr(task.name.toLowerCase())],
                 order: ['desc'],
                 name: 'priority',
                 icon: 'arrow-up'
@@ -133,7 +134,7 @@ export class TasksFiltersService {
             new SortBy({
                 id: 4,
                 label: 'sorting',
-                sortKeys: ['name'],
+                sortKeys: [task => _.deburr(task.name.toLowerCase())],
                 order: ['asc'],
                 name: 'A-Z',
                 icon: 'arrow-up'
@@ -141,7 +142,7 @@ export class TasksFiltersService {
             new SortBy({
                 id: 5,
                 label: 'sorting',
-                sortKeys: ['priority'],
+                sortKeys: ['priority', task => _.deburr(task.name.toLowerCase())],
                 order: ['asc'],
                 name: 'priority',
                 icon: 'arrow-down'
@@ -165,7 +166,7 @@ export class TasksFiltersService {
             new SortBy({
                 id: 8,
                 label: 'sorting',
-                sortKeys: ['name'],
+                sortKeys: [task => _.deburr(task.name.toLowerCase())],
                 order: ['desc'],
                 name: 'A-Z',
                 icon: 'arrow-down'

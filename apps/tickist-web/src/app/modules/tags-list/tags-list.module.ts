@@ -1,7 +1,7 @@
-import {TickistSharedModule} from '../../../../shared/shared.module';
+import {TickistSharedModule} from '../../shared/shared.module';
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
-import {TickistMaterialModule} from '../../../../material.module';
+import {TickistMaterialModule} from '../../material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TagComponent} from './components/tag/tag.component';
 import {FilterTagsDialogComponent} from './components/filter-tags-dialog/filter-tags-dialog.component';
@@ -27,9 +27,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         EffectsModule.forFeature([TagsFiltersEffects])
     ],
     providers: [],
-    entryComponents: [
-        FilterTagsDialogComponent
-    ],
     exports:
         [TagsListComponent],
     declarations:

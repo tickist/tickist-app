@@ -2,15 +2,19 @@ import {createAction, props} from '@ngrx/store';
 
 export const newActiveProjectsIds = createAction(
     '[ActiveProjectsIds] Add completely new ids',
-    props<{projectsIds: Array<string>}>()
+    props<{ projectsIds: Array<string> }>()
 )
 
-export const addNewActiveProjectId= createAction(
+export const addNewActiveProjectId = createAction(
     '[ActiveProjectsIds] Add new id',
-    props<{projectId: string}>()
+    props<{ projectId: string }>()
 )
 
-export const deleteActiveProjectId= createAction(
+export const deleteActiveProjectId = createAction(
     '[ActiveProjectsId] Delete id',
-    props<{projectId: string}>()
+    props<{ projectId: string }>()
+)
+
+export const clearActiveProjectsId = createAction(
+    '[ActiveProjectsId] Clear Active Projects Id'
 )

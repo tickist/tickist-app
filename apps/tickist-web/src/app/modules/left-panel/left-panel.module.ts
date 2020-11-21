@@ -10,8 +10,8 @@ import { LeftPanelComponent } from './pages/left-panel/left-panel.component';
 import {WeekDaysComponent} from './components/weekdays/weekdays.component';
 import {ChooseDayComponent} from './components/choose-day/choose-day.component';
 import {FutureListComponent} from './components/future-list/future-list.component';
-import {TickistProjectListModule} from './modules/projects-list/projects-list.module';
-import {TickistTagsListModule} from './modules/tags-list/tags-list.module';
+import {TickistProjectListModule} from '../projects-list/projects-list.module';
+import {TickistTagsListModule} from '../tags-list/tags-list.module';
 import {TickistLeftPanelRoutingModule} from './left-panel-routing.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
@@ -38,8 +38,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         FutureListComponent
     ],
     providers: [
-    ],
-    entryComponents: [
     ],
     exports: [
         LeftPanelComponent

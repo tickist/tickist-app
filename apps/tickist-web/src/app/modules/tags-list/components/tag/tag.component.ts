@@ -1,14 +1,14 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Tag} from '@data/tags/models/tags';
-import {TasksFiltersService} from '../../../../../../core/services/tasks-filters.service';
-import {requestDeleteTag, requestUpdateTag} from '../../../../../../core/actions/tags.actions';
+import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
+import {requestDeleteTag, requestUpdateTag} from '../../../../core/actions/tags.actions';
 import {Store} from '@ngrx/store';
-import {selectCurrentTagsFilter} from '../../../../../../core/selectors/filters-tasks.selectors';
+import {selectCurrentTagsFilter} from '../../../../core/selectors/filters-tasks.selectors';
 import {Filter} from '@data/filter';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {setCurrentTagsFilters} from "../../../../../../core/actions/tasks/tags-filters-tasks.actions";
+import {setCurrentTagsFilters} from "../../../../core/actions/tasks/tags-filters-tasks.actions";
 
 
 @Component({

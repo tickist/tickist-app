@@ -1,6 +1,7 @@
 import {Project} from '@data/projects';
-import {setActiveProject} from '../actions/projects/active-project.actions';
+import {clearActiveProject, setActiveProject} from '../actions/projects/active-project.actions';
 import {Action, createReducer, on} from "@ngrx/store";
+import {clearActiveProjectsId} from "../actions/projects/active-projects-ids.actions";
 
 
 export interface ActiveProjectState {
@@ -17,6 +18,9 @@ const activeProjectReducer = createReducer(
         return  {
             activeProject: props.project
         }
+    }),
+    on(clearActiveProject, (state, props) => {
+        return initialState
     })
 )
 

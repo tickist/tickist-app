@@ -4,7 +4,6 @@ import {FutureTasksFiltersService} from './modules/future-tasks/core/services/fu
 import {RouterModule, Routes} from '@angular/router';
 import {LoggedInGuard} from './core/guards/loggedIn.guard';
 import {AnonymousGuard} from './core/guards/anonymous.guard';
-import {SetAllTasksFilterResolver} from './routing/resolvers/set-all-tasks-filter.resolver';
 import {RouterStateSerializer, StoreRouterConnectingModule, DefaultRouterStateSerializer} from '@ngrx/router-store';
 import {CustomSerializer} from './routing/custom-serializer';
 import {HomeComponent} from './core/layouts/home';
@@ -97,7 +96,7 @@ export const routes: Routes = [
             },
             {
                 path: '',
-                redirectTo: '/home/weekdays',
+                redirectTo: '/home/dashboard',
                 pathMatch: 'full'
             }
         ]
@@ -136,7 +135,6 @@ export const routes: Routes = [
     ],
     declarations: [],
     providers: [
-        SetAllTasksFilterResolver,
         FutureTasksFiltersService,
         LoggedInGuard,
         AnonymousGuard,

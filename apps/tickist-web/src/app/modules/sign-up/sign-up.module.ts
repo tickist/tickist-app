@@ -15,7 +15,6 @@ import {AuthModule} from '../auth/auth.module';
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
         ReactiveFormsModule, TickistSignUpRoutingModule, TickistSharedModule, IconsModule, AuthModule],
     providers: [],
-    entryComponents: [],
     exports: [SignUpComponent],
     declarations: [
         SignUpComponent

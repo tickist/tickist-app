@@ -35,8 +35,6 @@ export class AuthEffects {
             ofType(fetchedLoginUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
-                console.log({user});
-
                 return this.db.collection('users').doc(action.uid).get().pipe(
                     filter(snapshot => snapshot.exists),
                     tap((snapshot: any) => {

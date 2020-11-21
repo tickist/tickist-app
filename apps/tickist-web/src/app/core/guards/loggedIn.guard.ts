@@ -23,13 +23,5 @@ export class LoggedInGuard implements CanActivate {
                 return false;
             })
         );
-
-        //
-        //
-        // if (state.url !== '/login' && !this.authService.isLoggedIn()) {
-        //     this.router.navigate(['login']);
-        //     return false;
-        // }
-        // return true;
     }
 }

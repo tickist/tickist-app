@@ -33,9 +33,6 @@ import {SliderModule} from 'primeng/slider';
     providers: [
         TaskService
     ],
-    entryComponents: [SortByDialogComponent, AssignedToDialogComponent, EstimateTimeDialogComponent, AssignedToDialogComponent,
-        TagsFilterDialogComponent, TasksFilterDialogComponent
-    ],
     exports: [
         SortTasksComponent, FilterTasksComponent, NoTasksComponent
     ]
