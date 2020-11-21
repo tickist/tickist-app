@@ -63,12 +63,12 @@ describe('Change project type', () => {
             });
             cy.callFirestore('set', `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
         });
-
+        cy.wait(1000);
         cy.visit('/');
     })
 
     it('should change project type and next check projects counters', () => {
-        cy.get(`mat-expansion-panel:contains("Alive projects")`, { timeout: 20000 }).should('contain', '3')
+        cy.get(`mat-expansion-panel:contains("Alive projects")`, { timeout: 30000 }).should('contain', '3')
         cy.get(`mat-expansion-panel:contains("Someday/maybe projects")`, {timeout: 20000}).should('contain', '0')
         clickOnEditProject(projectName);
         cy.get('mat-select[data-cy="select-project-type"]').click();
