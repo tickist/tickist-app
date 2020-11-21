@@ -68,7 +68,7 @@ export function calculateProjectsLevel(projects) {
 export function generateDifferentLevelsOfProjects(projects: Project[]): ProjectWithLevel[] {
     // @TODO change list_of_list => ProjectsTreeview
     projects = _.orderBy(projects,
-        ['name'],
+        [project => _.deburr(project.name.toLowerCase())],
         ['asc']
     );
 

@@ -104,7 +104,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 let project: Project;
                 this.user = user;
                 this.team = team;
-                this.projectsAncestors = [{id: '', name: ''},
+                this.projectsAncestors = [{id: '', name: 'No ancestor project'},
                     ...projects.filter(p => p.level < 2).filter(p => p.id !== projectId)];
                 if (projectId) {
                     project = projects.find(p => p.id === projectId);
