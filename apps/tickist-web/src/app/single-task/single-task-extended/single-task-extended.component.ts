@@ -16,7 +16,7 @@ import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectService} from '../../core/services/project.service';
-import {removeTagsNotBelongingToUser, ShareWithUser, Tag, Task, TaskProject, User} from '@data';
+import {removeTagsNotBelongingToUser, ShareWithUser, Tag, Task, TaskProject, TaskType, User} from '@data';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
@@ -24,11 +24,7 @@ import {SingleTask} from '../shared/single-task';
 import {requestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
-import {
-    selectAllProjectLeftPanel,
-    selectAllProjectsFilters,
-    selectFilteredProjectsList
-} from '../../modules/projects-list/projects-filters.selectors';
+import {selectAllProjectLeftPanel} from '../../modules/projects-list/projects-filters.selectors';
 import {selectProjectById} from '../../core/selectors/projects.selectors';
 import {FormControl} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
@@ -55,6 +51,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     repeatStringExtension;
     selectTaskProject: FormControl;
     tags: Tag[] = [];
+    isTaskTypeLabelVisible = false;
 
     @HostListener('mouseenter')
     onMouseEnter() {
@@ -169,6 +166,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
         if (changes.hasOwnProperty('task') && changes.task.currentValue && this.user) {
             this.tags = removeTagsNotBelongingToUser(this.task.tags, this.user.id);
         }
+        this.isTaskTypeLabelVisible = this.task.taskType === TaskType.NEED_INFO || this.task.taskType === TaskType.NEXT_ACTION
     }
 
     changeFastMenuVisible(value) {
