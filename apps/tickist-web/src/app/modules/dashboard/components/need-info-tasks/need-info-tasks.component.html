@@ -1,4 +1,4 @@
-<tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="'extended'"
+<tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="'extended'" [user]="user$ | async"
                      *ngFor="let task of tasks$ | async; trackBy: trackByFn">
 
 </tickist-single-task>

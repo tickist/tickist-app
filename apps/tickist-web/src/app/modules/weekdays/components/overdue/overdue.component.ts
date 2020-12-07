@@ -1,13 +1,11 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Task} from '@data/tasks/models/tasks';
 import {TaskService} from '../../../../core/services/task.service';
-import {UserService} from '../../../../core/services/user.service';
 import {User} from '@data/users/models';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {updateUser} from '../../../../core/actions/user.actions';
 import {Store} from '@ngrx/store';
-import {AppStore} from '../../../../store';
 import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 
 
