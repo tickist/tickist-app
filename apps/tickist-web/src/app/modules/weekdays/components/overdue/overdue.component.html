@@ -6,7 +6,7 @@
     </tickist-change-task-view>
 </div>
 
-<tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="taskView"
+<tickist-single-task class="item" [task]="task" [mediaChange]="mediaChange" [taskView]="taskView" [user]="user"
                  *ngFor="let task of tasks;trackBy: trackByFn">
 
 </tickist-single-task>
