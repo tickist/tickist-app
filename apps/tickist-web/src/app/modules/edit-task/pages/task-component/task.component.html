@@ -58,7 +58,7 @@
                     <div fxLayout="column" fxLayoutAlign="space-between none">
 
                         <mat-form-field>
-                            <input matInput #taskName name="taskName" cdkTrapFocus
+                            <input matInput #taskName name="taskName" cdkTrapFocus cdkTrapFocusAutoCapture="true"
                                    (blur)="updateImmediately('name', 'main.name', taskForm.value)"
                                    placeholder="Task name" maxlength="500" formControlName="name"
                                    [errorStateMatcher]="matcher">
@@ -185,12 +185,12 @@
 
                         <mat-form-field>
                             <input matInput placeholder="Estimated time" formControlName="estimateTime">
-                            <fa-icon matTooltip="e.g. 30m or 1h 15m" [icon]="'question'" [ngClass]="question" matSuffix></fa-icon>
+                            <fa-icon matTooltip="e.g. 30m or 1h 15m" [icon]="'question'" [ngClass]="'question'" matSuffix></fa-icon>
                         </mat-form-field>
 
                         <mat-form-field>
                             <input matInput placeholder="Real time" formControlName="time">
-                            <fa-icon matTooltip="e.g. 30m or 1h 15m" [icon]="'question'" [ngClass]="question" matSuffix></fa-icon>
+                            <fa-icon matTooltip="e.g. 30m or 1h 15m" [icon]="'question'" [ngClass]="'question'" matSuffix></fa-icon>
                         </mat-form-field>
 
                         <mat-form-field>
@@ -240,7 +240,9 @@
                                 <fa-icon [icon]="'arrows-alt'"[classes]="'hover-visible'"></fa-icon>
                                 <mat-form-field style="width: 80%;">
                                     <input matInput placeholder="Step name" formControlName="name"
-                                           [shouldFocusElement]="last && checkActiveItemInMenu('steps')">
+                                           [cdkTrapFocus]="last && checkActiveItemInMenu('steps')"
+                                           [cdkTrapFocusAutoCapture]="last && checkActiveItemInMenu('steps')"
+                                    >
                                 </mat-form-field>
                                 <fa-icon [icon]="'trash-alt'" (click)="removeStep(i)"></fa-icon>
                             </li>

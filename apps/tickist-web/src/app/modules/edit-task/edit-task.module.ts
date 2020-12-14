@@ -24,7 +24,7 @@ import {A11yModule} from "@angular/cdk/a11y";
         SortablejsModule.forRoot({
             animation: 150
         }),
-        A11yModule
+        A11yModule,
     ],
     providers: [],
     exports: [TaskComponent],

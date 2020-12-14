@@ -12,7 +12,7 @@ import {homeRoutesName} from '../../../routing.module.name';
 import {setCurrrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
 import {searchInputIsFocus} from "../../selectors/ui.selectors";
 import {blurOnSearchInput} from "../../actions/ui.actions";
-import {debug} from "util";
+
 
 @Component({
     selector: 'tickist-search-autocomplete',

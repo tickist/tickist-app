@@ -217,7 +217,7 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     private createFinishDateFilter() {
         if (!this.task.finishDate || this.task.finishDate >= this.minDate) {
-            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d.setHours(0, 0, 0, 0);
+            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
         } else {
             this.minFilter = (d: Date): boolean => true;
         }
