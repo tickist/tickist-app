@@ -1,6 +1,5 @@
 import {isRepeated, setAllStepsToDone, setAllStepsToUndone} from './task-utils';
 import {Task} from '@data/tasks/models/tasks';
-import {debug} from 'util';
 import {addBusinessDays, addDays, addMonths, addWeeks, addYears} from 'date-fns';
 
 export function setStatusDoneLogic(task): Task {
