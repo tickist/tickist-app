@@ -16,6 +16,7 @@ import {selectActiveProjectsIds, selectAliveProjects} from './projects.selectors
 import {selectCurrentSortBy} from './sort-by-tasks.selectors';
 import {selectLoggedInUser} from './user.selectors';
 import {Project, TaskType} from "@data";
+import * as _ from "lodash";
 
 
 export const selectTasksState = createFeatureSelector<TasksState>('task');
@@ -151,9 +152,12 @@ export const nextActionTasks = createSelector(
     selectAllTasks,
     selectLoggedInUser,
     (tasks, user) => {
-        return tasks
+        return orderBy(tasks
             .filter(task => task.owner.id === user.id)
-            .filter(task => task.taskType === TaskType.NEXT_ACTION)
+            .filter(task => task.taskType === TaskType.NEXT_ACTION),
+            ['priority', task => _.deburr(task.name.toLowerCase())],
+            ['asc', 'asc']
+            )
     }
 )
 
