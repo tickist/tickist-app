@@ -12,10 +12,7 @@
 
 </div>
 
-<div class="project-description">
-    {{ project.richDescription}}
-
-</div>
+<div class="project-description"  [innerHTML]="project.richDescription"></div>
 
 <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="navigateToCreateNewChildProject(project?.id)">
