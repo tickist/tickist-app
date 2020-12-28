@@ -2,13 +2,15 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    EventEmitter,
     Input,
     OnChanges,
     OnDestroy,
-    OnInit
+    OnInit,
+    Output
 } from '@angular/core';
 import {AngularFireStorage} from '@angular/fire/storage';
-import {Observable, of, Subject, throwError} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {DEFAULT_USER_AVATAR, USER_AVATAR_PATH} from '@data/users/config-user';
 import {delay, mergeMap, retryWhen, takeUntil} from 'rxjs/operators';
 
@@ -24,6 +26,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     @Input() avatarUrl: string;
     @Input() size = '32x32';
     @Input() styles?: { value: string, name: string }[] = [];
+    @Output() avatarIsEmpty = new EventEmitter<string>();
     MAX_AVATAR_SIZE = '200x200';
     imgStyle: any = {};
     spinnerDiameter = 32;
@@ -48,7 +51,9 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
             this.url = this.addMaxAvatarSizeToAvatarUrl();
         } else if (this.validURL(this.avatarUrl)) {
             this.url = this.avatarUrl;
-        } else {
+        } else if (this.avatarUrl === "" || this.avatarUrl === undefined) {
+           this.avatarIsEmpty.emit();
+        } else{
             this.updateUrlFromFirebaseStorage();
         }
     }

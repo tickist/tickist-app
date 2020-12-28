@@ -37,6 +37,7 @@ export class SingleTask implements OnDestroy{
     }
 
     isSharedProject(): boolean {
+        // return true;
         // @TODO change detetion too often -> it shouldn't be a function
         return this.task.taskProject.shareWithIds.length > 1
     }

@@ -21,7 +21,7 @@ import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
 import {SingleTask} from '../shared/single-task';
-import {requestUpdateTask} from '../../core/actions/tasks/task.actions';
+import {repairAvatarUrl, requestUpdateTask} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {removeTag} from '../utils/task-utils';
 import {selectAllProjectLeftPanel} from '../../modules/projects-list/projects-filters.selectors';
@@ -172,6 +172,10 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     changeFastMenuVisible(value) {
         this.isFastMenuVisible = value;
         this.changeRightMenuVisiblity();
+    }
+
+    repairAvatarUrl() {
+        this.store.dispatch(repairAvatarUrl({task: this.task}))
     }
 }
 
