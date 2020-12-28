@@ -56,3 +56,8 @@ export const closeMenuInAllTasks = createAction(
     '[TASKS] CLOSE MENU IN ALL TASKS',
     props<{ tasks: Update<Task>[] }>()
 )
+
+export const repairAvatarUrl = createAction(
+    '[TASKS] REPAIR AVATAR URL',
+    props<{task: Task}>()
+)

@@ -6,7 +6,7 @@ import {
     addTasks,
     closeMenuInAllTasks,
     deleteTask,
-    queryTasks,
+    queryTasks, repairAvatarUrl,
     requestCreateTask,
     requestDeleteTask,
     requestUpdateTask,
@@ -22,6 +22,7 @@ import {Update} from '@ngrx/entity';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {selectLoggedInUser} from '../selectors/user.selectors';
 import {switchOnProgressBar} from "../actions/progress-bar.actions";
+import {selectTeam} from "../selectors/team.selectors";
 
 
 @Injectable()
@@ -149,6 +150,20 @@ export class TaskEffects {
                 return closeMenuInAllTasks({tasks: tasksWithCloseMenu});
             })
         ));
+
+    repairAvatarUrl$ = createEffect(() => this.actions$
+        .pipe(
+            ofType(repairAvatarUrl),
+            withLatestFrom(this.store.select(selectTeam)),
+            filter(([, team]) => team.length > 0),
+            map(([action, team]) => {
+                const ownerAvatarUrl = team.find(user => user.id === action.task.owner.id).avatarUrl;
+                const task = Object.assign({}, action.task, {owner: {...action.task.owner, avatarUrl: ownerAvatarUrl}});
+                return requestUpdateTask({task: {id: action.task.id, changes: task}})
+            })
+        )
+    )
+
 
     constructor(private actions$: Actions, private tasksService: TaskService, private db: AngularFirestore,
                 private store: Store, public snackBar: MatSnackBar) {

@@ -42,7 +42,7 @@
                                  (click)="changeShowing('isRepeat')">
             </tickist-menu-button>
 
-            <tickist-user-avatar (click)="changeShowing('isAssignedTo')" [userId]="task.owner.id"
+            <tickist-user-avatar (click)="changeShowing('isAssignedTo')" [userId]="task.owner.id" (avatarIsEmpty)="repairAvatarUrl()"
                                  [avatarUrl]="task.owner.avatarUrl" [size]="'18x18'" [username]="task.owner.username"
                                  *ngIf="isSharedProject()" [styles]="[{name: 'margin-top', value: '5px'}]">
             </tickist-user-avatar>

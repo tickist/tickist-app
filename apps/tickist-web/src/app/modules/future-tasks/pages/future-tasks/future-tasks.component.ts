@@ -19,6 +19,7 @@ import {IActiveDateElement} from '@data/active-data-element.interface';
 import {Filter} from '@data/filter';
 import {stateActiveDateElement} from '@data/state-active-date-element.enum';
 import {TASK_EXTENDED_VIEW} from "@data";
+import {format} from "date-fns";
 
 
 @Component({
@@ -51,7 +52,9 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         this.activeDateElement$ = this.store.select(selectActiveDate);
         this.route.params
             .pipe(
-                map(params => params['date']),
+                map(params => {
+                    return params['date'] ? params['date'] : format(new Date(),'LLLL-uuuu')
+                }),
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe((param) => {
