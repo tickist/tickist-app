@@ -33,6 +33,19 @@ import {TickistLeftPanelModule} from './modules/left-panel/left-panel.module';
 import {AngularFirestoreModule, SETTINGS} from "@angular/fire/firestore";
 import {reducer as addTaskComponentVisibilityReducer} from "./reducers/add-task-component-visibility";
 import {reducer as leftSidenavVisibility} from "./reducers/left-sidenav-visibility";
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { USE_EMULATOR as USE_AUTH_EMULATOR } from '@angular/fire/auth';
+import { USE_EMULATOR as USE_DATABASE_EMULATOR } from '@angular/fire/database';
+import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from '@angular/fire/firestore';
+import { USE_EMULATOR as USE_FUNCTIONS_EMULATOR } from '@angular/fire/functions';
+
+import {NGXLoggerMonitor, NGXLogInterface} from 'ngx-logger';
+
+export class MyLoggerMonitor implements NGXLoggerMonitor {
+    onLog(log: NGXLogInterface) {
+        console.log('myCustomLoggerMonitor', log);
+    }
+}
 
 
 @NgModule({
@@ -46,6 +59,11 @@ import {reducer as leftSidenavVisibility} from "./reducers/left-sidenav-visibili
         SnackBarMessageComponent
     ],
     imports: [
+        LoggerModule.forRoot({
+            serverLoggingUrl: '/api/logs',
+            level: NgxLoggerLevel.DEBUG,
+            serverLogLevel: NgxLoggerLevel.ERROR
+        }),
         TickistSharedModule,
         TickistSingleTaskModule,
         BrowserModule,
@@ -98,7 +116,11 @@ import {reducer as leftSidenavVisibility} from "./reducers/left-sidenav-visibili
                 ssl: false,
                 experimentalForceLongPolling: true
             } : undefined
-        }
+        },
+        { provide: USE_AUTH_EMULATOR, useValue: environment.emulator ? ['localhost', 9099] : undefined },
+        { provide: USE_DATABASE_EMULATOR, useValue: environment.emulator ? ['localhost', 9000] : undefined },
+        { provide: USE_FIRESTORE_EMULATOR, useValue: environment.emulator ? ['localhost', 8080] : undefined },
+        { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.emulator ? ['localhost', 5001] : undefined },
     ]
 })
 export class AppModule {

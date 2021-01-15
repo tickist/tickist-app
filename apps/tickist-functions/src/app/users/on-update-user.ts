@@ -57,7 +57,7 @@ export const onUpdateUser = functions.firestore.document('users/{userId}')
                         avatarUrl: after.avatarUrl
                     });
                 task.ref.update({
-                    'owner': JSON.parse(JSON.stringify(author))
+                    'author': JSON.parse(JSON.stringify(author))
                 });
             });
 

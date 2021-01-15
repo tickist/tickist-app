@@ -48,7 +48,7 @@ steps:
             npm run cy:verify
             npm run build tickist-functions
             firebase use ci
-            firebase emulators:exec "npm run e2e"
+            npm run e2eCiWithEmulator
         displayName: 'e2e tests'
 
     #- script: |

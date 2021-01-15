@@ -5,7 +5,6 @@ export const environment: IEnvironment = {
     name: 'dev',
     e2eTest: false,
     emulator: true,
-    // emulatorIPAddress: '172.31.46.235:8080',
     emulatorIPAddress: 'localhost:8080',
     experimentalForceLongPolling: false,
     firebase: {

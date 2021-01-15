@@ -7,18 +7,17 @@ export function createFirebase() {
 }
 
 export function login() {
-    cy.login(Cypress.env('TEST_UID'));
-}
-
-export function logout() {
-    cy.logout();
+    cy.visit('/');
+    cy.get('input[name=email]').type('test@tickist.com');
+    cy.get('input[name=password]').type('passpass');
+    cy.get('button[type=\'submit\']').click();
 }
 
 function setFirebaseData() {
-    const uid = Cypress.env('TEST_UID');
+    const uid = '7mr64tVcVv3085oo0Y1VheOQYJXV'
     const database = new Database(uid);
     cy.wrap(database).as('database');
-    cy.callFirestore('set', `users/${database.uid}`, {...database.user});
+    cy.callFirestore('set', `projects/${database.inbox.id}`, JSON.parse(JSON.stringify(database.inbox)));
     database.projects.forEach(project => {
         cy.callFirestore('set', `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
     });
@@ -35,10 +34,6 @@ export function removeOldFirebaseData() {
         recursive: true
     });
     cy.callFirestore('delete', 'tags', {
-        recursive: true
-    });
-
-    cy.callFirestore('delete', 'users', {
         recursive: true
     });
 

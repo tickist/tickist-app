@@ -1,26 +1,25 @@
-import {clickOnTagsLeftPanelMenu, createFirebase, login, logout, removeOldFirebaseData} from '../support/utils';
+import {clickOnTagsLeftPanelMenu, createFirebase, login, removeOldFirebaseData} from '../support/utils';
 
 describe("Tags", () => {
-    before(() => {
+    beforeEach(() => {
         login();
         createFirebase()
     });
 
-    after(() => {
-        logout();
+    afterEach(() => {
+        removeOldFirebaseData();
     });
 
     describe("Create new tag", () => {
         beforeEach(() => {
-            cy.visit('/home/tasks-tags-view');
+            clickOnTagsLeftPanelMenu()
         });
 
         it('should create new tag using a form in the left panel and delete it', () => {
-           cy.url().should('include', 'tasks-tags-view');
+            cy.url().should('include', 'tasks-tags-view');
             const newTagName = 'New tag name';
             const newTagName2 = 'New tag name2';
             cy.log("Create tag name");
-            clickOnTagsLeftPanelMenu();
             cy.get('input[name=tag-name]').type(newTagName).should("have.value", newTagName);
             cy.get('[data-cy="createTag"]').click();
             cy.log("Edit tag name");

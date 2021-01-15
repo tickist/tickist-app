@@ -12,7 +12,7 @@
                     <mat-list-item (click)="changeActiveItemInMenu('main')"
                                    [ngClass]="{'active': checkActiveItemInMenu('main')}">
                         <fa-icon [icon]="'edit'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Main</span></p>
+                        <p [fxHide.xs]="1"><span>Account</span></p>
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('password')"
@@ -70,6 +70,12 @@
                         <input #changeAvatarInput type="file" name="openFile" accept="image/x-png,image/jpeg"
                                (change)="changeAvatar($event)"/>
                         <mat-progress-bar mode="determinate" value="{{ uploadPercent | async }}"></mat-progress-bar>
+                    </div>
+
+                    <div>
+                        <button id="delete-button" data-cy="delete-user-account" (click)="showDeleteAccountDialog()" mat-button>Delete my Tickist account</button>
+                        <p id="delete-button-description">Deleting your account is permanent. All your data will be wiped out immediately and you won't
+                            be able to get it back. Requires password.</p>
                     </div>
                 </div>
 

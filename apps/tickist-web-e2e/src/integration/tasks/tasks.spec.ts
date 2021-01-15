@@ -5,7 +5,6 @@ import {
     compareTaskElementWithTaskObject,
     createFirebase,
     login,
-    logout,
     removeOldFirebaseData
 } from '../../support/utils';
 import {TaskProject} from '@data/tasks/models/task-project';
@@ -21,11 +20,10 @@ describe('Tasks', () => {
     beforeEach(() => {
         login();
         createFirebase();
-        cy.visit('/');
     });
 
     afterEach(() => {
-        logout();
+        removeOldFirebaseData();
     });
 
     describe('Click on add new task button', () => {
@@ -43,7 +41,7 @@ describe('Tasks', () => {
             };
         });
 
-        it('should open the form, fills the form add new task to the Inbox', () => {
+        it('should open the form, fills the form and next add new task to the Inbox', () => {
             cy.get('tickist-add-task-footer-button', {timeout: 20000}).find('button').click();
             cy.url().should('include', 'home').should('include', 'edit-task');
 
@@ -209,7 +207,6 @@ describe('Tasks', () => {
             cy.get('tickist-single-task:contains("Task 4")').should('not.be.visible');
             clickOnProject('Project 2');
             cy.get('tickist-single-task:contains("Task 4")').then($task => {
-                cy.debug()
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').wrap($task.find('tickist-pin-button')).click();
 
             });

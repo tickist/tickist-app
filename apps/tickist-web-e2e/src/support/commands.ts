@@ -61,6 +61,7 @@ if (firebaseConfiguration.emulator) {
         ssl: false,
         experimentalForceLongPolling: true
     });
+    firebase.auth().useEmulator('http://127.0.0.1:9099/');
 }
 
 attachCustomCommands({ Cypress, cy, firebase });

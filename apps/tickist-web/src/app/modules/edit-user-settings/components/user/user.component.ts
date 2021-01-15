@@ -15,6 +15,9 @@ import {DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS} fr
 import {NotificationPermission, TASKS_VIEWS_LIST} from '@data';
 import {NotificationsService} from '../../../notifications/services/notifications.service';
 import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
+import {DeleteUserConfirmationDialogComponent} from "../../../edit-project/components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component";
+import {DeleteAccountDialogComponent} from "../delete-account-dialog/delete-account-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
     selector: 'tickist-user',
@@ -44,7 +47,7 @@ export class UserComponent implements OnInit, OnDestroy {
     @ViewChild('changeAvatarInput') changeAvatarInput: ElementRef;
 
     constructor(private fb: FormBuilder, private store: Store, private location: Location,
-                private notificationsService: NotificationsService,
+                private notificationsService: NotificationsService, public dialog: MatDialog,
                 private configurationService: ConfigurationService, private userService: UserService) {
 
         this.staticUrl = environment['staticUrl'];
@@ -377,5 +380,8 @@ export class UserComponent implements OnInit, OnDestroy {
         }
     }
 
+    showDeleteAccountDialog () {
+        const dialogRef = this.dialog.open(DeleteAccountDialogComponent);
+    }
 
 }

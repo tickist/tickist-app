@@ -3,12 +3,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../../auth/services/auth.service';
 import {Router} from '@angular/router';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {DeleteTaskDialogComponent} from '../../../../single-task/delete-task-dialog/delete-task.dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {PromptUserForPasswordDialogComponent} from '../../../auth/components/prompt-user-for-password-dialog/prompt-user-for-password-dialog.component';
-import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {auth} from 'firebase/app';
 
 
 @Component({

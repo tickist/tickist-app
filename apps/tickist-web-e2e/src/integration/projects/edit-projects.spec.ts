@@ -3,7 +3,6 @@ import {
     clickOnProjectTypeLeftPanelMenu,
     createFirebase,
     login,
-    logout,
     removeOldFirebaseData
 } from '../../support/utils';
 import {Project, ProjectType} from "@data";
@@ -11,11 +10,13 @@ import {createUniqueId} from "@tickist/utils";
 
 describe('Edit Projects', () => {
     beforeEach(() => {
-        logout();
         login();
         createFirebase();
-        cy.visit('/');
     });
+
+    afterEach(()=> {
+        removeOldFirebaseData();
+    })
 
     it('should change project name', () => {
         const newProjectName = 'Project new 1';
@@ -43,7 +44,6 @@ describe('Edit Projects', () => {
 describe('Change project type', () => {
     let projectName;
     beforeEach(() => {
-        logout();
         login();
         createFirebase();
         cy.get('@database').then((database: any) => {
@@ -64,7 +64,10 @@ describe('Change project type', () => {
             cy.callFirestore('set', `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
         });
         cy.wait(1000);
-        cy.visit('/');
+    })
+
+    afterEach(()=> {
+        removeOldFirebaseData()
     })
 
     it('should change project type and next check projects counters', () => {

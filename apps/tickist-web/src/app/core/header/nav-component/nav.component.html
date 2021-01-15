@@ -14,13 +14,13 @@
 
     <tickist-search-autocomplete></tickist-search-autocomplete>
     <tickist-notifications-icon></tickist-notifications-icon>
-    <tickist-user-avatar *ngIf="user" [mat-menu-trigger-for]="menu" [userId]="user.id" [avatarUrl]="user.avatarUrl"
+    <tickist-user-avatar *ngIf="user" data-cy="user-menu" [mat-menu-trigger-for]="menu" [userId]="user.id" [avatarUrl]="user.avatarUrl"
                          [size]="'32x32'"></tickist-user-avatar>
     <tickist-menu-button *ngIf="!user" (click)="logout()" [icon]="'sign-out-alt'" [fontSize]="'28'"
                          [iconPrefix]="'fas'"></tickist-menu-button>
     <mat-menu #menu="matMenu">
         <button (click)="navigateToTeam()" mat-menu-item>Team</button>
-        <button (click)="navigateToUserSettings()" mat-menu-item>Settings</button>
+        <button data-cy="user-settings" (click)="navigateToUserSettings()" mat-menu-item>Settings</button>
         <button (click)="logout()" mat-menu-item>Logout</button>
     </mat-menu>
 
