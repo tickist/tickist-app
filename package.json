@@ -15,12 +15,12 @@
         "test": "ng test",
         "lint": "nx workspace-lint && ng lint",
         "cy:verify": "cypress verify",
-        "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-ci CYPRESS_TEST_UID=UiQ1hqUIquXO1OXybS8bqT95kjR2 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ng e2e --configuration ci --record --headless --prod",
+        "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-ci CYPRESS_TEST_UID=7mr64tVcVv3085oo0Y1VheOQYJXV FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ng e2e --configuration ci --record --headless --prod",
         "e2e:watch": "cross-env CYPRESS_FIREBASE_PROJECT_ID=proven-reality-657  CYPRESS_TEST_UID=7mr64tVcVv3085oo0Y1VheOQYJXV FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ng e2e --watch -c e2e",
         "e2e:watchWithEmulator": "firebase emulators:exec \"ng e2e --watch -c e2e\"  --import=./tools/e2e-testing-data",
         "e2e:watch:ci": "ng e2e --watch -c ci",
         "e2e:testEmulator": "firebase emulators:start  --import=./tools/e2e-testing-data",
-        "e2eCiWithEmulator": "firebase emulators:exec \"npm run e2e\" --import=./tools/e2e-testing-data\"",
+        "e2eCiWithEmulator": "firebase emulators:exec \"npm run e2e\" --import=./tools/e2e-testing-data",
         "startEmulator": "firebase emulators:start  --import=./tools/testing-data  --export-on-exit=./tools/testing-data",
         "test:emulate": "cross-env FIREBASE_DATABASE_EMULATOR_HOST=\"localhost:$(cat firebase.json | jq .emulators.database.port)\" FIRESTORE_EMULATOR_HOST=\"localhost:$(cat firebase.json | jq .emulators.firestore.port)\" yarn test:open",
         "deploy:development": "ng build && firebase deploy --project development",
@@ -49,7 +49,7 @@
         "workspace-schematic": "nx workspace-schematic",
         "dep-graph": "nx dep-graph",
         "help": "nx help",
-        "generate-git-version": "node grab-git-info.js"
+        "firebase": "firebase"
     },
     "private": false,
     "optionalDependencies": {
