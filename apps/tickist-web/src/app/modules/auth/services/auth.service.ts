@@ -1,14 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
-import {User as FirebaseUser} from 'firebase';
 import {User, UserLogin} from '@data/users/models';
 import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {fetchedLoginUser} from '../../../core/actions/auth.actions';
 import {Router} from '@angular/router';
-import { auth } from 'firebase/app';
+import firebase from 'firebase/app';
 
 @Injectable({
     providedIn: 'root',
@@ -16,7 +15,7 @@ import { auth } from 'firebase/app';
 export class AuthService {
     user$: Observable<User>;
     usersCollection: AngularFirestoreCollection;
-    readonly authState$: Observable<FirebaseUser | null> = this.fireAuth.authState;
+    readonly authState$: Observable<firebase.User | null> = this.fireAuth.authState;
 
     constructor(private store: Store, private fireAuth: AngularFireAuth, private db: AngularFirestore, private router: Router) {
         this.user$ = this.store.pipe(
@@ -30,11 +29,11 @@ export class AuthService {
     }
 
     facebookAuth() {
-        return this.authLogin(new auth.FacebookAuthProvider())
+        return this.authLogin(new firebase.auth.FacebookAuthProvider())
     }
 
     googleAuth() {
-        return this.authLogin(new auth.GoogleAuthProvider());
+        return this.authLogin(new firebase.auth.GoogleAuthProvider());
     }
 
     authLogin(provider) {
@@ -63,10 +62,10 @@ export class AuthService {
 
     getProviderForId(id) {
         switch (id) {
-            case auth.GoogleAuthProvider.PROVIDER_ID:
-                return new auth.GoogleAuthProvider();
-            case auth.FacebookAuthProvider.PROVIDER_ID:
-                return new auth.FacebookAuthProvider();
+            case firebase.auth.GoogleAuthProvider.PROVIDER_ID:
+                return new firebase.auth.GoogleAuthProvider();
+            case firebase.auth.FacebookAuthProvider.PROVIDER_ID:
+                return new firebase.auth.FacebookAuthProvider();
         }
     }
 }

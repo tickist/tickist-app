@@ -64,5 +64,14 @@ input[type=file] {
 }
 
 .denied {
-    color: red;
+    color: $red;
+}
+
+#delete-button {
+    background-color: $red;
+}
+
+#delete-button-description {
+    color: grey;
+    font-size: 13px;
 }

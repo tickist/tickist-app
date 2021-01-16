@@ -1,24 +1,18 @@
 import {
     clickOnCreateNewProject,
-    clickOnEditProject,
-    clickOnProject, clickOnProjectTypeLeftPanelMenu,
+    clickOnProject,
     createFirebase,
     login,
-    logout,
     removeOldFirebaseData
 } from '../../support/utils';
-import {Project, ProjectType, Task} from "@data";
-import {createUniqueId} from "@tickist/utils";
 
 describe('Add Projects', () => {
     beforeEach(() => {
         login();
         createFirebase();
-        cy.visit('/');
     });
 
     afterEach(() => {
-        logout();
         removeOldFirebaseData();
     });
 

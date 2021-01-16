@@ -7,6 +7,7 @@ import {TickistEditUserSettingsRoutingModule} from './edit-user-settings-routing
 import {UserComponent} from './components/user/user.component';
 import {TickistSharedModule} from '../../shared/shared.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { DeleteAccountDialogComponent } from './components/delete-account-dialog/delete-account-dialog.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         UserComponent
     ],
     declarations: [
-        UserComponent
+        UserComponent,
+        DeleteAccountDialogComponent
     ]
 })
 export class TickistEditUserSettingsModule {

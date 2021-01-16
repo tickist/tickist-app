@@ -1,6 +1,6 @@
 import {Task, TaskType} from '@data';
 import {createUniqueId} from '@tickist/utils';
-import {createFirebase, login, logout, removeOldFirebaseData} from '../../support/utils';
+import {clickOnProject, createFirebase, login, removeOldFirebaseData} from '../../support/utils';
 
 describe('Delete task', () => {
     const deletedTaskName = 'Deleted task';
@@ -9,7 +9,6 @@ describe('Delete task', () => {
     beforeEach(() => {
         login();
         createFirebase();
-        cy.visit('/');
 
         cy.get('@database').then((database: any) => {
             const deletedTask = new Task({
@@ -55,15 +54,12 @@ describe('Delete task', () => {
                 }
             });
             cy.callFirestore('set', `tasks/${nonDeletedTask.id}`, JSON.parse(JSON.stringify(nonDeletedTask)));
-
-
+            clickOnProject(database.projects[0].name);
+            cy.url().should('include', '/home/tasks-projects-view');
         });
-        cy.visit('/home/tasks-projects-view')
-            .url().should('include', '/home/tasks-projects-view');
     });
 
     afterEach(() => {
-        logout();
         removeOldFirebaseData();
     });
 

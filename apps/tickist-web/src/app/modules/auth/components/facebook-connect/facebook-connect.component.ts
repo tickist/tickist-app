@@ -24,7 +24,6 @@ export class FacebookConnectComponent implements OnInit, OnDestroy {
     async facebookAuth(): Promise<void> {
         try {
             const user = await this.authService.facebookAuth();
-            console.log({user});
             if (user.additionalUserInfo.isNewUser) {
                 this.authService.save(
                     user.user.uid,
@@ -35,6 +34,8 @@ export class FacebookConnectComponent implements OnInit, OnDestroy {
                             (user.additionalUserInfo.profile as any).picture.url : (user.additionalUserInfo.profile as any).picture,
                         isFacebookConnection: true
                     });
+            } else {
+                this.router.navigateByUrl('/');
             }
         } catch (error) {
             if (error.code === 'auth/account-exists-with-different-credential') {

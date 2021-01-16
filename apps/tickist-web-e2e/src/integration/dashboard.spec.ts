@@ -1,20 +1,16 @@
-import {createFirebase, login, logout, removeOldFirebaseData} from '../support/utils';
+import {createFirebase, login, removeOldFirebaseData} from '../support/utils';
 import {addDays, format} from 'date-fns';
 
 describe('Dashboard view', () => {
-    before(() => {
+
+    beforeEach(() => {
         login();
         createFirebase();
     });
 
-    after(() => {
-        logout();
-        // removeOldFirebaseData();
-    });
-
-    beforeEach(() => {
-        cy.visit('/');
-    });
+    afterEach(()=> {
+        removeOldFirebaseData()
+    })
 
     it('should see weekdays view', () => {
 

@@ -64,7 +64,7 @@ export class DateOptionsComponent implements OnInit {
 
     private createFinishDateFilter() {
         if (!this.finishDate || this.finishDate >= this.minDate) {
-            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d.setHours(0, 0, 0, 0);
+            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
 
         } else {
             this.minFilter = (d: Date): boolean => true;

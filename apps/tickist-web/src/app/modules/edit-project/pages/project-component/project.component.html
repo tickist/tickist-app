@@ -214,7 +214,7 @@
 
                     </div>
                 </div>
-                <div [hidden]="!menu.branding" formGroupName="branding" [ngStyle]="{height: '100%'}">
+                <div [hidden]="!menu.branding" formGroupName="branding" [ngStyle]="{height: '100%', overflow: 'hidden'}">
                     <div class="selected-branding" *ngIf="{icon: icon$ | async, color: color$ | async } as data">
                         Selected icon: <fa-icon size="lg" [icon]="data.icon" [styles]="{color: data.color}"></fa-icon>
                     </div>

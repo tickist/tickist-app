@@ -1,7 +1,6 @@
-import {createFirebase, login, logout, removeOldFirebaseData} from '../support/utils';
+import {createFirebase, login, removeOldFirebaseData} from '../support/utils';
 import {Notification} from '@data';
 import {createUniqueId} from '@tickist/utils';
-import {addDays} from 'date-fns';
 import firebase from 'firebase/app';
 import Timestamp = firebase.firestore.Timestamp;
 
@@ -11,11 +10,10 @@ describe('Notifications feature', () => {
         login();
         createFirebase();
         createNotification();
-        cy.visit('/');
     });
 
     afterEach(() => {
-        logout();
+        removeOldFirebaseData();
     });
 
     it('should see icon notification with notification counter', () => {
@@ -55,7 +53,7 @@ function createNotification() {
         new Notification({
             id: createUniqueId(),
             recipient: uid as unknown as string,
-            title: 'Notification 1',
+            title: 'Notification 3',
             description: 'Description of the notification',
             isRead: false,
             type: 'notificationType1',
@@ -75,7 +73,7 @@ function createNotification() {
         new Notification({
             id: createUniqueId(),
             recipient: uid as unknown as string,
-            title: 'Notification 3',
+            title: 'Notification 1',
             description: 'Description of the notification 3',
             isRead: false,
             type: 'notificationType1',

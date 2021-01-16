@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>We'll be sorry to see you go, but thanks for trying Tickist!</h1>
+<mat-dialog-content>
+    Deleting your account is permanent. All your data will be wiped out immediately and you won't be able to get it back.
+    <form [formGroup]="passwordFormGroup">
+        <mat-form-field>
+            <input matInput name="password" placeholder="password" type="password" formControlName="password">
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button id="delete-button" data-cy="delete-user-account-confirmation" mat-button (click)="deleteMyAccount()">Delete my account</button>
+    <button mat-button (click)="dialogRef.close(false)">Cancel</button>
+</mat-dialog-actions>
