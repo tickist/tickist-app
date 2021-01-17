@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../../core/services/user.service';
+import {AngularFirestore} from "@angular/fire/firestore";
+import {NGXLogger} from "ngx-logger";
 
 @Component({
     selector: 'tickist-request-reset-password',
@@ -11,7 +13,7 @@ export class RequestResetPasswordComponent implements OnInit {
     requestChangePasswordForm: FormGroup;
     requestChangePasswordMessage: string;
 
-    constructor(private userService: UserService) {
+    constructor(private userService: UserService, private logger: NGXLogger) {
     }
 
     ngOnInit() {
@@ -23,10 +25,10 @@ export class RequestResetPasswordComponent implements OnInit {
     async requestChangePassword($event, values: any): Promise<void> {
         try {
             const result = await this.userService.requestChangePassword(values.email);
-            console.log({result});
+            this.logger.debug({result});
             this.requestChangePasswordMessage = 'Please check your inbox.';
         } catch (e) {
-            console.log({e});
+            this.logger.error({e});
             this.requestChangePasswordMessage = 'Something goes wrong.';
         }
     }

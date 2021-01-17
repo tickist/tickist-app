@@ -36,6 +36,8 @@ import {
     addNewActiveProjectId,
     deleteActiveProjectId
 } from "../../../../core/actions/projects/active-projects-ids.actions";
+import {AngularFirestore} from "@angular/fire/firestore";
+import {NGXLogger} from "ngx-logger";
 
 
 @Component({
@@ -67,7 +69,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
 
     constructor(private projectService: ProjectService, protected router: Router, public dialog: MatDialog,
                 protected configurationService: ConfigurationService, protected media: MediaObserver,
-                private store: Store, private cd: ChangeDetectorRef) {
+                private store: Store, private cd: ChangeDetectorRef, private logger: NGXLogger) {
     }
 
     ngOnInit() {
@@ -202,7 +204,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         if (!mdCheckbox) {
             this.router.navigate(
                 ['home', tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, projectId]
-            ).catch((err => console.log(err)));
+            ).catch((err => this.logger.error(err)));
             if (this.media.isActive('sm') || this.media.isActive('xs')) {
                 this.configurationService.changeOpenStateLeftSidenavVisibility('close');
             }

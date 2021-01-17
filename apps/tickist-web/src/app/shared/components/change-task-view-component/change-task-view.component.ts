@@ -26,13 +26,11 @@ export class ChangeTaskViewComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges() {
-        console.log(this.defaultTaskView);
         this.currentTaskView = this.defaultTaskView;
         this.currentTaskViewEvent.emit(this.defaultTaskView);
     }
 
     changeTaskView(event) {
-        console.log(event);
         if (this.currentTaskView === this.defaultTaskViewOptions[0].value) {
             this.currentTaskViewEvent.emit(this.defaultTaskViewOptions[1].value);
             this.currentTaskView = this.defaultTaskViewOptions[1].value;

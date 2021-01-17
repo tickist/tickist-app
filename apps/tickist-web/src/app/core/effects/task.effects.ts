@@ -33,8 +33,6 @@ export class TaskEffects {
             ofType(queryTasks),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
-                console.log(action);
-                console.log({user});
                 return this.db.collection('tasks', ref => ref
                     .where('taskProject.shareWithIds', 'array-contains', user.id)
                     .where('isActive', '==', true)
@@ -45,7 +43,6 @@ export class TaskEffects {
                 const addedTasks: Task[] = [];
                 let deletedTaskId: string;
                 let updatedTask: Update<Task>;
-                console.log(actions);
                 actions.forEach((action => {
                     if (action.type === 'added') {
                         const data: any = action.payload.doc.data();

@@ -18,6 +18,8 @@ import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add
 import {DeleteUserConfirmationDialogComponent} from "../../../edit-project/components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component";
 import {DeleteAccountDialogComponent} from "../delete-account-dialog/delete-account-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {AngularFirestore} from "@angular/fire/firestore";
+import {NGXLogger} from "ngx-logger";
 
 @Component({
     selector: 'tickist-user',
@@ -48,7 +50,8 @@ export class UserComponent implements OnInit, OnDestroy {
 
     constructor(private fb: FormBuilder, private store: Store, private location: Location,
                 private notificationsService: NotificationsService, public dialog: MatDialog,
-                private configurationService: ConfigurationService, private userService: UserService) {
+                private configurationService: ConfigurationService, private userService: UserService,
+                private logger: NGXLogger) {
 
         this.staticUrl = environment['staticUrl'];
         this.tasksOrderOptions = TASKS_ORDER_OPTIONS;
@@ -191,7 +194,10 @@ export class UserComponent implements OnInit, OnDestroy {
                 });
 
                 this.userNotificationSettings = new FormGroup({
-                    'dailySummaryHour': new FormControl({value: user.dailySummaryHour, disabled: !this.dailySummaryCheckbox}),
+                    'dailySummaryHour': new FormControl({
+                        value: user.dailySummaryHour,
+                        disabled: !this.dailySummaryCheckbox
+                    }),
                     'dailySummaryCheckbox': new FormControl(this.dailySummaryCheckbox),
                     'removesMeFromSharedList': new FormControl({
                         value: user.removesMeFromSharedList,
@@ -282,7 +288,7 @@ export class UserComponent implements OnInit, OnDestroy {
                 this.userNotificationSettings.valueChanges.pipe(
                     takeUntil(this.ngUnsubscribe)
                 ).subscribe(newValue => {
-                    console.log({newValue});
+                   this.logger.debug({newValue})
                 });
 
 
@@ -359,10 +365,10 @@ export class UserComponent implements OnInit, OnDestroy {
     async changePassword($event, values: any): Promise<void> {
         try {
             const result = await this.userService.requestChangePassword(values.email);
-            console.log({result});
+            this.logger.debug({result})
             this.requestChangePasswordMessage = 'Check your inbox.';
         } catch (err) {
-            console.log({err});
+            this.logger.error({err})
             this.requestChangePasswordMessage = 'Something goes wrong.';
         }
     }
@@ -380,7 +386,7 @@ export class UserComponent implements OnInit, OnDestroy {
         }
     }
 
-    showDeleteAccountDialog () {
+    showDeleteAccountDialog() {
         const dialogRef = this.dialog.open(DeleteAccountDialogComponent);
     }
 

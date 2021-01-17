@@ -40,8 +40,6 @@ export class UserEffects {
             ofType(queryUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
-                console.log(action);
-                console.log({user});
                 return this.db.collection('users', ref => ref
                     .where('id', '==', user.id)
                 ).stateChanges();
@@ -49,7 +47,6 @@ export class UserEffects {
             }),
             concatMap(actions => {
                 let updatedUser: User;
-                console.log(actions);
                 actions.forEach((action => {
                     if (action.type === 'modified') {
                         const data: any = action.payload.doc.data();

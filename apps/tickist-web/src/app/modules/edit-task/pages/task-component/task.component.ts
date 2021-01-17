@@ -114,12 +114,10 @@ export class TaskComponent implements OnInit, OnDestroy {
             )
             .subscribe(([tasks, taskId, selectedProject, projects, user]) => {
                 let task: Task;
-                console.log([tasks, taskId, selectedProject, projects, user]);
                 if (projects && tasks && projects.length > 0 && user) {
                     this.user = user;
 
                     this.projects = projects;
-                    console.log({projects});
                     if (taskId) {
                         task = tasks.filter(t => t.id === taskId)[0];
                         this.selectedProject = projects.find(project => project.id === task.taskProject.id);

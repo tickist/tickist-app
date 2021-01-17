@@ -1,12 +1,13 @@
-import {Injectable, ErrorHandler, Injector} from '@angular/core';
+import {ErrorHandler, Injectable, Injector} from '@angular/core';
 import {ErrorService} from './error.service';
+import {NGXLogger} from "ngx-logger";
 
 @Injectable({
   providedIn: 'root',
 })
 export class MyErrorHandler implements ErrorHandler {
   errorService: ErrorService;
-  constructor(private injector: Injector) {
+  constructor(private injector: Injector, private logger: NGXLogger) {
   }
 
   handleError(error: any): void {
@@ -20,7 +21,7 @@ export class MyErrorHandler implements ErrorHandler {
       console.error(error.stack);
       console.groupEnd();
     } catch (handlingError) {
-      console.log(handlingError);
+      this.logger.error(handlingError);
     }
   }
 }

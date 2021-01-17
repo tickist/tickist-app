@@ -241,7 +241,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     // }
 
     createForm(project: Project) {
-        console.log(project.projectType)
         return new FormGroup({
             'main': new FormGroup({
                 'name': new FormControl(project.name, {validators: Validators.required}),

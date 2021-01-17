@@ -26,7 +26,6 @@ export class TaskTypeLabelComponent implements OnChanges {
 
     ngOnChanges() {
         this.icon = this.taskTypesWithIcons.find(taskType => taskType.value === this.task.taskType)?.icon;
-        console.log(this.icon)
     }
 
 }

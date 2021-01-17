@@ -37,7 +37,6 @@ export class TagsEffects {
                 const addedTags: Tag[] = [];
                 let deletedTagId: string;
                 let updatedTag: Update<Tag>;
-                console.log(actions);
                 actions.forEach((action => {
                     if (action.type === 'added') {
                         const data: any = action.payload.doc.data();

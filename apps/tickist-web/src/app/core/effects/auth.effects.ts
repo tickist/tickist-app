@@ -18,6 +18,7 @@ import {User} from '@data/users/models';
 import {resetPasswordRoutesName} from '../../modules/reset-password/routes-names';
 import {firebaseError} from '../actions/errors.actions';
 import {selectLoggedInUser} from '../selectors/user.selectors';
+import {NGXLogger} from "ngx-logger";
 
 
 @Injectable()
@@ -68,7 +69,7 @@ export class AuthEffects {
 
                 this.router.navigateByUrl(`/${this.location.path()}`);
             } else {
-                this.router.navigateByUrl('/login').catch((error) => console.log(error));
+                this.router.navigateByUrl('/login').catch((error) => this.logger.error(error));
             }
 
         }),
@@ -88,6 +89,6 @@ export class AuthEffects {
     });
 
     constructor(private actions$: Actions, private router: Router, private authService: AuthService, private location: Location,
-                private store: Store, private userService: UserService, private db: AngularFirestore) {
+                private store: Store, private userService: UserService, private db: AngularFirestore, private logger: NGXLogger) {
     }
 }

@@ -7,6 +7,8 @@ import {AuthService} from '../../../auth/services/auth.service';
 import {signupRoutesName} from '../../../sign-up/routes-names';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {AngularFirestore} from "@angular/fire/firestore";
+import {NGXLogger} from "ngx-logger";
 
 
 @Component({
@@ -19,7 +21,7 @@ export class LoginComponent implements OnDestroy {
     message = '';
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(protected router: Router, private authService: AuthService, private store: Store) {
+    constructor(protected router: Router, private authService: AuthService, private store: Store, private logger: NGXLogger) {
         this.loginForm = new FormGroup({
             'email': new FormControl('', [Validators.required, Validators.email]),
             'password': new FormControl('', Validators.required)
@@ -51,12 +53,12 @@ export class LoginComponent implements OnDestroy {
     onSubmit(values: any) {
         this.authService.login(values)
             .then((user) => {
-                console.log(user);
+                this.logger.debug(user);
                 this.store.dispatch(login({uid: user.user.uid} ));
             })
             .catch(
                 err => {
-                    console.log(err.message);
+                    this.logger.error(err)
                     this.loginForm.controls['email'].setErrors({'incorrectLoginPassword': true});
                     this.loginForm.controls['password'].setErrors({'incorrectLoginPassword': true});
                     this.message = err.message;
@@ -66,7 +68,7 @@ export class LoginComponent implements OnDestroy {
 
     googleAuth(): void {
         this.authService.googleAuth().then(user => {
-            console.log({user});
+            this.logger.debug({user});
             if (user.additionalUserInfo.isNewUser) {
                 this.authService.save(
                     user.user.uid,

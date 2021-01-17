@@ -108,7 +108,6 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private validURL(str) {
-        console.log("str", str)
         const  regexQuery = "^(https?://)?(www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6}(/[-\\w@\\+\\.~#\\?&/=%]*)?$";
         const pattern = new RegExp(regexQuery,"i");
         return !!pattern.test(str);

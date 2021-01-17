@@ -8,6 +8,7 @@ import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firest
 import {fetchedLoginUser} from '../../../core/actions/auth.actions';
 import {Router} from '@angular/router';
 import firebase from 'firebase/app';
+import {NGXLogger} from "ngx-logger";
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +18,8 @@ export class AuthService {
     usersCollection: AngularFirestoreCollection;
     readonly authState$: Observable<firebase.User | null> = this.fireAuth.authState;
 
-    constructor(private store: Store, private fireAuth: AngularFireAuth, private db: AngularFirestore, private router: Router) {
+    constructor(private store: Store, private fireAuth: AngularFireAuth, private db: AngularFirestore,
+                private router: Router, private logger: NGXLogger) {
         this.user$ = this.store.pipe(
             select(selectLoggedInUser)
         );
@@ -56,7 +58,7 @@ export class AuthService {
                 this.router.navigateByUrl('/');
             })
             .catch((err) => {
-                console.log(err)
+                this.logger.error(err)
             });
     }
 
