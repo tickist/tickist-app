@@ -105,7 +105,7 @@ import {HttpClientModule} from "@angular/common/http";
                 experimentalForceLongPolling: true
             } : undefined
         },
-        { provide: USE_AUTH_EMULATOR, useValue: environment.emulator ? ['localhost', 9099] : undefined },
+        // { provide: USE_AUTH_EMULATOR, useValue: environment.emulator ? ['localhost', 9099] : undefined },
         { provide: USE_DATABASE_EMULATOR, useValue: environment.emulator ? ['localhost', 9000] : undefined },
         { provide: USE_FIRESTORE_EMULATOR, useValue: environment.emulator ? ['localhost', 8080] : undefined },
         { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.emulator ? ['localhost', 5001] : undefined },

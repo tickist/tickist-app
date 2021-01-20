@@ -14,3 +14,11 @@
 fa-icon {
     margin-left: 5px;
 }
+
+.content {
+    padding: 5px
+}
+
+::ng-deep .mat-dialog-container {
+    overflow: hidden !important;
+}

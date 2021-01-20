@@ -16,7 +16,7 @@ export class SortTasksComponent implements OnInit {
 
 
     openSortByDialog() {
-        const dialogRef = this.dialog.open(SortByDialogComponent, <MatDialogConfig> {'height': '350px', 'width': '300px'});
+        const dialogRef = this.dialog.open(SortByDialogComponent, <MatDialogConfig> {'height': '360px', 'width': '305px'});
     }
 
 

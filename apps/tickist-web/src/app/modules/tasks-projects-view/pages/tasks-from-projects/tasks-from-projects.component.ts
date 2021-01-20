@@ -33,6 +33,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     defaultTaskView = TASK_EXTENDED_VIEW.value;
     selectedProject: Project;
     selectedProject$: Observable<Project>;
+    isSharedProject: boolean;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef,
                 private tasksFiltersService: TasksFiltersService, private store: Store, private router: Router) {
@@ -82,6 +83,7 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
         ).subscribe(project => {
             this.defaultTaskView = project.taskView;
             this.taskView = project.taskView;
+            this.isSharedProject = project.shareWithIds.length > 1
             this.cd.detectChanges();
         });
     }

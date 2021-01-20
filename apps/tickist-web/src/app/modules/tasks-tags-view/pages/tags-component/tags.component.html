@@ -7,7 +7,7 @@
         <tickist-change-task-view [defaultTaskView]="user?.defaultTaskViewTagsView"
                           (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
 
-        <tickist-filter-tasks [showTags]="false"></tickist-filter-tasks>
+        <tickist-filter-tasks [showTags]="false" [isAssignedToVisible]="true"> </tickist-filter-tasks>
 
 
     </div>

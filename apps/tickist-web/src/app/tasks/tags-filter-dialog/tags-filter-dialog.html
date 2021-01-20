@@ -2,22 +2,22 @@
 <mat-dialog-content>
     <div *ngIf="tags.length > 0">
 
-        <mat-chip-list class="mat-chip-list-stacked" [selectable]="true">
+        <mat-chip-list  [selectable]="true">
             <mat-chip (click)="changeSelectedTags('allTags')" [selected]="isActive('allTasks')">
-                <fa-icon [icon]="'tags'"></fa-icon><span> All tags</span>
+                <fa-icon [icon]="'tags'"></fa-icon><span class="tag-name"> All tags</span>
             </mat-chip>
             <mat-chip (click)="changeSelectedTags('allTasks')" [selected]="isActive('allTasks')">
-                <fa-icon [icon]="'tags'"></fa-icon><span>All tasks</span>
+                <fa-icon [icon]="'tags'"></fa-icon><span class="tag-name">All tasks</span>
             </mat-chip>
             <mat-chip (click)="changeSelectedTags('withoutTags')" [selected]="isActive('allTasks')">
-                <fa-icon [icon]="'tags'"></fa-icon><span> Without tags</span>
+                <fa-icon [icon]="'tags'"></fa-icon><span class="tag-name"> Without tags</span>
             </mat-chip>
 
             <mat-chip *ngFor="let tag of tags"
-                     color="primary"
-                     (click)="changeSelectedTags(tag.id)"
+                     [color]="'primary'"
+                     (click)="changeSelectedTags(tag)"
                      [selected]="isActive(tag.id)">
-                <fa-icon [icon]="'tag'"></fa-icon><span>{{ tag.name }}</span>
+                <fa-icon [icon]="'tag'"></fa-icon><span class="tag-name">{{ tag.name }}</span>
             </mat-chip>
         </mat-chip-list>
     </div>

@@ -4,7 +4,7 @@
             <div>All tasks</div>
             <div fxFlex></div>
             <tickist-sort-tasks></tickist-sort-tasks>
-            <tickist-filter-tasks [showTags]="true"></tickist-filter-tasks>
+            <tickist-filter-tasks [showTags]="true" [isAssignedToVisible]="true"></tickist-filter-tasks>
             <tickist-change-task-view [defaultTaskView]="defaultTaskView"
                               (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
 
@@ -18,7 +18,7 @@
                                  (click)="navigateToEditProjectView(selectedProject.id)">
             </tickist-menu-button>
             <tickist-sort-tasks></tickist-sort-tasks>
-            <tickist-filter-tasks [showTags]="true"></tickist-filter-tasks>
+            <tickist-filter-tasks [showTags]="true" [isAssignedToVisible]="isSharedProject"></tickist-filter-tasks>
             <tickist-change-task-view [defaultTaskView]="defaultTaskView"
                               (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
         </div>

@@ -13,7 +13,8 @@ import {setCurrentTagsFilters} from "../../core/actions/tasks/tags-filters-tasks
 
 @Component({
     selector: 'tickist-tags-filter-dialog',
-    templateUrl: './tags-filter-dialog.html'
+    templateUrl: './tags-filter-dialog.html',
+    styleUrls: ['./tags-filter-dialog.component.scss']
 })
 export class TagsFilterDialogComponent implements OnInit, OnDestroy {
     tagsFilterValue: any;
@@ -33,6 +34,7 @@ export class TagsFilterDialogComponent implements OnInit, OnDestroy {
             takeUntil(this.ngUnsubscribe)
         ).subscribe((filter: Filter) => {
             this.tagsFilterValueId = filter.id;
+            this.tagsFilterValue = filter;
         });
 
         this.store.select(selectAllTags).pipe(
@@ -42,20 +44,22 @@ export class TagsFilterDialogComponent implements OnInit, OnDestroy {
         });
     }
 
-    changeSelectedTags(tagId: any) {
-        let value;
-        if (tagId instanceof String || typeof tagId === 'string') {
-            value = tagId;
-        } else if (Number.isInteger(tagId)) {
-            value = [tagId];
+    changeSelectedTags(tag: Tag | string) {
+        let value, name;
+        if (tag instanceof Tag) {
+            value =  [tag.id];
+            name = tag.name;
+        } else  {
+            value = tag;
+            name = tag;
         }
-        const newFilter = new Filter({'id': 1, 'label': 'tags', 'value': value});
+        const newFilter = new Filter({'id': 1, 'label': 'tags', value, name});
         this.store.dispatch(setCurrentTagsFilters({currentTagsFilter: newFilter}));
         this.dialogRef.close();
     }
 
     isActive(tagId: any) {
-        return this.tagsFilterValue === tagId;
+        return Array.isArray(this.tagsFilterValue.value) ? new Set(this.tagsFilterValue.value).has(tagId) : false
     }
 
     ngOnDestroy() {
