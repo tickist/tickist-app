@@ -463,3 +463,8 @@ body {
 .mat-expansion-panel-header {
     cursor: pointer;
 }
+
+.mat-chip-selected {
+    background-color: $orange !important;
+    color: $white !important;
+}

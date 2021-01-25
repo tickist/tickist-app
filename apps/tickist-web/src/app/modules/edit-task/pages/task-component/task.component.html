@@ -13,7 +13,7 @@
                                    [ngClass]="{'active': checkActiveItemInMenu('main'),
                                   'invalid': !taskForm.controls['main'].valid && taskForm.controls['main'].touched }">
                         <fa-icon [icon]="'edit'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Main </span></p>
+                        <p [fxHide.xs]="1"><span>General</span></p>
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('repeat')"

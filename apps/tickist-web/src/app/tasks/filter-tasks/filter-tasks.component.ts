@@ -25,6 +25,7 @@ import {Filter} from '@data/filter';
 })
 export class FilterTasksComponent implements OnInit, OnDestroy {
     @Input() showTags: boolean;
+    @Input() isAssignedToVisible? = false;
     currentMainFilter$: Observable<Filter>;
     currentAssignedToFilter$: Observable<Filter>;
     currentTagsFilter$: Observable<Filter>;
@@ -35,7 +36,7 @@ export class FilterTasksComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService, private store: Store) {
-        this.matDialogConfig = {'height': '350px', 'width': '300px'};
+        this.matDialogConfig = {'width': '300px'};
     }
 
     openTasksFilterDialog() {
@@ -67,10 +68,12 @@ export class FilterTasksComponent implements OnInit, OnDestroy {
 
     tagsValue() {
         if (this.tagsFilter) {
-            if (this.tagsFilter.value instanceof String || typeof this.tagsFilter.value === 'string') {
-                return this.tagsFilter.value;
-            } else if (this.tagsFilter.value instanceof Array) {
+            if (this.tagsFilter.value instanceof Array && this.tagsFilter.value?.length === 1) {
+                return `${this.tagsFilter.name} selected`;
+            } else if (this.tagsFilter.value instanceof Array && this.tagsFilter.value?.length){
                 return `${this.tagsFilter.value.length} selected`;
+            } else {
+                return this.tagsFilter.name;
             }
         } else {
             return '';

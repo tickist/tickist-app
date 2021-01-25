@@ -68,9 +68,9 @@ export const selectProjectTypeCounter = (projectType) => createSelector(
 )
 
 
-export const selectAliveProjects = createSelector(
+export const selectActiveProjects = createSelector(
     selectAllProjects,
     (projects) => {
-        return projects.filter(project => project.projectType === ProjectType.ALIVE)
+        return projects.filter(project => project.projectType === ProjectType.ACTIVE)
     }
 )

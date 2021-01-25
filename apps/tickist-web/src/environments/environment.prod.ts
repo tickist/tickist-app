@@ -1,4 +1,5 @@
 import {IEnvironment} from './environment.interface';
+import {NgxLoggerLevel} from "ngx-logger";
 
 export const environment: IEnvironment = {
     name: 'production',
@@ -7,6 +8,9 @@ export const environment: IEnvironment = {
     emulator: false,
     emulatorIPAddress: '',
     experimentalForceLongPolling: false,
+    logger: {
+        level: NgxLoggerLevel.LOG
+    },
     firebase: {
         apiKey: "AIzaSyAGJ-Uhloe3p24irXJ2bUEUfzSrLMt1qV0",
         authDomain: "tickist-stable.firebaseapp.com",

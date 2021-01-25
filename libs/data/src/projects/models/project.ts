@@ -55,7 +55,7 @@ export class Project {
     shareWithIds: Array<string> = [];
     inviteUserByEmail: InviteUser[] = [];
     lastEditor: Editor;
-    projectType: ProjectType = ProjectType.ALIVE;
+    projectType: ProjectType = ProjectType.ACTIVE;
     icon = DEFAULT_PROJECT_ICON;
 
     constructor(project: any) {

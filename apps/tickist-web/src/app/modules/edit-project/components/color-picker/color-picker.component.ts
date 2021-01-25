@@ -40,7 +40,6 @@ export class ColorPickerComponent implements ControlValueAccessor {
 
     // set accessor including call the onchange callback
     set value(v: any) {
-        console.log({v})
         if (v !== this.innerValue) {
             this.innerValue = v;
             this.onChangeCallback(v);

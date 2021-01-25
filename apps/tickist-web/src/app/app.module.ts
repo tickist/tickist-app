@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter} from '@angular/material/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActionReducerMap, StoreModule} from '@ngrx/store';
@@ -38,15 +38,7 @@ import { USE_EMULATOR as USE_AUTH_EMULATOR } from '@angular/fire/auth';
 import { USE_EMULATOR as USE_DATABASE_EMULATOR } from '@angular/fire/database';
 import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from '@angular/fire/firestore';
 import { USE_EMULATOR as USE_FUNCTIONS_EMULATOR } from '@angular/fire/functions';
-
-import {NGXLoggerMonitor, NGXLogInterface} from 'ngx-logger';
-
-export class MyLoggerMonitor implements NGXLoggerMonitor {
-    onLog(log: NGXLogInterface) {
-        console.log('myCustomLoggerMonitor', log);
-    }
-}
-
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
     declarations: [
@@ -59,11 +51,8 @@ export class MyLoggerMonitor implements NGXLoggerMonitor {
         SnackBarMessageComponent
     ],
     imports: [
-        LoggerModule.forRoot({
-            serverLoggingUrl: '/api/logs',
-            level: NgxLoggerLevel.DEBUG,
-            serverLogLevel: NgxLoggerLevel.ERROR
-        }),
+        HttpClientModule,
+        LoggerModule.forRoot(environment.logger),
         TickistSharedModule,
         TickistSingleTaskModule,
         BrowserModule,
@@ -80,10 +69,9 @@ export class MyLoggerMonitor implements NGXLoggerMonitor {
             metaReducers, runtimeChecks: {strictStateImmutability: true, strictActionImmutability: true}
         }),
         StoreDevtoolsModule.instrument({
-            maxAge: 25, // Retains last 25 states
+            maxAge: 50, // Retains last 25 states
             logOnly: environment.production, // Restrict extension to log-only mode
         }),
-        environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [],
         SortablejsModule.forRoot({
             animation: 150
         }),
@@ -117,7 +105,7 @@ export class MyLoggerMonitor implements NGXLoggerMonitor {
                 experimentalForceLongPolling: true
             } : undefined
         },
-        { provide: USE_AUTH_EMULATOR, useValue: environment.emulator ? ['localhost', 9099] : undefined },
+        { provide: USE_AUTH_EMULATOR, useValue: environment.authEmulator ? ['localhost', 9099] : undefined },
         { provide: USE_DATABASE_EMULATOR, useValue: environment.emulator ? ['localhost', 9000] : undefined },
         { provide: USE_FIRESTORE_EMULATOR, useValue: environment.emulator ? ['localhost', 8080] : undefined },
         { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.emulator ? ['localhost', 5001] : undefined },

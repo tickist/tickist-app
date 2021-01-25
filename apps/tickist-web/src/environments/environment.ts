@@ -12,6 +12,7 @@ export const environment: IEnvironment = {
     emulator: true,
     emulatorIPAddress: '',
     experimentalForceLongPolling: false,
+    logger: {},
     firebase: {
         apiKey: 'AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg',
         authDomain: 'proven-reality-657.firebaseapp.com',

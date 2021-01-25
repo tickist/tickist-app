@@ -14,6 +14,7 @@ import {homeRoutesName} from "./routing.module.name";
 import {editTaskRoutesName} from "./modules/edit-task/routes-names";
 import {Router} from "@angular/router";
 import {editProjectSettingsRoutesName} from "./modules/edit-project/routes-names";
+import {NGXLogger} from "ngx-logger";
 
 
 @Component({
@@ -32,14 +33,14 @@ export class AppComponent implements OnInit, OnDestroy {
                 private afMessaging: AngularFireMessaging,
                 private store: Store,
                 private readonly aff: AngularFireFunctions,
-                private readonly router: Router) {
+                private readonly router: Router,
+                private logger: NGXLogger) {
         this.config = new MatSnackBarConfig();
         this.config.panelClass = ['tickist-web-snack-bar'];
     }
 
     @HostListener('window:keydown', ['$event'])
     keyEvent(event: KeyboardEvent) {
-        console.log({event})
         if (event.key === 'f' && event.ctrlKey) {
             event.preventDefault();
             this.store.dispatch(focusOnSearchInput())
@@ -61,7 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         if (environment.emulator) {
-            this.aff.useFunctionsEmulator('http://localhost:5001').then(() => console.log('Using functions emulator'))
+            this.aff.useFunctionsEmulator('http://localhost:5001').then(() => this.logger.info('Using functions emulator'))
         }
         if (this.swUpdate.isEnabled) {
             this.swUpdate.available.pipe(
@@ -78,7 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.afMessaging.messages.pipe(
             takeUntil(this.ngUnsubscribe)
-            ).subscribe((message) => { console.log(message); });
+            ).subscribe((message) => { this.logger.log(message); });
 
         this.meta.addTags([
             {name: 'description', content: 'To-do-list application inspired by GTD methodology and life experience. ' +

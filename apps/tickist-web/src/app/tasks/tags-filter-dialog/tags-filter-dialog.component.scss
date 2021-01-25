@@ -1,12 +1,11 @@
-.radio-group {
-    display: inline-flex;
-    flex-direction: column;
+mat-dialog-content {
+    padding: 15px;
 }
 
 .radio-button {
     margin: 5px;
 }
 
-.selected-value {
-    margin: 15px 0;
+.tag-name {
+    margin-left: 5px !important;
 }

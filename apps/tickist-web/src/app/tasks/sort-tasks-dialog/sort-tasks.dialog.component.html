@@ -1,7 +1,8 @@
 <h1 mat-dialog-title><span>Sort by</span></h1>
-<div mat-dialog-content>
-    <mat-radio-group class="radio-group" (change)="changeSortingBy($event)"  [(ngModel)]="sortByValueId" >
-        <mat-radio-button class="radio-button" *ngFor="let o of sortByValues" [value]="o.id" fxFlex>
+<div mat-dialog-content class="content">
+    <mat-radio-group class="radio-group" (change)="changeSortingBy($event)" [(ngModel)]="sortByValueId"
+                   >
+        <mat-radio-button class="radio-button" *ngFor="let o of sortByValues" [value]="o.id">
             <span [innerHTML]="o.name"></span> <fa-icon [icon]="o.icon"></fa-icon>
         </mat-radio-button>
     </mat-radio-group>

@@ -40,7 +40,6 @@ export class NotificationsEffects {
                     const addedNotifications: Notification[] = [];
                     let deletedNotificationId: string;
                     const updatedNotifications: Update<Notification>[] = [];
-                    console.log(actions);
                     actions.forEach((action => {
                         if (action.type === 'added') {
                             const data: any = action.payload.doc.data();

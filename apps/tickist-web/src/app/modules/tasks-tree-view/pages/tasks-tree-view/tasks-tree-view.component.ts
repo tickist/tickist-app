@@ -118,7 +118,6 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
         } else {
             this.expandedProjectsNode.add(node.project.id);
         }
-        console.log(this.expandedProjectsNode);
     }
 
     collapseAll(): void {

@@ -46,7 +46,7 @@ export function clickMenuElement(element: string) {
     cy.get('mat-list').contains(element).click();
 }
 
-export function clickOnProject(projectName: string, projectType = "Alive projects") {
+export function clickOnProject(projectName: string, projectType = "Active projects") {
     cy.get('mat-sidenav').find('mat-panel-title').contains(projectType).click();
     if (projectName === 'Inbox') {
         cy.get('mat-sidenav').find('mat-panel-title').contains(projectName).click();
@@ -68,7 +68,7 @@ export function clickOnProjectTypeLeftPanelMenu(projectType) {
     cy.get('mat-sidenav').find('mat-panel-title').contains(projectType).click();
 }
 
-export function clickOnEditProject(projectName: string, projectType="Alive projects") {
+export function clickOnEditProject(projectName: string, projectType="Active projects") {
     cy.get('mat-sidenav').find('mat-panel-title').contains(projectType).click();
     cy.get('tickist-single-project').contains(projectName).click({force: true}).then(() => {
         cy.get('tickist-single-project').find('div.isActive').should('exist');
@@ -77,8 +77,8 @@ export function clickOnEditProject(projectName: string, projectType="Alive proje
 }
 
 export function clickOnCreateNewProject() {
-    const projectType = 'Alive projects'
-    cy.get('mat-sidenav').find('mat-panel-title').contains('Alive projects').click();
+    const projectType = 'Active projects'
+    cy.get('mat-sidenav').find('mat-panel-title').contains('Active projects').click();
     // @TODO remove force
     cy.get(`mat-expansion-panel:contains("${projectType}")`, {timeout: 10000}).then((matPanel$) => {
         cy.wrap(matPanel$.find('[data-cy="create-new-project"]')).click({force: true});
