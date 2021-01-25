@@ -6,6 +6,7 @@ export const environment: IEnvironment = {
     production: true,
     e2eTest: true,
     emulator: true,
+    authEmulator: true,
     emulatorIPAddress: '127.0.0.1:8080',
     experimentalForceLongPolling: true,
     logger: {
