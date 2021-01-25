@@ -43,7 +43,7 @@ export class LeftPanelComponent implements OnInit, OnDestroy {
             this.inboxPk = user.inboxPk
         })
         this.inboxTasksCounter$ = this.store.select(selectInboxTasksCounter)
-        this.activeProjectCounter$ = this.store.select(selectProjectTypeCounter(ProjectType.ALIVE))
+        this.activeProjectCounter$ = this.store.select(selectProjectTypeCounter(ProjectType.ACTIVE))
         this.maybeProjectCounter$ = this.store.select(selectProjectTypeCounter(ProjectType.MAYBE))
         this.remiderProjectCounter$ = this.store.select(selectProjectTypeCounter(ProjectType.ROUTINE_REMINDER))
     }

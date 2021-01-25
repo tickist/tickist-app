@@ -150,7 +150,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 if (project.projectType === ProjectType.INBOX) {
                     this.projectTypes = [ProjectType.INBOX]
                 } else {
-                    this.projectTypes = [ProjectType.ALIVE, ProjectType.ROUTINE_REMINDER, ProjectType.MAYBE]
+                    this.projectTypes = [ProjectType.ACTIVE, ProjectType.ROUTINE_REMINDER, ProjectType.MAYBE]
                 }
 
 

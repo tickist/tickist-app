@@ -6,6 +6,7 @@ export const environment: IEnvironment = {
     name: 'dev',
     e2eTest: false,
     emulator: true,
+    authEmulator: false,
     emulatorIPAddress: 'localhost:8080',
     experimentalForceLongPolling: false,
     logger: {

@@ -10,13 +10,13 @@ import {
 } from './filters-tasks.selectors';
 import {Task} from '@data/tasks/models/tasks';
 import {Tag} from '@data/tags/models/tags';
+import * as _ from 'lodash';
 import {orderBy} from 'lodash';
 
-import {selectActiveProjectsIds, selectAliveProjects} from './projects.selectors';
+import {selectActiveProjects, selectActiveProjectsIds} from './projects.selectors';
 import {selectCurrentSortBy} from './sort-by-tasks.selectors';
 import {selectLoggedInUser} from './user.selectors';
-import {Project, TaskType} from "@data";
-import * as _ from "lodash";
+import {TaskType} from "@data";
 
 
 export const selectTasksState = createFeatureSelector<TasksState>('task');
@@ -172,7 +172,7 @@ export const needInfoTasks = createSelector(
 
 export const projectWithoutNextActionTasks = createSelector(
     selectAllTasks,
-    selectAliveProjects,
+    selectActiveProjects,
     (tasks, projects) => {
         const projectsWithoutNextActionTasks = []
         projects.forEach(project => {
