@@ -1,13 +1,14 @@
 <div id="project" fxLayout="row" fxLayoutAlign="center center"
      [ngClass]="{'isActive': isSelected}" (click)="navigateTo('/home/projects', project.id, $event)">
-    <div fxFlex fxLayout="row" fxLayoutAlign="center center" *ngIf="project">
+    <div class="content" fxFlex fxLayout="row" fxLayoutAlign="center center" *ngIf="project">
         <span *ngIf='project.level==1' fxFlex="15px"></span>
         <span *ngIf='project.level==2' fxFlex="30px"></span>
         <fa-icon *ngIf='!activeCheckboxMode' [icon]="project.icon" [ngStyle]="{'color': project.color}"></fa-icon>
         <mat-checkbox [(ngModel)]="isActive" *ngIf="isSelected && activeCheckboxMode"
-                      (change)="changeId($event)">
+                      (change)="changeId()">
         </mat-checkbox>
-        <span> {{ project.name }} </span>
+        <span #projectNameDiv class="project-name" *ngIf="!tooltip" (resized)="onResized()"> {{ project.name }} </span>
+        <span #projectNameDiv class="project-name" *ngIf="tooltip" (resized)="onResized()" [matTooltip]="project.name"> {{ project.name }} </span>
         <span fxFlex></span>
         <span *ngIf="!isMenuVisible" class="tasks-counter"> {{ project.tasksCounter }} </span>
         <tickist-menu-button *ngIf="isMenuVisible" [icon]="'ellipsis-v'"

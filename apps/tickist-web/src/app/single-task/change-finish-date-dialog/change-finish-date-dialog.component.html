@@ -13,7 +13,7 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button (click)="close(changeDate.value)">Save</button>
+    <button mat-button (click)="close(changeDate.value?.finishDate)">Save</button>
     <button mat-button (click)="close()">Cancel</button>
 </mat-dialog-actions>
 

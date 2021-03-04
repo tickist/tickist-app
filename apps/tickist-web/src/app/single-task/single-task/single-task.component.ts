@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {TaskService} from '../../core/services/task.service';
-import {ConfigurationService} from '../../core/services/configuration.service';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {User} from '@data/users';
 import {TASK_EXTENDED_VIEW, TASK_SIMPLE_VIEW} from "@data";
 

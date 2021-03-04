@@ -25,7 +25,7 @@ export class ChangeFinishDateDialogComponent implements OnInit {
 
     }
 
-    close(result?) {
-        this.dialogRef.close(result);
+    close(finishDate?) {
+        this.dialogRef.close(finishDate);
     }
 }

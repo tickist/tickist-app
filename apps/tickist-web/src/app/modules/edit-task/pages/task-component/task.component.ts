@@ -36,6 +36,7 @@ import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task} from '@data';
 import {zip} from "ramda";
 import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
+import {changeTimeStringFormatToValue} from "@tickist/utils";
 
 @Component({
     selector: 'tickist-task-component',
@@ -508,8 +509,8 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.onHold = values['extra']['suspended'];
 
             updatedTask.fromRepeating = values['repeat']['fromRepeating'];
-            updatedTask.estimateTime = values['extra']['estimateTime'];
-            updatedTask.time = values['extra']['time'];
+            updatedTask.estimateTime = changeTimeStringFormatToValue(values['extra']['estimateTime']);
+            updatedTask.time = changeTimeStringFormatToValue(values['extra']['time']);
             // We need to know which step will be deleted in the backend
             updatedTask.steps = this.task.steps.filter(step => step.delete);
             values['steps'].forEach((step, index) => {

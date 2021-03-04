@@ -14,6 +14,7 @@ import {ProjectsFiltersEffects} from './projects-filters.effects';
 import {StoreModule} from '@ngrx/store';
 import * as fromProjectsFilters from './projects-filters.reducers';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {AngularResizedEventModule} from "angular-resize-event";
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         FontAwesomeModule,
         TickistSharedModule,
         StoreModule.forFeature('projectsFilters', fromProjectsFilters.reducer),
-        EffectsModule.forFeature([ProjectsFiltersEffects])
+        EffectsModule.forFeature([ProjectsFiltersEffects]),
+        AngularResizedEventModule
     ],
     exports: [ProjectsListComponent, SingleProjectComponent],
     declarations:

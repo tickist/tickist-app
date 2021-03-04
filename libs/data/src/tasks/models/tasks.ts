@@ -1,11 +1,12 @@
-import {Tag} from '../../tags/models/tags';
+import {Tag} from '@data/tags';
 import {Step} from './steps';
 import {Menu} from '../../menu';
 import {TaskUser} from './task-user';
-import {TaskProject} from './task-project';
+import {TaskProject} from '@data/tasks';
 import {addClickableLinks} from '@tickist/utils';
 import {Editor} from '@data/users';
 import {TaskType} from "@data/tasks/models/task-types";
+import {changeTimeStringFormatToValue} from "@tickist/utils";
 
 export interface ITask {
     name: string;
@@ -89,6 +90,8 @@ export class Task {
         this.tagsIds = this.tags.map(tag => tag.id);
         this.menuShowing = new Menu(task.menuShowing);
         this.taskProject = new TaskProject(task.taskProject);
+        this.estimateTime = changeTimeStringFormatToValue(task.estimateTime?.toString())
+        this.time = changeTimeStringFormatToValue(task.time?.toString())
     }
 }
 

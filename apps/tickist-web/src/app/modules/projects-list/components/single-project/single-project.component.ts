@@ -1,11 +1,11 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component,
+    Component, ElementRef,
     HostListener,
     Input,
     OnDestroy,
-    OnInit
+    OnInit, ViewChild
 } from '@angular/core';
 import {AVAILABLE_PROJECT_TYPES, ProjectType, ProjectWithAllDescendants} from '@data/projects';
 import {ProjectService} from '../../../../core/services/project.service';
@@ -51,6 +51,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     @Input() project: ProjectLeftPanel;
     @Input() isSmallScreen: boolean;
+    @ViewChild('projectNameDiv') el: ElementRef;
     selectedProject$: Observable<ProjectWithAllDescendants>;
     selectedProjectsIds$: Observable<Array<string>>;
     isActive = false;
@@ -66,6 +67,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     homeRoutesName = '/' + homeRoutesName.HOME;
     editProjectSettingsRoutesName = editProjectSettingsRoutesName.EDIT_PROJECT
     canHaveChildProjects: boolean;
+    tooltip = false;
 
     constructor(private projectService: ProjectService, protected router: Router, public dialog: MatDialog,
                 protected configurationService: ConfigurationService, protected media: MediaObserver,
@@ -106,6 +108,16 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
                 this.cd.detectChanges();
             });
 
+    }
+
+    onResized() {
+        if (this.el.nativeElement.offsetWidth < this.el.nativeElement.scrollWidth && !this.tooltip) {
+            this.tooltip = true;
+            this.cd.detectChanges()
+        } else if (this.el.nativeElement.offsetWidth >= this.el.nativeElement.scrollWidth && this.tooltip ) {
+            this.tooltip = false;
+            this.cd.detectChanges()
+        }
     }
 
     @HostListener('mouseenter')
