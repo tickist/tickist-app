@@ -16,6 +16,14 @@
         margin-left: 5px;
         margin-top: 0;
     }
+    .project-name {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .content {
+        max-width: 100%;
+    }
 }
 
 .isActive {
