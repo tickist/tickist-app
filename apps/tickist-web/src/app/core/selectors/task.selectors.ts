@@ -150,20 +150,30 @@ export const selectTasksStreamInProjectsView = createSelector(
 export const nextActionTasks = createSelector(
     selectAllTasks,
     selectLoggedInUser,
-    (tasks, user) => {
+    selectSearchTasksText,
+    (tasks, user, searchFilter) => {
+        if (searchFilter) {
+            const re = new RegExp(searchFilter, 'i');
+            tasks = tasks.filter((task) => re.test(task.name));
+        }
         return orderBy(tasks
-            .filter(task => task.owner.id === user.id)
-            .filter(task => task.taskType === TaskType.NEXT_ACTION),
+                .filter(task => task.owner.id === user.id)
+                .filter(task => task.taskType === TaskType.NEXT_ACTION),
             ['priority', task => _.deburr(task.name.toLowerCase())],
             ['asc', 'asc']
-            )
+        )
     }
 )
 
 export const needInfoTasks = createSelector(
     selectAllTasks,
     selectLoggedInUser,
-    (tasks, user) => {
+    selectSearchTasksText,
+    (tasks, user, searchFilter) => {
+        if (searchFilter) {
+            const re = new RegExp(searchFilter, 'i');
+            tasks = tasks.filter((task) => re.test(task.name));
+        }
         return tasks
             .filter(task => task.owner.id === user.id)
             .filter(task => task.taskType === TaskType.NEED_INFO)
@@ -173,13 +183,18 @@ export const needInfoTasks = createSelector(
 export const projectWithoutNextActionTasks = createSelector(
     selectAllTasks,
     selectActiveProjects,
-    (tasks, projects) => {
-        const projectsWithoutNextActionTasks = []
+    selectSearchTasksText,
+    (tasks, projects, searchFilter) => {
+        let projectsWithoutNextActionTasks = []
         projects.forEach(project => {
             if (!tasks.some(task => task.taskType === TaskType.NEXT_ACTION && task.taskProject.id === project.id)) {
                 projectsWithoutNextActionTasks.push(project)
             }
         })
+        if (searchFilter) {
+            const re = new RegExp(searchFilter, 'i');
+            projectsWithoutNextActionTasks = projectsWithoutNextActionTasks.filter((task) => re.test(task.name));
+        }
         return projectsWithoutNextActionTasks
     }
 )

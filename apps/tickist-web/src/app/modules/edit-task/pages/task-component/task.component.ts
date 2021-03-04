@@ -36,7 +36,7 @@ import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
 import {AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task} from '@data';
 import {zip} from "ramda";
 import {hideAddTaskButton, showAddTaskButton} from "../../../../core/actions/add-task-button-visibility.actions";
-import {changeTimeStringFormatToValue} from "../../../../../../../../libs/utils/src/lib/changeTimeStringFormatToValue";
+import {changeTimeStringFormatToValue} from "@tickist/utils";
 
 @Component({
     selector: 'tickist-task-component',
