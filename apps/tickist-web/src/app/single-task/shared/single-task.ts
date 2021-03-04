@@ -7,7 +7,7 @@ import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialo
 import {requestDeleteTask, requestUpdateTask, setStatusDone} from '../../core/actions/tasks/task.actions';
 import {Store} from '@ngrx/store';
 import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
-import {takeUntil} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {parse} from 'date-fns';
 import {Component, OnDestroy} from '@angular/core';
@@ -59,7 +59,7 @@ export class SingleTask implements OnDestroy{
         const task = Object.assign({}, this.task, {steps: steps});
         this.amountOfStepsDoneInPercent = task.steps.filter(step => step.status === 1).length * 100 / task.steps.length;
 
-        // if amount is 100 the status === 1
+        // if amount is 100 then status === 1
         this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
         if (this.amountOfStepsDoneInPercent === 100) {
             this.toggleDone();
@@ -97,11 +97,11 @@ export class SingleTask implements OnDestroy{
                     data: {'task': task}
                 });
                 dialogRef.afterClosed()
-                    .pipe(takeUntil(this.ngUnsubscribe))
-                    .subscribe(result => {
-                        if (result && result.hasOwnProperty('finishDate')) {
-                            task.finishDate = parse(result['finishDate'],  'dd-MM-yyyy', new Date());
-                        }
+                    .pipe(
+                        filter(finishDate => !!finishDate),
+                        takeUntil(this.ngUnsubscribe))
+                    .subscribe(finishDate => {
+                        task.finishDate = finishDate
                         this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
                     });
             } else {

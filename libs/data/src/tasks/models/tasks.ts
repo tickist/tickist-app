@@ -6,6 +6,7 @@ import {TaskProject} from './task-project';
 import {addClickableLinks} from '@tickist/utils';
 import {Editor} from '@data/users';
 import {TaskType} from "@data/tasks/models/task-types";
+import {changeTimeStringFormatToValue} from "../../../../utils/src/lib/changeTimeStringFormatToValue";
 
 export interface ITask {
     name: string;
@@ -89,6 +90,8 @@ export class Task {
         this.tagsIds = this.tags.map(tag => tag.id);
         this.menuShowing = new Menu(task.menuShowing);
         this.taskProject = new TaskProject(task.taskProject);
+        this.estimateTime = changeTimeStringFormatToValue(task.estimateTime?.toString())
+        this.time = changeTimeStringFormatToValue(task.time?.toString())
     }
 }
 
