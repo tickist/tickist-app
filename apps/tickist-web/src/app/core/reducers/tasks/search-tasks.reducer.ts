@@ -1,4 +1,4 @@
-import {setCurrrentSearchTasksFilter} from '../../actions/tasks/search-tasks.actions';
+import {clearSearchTasksFilter, setCurrentSearchTasksFilter} from '../../actions/tasks/search-tasks.actions';
 import {Action, createReducer, on} from "@ngrx/store";
 
 export interface SearchTaskState {
@@ -11,10 +11,15 @@ export const initialState: SearchTaskState = {
 
 const searchTasksReducer = createReducer(
     initialState,
-    on(setCurrrentSearchTasksFilter, (state, props) => {
+    on(setCurrentSearchTasksFilter, (state, props) => {
         return {
             searchText: props.searchText
         };
+    }),
+    on(clearSearchTasksFilter, (state, props) => {
+        return {
+            searchText: ''
+        }
     })
 )
 

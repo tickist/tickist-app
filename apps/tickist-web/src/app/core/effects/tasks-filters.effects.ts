@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {ROUTER_NAVIGATION, RouterNavigationAction} from '@ngrx/router-store';
-import {concatMap, filter, withLatestFrom} from 'rxjs/operators';
+import {concatMap, filter, map, withLatestFrom} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {TasksFiltersService} from '../services/tasks-filters.service';
 import {selectLoggedInUser} from '../selectors/user.selectors';
@@ -9,6 +9,7 @@ import {setCurrentMainFilter} from "../actions/tasks/main-filters-tasks.actions"
 import {setCurrentAssignedToFilter} from "../actions/tasks/assigned-to-filters-tasks.actions";
 import {setCurrentEstimateTimeFiltersTasks} from "../actions/tasks/estimate-time-filters-tasks.actions";
 import {setCurrentTagsFilters} from "../actions/tasks/tags-filters-tasks.actions";
+import {clearSearchTasksFilter} from "../actions/tasks/search-tasks.actions";
 
 
 @Injectable()
@@ -38,6 +39,13 @@ export class TasksFiltersEffects {
                 return actions;
             })
         ));
+
+    clearSearchBar$ = createEffect(() => this.actions$
+        .pipe(
+            ofType<RouterNavigationAction>(ROUTER_NAVIGATION),
+            map(() => clearSearchTasksFilter())
+        )
+    )
 
     constructor(private actions$: Actions, private  store: Store) {
     }
