@@ -2,14 +2,14 @@ import {ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewC
 import {Task} from '@data/tasks/models/tasks';
 import {FormControl} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, startWith, takeUntil} from 'rxjs/operators';
-import {Router} from '@angular/router';
+import {debounceTime, distinctUntilChanged, filter, map, startWith, takeUntil} from 'rxjs/operators';
+import {NavigationEnd, Router} from '@angular/router';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Store} from '@ngrx/store';
 import {selectAllUndoneTasks} from '../../selectors/task.selectors';
 import {editTaskRoutesName} from '../../../modules/edit-task/routes-names';
 import {homeRoutesName} from '../../../routing.module.name';
-import {setCurrrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
+import {setCurrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
 import {searchInputIsFocus} from "../../selectors/ui.selectors";
 import {blurOnSearchInput} from "../../actions/ui.actions";
 
@@ -30,7 +30,10 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.store.select(selectAllUndoneTasks).pipe(takeUntil(this.ngUnsubscribe)).subscribe(((tasks: Task[]) => this.tasks = tasks));
+        this.store.select(selectAllUndoneTasks).pipe(
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe((tasks: Task[]) => this.tasks = tasks);
+
         this.store.select(searchInputIsFocus).pipe(
             takeUntil(this.ngUnsubscribe)
         ).subscribe((isFocus) => {
@@ -50,7 +53,14 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
             distinctUntilChanged(),
             takeUntil(this.ngUnsubscribe),
         ).subscribe((value) => {
-            this.store.dispatch(setCurrrentSearchTasksFilter({searchText: value}));
+            this.store.dispatch(setCurrentSearchTasksFilter({searchText: value}));
+        });
+
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd),
+            takeUntil(this.ngUnsubscribe),
+        ).subscribe((event) => {
+            this.searchControl.reset();
         });
     }
 
