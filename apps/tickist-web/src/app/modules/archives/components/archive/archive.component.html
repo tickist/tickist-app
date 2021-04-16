@@ -1,0 +1,11 @@
+<cdk-virtual-scroll-viewport itemSize="90" class="viewport">
+    <tickist-project-header [project]="project$ | async"></tickist-project-header>
+    <div *ngIf="isLoading" class="spinner"  fxLayout="row" fxLayoutAlign="center center">
+        <mat-spinner [diameter]="48"></mat-spinner>
+    </div>
+    <tickist-single-task
+        *cdkVirtualFor="let task of tasks$ | async;trackBy: trackByFn; let last = last" [task]="task"
+        [taskView]="taskView">
+    </tickist-single-task>
+    <tickist-no-archived-tasks *ngIf="!isLoading" [tasksLength]="(tasks$ | async)?.length"></tickist-no-archived-tasks>
+</cdk-virtual-scroll-viewport>

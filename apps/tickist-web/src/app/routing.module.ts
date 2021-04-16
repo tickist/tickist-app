@@ -23,6 +23,7 @@ import {loginRoutesName} from './modules/login/routes-names';
 import {signupRoutesName} from './modules/sign-up/routes-names';
 import {LeftPanelComponent} from './modules/left-panel/pages/left-panel/left-panel.component';
 import {dashboardRoutesName} from "./modules/dashboard/routes.names";
+import {archiveRoutesName} from "./modules/archives/routes.names";
 
 
 export const routes: Routes = [
@@ -93,6 +94,11 @@ export const routes: Routes = [
                 path: editProjectSettingsRoutesName.EDIT_PROJECT,
                 canActivate: [LoggedInGuard],
                 loadChildren: () => import('./modules/edit-project/edit-project.module').then(m => m.TickistEditProjectModule)
+            },
+            {
+                path: archiveRoutesName.ARCHIVE,
+                canActivate: [LoggedInGuard],
+                loadChildren: () => import('./modules/archives/archive.module').then(m => m.ArchiveModule)
             },
             {
                 path: '',

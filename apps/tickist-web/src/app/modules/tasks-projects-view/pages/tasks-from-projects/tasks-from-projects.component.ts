@@ -18,6 +18,7 @@ import {calculateProjectDescendants, hasProjectDescription, isProjectType} from 
 import {TASK_EXTENDED_VIEW} from "@data";
 import {newActiveProjectsIds} from "../../../../core/actions/projects/active-projects-ids.actions";
 import {setActiveProject} from "../../../../core/actions/projects/active-project.actions";
+import {archiveRoutesName} from "../../../archives/routes.names";
 
 @Component({
     selector: 'tickist-tasks-from-projects',
@@ -34,6 +35,8 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     selectedProject: Project;
     selectedProject$: Observable<Project>;
     isSharedProject: boolean;
+    archiveRoutesName = archiveRoutesName.ARCHIVE;
+    homeRoutesName = '/' + homeRoutesName.HOME;
 
     constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef,
                 private tasksFiltersService: TasksFiltersService, private store: Store, private router: Router) {
