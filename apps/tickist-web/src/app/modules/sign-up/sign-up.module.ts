@@ -9,11 +9,12 @@ import {TickistSignUpRoutingModule} from './sign-up-routing.module';
 import {SignUpComponent} from './pages/sign-up/sign-up.component';
 import {  } from '../auth/components/prompt-user-for-password-dialog/prompt-user-for-password-dialog.component';
 import {AuthModule} from '../auth/auth.module';
+import {TickistCoreModule} from "../../core/core.module";
 
 
 @NgModule({
     imports: [CommonModule, TickistMaterialModule, FormsModule, FlexLayoutModule,
-        ReactiveFormsModule, TickistSignUpRoutingModule, TickistSharedModule, IconsModule, AuthModule],
+        ReactiveFormsModule, TickistSignUpRoutingModule, TickistSharedModule, IconsModule, AuthModule, TickistCoreModule],
     providers: [],
     exports: [SignUpComponent],
     declarations: [
