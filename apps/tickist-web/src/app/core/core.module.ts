@@ -48,6 +48,7 @@ import {AngularFireStorageModule} from '@angular/fire/storage';
 import {TickistSingleTaskModule} from '../single-task/single-task.module';
 import {TickistNotificationsModule} from '../modules/notifications/notifications.module';
 import {A11yModule} from "@angular/cdk/a11y";
+import { PrivacyPolicyComponent } from './footer/privacy-policy/privacy-policy.component';
 
 
 @NgModule({
@@ -97,7 +98,8 @@ import {A11yModule} from "@angular/cdk/a11y";
         NavBarAuthPageComponent,
         AuthLayoutComponent,
         HomeComponent,
-        AddTaskFooterButtonComponent
+        AddTaskFooterButtonComponent,
+        PrivacyPolicyComponent
     ],
     declarations: [
         NavComponent,
@@ -108,7 +110,8 @@ import {A11yModule} from "@angular/cdk/a11y";
         AuthLayoutComponent,
         HomeComponent,
         AddTaskFooterButtonComponent,
-        ShowNotificationAboutNewDayComponent
+        ShowNotificationAboutNewDayComponent,
+        PrivacyPolicyComponent
     ]
 })
 

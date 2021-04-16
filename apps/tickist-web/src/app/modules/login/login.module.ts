@@ -8,6 +8,7 @@ import {LoginComponent} from './pages/login';
 import {TickistLoginRoutingModule} from './login-routing.module';
 import {IconsModule} from '../../icons.module';
 import {AuthModule} from '../auth/auth.module';
+import {TickistCoreModule} from "../../core/core.module";
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import {AuthModule} from '../auth/auth.module';
         TickistLoginRoutingModule,
         TickistSharedModule,
         IconsModule,
-        AuthModule
+        AuthModule,
+        TickistCoreModule
     ],
     providers: [],
     exports: [
