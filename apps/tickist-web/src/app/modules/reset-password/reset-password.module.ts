@@ -7,6 +7,7 @@ import {TickistSharedModule} from '../../shared/shared.module';
 import {ResetPasswordComponent} from './pages/reset-password';
 import {TickistResetPasswordRoutingModule} from './reset-password-routing.module';
 import { RequestResetPasswordComponent } from './pages/request-reset-password/request-reset-password.component';
+import {TickistCoreModule} from "../../core/core.module";
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { RequestResetPasswordComponent } from './pages/request-reset-password/re
         FlexLayoutModule,
         ReactiveFormsModule,
         TickistResetPasswordRoutingModule,
-        TickistSharedModule
+        TickistSharedModule,
+        TickistCoreModule
     ],
     providers: [],
     exports: [
