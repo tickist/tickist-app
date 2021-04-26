@@ -1,0 +1,19 @@
+@import "../../../../shared/variables";
+@import "styles";
+
+:host {
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+
+    ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        max-width: 100%;
+    }
+
+    .spinner {
+        background: $background_card_color;
+    }
+}

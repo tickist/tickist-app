@@ -14,8 +14,12 @@
         <div class="header">
             <div>{{ selectedProject.name }}</div>
             <div fxFlex></div>
-            <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'" data-cy="edit-project"
+            <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'" data-cy="edit-project" [matTooltip]="'Edit project'"
                                  (click)="navigateToEditProjectView(selectedProject.id)">
+            </tickist-menu-button>
+            <tickist-menu-button [icon]="'archive'"  [fontSize]="'18px'" data-cy="archive-tasks" [matTooltip]="'Archived tasks from project'"
+                                 [routerLink]="[homeRoutesName, archiveRoutesName, selectedProject.id]">
+
             </tickist-menu-button>
             <tickist-sort-tasks></tickist-sort-tasks>
             <tickist-filter-tasks [showTags]="true" [isAssignedToVisible]="isSharedProject"></tickist-filter-tasks>
