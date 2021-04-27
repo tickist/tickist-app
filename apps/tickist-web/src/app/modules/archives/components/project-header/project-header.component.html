@@ -1,0 +1,10 @@
+<div  fxLayout="row" fxLayoutAlign="start center">
+    <div class="project-name" *ngIf="project">{{ project?.name }}: completed tasks</div>
+    <div fxFlex></div>
+    <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'" data-cy="edit-project" [matTooltip]="'Edit project'"
+                         (click)="navigateToEditProjectView(project?.id)">
+    </tickist-menu-button>
+    <tickist-menu-button [icon]="'folder'" [fontSize]="'18px'" data-cy="back-to-project" [matTooltip]="'Back to project'"
+                         (click)="navigateToProjectView(project?.id)">
+    </tickist-menu-button>
+</div>

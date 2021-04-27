@@ -78,7 +78,7 @@ export class SingleTask implements OnDestroy{
     toggleDone() {
         let task;
         if (this.task.isDone === false) {
-            task = Object.assign({}, this.task, {isDone: true});
+            task = Object.assign({}, this.task, {isDone: true, whenComplete: new Date()});
             if (task.taskProject.dialogTimeWhenTaskFinished) {
                 const dialogRef = this.dialog.open(TimeDialogComponent, {
                     data: {'task': task}
@@ -108,7 +108,7 @@ export class SingleTask implements OnDestroy{
                 this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
             }
         } else if (this.task.isDone === true) {
-            task = Object.assign({}, this.task, {isDone: false});
+            task = Object.assign({}, this.task, {isDone: false, whenComplete: null});
             this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
         } else if (this.task.onHold === true) {
             task = Object.assign({}, this.task, {isDone: false});

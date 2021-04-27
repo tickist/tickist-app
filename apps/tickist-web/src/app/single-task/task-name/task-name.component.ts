@@ -9,6 +9,7 @@ import {
     ViewChild
 } from '@angular/core';
 import {Task} from '@data/tasks/models/tasks';
+import {formatDate} from "@angular/common";
 
 @Component({
     selector: 'tickist-task-name',
@@ -23,11 +24,13 @@ export class TaskNameComponent implements OnInit, OnChanges {
     onlyEstimateTime = false;
     onlyTime = false;
     tooltip = false;
+    whenComplete = 'test test '
 
     constructor(private cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
+        this.whenComplete = this.task.whenComplete ? ` (${formatDate(this.task.whenComplete, 'MMM d, y, hh:mm:ss', 'en')})` : ''
 
     }
 

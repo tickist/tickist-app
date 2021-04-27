@@ -96,7 +96,9 @@ export function createTask(taskName) {
 }
 
 export function clickOnWeekDay(weekday: string) {
-    cy.get('mat-sidenav').find('mat-panel-title').contains('Weekdays').click();
+    cy.get('mat-sidenav').find('mat-panel-title').contains('Weekdays').then($elem => {
+        cy.wrap($elem).click({force: true})
+    });
     cy.get('mat-list-item').contains(weekday).click();
 }
 

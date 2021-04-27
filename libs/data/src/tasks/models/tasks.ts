@@ -74,6 +74,7 @@ export class Task {
     menuShowing: Menu;
     lastEditor: Editor;
     taskType = TaskType.NORMAL;
+    whenComplete: Date | null = null;
 
     constructor(task: ITask) {
         Object.assign(this, task);
