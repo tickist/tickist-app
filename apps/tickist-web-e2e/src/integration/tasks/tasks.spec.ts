@@ -124,13 +124,16 @@ describe('Tasks', () => {
                 cy.wrap($task.find('tickist-progress-bar')).click();
             });
 
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().click();
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
             cy.get('#steps').find('[data-cy="stepIsDone"]').should('have.length', 1);
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().click();
+            cy.wait(0)
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
             cy.get('#steps').find('[data-cy="stepIsDone"]').should('have.length', 2);
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().click();
+            cy.wait(0)
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
             cy.get('#steps').find('[data-cy="stepIsDone"]').should('have.length', 3);
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().click();
+            cy.wait(0)
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
             cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).should('not.exist');
         });
     });
