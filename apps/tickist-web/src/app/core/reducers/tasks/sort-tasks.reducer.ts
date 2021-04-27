@@ -21,7 +21,9 @@ const sortTasksReducer = createReducer(
     on(setCurrentSortBy, (state, props) => {
         return {sortByOptions: state.sortByOptions, currentSortBy: props.currentSortBy}
     }),
-    on(resetStore)
+    on(resetStore, () => {
+        return initialState;
+    })
 )
 
 export function reducer(state: SortByState, action: Action) {

@@ -124,16 +124,24 @@ describe('Tasks', () => {
                 cy.wrap($task.find('tickist-progress-bar')).click();
             });
 
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().then($elem => {
+                cy.wrap($elem).click({force: true});
+            });
             cy.get('#steps').find('[data-cy="stepIsDone"]').should('have.length', 1);
             cy.wait(0)
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().then($elem => {
+                cy.wrap($elem).click({force: true});
+            });
             cy.get('#steps').find('[data-cy="stepIsDone"]').should('have.length', 2);
             cy.wait(0)
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().then($elem => {
+                cy.wrap($elem).click({force: true});
+            });
             cy.get('#steps').find('[data-cy="stepIsDone"]').should('have.length', 3);
             cy.wait(0)
-            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().should('be.visible').click();
+            cy.get('#steps').find('[data-cy="stepIsUndone"]').first().then($elem => {
+                cy.wrap($elem).click({force: true});
+            });
             cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).should('not.exist');
         });
     });
@@ -207,7 +215,7 @@ describe('Tasks', () => {
 
     describe('Pin task', () => {
         it('should pinned task after click on pin icon next unpinned task after again click on pin icon', () => {
-            cy.get('tickist-single-task:contains("Task 4")').should('not.be.visible');
+            cy.get('tickist-single-task:contains("Task 4")').should('not.exist');
             clickOnProject('Project 2');
             cy.get('tickist-single-task:contains("Task 4")').then($task => {
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').wrap($task.find('tickist-pin-button')).click();
@@ -220,7 +228,7 @@ describe('Tasks', () => {
                 expect($task.find('tickist-pin-button')).to.be.visible;
                 cy.wrap($task.find('#first-row')).trigger('mouseenter').wrap($task.find('tickist-pin-button')).click();
             });
-            cy.get('tickist-single-task:contains("Task 4")').should('not.be.visible');
+            cy.get('tickist-single-task:contains("Task 4")').should('not.exist');
         });
     });
 

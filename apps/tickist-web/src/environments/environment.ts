@@ -4,6 +4,7 @@
 // The build system defaults to the dev environment.
 
 import {IEnvironment} from './environment.interface';
+import {NgxLoggerLevel} from "ngx-logger";
 
 export const environment: IEnvironment = {
     name: 'dev',
@@ -12,7 +13,9 @@ export const environment: IEnvironment = {
     emulator: true,
     emulatorIPAddress: '',
     experimentalForceLongPolling: false,
-    logger: {},
+    logger: {
+        level: NgxLoggerLevel.LOG
+    },
     firebase: {
         apiKey: 'AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg',
         authDomain: 'proven-reality-657.firebaseapp.com',
