@@ -6,6 +6,7 @@ import {getArchivedTasks, saveToStore} from "../actions/archive.actions";
 import {map, switchMap, withLatestFrom} from "rxjs/operators";
 import {selectLoggedInUser} from "../../../core/selectors/user.selectors";
 import {combineLatest, forkJoin} from "rxjs";
+import { Task } from "@data";
 
 @Injectable()
 export class ArchiveEffects {
