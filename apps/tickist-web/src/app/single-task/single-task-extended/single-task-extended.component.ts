@@ -16,7 +16,16 @@ import {TaskService} from '../../core/services/task.service';
 import {ConfigurationService} from '../../core/services/configuration.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectService} from '../../core/services/project.service';
-import {removeTagsNotBelongingToUser, ShareWithUser, Tag, Task, TaskProject, TaskType, User} from '@data';
+import {
+    DEFAULT_PROJECT_ICON,
+    removeTagsNotBelongingToUser,
+    ShareWithUser,
+    Tag,
+    Task,
+    TaskProject,
+    TaskType,
+    User
+} from '@data';
 import {Observable, Subject} from 'rxjs';
 import {RepeatStringExtension} from '../../shared/pipes/repeatStringExtension';
 import {takeUntil} from 'rxjs/operators';
@@ -42,7 +51,7 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     @Input() user: User;
     @Input() mediaChange;
     @ViewChild('container', { static: true }) container: ElementRef;
-
+    isArchive = false;
     dateFormat = 'dd-MM-yyyy';
     projects$: Observable<ProjectLeftPanel[]>;
     projects: ProjectLeftPanel[];
@@ -52,6 +61,8 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     selectTaskProject: FormControl;
     tags: Tag[] = [];
     isTaskTypeLabelVisible = false;
+    icon: string;
+    iconPrefix: string;
 
     @HostListener('mouseenter')
     onMouseEnter() {
@@ -154,6 +165,13 @@ export class SingleTaskExtendedComponent extends SingleTask implements OnInit, O
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+        this.isArchive = this.task.isDone;
+
+        if (changes.hasOwnProperty('task')) {
+            this.icon = this.task.taskProject?.icon ? this.task.taskProject.icon[1] : DEFAULT_PROJECT_ICON[1]
+            this.iconPrefix = this.task.taskProject?.icon ? this.task.taskProject.icon[0] : DEFAULT_PROJECT_ICON[0]
+        }
+
         if (changes.hasOwnProperty('mediaChange') && changes['mediaChange'].hasOwnProperty('currentValue')
             && changes['mediaChange'].currentValue && changes['mediaChange'].currentValue.mqAlias === 'xs') {
             this.dateFormat = 'dd-MM';

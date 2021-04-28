@@ -8,7 +8,7 @@
         <div #firstRow id="first-row"  fxLayout="row" fxLayoutAlign="start center">
             <tickist-task-type-label *ngIf="isTaskTypeLabelVisible" fxFlex="120px" [task]="task"></tickist-task-type-label>
             <tickist-task-name fxFlex [task]=task></tickist-task-name>
-            <tickist-right-menu fxFlex="90px" [isRightMenuVisible]="true" *ngIf="!task.isDone"
+            <tickist-right-menu fxFlex="90px" [isRightMenuVisible]="true" *ngIf="!isArchive"
                                 [task]="task"
                                 (deleteTaskClick)="deleteTask()"
                                 (togglePinClick)="togglePin()"
@@ -22,8 +22,8 @@
         </div>
         <div id="second-row">
             <tickist-menu-button id="taskProjectNameIcon"
-                                 [icon]="task.taskProject.icon[1]"
-                                 [iconPrefix]="task.taskProject.icon[0]"
+                                 [icon]="icon"
+                                 [iconPrefix]="iconPrefix"
                                  [color]="task.taskProject.color"
                                  (click)="changeShowing('isTaskProject')"
                                  [matTooltip]="task.taskProject.name">
@@ -44,10 +44,10 @@
 
             <tickist-user-avatar (click)="changeShowing('isAssignedTo')" [userId]="task.owner.id" (avatarIsEmpty)="repairAvatarUrl()"
                                  [avatarUrl]="task.owner.avatarUrl" [size]="'18x18'" [username]="task.owner.username"
-                                 *ngIf="isSharedProject()" [styles]="[{name: 'margin-top', value: '5px'}]">
+                                 *ngIf="!isArchive && isSharedProject()" [styles]="[{name: 'margin-top', value: '5px'}]">
             </tickist-user-avatar>
             <tickist-progress-bar id="taskSteps" (click)="changeShowing('isSteps')"
-                                  [percent]="amountOfStepsDoneInPercent"
+                                  [percent]="amountOfStepsDoneInPercent" *ngIf="!isArchive"
                                   [isDisabled]="task.steps.length === 0"></tickist-progress-bar>
             <span style="flex: 1 1 1e-09px;"></span>
             <tickist-display-finish-date [task]="task" *ngIf="task.finishDate"
@@ -59,7 +59,7 @@
 
 </div>
 
-<div>
+<div *ngIf="!isArchive">
 
     <div class="task-description" *ngIf="task.menuShowing.isDescription">
         <div fxLayout="row" fxLayoutAlign="end center">

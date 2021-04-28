@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
 import {Task} from '@data/tasks/models/tasks';
-import {format} from 'date-fns';
+import {format, isDate} from 'date-fns';
 
 
 @Component({
@@ -29,9 +29,11 @@ export class DisplayFinishDateComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (changes.hasOwnProperty('task')) {
+            const finishDate = isDate(this.task.finishDate) ? this.task.finishDate : new Date(this.task.finishDate)
+
             this.statusOn = this.task.typeFinishDate === 1;
             this.statusBy = this.task.typeFinishDate === 0;
-            this.finishDateFormat = format(this.task.finishDate, this.dateFormat);
+            this.finishDateFormat = format(finishDate, this.dateFormat);
         }
     }
 }
