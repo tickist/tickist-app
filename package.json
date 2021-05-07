@@ -93,7 +93,7 @@
     "firebase-functions": "^3.13.0",
     "fs-extra": "^8.1.0",
     "jq": "^1.7.2",
-    "lodash": ">=4.17.19",
+    "lodash": ">=4.17.21",
     "logrocket": "^1.0.10",
     "logrocket-ngrx": "^0.1.1",
     "ngx-logger": "^4.1.9",
