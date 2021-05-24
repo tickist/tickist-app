@@ -7,7 +7,7 @@ import {AngularFireMessaging} from '@angular/fire/messaging';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {AngularFireFunctions} from "@angular/fire/functions";
-import {environment} from "@env/environment";
+import {environment} from "../environments/environment";
 import {Store} from "@ngrx/store";
 import {focusOnAddTaskInput, focusOnSearchInput} from "./core/actions/ui.actions";
 import {homeRoutesName} from "./routing.module.name";

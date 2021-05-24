@@ -1,4 +1,4 @@
-import {DEFAULT_PROJECT_ICON} from '@data/projects';
+import {DEFAULT_PROJECT_ICON} from '../../projects';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
 
 interface ITaskProject {

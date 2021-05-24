@@ -4,7 +4,7 @@ import {UserService} from '../../../../core/services/user.service';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Location} from '@angular/common';
 import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {environment} from '@env/environment';
+import {environment} from '../../../../../environments/environment';
 import {MyErrorStateMatcher} from '../../../../shared/error-state-matcher';
 import {Observable, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';

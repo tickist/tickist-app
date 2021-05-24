@@ -10,7 +10,9 @@
   "projects": {
     "tickist-web-e2e": {
       "tags": [],
-      "implicitDependencies": ["tickist-web"]
+      "implicitDependencies": [
+        "tickist-web"
+      ]
     },
     "tickist-web": {
       "tags": []
@@ -29,7 +31,12 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ]
       }
     }
   },

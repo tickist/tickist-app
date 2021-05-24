@@ -8,7 +8,7 @@ import {TagService} from '../services/tag.service';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
-import {environment} from '@env/environment.dev';
+import {environment} from '../../../environments/environment.dev';
 
 describe('TagsEffects', () => {
     let actions$: Observable<any>;

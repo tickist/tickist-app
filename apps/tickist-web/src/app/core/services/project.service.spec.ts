@@ -9,7 +9,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
-import {environment} from '@env/environment.dev';
+import {environment} from '../../../environments/environment.dev';
 
 const project1FromApi = {
     name: 'F project',

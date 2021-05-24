@@ -1,4 +1,4 @@
-import {environment} from '@env/environment';
+import {environment} from '../../../environments/environment';
 import {Injectable} from '@angular/core';
 import {ConfigurationService} from './configuration.service';
 

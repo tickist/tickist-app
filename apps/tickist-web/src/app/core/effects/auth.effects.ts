@@ -10,7 +10,7 @@ import {UserService} from '../services/user.service';
 import {addUser} from '../actions/user.actions';
 import {resetStore} from '../../tickist.actions';
 import LogRocket from 'logrocket';
-import {environment} from '@env/environment';
+import {environment} from '../../../environments/environment';
 import {AuthService} from '../../modules/auth/services/auth.service';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {signupRoutesName} from '../../modules/sign-up/routes-names';
