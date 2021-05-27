@@ -14,7 +14,7 @@ import {metaReducers} from './store';
 import {DeleteTaskDialogComponent} from './single-task/delete-task-dialog/delete-task.dialog.component';
 import {RootComponent} from './testing/test.modules';
 import {MyDateAdapter} from './shared/data-adapter';
-import {environment} from '@env/environment';
+import {environment} from '../environments/environment';
 import {TickistMaterialModule} from './material.module';
 import {ChangeFinishDateDialogComponent} from './single-task/change-finish-date-dialog/change-finish-date-dialog.component';
 import {TickistRoutingModule} from './routing.module';

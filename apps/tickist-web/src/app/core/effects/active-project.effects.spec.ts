@@ -6,7 +6,7 @@ import {ActiveProjectEffects} from './active-project.effects';
 import {StoreModule} from '@ngrx/store';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFireModule} from '@angular/fire';
-import {environment} from '@env/environment.dev';
+import {environment} from '../../../environments/environment.dev';
 
 describe('ActiveProjecEffects', () => {
     let actions$: Observable<any>;

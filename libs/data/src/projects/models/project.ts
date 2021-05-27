@@ -8,7 +8,7 @@ import {
     DEFAULT_TASK_VIEW,
     DEFAULT_TYPE_FINISH_DATE
 } from '../config-projects';
-import {Editor} from '@data';
+import {Editor} from '../../users';
 import {addClickableLinks} from '@tickist/utils';
 import {ProjectType} from "./projects-type";
 

@@ -1,5 +1,5 @@
 import {Directive, ElementRef, Input, Renderer2} from '@angular/core';
-import {environment} from "@env/environment";
+import {environment} from "../../../environments/environment";
 
 @Directive({
     // tslint:disable-next-line:directive-selector

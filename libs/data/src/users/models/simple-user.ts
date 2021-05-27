@@ -1,5 +1,5 @@
-import {SimpleProject} from '@data/projects';
-import {DEFAULT_USER_AVATAR} from '@data/users/config-user';
+import {SimpleProject} from '../../projects';
+import {DEFAULT_USER_AVATAR} from '../config-user';
 
 
 export class SimpleUser {

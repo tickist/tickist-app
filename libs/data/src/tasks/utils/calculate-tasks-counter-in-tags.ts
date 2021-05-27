@@ -1,4 +1,4 @@
-import {TagWithTaskCounter} from '@data';
+import {TagWithTaskCounter} from '../../tags';
 
 
 export function calculateTasksCounterInTags(tags, tasks): TagWithTaskCounter[] {

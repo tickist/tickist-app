@@ -8,7 +8,7 @@ import {
     DEFAULT_TASKS_ORDER_OPTIONS,
     DEFAULT_USER_AVATAR
 } from '../config-user';
-import {NotificationPermission} from '@data/notifications';
+import {NotificationPermission} from '../../notifications';
 
 export interface IUser {
     id: string;

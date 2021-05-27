@@ -1,11 +1,11 @@
-import {Tag} from '@data/tags';
+import {Tag} from '../../tags';
 import {Step} from './steps';
 import {Menu} from '../../menu';
 import {TaskUser} from './task-user';
-import {TaskProject} from '@data/tasks';
+import {TaskProject} from './task-project';
 import {addClickableLinks} from '@tickist/utils';
-import {Editor} from '@data/users';
-import {TaskType} from "@data/tasks/models/task-types";
+import {Editor} from '../../users';
+import {TaskType} from "./task-types";
 import {changeTimeStringFormatToValue} from "@tickist/utils";
 
 export interface ITask {
