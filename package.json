@@ -84,7 +84,7 @@
     "@ngrx/store-devtools": "12.0.0",
     "@nrwl/angular": "12.3.4",
     "angular-resize-event": "^2.0.1",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "core-js": "^2.5.4",
     "date-fns": "^2.0.1",
     "date-fns-timezone": "^0.1.4",
