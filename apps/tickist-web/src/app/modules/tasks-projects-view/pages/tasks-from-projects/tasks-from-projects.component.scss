@@ -19,6 +19,13 @@
         background: $background_card_color;
         padding: 16px;
     }
+
+    #task-filter {
+        background: $background_card_color;
+        padding: 16px;
+        color: $orange;
+        font-size: 12px;
+    }
     ::ng-deep .cdk-virtual-scroll-content-wrapper {
         max-width: 100%;
     }

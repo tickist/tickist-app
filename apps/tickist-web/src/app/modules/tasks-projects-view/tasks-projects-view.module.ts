@@ -8,6 +8,7 @@ import {TickistTasksModule} from '../../tasks/tasks.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TasksFromProjectsComponent} from './pages/tasks-from-projects/tasks-from-projects.component';
 import {TickistTasksProjectsViewRoutingModule} from './tasks-projects-view-routing.module';
+import {IconsModule} from "../../icons.module";
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import {TickistTasksProjectsViewRoutingModule} from './tasks-projects-view-routi
         FlexLayoutModule,
         FormsModule,
         ReactiveFormsModule,
-        TickistTasksProjectsViewRoutingModule
+        TickistTasksProjectsViewRoutingModule,
+        IconsModule
     ],
     declarations: [TasksFromProjectsComponent],
     exports: []

@@ -12,6 +12,7 @@ import {homeRoutesName} from '../../../routing.module.name';
 import {setCurrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
 import {searchInputIsFocus} from "../../selectors/ui.selectors";
 import {blurOnSearchInput} from "../../actions/ui.actions";
+import {tasksProjectsViewRoutesName} from "../../../modules/tasks-projects-view/routes.names";
 
 
 @Component({
@@ -53,20 +54,26 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
             distinctUntilChanged(),
             takeUntil(this.ngUnsubscribe),
         ).subscribe((value) => {
-            this.store.dispatch(setCurrentSearchTasksFilter({searchText: value}));
+            if (value ) {
+                this.store.dispatch(setCurrentSearchTasksFilter({searchText: value}));
+            }
+
         });
 
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd),
             takeUntil(this.ngUnsubscribe),
         ).subscribe((event) => {
-            this.searchControl.reset();
+            if ((event as NavigationEnd).urlAfterRedirects.indexOf('goToElement') === -1) {
+                this.searchControl.reset();
+            }
         });
     }
 
     goToTask($event: MatAutocompleteSelectedEvent) {
-        this.router.navigate([homeRoutesName.HOME, editTaskRoutesName.EDIT_TASK, $event.option.value]);
-        this.searchControl.reset();
+        this.router.navigate([homeRoutesName.HOME, tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW, $event.option.value.projectId],
+            { queryParams: { goToElement: true } });
+        this.searchControl.setValue($event.option.value.taskName)
     }
 
     private _filter(value: string | number): Task[] {

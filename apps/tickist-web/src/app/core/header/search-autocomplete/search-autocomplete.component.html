@@ -1,9 +1,9 @@
 <form class="form">
     <mat-form-field class="search-input" floatLabel="never">
-        <input #searchInput type="text" placeholder="Search" aria-label="String" matInput [formControl]="searchControl" [matAutocomplete]="auto">
+        <input #searchInput type="text" placeholder="Search..." aria-label="String" matInput [formControl]="searchControl" [matAutocomplete]="auto">
         <fa-icon matSuffix [icon]="'search'"></fa-icon>
         <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="goToTask($event)">
-            <mat-option *ngFor="let task of filteredOptions | async" [value]="task.id" class="mat-options" >
+            <mat-option *ngFor="let task of filteredOptions | async" [value]="{projectId:task.taskProject.id, taskName: task.name}" class="mat-options" >
                 <div class="task-name">{{task.name}}</div>
                 <div class="task-project-name" [ngStyle]="{'color': task.taskProject.color}">
                     <fa-icon [icon]="task.taskProject.icon" [ngStyle]="{'color': task.taskProject.color}"></fa-icon>

@@ -9,7 +9,7 @@ import {setCurrentMainFilter} from "../actions/tasks/main-filters-tasks.actions"
 import {setCurrentAssignedToFilter} from "../actions/tasks/assigned-to-filters-tasks.actions";
 import {setCurrentEstimateTimeFiltersTasks} from "../actions/tasks/estimate-time-filters-tasks.actions";
 import {setCurrentTagsFilters} from "../actions/tasks/tags-filters-tasks.actions";
-import {clearSearchTasksFilter} from "../actions/tasks/search-tasks.actions";
+import {clearSearchTasksFilter, goToElement} from "../actions/tasks/search-tasks.actions";
 
 
 @Injectable()
@@ -43,7 +43,14 @@ export class TasksFiltersEffects {
     clearSearchBar$ = createEffect(() => this.actions$
         .pipe(
             ofType<RouterNavigationAction>(ROUTER_NAVIGATION),
-            map(() => clearSearchTasksFilter())
+            map((action) => {
+                const queryParams = action.payload.routerState['queryParams']
+                if (queryParams['goToElement']) {
+                    return goToElement()
+                } else {
+                    return clearSearchTasksFilter()
+                }
+            })
         )
     )
 
