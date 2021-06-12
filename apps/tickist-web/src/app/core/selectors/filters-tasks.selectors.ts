@@ -46,6 +46,10 @@ export const selectSearchTasksText = createSelector(
     searchTasksText => searchTasksText.searchText
 );
 
+export const selectSearchTasksTextIsEnabled = createSelector(
+    selectSearchTasksText,
+    searchTasksText => !!searchTasksText
+);
 
 export const selectCurrentEstimateTimeFilter = createSelector(
     selectEstimateTimeFiltersState,

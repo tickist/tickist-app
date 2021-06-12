@@ -9,3 +9,7 @@ export const setCurrentSearchTasksFilter = createAction(
 export const clearSearchTasksFilter = createAction(
     '[SearchTasks] Clear search filter'
 )
+
+export const goToElement = createAction(
+    '[SearchTasks] Go to element'
+)
