@@ -9,10 +9,11 @@ import {Store} from '@ngrx/store';
 import {selectAllUndoneTasks} from '../../selectors/task.selectors';
 import {editTaskRoutesName} from '../../../modules/edit-task/routes-names';
 import {homeRoutesName} from '../../../routing.module.name';
-import {setCurrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
+import {clearSearchTasksFilter, setCurrentSearchTasksFilter} from "../../actions/tasks/search-tasks.actions";
 import {searchInputIsFocus} from "../../selectors/ui.selectors";
 import {blurOnSearchInput} from "../../actions/ui.actions";
 import {tasksProjectsViewRoutesName} from "../../../modules/tasks-projects-view/routes.names";
+import {selectSearchTasksTextIsEnabled} from "../../selectors/filters-tasks.selectors";
 
 
 @Component({
@@ -35,6 +36,12 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
             takeUntil(this.ngUnsubscribe)
         ).subscribe((tasks: Task[]) => this.tasks = tasks);
 
+        this.store.select(selectSearchTasksTextIsEnabled).pipe(
+            filter(value => !value),
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(() => {
+            this.searchControl.reset();
+        })
         this.store.select(searchInputIsFocus).pipe(
             takeUntil(this.ngUnsubscribe)
         ).subscribe((isFocus) => {
@@ -56,8 +63,9 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
         ).subscribe((value) => {
             if (value ) {
                 this.store.dispatch(setCurrentSearchTasksFilter({searchText: value}));
+            } else {
+                this.store.dispatch(clearSearchTasksFilter())
             }
-
         });
 
         this.router.events.pipe(
