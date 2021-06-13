@@ -136,8 +136,8 @@ export const selectTasksStreamInProjectsView = createSelector(
             });
         }
         if (searchFilter) {
-            const re = new RegExp(searchFilter, 'i');
-            tasks = tasks.filter((task) => re.test(task.name));
+            const re = new RegExp(searchFilter.replace(/[^\w\s.&-]+/g, ''), 'i');
+            tasks = tasks.filter((task) => re.test(task.name.replace(/[^\w\s.&-]+/g, '')));
         }
         if (currentSortBy) {
             tasks = orderBy(tasks, currentSortBy.sortKeys, currentSortBy.order);

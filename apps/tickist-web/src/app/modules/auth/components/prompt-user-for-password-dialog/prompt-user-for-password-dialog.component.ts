@@ -5,7 +5,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 @Component({
     selector: 'tickist-prompt-user-for-password-dialog',
     templateUrl: './prompt-user-for-password-dialog.component.html',
-    styleUrls: ['./prompt-user-for-password-dialog.component.css']
+    styleUrls: ['./prompt-user-for-password-dialog.component.scss']
 })
 export class PromptUserForPasswordDialogComponent implements OnInit {
     passwordFormGroup: FormGroup;

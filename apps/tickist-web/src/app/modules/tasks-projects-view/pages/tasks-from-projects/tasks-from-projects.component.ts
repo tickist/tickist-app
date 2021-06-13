@@ -20,6 +20,7 @@ import {newActiveProjectsIds} from "../../../../core/actions/projects/active-pro
 import {setActiveProject} from "../../../../core/actions/projects/active-project.actions";
 import {archiveRoutesName} from "../../../archives/routes.names";
 import {selectSearchTasksTextIsEnabled} from "../../../../core/selectors/filters-tasks.selectors";
+import {clearSearchTasksFilter} from "../../../../core/actions/tasks/search-tasks.actions";
 
 @Component({
     selector: 'tickist-tasks-from-projects',
@@ -122,6 +123,10 @@ export class TasksFromProjectsComponent implements OnInit, OnDestroy {
 
     trackByFn(index, item): number {
         return item.id;
+    }
+
+    clearSearchFilter() {
+        this.store.dispatch(clearSearchTasksFilter())
     }
 
 }
