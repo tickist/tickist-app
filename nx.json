@@ -1,46 +1,47 @@
 {
-  "npmScope": "tickist",
-  "implicitDependencies": {
-    "angular.json": "*",
-    "package.json": "*",
-    "tslint.json": "*",
-    "nx.json": "*",
-    "tsconfig.base.json": "*"
-  },
-  "projects": {
-    "tickist-web-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "tickist-web"
-      ]
+    "npmScope": "tickist",
+    "implicitDependencies": {
+        "angular.json": "*",
+        "package.json": "*",
+        "tslint.json": "*",
+        "nx.json": "*",
+        "tsconfig.base.json": "*"
     },
-    "tickist-web": {
-      "tags": []
+    "projects": {
+        "data": {
+            "tags": []
+        },
+        "tickist-functions": {
+            "tags": []
+        },
+        "tickist-web": {
+            "tags": []
+        },
+        "tickist-web-e2e": {
+            "tags": [],
+            "implicitDependencies": ["tickist-web"]
+        },
+        "utils": {
+            "tags": []
+        }
     },
-    "tickist-functions": {
-      "tags": []
+    "tasksRunnerOptions": {
+        "default": {
+            "runner": "@nrwl/workspace/tasks-runners/default",
+            "options": {
+                "cacheableOperations": ["build", "lint", "test", "e2e"]
+            }
+        }
     },
-    "data": {
-      "tags": []
+    "affected": {
+        "defaultBase": "master"
     },
-    "utils": {
-      "tags": []
-    }
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
+    "targetDependencies": {
+        "build": [
+            {
+                "target": "build",
+                "projects": "dependencies"
+            }
         ]
-      }
     }
-  },
-  "affected": {
-    "defaultBase": "master"
-  }
 }
