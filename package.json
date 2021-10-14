@@ -15,7 +15,7 @@
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
     "cy:verify": "cypress verify",
-    "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-ci CYPRESS_TEST_UID=7mr64tVcVv3085oo0Y1VheOQYJXV FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ng e2e --configuration ci --record --headless --configuration production",
+    "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=tickist-ci CYPRESS_TEST_UID=7mr64tVcVv3085oo0Y1VheOQYJXV FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ng e2e --configuration ci --record --headless",
     "e2e:watch": "cross-env CYPRESS_FIREBASE_PROJECT_ID=proven-reality-657  CYPRESS_TEST_UID=7mr64tVcVv3085oo0Y1VheOQYJXV FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ng e2e --watch -c e2e",
     "e2e:watchWithEmulator": "firebase emulators:exec \"ng e2e --watch -c e2e\"  --import=./tools/e2e-testing-data",
     "e2e:watch:ci": "ng e2e --watch -c ci",
@@ -63,12 +63,12 @@
     "@angular/compiler-cli": "12.2.10",
     "@angular/core": "12.2.10",
     "@angular/fire": "^6.1.5",
-    "@angular/flex-layout": "^12.0.0-beta.34",
+    "@angular/flex-layout": "^12.0.0-beta.35",
     "@angular/forms": "12.2.10",
     "@angular/material": "12.2.9",
     "@angular/platform-browser": "12.2.10",
     "@angular/platform-browser-dynamic": "12.2.10",
-    "@angular/pwa": "^12.0.2",
+    "@angular/pwa": "^12.2.10",
     "@angular/router": "12.2.10",
     "@angular/service-worker": "12.2.10",
     "@fortawesome/angular-fontawesome": "^0.6.1",
@@ -113,7 +113,7 @@
   "devDependencies": {
     "@angular-devkit/architect": "~0.1001.3",
     "@angular-devkit/build-angular": "12.2.10",
-    "@angular-devkit/core": "~11.0.4",
+    "@angular-devkit/core": "~12.2.10",
     "@angular-extensions/lint-rules": "^1.2.0",
     "@angular/cli": "12.2.10",
     "@angular/language-service": "12.2.10",
@@ -132,7 +132,7 @@
     "concurrently": "^4.1.2",
     "cypress": "7.2.0",
     "cypress-failed-log": "^2.9.1",
-    "cypress-firebase": "1.8.0",
+    "cypress-firebase": "2.0.0",
     "cypress-pipe": "^2.0.0",
     "dotenv": "10.0.0",
     "eslint": "7.22.0",
@@ -158,4 +158,3 @@
     "typescript-tslint-plugin": "^0.5.5"
   }
 }
-
