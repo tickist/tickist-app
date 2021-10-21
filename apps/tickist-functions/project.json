@@ -1,0 +1,60 @@
+{
+    "root": "apps/tickist-functions",
+    "sourceRoot": "apps/tickist-functions/src",
+    "projectType": "application",
+    "prefix": "tickist-functions",
+    "generators": {},
+    "targets": {
+        "build": {
+            "executor": "@nrwl/node:build",
+            "options": {
+                "outputPath": "dist/apps/tickist-functions",
+                "main": "apps/tickist-functions/src/main.ts",
+                "tsConfig": "apps/tickist-functions/tsconfig.app.json",
+                "assets": ["apps/tickist-functions/src/assets"],
+                "buildLibsFromSource": true
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "extractLicenses": true,
+                    "inspect": false,
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/tickist-functions/src/environments/environment.ts",
+                            "with": "apps/tickist-functions/src/environments/environment.prod.ts"
+                        }
+                    ]
+                }
+            },
+            "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+            "executor": "@nrwl/node:execute",
+            "options": {
+                "buildTarget": "tickist-functions-functions:build"
+            }
+        },
+        "lint": {
+            "executor": "@angular-devkit/build-angular:tslint",
+            "options": {
+                "tsConfig": [
+                    "apps/tickist-functions/tsconfig.app.json",
+                    "apps/tickist-functions/tsconfig.spec.json"
+                ],
+                "exclude": [
+                    "**/node_modules/**",
+                    "!apps/tickist-functions/**/*"
+                ]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "options": {
+                "jestConfig": "apps/tickist-functions/jest.config.js",
+                "passWithNoTests": true
+            },
+            "outputs": ["coverage/apps/tickist-functions"]
+        }
+    }
+}

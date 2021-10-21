@@ -1,0 +1,33 @@
+{
+    "root": "apps/tickist-web-e2e",
+    "sourceRoot": "apps/tickist-web-e2e/src",
+    "projectType": "application",
+    "targets": {
+        "e2e": {
+            "executor": "@nrwl/cypress:cypress",
+            "options": {
+                "cypressConfig": "apps/tickist-web-e2e/cypress.json",
+                "tsConfig": "apps/tickist-web-e2e/tsconfig.e2e.json",
+                "devServerTarget": "tickist-web:serve"
+            },
+            "configurations": {
+                "production": {
+                    "devServerTarget": "tickist-web:serve:production"
+                },
+                "e2e": {
+                    "devServerTarget": "tickist-web:serve:e2e"
+                },
+                "ci": {
+                    "devServerTarget": "tickist-web:serve:ci"
+                }
+            }
+        },
+        "lint": {
+            "executor": "@angular-devkit/build-angular:tslint",
+            "options": {
+                "tsConfig": ["apps/tickist-web-e2e/tsconfig.e2e.json"],
+                "exclude": ["**/node_modules/**", "!apps/tickist-web-e2e/**/*"]
+            }
+        }
+    }
+}

@@ -7,24 +7,6 @@
         "nx.json": "*",
         "tsconfig.base.json": "*"
     },
-    "projects": {
-        "data": {
-            "tags": []
-        },
-        "tickist-functions": {
-            "tags": []
-        },
-        "tickist-web": {
-            "tags": []
-        },
-        "tickist-web-e2e": {
-            "tags": [],
-            "implicitDependencies": ["tickist-web"]
-        },
-        "utils": {
-            "tags": []
-        }
-    },
     "tasksRunnerOptions": {
         "default": {
             "runner": "@nrwl/workspace/tasks-runners/default",
@@ -43,5 +25,19 @@
                 "projects": "dependencies"
             }
         ]
+    },
+    "cli": {
+        "defaultCollection": "@nrwl/angular",
+        "analytics": "80ee2295-6922-4741-bc1b-f61408b017a4"
+    },
+    "defaultProject": "tickist-web",
+    "generators": {
+        "@nrwl/angular:application": {
+            "unitTestRunner": "jest",
+            "e2eTestRunner": "cypress"
+        },
+        "@nrwl/angular:library": {
+            "unitTestRunner": "jest"
+        }
     }
 }
