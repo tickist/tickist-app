@@ -1,3 +1,3 @@
 export const tasksTagsViewRoutesName = {
-    TASKS_TAGS_VIEW: 'tasks-tags-view'
+    tasksTagsView: "tasks-tags-view",
 };

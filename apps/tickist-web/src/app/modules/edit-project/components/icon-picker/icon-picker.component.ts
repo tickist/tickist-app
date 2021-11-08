@@ -1,32 +1,38 @@
-import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
-import {fab} from '@fortawesome/free-brands-svg-icons';
-import {far} from '@fortawesome/free-regular-svg-icons';
-import {fas} from '@fortawesome/free-solid-svg-icons';
-import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
-import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {noop, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
+import { Component, forwardRef, Input, OnDestroy } from "@angular/core";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import {
+    ControlValueAccessor,
+    FormControl,
+    NG_VALUE_ACCESSOR,
+} from "@angular/forms";
+import { noop, Subject } from "rxjs";
+import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
 
 @Component({
-    selector: 'tickist-icon-picker',
-    templateUrl: './icon-picker.component.html',
-    styleUrls: ['./icon-picker.component.scss'],
-    providers: [{
-        provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => IconPickerComponent),
-        multi: true
-    }]
+    selector: "tickist-icon-picker",
+    templateUrl: "./icon-picker.component.html",
+    styleUrls: ["./icon-picker.component.scss"],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => IconPickerComponent),
+            multi: true,
+        },
+    ],
 })
-export class IconPickerComponent implements OnInit, ControlValueAccessor, OnDestroy {
+export class IconPickerComponent implements ControlValueAccessor, OnDestroy {
     iconDefinitions: Array<IconDefinition> = [];
     iconDefinitionsGroups: Array<Array<IconDefinition>> = [];
     size = 4;
     @Input() color: string;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     searchText: string;
-    searchControl: FormControl
+    searchControl: FormControl;
 
-    innerValue: any = '';
+    innerValue: any = "";
     private onTouchedCallback: () => void = noop;
     private onChangeCallback: (_: any) => void = noop;
 
@@ -42,30 +48,25 @@ export class IconPickerComponent implements OnInit, ControlValueAccessor, OnDest
     }
 
     constructor() {
-        this.iconDefinitions = this.iconDefinitions.concat(
-            Object.values(fab)
-        );
-        this.iconDefinitions = this.iconDefinitions.concat(
-            Object.values(far)
-        );
-        this.iconDefinitions = this.iconDefinitions.concat(
-            Object.values(fas)
-        );
-        this.iconDefinitionsGroups = []
+        this.iconDefinitions = this.iconDefinitions.concat(Object.values(fab));
+        this.iconDefinitions = this.iconDefinitions.concat(Object.values(far));
+        this.iconDefinitions = this.iconDefinitions.concat(Object.values(fas));
+        this.iconDefinitionsGroups = [];
         while (this.iconDefinitions.length > 0) {
-            this.iconDefinitionsGroups.push(this.iconDefinitions.splice(0, this.size));
+            this.iconDefinitionsGroups.push(
+                this.iconDefinitions.splice(0, this.size)
+            );
         }
-        this.searchControl = new FormControl('')
-        this.searchControl.valueChanges.pipe(
-            debounceTime(400),
-            distinctUntilChanged(),
-            takeUntil(this.ngUnsubscribe))
-            .subscribe(value => {
+        this.searchControl = new FormControl("");
+        this.searchControl.valueChanges
+            .pipe(
+                debounceTime(400),
+                distinctUntilChanged(),
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe((value) => {
                 this.searchText = value;
-        })
-    }
-
-    ngOnInit(): void {
+            });
     }
 
     ngOnDestroy(): void {

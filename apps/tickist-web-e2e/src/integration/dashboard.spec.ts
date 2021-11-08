@@ -40,7 +40,7 @@ describe('Dashboard view', () => {
             cy.get('tickist-today').find('tickist-change-task-view').click();
             cy.get('tickist-overdue').find('tickist-change-task-view').click();
 
-            cy.get('tickist-today').find('tickist-single-task-simplified:contains(\"Task 1\")').should(($task) => {
+            cy.get('tickist-today').find('tickist-single-task-simplified:contains("Task 1")').should(($task) => {
                 expect($task).to.have.length(1);
                 expect($task.first()).to.contain('Task 1');
                 expect($task.first()).to.contain(format(new Date(), 'dd-MM-yyyy'));

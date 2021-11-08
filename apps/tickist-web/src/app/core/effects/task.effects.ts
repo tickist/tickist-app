@@ -32,13 +32,11 @@ export class TaskEffects {
         .pipe(
             ofType(queryTasks),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            switchMap(([action, user]) => {
-                return this.db.collection('tasks', ref => ref
+            switchMap(([action, user]) => this.db.collection('tasks', ref => ref
                     .where('taskProject.shareWithIds', 'array-contains', user.id)
                     .where('isActive', '==', true)
                     .where('isDone', '==', false)
-                ).stateChanges();
-            }),
+                ).stateChanges()),
             concatMap(actions => {
                 const addedTasks: Task[] = [];
                 let deletedTaskId: string;
@@ -128,8 +126,7 @@ export class TaskEffects {
             ofType(ROUTER_NAVIGATED),
             withLatestFrom(this.store.pipe(select(selectAllTasks))),
             map(([action, tasks]) => {
-                const tasksWithCloseMenu = tasks.map(task => {
-                    return {
+                const tasksWithCloseMenu = tasks.map(task => ({
                         id: task.id,
                         changes: <Partial<Task>>{
                             menuShowing: {
@@ -142,8 +139,7 @@ export class TaskEffects {
                                 isDescription: false
                             }
                         }
-                    };
-                });
+                    }));
                 return closeMenuInAllTasks({tasks: tasksWithCloseMenu});
             })
         ));

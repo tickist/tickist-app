@@ -51,14 +51,10 @@ export function isOverdue(task: Task): boolean {
 }
 
 export function setAllStepsToDone(taskSteps: Step[]): Step[] {
-    return taskSteps.map(step => {
-        return {...step, status: 1};
-    });
+    return taskSteps.map(step => ({...step, status: 1}));
 }
 
 export function setAllStepsToUndone(taskSteps: Step[]): Step[] {
-    return taskSteps.map(step => {
-        return {...step, status: 0};
-    });
+    return taskSteps.map(step => ({...step, status: 0}));
 }
 

@@ -1,8 +1,8 @@
 <div id="project" fxLayout="row" fxLayoutAlign="center center"
      [ngClass]="{'isActive': isSelected}" (click)="navigateTo('/home/projects', project.id, $event)">
     <div class="content" fxFlex fxLayout="row" fxLayoutAlign="center center" *ngIf="project">
-        <span *ngIf='project.level==1' fxFlex="15px"></span>
-        <span *ngIf='project.level==2' fxFlex="30px"></span>
+        <span *ngIf='project.level===1' fxFlex="15px"></span>
+        <span *ngIf='project.level===2' fxFlex="30px"></span>
         <fa-icon *ngIf='!activeCheckboxMode' [icon]="project.icon" [ngStyle]="{'color': project.color}"></fa-icon>
         <mat-checkbox [(ngModel)]="isActive" *ngIf="isSelected && activeCheckboxMode"
                       (change)="changeId()">

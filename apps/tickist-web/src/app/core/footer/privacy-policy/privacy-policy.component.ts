@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'tickist-privacy-policy',
-  templateUrl: './privacy-policy.component.html',
-  styleUrls: ['./privacy-policy.component.scss']
+    selector: "tickist-privacy-policy",
+    templateUrl: "./privacy-policy.component.html",
+    styleUrls: ["./privacy-policy.component.scss"],
 })
-export class PrivacyPolicyComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class PrivacyPolicyComponent {
+    constructor() {}
 }

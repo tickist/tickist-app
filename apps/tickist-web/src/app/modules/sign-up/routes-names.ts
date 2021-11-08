@@ -1,3 +1,3 @@
 export const signupRoutesName = {
-    SIGNUP: 'signup'
+    signUp: "signup",
 };

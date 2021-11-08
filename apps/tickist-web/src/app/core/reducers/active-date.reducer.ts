@@ -20,14 +20,12 @@ export const activeDateInitialState: ActiveDateState = {
 
 const activeDateReducer = createReducer(
     activeDateInitialState,
-    on(updateActiveDate, (state, props) => {
-        return {
+    on(updateActiveDate, (state, props) => ({
             active: {
                 date: props.date,
                 state: props.state
             }
-        }
-    })
+        }))
 )
 
 export function reducer(state: ActiveDateState, action: Action) {

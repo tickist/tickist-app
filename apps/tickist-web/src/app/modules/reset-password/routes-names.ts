@@ -1,3 +1,3 @@
 export const resetPasswordRoutesName = {
-    RESET_PASSWORD: 'reset-password'
+    resetPassword: "reset-password",
 };

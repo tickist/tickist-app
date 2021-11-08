@@ -17,16 +17,12 @@ export const initialState: ActiveProjectsIdsState = {
 
 const activeProjectsIdsReducer = createReducer(
     initialState,
-    on(newActiveProjectsIds, (state, props) => {
-        return {
+    on(newActiveProjectsIds, (state, props) => ({
             projectsIds: props.projectsIds
-        };
-    }),
-    on(addNewActiveProjectId, (state, props) => {
-        return {
+        })),
+    on(addNewActiveProjectId, (state, props) => ({
             projectsIds: [...state.projectsIds, props.projectId]
-        }
-    } ),
+        }) ),
     on(deleteActiveProjectId,  (state, props) => {
         const index = state.projectsIds.indexOf(props.projectId);
         return {
@@ -36,9 +32,7 @@ const activeProjectsIdsReducer = createReducer(
             ]
         };
     }),
-    on(clearActiveProjectsId, (state, props) => {
-        return initialState
-    })
+    on(clearActiveProjectsId, (state, props) => initialState)
 )
 
 export function reducer(state: ActiveProjectsIdsState, action: Action) {

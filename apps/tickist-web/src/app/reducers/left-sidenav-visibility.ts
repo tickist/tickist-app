@@ -15,9 +15,7 @@ const initialState: LeftSidenavVisibilityState = {
 
 const leftSidenavVisibilityReducer = createReducer(
     initialState,
-    on(updateLeftSidenavVisibility, (state, props)=> {
-        return Object.assign({}, state, props);
-    })
+    on(updateLeftSidenavVisibility, (state, props)=> Object.assign({}, state, props))
 )
 
 export function reducer(state: LeftSidenavVisibilityState, action: Action) {

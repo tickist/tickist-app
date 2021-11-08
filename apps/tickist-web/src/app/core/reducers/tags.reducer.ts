@@ -21,21 +21,11 @@ export const initialTagsState: TagsState = adapter.getInitialState({
 
 const tagsReducer = createReducer(
     initialTagsState,
-    on(createTag, (state, props) => {
-        return adapter.addOne(props.tag, state);
-    }),
-    on(addTags, (state, props) => {
-        return adapter.addMany(props.tags, {...state, allTagsLoaded: true});
-    }),
-    on(updateTag, (state, props) => {
-        return adapter.updateOne(props.tag, state);
-    }),
-    on(deleteTag, (state, props) => {
-        return adapter.removeOne(props.tagId, state);
-    }),
-    on(resetStore, (state, props) => {
-        return initialTagsState
-    }),
+    on(createTag, (state, props) => adapter.addOne(props.tag, state)),
+    on(addTags, (state, props) => adapter.addMany(props.tags, {...state, allTagsLoaded: true})),
+    on(updateTag, (state, props) => adapter.updateOne(props.tag, state)),
+    on(deleteTag, (state, props) => adapter.removeOne(props.tagId, state)),
+    on(resetStore, (state, props) => initialTagsState),
 )
 
 export function reducer(state: TagsState, action: Action) {

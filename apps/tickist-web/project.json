@@ -131,13 +131,12 @@
             }
         },
         "lint": {
-            "executor": "@angular-devkit/build-angular:tslint",
+            "executor": "@nrwl/linter:eslint",
             "options": {
-                "tsConfig": [
-                    "apps/tickist-web/tsconfig.app.json",
-                    "apps/tickist-web/tsconfig.spec.json"
-                ],
-                "exclude": ["**/node_modules/**", "!apps/tickist-web/**/*"]
+                "lintFilePatterns": [
+                    "apps/tickist-web/src/**/*.ts",
+                    "apps/tickist-web/src/**/*.html"
+                ]
             }
         },
         "test": {

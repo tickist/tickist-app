@@ -23,10 +23,10 @@
             }
         },
         "lint": {
-            "executor": "@angular-devkit/build-angular:tslint",
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
             "options": {
-                "tsConfig": ["apps/tickist-web-e2e/tsconfig.e2e.json"],
-                "exclude": ["**/node_modules/**", "!apps/tickist-web-e2e/**/*"]
+                "lintFilePatterns": ["apps/tickist-web-e2e/**/*.{js,ts}"]
             }
         }
     }

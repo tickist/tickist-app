@@ -24,22 +24,20 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
-import 'firebase/firestore';
-import attachCustomCommands from 'cypress-firebase/lib/attachCustomCommands'
-// tslint:disable-next-line:nx-enforce-module-boundaries
-import {environment as ci} from '@env/environment.ci'
-// tslint:disable-next-line:nx-enforce-module-boundaries
-import {environment as e2e} from '@env/environment.e2e'
-
-
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
+import "firebase/firestore";
+import attachCustomCommands from "cypress-firebase/lib/attachCustomCommands";
+// eslint-disable-next-line
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { environment as ci } from "@env/environment.ci";
+// eslint-disable-next-line
+import { environment as e2e } from "@env/environment.e2e";
 
 let firebaseConfiguration;
 let configuration;
-if (Cypress.env('FIREBASE_PROJECT_ID') === 'tickist-testing') {
+if (Cypress.env("FIREBASE_PROJECT_ID") === "tickist-testing") {
     configuration = e2e;
     firebaseConfiguration = e2e.firebase;
 } else {
@@ -47,21 +45,21 @@ if (Cypress.env('FIREBASE_PROJECT_ID') === 'tickist-testing') {
     firebaseConfiguration = ci.firebase;
 }
 
-console.log(JSON.stringify(configuration))
-
+console.log(JSON.stringify(configuration));
 
 const fbInstance = firebase.initializeApp(firebaseConfiguration);
 if (fbInstance) {
-    (window as any).fbInstance = fbInstance
+    (window as any).fbInstance = fbInstance;
 }
 if (firebaseConfiguration.emulator) {
     // firebase.firestore().settings({ experimentalForceLongPolling: true })
     firebase.firestore().settings({
         host: configuration.emulatorIPAddress,
         ssl: false,
-        experimentalForceLongPolling: true
+        experimentalForceLongPolling: true,
     });
-    firebase.auth().useEmulator('http://127.0.0.1:9099/');
+    firebase.auth().useEmulator("http://127.0.0.1:9099/");
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 attachCustomCommands({ Cypress, cy, firebase });

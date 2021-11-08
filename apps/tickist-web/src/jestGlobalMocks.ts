@@ -16,30 +16,24 @@ Object.defineProperty(document, 'doctype', {
     value: '<!DOCTYPE html>'
 });
 Object.defineProperty(window, 'getComputedStyle', {
-    value: () => {
-        return {
+    value: () => ({
             display: 'none',
             appearance: ['-webkit-appearance']
-        };
-    }
+        })
 });
 
 Object.defineProperty(window, 'matchMedia', {
-    value: () => {
-        return {
+    value: () => ({
             matches: true
-        };
-    }
+        })
 });
 /**
  * ISSUE: https://github.com/angular/material2/issues/7101
  * Workaround for JSDOM missing transform property
  */
 Object.defineProperty(document.body.style, 'transform', {
-    value: () => {
-        return {
+    value: () => ({
             enumerable: true,
             configurable: true,
-        };
-    },
+        }),
 });

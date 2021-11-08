@@ -1,34 +1,35 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
-import {IconPrefix} from '@fortawesome/fontawesome-common-types';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Input,
+    OnChanges,
+    SimpleChange,
+} from "@angular/core";
+import { IconPrefix } from "@fortawesome/fontawesome-common-types";
 
 @Component({
-    selector: 'tickist-menu-button',
-    templateUrl: './menu-button.component.html',
-    styleUrls: ['./menu-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "tickist-menu-button",
+    templateUrl: "./menu-button.component.html",
+    styleUrls: ["./menu-button.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MenuButtonComponent implements OnInit, OnChanges {
+export class MenuButtonComponent implements OnChanges {
     @Input() icon: any;
-    @Input() iconPrefix: IconPrefix = 'fas';
-    @Input() color = 'white';
+    @Input() iconPrefix: IconPrefix = "fas";
+    @Input() color = "white";
     @Input() isDisabled = false;
-    @Input() fontSize = '16px';
-    @Input() transform = '';
+    @Input() fontSize = "16px";
+    @Input() transform = "";
     @Input() rotate = 0;
-    isDisabledClass = '';
+    isDisabledClass = "";
 
-    constructor() {
-    }
-
-    ngOnInit() {
-    }
+    constructor() {}
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        if (changes.hasOwnProperty('isDisabled') && changes.isDisabled.currentValue) {
-            this.isDisabledClass = 'unvisible';
+        if (changes?.isDisabled?.currentValue) {
+            this.isDisabledClass = "unvisible";
         } else {
-            this.isDisabledClass = 'visible';
+            this.isDisabledClass = "visible";
         }
     }
-
 }

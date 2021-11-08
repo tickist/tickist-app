@@ -15,12 +15,10 @@ export class TaskTypeLabelComponent implements OnChanges {
 
     constructor() {
         this.taskTypesWithIcons = zip(AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS).map(
-            (taskType) => {
-                return {
+            (taskType) => ({
                     value: taskType[0],
                     icon: taskType[1]
-                }
-            }
+                })
         )
     }
 

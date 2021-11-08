@@ -26,16 +26,14 @@ export class NotificationsEffects {
             .pipe(
                 ofType(queryNotifications),
                 withLatestFrom(this.store.select(selectLoggedInUser)),
-                switchMap(([, user]) => {
-                    return this.db.collection(
+                switchMap(([, user]) => this.db.collection(
                         'notifications',
                         ref => ref
                             .where('recipient', '==', user.id)
                             .limit(30)
                             .orderBy('date')
                     )
-                        .stateChanges();
-                }),
+                        .stateChanges()),
                 concatMap(actions => {
                     const addedNotifications: Notification[] = [];
                     let deletedNotificationId: string;

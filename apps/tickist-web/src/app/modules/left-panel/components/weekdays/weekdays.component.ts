@@ -1,28 +1,33 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {Task} from '@data/tasks/models/tasks';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Subject} from 'rxjs';
-import * as _ from 'lodash';
-import {MediaChange, MediaObserver} from '@angular/flex-layout';
-import {TaskService} from '../../../../core/services/task.service';
-import {UserService} from '../../../../core/services/user.service';
-import {User} from '@data/users/models';
-import {takeUntil} from 'rxjs/operators';
-import {Store} from '@ngrx/store';
-import {selectAllUndoneTasks} from '../../../../core/selectors/task.selectors';
-import {selectActiveDate} from '../../../../core/selectors/active-date.selectors';
-import {homeRoutesName} from '../../../../routing.module.name';
-import {IActiveDateElement} from '@data/active-data-element.interface';
-import {addDays, format, isDate} from 'date-fns';
-import {weekdaysRoutesName} from "../../../weekdays/routes.names";
-
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    OnDestroy,
+    OnInit,
+} from "@angular/core";
+import { ConfigurationService } from "../../../../core/services/configuration.service";
+import { Task } from "@data/tasks/models/tasks";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subject } from "rxjs";
+import * as _ from "lodash";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { TaskService } from "../../../../core/services/task.service";
+import { UserService } from "../../../../core/services/user.service";
+import { User } from "@data/users/models";
+import { takeUntil } from "rxjs/operators";
+import { Store } from "@ngrx/store";
+import { selectAllUndoneTasks } from "../../../../core/selectors/task.selectors";
+import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
+import { homeRoutesName } from "../../../../routing.module.name";
+import { IActiveDateElement } from "@data/active-data-element.interface";
+import { addDays, format, isDate } from "date-fns";
+import { weekdaysRoutesName } from "../../../weekdays/routes.names";
 
 @Component({
-    selector: 'tickist-weekdays-list',
-    templateUrl: './weekdays.component.html',
-    styleUrls: ['./weekdays.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "tickist-weekdays-list",
+    templateUrl: "./weekdays.component.html",
+    styleUrls: ["./weekdays.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WeekDaysComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -34,28 +39,38 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     user: User;
     timer: any;
 
-    constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef, private taskService: TaskService,
-                private configurationService: ConfigurationService, private router: Router, private store: Store,
-                private userService: UserService, private media: MediaObserver) {
-
+    constructor(
+        private route: ActivatedRoute,
+        private cd: ChangeDetectorRef,
+        private taskService: TaskService,
+        private configurationService: ConfigurationService,
+        private router: Router,
+        private store: Store,
+        private userService: UserService,
+        private media: MediaObserver
+    ) {
         this.regenerateWeekListAfterMidnight();
     }
 
     regenerateWeekListAfterMidnight() {
         const today = new Date();
-        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-        const timeToMidnight = (tomorrow.getTime() - today.getTime());
+        const tomorrow = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() + 1
+        );
+        const timeToMidnight = tomorrow.getTime() - today.getTime();
         // this.timer = setTimeout(() => {
         //      this.feelWeekData();
         // }, timeToMidnight);
     }
 
-    isToday(date: (Date | string) = this.activeDateElement.date): boolean {
+    isToday(date: Date | string = this.activeDateElement.date): boolean {
         const today: Date = new Date();
         if (isDate(date)) {
-            date = (<string>(format(<Date> date, 'dd-MM-yyyy')));
+            date = <string>format(<Date>date, "dd-MM-yyyy");
         }
-        return format(today, 'dd-MM-yyyy') === date;
+        return format(today, "dd-MM-yyyy") === date;
     }
 
     ngOnInit(): void {
@@ -73,26 +88,29 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
             .subscribe((mediaChange: MediaChange) => {
                 this.mediaChange = mediaChange;
             });
-        this.store.select(selectActiveDate)
+        this.store
+            .select(selectActiveDate)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((activeDateElement) => {
                 this.activeDateElement = activeDateElement;
                 this.cd.detectChanges();
-
             });
-        this.store.select(selectAllUndoneTasks)
+        this.store
+            .select(selectAllUndoneTasks)
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(tasks => {
+            .subscribe((tasks) => {
                 this.tasks = tasks;
                 this.feelWeekData();
                 this.cd.detectChanges();
             });
 
-        this.userService.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(user => {
-            this.user = user;
-            this.feelWeekData();
-            this.cd.detectChanges();
-        });
+        this.userService.user$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((user) => {
+                this.user = user;
+                this.feelWeekData();
+                this.cd.detectChanges();
+            });
     }
 
     ngOnDestroy() {
@@ -103,13 +121,19 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     }
 
     isSelected(day): boolean {
-        return (day.date === format(this.activeDateElement.date, 'dd-MM-yyyy'));
+        return day.date === format(this.activeDateElement.date, "dd-MM-yyyy");
     }
 
     navigateTo(arg) {
-        this.router.navigate([`${homeRoutesName.HOME}`, `${weekdaysRoutesName.WEEKDAYS}`, arg]);
-        if (this.media.isActive('sm') || this.media.isActive('xs')) {
-            this.configurationService.changeOpenStateLeftSidenavVisibility('close');
+        this.router.navigate([
+            `${homeRoutesName.home}`,
+            `${weekdaysRoutesName.weekdays}`,
+            arg,
+        ]);
+        if (this.media.isActive("sm") || this.media.isActive("xs")) {
+            this.configurationService.changeOpenStateLeftSidenavVisibility(
+                "close"
+            );
         }
     }
 
@@ -119,28 +143,31 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
 
     feelWeekData() {
         let nextDay = new Date();
-        const userId = _.get(this.user, 'id');
+        const userId = _.get(this.user, "id");
         this.week = [];
         if (!userId || this.tasks.length === 0) {
             return;
         }
         for (let i = 0; i < 7; i++) {
             this.week.push({
-                'name': format(nextDay, 'EEEE'),
-                'date': format(nextDay, 'dd-MM-yyyy'),
-                'tasksCounter': this.tasks.filter(task => {
-                    return task.owner.id === userId && task.isDone === false;
-                })
-                    .filter(task => {
+                name: format(nextDay, "EEEE"),
+                date: format(nextDay, "dd-MM-yyyy"),
+                tasksCounter: this.tasks
+                    .filter(
+                        (task) =>
+                            task.owner.id === userId && task.isDone === false
+                    )
+                    .filter((task) => {
                         const finishDate = task.finishDate;
-                        return ((finishDate && (format(finishDate, 'dd-MM-yyyy') === format(nextDay, 'dd-MM-yyyy'))) ||
+                        return (
+                            (finishDate &&
+                                format(finishDate, "dd-MM-yyyy") ===
+                                    format(nextDay, "dd-MM-yyyy")) ||
                             (this.isToday(nextDay) && task.pinned)
                         );
-                    }).length
+                    }).length,
             });
             nextDay = addDays(nextDay, 1);
         }
     }
-
 }
-

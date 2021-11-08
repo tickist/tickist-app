@@ -63,7 +63,6 @@ describe('Change project type', () => {
             });
             cy.callFirestore('set', `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
         });
-        cy.wait(1000);
     })
 
     afterEach(()=> {

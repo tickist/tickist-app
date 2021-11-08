@@ -27,24 +27,12 @@ export const initialTasksState: TasksState = adapter.getInitialState({
 
 const taskReducer = createReducer(
     initialTasksState,
-    on(createTask, (state, props) => {
-        return adapter.addOne(props.task, state);
-    }),
-    on(addTasks, (state, props) => {
-        return adapter.addMany(props.tasks, {...state, allTasksLoaded: true});
-    }),
-    on(updateTask, (state, props) => {
-        return adapter.updateOne(props.task, state);
-    }),
-    on(deleteTask, (state, props) => {
-        return adapter.removeOne(props.taskId, state);
-    }),
-    on(closeMenuInAllTasks, (state, props) => {
-        return adapter.updateMany(props.tasks, state);
-    }),
-    on(resetStore, (state, props) => {
-        return initialTasksState;
-    }),
+    on(createTask, (state, props) => adapter.addOne(props.task, state)),
+    on(addTasks, (state, props) => adapter.addMany(props.tasks, {...state, allTasksLoaded: true})),
+    on(updateTask, (state, props) => adapter.updateOne(props.task, state)),
+    on(deleteTask, (state, props) => adapter.removeOne(props.taskId, state)),
+    on(closeMenuInAllTasks, (state, props) => adapter.updateMany(props.tasks, state)),
+    on(resetStore, (state, props) => initialTasksState),
 )
 
 export function reducer(state: TasksState, action: Action) {

@@ -52,9 +52,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         this.activeDateElement$ = this.store.select(selectActiveDate);
         this.route.params
             .pipe(
-                map(params => {
-                    return params['date'] ? params['date'] : format(new Date(),'LLLL-uuuu')
-                }),
+                map(params => params['date'] ? params['date'] : format(new Date(),'LLLL-uuuu')),
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe((param) => {

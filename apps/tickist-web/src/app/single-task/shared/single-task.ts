@@ -1,22 +1,30 @@
-import {Task} from '@data/tasks/models/tasks';
-import {MatDialog} from '@angular/material/dialog';
-import {Step} from '@data/tasks/models/steps';
-import {TimeDialogComponent} from '../time-dialog/time-dialog.component';
-import {ChangeFinishDateDialogComponent} from '../change-finish-date-dialog/change-finish-date-dialog.component';
-import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task.dialog.component';
-import {requestDeleteTask, requestUpdateTask, setStatusDone} from '../../core/actions/tasks/task.actions';
-import {Store} from '@ngrx/store';
-import {hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate} from '../utils/task-utils';
-import {filter, takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
-import {parse} from 'date-fns';
-import {Component, OnDestroy} from '@angular/core';
-
+import { Task } from "@data/tasks/models/tasks";
+import { MatDialog } from "@angular/material/dialog";
+import { Step } from "@data/tasks/models/steps";
+import { TimeDialogComponent } from "../time-dialog/time-dialog.component";
+import { ChangeFinishDateDialogComponent } from "../change-finish-date-dialog/change-finish-date-dialog.component";
+import { DeleteTaskDialogComponent } from "../delete-task-dialog/delete-task.dialog.component";
+import {
+    requestDeleteTask,
+    requestUpdateTask,
+    setStatusDone,
+} from "../../core/actions/tasks/task.actions";
+import { Store } from "@ngrx/store";
+import {
+    hideAllMenuElements,
+    isOverdue,
+    isRepeated,
+    moveFinishDateFromPreviousFinishDate,
+} from "../utils/task-utils";
+import { filter, takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { parse } from "date-fns";
+import { Component, OnDestroy } from "@angular/core";
 
 @Component({
-    template: ''
+    template: "",
 })
-export class SingleTask implements OnDestroy{
+export class SingleTask2Component implements OnDestroy {
     task: Task;
     isRightMenuVisible = false;
     isFastMenuVisible = false;
@@ -24,9 +32,7 @@ export class SingleTask implements OnDestroy{
     ngUnsubscribe: Subject<void> = new Subject<void>();
     amountOfStepsDoneInPercent: number;
 
-    constructor(public store: Store, public dialog: MatDialog) {
-
-    }
+    constructor(public store: Store, public dialog: MatDialog) {}
 
     changeShowing(show) {
         const oldValue = this.task.menuShowing[show];
@@ -38,8 +44,8 @@ export class SingleTask implements OnDestroy{
 
     isSharedProject(): boolean {
         // return true;
-        // @TODO change detetion too often -> it shouldn't be a function
-        return this.task.taskProject.shareWithIds.length > 1
+        // @TODO change detection too often -> it shouldn't be a function
+        return this.task.taskProject.shareWithIds.length > 1;
     }
 
     hideAllMenuElements(): void {
@@ -52,108 +58,153 @@ export class SingleTask implements OnDestroy{
         this.task.steps.forEach((step: Step) => {
             let newStatus = step.status;
             if (step.id === toggledStep.id) {
-                newStatus = Number(!Boolean(step.status));
+                newStatus = Number(!step.status);
             }
-            steps.push(Object.assign({}, step, {status: newStatus}));
+            steps.push(Object.assign({}, step, { status: newStatus }));
         });
-        const task = Object.assign({}, this.task, {steps: steps});
-        this.amountOfStepsDoneInPercent = task.steps.filter(step => step.status === 1).length * 100 / task.steps.length;
+        const task = Object.assign({}, this.task, { steps: steps });
+        this.amountOfStepsDoneInPercent =
+            (task.steps.filter((step) => step.status === 1).length * 100) /
+            task.steps.length;
 
         // if amount is 100 then status === 1
-        this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
+        this.store.dispatch(
+            requestUpdateTask({ task: { id: task.id, changes: task } })
+        );
         if (this.amountOfStepsDoneInPercent === 100) {
             this.toggleDone();
         }
     }
 
     convertTo(taskType) {
-        this.store.dispatch(requestUpdateTask({
-            task: {
-                id: this.task.id,
-                changes: Object.assign({}, this.task, {taskType})
-            }
-        }))
+        this.store.dispatch(
+            requestUpdateTask({
+                task: {
+                    id: this.task.id,
+                    changes: Object.assign({}, this.task, { taskType }),
+                },
+            })
+        );
     }
 
     toggleDone() {
         let task;
         if (this.task.isDone === false) {
-            task = Object.assign({}, this.task, {isDone: true, whenComplete: new Date()});
+            task = Object.assign({}, this.task, {
+                isDone: true,
+                whenComplete: new Date(),
+            });
             if (task.taskProject.dialogTimeWhenTaskFinished) {
                 const dialogRef = this.dialog.open(TimeDialogComponent, {
-                    data: {'task': task}
+                    data: { task: task },
                 });
-                dialogRef.afterClosed()
+                dialogRef
+                    .afterClosed()
                     .pipe(takeUntil(this.ngUnsubscribe))
-                    .subscribe(result => {
+                    .subscribe((result) => {
                         if (result) {
-                            task.estimateTime = result['estimateTime'];
-                            task.time = result['realTime'];
+                            task.estimateTime = result["estimateTime"];
+                            task.time = result["realTime"];
                         }
-                        this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
+                        this.store.dispatch(
+                            setStatusDone({
+                                task: { id: task.id, changes: task },
+                            })
+                        );
                     });
-            } else if (isRepeated(this.task) && isOverdue(this.task) && this.task.fromRepeating === 1) {
-                const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
-                    data: {'task': task}
-                });
-                dialogRef.afterClosed()
+            } else if (
+                isRepeated(this.task) &&
+                isOverdue(this.task) &&
+                this.task.fromRepeating === 1
+            ) {
+                const dialogRef = this.dialog.open(
+                    ChangeFinishDateDialogComponent,
+                    {
+                        data: { task: task },
+                    }
+                );
+                dialogRef
+                    .afterClosed()
                     .pipe(
-                        filter(finishDate => !!finishDate),
-                        takeUntil(this.ngUnsubscribe))
-                    .subscribe(finishDate => {
-                        task.finishDate = finishDate
-                        this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
+                        filter((finishDate) => !!finishDate),
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe((finishDate) => {
+                        task.finishDate = finishDate;
+                        this.store.dispatch(
+                            setStatusDone({
+                                task: { id: task.id, changes: task },
+                            })
+                        );
                     });
             } else {
-                this.store.dispatch(setStatusDone({task: {id: task.id, changes: task}}));
+                this.store.dispatch(
+                    setStatusDone({ task: { id: task.id, changes: task } })
+                );
             }
         } else if (this.task.isDone === true) {
-            task = Object.assign({}, this.task, {isDone: false, whenComplete: null});
-            this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
+            task = Object.assign({}, this.task, {
+                isDone: false,
+                whenComplete: null,
+            });
+            this.store.dispatch(
+                requestUpdateTask({ task: { id: task.id, changes: task } })
+            );
         } else if (this.task.onHold === true) {
-            task = Object.assign({}, this.task, {isDone: false});
-            this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
+            task = Object.assign({}, this.task, { isDone: false });
+            this.store.dispatch(
+                requestUpdateTask({ task: { id: task.id, changes: task } })
+            );
         }
-
     }
 
     togglePin(): void {
-        const task = Object.assign({}, this.task, {pinned: !this.task.pinned});
-        this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
+        const task = Object.assign({}, this.task, {
+            pinned: !this.task.pinned,
+        });
+        this.store.dispatch(
+            requestUpdateTask({ task: { id: task.id, changes: task } })
+        );
     }
 
     changePriority(priority: string) {
         if (this.task.priority !== priority) {
-            const task = Object.assign({}, this.task, {priority: priority});
-            this.store.dispatch(requestUpdateTask({task: {id: task.id, changes: task}}));
+            const task = Object.assign({}, this.task, { priority: priority });
+            this.store.dispatch(
+                requestUpdateTask({ task: { id: task.id, changes: task } })
+            );
         }
     }
 
     changeDate(date: string) {
         let delta;
-        if (date === 'today') {
-            delta = 'today';
-        } else if (date === 'next_day') {
+        if (date === "today") {
+            delta = "today";
+        } else if (date === "next_day") {
             delta = 1;
-        } else if (date === 'next_week') {
+        } else if (date === "next_week") {
             delta = 7;
-        } else if (date === 'lastDayOfMonth') {
-            delta = 'lastDayOfMonth';
-        } else if (date === 'next_month') {
+        } else if (date === "lastDayOfMonth") {
+            delta = "lastDayOfMonth";
+        } else if (date === "next_month") {
             delta = 30;
         }
         const task = moveFinishDateFromPreviousFinishDate(this.task, delta);
-        this.store.dispatch(requestUpdateTask({task: {id: this.task.id, changes: task}}));
+        this.store.dispatch(
+            requestUpdateTask({ task: { id: this.task.id, changes: task } })
+        );
     }
-
 
     deleteTask() {
         const dialogRef = this.dialog.open(DeleteTaskDialogComponent);
-        dialogRef.afterClosed()
+        dialogRef
+            .afterClosed()
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(result => {
+            .subscribe((result) => {
                 if (result) {
-                    this.store.dispatch(requestDeleteTask({taskId: this.task.id}));
+                    this.store.dispatch(
+                        requestDeleteTask({ taskId: this.task.id })
+                    );
                 }
             });
     }

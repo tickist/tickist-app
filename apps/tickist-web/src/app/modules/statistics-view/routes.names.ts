@@ -1,3 +1,3 @@
 export const statisticsRoutesName = {
-    STATISTICS: 'statistics'
+    statistics: "statistics",
 };

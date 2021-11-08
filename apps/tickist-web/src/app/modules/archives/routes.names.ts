@@ -1,3 +1,3 @@
 export const archiveRoutesName = {
-    ARCHIVE: 'archive'
+    archive: "archive",
 };

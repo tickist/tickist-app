@@ -26,14 +26,10 @@ export const selectAllUnreadNotificationsIds = createSelector(
 
 export const selectLengthOfAllUnreadNotifications = createSelector(
     selectAllNotifications,
-    (notifications) => {
-        return notifications.filter(notification => !notification.isRead).length
-    }
+    (notifications) => notifications.filter(notification => !notification.isRead).length
 );
 
 export const selectLengthOfAllNotifications = createSelector(
     selectAllNotifications,
-    (notifications) => {
-        return notifications.length
-    }
+    (notifications) => notifications.length
 );

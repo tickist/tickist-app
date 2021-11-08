@@ -16,20 +16,16 @@ export const addTaskButtonInitialState: AddTaskButtonVisibilityState = {
 
 const addTaskButtonVisibilityReducer = createReducer(
     addTaskButtonInitialState,
-    on(showAddTaskButton, (state, props) => {
-        return {
+    on(showAddTaskButton, (state, props) => ({
             addTaskButtonVisibility: {
                 isVisible: true
             }
-        };
-    }),
-    on(hideAddTaskButton, (state, props) => {
-        return {
+        })),
+    on(hideAddTaskButton, (state, props) => ({
             addTaskButtonVisibility: {
                 isVisible: false
             }
-        };
-    })
+        }))
 )
 
 export function reducer(state: AddTaskButtonVisibilityState, action: Action) {

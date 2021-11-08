@@ -38,7 +38,7 @@
                                  (click)="changeShowing('isTags')">
             </tickist-menu-button>
             <tickist-menu-button [icon]="'redo'" [matTooltip]="repeatString"
-                                 [isDisabled]="task.repeat == 0"
+                                 [isDisabled]="task.repeat === 0"
                                  (click)="changeShowing('isRepeat')">
             </tickist-menu-button>
 

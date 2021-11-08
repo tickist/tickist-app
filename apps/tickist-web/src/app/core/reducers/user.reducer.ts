@@ -14,19 +14,13 @@ export const initialState: UserState = {
 
 const userReducer = createReducer(
     initialState,
-    on(addUser, (state, props) => {
-        return {
+    on(addUser, (state, props) => ({
             user: props.user
-        }
-    }),
-    on(updateUser, (state, props) => {
-        return {
+        })),
+    on(updateUser, (state, props) => ({
             user: props.user
-        };
-    }),
-    on(resetStore, () => {
-        return initialState
-    })
+        })),
+    on(resetStore, () => initialState)
 )
 
 export function reducer(state: UserState, action: Action) {

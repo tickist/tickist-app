@@ -1,53 +1,52 @@
-import {switchOffProgressBar, switchOnProgressBar} from '../actions/progress-bar.actions';
-import {Action, createReducer, on} from "@ngrx/store";
-import {blurOnAddTaskInput, blurOnSearchInput, focusOnAddTaskInput, focusOnSearchInput} from "../actions/ui.actions";
+import {
+    switchOffProgressBar,
+    switchOnProgressBar,
+} from "../actions/progress-bar.actions";
+import { Action, createReducer, on } from "@ngrx/store";
+import {
+    blurOnAddTaskInput,
+    blurOnSearchInput,
+    focusOnAddTaskInput,
+    focusOnSearchInput,
+} from "../actions/ui.actions";
 
 export interface UIState {
     searchInput: {
-        focus: boolean
-    },
+        focus: boolean;
+    };
     addTask: {
-        focus: boolean
-    }
+        focus: boolean;
+    };
 }
 
-export const UIInitialState: UIState = {
+export const uIInitialState: UIState = {
     searchInput: {
-        focus: false
+        focus: false,
     },
     addTask: {
-        focus: false
-    }
+        focus: false,
+    },
 };
 
 const uiReducer = createReducer(
-    UIInitialState,
-    on(focusOnAddTaskInput, (state, props) => {
-        return {
-            ...state,
-            addTask: {focus: true}
-        };
-    }),
-    on(focusOnSearchInput, (state, props) => {
-        return {
-            ...state,
-            searchInput: {focus: true}
-        };
-    }),
-    on(blurOnAddTaskInput, (state, props) => {
-        return {
-            ...state,
-            addTask: {focus: false}
-
-        };
-    }),
-    on(blurOnSearchInput, (state, props) => {
-        return {
-            ...state,
-            searchInput: {focus: false}
-        };
-    })
-)
+    uIInitialState,
+    on(focusOnAddTaskInput, (state, props) => ({
+        ...state,
+        addTask: { focus: true },
+    })),
+    on(focusOnSearchInput, (state, props) => ({
+        ...state,
+        searchInput: { focus: true },
+    })),
+    on(blurOnAddTaskInput, (state, props) => ({
+        ...state,
+        addTask: { focus: false },
+    })),
+    on(blurOnSearchInput, (state, props) => ({
+        ...state,
+        searchInput: { focus: false },
+    }))
+);
 
 export function reducer(state: UIState, action: Action) {
     return uiReducer(state, action);

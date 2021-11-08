@@ -26,14 +26,12 @@ export class ProjectsEffects {
         .pipe(
             ofType(queryProjects),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            switchMap(([, user]) => {
-                return this.db.collection(
+            switchMap(([, user]) => this.db.collection(
                     'projects',
                     ref => ref
                         .where('isActive', '==', true)
                         .where('shareWithIds', 'array-contains', user.id)
-                ).stateChanges();
-            }),
+                ).stateChanges()),
             concatMap(actions => {
                 const addedProjects: Project[] = [];
                 let deletedProjectId: string;

@@ -27,12 +27,10 @@ export class TagsEffects {
         .pipe(
             ofType(queryTags),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            switchMap(([, user]) => {
-                return this.db.collection(
+            switchMap(([, user]) => this.db.collection(
                     'tags',
                     ref => ref.where('author', '==', user.id))
-                    .stateChanges();
-            }),
+                    .stateChanges()),
             concatMap(actions => {
                 const addedTags: Tag[] = [];
                 let deletedTagId: string;

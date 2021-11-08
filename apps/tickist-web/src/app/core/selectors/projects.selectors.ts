@@ -34,9 +34,7 @@ export const selectAllProjects = createSelector(
 
 export const selectAllProjectsWithLevelAndTreeStructures = createSelector(
     selectAllProjects,
-    projects => {
-        return generateDifferentLevelsOfProjects(projects);
-    }
+    projects => generateDifferentLevelsOfProjects(projects)
 );
 
 export const selectActiveProjectsIds = createSelector(
@@ -62,15 +60,11 @@ export const selectActiveProjectWithAllDescendants = createSelector(
 
 export const selectProjectTypeCounter = (projectType) => createSelector(
     selectAllProjects,
-    projects => {
-        return projects.filter(project => project.projectType === projectType).length
-    }
+    projects => projects.filter(project => project.projectType === projectType).length
 )
 
 
 export const selectActiveProjects = createSelector(
     selectAllProjects,
-    (projects) => {
-        return projects.filter(project => project.projectType === ProjectType.ACTIVE)
-    }
+    (projects) => projects.filter(project => project.projectType === ProjectType.ACTIVE)
 )

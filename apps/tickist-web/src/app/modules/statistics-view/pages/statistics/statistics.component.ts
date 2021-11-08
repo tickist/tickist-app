@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'tickist-statistics',
-  templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.scss']
+    selector: "tickist-statistics",
+    templateUrl: "./statistics.component.html",
+    styleUrls: ["./statistics.component.scss"],
 })
-export class StatisticsComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class StatisticsComponent {
+    constructor() {}
 }

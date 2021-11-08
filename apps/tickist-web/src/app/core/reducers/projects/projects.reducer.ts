@@ -18,18 +18,10 @@ export const initialProjectsState: ProjectsState = adapter.getInitialState({
 
 const projectReducer = createReducer(
     initialProjectsState,
-    on(createProject, (state, props) => {
-        return adapter.addOne(props.project, state);
-    }),
-    on(addProjects, (state, props) => {
-        return adapter.addMany(props.projects, {...state, allProjectsLoaded: true});
-    }),
-    on(updateProject, (state, props) => {
-        return adapter.updateOne(props.project, state);
-    }),
-    on(deleteProject, (state, props) => {
-        return adapter.removeOne(props.projectId, state);
-    }),
+    on(createProject, (state, props) => adapter.addOne(props.project, state)),
+    on(addProjects, (state, props) => adapter.addMany(props.projects, {...state, allProjectsLoaded: true})),
+    on(updateProject, (state, props) => adapter.updateOne(props.project, state)),
+    on(deleteProject, (state, props) => adapter.removeOne(props.projectId, state)),
     on(resetStore, () => initialProjectsState),
 )
 

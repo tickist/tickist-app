@@ -17,19 +17,16 @@ export class FutureTasksEffects {
     addTagsFilters = createEffect(() => this.actions$
         .pipe(
             ofType(addUser),
-            concatMap(action => {
-                return [
+            concatMap(action => [
                     addFutureTasksFilters({filters: FutureTasksFiltersService.getAllFutureTasksFilters()}),
                     setCurrentFutureTaskFilter({
                         currentFilter: FutureTasksFiltersService.getDefaultCurrentTagsFilter(action.user.projectsFilterId)
                     })
-                ];
-            })
+                ])
         ));
 
-    @Effect()
-    init$ = defer(() => {
-        return this.store.select(selectLoggedInUser).pipe(
+    
+    init$ = createEffect(() => defer(() => this.store.select(selectLoggedInUser).pipe(
             concatMap(user => {
                 const actions = [];
                 if (user) {
@@ -44,8 +41,7 @@ export class FutureTasksEffects {
                 }
                 return actions;
             })
-        );
-    });
+        )));
 
     constructor(private actions$: Actions, private store: Store) {
     }

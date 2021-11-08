@@ -19,7 +19,7 @@ const noop = () => {
 export class PriorityComponent implements ControlValueAccessor {
     @Output() changePriority = new EventEmitter();
 
-    @Input('manualValue') set manualValue(manualValue) {
+    @Input() set manualValue(manualValue) {
         this.innerValue = manualValue;
     }
     get manualValue() {

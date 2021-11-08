@@ -14,19 +14,15 @@ export class ArchiveEffects {
     queryArchivedTasks$ = createEffect(() => this.actions$
         .pipe(
             ofType(getArchivedTasks),
-            switchMap(({projectId, userId}) => {
-                return this.db.collection(
+            switchMap(({projectId, userId}) => this.db.collection(
                     'tasks',
                     ref => ref
                         .where('isActive', '==', true)
                         .where('taskProject.shareWithIds', 'array-contains', userId)
                         .where('taskProject.id', '==', projectId)
                         .where('isDone', '==', true)
-                ).valueChanges();
-            }),
-            map(tasks => {
-                return saveToStore({archivedTasks: tasks as any})
-            })
+                ).valueChanges()),
+            map(tasks => saveToStore({archivedTasks: tasks as any}))
         )
     )
 

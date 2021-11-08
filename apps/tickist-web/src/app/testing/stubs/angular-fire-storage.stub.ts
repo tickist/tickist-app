@@ -1,5 +1,6 @@
 import {BehaviorSubject} from 'rxjs';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FireStorageStub = {
     collection: (name: string) => ({
         doc: (_id: string) => ({

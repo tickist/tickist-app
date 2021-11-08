@@ -16,19 +16,16 @@ export class TagsFiltersEffects {
     addTagsFilters = createEffect(() => this.actions$
         .pipe(
             ofType(addUser),
-            concatMap(action => {
-                return [
+            concatMap(action => [
                     addTagsFilters({filters: TagsFiltersService.getAllTagsFilter()}),
                     setCurrentTagsFilters({
                         currentTagsFilter: TagsFiltersService.getDefaultCurrentTagsFilter(action.user.tagsFilterId)
                     })
-                ];
-            })
+                ])
         ));
 
-    @Effect()
-    init$ = defer(() => {
-        return this.store.select(selectLoggedInUser).pipe(
+    
+    init$ = createEffect(() => defer(() => this.store.select(selectLoggedInUser).pipe(
             concatMap(user => {
                 const actions = [];
                 if (user) {
@@ -39,8 +36,7 @@ export class TagsFiltersEffects {
                 }
                 return actions;
             })
-        );
-    });
+        )));
 
 
     constructor(private actions$: Actions, private store: Store) {

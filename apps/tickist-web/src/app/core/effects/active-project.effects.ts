@@ -25,7 +25,7 @@ export class ActiveProjectEffects {
                 const filters = [];
                 if (action.project) {
                     action.project.shareWith.map((simpleUserOrPendingUser: ShareWithUser) => {
-                        if (simpleUserOrPendingUser.hasOwnProperty('id')
+                        if (simpleUserOrPendingUser.id
                             && simpleUserOrPendingUser['id'] !== undefined
                             && simpleUserOrPendingUser['id'] !== user.id) {
                                 const userId = (<ShareWithUser>simpleUserOrPendingUser).id;
@@ -74,9 +74,7 @@ export class ActiveProjectEffects {
     activeProjectRouterChange$ = createEffect(() => this.actions$
         .pipe(
             ofType<RouterNavigationAction>(ROUTER_NAVIGATED),
-            filter((action) => {
-                return action.payload.event.url.indexOf('dashboard') > 0;
-            }),
+            filter((action) => action.payload.event.url.indexOf('dashboard') > 0),
             concatMapTo([
                     clearActiveProjectsId(),
                     clearActiveProject()

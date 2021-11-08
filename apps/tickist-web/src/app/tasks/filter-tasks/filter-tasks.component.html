@@ -4,7 +4,7 @@
 <mat-menu #filtersMenu="matMenu">
   <button (click)="openTasksFilterDialog()" mat-menu-item>Filter by: {{ (currentMainFilter$ | async).name }}</button>
   <button *ngIf="isAssignedToVisible" (click)="openAssignedToDialog()" mat-menu-item>Assigned to: {{ (currentAssignedToFilter$ | async).name }}</button>
-  <button (click)="openEstimateTimeDialog()" mat-menu-item> Estimated time:  {{ (currentEstimateTimeFilter$ | async).currentFilter_lt.name }} -  {{ (currentEstimateTimeFilter$ | async).currentFilter_gt.name }}</button>
+  <button (click)="openEstimateTimeDialog()" mat-menu-item> Estimated time:  {{ (currentEstimateTimeFilter$ | async).currentFilterLt.name }} -  {{ (currentEstimateTimeFilter$ | async).currentFilterGt.name }}</button>
   <button *ngIf="showTags" (click)="openTagsFilterDialog()" mat-menu-item>Tags: {{ tagsValue() }}</button>
 </mat-menu>
 

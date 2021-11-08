@@ -15,19 +15,15 @@ export const selectAllTasksTreeView = createSelector(
 
         function createTreeViewNode(currentProject) {
             const filteredTasks = tasks.filter(task => task.taskProject.id === currentProject.id)
-                .map(task => {
-                    return {
+                .map(task => ({
                         task: task
-                    };
-                });
+                    }));
             const filteredProjects = projects.filter(project => project.ancestor === currentProject.id);
 
             return {
                 project: currentProject,
                 children: [
-                    ...filteredProjects.map(project => {
-                        return createTreeViewNode(project);
-                    }),
+                    ...filteredProjects.map(project => createTreeViewNode(project)),
                     ...filteredTasks,
                     {addTask: true, project: currentProject}
                 ]

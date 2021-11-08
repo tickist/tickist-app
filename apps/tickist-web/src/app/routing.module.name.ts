@@ -1,3 +1,3 @@
 export const homeRoutesName = {
-    HOME: 'home'
+    home: "home",
 };
