@@ -1,12 +1,12 @@
-import {Tag} from '../../tags';
-import {Step} from './steps';
-import {Menu} from '../../menu';
-import {TaskUser} from './task-user';
-import {TaskProject} from './task-project';
-import {addClickableLinks} from '@tickist/utils';
-import {Editor} from '../../users';
-import {TaskType} from "./task-types";
-import {changeTimeStringFormatToValue} from "@tickist/utils";
+import { Tag } from "../../tags";
+import { Step } from "./steps";
+import { Menu } from "../../menu";
+import { TaskUser } from "./task-user";
+import { TaskProject } from "./task-project";
+import { addClickableLinks } from "@tickist/utils";
+import { Editor } from "../../users";
+import { TaskType } from "./task-types";
+import { changeTimeStringFormatToValue } from "@tickist/utils";
 
 export interface ITask {
     name: string;
@@ -44,13 +44,12 @@ export interface ITask {
     lastEditor?: Editor;
 }
 
-
 export class Task {
     id: string;
     name: string;
-    description = '';
-    richName = '';
-    richDescription = '';
+    description = "";
+    richName = "";
+    richDescription = "";
     finishDate: Date;
     finishTime: string;
     suspendDate: any;
@@ -73,27 +72,27 @@ export class Task {
     estimateTime = null;
     menuShowing: Menu;
     lastEditor: Editor;
-    taskType = TaskType.NORMAL;
+    taskType = TaskType.normal;
     whenComplete: Date | null = null;
 
     constructor(task: ITask) {
         Object.assign(this, task);
         this.richName = addClickableLinks(task.name);
         this.finishDate = task.finishDate ? new Date(task.finishDate) : null;
-        this.finishTime = task.finishTime ? task.finishTime : '';
-        this.suspendDate = task.suspendDate ? new Date(task.suspendDate) : '';
-        this.repeat = task.repeat ? parseInt((<string> task.repeat), 10) : 0;
+        this.finishTime = task.finishTime ? task.finishTime : "";
+        this.suspendDate = task.suspendDate ? new Date(task.suspendDate) : "";
+        this.repeat = task.repeat ? parseInt(<string>task.repeat, 10) : 0;
         this.richDescription = addClickableLinks(task.description);
         if (Array.isArray(task.steps)) {
             this.steps.map((step) => new Step(step));
         }
-        this.tags = this.tags.map(tag => new Tag(tag));
-        this.tagsIds = this.tags.map(tag => tag.id);
+        this.tags = this.tags.map((tag) => new Tag(tag));
+        this.tagsIds = this.tags.map((tag) => tag.id);
         this.menuShowing = new Menu(task.menuShowing);
         this.taskProject = new TaskProject(task.taskProject);
-        this.estimateTime = changeTimeStringFormatToValue(task.estimateTime?.toString())
-        this.time = changeTimeStringFormatToValue(task.time?.toString())
+        this.estimateTime = changeTimeStringFormatToValue(
+            task.estimateTime?.toString()
+        );
+        this.time = changeTimeStringFormatToValue(task.time?.toString());
     }
 }
-
-

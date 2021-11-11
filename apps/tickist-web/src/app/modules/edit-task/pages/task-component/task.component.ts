@@ -163,7 +163,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         if (!selectedProject) {
                             this.selectedProject = projects.find(
                                 (project) =>
-                                    project.projectType === ProjectType.INBOX
+                                    project.projectType === ProjectType.inbox
                             );
                         } else {
                             this.selectedProject = selectedProject;

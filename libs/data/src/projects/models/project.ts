@@ -1,4 +1,4 @@
-import {IShareWithUser, ShareWithUser} from './share-with-user';
+import { IShareWithUser, ShareWithUser } from "./share-with-user";
 import {
     DEFAULT_COLOR_LIST,
     DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED,
@@ -6,11 +6,11 @@ import {
     DEFAULT_PRIORITY,
     DEFAULT_PROJECT_ICON,
     DEFAULT_TASK_VIEW,
-    DEFAULT_TYPE_FINISH_DATE
-} from '../config-projects';
-import {Editor} from '../../users';
-import {addClickableLinks} from '@tickist/utils';
-import {ProjectType} from "./projects-type";
+    DEFAULT_TYPE_FINISH_DATE,
+} from "../config-projects";
+import { Editor } from "../../users";
+import { addClickableLinks } from "@tickist/utils";
+import { ProjectType } from "./projects-type";
 
 interface IProject {
     id: string;
@@ -25,8 +25,8 @@ interface IProject {
 }
 
 export enum InviteUserStatus {
-    Processing,
-    Error
+    processing,
+    error,
 }
 
 export interface InviteUser {
@@ -34,14 +34,13 @@ export interface InviteUser {
     status: InviteUserStatus;
 }
 
-
 export class Project {
     id: string;
     name: string;
     isActive = true;
     isInbox = false;
-    description = '';
-    richDescription = '';
+    description = "";
+    richDescription = "";
     ancestor: string;
     color = DEFAULT_COLOR_LIST;
     shareWith: ShareWithUser[] = [];
@@ -55,7 +54,7 @@ export class Project {
     shareWithIds: Array<string> = [];
     inviteUserByEmail: InviteUser[] = [];
     lastEditor: Editor;
-    projectType: ProjectType = ProjectType.ACTIVE;
+    projectType: ProjectType = ProjectType.active;
     icon = DEFAULT_PROJECT_ICON;
 
     constructor(project: any) {
@@ -63,11 +62,13 @@ export class Project {
         this.id = project.id || null;
         this.ancestor = project.ancestor || undefined;
         this.richDescription = addClickableLinks(project.description);
-        if (project.isInbox) this.projectType = ProjectType.INBOX;
+        if (project.isInbox) this.projectType = ProjectType.inbox;
         if (project.taskView) this.taskView = project.taskView;
-        if (project.defaultTypeFinishDate === null) this.defaultTypeFinishDate = DEFAULT_TYPE_FINISH_DATE;
-        this.shareWith = this.shareWith.map((user) => new ShareWithUser(<IShareWithUser> user));
+        if (project.defaultTypeFinishDate === null) {
+            this.defaultTypeFinishDate = DEFAULT_TYPE_FINISH_DATE;
+        }
+        this.shareWith = this.shareWith.map(
+            (user) => new ShareWithUser(<IShareWithUser>user)
+        );
     }
 }
-
-

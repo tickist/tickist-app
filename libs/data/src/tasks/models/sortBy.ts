@@ -2,11 +2,12 @@ export class SortBy {
     id: number;
     label: string;
     sortKeys: string[];
-    order: Array<boolean | 'asc' | 'desc'>;
+    // eslint-disable-next-line no-irregular-whitespace
+    order: Array<boolean | "asc" | "desc">;
     name: string;
     icon: string;
 
-    constructor({id, label, sortKeys, order, name, icon}) {
+    constructor({ id, label, sortKeys, order, name, icon }) {
         this.id = id;
         this.label = label;
         this.sortKeys = sortKeys;
@@ -14,5 +15,4 @@ export class SortBy {
         this.name = name;
         this.icon = icon;
     }
-
 }

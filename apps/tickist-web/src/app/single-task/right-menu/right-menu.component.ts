@@ -28,9 +28,9 @@ export class RightMenuComponent implements OnInit {
     @Output() fastMenuOpen = new EventEmitter();
     @Output() fastMenuClose = new EventEmitter();
     @Output() convertTo = new EventEmitter();
-    normalTaskType = TaskType.NORMAL;
-    nextActionTaskType = TaskType.NEXT_ACTION;
-    needInfoTaskType = TaskType.NEED_INFO;
+    normalTaskType = TaskType.normal;
+    nextActionTaskType = TaskType.nextAction;
+    needInfoTaskType = TaskType.needInfo;
 
     constructor(private router: Router) {}
 

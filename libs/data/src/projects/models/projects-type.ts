@@ -1,9 +1,12 @@
 export enum ProjectType {
-    ACTIVE = "Active",
-    MAYBE = "Someday/maybe",
-    ROUTINE_REMINDER = "Routine Reminder",
-    INBOX = "Inbox"
+    active = "Active",
+    maybe = "Someday/maybe",
+    routineReminder = "Routine Reminder",
+    inbox = "Inbox",
 }
 
-
-export const AVAILABLE_PROJECT_TYPES = [ProjectType.ACTIVE, ProjectType.MAYBE, ProjectType.ROUTINE_REMINDER]
+export const AVAILABLE_PROJECT_TYPES = [
+    ProjectType.active,
+    ProjectType.maybe,
+    ProjectType.routineReminder,
+];

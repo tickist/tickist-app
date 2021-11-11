@@ -50,7 +50,7 @@
                         Active projects ({{ activeProjectCounter$ | async}})
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <tickist-projects-list [projectType]="projectsTypes.ACTIVE"></tickist-projects-list>
+                <tickist-projects-list [projectType]="projectsTypes.active"></tickist-projects-list>
             </mat-expansion-panel>
 
             <mat-expansion-panel>
@@ -60,7 +60,7 @@
                         Someday/maybe projects ({{ maybeProjectCounter$ | async}})
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <tickist-projects-list [projectType]="projectsTypes.MAYBE"></tickist-projects-list>
+                <tickist-projects-list [projectType]="projectsTypes.maybe"></tickist-projects-list>
             </mat-expansion-panel>
 
             <mat-expansion-panel>
@@ -70,7 +70,7 @@
                         Routine reminder ({{ remiderProjectCounter$ | async}})
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <tickist-projects-list [projectType]="projectsTypes.ROUTINE_REMINDER"></tickist-projects-list>
+                <tickist-projects-list [projectType]="projectsTypes.routineReminder"></tickist-projects-list>
             </mat-expansion-panel>
 
             <mat-expansion-panel (click)="navigateToTasksTreeView()" hideToggle="true" [expanded]="'false'"

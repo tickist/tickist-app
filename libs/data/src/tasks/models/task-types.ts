@@ -1,9 +1,16 @@
 export enum TaskType {
-    NORMAL = "Normal",
-    NEXT_ACTION = "Next action",
-    NEED_INFO = "Need info",
+    normal = "Normal",
+    nextAction = "Next action",
+    needInfo = "Need info",
 }
 
-
-export const AVAILABLE_TASK_TYPES = [TaskType.NORMAL, TaskType.NEED_INFO, TaskType.NEXT_ACTION]
-export const AVAILABLE_TASK_TYPES_ICONS = [['far', 'square'], ['fas', 'mug-hot'], ['fas', 'project-diagram']]
+export const AVAILABLE_TASK_TYPES = [
+    TaskType.normal,
+    TaskType.needInfo,
+    TaskType.nextAction,
+];
+export const AVAILABLE_TASK_TYPES_ICONS = [
+    ["far", "square"],
+    ["fas", "mug-hot"],
+    ["fas", "project-diagram"],
+];

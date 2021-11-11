@@ -188,13 +188,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
                             }
                         });
                 }
-                if (project.projectType === ProjectType.INBOX) {
-                    this.projectTypes = [ProjectType.INBOX];
+                if (project.projectType === ProjectType.inbox) {
+                    this.projectTypes = [ProjectType.inbox];
                 } else {
                     this.projectTypes = [
-                        ProjectType.ACTIVE,
-                        ProjectType.ROUTINE_REMINDER,
-                        ProjectType.MAYBE,
+                        ProjectType.active,
+                        ProjectType.routineReminder,
+                        ProjectType.maybe,
                     ];
                 }
             });

@@ -183,7 +183,7 @@ export const nextActionTasks = createSelector(
         return orderBy(
             tasks
                 .filter((task) => task.owner.id === user.id)
-                .filter((task) => task.taskType === TaskType.NEXT_ACTION),
+                .filter((task) => task.taskType === TaskType.nextAction),
             ["priority", (task) => _.deburr(task.name.toLowerCase())],
             ["asc", "asc"]
         );
@@ -201,7 +201,7 @@ export const needInfoTasks = createSelector(
         }
         return tasks
             .filter((task) => task.owner.id === user.id)
-            .filter((task) => task.taskType === TaskType.NEED_INFO);
+            .filter((task) => task.taskType === TaskType.needInfo);
     }
 );
 
@@ -215,7 +215,7 @@ export const projectWithoutNextActionTasks = createSelector(
             if (
                 !tasks.some(
                     (task) =>
-                        task.taskType === TaskType.NEXT_ACTION &&
+                        task.taskType === TaskType.nextAction &&
                         task.taskProject.id === project.id
                 )
             ) {

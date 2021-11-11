@@ -107,7 +107,7 @@ describe("Tasks", () => {
                     repeat: 0,
                     repeatDelta: 0,
                     fromRepeating: 1,
-                    taskType: TaskType.NORMAL,
+                    taskType: TaskType.normal,
                     taskProject: {
                         id: database.projects[0].id,
                         name: database.projects[0].name,
@@ -239,7 +239,7 @@ describe("Tasks", () => {
                         repeat: 1,
                         repeatDelta: 7,
                         fromRepeating: 1,
-                        taskType: TaskType.NORMAL,
+                        taskType: TaskType.normal,
                         taskProject: {
                             id: database.projects[0].id,
                             name: database.projects[0].name,

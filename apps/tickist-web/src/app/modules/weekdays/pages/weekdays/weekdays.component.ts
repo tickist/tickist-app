@@ -13,7 +13,7 @@ import { updateActiveDate } from "../../../../core/actions/active-date.actions";
 import { Store } from "@ngrx/store";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
 import { IActiveDateElement } from "@data/active-data-element.interface";
-import { stateActiveDateElement } from "@data/state-active-date-element.enum";
+import { StateActiveDateElement } from "@data/state-active-date-element.enum";
 import { addDays, format } from "date-fns";
 
 @Component({
@@ -135,7 +135,7 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
                     this.store.dispatch(
                         updateActiveDate({
                             date: param,
-                            state: stateActiveDateElement.weekdays,
+                            state: StateActiveDateElement.weekdays,
                         })
                     );
                 }

@@ -236,8 +236,8 @@ export class SingleTaskExtendedComponent
             );
         }
         this.isTaskTypeLabelVisible =
-            this.task.taskType === TaskType.NEED_INFO ||
-            this.task.taskType === TaskType.NEXT_ACTION;
+            this.task.taskType === TaskType.needInfo ||
+            this.task.taskType === TaskType.nextAction;
     }
 
     changeFastMenuVisible(value) {

@@ -45,13 +45,13 @@ export class LeftPanelComponent implements OnInit, OnDestroy {
             });
         this.inboxTasksCounter$ = this.store.select(selectInboxTasksCounter);
         this.activeProjectCounter$ = this.store.select(
-            selectProjectTypeCounter(ProjectType.ACTIVE)
+            selectProjectTypeCounter(ProjectType.active)
         );
         this.maybeProjectCounter$ = this.store.select(
-            selectProjectTypeCounter(ProjectType.MAYBE)
+            selectProjectTypeCounter(ProjectType.maybe)
         );
         this.remiderProjectCounter$ = this.store.select(
-            selectProjectTypeCounter(ProjectType.ROUTINE_REMINDER)
+            selectProjectTypeCounter(ProjectType.routineReminder)
         );
     }
 

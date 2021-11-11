@@ -14,7 +14,7 @@ export function addUserToShareList(project: Project, email) {
     //     shareWith.push(new ShareWithUser(user));
     // }
     //
-    const entry = { email: email, status: InviteUserStatus.Processing };
+    const entry = { email: email, status: InviteUserStatus.processing };
     return Object.assign({}, project, {
         inviteUserByEmail: [...project.inviteUserByEmail, entry],
     });

@@ -12,12 +12,8 @@ export const onDeleteTag = functions.firestore.document('tags/{tagId}')
                     const tags = task.data().tags;
                     const tagsIds = task.data().tagsIds;
                     transaction.update(task.ref, {
-                        'tags': tags.filter(tag => {
-                            return tag.id !== change.id;
-                        }),
-                        'tagsIds': tagsIds.filter(tagId => {
-                            return tagId !== change.id;
-                        })
+                        'tags': tags.filter(tag => tag.id !== change.id),
+                        'tagsIds': tagsIds.filter(tagId => tagId !== change.id)
                     });
                 }
             );

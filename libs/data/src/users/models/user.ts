@@ -6,9 +6,9 @@ import {
     DEFAULT_PROJECTS_FILTER_ID,
     DEFAULT_TAGS_FILTER_ID,
     DEFAULT_TASKS_ORDER_OPTIONS,
-    DEFAULT_USER_AVATAR
-} from '../config-user';
-import {NotificationPermission} from '../../notifications';
+    DEFAULT_USER_AVATAR,
+} from "../config-user";
+import { NotificationPermission } from "../../notifications";
 
 export interface IUser {
     id: string;
@@ -44,10 +44,8 @@ export interface IUser {
     avatarUrl?: string;
     fcmToken?: string;
     notificationPermission: NotificationPermission;
-    flags: {};
+    flags: any;
 }
-
-
 
 export class User {
     id: string;
@@ -68,18 +66,19 @@ export class User {
     removesMeFromSharedList = true;
     sharesListWithMe: boolean;
     avatarUrl = DEFAULT_USER_AVATAR;
-    dialogTimeWhenTaskFinishedInProject = DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT;
-    allTasksView = 'extended';
-    defaultTaskView = 'extended';
-    defaultTaskViewTodayView = 'extended';
-    defaultTaskViewOverdueView = 'extended';
-    defaultTaskViewFutureView = 'extended';
-    defaultTaskViewTagsView = 'extended';
-    overdueTasksSortBy =  DEFAULT_OVERDUE_TASKS_SORT_BY;
+    dialogTimeWhenTaskFinishedInProject =
+        DEFAULT_DIALOG_TIME_WHEN_TASK_FINISHED_IN_PROJECT;
+    allTasksView = "extended";
+    defaultTaskView = "extended";
+    defaultTaskViewTodayView = "extended";
+    defaultTaskViewOverdueView = "extended";
+    defaultTaskViewFutureView = "extended";
+    defaultTaskViewTagsView = "extended";
+    overdueTasksSortBy = DEFAULT_OVERDUE_TASKS_SORT_BY;
     futureTasksSortBy = DEFAULT_FUTURE_TASKS_SORT_BY;
     projectsFilterId = DEFAULT_PROJECTS_FILTER_ID;
     tagsFilterId = DEFAULT_TAGS_FILTER_ID;
-    fcmToken = '';
+    fcmToken = "";
     notificationPermission = NotificationPermission.unknown;
     flags = {};
 

@@ -14,7 +14,7 @@ import { TaskService } from "../../../../core/services/task.service";
 import { Task } from "@data/tasks/models/tasks";
 import { UserService } from "../../../../core/services/user.service";
 import { User } from "@data/users/models";
-import { stateActiveDateElement } from "@data/state-active-date-element.enum";
+import { StateActiveDateElement } from "@data/state-active-date-element.enum";
 import { futureTasksRoutesName } from "../../../future-tasks/routes.names";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
 import { Store } from "@ngrx/store";
@@ -34,7 +34,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
     activeDateElement: IActiveDateElement;
     tasks: Task[];
     user: User;
-    stateActiveDateElement = stateActiveDateElement;
+    stateActiveDateElement = StateActiveDateElement;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
