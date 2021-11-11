@@ -36,15 +36,11 @@
             }
         },
         "lint": {
-            "executor": "@angular-devkit/build-angular:tslint",
+            "executor": "@nrwl/linter:eslint",
             "options": {
-                "tsConfig": [
-                    "apps/tickist-functions/tsconfig.app.json",
-                    "apps/tickist-functions/tsconfig.spec.json"
-                ],
-                "exclude": [
-                    "**/node_modules/**",
-                    "!apps/tickist-functions/**/*"
+                "lintFilePatterns": [
+                    "apps/tickist-functions/src/**/*.ts",
+                    "apps/tickist-functions/src/**/*.html"
                 ]
             }
         },
