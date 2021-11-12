@@ -83,7 +83,7 @@ function createInboxProject(userData, userId, projectId): Project {
         id: projectId,
         name: "Inbox",
         owner: userId,
-        projectType: ProjectType.INBOX,
+        projectType: ProjectType.inbox,
         shareWith: [
             <ShareWithUser>{
                 id: userId,
