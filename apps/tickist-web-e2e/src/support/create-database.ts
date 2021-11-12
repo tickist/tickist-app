@@ -45,7 +45,7 @@ export class Database {
         this.inbox = new Project({
             id: "1",
             name: "Inbox",
-            projectType: ProjectType.INBOX,
+            projectType: ProjectType.inbox,
             owner: this.uid,
             shareWith: [
                 <ShareWithUser>{
