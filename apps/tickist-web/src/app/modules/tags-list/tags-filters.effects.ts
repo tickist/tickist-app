@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {addUser} from '../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {TagsFiltersService} from '../../core/services/tags-filters.service';

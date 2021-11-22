@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {tap} from 'rxjs/operators';
 import {RouterNavigatedAction, ROUTER_NAVIGATED} from '@ngrx/router-store';
 import {environment} from '../../../environments/environment';

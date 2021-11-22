@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Location } from "@angular/common";
-import { Actions, createEffect, Effect, ofType } from "@ngrx/effects";
+import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { fetchedLoginUser, login, logout } from "../actions/auth.actions";
 import {
     catchError,

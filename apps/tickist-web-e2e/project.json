@@ -1,33 +1,37 @@
 {
-    "root": "apps/tickist-web-e2e",
-    "sourceRoot": "apps/tickist-web-e2e/src",
-    "projectType": "application",
-    "targets": {
-        "e2e": {
-            "executor": "@nrwl/cypress:cypress",
-            "options": {
-                "cypressConfig": "apps/tickist-web-e2e/cypress.json",
-                "tsConfig": "apps/tickist-web-e2e/tsconfig.e2e.json",
-                "devServerTarget": "tickist-web:serve"
-            },
-            "configurations": {
-                "production": {
-                    "devServerTarget": "tickist-web:serve:production"
-                },
-                "e2e": {
-                    "devServerTarget": "tickist-web:serve:e2e"
-                },
-                "ci": {
-                    "devServerTarget": "tickist-web:serve:ci"
-                }
-            }
+  "root": "apps/tickist-web-e2e",
+  "sourceRoot": "apps/tickist-web-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/tickist-web-e2e/cypress.json",
+        "tsConfig": "apps/tickist-web-e2e/tsconfig.e2e.json",
+        "devServerTarget": "tickist-web:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "tickist-web:serve:production"
         },
-        "lint": {
-            "executor": "@nrwl/linter:eslint",
-            "outputs": ["{options.outputFile}"],
-            "options": {
-                "lintFilePatterns": ["apps/tickist-web-e2e/**/*.{js,ts}"]
-            }
+        "e2e": {
+          "devServerTarget": "tickist-web:serve:e2e"
+        },
+        "ci": {
+          "devServerTarget": "tickist-web:serve:ci"
         }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/tickist-web-e2e/**/*.{js,ts}"
+        ]
+      }
     }
+  }
 }
