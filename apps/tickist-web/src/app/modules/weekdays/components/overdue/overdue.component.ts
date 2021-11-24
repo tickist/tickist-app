@@ -1,18 +1,17 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Task} from '@data/tasks/models/tasks';
-import {TaskService} from '../../../../core/services/task.service';
-import {User} from '@data/users/models';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {updateUser} from '../../../../core/actions/user.actions';
-import {Store} from '@ngrx/store';
-import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Task } from "@data/tasks/models/tasks";
+import { TaskService } from "../../../../core/services/task.service";
+import { User } from "@data/users/models";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { updateUser } from "../../../../core/actions/user.actions";
+import { Store } from "@ngrx/store";
+import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 
 @Component({
-    selector: 'tickist-overdue',
-    templateUrl: './overdue.component.html',
-    styleUrls: ['./overdue.component.scss']
+    selector: "tickist-overdue",
+    templateUrl: "./overdue.component.html",
+    styleUrls: ["./overdue.component.scss"],
 })
 export class OverdueComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -24,11 +23,14 @@ export class OverdueComponent implements OnInit, OnDestroy {
     constructor(private taskService: TaskService, private store: Store) {}
 
     ngOnInit() {
-        this.store.select(selectLoggedInUser).pipe(takeUntil(this.ngUnsubscribe)).subscribe((user) => {
-            if (user) {
-                this.user = user;
-            }
-        });
+        this.store
+            .select(selectLoggedInUser)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((user) => {
+                if (user) {
+                    this.user = user;
+                }
+            });
     }
 
     postponeToToday() {
@@ -38,8 +40,10 @@ export class OverdueComponent implements OnInit, OnDestroy {
     changeTaskView(event) {
         this.taskView = event;
         if (this.user.defaultTaskViewOverdueView !== event) {
-            const user = Object.assign({}, this.user, {defaultTaskViewOverdueView: event});
-            this.store.dispatch(updateUser({user}));
+            const user = Object.assign({}, this.user, {
+                defaultTaskViewOverdueView: event,
+            });
+            this.store.dispatch(updateUser({ user }));
         }
     }
 

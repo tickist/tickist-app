@@ -50,16 +50,16 @@ export const selectActiveProjectsIds = createSelector(
 
 export const selectActiveProject = createSelector(
     selectActiveProjectState,
-    selectAllProjects,
     (activeProject) => activeProject.activeProject
 );
 
 export const selectActiveProjectWithAllDescendants = createSelector(
     selectActiveProject,
     selectAllProjects,
-    (activeProject, projects): ProjectWithAllDescendants => {
-        if (!activeProject)
+    (activeProject, projects) => {
+        if (!activeProject) {
             return Object.assign({}, activeProject, { allDescendants: [] });
+        }
         const allDescendants = calculateProjectDescendants(
             activeProject,
             projects
