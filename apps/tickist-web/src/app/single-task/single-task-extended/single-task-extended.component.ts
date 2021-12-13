@@ -39,7 +39,6 @@ import { removeTag } from "../utils/task-utils";
 import { selectAllProjectLeftPanel } from "../../modules/projects-list/projects-filters.selectors";
 import { selectProjectById } from "../../core/selectors/projects.selectors";
 import { FormControl } from "@angular/forms";
-import { AngularFireAuth } from "@angular/fire/auth";
 import { ProjectLeftPanel } from "../../modules/projects-list/models/project-list";
 
 @Component({
@@ -103,8 +102,7 @@ export class SingleTaskExtendedComponent
         public dialog: MatDialog,
         private projectService: ProjectService,
         private renderer: Renderer2,
-        public store: Store,
-        private fireAuth: AngularFireAuth
+        public store: Store
     ) {
         super(store, dialog);
         this.repeatStringExtension = new RepeatStringExtension(

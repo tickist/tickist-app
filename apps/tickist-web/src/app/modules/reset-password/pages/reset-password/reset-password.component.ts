@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/auth";
+import { Auth } from "@angular/fire/auth";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UserService } from "../../../../core/services/user.service";
@@ -14,7 +14,7 @@ export class ResetPasswordComponent implements OnInit {
     code: string;
 
     constructor(
-        private afAuth: AngularFireAuth,
+        private afAuth: Auth,
         private fb: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,

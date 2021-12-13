@@ -1,5 +1,4 @@
-import firebase from "firebase/app";
-import Timestamp = firebase.firestore.Timestamp;
+import { Timestamp } from "@angular/fire/firestore";
 
 interface INotification {
     id?: string;

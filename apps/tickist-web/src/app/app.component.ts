@@ -7,10 +7,9 @@ import {
     MatSnackBarConfig,
 } from "@angular/material/snack-bar";
 import { SnackBarMessageComponent } from "./components/snack-bar-message/snack-bar-message.component";
-import { AngularFireMessaging } from "@angular/fire/messaging";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { AngularFireFunctions } from "@angular/fire/functions";
+import { Functions } from "@angular/fire/functions";
 import { environment } from "../environments/environment";
 import { Store } from "@ngrx/store";
 import {
@@ -37,9 +36,9 @@ export class AppComponent implements OnInit, OnDestroy {
         private swUpdate: SwUpdate,
         private meta: Meta,
         private snackBar: MatSnackBar,
-        private afMessaging: AngularFireMessaging,
+        // private afMessaging: AngularFireMessaging,
         private store: Store,
-        private readonly aff: AngularFireFunctions,
+        private readonly aff: Functions,
         private readonly router: Router,
         private logger: NGXLogger
     ) {
@@ -83,11 +82,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        if (environment.emulator) {
-            this.aff
-                .useFunctionsEmulator("http://localhost:5001")
-                .then(() => this.logger.info("Using functions emulator"));
-        }
+        // if (environment.emulator) {
+        //     this.aff
+        //         .useFunctionsEmulator("http://localhost:5001")
+        //         .then(() => this.logger.info("Using functions emulator"));
+        // }
         if (this.swUpdate.isEnabled) {
             this.swUpdate.available
                 .pipe(takeUntil(this.ngUnsubscribe))
@@ -104,12 +103,12 @@ export class AppComponent implements OnInit, OnDestroy {
                         });
                 });
         }
-
-        this.afMessaging.messages
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((message) => {
-                this.logger.log(message);
-            });
+        // @TODO  not working
+        // this.afMessaging.messages
+        //     .pipe(takeUntil(this.ngUnsubscribe))
+        //     .subscribe((message) => {
+        //         this.logger.log(message);
+        //     });
 
         this.meta.addTags(
             [

@@ -12,6 +12,7 @@ describe("Delete task", () => {
     const nonDeletedTaskName = "Task non deleted";
 
     beforeEach(() => {
+        cy.logout();
         login();
         createFirebase();
 

@@ -9,7 +9,7 @@ import {
     OnInit,
     Output,
 } from "@angular/core";
-import { AngularFireStorage } from "@angular/fire/storage";
+import { Storage } from "@angular/fire/storage";
 import { Observable, of, Subject } from "rxjs";
 import { DEFAULT_USER_AVATAR, USER_AVATAR_PATH } from "@data/users/config-user";
 import { delay, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
@@ -33,10 +33,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     url: string;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(
-        private storage: AngularFireStorage,
-        private cd: ChangeDetectorRef
-    ) {}
+    constructor(private storage: Storage, private cd: ChangeDetectorRef) {}
 
     ngOnInit() {
         const [width, height] = this.size.split("x");
@@ -88,39 +85,40 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private updateUrlFromFirebaseStorage() {
-        let retries = 3;
-        this.url = localStorage.getItem(this.createAvatarPath());
-        this.storage
-            .ref(this.createAvatarPath())
-            .getDownloadURL()
-            .pipe(
-                retryWhen((errors: Observable<any>) =>
-                    errors.pipe(
-                        delay(5000),
-                        mergeMap((error) => {
-                            if (retries-- > 0) {
-                                return of(error);
-                            } else {
-                                this.url = localStorage.getItem(
-                                    this.createAvatarPath()
-                                );
-                                this.cd.detectChanges();
-                            }
-                        })
-                    )
-                ),
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe((avatarUrl) => {
-                const userAvatarPath = localStorage.getItem(
-                    this.createAvatarPath()
-                );
-                if (userAvatarPath !== avatarUrl) {
-                    localStorage.setItem(this.createAvatarPath(), avatarUrl);
-                }
-                this.url = avatarUrl;
-                this.cd.detectChanges();
-            });
+        // @TODO fix it nie działa
+        // let retries = 3;
+        // this.url = localStorage.getItem(this.createAvatarPath());
+        // this.storage
+        //     .ref(this.createAvatarPath())
+        //     .getDownloadURL()
+        //     .pipe(
+        //         retryWhen((errors: Observable<any>) =>
+        //             errors.pipe(
+        //                 delay(5000),
+        //                 mergeMap((error) => {
+        //                     if (retries-- > 0) {
+        //                         return of(error);
+        //                     } else {
+        //                         this.url = localStorage.getItem(
+        //                             this.createAvatarPath()
+        //                         );
+        //                         this.cd.detectChanges();
+        //                     }
+        //                 })
+        //             )
+        //         ),
+        //         takeUntil(this.ngUnsubscribe)
+        //     )
+        //     .subscribe((avatarUrl) => {
+        //         const userAvatarPath = localStorage.getItem(
+        //             this.createAvatarPath()
+        //         );
+        //         if (userAvatarPath !== avatarUrl) {
+        //             localStorage.setItem(this.createAvatarPath(), avatarUrl);
+        //         }
+        //         this.url = avatarUrl;
+        //         this.cd.detectChanges();
+        //     });
     }
 
     private validURL(str) {

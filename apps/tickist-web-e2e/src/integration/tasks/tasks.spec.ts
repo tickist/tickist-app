@@ -16,6 +16,7 @@ import { TaskType } from "@data";
 
 describe("Tasks", () => {
     beforeEach(() => {
+        cy.logout();
         login();
         createFirebase();
     });
@@ -40,23 +41,17 @@ describe("Tasks", () => {
         });
 
         it("should open the form, fills the form and next add new task to the Inbox", () => {
-            cy.get("tickist-add-task-footer-button", { timeout: 20000 })
-                .find("button")
-                .click();
+            cy.get("tickist-add-task-footer-button", { timeout: 20000 }).find("button").click();
             cy.url().should("include", "home").should("include", "edit-task");
 
             cy.log("fill main form");
-            cy.get("input[name=taskName]", { timeout: 20000 })
-                .type("Task 3")
-                .should("have.value", "Task 3");
+            cy.get("input[name=taskName]", { timeout: 20000 }).type("Task 3").should("have.value", "Task 3");
             cy.get("tickist-priority").find("button").contains("A").click();
 
             cy.get("input[name=finishDate]").focus();
             cy.get("mat-calendar").find(".mat-calendar-body-today").click();
             // cy.get('body').type('{esc}');
-            cy.get("input[name=finishTime]")
-                .type("10:00")
-                .should("have.value", "10:00");
+            cy.get("input[name=finishTime]").type("10:00").should("have.value", "10:00");
 
             cy.log("fill repeat form");
             clickMenuElement("Repeat");
@@ -64,19 +59,13 @@ describe("Tasks", () => {
 
             cy.log("fill steps");
             clickMenuElement("Steps");
-            cy.get("#steps")
-                .find("input")
-                .last()
-                .type("step 1")
-                .should("have.value", "step 1");
+            cy.get("#steps").find("input").last().type("step 1").should("have.value", "step 1");
             cy.get("#add-step").contains("Add new step").click();
             cy.get("#steps").find("input").last().type("step 2");
             // extra
             clickMenuElement("Extra");
 
-            cy.get("textarea")
-                .type("Task description")
-                .should("have.value", "Task description");
+            cy.get("textarea").type("Task description").should("have.value", "Task description");
 
             cy.get("button[type='submit']").click();
 
@@ -138,22 +127,16 @@ describe("Tasks", () => {
                         }),
                     ],
                 });
-                cy.callFirestore(
-                    "set",
-                    `tasks/${task.id}`,
-                    JSON.parse(JSON.stringify(task))
-                );
+                cy.callFirestore("set", `tasks/${task.id}`, JSON.parse(JSON.stringify(task)));
             });
         });
 
         it("should change task status to done. when all steps are finished", () => {
             clickOnProject(taskWithStepsNameProjectName);
-            cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).then(
-                ($task) => {
-                    cy.log("Click on progress bar");
-                    cy.wrap($task.find("tickist-progress-bar")).click();
-                }
-            );
+            cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).then(($task) => {
+                cy.log("Click on progress bar");
+                cy.wrap($task.find("tickist-progress-bar")).click();
+            });
 
             cy.get("#steps")
                 .find('[data-cy="stepIsUndone"]')
@@ -161,9 +144,7 @@ describe("Tasks", () => {
                 .then(($elem) => {
                     cy.wrap($elem).click({ force: true });
                 });
-            cy.get("#steps")
-                .find('[data-cy="stepIsDone"]')
-                .should("have.length", 1);
+            cy.get("#steps").find('[data-cy="stepIsDone"]').should("have.length", 1);
 
             cy.get("#steps")
                 .find('[data-cy="stepIsUndone"]')
@@ -171,9 +152,7 @@ describe("Tasks", () => {
                 .then(($elem) => {
                     cy.wrap($elem).click({ force: true });
                 });
-            cy.get("#steps")
-                .find('[data-cy="stepIsDone"]')
-                .should("have.length", 2);
+            cy.get("#steps").find('[data-cy="stepIsDone"]').should("have.length", 2);
 
             cy.get("#steps")
                 .find('[data-cy="stepIsUndone"]')
@@ -181,9 +160,7 @@ describe("Tasks", () => {
                 .then(($elem) => {
                     cy.wrap($elem).click({ force: true });
                 });
-            cy.get("#steps")
-                .find('[data-cy="stepIsDone"]')
-                .should("have.length", 3);
+            cy.get("#steps").find('[data-cy="stepIsDone"]').should("have.length", 3);
 
             cy.get("#steps")
                 .find('[data-cy="stepIsUndone"]')
@@ -191,9 +168,7 @@ describe("Tasks", () => {
                 .then(($elem) => {
                     cy.wrap($elem).click({ force: true });
                 });
-            cy.get(
-                `tickist-single-task:contains("${taskWithStepsName}")`
-            ).should("not.exist");
+            cy.get(`tickist-single-task:contains("${taskWithStepsName}")`).should("not.exist");
         });
     });
 
@@ -209,14 +184,10 @@ describe("Tasks", () => {
 
             clickOnProject("Inbox");
 
-            cy.get(`tickist-single-task:contains("${newTaskName}")`).then(
-                ($task) => {
-                    cy.wrap($task.find("tickist-toggle-button")).click();
-                }
-            );
-            cy.get(`tickist-single-task:contains("${newTaskName}")`).should(
-                "not.exist"
-            );
+            cy.get(`tickist-single-task:contains("${newTaskName}")`).then(($task) => {
+                cy.wrap($task.find("tickist-toggle-button")).click();
+            });
+            cy.get(`tickist-single-task:contains("${newTaskName}")`).should("not.exist");
             cy.get("simple-snack-bar").should("exist");
         });
 
@@ -248,59 +219,39 @@ describe("Tasks", () => {
                             icon: database.projects[0].icon,
                         },
                     });
-                    cy.callFirestore(
-                        "set",
-                        `tasks/${task.id}`,
-                        JSON.parse(JSON.stringify(task))
-                    );
+                    cy.callFirestore("set", `tasks/${task.id}`, JSON.parse(JSON.stringify(task)));
                 });
             });
 
             it("should change finish date when task has enabled repeat options", () => {
-                cy.get(`tickist-single-task:contains("${taskName}")`).then(
-                    ($task) => {
-                        cy.wrap($task.find("tickist-toggle-button")).click();
-                    }
-                );
+                cy.get(`tickist-single-task:contains("${taskName}")`).then(($task) => {
+                    cy.wrap($task.find("tickist-toggle-button")).click();
+                });
                 clickOnProject(projectName);
-                cy.get(`tickist-single-task:contains("${taskName}")`).then(
-                    ($task) => {
-                        cy.wrap($task.find("tickist-display-finish-date"))
-                            .contains(
-                                format(addDays(new Date(), 7), "dd-MM-yyyy")
-                            )
-                            .should("exist");
-                    }
-                );
+                cy.get(`tickist-single-task:contains("${taskName}")`).then(($task) => {
+                    cy.wrap($task.find("tickist-display-finish-date"))
+                        .contains(format(addDays(new Date(), 7), "dd-MM-yyyy"))
+                        .should("exist");
+                });
             });
         });
     });
 
     describe("Pin task", () => {
         it("should pinned task after click on pin icon next unpinned task after again click on pin icon", () => {
-            cy.get('tickist-single-task:contains("Task 4")').should(
-                "not.exist"
-            );
+            cy.get('tickist-single-task:contains("Task 4")').should("not.exist");
             clickOnProject("Project 2");
             cy.get('tickist-single-task:contains("Task 4")').then(($task) => {
-                cy.wrap($task.find("#first-row"))
-                    .trigger("mouseenter")
-                    .wrap($task.find("tickist-pin-button"))
-                    .click();
+                cy.wrap($task.find("#first-row")).trigger("mouseenter").wrap($task.find("tickist-pin-button")).click();
             });
             clickOnWeekDay("today");
 
             cy.get('tickist-single-task:contains("Task 4")').then(($task) => {
                 // eslint-disable-next-line no-unused-expressions, @typescript-eslint/no-unused-expressions
                 expect($task.find("tickist-pin-button")).to.be.visible;
-                cy.wrap($task.find("#first-row"))
-                    .trigger("mouseenter")
-                    .wrap($task.find("tickist-pin-button"))
-                    .click();
+                cy.wrap($task.find("#first-row")).trigger("mouseenter").wrap($task.find("tickist-pin-button")).click();
             });
-            cy.get('tickist-single-task:contains("Task 4")').should(
-                "not.exist"
-            );
+            cy.get('tickist-single-task:contains("Task 4")').should("not.exist");
         });
     });
 

@@ -3,6 +3,7 @@ import {
     clickOnProjectTypeLeftPanelMenu,
     createFirebase,
     login,
+    logout,
     removeOldFirebaseData,
 } from "../../support/utils";
 import { Project, ProjectType } from "@data";
@@ -10,6 +11,7 @@ import { createUniqueId } from "@tickist/utils";
 
 describe("Edit Projects", () => {
     beforeEach(() => {
+        cy.logout();
         login();
         createFirebase();
     });
@@ -52,6 +54,7 @@ describe("Edit Projects", () => {
 describe("Change project type", () => {
     let projectName;
     beforeEach(() => {
+        cy.logout();
         login();
         createFirebase();
         cy.get("@database").then((database: any) => {

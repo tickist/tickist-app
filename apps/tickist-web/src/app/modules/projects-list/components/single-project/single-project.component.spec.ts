@@ -1,12 +1,9 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { APP_BASE_HREF } from "@angular/common";
-import { By } from "@angular/platform-browser";
-import { DebugElement } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SingleProjectComponent } from "./single-project.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterModule, Routes } from "@angular/router";
+import { Routes } from "@angular/router";
 import { MockProjectService } from "../../../../testing/mocks/project-service";
 import { MockConfigurationService } from "../../../../testing/mocks/configurationService";
 import { MockUserService } from "../../../../testing/mocks/userService";
@@ -18,7 +15,6 @@ import { TickistMaterialModule } from "../../../../material.module";
 import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
 import { MediaObserver } from "@angular/flex-layout";
 import { StoreModule } from "@ngrx/store";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { RouterTestingModule } from "@angular/router/testing";
 import { IconsModule } from "../../../../icons.module";
 

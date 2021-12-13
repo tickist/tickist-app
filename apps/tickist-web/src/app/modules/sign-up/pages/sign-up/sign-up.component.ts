@@ -1,8 +1,6 @@
 import { Component, OnDestroy } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { AuthService } from "../../../auth/services/auth.service";
-import { Router } from "@angular/router";
-import { AngularFireAuth } from "@angular/fire/auth";
 import { MatDialog } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 
@@ -16,12 +14,7 @@ export class SignUpComponent implements OnDestroy {
     firebaseMessage = "";
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(
-        private authService: AuthService,
-        private router: Router,
-        private fireAuth: AngularFireAuth,
-        public dialog: MatDialog
-    ) {
+    constructor(private authService: AuthService, public dialog: MatDialog) {
         this.userForm = new FormGroup({
             username: new FormControl("", [Validators.required]),
             email: new FormControl(

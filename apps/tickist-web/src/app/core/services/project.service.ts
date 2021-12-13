@@ -1,20 +1,15 @@
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { AppStore } from "../../store";
 import { InviteUser, InviteUserStatus, Project } from "@data/projects";
 import { SimpleUser, User } from "@data/users/models";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { TasksFiltersService } from "./tasks-filters.service";
-import {
-    selectActiveProject,
-    selectActiveProjectsIds,
-    selectAllProjects,
-} from "../selectors/projects.selectors";
-import { AngularFirestore } from "@angular/fire/firestore";
+import { selectActiveProject, selectActiveProjectsIds, selectAllProjects } from "../selectors/projects.selectors";
 import { requestUpdateProject } from "../actions/projects/projects.actions";
 import { Editor } from "@data/users";
+import { collection, doc, Firestore, setDoc, updateDoc } from "@angular/fire/firestore";
 
 const projectsCollectionName = "projects";
 
@@ -28,7 +23,7 @@ export class ProjectService {
     selectedProjectsIds$: Observable<Array<string>>;
 
     constructor(
-        private db: AngularFirestore,
+        private firestore: Firestore,
         private store: Store,
         public snackBar: MatSnackBar,
         private router: Router,
@@ -47,10 +42,7 @@ export class ProjectService {
                 project: {
                     id: project.id,
                     changes: Object.assign({}, project, {
-                        inviteUserByEmail: [
-                            ...project.inviteUserByEmail,
-                            entry,
-                        ],
+                        inviteUserByEmail: [...project.inviteUserByEmail, entry],
                     }),
                 },
             })
@@ -58,12 +50,8 @@ export class ProjectService {
     }
 
     removeUserFormShareWithList(project, deletedUser) {
-        const shareWith = project.shareWith.filter(
-            (user) => user.id !== deletedUser.id
-        );
-        const shareWithIds = project.shareWithIds.filter(
-            (userId) => userId !== deletedUser.id
-        );
+        const shareWith = project.shareWith.filter((user) => user.id !== deletedUser.id);
+        const shareWithIds = project.shareWithIds.filter((userId) => userId !== deletedUser.id);
         this.store.dispatch(
             requestUpdateProject({
                 project: {
@@ -78,9 +66,7 @@ export class ProjectService {
     }
 
     deleteUserFromInviteList(project: Project, deletedUser: InviteUser) {
-        const inviteUserByEmail = project.inviteUserByEmail.filter(
-            (invitedUser) => invitedUser.email !== deletedUser.email
-        );
+        const inviteUserByEmail = project.inviteUserByEmail.filter((invitedUser) => invitedUser.email !== deletedUser.email);
         this.store.dispatch(
             requestUpdateProject({
                 project: {
@@ -91,50 +77,94 @@ export class ProjectService {
         );
     }
 
-    createProject(project: Project, user: User) {
-        const newProject = this.db.collection(projectsCollectionName).ref.doc();
+    async createProject(project: Project, user: User) {
+        const docRef = doc(collection(this.firestore, projectsCollectionName));
         const editor = {
             id: user.id,
             email: user.email,
             username: user.username,
         } as Editor;
         const newProjectWithLastEditor = { ...project, lastEditor: editor };
-        return newProject.set(
+        // await setDoc(
+        //     docRef,
+        //     JSON.parse(
+        //         JSON.stringify({
+        //             ...newProjectWithLastEditor,
+        //             id: docRef.id,
+        //         })
+        //     )
+        // );
+        await setDoc(
+            docRef,
             JSON.parse(
                 JSON.stringify({
                     ...newProjectWithLastEditor,
-                    id: newProject.id,
+                    id: docRef.id,
                 })
             )
         );
+
+        // const newProject = this.db.collection(projectsCollectionName).ref.doc();
+        // const editor = {
+        //     id: user.id,
+        //     email: user.email,
+        //     username: user.username,
+        // } as Editor;
+        // const newProjectWithLastEditor = { ...project, lastEditor: editor };
+        // return newProject.set(
+        //     JSON.parse(
+        //         JSON.stringify({
+        //             ...newProjectWithLastEditor,
+        //             id: newProject.id,
+        //         })
+        //     )
+        // );
     }
 
-    updateProject(project: Project, user: User, withoutSnackBar = false) {
+    async updateProject(project: Project, user: User, withoutSnackBar = false) {
         const editor = {
             id: user.id,
             email: user.email,
             username: user.username,
         } as Editor;
         const projectWithLastEditor = { ...project, lastEditor: editor };
-        return this.db
-            .collection(projectsCollectionName)
-            .doc(project.id)
-            .update(JSON.parse(JSON.stringify(projectWithLastEditor)));
+        const docRef = doc(this.firestore, `${projectsCollectionName}/${project.id}`);
+        await updateDoc(docRef, JSON.parse(JSON.stringify(projectWithLastEditor)));
+
+        // const editor = {
+        //     id: user.id,
+        //     email: user.email,
+        //     username: user.username,
+        // } as Editor;
+        // const projectWithLastEditor = { ...project, lastEditor: editor };
+        // return this.db
+        //     .collection(projectsCollectionName)
+        //     .doc(project.id)
+        //     .update(JSON.parse(JSON.stringify(projectWithLastEditor)));
     }
 
-    deleteProject(projectId: string) {
-        return this.db
-            .collection(projectsCollectionName)
-            .doc(projectId)
-            .update({ isActive: false });
+    async deleteProject(projectId: string) {
+        const docRef = doc(this.firestore, `${projectsCollectionName}/${projectId}`);
+        await updateDoc(docRef, { isActive: false });
+
+        //
+        // return this.db
+        //     .collection(projectsCollectionName)
+        //     .doc(projectId)
+        //     .update({ isActive: false });
     }
 
-    leaveProject(project: Project) {
+    async leaveProject(project: Project) {
+        const docRef = doc(this.firestore, `${projectsCollectionName}/${project.id}`);
+        await updateDoc(docRef, { isActive: false });
+
+        // @TODO not working
         // @TODO remove user from shareWith
         // @TODO remove user from shareWithIds
-        return this.db
-            .collection(projectsCollectionName)
-            .doc(project.id)
-            .update({ isActive: false });
+        //     return this.db
+        //         .collection(projectsCollectionName)
+        //         .doc(project.id)
+        //         .update({ isActive: false });
+        // }
     }
 }

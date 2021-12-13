@@ -1,14 +1,7 @@
-import { ChangeDetectorRef, Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { AngularFireMessaging } from "@angular/fire/messaging";
-import { map, mergeMapTo, takeUntil, withLatestFrom } from "rxjs/operators";
-import { UserService } from "../../../../core/services/user.service";
 import { Subject } from "rxjs";
-import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
-import {
-    removeNotificationPermission,
-    savefcmToken,
-} from "../../../../core/actions/user.actions";
+import { removeNotificationPermission } from "../../../../core/actions/user.actions";
 import { NotificationsService } from "../../services/notifications.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 

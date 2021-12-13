@@ -36,17 +36,11 @@ export class EditRepeatingOptionComponent implements OnInit {
             throw new Error("Task cannot be null");
         }
         this.defaultRepeatOptions =
-            this.configurationService.loadConfiguration()["commons"][
-                "DEFAULT_REPEAT_OPTIONS"
-            ];
+            this.configurationService.loadConfiguration().commons.defaultRepeatOptions;
         this.customRepeatOptions =
-            this.configurationService.loadConfiguration()["commons"][
-                "CUSTOM_REPEAT_OPTIONS"
-            ];
+            this.configurationService.loadConfiguration().commons.customRepeatOptions;
         this.fromRepeatingOptions =
-            this.configurationService.loadConfiguration()["commons"][
-                "FROM_REPEATING_OPTIONS"
-            ];
+            this.configurationService.loadConfiguration().commons.fromRepeatingOptions;
 
         if (this.task?.repeatDelta > 1) {
             this.repeatDelta = this.task.repeatDelta;

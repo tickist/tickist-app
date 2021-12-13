@@ -14,11 +14,11 @@ service cloud.firestore {
      }
 
      match /notifications/{notificationId} {
-        allow read, update: if request.auth.uid == resource.data.recipient
+        allow read, update: if request.auth.uid == resource.data.recipient;
      }
 
      match /tasks/{taskId} {
-        function isActive() {
+        function isTaskActive() {
         	return resource.data.isActive == true;
         }
 
@@ -27,8 +27,8 @@ service cloud.firestore {
         }
 
         allow create: if isAuthenticated();
-      	allow read: if isActive() && isTaskBelongsToMyProjects();
-        allow write: if isActive() && isTaskBelongsToMyProjects();
+      	allow read: if isTaskActive() && isTaskBelongsToMyProjects();
+        allow write: if isTaskActive() && isTaskBelongsToMyProjects();
 
 
      }
@@ -39,22 +39,22 @@ service cloud.firestore {
     }
 
     match /projects/{projectId} {
-        function isActive() {
+        function isProjectActive() {
         	return resource.data.isActive == true;
         }
 
         function canDelete() {
             return request.resource.data.isActive ||
-                (request.auth.uid == resource.data.owner && request.resource.data.isActive == false && resource.data.isActive == true)
+                (request.auth.uid == resource.data.owner && request.resource.data.isActive == false && resource.data.isActive == true);
         }
 
         function isProjectSharedWithAuthenticatedUser() {
             return request.auth.uid in resource.data.shareWithIds;
         }
       	allow create: if isAuthenticated();
-        allow read: if isProjectSharedWithAuthenticatedUser() && isActive() && isAuthenticated();
-        allow write: if isProjectSharedWithAuthenticatedUser() && isActive() && isAuthenticated();
-        allow update: if canDelete()
+        allow read: if isProjectSharedWithAuthenticatedUser() && isProjectActive() && isAuthenticated();
+        allow write: if isProjectSharedWithAuthenticatedUser() && isProjectActive() && isAuthenticated();
+        allow update: if canDelete();
     }
   }
 

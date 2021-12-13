@@ -6,9 +6,9 @@ import { MockTasksFiltersService } from "../../testing/mocks/tasks-filters-servi
 import { StoreModule } from "@ngrx/store";
 // import { reducers } from "../../store";
 import { RouterTestingModule } from "@angular/router/testing";
-import { AngularFireModule } from "@angular/fire";
-import { AngularFireAuthModule } from "@angular/fire/auth";
-import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { AngularFireModule } from "@angular/fire/compat/";
+import { AngularFireAuthModule } from "@angular/fire/compat/auth";
+import { AngularFirestoreModule } from "@angular/fire/compat/firestore";
 import { environment } from "../../../environments/environment.dev";
 
 // const project1FromApi = {

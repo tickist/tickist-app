@@ -21,7 +21,7 @@ import { selectProgressBarIsEnabled } from "../../../reducers/core.selectors";
 import { editUserSettingsRoutesName } from "../../../modules/edit-user-settings/routes-names";
 import { logout } from "../../actions/auth.actions";
 import { teamRoutesName } from "../../../modules/team/routes-names";
-import { AngularFireStorage } from "@angular/fire/storage";
+import { Storage } from "@angular/fire/storage";
 import { dashboardRoutesName } from "../../../modules/dashboard/routes.names";
 import { setActiveProject } from "../../actions/projects/active-project.actions";
 
@@ -59,7 +59,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         private media: MediaObserver,
         private router: Router,
         private renderer: Renderer2,
-        private storage: AngularFireStorage,
+        private storage: Storage,
         private store: Store
     ) {}
 

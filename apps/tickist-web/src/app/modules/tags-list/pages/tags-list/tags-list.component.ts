@@ -1,29 +1,33 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
-import {TagService} from '../../../../core/services/tag.service';
-import {Tag} from '@data/tags/models/tags';
-import {Task} from '@data/tasks/models/tasks';
-import {TaskService} from '../../../../core/services/task.service';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {UserService} from '../../../../core/services/user.service';
-import {User} from '@data/users/models';
-import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {FilterTagsDialogComponent} from '../../components/filter-tags-dialog/filter-tags-dialog.component';
-import {MatDialog} from '@angular/material/dialog';
-import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
-import {Store} from '@ngrx/store';
-import {takeUntil} from 'rxjs/operators';
-import {requestCreateTag} from '../../../../core/actions/tags.actions';
-import {selectFilteredTagsList} from '../../tags-filters.selectors';
-import {AngularFireAuth} from '@angular/fire/auth';
-import {TagWithTaskCounter} from '@data/tags/models/tag-with-task-counter';
-import {selectLoggedInUser} from '../../../../core/selectors/user.selectors';
-
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Observable, Subject } from "rxjs";
+import { TagService } from "../../../../core/services/tag.service";
+import { Tag } from "@data/tags/models/tags";
+import { Task } from "@data/tasks/models/tasks";
+import { TaskService } from "../../../../core/services/task.service";
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators,
+} from "@angular/forms";
+import { UserService } from "../../../../core/services/user.service";
+import { User } from "@data/users/models";
+import { ConfigurationService } from "../../../../core/services/configuration.service";
+import { FilterTagsDialogComponent } from "../../components/filter-tags-dialog/filter-tags-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
+import { TasksFiltersService } from "../../../../core/services/tasks-filters.service";
+import { Store } from "@ngrx/store";
+import { takeUntil } from "rxjs/operators";
+import { requestCreateTag } from "../../../../core/actions/tags.actions";
+import { selectFilteredTagsList } from "../../tags-filters.selectors";
+import { Auth } from "@angular/fire/auth";
+import { TagWithTaskCounter } from "@data/tags/models/tag-with-task-counter";
+import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 
 @Component({
-    selector: 'tickist-tags-list',
-    templateUrl: './tags-list.component.html',
-    styleUrls: ['./tags-list.component.scss']
+    selector: "tickist-tags-list",
+    templateUrl: "./tags-list.component.html",
+    styleUrls: ["./tags-list.component.scss"],
 })
 export class TagsListComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -34,23 +38,29 @@ export class TagsListComponent implements OnInit, OnDestroy {
     defaultTaskView: string;
     taskView: string;
     filteredTagsList$: Observable<TagWithTaskCounter[]>;
-    @ViewChild('form', {static: true}) createTagFormDOM;
+    @ViewChild("form", { static: true }) createTagFormDOM;
 
-    constructor(private fb: FormBuilder, private tagService: TagService, private  taskService: TaskService,
-                private userService: UserService, private configurationService: ConfigurationService,
-                public dialog: MatDialog, private authFire: AngularFireAuth,
-                private tasksFiltersService: TasksFiltersService, private store: Store) {
-
-    }
+    constructor(
+        private fb: FormBuilder,
+        private tagService: TagService,
+        private taskService: TaskService,
+        private userService: UserService,
+        private configurationService: ConfigurationService,
+        public dialog: MatDialog,
+        private authFire: Auth,
+        private tasksFiltersService: TasksFiltersService,
+        private store: Store
+    ) {}
 
     ngOnInit(): void {
         this.filteredTagsList$ = this.store.select(selectFilteredTagsList);
         this.createTagForm = new FormGroup({
-            'name': new FormControl('', Validators.required)
+            name: new FormControl("", Validators.required),
         });
-        this.store.select(selectLoggedInUser).pipe(
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe(user => this.user = user)
+        this.store
+            .select(selectLoggedInUser)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((user) => (this.user = user));
     }
 
     ngOnDestroy() {
@@ -61,12 +71,14 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     createTag(values): void {
         if (this.createTagForm.valid) {
-            const newTag = new Tag(<any> {name: values['name'], author: this.user.id});
-            this.store.dispatch(requestCreateTag({tag: newTag}));
+            const newTag = new Tag(<any>{
+                name: values["name"],
+                author: this.user.id,
+            });
+            this.store.dispatch(requestCreateTag({ tag: newTag }));
             this.createTagForm.reset();
             this.createTagFormDOM.resetForm();
         }
-
     }
 
     trackByFn(index, item): number {
@@ -75,13 +87,12 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     openFilterDialog(): void {
         const dialogRef = this.dialog.open(FilterTagsDialogComponent);
-        dialogRef.afterClosed()
+        dialogRef
+            .afterClosed()
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(result => {
+            .subscribe((result) => {
                 if (result) {
-
                 }
             });
     }
-
 }

@@ -9,48 +9,24 @@ import {
     savefcmToken,
     updateUser,
 } from "../actions/user.actions";
-import {
-    concatMap,
-    concatMapTo,
-    filter,
-    map,
-    mapTo,
-    mergeMap,
-    switchMap,
-    withLatestFrom,
-} from "rxjs/operators";
+import { concatMap, concatMapTo, filter, map, mapTo, mergeMap, switchMap, withLatestFrom } from "rxjs/operators";
 import { TasksFiltersService } from "../services/tasks-filters.service";
 import { UserService } from "../services/user.service";
 import { queryTasks } from "../actions/tasks/task.actions";
-import {
-    addSortByOptions,
-    setCurrentSortBy,
-} from "../actions/tasks/sort-tasks.actions";
+import { addSortByOptions, setCurrentSortBy } from "../actions/tasks/sort-tasks.actions";
 import { queryTags } from "../actions/tags.actions";
 import { queryProjects } from "../actions/projects/projects.actions";
-import { AngularFirestore } from "@angular/fire/firestore";
 import { User } from "@data/users/models";
 import { selectLoggedInUser } from "../selectors/user.selectors";
 import { Store } from "@ngrx/store";
 import { queryNotifications } from "../../modules/notifications/actions/notifications.actions";
 import { NotificationPermission } from "@data";
-import {
-    addEstimateTimeFiltersTasks,
-    setCurrentEstimateTimeFiltersTasks,
-} from "../actions/tasks/estimate-time-filters-tasks.actions";
-import {
-    addMainFilters,
-    setCurrentMainFilter,
-} from "../actions/tasks/main-filters-tasks.actions";
-import {
-    addNewAssignedToFilter,
-    setCurrentAssignedToFilter,
-} from "../actions/tasks/assigned-to-filters-tasks.actions";
+import { addEstimateTimeFiltersTasks, setCurrentEstimateTimeFiltersTasks } from "../actions/tasks/estimate-time-filters-tasks.actions";
+import { addMainFilters, setCurrentMainFilter } from "../actions/tasks/main-filters-tasks.actions";
+import { addNewAssignedToFilter, setCurrentAssignedToFilter } from "../actions/tasks/assigned-to-filters-tasks.actions";
 import { setCurrentTagsFilters } from "../actions/tasks/tags-filters-tasks.actions";
-import {
-    switchOffProgressBar,
-    switchOnProgressBar,
-} from "../actions/progress-bar.actions";
+import { switchOffProgressBar, switchOnProgressBar } from "../actions/progress-bar.actions";
+import { collection, collectionData, Firestore, query, where } from "@angular/fire/firestore";
 
 @Injectable()
 export class UserEffects {
@@ -58,13 +34,11 @@ export class UserEffects {
         this.actions$.pipe(
             ofType(queryUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            switchMap(([action, user]) =>
-                this.db
-                    .collection("users", (ref) =>
-                        ref.where("id", "==", user.id)
-                    )
-                    .stateChanges()
-            ),
+            switchMap(([action, user]) => {
+                const firebaseCollection = collection(this.firestore, "users");
+                const firebaseQuery = query(firebaseCollection, where("id", "==", user.id));
+                return collectionData(firebaseQuery, { idField: "id" });
+            }),
             concatMap((actions) => {
                 let updatedUser: User;
                 actions.forEach((action) => {
@@ -86,10 +60,7 @@ export class UserEffects {
         this.actions$.pipe(
             ofType(addUser),
             concatMap((action) => {
-                const assignedToFilters =
-                    TasksFiltersService.getDefaultAssignedToFilters(
-                        action.user
-                    );
+                const assignedToFilters = TasksFiltersService.getDefaultAssignedToFilters(action.user);
                 return [
                     addNewAssignedToFilter({ filters: assignedToFilters }),
                     setCurrentAssignedToFilter({
@@ -104,10 +75,8 @@ export class UserEffects {
         this.actions$.pipe(
             ofType(addUser),
             concatMap(() => {
-                const { filtersLt, filtersGt } =
-                    TasksFiltersService.getDefaultEstimateTimeFilters();
-                const { currentFilterLt, currentFilterGt } =
-                    TasksFiltersService.getDefaultCurrentEstimateTimeFilters();
+                const { filtersLt, filtersGt } = TasksFiltersService.getDefaultEstimateTimeFilters();
+                const { currentFilterLt, currentFilterGt } = TasksFiltersService.getDefaultCurrentEstimateTimeFilters();
                 return [
                     addEstimateTimeFiltersTasks({ filtersLt, filtersGt }),
                     setCurrentEstimateTimeFiltersTasks({
@@ -124,8 +93,7 @@ export class UserEffects {
             ofType(addUser),
             concatMapTo([
                 setCurrentMainFilter({
-                    currentFilter:
-                        TasksFiltersService.getDefaultCurrentMainFilter(),
+                    currentFilter: TasksFiltersService.getDefaultCurrentMainFilter(),
                 }),
                 addMainFilters({
                     filters: TasksFiltersService.getDefaultMainFilters(),
@@ -153,24 +121,14 @@ export class UserEffects {
             ofType(addUser),
             mapTo(
                 setCurrentTagsFilters({
-                    currentTagsFilter:
-                        TasksFiltersService.getDefaultCurrentTagsFilters(),
+                    currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters(),
                 })
             )
         )
     );
 
     loadUserData$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(addUser),
-            concatMapTo([
-                queryUser(),
-                queryTasks(),
-                queryTags(),
-                queryProjects(),
-                queryNotifications(),
-            ])
-        )
+        this.actions$.pipe(ofType(addUser), concatMapTo([queryUser(), queryTasks(), queryTags(), queryProjects(), queryNotifications()]))
     );
 
     updateUser$ = createEffect(
@@ -235,10 +193,5 @@ export class UserEffects {
         )
     );
 
-    constructor(
-        private actions$: Actions,
-        private db: AngularFirestore,
-        private store: Store,
-        private userService: UserService
-    ) {}
+    constructor(private actions$: Actions, private firestore: Firestore, private store: Store, private userService: UserService) {}
 }

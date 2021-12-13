@@ -20,13 +20,13 @@ import { resetStore } from "../../tickist.actions";
 import LogRocket from "logrocket";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "../../modules/auth/services/auth.service";
-import { AngularFirestore } from "@angular/fire/firestore";
 import { signupRoutesName } from "../../modules/sign-up/routes-names";
 import { User } from "@data/users/models";
 import { resetPasswordRoutesName } from "../../modules/reset-password/routes-names";
 import { firebaseError } from "../actions/errors.actions";
 import { selectLoggedInUser } from "../selectors/user.selectors";
 import { NGXLogger } from "ngx-logger";
+import { doc, docSnapshots, Firestore } from "@angular/fire/firestore";
 
 @Injectable()
 export class AuthEffects {
@@ -42,34 +42,31 @@ export class AuthEffects {
         this.actions$.pipe(
             ofType(fetchedLoginUser),
             withLatestFrom(this.store.select(selectLoggedInUser)),
-            switchMap(([action, user]) =>
-                this.db
-                    .collection("users")
-                    .doc(action.uid)
-                    .get()
-                    .pipe(
-                        filter((snapshot) => snapshot.exists),
-                        tap((snapshot: any) => {
-                            if (environment.production) {
-                                LogRocket.identify(snapshot.id, {
-                                    name: snapshot.data().username,
-                                    email: snapshot.data().email,
-                                });
-                            }
-                        }),
-                        map((snapshot: any) =>
-                            addUser({
-                                user: new User({
-                                    id: snapshot.id,
-                                    ...snapshot.data(),
-                                }),
-                            })
-                        ),
-                        catchError((err) =>
-                            of(firebaseError({ error: new Error(err) }))
-                        )
+            switchMap(([action, user]) => {
+                const docRef = doc(this.firestore, `users/${action.uid}`);
+                return docSnapshots(docRef).pipe(
+                    filter((snapshot: any) => snapshot.exists),
+                    tap((snapshot: any) => {
+                        if (environment.production) {
+                            LogRocket.identify(snapshot.id, {
+                                name: snapshot.data().username,
+                                email: snapshot.data().email,
+                            });
+                        }
+                    }),
+                    map((snapshot: any) =>
+                        addUser({
+                            user: new User({
+                                id: snapshot.id,
+                                ...snapshot.data(),
+                            }),
+                        })
+                    ),
+                    catchError((err) =>
+                        of(firebaseError({ error: new Error(err) }))
                     )
-            )
+                );
+            })
         )
     );
 
@@ -100,6 +97,7 @@ export class AuthEffects {
         defer(() =>
             this.authService.authState$.pipe(
                 map((state) => {
+                    console.log({ state });
                     if (state !== null) {
                         return fetchedLoginUser({ uid: state.uid });
                     }
@@ -116,7 +114,7 @@ export class AuthEffects {
         private location: Location,
         private store: Store,
         private userService: UserService,
-        private db: AngularFirestore,
+        private firestore: Firestore,
         private logger: NGXLogger
     ) {}
 }

@@ -1,11 +1,11 @@
 import { createFirebase, login, removeOldFirebaseData } from "../support/utils";
 import { Notification } from "@data";
 import { createUniqueId } from "@tickist/utils";
-import firebase from "firebase/app";
-import Timestamp = firebase.firestore.Timestamp;
+import { Timestamp } from "@angular/fire/firestore";
 
 describe("Notifications feature", () => {
     beforeEach(() => {
+        cy.logout();
         login();
         createFirebase();
         createNotification();
@@ -16,46 +16,31 @@ describe("Notifications feature", () => {
     });
 
     it("should see icon notification with notification counter", () => {
-        cy.get("tickist-notifications-icon", { timeout: 20000 }).should(
-            "be.visible"
-        );
-        cy.get("tickist-notifications-icon", { timeout: 20000 }).should(
-            "contain",
-            3
-        );
+        cy.get("tickist-notifications-icon", { timeout: 20000 }).should("be.visible");
+        cy.get("tickist-notifications-icon", { timeout: 20000 }).should("contain", 3);
         cy.log("Click on notification icon");
         cy.get('[data-cy="notification-icon"]').click();
         cy.log("see all notifications");
         cy.get("tickist-notification").should("have.length", 3);
         cy.get("tickist-notification").each(($notification, index) => {
-            expect($notification.find(".notification-title")).to.contain(
-                `Notification ${index + 1}`
-            );
-            expect($notification.find(".notification-description")).to.contain(
-                `Description of the notification`
-            );
+            expect($notification.find(".notification-title")).to.contain(`Notification ${index + 1}`);
+            expect($notification.find(".notification-description")).to.contain(`Description of the notification`);
             // eslint-disable-next-line no-unused-expressions,@typescript-eslint/no-unused-expressions
-            expect(
-                $notification.find('[data-cy="unread-notification"]').first()
-            ).to.be.exist;
+            expect($notification.find('[data-cy="unread-notification"]').first()).to.be.exist;
             // eslint-disable-next-line no-unused-expressions,@typescript-eslint/no-unused-expressions
-            expect($notification.find('[data-cy="read-notification"]').first())
-                .not.to.be.exist;
+            expect($notification.find('[data-cy="read-notification"]').first()).not.to.be.exist;
         });
 
         cy.get('[data-cy="markAllAs"]').click();
         cy.get("tickist-notifications-icon").should("contain", 0);
         cy.get("tickist-notification").each(($notification, index) => {
             // eslint-disable-next-line no-unused-expressions,@typescript-eslint/no-unused-expressions
-            expect($notification.find('[data-cy="read-notification"]').first())
-                .to.be.exist;
+            expect($notification.find('[data-cy="read-notification"]').first()).to.be.exist;
         });
         cy.log("unread again");
         cy.get("tickist-notification").each(($notification) => {
             // eslint-disable-next-line no-unused-expressions, @typescript-eslint/no-unused-expressions
-            cy.wrap($notification.find('[data-cy="read-notification"]'))
-                .first()
-                .click();
+            cy.wrap($notification.find('[data-cy="read-notification"]')).first().click();
         });
         cy.get("tickist-notifications-icon").should("contain", 3);
     });
@@ -95,10 +80,6 @@ function createNotification() {
         }),
     ];
     notifications.forEach((notification) => {
-        cy.callFirestore(
-            "set",
-            `notifications/${notification.id}`,
-            JSON.parse(JSON.stringify(notification))
-        );
+        cy.callFirestore("set", `notifications/${notification.id}`, JSON.parse(JSON.stringify(notification)));
     });
 }

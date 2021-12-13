@@ -1,75 +1,102 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {select, Store} from '@ngrx/store';
-import {User, UserLogin} from '@data/users/models';
-import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
-import {AngularFireAuth} from '@angular/fire/auth';
-import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
-import {fetchedLoginUser} from '../../../core/actions/auth.actions';
-import {Router} from '@angular/router';
-import firebase from 'firebase/app';
-import {NGXLogger} from "ngx-logger";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { select, Store } from "@ngrx/store";
+import { User, UserLogin } from "@data/users/models";
+import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
+import {
+    Auth,
+    authState,
+    createUserWithEmailAndPassword,
+    FacebookAuthProvider,
+    GoogleAuthProvider,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+} from "@angular/fire/auth";
+import { fetchedLoginUser } from "../../../core/actions/auth.actions";
+import { Router } from "@angular/router";
+import { NGXLogger } from "ngx-logger";
+
+import {
+    collection,
+    doc,
+    Firestore,
+    setDoc,
+    updateDoc,
+} from "@angular/fire/firestore";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class AuthService {
     user$: Observable<User>;
-    usersCollection: AngularFirestoreCollection;
-    readonly authState$: Observable<firebase.User | null> = this.fireAuth.authState;
+    readonly authState$: Observable<any | null> = authState(this.fireAuth);
 
-    constructor(private store: Store, private fireAuth: AngularFireAuth, private db: AngularFirestore,
-                private router: Router, private logger: NGXLogger) {
-        this.user$ = this.store.pipe(
-            select(selectLoggedInUser)
-        );
-        this.usersCollection = this.db.collection('users');
+    constructor(
+        private store: Store,
+        private fireAuth: Auth,
+        private firestore: Firestore,
+        private router: Router,
+        private logger: NGXLogger
+    ) {
+        this.user$ = this.store.pipe(select(selectLoggedInUser));
     }
 
     login(user: UserLogin) {
-        return this.fireAuth.signInWithEmailAndPassword(user.email, user.password);
+        return signInWithEmailAndPassword(
+            this.fireAuth,
+            user.email,
+            user.password
+        );
     }
 
     facebookAuth() {
-        return this.authLogin(new firebase.auth.FacebookAuthProvider())
+        return this.authLogin(new FacebookAuthProvider());
     }
 
     googleAuth() {
-        return this.authLogin(new firebase.auth.GoogleAuthProvider());
+        return this.authLogin(new GoogleAuthProvider());
     }
 
     authLogin(provider) {
-        return this.fireAuth.signInWithPopup(provider)
+        return signInWithPopup(this.fireAuth, provider);
     }
 
-    signup({email, password}) {
-        return this.fireAuth.createUserWithEmailAndPassword(email, password);
+    signup({ email, password }) {
+        return createUserWithEmailAndPassword(this.fireAuth, email, password);
     }
 
     logout() {
         return this.fireAuth.signOut();
     }
 
-    save(uid: string, username: string, email: string, additionalData?: Partial<User>) {
-        const user = new User(<any> {id: uid, username, email, ...additionalData});
-        this.usersCollection.doc(uid).set(JSON.parse(JSON.stringify(user)))
-            .then(() => {
-                this.store.dispatch(fetchedLoginUser({uid: uid}));
-                this.router.navigateByUrl('/');
-            })
-            .catch((err) => {
-                this.logger.error(err)
-            });
+    async save(
+        uid: string,
+        username: string,
+        email: string,
+        additionalData?: Partial<User>
+    ) {
+        const user = new User(<any>{
+            id: uid,
+            username,
+            email,
+            ...additionalData,
+        });
+        const docRef = doc(collection(this.firestore, `users`), uid);
+        try {
+            await setDoc(docRef, JSON.parse(JSON.stringify(user)));
+            this.store.dispatch(fetchedLoginUser({ uid: uid }));
+            this.router.navigateByUrl("/");
+        } catch (err) {
+            this.logger.error(err);
+        }
     }
 
     getProviderForId(id) {
         switch (id) {
-            case firebase.auth.GoogleAuthProvider.PROVIDER_ID:
-                return new firebase.auth.GoogleAuthProvider();
-            case firebase.auth.FacebookAuthProvider.PROVIDER_ID:
-                return new firebase.auth.FacebookAuthProvider();
+            case GoogleAuthProvider.PROVIDER_ID:
+                return new GoogleAuthProvider();
+            case FacebookAuthProvider.PROVIDER_ID:
+                return new FacebookAuthProvider();
         }
     }
 }
-
-

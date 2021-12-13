@@ -3,9 +3,17 @@ import { PromptUserForPasswordDialogComponent } from "../prompt-user-for-passwor
 import { takeUntil } from "rxjs/operators";
 import { AuthService } from "../../services/auth.service";
 import { Router } from "@angular/router";
-import { AngularFireAuth } from "@angular/fire/auth";
+import {
+    Auth,
+    fetchSignInMethodsForEmail,
+    linkWithCredential,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+} from "@angular/fire/auth";
 import { MatDialog } from "@angular/material/dialog";
 import { Subject } from "rxjs";
+import { OperationType } from "@firebase/auth";
+import { NGXLogger } from "ngx-logger";
 
 @Component({
     selector: "tickist-facebook-connect",
@@ -18,24 +26,22 @@ export class FacebookConnectComponent implements OnDestroy {
     constructor(
         private authService: AuthService,
         private router: Router,
-        private fireAuth: AngularFireAuth,
-        public dialog: MatDialog
+        private fireAuth: Auth,
+        public dialog: MatDialog,
+        private logger: NGXLogger
     ) {}
 
     async facebookAuth(): Promise<void> {
         try {
-            const user = await this.authService.facebookAuth();
-            if (user.additionalUserInfo.isNewUser) {
+            const userCredential = await this.authService.facebookAuth();
+            this.logger.debug({ userCredential });
+            if (userCredential.operationType === OperationType.SIGN_IN) {
                 this.authService.save(
-                    user.user.uid,
-                    (user.additionalUserInfo.profile as any).name,
-                    user.user.email,
+                    userCredential.user.uid,
+                    userCredential.user.displayName,
+                    userCredential.user.email,
                     {
-                        avatarUrl: (user.additionalUserInfo.profile as any)
-                            .picture.url
-                            ? (user.additionalUserInfo.profile as any).picture
-                                  .url
-                            : (user.additionalUserInfo.profile as any).picture,
+                        avatarUrl: userCredential.user.providerData[0].photoURL,
                         isFacebookConnection: true,
                     }
                 );
@@ -48,7 +54,8 @@ export class FacebookConnectComponent implements OnDestroy {
             ) {
                 const pendingCred = error.credential;
                 const email = error.email;
-                const methods = await this.fireAuth.fetchSignInMethodsForEmail(
+                const methods = await fetchSignInMethodsForEmail(
+                    this.fireAuth,
                     email
                 );
                 if (methods[0] === "password") {
@@ -60,11 +67,13 @@ export class FacebookConnectComponent implements OnDestroy {
                         .pipe(takeUntil(this.ngUnsubscribe))
                         .subscribe(async (password) => {
                             const userCredential =
-                                await this.fireAuth.signInWithEmailAndPassword(
+                                await signInWithEmailAndPassword(
+                                    this.fireAuth,
                                     email,
                                     password
                                 );
-                            await userCredential.user.linkWithCredential(
+                            await linkWithCredential(
+                                userCredential.user,
                                 pendingCred
                             );
 
@@ -74,10 +83,11 @@ export class FacebookConnectComponent implements OnDestroy {
                     const provider = this.authService.getProviderForId(
                         methods[0]
                     );
-                    const userCredentials = await this.fireAuth.signInWithPopup(
+                    const userCredentials = await signInWithPopup(
+                        this.fireAuth,
                         provider
                     );
-                    await userCredentials.user.linkWithCredential(pendingCred);
+                    await linkWithCredential(userCredentials.user, pendingCred);
 
                     await this.router.navigateByUrl("/");
                 }

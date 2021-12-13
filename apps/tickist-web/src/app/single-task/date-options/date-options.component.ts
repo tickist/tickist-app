@@ -40,9 +40,7 @@ export class DateOptionsComponent implements OnInit {
             throw new Error(`Attribute 'task' is required`);
         }
         this.typeFinishDateOptions =
-            this.configurationService.loadConfiguration()["commons"][
-                "TYPE_FINISH_DATE_OPTIONS"
-            ];
+            this.configurationService.loadConfiguration().commons.typeFinishDateOptions;
         this.finishDate = this.task.finishDate;
         this.finishTime = this.task.finishTime;
         this.typeFinishDate = this.task.typeFinishDate;

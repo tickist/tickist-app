@@ -1,28 +1,22 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {AuthLayoutComponent} from './auth-layout.component';
-import {TickistCoreModule} from '../../core.module';
-import {MockComponent} from 'ng-mocks';
-import {NavBarAuthPageComponent} from '../../header/nav-bar-auth-page/nav-bar-auth-page.component';
-import {RouterModule} from '@angular/router';
-import {APP_BASE_HREF} from '@angular/common';
-import {RouterTestingModule} from '@angular/router/testing';
+import { AuthLayoutComponent } from "./auth-layout.component";
+import { MockComponent } from "ng-mocks";
+import { NavBarAuthPageComponent } from "../../header/nav-bar-auth-page/nav-bar-auth-page.component";
+import { RouterTestingModule } from "@angular/router/testing";
 
-describe('DialogLayoutComponent', () => {
+describe("DialogLayoutComponent", () => {
     let component: AuthLayoutComponent;
     let fixture: ComponentFixture<AuthLayoutComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [
-                RouterTestingModule
-            ],
+            imports: [RouterTestingModule],
             declarations: [
                 AuthLayoutComponent,
-                MockComponent(NavBarAuthPageComponent)
-            ]
-        })
-            .compileComponents();
+                MockComponent(NavBarAuthPageComponent),
+            ],
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -31,7 +25,7 @@ describe('DialogLayoutComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

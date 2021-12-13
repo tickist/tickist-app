@@ -34,7 +34,6 @@ import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import {
     requestDeleteProject,
     requestUpdateProject,
-    updateProject,
 } from "../../../../core/actions/projects/projects.actions";
 import { homeRoutesName } from "../../../../routing.module.name";
 import { ProjectLeftPanel } from "../../models/project-list";
@@ -42,7 +41,6 @@ import {
     addNewActiveProjectId,
     deleteActiveProjectId,
 } from "../../../../core/actions/projects/active-projects-ids.actions";
-import { AngularFirestore } from "@angular/fire/firestore";
 import { NGXLogger } from "ngx-logger";
 
 @Component({

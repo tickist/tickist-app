@@ -1,8 +1,9 @@
 import { Component } from "@angular/core";
 import { AuthService } from "../../services/auth.service";
 import { Router } from "@angular/router";
-import { AngularFirestore } from "@angular/fire/firestore";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { NGXLogger } from "ngx-logger";
+import { OperationType } from "@firebase/auth";
 
 @Component({
     selector: "tickist-google-connect",
@@ -17,16 +18,15 @@ export class GoogleConnectComponent {
     ) {}
 
     googleAuth(): void {
-        this.authService.googleAuth().then((user) => {
-            this.logger.debug({ user });
-            if (user.additionalUserInfo.isNewUser) {
+        this.authService.googleAuth().then((userCredential) => {
+            this.logger.debug({ userCredential });
+            if (userCredential.operationType === OperationType.SIGN_IN) {
                 this.authService.save(
-                    user.user.uid,
-                    (user.additionalUserInfo.profile as any).name,
-                    user.user.email,
+                    userCredential.user.uid,
+                    userCredential.user.displayName,
+                    userCredential.user.email,
                     {
-                        avatarUrl: (user.additionalUserInfo.profile as any)
-                            .picture,
+                        avatarUrl: userCredential.user.providerData[0].photoURL,
                         isGoogleConnection: true,
                     }
                 );
