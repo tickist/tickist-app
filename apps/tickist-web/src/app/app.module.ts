@@ -94,18 +94,18 @@ console.log({ environment });
         FlexLayoutModule,
         ServiceWorkerModule.register("/combined-sw.js", {
             registrationStrategy: "registerWhenStable:30000",
-            enabled: environment.production,
+            enabled: environment.production && !environment.e2eTest,
         }),
         ServiceWorkerModule.register("/firebase-messaging-sw.js", {
             registrationStrategy: "registerWhenStable:30000",
-            enabled: !environment.production,
+            enabled: !environment.production && !environment.e2eTest,
         }),
         EffectsModule.forRoot([]),
         TickistRoutingModule,
         TickistCoreModule,
         IconsModule,
 
-        TickistNotificationsModule,
+        // TickistNotificationsModule,
         TickistLeftPanelModule,
         provideFirebaseApp(() => {
             const firebase = initializeApp(environment.firebase);

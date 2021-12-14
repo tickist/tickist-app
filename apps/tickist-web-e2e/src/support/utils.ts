@@ -6,6 +6,8 @@ export function createFirebase() {
     setFirebaseData();
 }
 
+export const userID = "7mr64tVcVv3085oo0Y1VheOQYJXV";
+
 export function login() {
     cy.visit("/", { timeout: 100000 });
     cy.get("input[name=email]").type("test@tickist.com");
@@ -13,54 +15,15 @@ export function login() {
     cy.get("button[type='submit']").click();
 }
 
-// export function logout() {
-//     cy.visit("/", { timeout: 100000 });
-//     cy.get("body").then(($body) => {
-//         const tickistNavBar = cy.wrap($body.find("tickist-nav"));
-//         const tickistNavBar2 = $body.find("tickist-nav-bar-landing-page");
-//
-//         console.log({ tickistNavBar });
-//         console.log({ tickistNavBar2 });
-//     });
-//
-//     cy.get("router-outlet").then(($elem) => {
-//         const userMenu = $elem.find('[data-cy="user-menu"]');
-//         if (userMenu.length > 0) {
-//             cy.get('[data-cy="user-menu"]').click();
-//         }
-//     });
-//
-//     cy.get("body").then(($body) => {
-//         if ($body.find('[data-cy="logout"]').length > 0) {
-//             cy.get('[data-cy="logout"]').click();
-//         }
-//     });
-//     // eslint-disable-next-line cypress/no-unnecessary-waiting
-//     cy.wait(2000);
-// }
-
 function setFirebaseData() {
-    const uid = "7mr64tVcVv3085oo0Y1VheOQYJXV";
-    const database = new Database(uid);
+    const database = new Database(userID);
     cy.wrap(database).as("database");
-    cy.callFirestore(
-        "set",
-        `projects/${database.inbox.id}`,
-        JSON.parse(JSON.stringify(database.inbox))
-    );
+    cy.callFirestore("set", `projects/${database.inbox.id}`, JSON.parse(JSON.stringify(database.inbox)));
     database.projects.forEach((project) => {
-        cy.callFirestore(
-            "set",
-            `projects/${project.id}`,
-            JSON.parse(JSON.stringify(project))
-        );
+        cy.callFirestore("set", `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
     });
     database.tasks.forEach((task) => {
-        cy.callFirestore(
-            "set",
-            `tasks/${task.id}`,
-            JSON.parse(JSON.stringify(task))
-        );
+        cy.callFirestore("set", `tasks/${task.id}`, JSON.parse(JSON.stringify(task)));
     });
 }
 
@@ -84,25 +47,17 @@ export function clickMenuElement(element: string) {
     cy.get("mat-list").contains(element).click();
 }
 
-export function clickOnProject(
-    projectName: string,
-    projectType = "Active projects"
-) {
+export function clickOnProject(projectName: string, projectType = "Active projects") {
     cy.get("mat-sidenav").find("mat-panel-title").contains(projectType).click();
     if (projectName === "Inbox") {
-        cy.get("mat-sidenav")
-            .find("mat-panel-title")
-            .contains(projectName)
-            .click();
+        cy.get("mat-sidenav").find("mat-panel-title").contains(projectName).click();
     } else if (projectName !== "All projects") {
         // @TODO remove force
         cy.get("tickist-single-project")
             .contains(projectName)
             .click({ force: true })
             .then(() => {
-                cy.get("tickist-single-project")
-                    .find("div.isActive")
-                    .should("exist");
+                cy.get("tickist-single-project").find("div.isActive").should("exist");
             });
     } else {
         cy.get(`[dataCy="${projectType}"]`).click();
@@ -117,28 +72,20 @@ export function clickOnProjectTypeLeftPanelMenu(projectType) {
     cy.get("mat-sidenav").find("mat-panel-title").contains(projectType).click();
 }
 
-export function clickOnEditProject(
-    projectName: string,
-    projectType = "Active projects"
-) {
+export function clickOnEditProject(projectName: string, projectType = "Active projects") {
     cy.get("mat-sidenav").find("mat-panel-title").contains(projectType).click();
     cy.get("tickist-single-project")
         .contains(projectName)
         .click({ force: true })
         .then(() => {
-            cy.get("tickist-single-project")
-                .find("div.isActive")
-                .should("exist");
+            cy.get("tickist-single-project").find("div.isActive").should("exist");
         });
     cy.get('[data-cy="edit-project"]').click();
 }
 
 export function clickOnCreateNewProject() {
     const projectType = "Active projects";
-    cy.get("mat-sidenav")
-        .find("mat-panel-title")
-        .contains("Active projects")
-        .click();
+    cy.get("mat-sidenav").find("mat-panel-title").contains("Active projects").click();
     // @TODO remove force
     cy.get(`mat-expansion-panel:contains("${projectType}")`, {
         timeout: 10000,
@@ -171,24 +118,18 @@ export function clickOnWeekDay(weekday: string) {
 export function compareTaskElementWithTaskObject($taskElement, taskObject) {
     expect($taskElement.find("tickist-task-name")).to.contain(taskObject.name);
     if (taskObject.finishDate) {
-        expect($taskElement).to.contain(
-            format(taskObject.finishDate, "dd-MM-yyyy")
-        );
+        expect($taskElement).to.contain(format(taskObject.finishDate, "dd-MM-yyyy"));
     }
     if (taskObject.finishTime) {
         expect($taskElement).to.contain(taskObject.finishTime);
     }
     // project
     $taskElement.find("#taskProjectNameIcon").click();
-    expect($taskElement.find("mat-select")).to.contain(
-        taskObject.taskProject.name
-    );
+    expect($taskElement.find("mat-select")).to.contain(taskObject.taskProject.name);
     $taskElement.find(".close-menu-icon").click();
     // task description
     $taskElement.find("#taskDescriptionIcon").click();
-    expect($taskElement.find(".task-description")).to.contain(
-        taskObject.description
-    );
+    expect($taskElement.find(".task-description")).to.contain(taskObject.description);
     $taskElement.find(".close-menu-icon").click();
     // steps
     if (taskObject.steps.length) {

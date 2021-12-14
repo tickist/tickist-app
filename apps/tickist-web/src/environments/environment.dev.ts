@@ -6,7 +6,7 @@ export const environment: IEnvironment = {
     name: "dev",
     e2eTest: false,
     emulator: true,
-    authEmulator: false,
+    authEmulator: true,
     emulatorIPAddress: "localhost:8080",
     experimentalForceLongPolling: false,
     logger: {
@@ -21,7 +21,6 @@ export const environment: IEnvironment = {
         storageBucket: "proven-reality-657.appspot.com",
         messagingSenderId: "924613962771",
         appId: "1:924613962771:web:52fe355b5723d6af",
-        vapidKey:
-            "BHrEaSmTKRL4PbuBdPKS0UplRKysPgtgUfVTNb7XGoddKkoK0F33Ow5GZrRTXjcbhzJoZDeAKhuyEFc3V-5hRx8",
+        vapidKey: "BHrEaSmTKRL4PbuBdPKS0UplRKysPgtgUfVTNb7XGoddKkoK0F33Ow5GZrRTXjcbhzJoZDeAKhuyEFc3V-5hRx8",
     },
 };

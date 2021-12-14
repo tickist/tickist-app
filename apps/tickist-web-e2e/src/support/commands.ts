@@ -65,7 +65,7 @@ const fbInstance = firebase.initializeApp(configuration.firebase);
 if (fbInstance) {
     (window as any).fbInstance = fbInstance;
 }
-if (!configuration.emulator) {
+if (configuration.emulator) {
     // firebase.firestore().settings({ experimentalForceLongPolling: true })
     console.log({ firebase });
     firebase.firestore().settings({
@@ -76,41 +76,6 @@ if (!configuration.emulator) {
     });
     firebase.auth().useEmulator("http://localhost:9099/");
 }
-
-// Cypress.Commands.add("clearIndexedDB", async () => {
-//     const databases = await window.indexedDB.databases();
-//
-//     await Cypress.Promise.all(
-//         databases.map(
-//             ({ name }) =>
-//                 new Cypress.Promise((resolve, reject) => {
-//                     const request = window.indexedDB.deleteDatabase(name);
-//
-//                     request.addEventListener("success", () => {
-//                         console.log(
-//                             "tsddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
-//                         );
-//                         // login();
-//                         // createFirebase();
-//                         return resolve;
-//                     });
-//                     // Note: we need to also listen to the "blocked" event
-//                     // (and resolve the promise) due to https://stackoverflow.com/a/35141818
-//                     request.addEventListener("blocked", resolve);
-//                     request.addEventListener("error", reject);
-//                 })
-//         )
-//     );
-// });
-//
-Cypress.Commands.add(
-    "clearAuth",
-    () =>
-        new Cypress.Promise(async (resolve) => {
-            firebase.auth().signOut();
-            resolve();
-        })
-);
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 attachCustomCommands({ Cypress, cy, firebase });

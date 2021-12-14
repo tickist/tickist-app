@@ -1,4 +1,4 @@
-import { createFirebase, login, removeOldFirebaseData } from "../support/utils";
+import { createFirebase, login, removeOldFirebaseData, userID } from "../support/utils";
 import { Notification } from "@data";
 import { createUniqueId } from "@tickist/utils";
 import { Timestamp } from "@angular/fire/firestore";
@@ -16,12 +16,13 @@ describe("Notifications feature", () => {
     });
 
     it("should see icon notification with notification counter", () => {
-        cy.get("tickist-notifications-icon", { timeout: 20000 }).should("be.visible");
-        cy.get("tickist-notifications-icon", { timeout: 20000 }).should("contain", 3);
+        cy.get("tickist-notifications-icon", { timeout: 40000 }).should("be.visible");
+        cy.get("tickist-notifications-icon", { timeout: 40000 }).should("contain", 3);
         cy.log("Click on notification icon");
         cy.get('[data-cy="notification-icon"]').click();
         cy.log("see all notifications");
         cy.get("tickist-notification").should("have.length", 3);
+        cy.pause();
         cy.get("tickist-notification").each(($notification, index) => {
             expect($notification.find(".notification-title")).to.contain(`Notification ${index + 1}`);
             expect($notification.find(".notification-description")).to.contain(`Description of the notification`);
@@ -47,21 +48,20 @@ describe("Notifications feature", () => {
 });
 
 function createNotification() {
-    const uid = Cypress.env("TEST_UID");
     const notifications = [
         new Notification({
             id: createUniqueId(),
-            recipient: uid as unknown as string,
-            title: "Notification 3",
+            recipient: userID as unknown as string,
+            title: "Notification 1",
             description: "Description of the notification",
             isRead: false,
             type: "notificationType1",
-            date: { seconds: 1578009600 } as Timestamp,
+            date: { seconds: 1577836800 } as Timestamp,
         }),
 
         new Notification({
             id: createUniqueId(),
-            recipient: uid as unknown as string,
+            recipient: userID as unknown as string,
             title: "Notification 2",
             description: "Description of the notification 2",
             isRead: false,
@@ -71,12 +71,12 @@ function createNotification() {
 
         new Notification({
             id: createUniqueId(),
-            recipient: uid as unknown as string,
-            title: "Notification 1",
+            recipient: userID as unknown as string,
+            title: "Notification 3",
             description: "Description of the notification 3",
             isRead: false,
             type: "notificationType1",
-            date: { seconds: 1577836800 } as Timestamp,
+            date: { seconds: 1578009600 } as Timestamp,
         }),
     ];
     notifications.forEach((notification) => {

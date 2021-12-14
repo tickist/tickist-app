@@ -1,12 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import {
-    concatMap,
-    map,
-    mergeMap,
-    switchMap,
-    withLatestFrom,
-} from "rxjs/operators";
+import { concatMap, map, mergeMap, switchMap, withLatestFrom } from "rxjs/operators";
 import { Store } from "@ngrx/store";
 import { Update } from "@ngrx/entity";
 import {
@@ -22,13 +16,7 @@ import { ProjectService } from "../services/project.service";
 import { Project } from "@data/projects";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { selectLoggedInUser } from "../selectors/user.selectors";
-import {
-    collection,
-    collectionChanges,
-    Firestore,
-    query,
-    where,
-} from "@angular/fire/firestore";
+import { collection, collectionChanges, Firestore, query, where } from "@angular/fire/firestore";
 
 @Injectable()
 export class ProjectsEffects {
@@ -38,10 +26,7 @@ export class ProjectsEffects {
             withLatestFrom(this.store.select(selectLoggedInUser)),
             switchMap(
                 ([, user]) => {
-                    const firebaseCollection = collection(
-                        this.firestore,
-                        "projects"
-                    );
+                    const firebaseCollection = collection(this.firestore, "projects");
                     const firebaseQuery = query(
                         firebaseCollection,
                         where("isActive", "==", true),
@@ -85,19 +70,13 @@ export class ProjectsEffects {
                 });
                 const returnsActions = [];
                 if (addedProjects.length > 0) {
-                    returnsActions.push(
-                        addProjects({ projects: addedProjects })
-                    );
+                    returnsActions.push(addProjects({ projects: addedProjects }));
                 }
                 if (updatedProject) {
-                    returnsActions.push(
-                        updateProject({ project: updatedProject })
-                    );
+                    returnsActions.push(updateProject({ project: updatedProject }));
                 }
                 if (deletedProjectId) {
-                    returnsActions.push(
-                        deleteProject({ projectId: deletedProjectId })
-                    );
+                    returnsActions.push(deleteProject({ projectId: deletedProjectId }));
                 }
                 return returnsActions;
             })
@@ -109,9 +88,7 @@ export class ProjectsEffects {
             this.actions$.pipe(
                 ofType(requestCreateProject),
                 withLatestFrom(this.store.select(selectLoggedInUser)),
-                mergeMap(([action, user]) =>
-                    this.projectService.createProject(action.project, user)
-                )
+                mergeMap(([action, user]) => this.projectService.createProject(action.project, user))
             ),
         { dispatch: false }
     );
@@ -121,12 +98,7 @@ export class ProjectsEffects {
             this.actions$.pipe(
                 ofType(requestUpdateProject),
                 withLatestFrom(this.store.select(selectLoggedInUser)),
-                mergeMap(([action, user]) =>
-                    this.projectService.updateProject(
-                        <Project>action.project.changes,
-                        user
-                    )
-                )
+                mergeMap(([action, user]) => this.projectService.updateProject(<Project>action.project.changes, user))
             ),
         { dispatch: false }
     );
@@ -135,17 +107,11 @@ export class ProjectsEffects {
         () =>
             this.actions$.pipe(
                 ofType(requestDeleteProject),
-                mergeMap((action) =>
-                    this.projectService.deleteProject(action.projectId)
-                ),
+                mergeMap((action) => this.projectService.deleteProject(action.projectId)),
                 map(() =>
-                    this.snackBar.open(
-                        "Project has been deleted successfully",
-                        "",
-                        {
-                            duration: 2000,
-                        }
-                    )
+                    this.snackBar.open("Project has been deleted successfully", "", {
+                        duration: 2000,
+                    })
                 )
             ),
         { dispatch: false }

@@ -1,11 +1,4 @@
-import {
-    clickOnEditProject,
-    clickOnProjectTypeLeftPanelMenu,
-    createFirebase,
-    login,
-    logout,
-    removeOldFirebaseData,
-} from "../../support/utils";
+import { clickOnEditProject, clickOnProjectTypeLeftPanelMenu, createFirebase, login, removeOldFirebaseData } from "../../support/utils";
 import { Project, ProjectType } from "@data";
 import { createUniqueId } from "@tickist/utils";
 
@@ -23,31 +16,20 @@ describe("Edit Projects", () => {
     it("should change project name", () => {
         const newProjectName = "Project new 1";
         const oldProjectName = "Project 1";
-        cy.get(`tickist-single-project:contains(${newProjectName})`).should(
-            "not.exist"
-        );
+        cy.get(`tickist-single-project:contains(${newProjectName})`).should("not.exist");
 
         clickOnEditProject(oldProjectName);
-        cy.get("input[name=projectName]").clear();
-        cy.get("input[name=projectName]").type(newProjectName);
+        cy.get("input[name=projectName]")
+            .focus()
+            .type("{selectall}{backspace}{selectall}{backspace}")
+            .then(() => cy.get("input[name=projectName]").should("be.empty"))
+            .then(() => cy.get("input[name=projectName]").type(newProjectName))
+            .then(() => cy.get("input[name=projectName]").should("have.value", newProjectName));
         cy.get('[data-cy="save project"]').click();
-        cy.get(`tickist-single-project:contains(${newProjectName})`).should(
-            "exist"
-        );
-        cy.get("tickist-tasks-from-projects")
-            .contains(newProjectName)
-            .should("exist");
+        cy.get(`tickist-single-project:contains(${newProjectName})`).should("exist");
+        cy.get("tickist-tasks-from-projects").contains(newProjectName).should("exist");
 
         clickOnEditProject(newProjectName);
-        cy.get("input[name=projectName]").clear();
-        cy.get("input[name=projectName]").type(oldProjectName);
-        cy.get('[data-cy="save project"]').click();
-        cy.get(`tickist-single-project:contains(${oldProjectName})`).should(
-            "exist"
-        );
-        cy.get("tickist-tasks-from-projects")
-            .contains(oldProjectName)
-            .should("exist");
     });
 });
 
@@ -73,11 +55,7 @@ describe("Change project type", () => {
                 ],
                 shareWithIds: [database.user.id],
             });
-            cy.callFirestore(
-                "set",
-                `projects/${project.id}`,
-                JSON.parse(JSON.stringify(project))
-            );
+            cy.callFirestore("set", `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
         });
     });
 
@@ -111,10 +89,7 @@ describe("Change project type", () => {
         cy.get(`tickist-single-project:contains(${projectName})`, {
             timeout: 10000,
         }).then(($project) => {
-            cy.wrap($project.find("div#project"))
-                .trigger("mouseenter")
-                .get('[data-cy="project-fast-menu"]')
-                .click();
+            cy.wrap($project.find("div#project")).trigger("mouseenter").get('[data-cy="project-fast-menu"]').click();
             cy.get("button").contains("Convert to Someday/maybe").click();
         });
         clickOnProjectTypeLeftPanelMenu("Someday/maybe projects");

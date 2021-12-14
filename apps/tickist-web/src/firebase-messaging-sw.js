@@ -3,11 +3,7 @@
 // If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-app.js";
-import {
-    getMessaging,
-    onBackgroundMessage,
-    isSupported,
-} from "https://www.gstatic.com/firebasejs/9.0.1/firebase-messaging-sw.js";
+import { getMessaging, onBackgroundMessage, isSupported } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-messaging-sw.js";
 
 const app = initializeApp({
     apiKey: "AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg",
@@ -24,10 +20,7 @@ isSupported().then((isSupported) => {
         const messaging = getMessaging(app);
 
         onBackgroundMessage(messaging, function (payload) {
-            console.log(
-                "[firebase-messaging-sw.js] Received background message ",
-                payload
-            );
+            console.log("[firebase-messaging-sw.js] Received background message ", payload);
             // Customize notification here
             const notificationTitle = "Background Message Title";
             const notificationOptions = {
@@ -35,10 +28,7 @@ isSupported().then((isSupported) => {
                 icon: "/firebase-logo.png",
             };
 
-            return self.registration.showNotification(
-                notificationTitle,
-                notificationOptions
-            );
+            return self.registration.showNotification(notificationTitle, notificationOptions);
         });
     }
 });
@@ -50,8 +40,6 @@ isSupported().then((isSupported) => {
  // Give the service worker access to Firebase Messaging.
  // Note that you can only use Firebase Messaging here, other Firebase libraries
  // are not available in the service worker.
- // importScripts('https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js');
- // importScripts('https://www.gstatic.com/firebasejs/7.6.2/firebase-messaging.js');
  // Initialize the Firebase app in the service worker by passing in the
  // messagingSenderId.
 
