@@ -88,7 +88,7 @@
     "core-js": "^2.5.4",
     "date-fns": "^2.0.1",
     "date-fns-timezone": "^0.1.4",
-    "firebase": "^8.2.2",
+    "firebase": "^9.6.5",
     "firebase-admin": "^9.4.2",
     "firebase-functions": "^3.13.0",
     "fs-extra": "^8.1.0",
