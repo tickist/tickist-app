@@ -16,9 +16,9 @@ import { TaskType } from "@data";
 
 describe("Tasks", () => {
     beforeEach(() => {
-        cy.logout();
-        login();
+        cy.login("7mr64tVcVv3085oo0Y1VheOQYJXV");
         createFirebase();
+        cy.visit("/");
     });
 
     afterEach(() => {
@@ -176,7 +176,7 @@ describe("Tasks", () => {
         it("should change task status to done after click on tickist-toggle-button", () => {
             const newTaskName = "new task";
             cy.log("Create new task");
-            cy.get("tickist-add-task-footer-button").find("button").click();
+            cy.get("tickist-add-task-footer-button", { timeout: 600000 }).find("button").click();
             cy.url().should("include", "home").should("include", "edit-task");
             cy.log("fill main form");
             cy.get("input[name=taskName]").type(newTaskName);
@@ -224,7 +224,7 @@ describe("Tasks", () => {
             });
 
             it("should change finish date when task has enabled repeat options", () => {
-                cy.get(`tickist-single-task:contains("${taskName}")`).then(($task) => {
+                cy.get(`tickist-single-task:contains("${taskName}")`, { timeout: 600000 }).then(($task) => {
                     cy.wrap($task.find("tickist-toggle-button")).click();
                 });
                 clickOnProject(projectName);

@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Store } from "@ngrx/store";
 import { getArchivedTasks, saveToStore } from "../actions/archive.actions";
-import { map, switchMap, withLatestFrom } from "rxjs/operators";
+import { concatMap, map, switchMap, withLatestFrom } from "rxjs/operators";
 import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
 import { combineLatest, forkJoin } from "rxjs";
 import { Task } from "@data";
@@ -20,6 +20,7 @@ import {
     orderBy,
     collectionData,
     sortedChanges,
+    collectionChanges,
 } from "@angular/fire/firestore";
 
 @Injectable()
@@ -29,22 +30,16 @@ export class ArchiveEffects {
             ofType(getArchivedTasks),
             switchMap(
                 ({ projectId, userId }) => {
-                    const firebaseCollection = collection(
-                        this.firestore,
-                        "tasks"
-                    );
+                    const firebaseCollection = collection(this.firestore, "tasks");
                     const firebaseQuery = query(
                         firebaseCollection,
                         where("isActive", "==", true),
-                        where(
-                            "taskProject.shareWithIds",
-                            "array-contains",
-                            userId
-                        ),
+                        where("taskProject.shareWithIds", "array-contains", userId),
                         where("taskProject.id", "==", projectId),
                         where("isDone", "==", true)
                     );
-                    return sortedChanges(firebaseQuery);
+                    console.log(collectionChanges(firebaseQuery));
+                    return collectionChanges(firebaseQuery);
                 }
                 // this.db
                 //     .collection("tasks", (ref) =>
@@ -60,13 +55,19 @@ export class ArchiveEffects {
                 //     )
                 //     .valueChanges()
             ),
-            map((tasks) => saveToStore({ archivedTasks: tasks as any }))
+            // concatMap((actions) => {
+            //     const addedTasks: Task[] = [];
+            //
+            // }),
+            map((tasks) => {
+                const archivedTasks = [];
+                tasks.forEach((task) => {
+                    archivedTasks.push(task.doc.data());
+                });
+                return saveToStore({ archivedTasks });
+            })
         )
     );
 
-    constructor(
-        private actions$: Actions,
-        private firestore: Firestore,
-        private store: Store
-    ) {}
+    constructor(private actions$: Actions, private firestore: Firestore, private store: Store) {}
 }

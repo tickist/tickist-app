@@ -15,6 +15,13 @@ export function login() {
     cy.get("button[type='submit']").click();
 }
 
+export function logout() {
+    cy.visit("/");
+    cy.get("tickist-user-avatar").click();
+    cy.get('[data-cy="logout"]').click();
+    cy.visit("/");
+}
+
 function setFirebaseData() {
     const database = new Database(userID);
     cy.wrap(database).as("database");
@@ -48,7 +55,7 @@ export function clickMenuElement(element: string) {
 }
 
 export function clickOnProject(projectName: string, projectType = "Active projects") {
-    cy.get("mat-sidenav").find("mat-panel-title").contains(projectType).click();
+    cy.get("mat-sidenav", { timeout: 60000 }).find("mat-panel-title").contains(projectType).click();
     if (projectName === "Inbox") {
         cy.get("mat-sidenav").find("mat-panel-title").contains(projectName).click();
     } else if (projectName !== "All projects") {
@@ -65,11 +72,11 @@ export function clickOnProject(projectName: string, projectType = "Active projec
 }
 
 export function clickOnTagsLeftPanelMenu() {
-    cy.get("mat-sidenav").find("mat-panel-title").contains("Tags").click();
+    cy.get("mat-sidenav", { timeout: 600000 }).find("mat-panel-title").contains("Tags").click();
 }
 
 export function clickOnProjectTypeLeftPanelMenu(projectType) {
-    cy.get("mat-sidenav").find("mat-panel-title").contains(projectType).click();
+    cy.get("mat-sidenav", { timeout: 600000 }).find("mat-panel-title").contains(projectType).click();
 }
 
 export function clickOnEditProject(projectName: string, projectType = "Active projects") {

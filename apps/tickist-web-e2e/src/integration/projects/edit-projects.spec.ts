@@ -1,12 +1,24 @@
-import { clickOnEditProject, clickOnProjectTypeLeftPanelMenu, createFirebase, login, removeOldFirebaseData } from "../../support/utils";
+import {
+    clickMenuElement,
+    clickOnEditProject,
+    clickOnProject,
+    clickOnProjectTypeLeftPanelMenu,
+    createFirebase,
+    login,
+    logout,
+    removeOldFirebaseData,
+} from "../../support/utils";
 import { Project, ProjectType } from "@data";
 import { createUniqueId } from "@tickist/utils";
 
 describe("Edit Projects", () => {
     beforeEach(() => {
-        cy.logout();
-        login();
+        // // cy.logout();
+        // logout();
+        // login();
+        cy.login("7mr64tVcVv3085oo0Y1VheOQYJXV");
         createFirebase();
+        cy.visit("/");
     });
 
     afterEach(() => {
@@ -14,6 +26,7 @@ describe("Edit Projects", () => {
     });
 
     it("should change project name", () => {
+        cy.visit("/home/dashboard", { timeout: 600000 });
         const newProjectName = "Project new 1";
         const oldProjectName = "Project 1";
         cy.get(`tickist-single-project:contains(${newProjectName})`).should("not.exist");
@@ -36,9 +49,8 @@ describe("Edit Projects", () => {
 describe("Change project type", () => {
     let projectName;
     beforeEach(() => {
-        cy.logout();
-        login();
         createFirebase();
+
         cy.get("@database").then((database: any) => {
             projectName = "Project with projectType Active";
             const project = new Project({
@@ -56,16 +68,16 @@ describe("Change project type", () => {
                 shareWithIds: [database.user.id],
             });
             cy.callFirestore("set", `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
+            // logout();
+            // login();
+            cy.login("7mr64tVcVv3085oo0Y1VheOQYJXV");
         });
     });
 
-    afterEach(() => {
-        removeOldFirebaseData();
-    });
-
     it("should change project type and next check projects counters", () => {
+        cy.visit("/home", { timeout: 600000 });
         cy.get(`mat-expansion-panel:contains("Active projects")`, {
-            timeout: 30000,
+            timeout: 60000,
         }).should("contain", "3");
         cy.get(`mat-expansion-panel:contains("Someday/maybe projects")`, {
             timeout: 20000,
@@ -85,9 +97,10 @@ describe("Change project type", () => {
     });
 
     it("should change project type using fast menu", () => {
+        cy.visit("/", { timeout: 600000 });
         clickOnProjectTypeLeftPanelMenu("Active projects");
         cy.get(`tickist-single-project:contains(${projectName})`, {
-            timeout: 10000,
+            timeout: 20000,
         }).then(($project) => {
             cy.wrap($project.find("div#project")).trigger("mouseenter").get('[data-cy="project-fast-menu"]').click();
             cy.get("button").contains("Convert to Someday/maybe").click();

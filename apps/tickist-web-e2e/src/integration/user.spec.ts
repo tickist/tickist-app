@@ -8,6 +8,7 @@ describe("Create and delete user", () => {
     beforeEach(() => {
         removeOldFirebaseData();
         cy.logout();
+        cy.visit("/");
     });
 
     it("should create and next delete user using form from user settings", () => {
@@ -23,12 +24,9 @@ describe("Create and delete user", () => {
         cy.get("input[name=password]").type(userPassword);
         cy.get('[data-cy="delete-user-account-confirmation"]').click();
         cy.log("Login attempt");
-        cy.get("input[name=email]").type(userEmail);
+        cy.get("input[name=email]", { timeout: 600000 }).type(userEmail);
         cy.get("input[name=password]").type(userPassword);
         cy.get("button[type='submit']").click();
-        cy.get("mat-error").should(
-            "contain",
-            "Firebase: Error (auth/user-not-found)."
-        );
+        cy.get("mat-error", { timeout: 600000 }).should("contain", "Firebase: Error (auth/user-not-found).");
     });
 });

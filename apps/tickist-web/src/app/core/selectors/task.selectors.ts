@@ -13,42 +13,25 @@ import { Tag } from "@data/tags/models/tags";
 import * as _ from "lodash";
 import { orderBy } from "lodash";
 
-import {
-    selectActiveProjects,
-    selectActiveProjectsIds,
-} from "./projects.selectors";
+import { selectActiveProjects, selectActiveProjectsIds } from "./projects.selectors";
 import { selectCurrentSortBy } from "./sort-by-tasks.selectors";
 import { selectLoggedInUser } from "./user.selectors";
 import { TaskType } from "@data";
 
 export const selectTasksState = createFeatureSelector<TasksState>("task");
 
-export const allTasksLoaded = createSelector(
-    selectTasksState,
-    (tasksState) => tasksState.allTasksLoaded
-);
+export const allTasksLoaded = createSelector(selectTasksState, (tasksState) => tasksState.allTasksLoaded);
 
-export const selectTaskById = (taskId: number) =>
-    createSelector(
-        selectTasksState,
-        (tasksState) => tasksState.entities[taskId]
-    );
+export const selectTaskById = (taskId: number) => createSelector(selectTasksState, (tasksState) => tasksState.entities[taskId]);
 
-export const selectAllTasks = createSelector(
-    selectTasksState,
-    fromCourse.selectAll
-);
+export const selectAllTasks = createSelector(selectTasksState, fromCourse.selectAll);
 
-export const selectInboxTasksCounter = createSelector(
-    selectAllTasks,
-    selectLoggedInUser,
-    (tasks, user) =>
-        tasks.filter((task) => task.taskProject.id === user.inboxPk).length
-);
+export const selectInboxTasksCounter = createSelector(selectAllTasks, selectLoggedInUser, (tasks, user) => {
+    console.log({ tasks });
+    return tasks.filter((task) => task.taskProject.id === user.inboxPk).length;
+});
 
-export const selectAllUndoneTasks = createSelector(selectAllTasks, (tasks) =>
-    tasks.filter((task) => task.isDone === false)
-);
+export const selectAllUndoneTasks = createSelector(selectAllTasks, (tasks) => tasks.filter((task) => task.isDone === false));
 
 export const selectTasksStreamInTagsView = createSelector(
     selectAllTasks,
@@ -59,26 +42,13 @@ export const selectTasksStreamInTagsView = createSelector(
     selectCurrentEstimateTimeFilter,
     selectCurrentSortBy,
     selectLoggedInUser,
-    (
-        tasks,
-        tagsFilter,
-        assignedToFilter,
-        mainFilter,
-        searchFilter,
-        estimateTimeFilter,
-        currentSortBy,
-        user
-    ) => {
+    (tasks, tagsFilter, assignedToFilter, mainFilter, searchFilter, estimateTimeFilter, currentSortBy, user) => {
         if (!user || tasks.length === 0) return [];
         tasks = tasks
             .filter(Function(`return ${mainFilter.value}`)())
             .filter(Function(`return ${assignedToFilter.value}`)())
-            .filter(
-                Function(`return ${estimateTimeFilter.currentFilterLt.value}`)()
-            )
-            .filter(
-                Function(`return ${estimateTimeFilter.currentFilterGt.value}`)()
-            );
+            .filter(Function(`return ${estimateTimeFilter.currentFilterLt.value}`)())
+            .filter(Function(`return ${estimateTimeFilter.currentFilterGt.value}`)());
 
         if (tagsFilter.value instanceof Array) {
             const tags = new Set(tagsFilter.value);
@@ -114,29 +84,14 @@ export const selectTasksStreamInProjectsView = createSelector(
     selectCurrentEstimateTimeFilter,
     selectActiveProjectsIds,
     selectCurrentSortBy,
-    (
-        tasks,
-        tagsFilter,
-        assignedToFilter,
-        mainFilter,
-        searchFilter,
-        estimateTimeFilter,
-        activeProjectIds,
-        currentSortBy
-    ) => {
+    (tasks, tagsFilter, assignedToFilter, mainFilter, searchFilter, estimateTimeFilter, activeProjectIds, currentSortBy) => {
         tasks = tasks
             .filter(Function(`return ${mainFilter.value}`)())
             .filter(Function(`return ${assignedToFilter.value}`)())
-            .filter(
-                Function(`return ${estimateTimeFilter.currentFilterLt.value}`)()
-            )
-            .filter(
-                Function(`return ${estimateTimeFilter.currentFilterGt.value}`)()
-            );
+            .filter(Function(`return ${estimateTimeFilter.currentFilterLt.value}`)())
+            .filter(Function(`return ${estimateTimeFilter.currentFilterGt.value}`)());
         if (activeProjectIds.length > 0) {
-            tasks = tasks.filter(
-                (task) => activeProjectIds.indexOf(task.taskProject.id) > -1
-            );
+            tasks = tasks.filter((task) => activeProjectIds.indexOf(task.taskProject.id) > -1);
         }
         if (tagsFilter.value instanceof Array) {
             const tags = new Set(tagsFilter.value);
@@ -155,13 +110,8 @@ export const selectTasksStreamInProjectsView = createSelector(
             tasks = tasks.filter((task) => task.tags.length === 0);
         }
         if (searchFilter) {
-            const re = new RegExp(
-                searchFilter.replace(/[^\w\s.&-]+/g, ""),
-                "i"
-            );
-            tasks = tasks.filter((task) =>
-                re.test(task.name.replace(/[^\w\s.&-]+/g, ""))
-            );
+            const re = new RegExp(searchFilter.replace(/[^\w\s.&-]+/g, ""), "i");
+            tasks = tasks.filter((task) => re.test(task.name.replace(/[^\w\s.&-]+/g, "")));
         }
         if (currentSortBy) {
             tasks = orderBy(tasks, currentSortBy.sortKeys, currentSortBy.order);
@@ -171,39 +121,25 @@ export const selectTasksStreamInProjectsView = createSelector(
     }
 );
 
-export const nextActionTasks = createSelector(
-    selectAllTasks,
-    selectLoggedInUser,
-    selectSearchTasksText,
-    (tasks, user, searchFilter) => {
-        if (searchFilter) {
-            const re = new RegExp(searchFilter, "i");
-            tasks = tasks.filter((task) => re.test(task.name));
-        }
-        return orderBy(
-            tasks
-                .filter((task) => task.owner.id === user.id)
-                .filter((task) => task.taskType === TaskType.nextAction),
-            ["priority", (task) => _.deburr(task.name.toLowerCase())],
-            ["asc", "asc"]
-        );
+export const nextActionTasks = createSelector(selectAllTasks, selectLoggedInUser, selectSearchTasksText, (tasks, user, searchFilter) => {
+    if (searchFilter) {
+        const re = new RegExp(searchFilter, "i");
+        tasks = tasks.filter((task) => re.test(task.name));
     }
-);
+    return orderBy(
+        tasks.filter((task) => task.owner.id === user.id).filter((task) => task.taskType === TaskType.nextAction),
+        ["priority", (task) => _.deburr(task.name.toLowerCase())],
+        ["asc", "asc"]
+    );
+});
 
-export const needInfoTasks = createSelector(
-    selectAllTasks,
-    selectLoggedInUser,
-    selectSearchTasksText,
-    (tasks, user, searchFilter) => {
-        if (searchFilter) {
-            const re = new RegExp(searchFilter, "i");
-            tasks = tasks.filter((task) => re.test(task.name));
-        }
-        return tasks
-            .filter((task) => task.owner.id === user.id)
-            .filter((task) => task.taskType === TaskType.needInfo);
+export const needInfoTasks = createSelector(selectAllTasks, selectLoggedInUser, selectSearchTasksText, (tasks, user, searchFilter) => {
+    if (searchFilter) {
+        const re = new RegExp(searchFilter, "i");
+        tasks = tasks.filter((task) => re.test(task.name));
     }
-);
+    return tasks.filter((task) => task.owner.id === user.id).filter((task) => task.taskType === TaskType.needInfo);
+});
 
 export const projectWithoutNextActionTasks = createSelector(
     selectAllTasks,
@@ -212,38 +148,20 @@ export const projectWithoutNextActionTasks = createSelector(
     (tasks, projects, searchFilter) => {
         let projectsWithoutNextActionTasks = [];
         projects.forEach((project) => {
-            if (
-                !tasks.some(
-                    (task) =>
-                        task.taskType === TaskType.nextAction &&
-                        task.taskProject.id === project.id
-                )
-            ) {
+            if (!tasks.some((task) => task.taskType === TaskType.nextAction && task.taskProject.id === project.id)) {
                 projectsWithoutNextActionTasks.push(project);
             }
         });
         if (searchFilter) {
             const re = new RegExp(searchFilter, "i");
-            projectsWithoutNextActionTasks =
-                projectsWithoutNextActionTasks.filter((task) =>
-                    re.test(task.name)
-                );
+            projectsWithoutNextActionTasks = projectsWithoutNextActionTasks.filter((task) => re.test(task.name));
         }
         return projectsWithoutNextActionTasks;
     }
 );
 
-export const nextActionTasksLength = createSelector(
-    nextActionTasks,
-    (tasks) => tasks.length
-);
+export const nextActionTasksLength = createSelector(nextActionTasks, (tasks) => tasks.length);
 
-export const needInfoTasksLength = createSelector(
-    needInfoTasks,
-    (tasks) => tasks.length
-);
+export const needInfoTasksLength = createSelector(needInfoTasks, (tasks) => tasks.length);
 
-export const projectWithoutNextActionTasksLength = createSelector(
-    projectWithoutNextActionTasks,
-    (projects) => projects.length
-);
+export const projectWithoutNextActionTasksLength = createSelector(projectWithoutNextActionTasks, (projects) => projects.length);

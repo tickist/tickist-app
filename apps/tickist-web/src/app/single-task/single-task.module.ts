@@ -19,7 +19,7 @@ import { SingleTaskExtendedComponent } from "./single-task-extended/single-task-
 import { NoTasksComponent } from "./no-tasks/no-tasks.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ChangeUserIdToUserNamePipe } from "./change-user-id-to-user-name.pipe";
-import { AngularResizedEventModule } from "angular-resize-event";
+import { AngularResizeEventModule } from "angular-resize-event";
 import { TaskTypeLabelComponent } from "./task-type-label/task-type-label.component";
 import { SingleTask2Component } from "./shared/single-task";
 
@@ -33,7 +33,7 @@ import { SingleTask2Component } from "./shared/single-task";
         TickistSharedModule,
         RouterModule,
         FontAwesomeModule,
-        AngularResizedEventModule,
+        AngularResizeEventModule,
     ],
     providers: [],
     exports: [

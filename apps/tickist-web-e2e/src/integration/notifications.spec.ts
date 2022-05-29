@@ -5,10 +5,10 @@ import { Timestamp } from "@angular/fire/firestore";
 
 describe("Notifications feature", () => {
     beforeEach(() => {
-        cy.logout();
-        login();
+        cy.login("7mr64tVcVv3085oo0Y1VheOQYJXV");
         createFirebase();
         createNotification();
+        cy.visit("/");
     });
 
     afterEach(() => {
@@ -22,7 +22,7 @@ describe("Notifications feature", () => {
         cy.get('[data-cy="notification-icon"]').click();
         cy.log("see all notifications");
         cy.get("tickist-notification").should("have.length", 3);
-        cy.pause();
+        // cy.pause();
         cy.get("tickist-notification").each(($notification, index) => {
             expect($notification.find(".notification-title")).to.contain(`Notification ${index + 1}`);
             expect($notification.find(".notification-description")).to.contain(`Description of the notification`);

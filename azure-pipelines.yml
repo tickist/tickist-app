@@ -29,7 +29,7 @@ steps:
             npm install -g cross-env
             npm install -g npm
             npm install -g node-gyp make
-            npm ci
+            npm ci --legacy-peer-deps
         displayName: 'npm install'
 
     -   script: |
@@ -46,12 +46,13 @@ steps:
 
     -   script: |
             npm run cy:verify
-            npm run build tickist-functions
+            npm run build:functions
             firebase use development
             firebase emulators:exec "npm run e2e" --only auth,firestore,functions  --import=./tools/e2e-testing-data
         displayName: 'e2e tests'
         env:
             SERVICE_ACCOUNT: $(FIREBASE_DEV_SERVICE_ACCOUNT)
+            CYPRESS_VERIFY_TIMEOUT: 300000
 
     #- script: |
     #    ng deploy --token $FIREBASE_TOKEN

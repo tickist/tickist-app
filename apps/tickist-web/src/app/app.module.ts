@@ -40,6 +40,7 @@ import {
     enableMultiTabIndexedDbPersistence,
     getFirestore,
     provideFirestore,
+    setLogLevel,
 } from "@angular/fire/firestore";
 import { connectStorageEmulator, getStorage, provideStorage } from "@angular/fire/storage";
 import { getMessaging, isSupported, provideMessaging } from "@angular/fire/messaging";
@@ -111,20 +112,26 @@ console.log({ environment });
             const firebase = initializeApp(environment.firebase);
             let config = {};
             if (environment.emulator) {
+                console.log("TEST ###############################################");
                 config = {
-                    experimentalForceLongPolling: true,
+                    merge: true,
+                    // experimentalForceLongPolling: true,
+                    experimentalAutoDetectLongPolling: true,
                 };
             }
+            console.log({ config });
             initializeFirestore(firebase, config);
             return firebase;
         }),
         provideFirestore(() => {
             const firestore = getFirestore();
+            setLogLevel("info");
             if (environment.emulator) {
-                connectFirestoreEmulator(firestore, "localhost", 8080, {});
-            } else {
-                enableIndexedDbPersistence(firestore);
+                connectFirestoreEmulator(firestore, "127.0.0.1", 8080, {});
             }
+            // if (!environment.e2eTest) {
+            //     enableIndexedDbPersistence(firestore);
+            // }
             // enableMultiTabIndexedDbPersistence(firestore);
             return firestore;
         }),

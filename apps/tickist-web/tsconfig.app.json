@@ -1,9 +1,9 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "types": []
-  },
-  "include": ["**/*.ts", "**/*.js"],
-  "exclude": ["src/test-setup.ts", "**/*.spec.ts"]
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../dist/out-tsc",
+        "types": []
+    },
+    "include": ["**/*.ts", "**/*.js"],
+    "exclude": ["src/test-setup.ts", "**/*.spec.ts", "jest.config.ts"]
 }

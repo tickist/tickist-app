@@ -44,10 +44,12 @@ export class ProjectsEffects {
             ),
             concatMap((actions) => {
                 console.log({ actions });
+                console.log({ actions });
                 const addedProjects: Project[] = [];
                 let deletedProjectId: string;
                 let updatedProject: Update<Project>;
                 actions.forEach((action) => {
+                    console.log(action.doc.data());
                     if (action.type === "added") {
                         const data: any = action.doc.data();
                         addedProjects.push(

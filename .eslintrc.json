@@ -102,16 +102,16 @@
                         "code": 140
                     }
                 ],
-                "ngrx/avoid-dispatching-multiple-actions-sequentially": "warn",
-                "ngrx/good-action-hygiene": "warn",
-                "ngrx/no-dispatch-in-effects": "warn",
-                "ngrx/no-effect-decorator": "warn",
-                "ngrx/no-effect-decorator-and-creator": "error",
-                "ngrx/no-effects-in-providers": "error",
-                "ngrx/no-multiple-actions-in-effects": "warn",
-                "ngrx/no-reducer-in-key-names": "warn",
-                "ngrx/no-typed-global-store": "warn",
-                "ngrx/use-selector-in-select": "error",
+//                "ngrx/avoid-dispatching-multiple-actions-sequentially": "warn",
+//                "ngrx/good-action-hygiene": "warn",
+//                "ngrx/no-dispatch-in-effects": "warn",
+//                "ngrx/no-effect-decorator": "warn",
+//                "ngrx/no-effect-decorator-and-creator": "error",
+//                "ngrx/no-effects-in-providers": "error",
+//                "ngrx/no-multiple-actions-in-effects": "warn",
+//                "ngrx/no-reducer-in-key-names": "warn",
+//                "ngrx/no-typed-global-store": "warn",
+//                "ngrx/use-selector-in-select": "error",
                 "no-bitwise": "error",
                 "no-caller": "error",
                 "no-console": [
@@ -154,10 +154,10 @@
                 "no-unused-expressions": "error",
                 "no-var": "error",
                 "prefer-const": "error",
-                "radix": "error",
-                "rxjs/no-unsafe-catch": "error",
-                "rxjs/no-unsafe-first": "error",
-                "rxjs/no-unsafe-switchmap": "error"
+                "radix": "error"
+//                "rxjs/no-unsafe-catch": "error",
+//                "rxjs/no-unsafe-first": "error",
+//                "rxjs/no-unsafe-switchmap": "error"
             },
             "plugins": [
                 "eslint-plugin-ngrx",

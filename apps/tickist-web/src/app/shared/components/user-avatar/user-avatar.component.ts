@@ -37,11 +37,9 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
 
     ngOnInit() {
         const [width, height] = this.size.split("x");
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         this.imgStyle = { "width.px": width, "height.px": height };
-        this.spinnerDiameter = Math.max(
-            parseInt(width, 10),
-            parseInt(height, 10)
-        );
+        this.spinnerDiameter = Math.max(parseInt(width, 10), parseInt(height, 10));
         this.styles.forEach((style) => {
             this.imgStyle[style.name] = style.value;
         });
@@ -72,16 +70,12 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private createAvatarPath(): string {
-        return `${USER_AVATAR_PATH}${
-            this.userId
-        }/${this.addMaxAvatarSizeToAvatarUrl()}`;
+        return `${USER_AVATAR_PATH}${this.userId}/${this.addMaxAvatarSizeToAvatarUrl()}`;
     }
 
     private addMaxAvatarSizeToAvatarUrl() {
         const extension = this.avatarUrl.slice(-4);
-        return (
-            this.avatarUrl.slice(0, -4) + "_" + this.maxAvatarSize + extension
-        );
+        return this.avatarUrl.slice(0, -4) + "_" + this.maxAvatarSize + extension;
     }
 
     private updateUrlFromFirebaseStorage() {

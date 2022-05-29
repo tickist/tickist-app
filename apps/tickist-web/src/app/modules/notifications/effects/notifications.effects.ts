@@ -15,15 +15,7 @@ import { selectAllUnreadNotificationsIds } from "../selectors/notifications.sele
 import { NotificationsService } from "../services/notifications.service";
 import { Store } from "@ngrx/store";
 import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
-import {
-    collection,
-    collectionChanges,
-    Firestore,
-    limit,
-    orderBy,
-    query,
-    where,
-} from "@angular/fire/firestore";
+import { collection, collectionChanges, Firestore, limit, orderBy, query, where } from "@angular/fire/firestore";
 
 @Injectable()
 export class NotificationsEffects {
@@ -38,16 +30,8 @@ export class NotificationsEffects {
                 //         .limit(30)
                 //         .orderBy("date")
                 // ).stateChanges();
-                const firebaseCollection = collection(
-                    this.firestore,
-                    "notifications"
-                );
-                const firebaseQuery = query(
-                    firebaseCollection,
-                    where("recipient", "==", user.id),
-                    limit(30),
-                    orderBy("date")
-                );
+                const firebaseCollection = collection(this.firestore, "notifications");
+                const firebaseQuery = query(firebaseCollection, where("recipient", "==", user.id), limit(30), orderBy("date"));
                 return collectionChanges(firebaseQuery);
             }),
             concatMap((actions) => {
@@ -73,9 +57,7 @@ export class NotificationsEffects {
                 });
                 const returnsActions = [];
                 if (addedNotifications.length > 0) {
-                    returnsActions.push(
-                        addNotifications({ notifications: addedNotifications })
-                    );
+                    returnsActions.push(addNotifications({ notifications: addedNotifications }));
                 }
                 if (updatedNotifications.length > 0) {
                     returnsActions.push(
@@ -94,13 +76,9 @@ export class NotificationsEffects {
         () =>
             this.actions$.pipe(
                 ofType(markAllNotificationsAsRead),
-                withLatestFrom(
-                    this.store.select(selectAllUnreadNotificationsIds)
-                ),
+                withLatestFrom(this.store.select(selectAllUnreadNotificationsIds)),
                 map(([, unreadNotificationsIds]) => {
-                    this.notificationsService.markAllAsRead(
-                        unreadNotificationsIds
-                    );
+                    this.notificationsService.markAllAsRead(unreadNotificationsIds);
                 })
             ),
         { dispatch: false }
@@ -111,9 +89,7 @@ export class NotificationsEffects {
             this.actions$.pipe(
                 ofType(updateNotification),
                 map((action) => {
-                    this.notificationsService.updateNotification(
-                        action.notification.changes
-                    );
+                    this.notificationsService.updateNotification(action.notification.changes);
                 })
             ),
         { dispatch: false }

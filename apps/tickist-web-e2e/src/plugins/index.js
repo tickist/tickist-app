@@ -61,6 +61,9 @@ module.exports = (on, config) => {
     //         }
     //     })
     // );
+    const extendedConfig = cypressFirebasePlugin(on, config, admin);
 
-    return cypressFirebasePlugin(on, config, admin);
+    // Add other plugins/tasks such as code coverage here
+
+    return extendedConfig;
 };

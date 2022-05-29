@@ -1,62 +1,52 @@
 {
-  "root": "apps/tickist-functions",
-  "sourceRoot": "apps/tickist-functions/src",
-  "projectType": "application",
-  "prefix": "tickist-functions",
-  "generators": {},
-  "targets": {
-    "build": {
-      "executor": "@nrwl/node:build",
-      "options": {
-        "outputPath": "dist/apps/tickist-functions",
-        "main": "apps/tickist-functions/src/main.ts",
-        "tsConfig": "apps/tickist-functions/tsconfig.app.json",
-        "assets": [
-          "apps/tickist-functions/src/assets"
-        ],
-        "buildLibsFromSource": true
-      },
-      "configurations": {
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/tickist-functions/src/environments/environment.ts",
-              "with": "apps/tickist-functions/src/environments/environment.prod.ts"
+    "sourceRoot": "apps/tickist-functions/src",
+    "projectType": "application",
+    "prefix": "tickist-functions",
+    "generators": {},
+    "targets": {
+        "build": {
+            "executor": "@nrwl/node:webpack",
+            "options": {
+                "outputPath": "dist/apps/tickist-functions",
+                "main": "apps/tickist-functions/src/main.ts",
+                "tsConfig": "apps/tickist-functions/tsconfig.app.json",
+                "assets": ["apps/tickist-functions/src/assets"],
+                "buildLibsFromSource": true
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "extractLicenses": true,
+                    "inspect": false,
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/tickist-functions/src/environments/environment.ts",
+                            "with": "apps/tickist-functions/src/environments/environment.prod.ts"
+                        }
+                    ]
+                }
+            },
+            "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+            "executor": "@nrwl/node:node",
+            "options": {
+                "buildTarget": "tickist-functions-functions:build"
             }
-          ]
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": ["apps/tickist-functions/src/**/*.ts", "apps/tickist-functions/src/**/*.html"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "options": {
+                "jestConfig": "apps/tickist-functions/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "outputs": ["coverage/apps/tickist-functions"]
         }
-      },
-      "outputs": [
-        "{options.outputPath}"
-      ]
-    },
-    "serve": {
-      "executor": "@nrwl/node:execute",
-      "options": {
-        "buildTarget": "tickist-functions-functions:build"
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/tickist-functions/src/**/*.ts",
-          "apps/tickist-functions/src/**/*.html"
-        ]
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "options": {
-        "jestConfig": "apps/tickist-functions/jest.config.js",
-        "passWithNoTests": true
-      },
-      "outputs": [
-        "coverage/apps/tickist-functions"
-      ]
     }
-  }
 }

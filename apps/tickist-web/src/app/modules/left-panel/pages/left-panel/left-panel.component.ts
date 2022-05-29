@@ -41,18 +41,13 @@ export class LeftPanelComponent implements OnInit, OnDestroy {
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe((user) => {
+                console.log({ user });
                 this.inboxPk = user.inboxPk;
             });
         this.inboxTasksCounter$ = this.store.select(selectInboxTasksCounter);
-        this.activeProjectCounter$ = this.store.select(
-            selectProjectTypeCounter(ProjectType.active)
-        );
-        this.maybeProjectCounter$ = this.store.select(
-            selectProjectTypeCounter(ProjectType.maybe)
-        );
-        this.remiderProjectCounter$ = this.store.select(
-            selectProjectTypeCounter(ProjectType.routineReminder)
-        );
+        this.activeProjectCounter$ = this.store.select(selectProjectTypeCounter(ProjectType.active));
+        this.maybeProjectCounter$ = this.store.select(selectProjectTypeCounter(ProjectType.maybe));
+        this.remiderProjectCounter$ = this.store.select(selectProjectTypeCounter(ProjectType.routineReminder));
     }
 
     ngOnDestroy() {
@@ -61,31 +56,18 @@ export class LeftPanelComponent implements OnInit, OnDestroy {
     }
 
     navigateToTags() {
-        this.router.navigate([
-            homeRoutesName.home,
-            tasksTagsViewRoutesName.tasksTagsView,
-        ]);
+        this.router.navigate([homeRoutesName.home, tasksTagsViewRoutesName.tasksTagsView]);
     }
 
     navigateToInbox() {
-        this.router.navigate([
-            homeRoutesName.home,
-            tasksProjectsViewRoutesName.tasksProjectsView,
-            this.inboxPk,
-        ]);
+        this.router.navigate([homeRoutesName.home, tasksProjectsViewRoutesName.tasksProjectsView, this.inboxPk]);
     }
 
     navigateToTasksTreeView() {
-        this.router.navigate([
-            homeRoutesName.home,
-            tasksTreeViewRoutesName.tasksTreeView,
-        ]);
+        this.router.navigate([homeRoutesName.home, tasksTreeViewRoutesName.tasksTreeView]);
     }
 
     navigateToStatisticsView() {
-        this.router.navigate([
-            homeRoutesName.home,
-            statisticsRoutesName.statistics,
-        ]);
+        this.router.navigate([homeRoutesName.home, statisticsRoutesName.statistics]);
     }
 }
