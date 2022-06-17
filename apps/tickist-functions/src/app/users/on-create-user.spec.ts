@@ -24,9 +24,7 @@ describe('onCreateUser', function () {
     it('first test', async () => {
         const wrapped = test.wrap(api.onCreateUser);
         await wrapped({
-            data: jest.fn(() => {
-                return {email: 'bill@tickist.com', id: 1, username: 'bill'};
-            })
+            data: jest.fn(() => ({email: 'bill@tickist.com', id: 1, username: 'bill'}))
         });
     });
 

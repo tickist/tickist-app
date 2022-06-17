@@ -14,12 +14,8 @@ export const initialState: TagsFiltersState = {
 
 const tagsFiltersReducer = createReducer(
     initialState,
-    on(addTagsFilters, (state, props) => {
-        return {filters: props.filters, currentFilter: state.currentFilter};
-    }),
-    on(setCurrentTagsListFilter, (state, props) => {
-        return {filters: state.filters, currentFilter: props.currentFilter};
-    })
+    on(addTagsFilters, (state, props) => ({filters: props.filters, currentFilter: state.currentFilter})),
+    on(setCurrentTagsListFilter, (state, props) => ({filters: state.filters, currentFilter: props.currentFilter}))
 )
 
 export function reducer(state: TagsFiltersState, action: Action) {

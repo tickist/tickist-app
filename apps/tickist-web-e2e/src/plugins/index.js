@@ -10,10 +10,10 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-const wp = require('@cypress/webpack-preprocessor');
-const pathsPlugin = require('tsconfig-paths-webpack-plugin');
-const path = require('path');
-
+// const wp = require('@cypress/webpack-preprocessor');
+// const pathsPlugin = require('tsconfig-paths-webpack-plugin');
+// const path = require('path');
+//
 const admin = require("firebase-admin");
 const cypressFirebasePlugin = require("cypress-firebase").plugin;
 
@@ -29,41 +29,41 @@ module.exports = (on, config) => {
     //     return args
     // });
 
+    on("task", {
+        failed: require("cypress-failed-log/src/failed")(),
+    });
 
-    on('task', {
-        failed: require('cypress-failed-log/src/failed')(),
-    })
+    // on('file:preprocessor',
+    //     wp({
+    //         webpackOptions: {
+    //             resolve: {
+    //                 extensions: ['.ts', '.js'],
+    //                 plugins: [
+    //                     new pathsPlugin({
+    //                         configFile: path.join(__dirname, '../../tsconfig.e2e.json'),
+    //                         extensions: [".ts", ".js"]
+    //                     })
+    //                 ]
+    //             },
+    //             module: {
+    //                 rules: [
+    //                     {
+    //                         test: /\.ts$/,
+    //                         loader: 'ts-loader',
+    //                         options: {
+    //                             configFile: path.join(__dirname, '../../tsconfig.e2e.json'),
+    //                             // https://github.com/TypeStrong/ts-loader/pull/685
+    //                             experimentalWatchApi: true
+    //                         }
+    //                     },
+    //                 ],
+    //             }
+    //         }
+    //     })
+    // );
+    const extendedConfig = cypressFirebasePlugin(on, config, admin);
 
+    // Add other plugins/tasks such as code coverage here
 
-    on('file:preprocessor',
-        wp({
-            webpackOptions: {
-                resolve: {
-                    extensions: ['.ts', '.js'],
-                    plugins: [
-                        new pathsPlugin({
-                            configFile: path.join(__dirname, '../../tsconfig.e2e.json'),
-                            extensions: [".ts", ".js"]
-                        })
-                    ]
-                },
-                module: {
-                    rules: [
-                        {
-                            test: /\.ts$/,
-                            loader: 'ts-loader',
-                            options: {
-                                configFile: path.join(__dirname, '../../tsconfig.e2e.json'),
-                                // https://github.com/TypeStrong/ts-loader/pull/685
-                                experimentalWatchApi: true
-                            }
-                        },
-                    ],
-                }
-            }
-        })
-    );
-
-
-    return cypressFirebasePlugin(on, config, admin);
+    return extendedConfig;
 };

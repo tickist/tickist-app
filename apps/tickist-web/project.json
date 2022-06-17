@@ -1,0 +1,151 @@
+{
+    "projectType": "application",
+    "generators": {
+        "@nrwl/angular:component": {
+            "style": "scss"
+        }
+    },
+    "sourceRoot": "apps/tickist-web/src",
+    "prefix": "tickist",
+    "targets": {
+        "build": {
+            "executor": "@angular-devkit/build-angular:browser",
+            "options": {
+                "outputPath": "dist/apps/tickist-web",
+                "index": "apps/tickist-web/src/index.html",
+                "main": "apps/tickist-web/src/main.ts",
+                "polyfills": "apps/tickist-web/src/polyfills.ts",
+                "stylePreprocessorOptions": {
+                    "includePaths": [
+                        "node_modules",
+                        "apps/tickist-web/src/app/shared/",
+                        "apps/tickist-web/src/",
+                        "apps/tickist-web/src/app/"
+                    ]
+                },
+                "tsConfig": "apps/tickist-web/tsconfig.app.json",
+                "aot": false,
+                "assets": [
+                    "apps/tickist-web/src/favicon.png",
+                    "apps/tickist-web/src/assets",
+                    "apps/tickist-web/src/firebase-messaging-sw.js",
+                    "apps/tickist-web/src/combined-sw.js",
+                    "apps/tickist-web/src/manifest.json",
+                    "apps/tickist-web/src/robots.txt"
+                ],
+                "styles": [
+                    "apps/tickist-web/src/styles.scss",
+                    "node_modules/primeng/resources/primeng.css",
+                    "node_modules/primeng/resources/themes/nova-dark/theme.css"
+                ],
+                "scripts": ["node_modules/chart.js/dist/Chart.js", "node_modules/quill/dist/quill.js"],
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "buildOptimizer": false,
+                "sourceMap": true,
+                "optimization": false,
+                "namedChunks": true
+            },
+            "configurations": {
+                "dev": {
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/tickist-web/src/environments/environment.ts",
+                            "with": "apps/tickist-web/src/environments/environment.dev.ts"
+                        }
+                    ]
+                },
+                "ci": {
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/tickist-web/src/environments/environment.ts",
+                            "with": "apps/tickist-web/src/environments/environment.ci.ts"
+                        }
+                    ]
+                },
+                "e2e": {
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/tickist-web/src/environments/environment.ts",
+                            "with": "apps/tickist-web/src/environments/environment.e2e.ts"
+                        }
+                    ]
+                },
+                "production": {
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/tickist-web/src/environments/environment.ts",
+                            "with": "apps/tickist-web/src/environments/environment.prod.ts"
+                        }
+                    ],
+                    "optimization": true,
+                    "outputHashing": "all",
+                    "namedChunks": false,
+                    "aot": true,
+                    "extractLicenses": true,
+                    "vendorChunk": false,
+                    "buildOptimizer": true,
+                    "serviceWorker": true,
+                    "ngswConfigPath": "apps/tickist-web/src/ngsw-config.json",
+                    "budgets": [
+                        {
+                            "type": "initial",
+                            "maximumWarning": "2mb",
+                            "maximumError": "5mb"
+                        }
+                    ]
+                }
+            },
+            "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+            "executor": "@angular-devkit/build-angular:dev-server",
+            "options": {
+                "browserTarget": "tickist-web:build",
+                "host": "0.0.0.0"
+            },
+            "configurations": {
+                "dev": {
+                    "browserTarget": "tickist-web:build:dev"
+                },
+                "e2e": {
+                    "browserTarget": "tickist-web:build:e2e"
+                },
+                "ci": {
+                    "browserTarget": "tickist-web:build:ci"
+                },
+                "production": {
+                    "browserTarget": "tickist-web:build:production"
+                }
+            }
+        },
+        "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+                "browserTarget": "tickist-web:build"
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": ["apps/tickist-web/src/**/*.ts", "apps/tickist-web/src/**/*.html"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "options": {
+                "jestConfig": "apps/tickist-web/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "outputs": ["coverage/apps/tickist-web"]
+        },
+        "deploy": {
+            "executor": "@angular/fire:deploy",
+            "options": {
+                "project": "staging",
+                "token": "$FIREBASE_TOKEN",
+                "non-interactive": true
+            }
+        }
+    }
+}

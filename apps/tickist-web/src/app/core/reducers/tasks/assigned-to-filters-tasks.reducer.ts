@@ -20,22 +20,16 @@ export const initialState: AssignedToFiltersTasks = {
 
 const assignedToFiltersTasksReducer = createReducer(
     initialState,
-    on(addNewAssignedToFilter, (state, props) => {
-        return {
+    on(addNewAssignedToFilter, (state, props) => ({
             filters: [
                 ...state.filters.filter(filter => filter.fixed),
                 ...props.filters], currentFilter: state.currentFilter
-        };
-    }),
-    on(deleteNonFixedAssignedTo, (state, props) => {
-        return {
+        })),
+    on(deleteNonFixedAssignedTo, (state, props) => ({
             filters: state.filters.filter(filter => filter.fixed),
             currentFilter: state.currentFilter.fixed ? state.currentFilter : undefined
-        };
-    }),
-    on(setCurrentAssignedToFilter, (state, props) => {
-        return {filters: state.filters, currentFilter: props.currentFilter};
-    }),
+        })),
+    on(setCurrentAssignedToFilter, (state, props) => ({filters: state.filters, currentFilter: props.currentFilter})),
 )
 
 export function reducer(state: AssignedToFiltersTasks, action: Action) {

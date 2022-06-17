@@ -264,7 +264,7 @@
                             </mat-radio-button>
                             <mat-radio-button [value]="99">every&hellip;</mat-radio-button>
                         </mat-radio-group>
-                        <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value == 99"
+                        <div *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value === 99"
                              fxLayout.xs="column" fxLayout="row" fxLayoutAlign.xs="center none"
                              fxLayoutAlign="space-between center">
 
@@ -283,7 +283,7 @@
 
                         </div>
                         <div id="from-repeating-wrapper"
-                             *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value != 0">
+                             *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value !== 0">
                             <span>From:</span>
                             <mat-radio-group formControlName="fromRepeating" fxLayout="column">
                                 <mat-radio-button *ngFor="let option of fromRepetingOptions" [value]="option.id">

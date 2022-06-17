@@ -15,36 +15,26 @@ export const initialState: ArchiveState = {
 
 const archiveReducer = createReducer(
     initialState,
-    on(getArchivedTasks, (state, props) => {
-        return {
+    on(getArchivedTasks, (state, props) => ({
             isLoading: true,
             tasks: []
-        }
-    }),
-    on(startFetching, (state, props) => {
-        return {
+        })),
+    on(startFetching, (state, props) => ({
             isLoading: true,
             tasks: [...state.tasks]
-        }
-    }),
-    on(stopFetching, (state, props) => {
-        return {
+        })),
+    on(stopFetching, (state, props) => ({
             isLoading: false,
             tasks: [...state.tasks]
-        }
-    }),
-    on(saveToStore, (state, props) => {
-        return {
+        })),
+    on(saveToStore, (state, props) => ({
             isLoading: false,
             tasks: [...props.archivedTasks]
-        }
-    }),
-    on(clearArchive, (state, props) => {
-        return {
+        })),
+    on(clearArchive, (state, props) => ({
             isLoading: false,
             tasks: []
-        }
-    })
+        }))
 )
 
 export function reducer(state: ArchiveState, action: Action) {

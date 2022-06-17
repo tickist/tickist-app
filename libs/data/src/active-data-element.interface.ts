@@ -1,6 +1,6 @@
-import {stateActiveDateElement} from './state-active-date-element.enum';
+import { StateActiveDateElement } from "./state-active-date-element.enum";
 
 export interface IActiveDateElement {
     date: Date;
-    state: stateActiveDateElement;
+    state: StateActiveDateElement;
 }

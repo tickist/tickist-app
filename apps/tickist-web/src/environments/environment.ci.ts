@@ -1,24 +1,25 @@
-import {IEnvironment} from './environment.interface';
-import {NgxLoggerLevel} from "ngx-logger";
+import { IEnvironment } from "./environment.interface";
+import { NgxLoggerLevel } from "ngx-logger";
 
 export const environment: IEnvironment = {
-    name: 'CI',
+    name: "CI",
     production: true,
     e2eTest: true,
     emulator: true,
     authEmulator: true,
-    emulatorIPAddress: '127.0.0.1:8080',
+    emulatorIPAddress: "127.0.0.1:8080",
     experimentalForceLongPolling: true,
     logger: {
-        level: NgxLoggerLevel.DEBUG
+        level: NgxLoggerLevel.DEBUG,
     },
     firebase: {
-        apiKey: "AIzaSyDwy1Vcqodkt8lqdRNy8hh8wqrB1kX7sCU",
-        authDomain: "tickist-ci.firebaseapp.com",
-        databaseURL: "https://tickist-ci.firebaseio.com",
-        projectId: "tickist-ci",
-        storageBucket: "tickist-ci.appspot.com",
-        messagingSenderId: "714177725631",
-        appId: "1:714177725631:web:1e74160d0a525af47c320a"
-    }
+        apiKey: "AIzaSyDu-vOMokFGi5I3oV5tLN5PIqctHyCNcNg",
+        authDomain: "proven-reality-657.firebaseapp.com",
+        databaseURL: "https://proven-reality-657.firebaseio.com",
+        projectId: "proven-reality-657",
+        storageBucket: "proven-reality-657.appspot.com",
+        messagingSenderId: "924613962771",
+        appId: "1:924613962771:web:52fe355b5723d6af",
+        vapidKey: "BHrEaSmTKRL4PbuBdPKS0UplRKysPgtgUfVTNb7XGoddKkoK0F33Ow5GZrRTXjcbhzJoZDeAKhuyEFc3V-5hRx8",
+    },
 };

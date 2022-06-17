@@ -14,12 +14,8 @@ export const initialState: ProjectsFiltersState = {
 
 const projectsFiltersReducer = createReducer(
     initialState,
-    on(addProjectsFilters, (state, props) => {
-        return {filters: props.filters, currentFilter: state.currentFilter};
-    }),
-    on(setCurrentProjectFilter, (state, props) => {
-        return {filters: state.filters, currentFilter: props.currentFilter};
-    })
+    on(addProjectsFilters, (state, props) => ({filters: props.filters, currentFilter: state.currentFilter})),
+    on(setCurrentProjectFilter, (state, props) => ({filters: state.filters, currentFilter: props.currentFilter}))
 )
 
 export function reducer(state: ProjectsFiltersState, action: Action) {

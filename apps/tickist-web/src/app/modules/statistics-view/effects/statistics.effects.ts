@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import { Injectable } from "@angular/core";
+import { Actions, ofType, createEffect } from "@ngrx/effects";
 import {
     LoadChartStatistics,
     LoadDailyStatistics,
@@ -8,44 +8,64 @@ import {
     StatisticsActionTypes,
     UpdateChartStatistics,
     UpdateDailyStatistics,
-    UpdateGlobalStatistics
-} from '../actions/statistics.actions';
-import {StatisticsService} from '../../../core/services/statistics.service';
-import {concatMap, concatMapTo, map, mergeMap} from 'rxjs/operators';
-import {defer} from 'rxjs';
-import {addUser} from '../../../core/actions/user.actions';
-import {selectLoggedInUser} from '../../../core/selectors/user.selectors';
-import {Store} from '@ngrx/store';
-import {AppStore} from '../../../store';
-import {ChartStatistics, DailyStatistics, GlobalStatistics} from '@data/statistics';
-
+    UpdateGlobalStatistics,
+} from "../actions/statistics.actions";
+import { StatisticsService } from "../../../core/services/statistics.service";
+import { concatMap, concatMapTo, map, mergeMap } from "rxjs/operators";
+import { defer } from "rxjs";
+import { addUser } from "../../../core/actions/user.actions";
+import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
+import { Store } from "@ngrx/store";
+import {
+    ChartStatistics,
+    DailyStatistics,
+    GlobalStatistics,
+} from "@data/statistics";
 
 @Injectable()
 export class StatisticsEffects {
-
-    @Effect()
-    LoadGlobalStatistics$ = this.actions$
-        .pipe(
-            ofType<LoadGlobalStatistics>(StatisticsActionTypes.LoadGlobalStatistics),
+    loadGlobalStatistics$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType<LoadGlobalStatistics>(
+                StatisticsActionTypes.loadGlobalStatistics
+            ),
             mergeMap(() => this.statisticsService.loadGlobalStatistics()),
-            map((globalStatistics: GlobalStatistics) => new UpdateGlobalStatistics({globalStatistics: globalStatistics}))
-        );
+            map(
+                (globalStatistics: GlobalStatistics) =>
+                    new UpdateGlobalStatistics({
+                        globalStatistics: globalStatistics,
+                    })
+            )
+        )
+    );
 
-    @Effect()
-    LoadChartStatistics$ = this.actions$
-        .pipe(
-            ofType<LoadChartStatistics>(StatisticsActionTypes.LoadChartStatistics),
+    loadChartStatistics$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType<LoadChartStatistics>(
+                StatisticsActionTypes.loadChartStatistics
+            ),
             mergeMap(() => this.statisticsService.loadChartsData()),
-            map((chartStaticstics: ChartStatistics) => new UpdateChartStatistics(({chartStatistics: chartStaticstics})))
-        );
+            map(
+                (chartStaticstics: ChartStatistics) =>
+                    new UpdateChartStatistics({
+                        chartStatistics: chartStaticstics,
+                    })
+            )
+        )
+    );
 
-    @Effect()
-    LoadDailyStatistics$ = this.actions$
-        .pipe(
-            ofType<LoadDailyStatistics>(StatisticsActionTypes.LoadDailyStatistics),
+    loadDailyStatistics$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType<LoadDailyStatistics>(
+                StatisticsActionTypes.loadDailyStatistics
+            ),
             mergeMap(() => this.statisticsService.loadDailyStatistics()),
-            map((dailyStatistics: DailyStatistics) => new UpdateDailyStatistics({dailyStatistics}))
-        );
+            map(
+                (dailyStatistics: DailyStatistics) =>
+                    new UpdateDailyStatistics({ dailyStatistics })
+            )
+        )
+    );
     //
     // @Effect({dispatch: false})
     // LoadGlobalStatisticsDateRange = this.actions$
@@ -53,34 +73,36 @@ export class StatisticsEffects {
     //         ofType<LoadGlobalStatisticsDateRange>(StatisticsActionTypes.LoadGlobalStatisticsDateRange),
     //     );
 
-    @Effect()
-    loadAllStatistics = this.actions$
-        .pipe(
+    loadAllStatistics = createEffect(() =>
+        this.actions$.pipe(
             ofType(addUser),
             concatMapTo([
                 new LoadChartStatistics(),
                 new LoadDailyStatistics(),
                 new LoadGlobalStatistics(),
-                new LoadGlobalStatisticsDateRange()
+                new LoadGlobalStatisticsDateRange(),
             ])
-        );
+        )
+    );
 
-    @Effect()
-    init$ = defer(() => {
-        return this.store.select(selectLoggedInUser).pipe(
-            concatMap(() => {
-                return [
-                    new LoadChartStatistics(),
-                    new LoadDailyStatistics(),
-                    new LoadGlobalStatistics(),
-                    new LoadGlobalStatisticsDateRange()
-                ];
-            })
-        );
-    });
+    init$ = createEffect(() =>
+        defer(() =>
+            this.store
+                .select(selectLoggedInUser)
+                .pipe(
+                    concatMap(() => [
+                        new LoadChartStatistics(),
+                        new LoadDailyStatistics(),
+                        new LoadGlobalStatistics(),
+                        new LoadGlobalStatisticsDateRange(),
+                    ])
+                )
+        )
+    );
 
-
-    constructor(private actions$: Actions, private statisticsService: StatisticsService, private store: Store) {
-    }
-
+    constructor(
+        private actions$: Actions,
+        private statisticsService: StatisticsService,
+        private store: Store
+    ) {}
 }

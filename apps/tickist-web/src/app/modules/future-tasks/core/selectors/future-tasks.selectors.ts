@@ -28,13 +28,11 @@ export const selectFutureTasksList = createSelector(
     (tasks, user, filter, activeDate) => {
         if (!filter || !user) return [];
         const filteredTasks = tasks.filter(Function(`return ${filter.value}`)())
-            .filter((task: Task) => {
-                return task.owner.id === user.id
+            .filter((task: Task) => task.owner.id === user.id
                     && task.isDone === false
                     && task.finishDate
                     && getMonth(task.finishDate) === getMonth(activeDate.date)
-                    && getYear(task.finishDate) === getYear(activeDate.date);
-            });
+                    && getYear(task.finishDate) === getYear(activeDate.date));
 
         const futureTasksSortBy = JSON.parse(user.futureTasksSortBy);
         return _.orderBy(filteredTasks, futureTasksSortBy.fields, futureTasksSortBy.orders);

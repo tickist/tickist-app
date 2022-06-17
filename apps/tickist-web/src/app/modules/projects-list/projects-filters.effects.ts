@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {addUser} from '../../core/actions/user.actions';
 import {concatMap} from 'rxjs/operators';
 import {defer} from 'rxjs';
@@ -15,19 +15,16 @@ export class ProjectsFiltersEffects {
     addTagsFilters = createEffect(() => this.actions$
         .pipe(
             ofType(addUser),
-            concatMap(action => {
-                return [
+            concatMap(action => [
                     addProjectsFilters({filters: ProjectsFiltersService.getAllProjectsFilters()}),
                     setCurrentProjectFilter({
                         currentFilter: ProjectsFiltersService.getDefaultCurrentProjectsFilter(action.user.projectsFilterId)
                     })
-                ];
-            })
+                ])
         ));
 
-    @Effect()
-    init$ = defer(() => {
-        return this.store.select(selectLoggedInUser).pipe(
+    
+    init$ = createEffect(() => defer(() => this.store.select(selectLoggedInUser).pipe(
             concatMap(user => {
                 const actions = [];
                 if (user) {
@@ -38,8 +35,7 @@ export class ProjectsFiltersEffects {
                 }
                 return actions;
             })
-        );
-    });
+        )));
 
     constructor(private actions$: Actions, private store: Store) {
     }

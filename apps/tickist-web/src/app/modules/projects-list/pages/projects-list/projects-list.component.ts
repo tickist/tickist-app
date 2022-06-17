@@ -1,29 +1,34 @@
-import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, Subject} from 'rxjs';
-import {TaskService} from '../../../../core/services/task.service';
-import {Project, ProjectType, ProjectWithLevel} from '@data/projects';
-import {ConfigurationService} from '../../../../core/services/configuration.service';
-import {User} from '@data/users/models';
-import {UserService} from '../../../../core/services/user.service';
-import {MediaObserver} from '@angular/flex-layout';
-import {MatDialog} from '@angular/material/dialog';
-import {FilterProjectDialogComponent} from '../../components/filter-projects-dialog/filter-projects.dialog.component';
-import {ProjectsFiltersService} from '../../projects-filters.service';
-import {Store} from '@ngrx/store';
-import {tasksProjectsViewRoutesName} from '../../../tasks-projects-view/routes.names';
-import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
-import {selectFilteredProjectsList} from '../../projects-filters.selectors';
-import {homeRoutesName} from '../../../../routing.module.name';
-import {Filter} from '@data/filter';
-import {takeUntil} from 'rxjs/operators';
-import {ProjectLeftPanel} from '../../models/project-list';
-
+import {
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnDestroy,
+    OnInit,
+} from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Observable, Subject } from "rxjs";
+import { TaskService } from "../../../../core/services/task.service";
+import { ProjectType } from "@data/projects";
+import { ConfigurationService } from "../../../../core/services/configuration.service";
+import { User } from "@data/users/models";
+import { UserService } from "../../../../core/services/user.service";
+import { MediaObserver } from "@angular/flex-layout";
+import { MatDialog } from "@angular/material/dialog";
+import { FilterProjectDialogComponent } from "../../components/filter-projects-dialog/filter-projects.dialog.component";
+import { ProjectsFiltersService } from "../../projects-filters.service";
+import { Store } from "@ngrx/store";
+import { tasksProjectsViewRoutesName } from "../../../tasks-projects-view/routes.names";
+import { editProjectSettingsRoutesName } from "../../../edit-project/routes-names";
+import { selectFilteredProjectsList } from "../../projects-filters.selectors";
+import { homeRoutesName } from "../../../../routing.module.name";
+import { Filter } from "@data/filter";
+import { takeUntil } from "rxjs/operators";
+import { ProjectLeftPanel } from "../../models/project-list";
 
 @Component({
-    selector: 'tickist-projects-list',
-    templateUrl: './projects-list.component.html',
-    styleUrls: ['./projects-list.component.scss']
+    selector: "tickist-projects-list",
+    templateUrl: "./projects-list.component.html",
+    styleUrls: ["./projects-list.component.scss"],
 })
 export class ProjectsListComponent implements OnInit, OnDestroy {
     @Input() projectType: ProjectType;
@@ -31,18 +36,27 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     user: User;
     showOnlyProjectsWithTasks = true;
     filter: Filter;
-    tasksProjectsViewRoutingName = tasksProjectsViewRoutesName.TASKS_PROJECTS_VIEW;
+    tasksProjectsViewRoutingName =
+        tasksProjectsViewRoutesName.tasksProjectsView;
     projectsList$: Observable<ProjectLeftPanel[]>;
 
-    constructor(private taskService: TaskService,
-                private projectsFiltersService: ProjectsFiltersService, private store: Store,
-                private route: ActivatedRoute, private userService: UserService,
-                private configurationService: ConfigurationService, private router: Router,
-                private media: MediaObserver, private cd: ChangeDetectorRef, public dialog: MatDialog) {
-    }
+    constructor(
+        private taskService: TaskService,
+        private projectsFiltersService: ProjectsFiltersService,
+        private store: Store,
+        private route: ActivatedRoute,
+        private userService: UserService,
+        private configurationService: ConfigurationService,
+        private router: Router,
+        private media: MediaObserver,
+        private cd: ChangeDetectorRef,
+        public dialog: MatDialog
+    ) {}
 
     ngOnInit() {
-        this.projectsList$ = this.store.select(selectFilteredProjectsList(this.projectType));
+        this.projectsList$ = this.store.select(
+            selectFilteredProjectsList(this.projectType)
+        );
     }
 
     toggleProjectView() {
@@ -54,25 +68,30 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     }
 
     navigateToAllProjects(path) {
-        this.router.navigate([homeRoutesName.HOME, path, this.projectType]);
-        if (this.media.isActive('sm') || this.media.isActive('xs')) {
-            this.configurationService.changeOpenStateLeftSidenavVisibility('close');
+        this.router.navigate([homeRoutesName.home, path, this.projectType]);
+        if (this.media.isActive("sm") || this.media.isActive("xs")) {
+            this.configurationService.changeOpenStateLeftSidenavVisibility(
+                "close"
+            );
         }
     }
 
     openFilterDialog() {
         const dialogRef = this.dialog.open(FilterProjectDialogComponent);
-        dialogRef.afterClosed().pipe(
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe(result => {
-            if (result) {
-
-            }
-        });
+        dialogRef
+            .afterClosed()
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((result) => {
+                if (result) {
+                }
+            });
     }
 
     navigateToCreateProjectView() {
-        this.router.navigate(['home', editProjectSettingsRoutesName.EDIT_PROJECT]);
+        this.router.navigate([
+            "home",
+            editProjectSettingsRoutesName.editProject,
+        ]);
     }
 
     ngOnDestroy() {
@@ -80,5 +99,4 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
         this.cd.detach();
     }
-
 }

@@ -1,0 +1,21 @@
+{
+    "sourceRoot": "libs/utils/src",
+    "projectType": "library",
+    "generators": {},
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": ["libs/utils/src/**/*.ts", "libs/utils/src/**/*.html"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "options": {
+                "jestConfig": "libs/utils/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "outputs": ["coverage/libs/utils"]
+        }
+    }
+}

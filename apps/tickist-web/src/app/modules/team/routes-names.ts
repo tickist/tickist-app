@@ -1,3 +1,3 @@
 export const teamRoutesName = {
-    TEAM: 'team'
+    team: "team",
 };

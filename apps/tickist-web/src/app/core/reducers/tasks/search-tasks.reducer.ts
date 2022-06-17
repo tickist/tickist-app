@@ -11,16 +11,12 @@ export const initialState: SearchTaskState = {
 
 const searchTasksReducer = createReducer(
     initialState,
-    on(setCurrentSearchTasksFilter, (state, props) => {
-        return {
+    on(setCurrentSearchTasksFilter, (state, props) => ({
             searchText: props.searchText
-        };
-    }),
-    on(clearSearchTasksFilter, (state, props) => {
-        return {
+        })),
+    on(clearSearchTasksFilter, (state, props) => ({
             searchText: ''
-        }
-    })
+        }))
 )
 
 export function reducer(state: SearchTaskState, action: Action) {

@@ -22,14 +22,12 @@ export const selectAllProjectsFilters = createSelector(
 export const selectAllProjectLeftPanel = createSelector(
     selectAllProjects,
     selectAllUndoneTasks,
-    (projects, tasks): ProjectLeftPanel[] => {
-        return calculateTasksCounter(
+    (projects, tasks): ProjectLeftPanel[] => calculateTasksCounter(
             generateDifferentLevelsOfProjects(
                 projects
             ),
             tasks
         )
-    }
  )
 
 export const selectFilteredProjectsList = (projectType: ProjectType) => createSelector(

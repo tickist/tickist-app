@@ -14,16 +14,12 @@ export const initialState: FutureTasksFiltersState = {
 
 const futureTasksFiltersReducer = createReducer(
     initialState,
-    on(addFutureTasksFilters, (state, props) => {
-        return {
+    on(addFutureTasksFilters, (state, props) => ({
             filters: props.filters, currentFilter: state.currentFilter
-        };
-    }),
-    on(setCurrentFutureTaskFilter, (state, props) => {
-        return {
+        })),
+    on(setCurrentFutureTaskFilter, (state, props) => ({
             filters: state.filters, currentFilter: props.currentFilter
-        };
-    })
+        }))
 )
 
 export function reducer(state: FutureTasksFiltersState, action: Action) {

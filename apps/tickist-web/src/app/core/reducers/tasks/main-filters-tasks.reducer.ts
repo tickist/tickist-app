@@ -14,12 +14,8 @@ export const initialState: TasksMainFiltersState = {
 
 const tasksMainFiltersReducer = createReducer(
     initialState,
-    on(addMainFilters, (state, props) => {
-        return {filters: props.filters, currentFilter: state.currentFilter};
-    }),
-    on(setCurrentMainFilter, (state, props) => {
-        return {filters: state.filters, currentFilter: props.currentFilter};
-    })
+    on(addMainFilters, (state, props) => ({filters: props.filters, currentFilter: state.currentFilter})),
+    on(setCurrentMainFilter, (state, props) => ({filters: state.filters, currentFilter: props.currentFilter}))
 )
 
 

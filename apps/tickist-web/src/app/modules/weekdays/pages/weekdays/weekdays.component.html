@@ -1,9 +1,9 @@
-<div class="viewport-dashboard" *ngIf="user?.orderTasksDashboard == 'Today->Overdue'" fxLayout="column" fxLayoutAlign="start stretch" >
+<div class="viewport-dashboard" *ngIf="user?.orderTasksDashboard === 'Today->Overdue'" fxLayout="column" fxLayoutAlign="start stretch" >
     <tickist-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></tickist-today>
     <tickist-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
                      [defaultTaskView]="user.defaultTaskViewOverdueView"></tickist-overdue>
 </div>
-<div class="viewport-dashboard" *ngIf="user?.orderTasksDashboard == 'Overdue->Today'" fxLayout="column" fxLayoutAlign="start stretch">
+<div class="viewport-dashboard" *ngIf="user?.orderTasksDashboard === 'Overdue->Today'" fxLayout="column" fxLayoutAlign="start stretch">
     <tickist-overdue *ngIf="isToday() && overdueTasks?.length > 0" [tasks]="overdueTasks"
                      [defaultTaskView]="user.defaultTaskViewOverdueView"></tickist-overdue>
     <tickist-today [tasks]="todayTasks" [defaultTaskView]="user.defaultTaskViewTodayView"></tickist-today>

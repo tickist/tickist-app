@@ -10,6 +10,7 @@
         "rootDir": ".",
         "sourceMap": true,
         "declaration": false,
+        "downlevelIteration": true,
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "allowSyntheticDefaultImports": true,
@@ -17,37 +18,21 @@
         "experimentalDecorators": true,
         "importHelpers": true,
         "target": "es2015",
-        "module": "esnext",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "lib": [
-            "es2019",
-            "dom"
-        ],
+        "module": "es2020",
+        "typeRoots": ["node_modules/@types"],
+        "lib": ["es2018", "es2019", "dom"],
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
         "paths": {
-            "@data": [
-                "libs/data/src/index.ts"
-            ],
-            "@data/*": [
-                "libs/data/src/*"
-            ],
-            "@tickist/utils": [
-                "libs/utils/src/index.ts"
-            ],
-            "@env/*": [
-                "apps/tickist-web/src/environments/*"
-            ]
+            "@data": ["libs/data/src/index.ts"],
+            "@data/*": ["libs/data/src/*"],
+            "@env/*": ["apps/tickist-web/src/environments/*"],
+            "@tickist/utils": ["libs/utils/src/index.ts"]
         }
     },
     "angularCompilerOptions": {
         "fullTemplateTypeCheck": false
     },
-    "exclude": [
-        "node_modules",
-        "tmp"
-    ]
+    "exclude": ["node_modules", "tmp"]
 }

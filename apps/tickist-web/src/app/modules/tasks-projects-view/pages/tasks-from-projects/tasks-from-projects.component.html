@@ -1,46 +1,91 @@
 <cdk-virtual-scroll-viewport itemSize="90" class="viewport">
-    <div *ngIf="(selectedProject$ | async) === undefined"  class="project-header">
+    <div
+        *ngIf="(selectedProject$ | async) === undefined"
+        class="project-header"
+    >
         <div class="header">
             <div>All tasks</div>
             <div fxFlex></div>
             <tickist-sort-tasks></tickist-sort-tasks>
-            <tickist-filter-tasks [showTags]="true" [isAssignedToVisible]="true"></tickist-filter-tasks>
-            <tickist-change-task-view [defaultTaskView]="defaultTaskView"
-                              (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
-
+            <tickist-filter-tasks
+                [showTags]="true"
+                [isAssignedToVisible]="true"
+            ></tickist-filter-tasks>
+            <tickist-change-task-view
+                [defaultTaskView]="defaultTaskView"
+                (currentTaskViewEvent)="changeTaskView($event)"
+            ></tickist-change-task-view>
         </div>
     </div>
-    <div *ngIf="(selectedProject$ | async) as selectedProject"  class="project-header">
+    <div
+        *ngIf="selectedProject$ | async as selectedProject"
+        class="project-header"
+    >
         <div class="header">
             <div>{{ selectedProject.name }}</div>
             <div fxFlex></div>
-            <tickist-menu-button [icon]="'edit'" [fontSize]="'18px'" data-cy="edit-project" [matTooltip]="'Edit project'"
-                                 (click)="navigateToEditProjectView(selectedProject.id)">
+            <tickist-menu-button
+                [icon]="'edit'"
+                [fontSize]="'18px'"
+                data-cy="edit-project"
+                [matTooltip]="'Edit project'"
+                (click)="navigateToEditProjectView(selectedProject.id)"
+            >
             </tickist-menu-button>
-            <tickist-menu-button [icon]="'archive'"  [fontSize]="'18px'" data-cy="archive-tasks" [matTooltip]="'Archived tasks from project'"
-                                 [routerLink]="[homeRoutesName, archiveRoutesName, selectedProject.id]">
-
+            <tickist-menu-button
+                [icon]="'archive'"
+                [fontSize]="'18px'"
+                data-cy="archive-tasks"
+                [matTooltip]="'Archived tasks from project'"
+                [routerLink]="[
+                    homeRoutesName,
+                    archiveRoutesName,
+                    selectedProject.id
+                ]"
+            >
             </tickist-menu-button>
             <tickist-sort-tasks></tickist-sort-tasks>
-            <tickist-filter-tasks [showTags]="true" [isAssignedToVisible]="isSharedProject"></tickist-filter-tasks>
-            <tickist-change-task-view [defaultTaskView]="defaultTaskView"
-                              (currentTaskViewEvent)="changeTaskView($event)"></tickist-change-task-view>
+            <tickist-filter-tasks
+                [showTags]="true"
+                [isAssignedToVisible]="isSharedProject"
+            ></tickist-filter-tasks>
+            <tickist-change-task-view
+                [defaultTaskView]="defaultTaskView"
+                (currentTaskViewEvent)="changeTaskView($event)"
+            ></tickist-change-task-view>
         </div>
 
-        <div *ngIf=hasProjectDescription(selectedProject)
-             class="project-description" [innerHTML]="selectedProject.richDescription"></div>
+        <div
+            *ngIf="hasProjectDescription(selectedProject)"
+            class="project-description"
+            [innerHTML]="selectedProject.richDescription"
+        ></div>
     </div>
 
-    <tickist-single-task  [task]="task" [mediaChange]="mediaChange" [taskView]="taskView" [user]="user"
-                     *cdkVirtualFor="let task of tasks$ | async;trackBy: trackByFn; let last = last" [last]="last">
+    <tickist-single-task
+        [task]="task"
+        [mediaChange]="mediaChange"
+        [taskView]="taskView"
+        [user]="user"
+        *cdkVirtualFor="
+            let task of tasks$ | async;
+            trackBy: trackByFn;
+            let last = last
+        "
+        [last]="last"
+    >
     </tickist-single-task>
-    <tickist-no-tasks [tasksLength]="(tasks$ | async).length"></tickist-no-tasks>
+    <tickist-no-tasks
+        [tasksLength]="(tasks$ | async).length"
+    ></tickist-no-tasks>
     <div id="task-filter" *ngIf="isSearchFilterEnabled$ | async">
-        Task filter <fa-icon [icon]="['fas', 'search']"></fa-icon> is enabled. Some tasks can be hidden. Click <span class="pointer" (click)="clearSearchFilter()">this
-        link</span> to clear filter.
+        Task filter <fa-icon [icon]="['fas', 'search']"></fa-icon> is enabled.
+        Some tasks can be hidden. Click
+        <span class="pointer" (click)="clearSearchFilter()">here </span> to
+        remove the filter.
     </div>
-    <tickist-add-task [project]="(selectedProject$ | async)" [enableLastElement]="true"></tickist-add-task>
+    <tickist-add-task
+        [project]="selectedProject$ | async"
+        [enableLastElement]="true"
+    ></tickist-add-task>
 </cdk-virtual-scroll-viewport>
-
-
-

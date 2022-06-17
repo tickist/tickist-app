@@ -1,0 +1,15 @@
+{
+    "extends": ["plugin:cypress/recommended", "../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.ts"],
+            "parserOptions": {
+                "project": "apps/tickist-web-e2e/tsconfig.*?.json"
+            },
+            "rules": {}
+        }
+    ],
+    "plugins": ["@typescript-eslint"],
+    "rules": {}
+}

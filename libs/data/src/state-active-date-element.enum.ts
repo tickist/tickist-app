@@ -1,4 +1,4 @@
-export enum stateActiveDateElement {
+export enum StateActiveDateElement {
     future,
-    weekdays
+    weekdays,
 }

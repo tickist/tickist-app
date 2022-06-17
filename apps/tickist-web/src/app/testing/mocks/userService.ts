@@ -1,9 +1,5 @@
-import {UserService} from '../../core/services/user.service';
-import {SpyObject} from '../test.helpers';
-import {User} from '@data/users/models';
-import {Observable, of} from 'rxjs';
-import {UsersApiMockFactory} from './api-mock/users-api-mock.factory';
-
+import { UserService } from "../../core/services/user.service";
+import { SpyObject } from "../test.helpers";
 
 export class MockUserService extends SpyObject {
     login;
@@ -11,14 +7,12 @@ export class MockUserService extends SpyObject {
     fakeResponse;
     responseSuccess: boolean;
     user$: any;
-    usersApiMockFactory: UsersApiMockFactory;
 
     constructor() {
         super(UserService);
-        this.usersApiMockFactory = new UsersApiMockFactory();
+
         this.fakeResponse = null;
         this.responseSuccess = true;
-        this.user$ = of(new User(this.usersApiMockFactory.createUserDict()));
     }
 
     subscribe(success, error) {
@@ -38,6 +32,6 @@ export class MockUserService extends SpyObject {
     }
 
     getProviders(): Array<any> {
-        return [{provide: UserService, useValue: this}];
+        return [{ provide: UserService, useValue: this }];
     }
 }

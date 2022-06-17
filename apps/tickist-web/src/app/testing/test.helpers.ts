@@ -1,5 +1,5 @@
-/* tslint:disable forin */
-declare var jasmine: any;
+/* eslint-disable  guard-for-in */
+declare let jasmine: any;
 
 export class SpyObject {
     constructor(type?: any) {
@@ -14,7 +14,7 @@ export class SpyObject {
                     // As we are only auto creating spys for methods, this
                     // should not matter.
                 }
-                if (typeof m === 'function') {
+                if (typeof m === "function") {
                     this.spy(prop);
                 }
             }
@@ -31,5 +31,4 @@ export class SpyObject {
     prop(name: string, value: any) {
         (this as any)[name] = value;
     }
-
 }

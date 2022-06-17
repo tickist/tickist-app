@@ -1,15 +1,23 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {Project} from '@data/projects';
-import {Store} from '@ngrx/store';
-import {Task} from '@data/tasks/models/tasks';
-import {selectAllTasksTreeView} from '../../tasks-tree-view.selectors';
-import {Observable, Subject} from 'rxjs';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
-import {FlatTreeControl} from '@angular/cdk/tree';
-import {takeUntil} from 'rxjs/operators';
-import {editProjectSettingsRoutesName} from '../../../edit-project/routes-names';
-import {Router} from '@angular/router';
-
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    OnDestroy,
+    OnInit,
+} from "@angular/core";
+import { Project } from "@data/projects";
+import { Store } from "@ngrx/store";
+import { Task } from "@data/tasks/models/tasks";
+import { selectAllTasksTreeView } from "../../tasks-tree-view.selectors";
+import { Observable, Subject } from "rxjs";
+import {
+    MatTreeFlatDataSource,
+    MatTreeFlattener,
+} from "@angular/material/tree";
+import { FlatTreeControl } from "@angular/cdk/tree";
+import { takeUntil } from "rxjs/operators";
+import { editProjectSettingsRoutesName } from "../../../edit-project/routes-names";
+import { Router } from "@angular/router";
 
 interface TaskTreeViewNode {
     project?: Project;
@@ -32,17 +40,17 @@ interface FlatNode {
 }
 
 @Component({
-    selector: 'tickist-tasks-tree-view',
-    templateUrl: './tasks-tree-view.component.html',
-    styleUrls: ['./tasks-tree-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "tickist-tasks-tree-view",
+    templateUrl: "./tasks-tree-view.component.html",
+    styleUrls: ["./tasks-tree-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksTreeViewComponent implements OnInit, OnDestroy {
     transformer: any;
     expandedProjectsNode = new Set<string>();
     treeControl = new FlatTreeControl<FlatNode>(
-        node => node.level,
-        node => node.expandable
+        (node) => node.level,
+        (node) => node.expandable
     );
 
     treeFlattener: MatTreeFlattener<any, any>;
@@ -51,14 +59,20 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     tasksFormCounter = 1;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private store: Store, private cd: ChangeDetectorRef, private router: Router) {
+    constructor(
+        private store: Store,
+        private cd: ChangeDetectorRef,
+        private router: Router
+    ) {
         this.transformer = (node: TaskTreeViewNode, level: number) => {
             const isProject = !!node.project;
             const isTask = !!node.task;
             const addTask = !!node.addTask;
-            const tasksCounter = node.children ? node.children.length - this.tasksFormCounter : 0;
+            const tasksCounter = node.children
+                ? node.children.length - this.tasksFormCounter
+                : 0;
             return {
-                expandable: (!!node.children && node.children.length > 0),
+                expandable: !!node.children && node.children.length > 0,
                 isTask,
                 isProject,
                 tasksCounter,
@@ -71,28 +85,36 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
         };
 
         this.treeFlattener = new MatTreeFlattener(
-            this.transformer, this.getLevel, this.isExpandable, this.getChildren
+            this.transformer,
+            this.getLevel,
+            this.isExpandable,
+            this.getChildren
         );
 
-        this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+        this.dataSource = new MatTreeFlatDataSource(
+            this.treeControl,
+            this.treeFlattener
+        );
     }
 
     ngOnInit() {
         this.tasksTreeView$ = this.store.select(selectAllTasksTreeView);
         this.tasksTreeView$
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(data => {
+            .subscribe((data) => {
                 if (data.length > 0) {
                     this.dataSource.data = data;
-                    this.treeControl.dataNodes.forEach(node => {
-                        if (node.isProject && this.expandedProjectsNode.has(node.project.id)) {
+                    this.treeControl.dataNodes.forEach((node) => {
+                        if (
+                            node.isProject &&
+                            this.expandedProjectsNode.has(node.project.id)
+                        ) {
                             this.treeControl.expand(node);
                         }
                     });
                 }
                 this.cd.detectChanges();
             });
-
     }
 
     getLevel(node: any) {
@@ -100,7 +122,6 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     }
 
     isExpandable(node: any) {
-
         return node.expandable;
     }
 
@@ -129,7 +150,10 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
     }
 
     navigateToCreateProjectView() {
-        this.router.navigate(['home', editProjectSettingsRoutesName.EDIT_PROJECT]);
+        this.router.navigate([
+            "home",
+            editProjectSettingsRoutesName.editProject,
+        ]);
     }
 
     ngOnDestroy() {
@@ -137,6 +161,4 @@ export class TasksTreeViewComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
         // clearTimeout(this.timer);
     }
-
 }
-

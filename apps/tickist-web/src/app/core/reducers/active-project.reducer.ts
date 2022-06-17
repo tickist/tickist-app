@@ -14,14 +14,10 @@ export const initialState: ActiveProjectState = {
 
 const activeProjectReducer = createReducer(
     initialState,
-    on(setActiveProject, (state, props) => {
-        return  {
+    on(setActiveProject, (state, props) => ({
             activeProject: props.project
-        }
-    }),
-    on(clearActiveProject, (state, props) => {
-        return initialState
-    })
+        })),
+    on(clearActiveProject, (state, props) => initialState)
 )
 
 export function reducer(state: ActiveProjectState, action: Action) {

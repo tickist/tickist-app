@@ -15,20 +15,16 @@ export const apiErrorInitialState: ApiErrorState = {
 
 const apiErrorReducer = createReducer(
     apiErrorInitialState,
-    on(showApiErrorBar, (state, props) => {
-        return {
+    on(showApiErrorBar, (state, props) => ({
             apiError: {
                 showApiErrorBar: true
             }
-        };
-    }),
-    on(hideApiErrorBar, (state, props) => {
-        return {
+        })),
+    on(hideApiErrorBar, (state, props) => ({
             apiError: {
                 showApiErrorBar: false
             }
-        };
-    })
+        }))
 )
 
 export function reducer(state: ApiErrorState, action: Action) {

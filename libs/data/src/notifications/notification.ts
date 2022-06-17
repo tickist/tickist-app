@@ -1,5 +1,4 @@
-import firebase from 'firebase/app';
-import Timestamp = firebase.firestore.Timestamp;
+import { Timestamp } from "@angular/fire/firestore";
 
 interface INotification {
     id?: string;
@@ -8,28 +7,24 @@ interface INotification {
     recipient: string;
     isRead?: boolean;
     type: string;
-    icon?: {};
+    icon?: any;
     date?: Timestamp;
 }
 
-enum NotificationIcon {
-
-}
-
+enum NotificationIcon {}
 
 export class Notification {
     id?: string;
     title: string;
-    type = '';
+    type = "";
     description: string;
-    icon = '';
+    icon = "";
     recipient: string;
     isRead = false;
     date: Date;
 
-
     constructor(notification: INotification) {
         Object.assign(this, notification);
-        this.date = new Date(notification.date.seconds * 1000)
+        this.date = new Date(notification.date.seconds * 1000);
     }
 }

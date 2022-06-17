@@ -1,3 +1,3 @@
 export const weekdaysRoutesName = {
-    WEEKDAYS: 'weekdays'
+    weekdays: "weekdays",
 };

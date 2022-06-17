@@ -1,3 +1,3 @@
 export const dashboardRoutesName = {
-    DASHBOARD: 'dashboard'
+    dashboard: "dashboard",
 };

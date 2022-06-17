@@ -1,4 +1,4 @@
-import {LoggerConfig} from "ngx-logger/lib/logger.config";
+// import {LoggerConfig} from "ngx-logger";
 
 export interface IEnvironment {
     name: string;
@@ -6,7 +6,7 @@ export interface IEnvironment {
     e2eTest: boolean;
     emulator: boolean;
     authEmulator?: boolean;
-    logger: LoggerConfig;
+    logger: any;
     firebase: any;
     experimentalForceLongPolling: boolean;
     emulatorIPAddress?: string;

@@ -12,11 +12,9 @@ export const initialState: TagsFiltersTasksState = {
 
 const tagsFiltersTasksReducer = createReducer(
     initialState,
-    on(setCurrentTagsFilters, (state, props) => {
-        return {
+    on(setCurrentTagsFilters, (state, props) => ({
             currentTagsFilter: props.currentTagsFilter
-        };
-    })
+        }))
 )
 
 export function reducer(state: TagsFiltersTasksState, action: Action) {

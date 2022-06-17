@@ -15,16 +15,12 @@ export const progressBarInitialState: ProgressBarState = {
 
 const progressBarReducer = createReducer(
     progressBarInitialState,
-    on(switchOffProgressBar, (state, props) => {
-        return {
+    on(switchOffProgressBar, (state, props) => ({
             progressBar: {isEnabled: false}
-        };
-    }),
-    on(switchOnProgressBar, (state, props) => {
-        return {
+        })),
+    on(switchOnProgressBar, (state, props) => ({
             progressBar: {isEnabled: true}
-        };
-    })
+        }))
 )
 
 export function reducer(state: ProgressBarState, action: Action) {

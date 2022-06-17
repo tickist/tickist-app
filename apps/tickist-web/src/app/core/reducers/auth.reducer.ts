@@ -14,24 +14,18 @@ export const initialState: AuthState = {
 
 const authReducer = createReducer(
     initialState,
-    on(login, (state, props) => {
-        return {
+    on(login, (state, props) => ({
             loggedIn: true,
             uid: props.uid
-        }
-    }),
-    on(fetchedLoginUser, (state, props) => {
-        return {
+        })),
+    on(fetchedLoginUser, (state, props) => ({
             loggedIn: true,
             ...state
-        }
-    }),
-    on(logout, () => {
-        return {
+        })),
+    on(logout, () => ({
             loggedIn: false,
             uid: undefined
-        }
-    }),
+        })),
 )
 
 export function reducer(state: AuthState, action: Action) {

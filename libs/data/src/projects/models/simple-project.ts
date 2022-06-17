@@ -1,7 +1,6 @@
-import {ShareWithUser} from './share-with-user';
+import { ShareWithUser } from "./share-with-user";
 
-
-export class SimpleProject  {
+export class SimpleProject {
     id: string;
     name: string;
     color: string;
@@ -12,14 +11,12 @@ export class SimpleProject  {
         this.id = project.id;
         this.name = project.name;
         this.color = project.color;
-        this.dialogTimeWhenTaskFinished = project.dialog_time_when_task_finished;
-        if (project.hasOwnProperty('share_with')) {
+        this.dialogTimeWhenTaskFinished =
+            project.dialog_time_when_task_finished;
+        if (project.share_with) {
             project.share_with.forEach((user) => {
-                    this.shareWith.push(new ShareWithUser(user));
+                this.shareWith.push(new ShareWithUser(user));
             });
         }
-
     }
 }
-
-

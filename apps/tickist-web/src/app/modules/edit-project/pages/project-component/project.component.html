@@ -54,7 +54,7 @@
                 </mat-list>
             </div>
             <div fxFlex="68%" class="right-menu">
-                <div [hidden]="!menu.main" formGroupName="main">
+                <div [hidden]="!checkActiveItemInMenu('main')" formGroupName="main">
 
                     <div fxLayout="column">
                         <mat-form-field>
@@ -92,7 +92,7 @@
                     </div>
                 </div>
 
-                <div [hidden]="!menu.extra" formGroupName="extra">
+                <div [hidden]="!checkActiveItemInMenu('extra')" formGroupName="extra">
                     <div fxLayout="column">
                         <div class="form-field" fxLayout="column">
                             <span>Default priority of project tasks</span>
@@ -141,7 +141,7 @@
                     </div>
                 </div>
 
-                <div [hidden]="!menu.sharing">
+                <div [hidden]="!checkActiveItemInMenu('sharing')">
                     <div fxLayout="column" *ngIf="isNewProject()">
                         Sharing tab will be available after creating the project
                     </div>
@@ -160,7 +160,7 @@
                             <mat-option *ngFor="let u of filteredUsers | async" [value]="u.email">
                                 <tickist-user-avatar *ngIf="u.avatarUrl" [userId]="u.id" [avatarUrl]="u.avatarUrl"
                                                      [size]="'24x24'"></tickist-user-avatar>
-                                <tickist-user-avatar *ngIf="!u.avatarUrl" [avatarUrl]="DEFAULT_USER_AVATAR"
+                                <tickist-user-avatar *ngIf="!u.avatarUrl" [avatarUrl]="defaultUserAvatar"
                                                      [size]="'24x24'"></tickist-user-avatar>
                                 <span>{{ u.email }}</span>
                             </mat-option>
@@ -185,13 +185,13 @@
 
                         <mat-list>
                             <mat-list-item *ngFor="let u of usersWithoutAccount">
-                                <tickist-user-avatar *ngIf="u.status == userWithoutAccountStatus.Processing"
-                                                     matListAvatar [avatarUrl]="DEFAULT_USER_AVATAR"
+                                <tickist-user-avatar *ngIf="u.status === userWithoutAccountStatus.Processing"
+                                                     matListAvatar [avatarUrl]="defaultUserAvatar"
                                                      [size]="'32x32'">
 
                                 </tickist-user-avatar>
                                 <fa-icon matListAvatar
-                                         *ngIf="u.status == userWithoutAccountStatus.Error"
+                                         *ngIf="u.status === userWithoutAccountStatus.Error"
                                          [icon]="['fas', 'exclamation-circle']"
                                          [ngStyle]="{'font-size': '32px'}">
                                 </fa-icon>
@@ -199,12 +199,12 @@
                                     <span>{{ u.email }}</span>
 
                                 </h3>
-                                <p matLine *ngIf="u.status == userWithoutAccountStatus.Error">
+                                <p matLine *ngIf="u.status === userWithoutAccountStatus.Error">
                                     User doesn't have a tickist account.
                                 </p>
-                                <mat-spinner *ngIf="u.status == userWithoutAccountStatus.Processing"
+                                <mat-spinner *ngIf="u.status === userWithoutAccountStatus.Processing"
                                              diameter="32"></mat-spinner>
-                                <span *ngIf="u.status == userWithoutAccountStatus.Error"
+                                <span *ngIf="u.status === userWithoutAccountStatus.Error"
                                       (click)="deleteUserFromInviteList(u)">
                                     <fa-icon [matTooltip]="'Delete an invitation'" [icon]="'times'" [ngStyle]="{'font-size': '32px'}"></fa-icon>
                                 </span>
@@ -214,7 +214,7 @@
 
                     </div>
                 </div>
-                <div [hidden]="!menu.branding" formGroupName="branding" [ngStyle]="{height: '100%', overflow: 'hidden'}">
+                <div [hidden]="!checkActiveItemInMenu('branding')" formGroupName="branding" [ngStyle]="{height: '100%', overflow: 'hidden'}">
                     <div class="selected-branding" *ngIf="{icon: icon$ | async, color: color$ | async } as data">
                         Selected icon: <fa-icon size="lg" [icon]="data.icon" [styles]="{color: data.color}"></fa-icon>
                     </div>

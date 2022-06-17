@@ -1,15 +1,14 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {TaskService} from '../../core/services/task.service';
-import {MatDialog} from '@angular/material/dialog';
-import {User} from '@data/users';
-import {TASK_EXTENDED_VIEW, TASK_SIMPLE_VIEW} from "@data";
-
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { TaskService } from "../../core/services/task.service";
+import { MatDialog } from "@angular/material/dialog";
+import { User } from "@data/users";
+import { TASK_EXTENDED_VIEW, TASK_SIMPLE_VIEW } from "@data";
 
 @Component({
-    selector: 'tickist-single-task',
-    templateUrl: './single-task.component.html',
-    styleUrls: ['./single-task.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "tickist-single-task",
+    templateUrl: "./single-task.component.html",
+    styleUrls: ["./single-task.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SingleTaskComponent {
     @Input() task;
@@ -17,8 +16,7 @@ export class SingleTaskComponent {
     @Input() taskView;
     @Input() last;
     @Input() user: User;
-    task_simple_view_value = TASK_SIMPLE_VIEW.value;
-    task_extended_view_value = TASK_EXTENDED_VIEW.value;
-    constructor(public taskService: TaskService, public dialog: MatDialog) {
-    }
+    taskSimpleViewValue = TASK_SIMPLE_VIEW.value;
+    taskExtendedViewValue = TASK_EXTENDED_VIEW.value;
+    constructor(public taskService: TaskService, public dialog: MatDialog) {}
 }

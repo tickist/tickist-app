@@ -10,26 +10,17 @@ export const adapter: EntityAdapter<Notification> = createEntityAdapter<Notifica
 export const initialState: NotificationState = adapter.getInitialState();
 
 
-export interface NotificationState extends EntityState<Notification> {
-}
+export type NotificationState = EntityState<Notification>
 
 
 export const notificationReducer = createReducer(
     initialState,
-    on(addNotifications, (state, {notifications}) => {
-            return adapter.addMany(notifications, state);
-        }
+    on(addNotifications, (state, {notifications}) => adapter.addMany(notifications, state)
     ),
-    on(addNotification, (state, {notification}) => {
-        return adapter.addOne(notification, state);
-    }),
-    on(updateNotification, (state, {notification}) => {
-      return adapter.updateOne(notification, state)
-    }),
+    on(addNotification, (state, {notification}) => adapter.addOne(notification, state)),
+    on(updateNotification, (state, {notification}) => adapter.updateOne(notification, state)),
 
-    on(updateNotifications, (state, {notifications}) => {
-      return adapter.updateMany(notifications, state)
-    })
+    on(updateNotifications, (state, {notifications}) => adapter.updateMany(notifications, state))
 );
 
 

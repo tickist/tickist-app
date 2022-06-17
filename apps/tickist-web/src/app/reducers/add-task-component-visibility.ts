@@ -12,11 +12,9 @@ const initialState =  {
 
 const addTaskComponentVisibilityReducer = createReducer(
     initialState,
-    on(updateAddTaskComponentVisibility, (state, props) => {
-        return {
+    on(updateAddTaskComponentVisibility, (state, props) => ({
             visible: props.visible
-        }
-    })
+        }))
 )
 
 export function reducer(state: AddTaskComponentVisibilityState, action: Action) {

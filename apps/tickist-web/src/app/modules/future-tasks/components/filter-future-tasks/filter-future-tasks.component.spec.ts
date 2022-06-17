@@ -1,18 +1,15 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {FilterFutureTasksComponent} from './filter-future-tasks.component';
-import {RouterModule} from '@angular/router';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {TickistMaterialModule} from '../../../../material.module';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {StoreModule} from '@ngrx/store';
-import {FormsModule} from '@angular/forms';
-import {MockFutureTasksFiltersService} from '../../../../testing/mocks/future-tasks-fiters-service';
-import {APP_BASE_HREF} from '@angular/common';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {IconsModule} from '../../../../icons.module';
+import { FilterFutureTasksComponent } from "./filter-future-tasks.component";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { TickistMaterialModule } from "../../../../material.module";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { StoreModule } from "@ngrx/store";
+import { FormsModule } from "@angular/forms";
+import { MockFutureTasksFiltersService } from "../../../../testing/mocks/future-tasks-fiters-service";
+import { IconsModule } from "../../../../icons.module";
 
-describe('FilterFutureTasksComponent', () => {
+describe("FilterFutureTasksComponent", () => {
     let component: FilterFutureTasksComponent;
     let fixture: ComponentFixture<FilterFutureTasksComponent>;
     const futureTaskFiltersService = new MockFutureTasksFiltersService();
@@ -25,12 +22,10 @@ describe('FilterFutureTasksComponent', () => {
                 TickistMaterialModule,
                 NoopAnimationsModule,
                 StoreModule.forRoot({}),
-                IconsModule
+                IconsModule,
             ],
             declarations: [FilterFutureTasksComponent],
-            providers: [
-                futureTaskFiltersService.getProviders()
-            ]
+            providers: [futureTaskFiltersService.getProviders()],
         }).compileComponents();
     }));
 
@@ -40,7 +35,7 @@ describe('FilterFutureTasksComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

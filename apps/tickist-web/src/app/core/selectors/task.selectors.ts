@@ -1,55 +1,37 @@
-import {createFeatureSelector, createSelector} from '@ngrx/store';
-import * as fromCourse from '../reducers/tasks/task.reducer';
-import {TasksState} from '../reducers/tasks/task.reducer';
+import { createFeatureSelector, createSelector } from "@ngrx/store";
+import * as fromCourse from "../reducers/tasks/task.reducer";
+import { TasksState } from "../reducers/tasks/task.reducer";
 import {
     selectCurrentAssignedToFilter,
     selectCurrentEstimateTimeFilter,
     selectCurrentMainFilter,
     selectCurrentTagsFilter,
-    selectSearchTasksText
-} from './filters-tasks.selectors';
-import {Task} from '@data/tasks/models/tasks';
-import {Tag} from '@data/tags/models/tags';
-import * as _ from 'lodash';
-import {orderBy} from 'lodash';
+    selectSearchTasksText,
+} from "./filters-tasks.selectors";
+import { Task } from "@data/tasks/models/tasks";
+import { Tag } from "@data/tags/models/tags";
+import * as _ from "lodash";
+import { orderBy } from "lodash";
 
-import {selectActiveProjects, selectActiveProjectsIds} from './projects.selectors';
-import {selectCurrentSortBy} from './sort-by-tasks.selectors';
-import {selectLoggedInUser} from './user.selectors';
-import {TaskType} from "@data";
+import { selectActiveProjects, selectActiveProjectsIds } from "./projects.selectors";
+import { selectCurrentSortBy } from "./sort-by-tasks.selectors";
+import { selectLoggedInUser } from "./user.selectors";
+import { TaskType } from "@data";
 
+export const selectTasksState = createFeatureSelector<TasksState>("task");
 
-export const selectTasksState = createFeatureSelector<TasksState>('task');
+export const allTasksLoaded = createSelector(selectTasksState, (tasksState) => tasksState.allTasksLoaded);
 
-export const allTasksLoaded = createSelector(
-    selectTasksState,
-    tasksState => tasksState.allTasksLoaded
-);
+export const selectTaskById = (taskId: number) => createSelector(selectTasksState, (tasksState) => tasksState.entities[taskId]);
 
-export const selectTaskById = (taskId: number) => createSelector(
-    selectTasksState,
-    tasksState => tasksState.entities[taskId]
-);
+export const selectAllTasks = createSelector(selectTasksState, fromCourse.selectAll);
 
-export const selectAllTasks = createSelector(
-    selectTasksState,
-    fromCourse.selectAll
-);
+export const selectInboxTasksCounter = createSelector(selectAllTasks, selectLoggedInUser, (tasks, user) => {
+    console.log({ tasks });
+    return tasks.filter((task) => task.taskProject.id === user.inboxPk).length;
+});
 
-export const selectInboxTasksCounter = createSelector(
-    selectAllTasks,
-    selectLoggedInUser,
-    (tasks, user) => {
-        return tasks.filter(task => task.taskProject.id === user.inboxPk).length
-    }
-)
-
-export const selectAllUndoneTasks = createSelector(
-    selectAllTasks,
-    tasks => {
-        return tasks.filter(task => task.isDone === false);
-    }
-);
+export const selectAllUndoneTasks = createSelector(selectAllTasks, (tasks) => tasks.filter((task) => task.isDone === false));
 
 export const selectTasksStreamInTagsView = createSelector(
     selectAllTasks,
@@ -65,8 +47,8 @@ export const selectTasksStreamInTagsView = createSelector(
         tasks = tasks
             .filter(Function(`return ${mainFilter.value}`)())
             .filter(Function(`return ${assignedToFilter.value}`)())
-            .filter(Function(`return ${estimateTimeFilter.currentFilter_lt.value}`)())
-            .filter(Function(`return ${estimateTimeFilter.currentFilter_gt.value}`)());
+            .filter(Function(`return ${estimateTimeFilter.currentFilterLt.value}`)())
+            .filter(Function(`return ${estimateTimeFilter.currentFilterGt.value}`)());
 
         if (tagsFilter.value instanceof Array) {
             const tags = new Set(tagsFilter.value);
@@ -79,17 +61,13 @@ export const selectTasksStreamInTagsView = createSelector(
                 });
                 return result.length === tags.size;
             });
-        } else if (tagsFilter.value === 'allTags') {
-            tasks = tasks.filter((task) => {
-                return !(task.tags.length === 0);
-            });
-        } else if (tagsFilter.value === 'withoutTags') {
-            tasks = tasks.filter((task) => {
-                return (task.tags.length === 0);
-            });
+        } else if (tagsFilter.value === "allTags") {
+            tasks = tasks.filter((task) => !(task.tags.length === 0));
+        } else if (tagsFilter.value === "withoutTags") {
+            tasks = tasks.filter((task) => task.tags.length === 0);
         }
         if (searchFilter) {
-            const re = new RegExp(searchFilter, 'i');
+            const re = new RegExp(searchFilter, "i");
             tasks = tasks.filter((task) => re.test(task.name));
         }
         tasks = orderBy(tasks, currentSortBy.sortKeys, currentSortBy.order);
@@ -110,10 +88,10 @@ export const selectTasksStreamInProjectsView = createSelector(
         tasks = tasks
             .filter(Function(`return ${mainFilter.value}`)())
             .filter(Function(`return ${assignedToFilter.value}`)())
-            .filter(Function(`return ${estimateTimeFilter.currentFilter_lt.value}`)())
-            .filter(Function(`return ${estimateTimeFilter.currentFilter_gt.value}`)());
+            .filter(Function(`return ${estimateTimeFilter.currentFilterLt.value}`)())
+            .filter(Function(`return ${estimateTimeFilter.currentFilterGt.value}`)());
         if (activeProjectIds.length > 0) {
-            tasks = tasks.filter((task => activeProjectIds.indexOf(task.taskProject.id) > -1));
+            tasks = tasks.filter((task) => activeProjectIds.indexOf(task.taskProject.id) > -1);
         }
         if (tagsFilter.value instanceof Array) {
             const tags = new Set(tagsFilter.value);
@@ -126,18 +104,14 @@ export const selectTasksStreamInProjectsView = createSelector(
                 });
                 return result.length === tags.size;
             });
-        } else if (tagsFilter.value === 'allTags') {
-            tasks = tasks.filter((task) => {
-                return !(task.tags.length === 0);
-            });
-        } else if (tagsFilter.value === 'withoutTags') {
-            tasks = tasks.filter((task) => {
-                return (task.tags.length === 0);
-            });
+        } else if (tagsFilter.value === "allTags") {
+            tasks = tasks.filter((task) => !(task.tags.length === 0));
+        } else if (tagsFilter.value === "withoutTags") {
+            tasks = tasks.filter((task) => task.tags.length === 0);
         }
         if (searchFilter) {
-            const re = new RegExp(searchFilter.replace(/[^\w\s.&-]+/g, ''), 'i');
-            tasks = tasks.filter((task) => re.test(task.name.replace(/[^\w\s.&-]+/g, '')));
+            const re = new RegExp(searchFilter.replace(/[^\w\s.&-]+/g, ""), "i");
+            tasks = tasks.filter((task) => re.test(task.name.replace(/[^\w\s.&-]+/g, "")));
         }
         if (currentSortBy) {
             tasks = orderBy(tasks, currentSortBy.sortKeys, currentSortBy.order);
@@ -147,75 +121,47 @@ export const selectTasksStreamInProjectsView = createSelector(
     }
 );
 
-export const nextActionTasks = createSelector(
-    selectAllTasks,
-    selectLoggedInUser,
-    selectSearchTasksText,
-    (tasks, user, searchFilter) => {
-        if (searchFilter) {
-            const re = new RegExp(searchFilter, 'i');
-            tasks = tasks.filter((task) => re.test(task.name));
-        }
-        return orderBy(tasks
-                .filter(task => task.owner.id === user.id)
-                .filter(task => task.taskType === TaskType.NEXT_ACTION),
-            ['priority', task => _.deburr(task.name.toLowerCase())],
-            ['asc', 'asc']
-        )
+export const nextActionTasks = createSelector(selectAllTasks, selectLoggedInUser, selectSearchTasksText, (tasks, user, searchFilter) => {
+    if (searchFilter) {
+        const re = new RegExp(searchFilter, "i");
+        tasks = tasks.filter((task) => re.test(task.name));
     }
-)
+    return orderBy(
+        tasks.filter((task) => task.owner.id === user.id).filter((task) => task.taskType === TaskType.nextAction),
+        ["priority", (task) => _.deburr(task.name.toLowerCase())],
+        ["asc", "asc"]
+    );
+});
 
-export const needInfoTasks = createSelector(
-    selectAllTasks,
-    selectLoggedInUser,
-    selectSearchTasksText,
-    (tasks, user, searchFilter) => {
-        if (searchFilter) {
-            const re = new RegExp(searchFilter, 'i');
-            tasks = tasks.filter((task) => re.test(task.name));
-        }
-        return tasks
-            .filter(task => task.owner.id === user.id)
-            .filter(task => task.taskType === TaskType.NEED_INFO)
+export const needInfoTasks = createSelector(selectAllTasks, selectLoggedInUser, selectSearchTasksText, (tasks, user, searchFilter) => {
+    if (searchFilter) {
+        const re = new RegExp(searchFilter, "i");
+        tasks = tasks.filter((task) => re.test(task.name));
     }
-)
+    return tasks.filter((task) => task.owner.id === user.id).filter((task) => task.taskType === TaskType.needInfo);
+});
 
 export const projectWithoutNextActionTasks = createSelector(
     selectAllTasks,
     selectActiveProjects,
     selectSearchTasksText,
     (tasks, projects, searchFilter) => {
-        let projectsWithoutNextActionTasks = []
-        projects.forEach(project => {
-            if (!tasks.some(task => task.taskType === TaskType.NEXT_ACTION && task.taskProject.id === project.id)) {
-                projectsWithoutNextActionTasks.push(project)
+        let projectsWithoutNextActionTasks = [];
+        projects.forEach((project) => {
+            if (!tasks.some((task) => task.taskType === TaskType.nextAction && task.taskProject.id === project.id)) {
+                projectsWithoutNextActionTasks.push(project);
             }
-        })
+        });
         if (searchFilter) {
-            const re = new RegExp(searchFilter, 'i');
+            const re = new RegExp(searchFilter, "i");
             projectsWithoutNextActionTasks = projectsWithoutNextActionTasks.filter((task) => re.test(task.name));
         }
-        return projectsWithoutNextActionTasks
+        return projectsWithoutNextActionTasks;
     }
-)
+);
 
-export const nextActionTasksLength = createSelector(
-    nextActionTasks,
-    (tasks) => {
-        return tasks.length;
-    }
-)
+export const nextActionTasksLength = createSelector(nextActionTasks, (tasks) => tasks.length);
 
-export const needInfoTasksLength = createSelector(
-    needInfoTasks,
-    (tasks) => {
-        return tasks.length;
-    }
-)
+export const needInfoTasksLength = createSelector(needInfoTasks, (tasks) => tasks.length);
 
-export const projectWithoutNextActionTasksLength = createSelector(
-    projectWithoutNextActionTasks,
-    (projects) => {
-        return projects.length;
-    }
-)
+export const projectWithoutNextActionTasksLength = createSelector(projectWithoutNextActionTasks, (projects) => projects.length);
