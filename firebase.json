@@ -60,7 +60,7 @@
     "functions": {
         "predeploy": [
             "npm run lint tickist-functions",
-            "npm run build tickist-functions --prod"
+            "npm run build:functions"
         ],
         "source": "/"
     },
