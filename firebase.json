@@ -62,7 +62,16 @@
             "npm run lint tickist-functions",
             "npm run build:functions"
         ],
-        "source": "/"
+        "source": "/",
+        "ignore": [
+            "**/tests/**",
+            "**/node_modules/**",
+            "jest.config.js",
+            "**/allure-results/**",
+            "**/log",
+            "**/tools/**",
+            "src/specification/**"
+        ]
     },
     "storage": {
         "rules": "storage.rules"
