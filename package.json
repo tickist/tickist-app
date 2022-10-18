@@ -82,7 +82,7 @@
     "@ngrx/router-store": "13.2.0",
     "@ngrx/store": "13.2.0",
     "@ngrx/store-devtools": "13.2.0",
-    "@nrwl/angular": "14.1.9",
+    "@nrwl/angular": "14.2.0",
     "angular-resize-event": "^3.1.1",
     "chart.js": "^2.8.0",
     "core-js": "^3.19.1",
