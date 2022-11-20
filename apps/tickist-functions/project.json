@@ -11,7 +11,11 @@
                 "main": "apps/tickist-functions/src/main.ts",
                 "tsConfig": "apps/tickist-functions/tsconfig.app.json",
                 "assets": ["apps/tickist-functions/src/assets"],
-                "buildLibsFromSource": true
+                "buildLibsFromSource": true,
+                "generatePackageJson": true,
+                "generateExportsField": {
+
+                }
             },
             "configurations": {
                 "production": {

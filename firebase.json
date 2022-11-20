@@ -62,7 +62,7 @@
             "npm run lint tickist-functions",
             "npm run build:functions"
         ],
-        "source": "/",
+        "source": "/dist/apps/tickist-functions",
         "ignore": [
             "**/tests/**",
             "**/node_modules/**",

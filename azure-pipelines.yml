@@ -61,7 +61,7 @@ steps:
 
 
     -   script: |
-            npm run build && firebase deploy --non-interactive  --project stable --token $FIREBASE_TOKEN
+            npm run build:functions && firebase deploy --non-interactive  --project stable --token $FIREBASE_TOKEN
         #    ng run build && firebase deploy --non-interactive  --project stable --only functions,firestore:rules,firestore:indexes --token $FIREBASE_TOKEN
         displayName: 'Deploy'
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
