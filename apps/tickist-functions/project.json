@@ -10,12 +10,11 @@
                 "outputPath": "dist/apps/tickist-functions",
                 "main": "apps/tickist-functions/src/main.ts",
                 "tsConfig": "apps/tickist-functions/tsconfig.app.json",
-                "assets": ["apps/tickist-functions/src/assets"],
+                "assets": [
+                    "apps/tickist-functions/src/assets"
+                ],
                 "buildLibsFromSource": true,
-                "generatePackageJson": true,
-                "generateExportsField": {
-
-                }
+                "generatePackageJson": true
             },
             "configurations": {
                 "production": {
@@ -30,7 +29,9 @@
                     ]
                 }
             },
-            "outputs": ["{options.outputPath}"]
+            "outputs": [
+                "{options.outputPath}"
+            ]
         },
         "serve": {
             "executor": "@nrwl/node:node",
@@ -41,7 +42,10 @@
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "options": {
-                "lintFilePatterns": ["apps/tickist-functions/src/**/*.ts", "apps/tickist-functions/src/**/*.html"]
+                "lintFilePatterns": [
+                    "apps/tickist-functions/src/**/*.ts",
+                    "apps/tickist-functions/src/**/*.html"
+                ]
             }
         },
         "test": {
@@ -50,7 +54,9 @@
                 "jestConfig": "apps/tickist-functions/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": ["coverage/apps/tickist-functions"]
+            "outputs": [
+                "coverage/apps/tickist-functions"
+            ]
         }
     }
 }
