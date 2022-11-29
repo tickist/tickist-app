@@ -24,7 +24,7 @@ describe("Tags", () => {
             cy.get("input[name=tag-name]").type(newTagName).should("have.value", newTagName);
             cy.get('[data-cy="createTag"]').click();
             cy.log("Edit tag name");
-            cy.get(`tickist-tag:contains("${newTagName}")`).then(($tag) => {
+            cy.get(`tickist-tag:contains("${newTagName}")`, { timeout: 20000 }).then(($tag) => {
                 cy.wrap($tag.find('[data-cy="editTag"]')).click({
                     force: true,
                 });
