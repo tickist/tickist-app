@@ -20,6 +20,7 @@ describe("Tags", () => {
             cy.url().should("include", "tasks-tags-view");
             const newTagName = "New tag name";
             const newTagName2 = "New tag name2";
+            cy.get("tickist-user-avatar", { timeout: 40000 }).should("be.visible");
             cy.log("Create tag name");
             cy.get("input[name=tag-name]").type(newTagName).should("have.value", newTagName);
             cy.get('[data-cy="createTag"]').click();
