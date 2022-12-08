@@ -16,16 +16,16 @@ import {
 } from "@data/projects";
 import { Location } from "@angular/common";
 import {
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     Validators,
 } from "@angular/forms";
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SimpleUser, User } from "@data/users/models";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { filter, map, startWith, takeUntil } from "rxjs/operators";
 import {
     requestCreateProject,
@@ -58,7 +58,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     defaultAvatarUrl: string;
     projectsAncestors: Project[] | any[];
     stream$: Observable<any>;
-    projectForm: FormGroup;
+    projectForm: UntypedFormGroup;
     menu: any;
     user: User;
     team: SimpleUser[];
@@ -68,7 +68,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     deleteOrLeaveProjectLabel = "";
     colors: any;
     filteredUsers: any;
-    addUserToShareWithListCtrl: FormControl;
+    addUserToShareWithListCtrl: UntypedFormControl;
     subscription: Subscription;
     submitButtonLabel: string;
     defaultUserAvatar = DEFAULT_USER_AVATAR;
@@ -84,7 +84,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     @ViewChild("matAutocomplete") matAutocomplete: any;
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private route: ActivatedRoute,
         private store: Store,
         private location: Location,
@@ -93,7 +93,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         private router: Router,
         private projectService: ProjectService
     ) {
-        this.addUserToShareWithListCtrl = new FormControl();
+        this.addUserToShareWithListCtrl = new UntypedFormControl();
         this.menu = this.createMenuDict();
     }
 
@@ -198,7 +198,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     ];
                 }
             });
-        this.addUserToShareWithListCtrl = new FormControl(
+        this.addUserToShareWithListCtrl = new UntypedFormControl(
             "",
             Validators.compose([Validators.required, Validators.email])
         );
@@ -308,31 +308,31 @@ export class ProjectComponent implements OnInit, OnDestroy {
     // }
 
     createForm(project: Project) {
-        return new FormGroup({
-            main: new FormGroup({
-                name: new FormControl(project.name, {
+        return new UntypedFormGroup({
+            main: new UntypedFormGroup({
+                name: new UntypedFormControl(project.name, {
                     validators: Validators.required,
                 }),
-                projectType: new FormControl(project.projectType, {
+                projectType: new UntypedFormControl(project.projectType, {
                     validators: Validators.required,
                 }),
-                ancestor: new FormControl(project.ancestor),
-                description: new FormControl(project.description),
+                ancestor: new UntypedFormControl(project.ancestor),
+                description: new UntypedFormControl(project.description),
             }),
-            extra: new FormGroup({
-                defaultFinishDate: new FormControl(project.defaultFinishDate),
-                defaultPriority: new FormControl(project.defaultPriority),
-                defaultTypeFinishDate: new FormControl(
+            extra: new UntypedFormGroup({
+                defaultFinishDate: new UntypedFormControl(project.defaultFinishDate),
+                defaultPriority: new UntypedFormControl(project.defaultPriority),
+                defaultTypeFinishDate: new UntypedFormControl(
                     project.defaultTypeFinishDate
                 ),
-                dialogTimeWhenTaskFinished: new FormControl(
+                dialogTimeWhenTaskFinished: new UntypedFormControl(
                     project.dialogTimeWhenTaskFinished
                 ),
-                taskView: new FormControl(project.taskView),
+                taskView: new UntypedFormControl(project.taskView),
             }),
-            branding: new FormGroup({
-                color: new FormControl(project.color),
-                icon: new FormControl(project.icon),
+            branding: new UntypedFormGroup({
+                color: new UntypedFormControl(project.color),
+                icon: new UntypedFormControl(project.icon),
             }),
         });
     }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { TaskService } from "../../core/services/task.service";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { User } from "@data/users";
 import { TASK_EXTENDED_VIEW, TASK_SIMPLE_VIEW } from "@data";
 

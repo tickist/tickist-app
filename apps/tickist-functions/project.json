@@ -1,20 +1,22 @@
 {
+    "name": "tickist-functions",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "apps/tickist-functions/src",
     "projectType": "application",
     "prefix": "tickist-functions",
     "generators": {},
     "targets": {
         "build": {
-            "executor": "@nrwl/node:webpack",
+            "executor": "@nrwl/webpack:webpack",
             "options": {
                 "outputPath": "dist/apps/tickist-functions",
                 "main": "apps/tickist-functions/src/main.ts",
                 "tsConfig": "apps/tickist-functions/tsconfig.app.json",
-                "assets": [
-                    "apps/tickist-functions/src/assets"
-                ],
+                "assets": ["apps/tickist-functions/src/assets"],
                 "buildLibsFromSource": true,
-                "generatePackageJson": true
+                "generatePackageJson": true,
+                "target": "node",
+                "compiler": "tsc"
             },
             "configurations": {
                 "production": {
@@ -29,9 +31,7 @@
                     ]
                 }
             },
-            "outputs": [
-                "{options.outputPath}"
-            ]
+            "outputs": ["{options.outputPath}"]
         },
         "serve": {
             "executor": "@nrwl/node:node",
@@ -42,10 +42,7 @@
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "options": {
-                "lintFilePatterns": [
-                    "apps/tickist-functions/src/**/*.ts",
-                    "apps/tickist-functions/src/**/*.html"
-                ]
+                "lintFilePatterns": ["apps/tickist-functions/src/**/*.ts", "apps/tickist-functions/src/**/*.html"]
             }
         },
         "test": {
@@ -54,9 +51,7 @@
                 "jestConfig": "apps/tickist-functions/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": [
-                "coverage/apps/tickist-functions"
-            ]
+            "outputs": ["{workspaceRoot}/coverage/apps/tickist-functions"]
         }
     }
 }

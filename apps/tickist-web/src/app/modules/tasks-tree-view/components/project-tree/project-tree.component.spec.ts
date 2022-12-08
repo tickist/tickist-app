@@ -9,7 +9,7 @@ import {TickistSingleTaskModule} from '../../../../single-task/single-task.modul
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {MockDirective} from 'ng-mocks';
 import {Project} from '@data/projects';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
 import {RouterTestingModule} from '@angular/router/testing';
 import {IconsModule} from '../../../../icons.module';
 

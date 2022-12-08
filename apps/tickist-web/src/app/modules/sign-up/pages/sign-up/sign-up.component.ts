@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { AuthService } from "../../../auth/services/auth.service";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { Subject } from "rxjs";
 
 @Component({
@@ -10,19 +10,19 @@ import { Subject } from "rxjs";
     styleUrls: ["./sign-up.component.scss"],
 })
 export class SignUpComponent implements OnDestroy {
-    userForm: FormGroup;
+    userForm: UntypedFormGroup;
     firebaseMessage = "";
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private authService: AuthService, public dialog: MatDialog) {
-        this.userForm = new FormGroup({
-            username: new FormControl("", [Validators.required]),
-            email: new FormControl(
+        this.userForm = new UntypedFormGroup({
+            username: new UntypedFormControl("", [Validators.required]),
+            email: new UntypedFormControl(
                 "",
                 [Validators.required, Validators.email],
                 []
             ),
-            password: new FormControl("", [
+            password: new UntypedFormControl("", [
                 Validators.required,
                 Validators.min(6),
                 Validators.minLength(6),

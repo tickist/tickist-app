@@ -3,7 +3,7 @@ import { Store } from "@ngrx/store";
 import { Subject } from "rxjs";
 import { removeNotificationPermission } from "../../../../core/actions/user.actions";
 import { NotificationsService } from "../../services/notifications.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
 
 @Component({
     selector: "tickist-snack-bar-notification",

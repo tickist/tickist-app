@@ -6,7 +6,7 @@ import {
     OnInit,
     Output,
 } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
@@ -24,13 +24,13 @@ import { differenceInDays, format, isDate } from "date-fns";
 })
 export class ChooseDayComponent implements OnInit, OnDestroy {
     @Output() selectedDate = new EventEmitter();
-    selectedDateFormControl: FormControl;
+    selectedDateFormControl: UntypedFormControl;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private store: Store) {}
 
     ngOnInit() {
-        this.selectedDateFormControl = new FormControl({
+        this.selectedDateFormControl = new UntypedFormControl({
             value: "",
             disabled: true,
         });

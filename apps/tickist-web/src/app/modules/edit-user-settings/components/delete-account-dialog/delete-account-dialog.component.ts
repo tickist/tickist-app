@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { Auth, onAuthStateChanged } from "@angular/fire/auth";
 import { Subject } from "rxjs";
 import { Store } from "@ngrx/store";
@@ -18,7 +18,7 @@ import {
 })
 export class DeleteAccountDialogComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    passwordFormGroup: FormGroup;
+    passwordFormGroup: UntypedFormGroup;
     user: User;
 
     constructor(
@@ -33,8 +33,8 @@ export class DeleteAccountDialogComponent implements OnInit, OnDestroy {
                 this.user = user as User;
             }
         });
-        this.passwordFormGroup = new FormGroup({
-            password: new FormControl("", {
+        this.passwordFormGroup = new UntypedFormGroup({
+            password: new UntypedFormControl("", {
                 validators: [Validators.required],
             }),
         });

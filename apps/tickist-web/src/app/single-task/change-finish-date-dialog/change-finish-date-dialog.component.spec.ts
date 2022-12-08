@@ -4,7 +4,7 @@ import { ChangeFinishDateDialogComponent } from "./change-finish-date-dialog.com
 import { TickistMaterialModule } from "../../material.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
 
 describe("ChangeFinishDateDialogComponent", () => {
     let component: ChangeFinishDateDialogComponent;

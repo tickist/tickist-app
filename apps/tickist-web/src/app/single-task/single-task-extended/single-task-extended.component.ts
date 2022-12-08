@@ -14,7 +14,7 @@ import {
 } from "@angular/core";
 import { TaskService } from "../../core/services/task.service";
 import { ConfigurationService } from "../../core/services/configuration.service";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { ProjectService } from "../../core/services/project.service";
 import {
     DEFAULT_PROJECT_ICON,
@@ -38,7 +38,7 @@ import { Store } from "@ngrx/store";
 import { removeTag } from "../utils/task-utils";
 import { selectAllProjectLeftPanel } from "../../modules/projects-list/projects-filters.selectors";
 import { selectProjectById } from "../../core/selectors/projects.selectors";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { ProjectLeftPanel } from "../../modules/projects-list/models/project-list";
 
 @Component({
@@ -62,7 +62,7 @@ export class SingleTaskExtendedComponent
     ngUnsubscribe: Subject<void> = new Subject<void>();
     repeatString = "";
     repeatStringExtension;
-    selectTaskProject: FormControl;
+    selectTaskProject: UntypedFormControl;
     tags: Tag[] = [];
     isTaskTypeLabelVisible = false;
     icon: string;
@@ -111,7 +111,7 @@ export class SingleTaskExtendedComponent
     }
 
     ngOnInit() {
-        this.selectTaskProject = new FormControl(this.task.taskProject.id);
+        this.selectTaskProject = new UntypedFormControl(this.task.taskProject.id);
         this.projects$ = this.store.select(selectAllProjectLeftPanel);
         this.projects$
             .pipe(takeUntil(this.ngUnsubscribe))

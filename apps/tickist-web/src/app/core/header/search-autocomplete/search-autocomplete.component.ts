@@ -7,7 +7,7 @@ import {
     ViewChild,
 } from "@angular/core";
 import { Task } from "@data/tasks/models/tasks";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { Observable, Subject } from "rxjs";
 import {
     debounceTime,
@@ -18,7 +18,7 @@ import {
     takeUntil,
 } from "rxjs/operators";
 import { NavigationEnd, Router } from "@angular/router";
-import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
+import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from "@angular/material/legacy-autocomplete";
 import { Store } from "@ngrx/store";
 import { selectAllUndoneTasks } from "../../selectors/task.selectors";
 import { editTaskRoutesName } from "../../../modules/edit-task/routes-names";
@@ -42,7 +42,7 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
     @ViewChild("searchInput", { static: true }) searchInput: ElementRef;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     tasks: Task[];
-    searchControl = new FormControl();
+    searchControl = new UntypedFormControl();
     filteredOptions: Observable<Task[]>;
     constructor(private store: Store, private router: Router) {}
 

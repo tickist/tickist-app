@@ -5,7 +5,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
     ControlValueAccessor,
-    FormControl,
+    UntypedFormControl,
     NG_VALUE_ACCESSOR,
 } from "@angular/forms";
 import { noop, Subject } from "rxjs";
@@ -30,7 +30,7 @@ export class IconPickerComponent implements ControlValueAccessor, OnDestroy {
     @Input() color: string;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     searchText: string;
-    searchControl: FormControl;
+    searchControl: UntypedFormControl;
 
     innerValue: any = "";
     private onTouchedCallback: () => void = noop;
@@ -57,7 +57,7 @@ export class IconPickerComponent implements ControlValueAccessor, OnDestroy {
                 this.iconDefinitions.splice(0, this.size)
             );
         }
-        this.searchControl = new FormControl("");
+        this.searchControl = new UntypedFormControl("");
         this.searchControl.valueChanges
             .pipe(
                 debounceTime(400),

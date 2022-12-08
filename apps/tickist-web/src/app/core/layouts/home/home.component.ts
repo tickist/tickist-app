@@ -14,7 +14,7 @@ import { Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
 import { SideNavVisibility } from "@data/configurations";
 import { AngularFireMessaging } from "@angular/fire/compat/messaging";
-import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
+import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from "@angular/material/legacy-snack-bar";
 import { selectLoggedInUser } from "../../selectors/user.selectors";
 import { NotificationPermission, User } from "@data";
 import { SnackBarNotificationComponent } from "../../../modules/notifications/components/snack-bar-notification/snack-bar-notification.component";

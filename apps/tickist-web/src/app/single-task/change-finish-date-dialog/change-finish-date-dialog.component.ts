@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import { Task } from '@data/tasks/models/tasks';
 
 
@@ -10,7 +10,7 @@ import { Task } from '@data/tasks/models/tasks';
     styleUrls: ['./change-finish-date-dialog.component.scss']
 })
 export class ChangeFinishDateDialogComponent implements OnInit {
-    changeDate: FormGroup;
+    changeDate: UntypedFormGroup;
     task: Task;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ChangeFinishDateDialogComponent>) {
@@ -19,8 +19,8 @@ export class ChangeFinishDateDialogComponent implements OnInit {
 
     ngOnInit() {
         const finishDate = this.task.finishDate ? this.task.finishDate : '';
-        this.changeDate = new FormGroup({
-            finishDate: new FormControl(finishDate, Validators.required)
+        this.changeDate = new UntypedFormGroup({
+            finishDate: new UntypedFormControl(finishDate, Validators.required)
         });
 
     }

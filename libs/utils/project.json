@@ -1,4 +1,6 @@
 {
+    "name": "utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "libs/utils/src",
     "projectType": "library",
     "generators": {},
@@ -15,7 +17,7 @@
                 "jestConfig": "libs/utils/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": ["coverage/libs/utils"]
+            "outputs": ["{workspaceRoot}/coverage/libs/utils"]
         }
     }
 }

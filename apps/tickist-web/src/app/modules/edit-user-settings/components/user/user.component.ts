@@ -9,9 +9,9 @@ import { User } from "@data/users/models";
 import { UserService } from "../../../../core/services/user.service";
 import {
     AbstractControl,
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     Validators,
 } from "@angular/forms";
 import { Location } from "@angular/common";
@@ -40,7 +40,7 @@ import {
 } from "../../../../core/actions/add-task-button-visibility.actions";
 import { DeleteUserConfirmationDialogComponent } from "../../../edit-project/components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component";
 import { DeleteAccountDialogComponent } from "../delete-account-dialog/delete-account-dialog.component";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { NGXLogger } from "ngx-logger";
 import { UploadTask } from "@angular/fire/storage";
@@ -53,10 +53,10 @@ import { getDownloadURL } from "@angular/fire/storage";
 })
 export class UserComponent implements OnInit, OnDestroy {
     menu: Array<any>;
-    changePasswordForm: FormGroup;
-    userData: FormGroup;
-    userSettings: FormGroup;
-    userNotificationSettings: FormGroup;
+    changePasswordForm: UntypedFormGroup;
+    userData: UntypedFormGroup;
+    userSettings: UntypedFormGroup;
+    userNotificationSettings: UntypedFormGroup;
     user: User = null;
     dailySummaryCheckbox: boolean;
     staticUrl: string;
@@ -74,7 +74,7 @@ export class UserComponent implements OnInit, OnDestroy {
     @ViewChild("changeAvatarInput") changeAvatarInput: ElementRef;
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private store: Store,
         private location: Location,
         private notificationsService: NotificationsService,
@@ -132,15 +132,15 @@ export class UserComponent implements OnInit, OnDestroy {
                 // this.uploadPercent = new Observable<number>();
                 this.user = user;
                 this.dailySummaryCheckbox = !!user.dailySummaryHour;
-                this.userData = new FormGroup(
+                this.userData = new UntypedFormGroup(
                     {
-                        username: new FormControl(user.username, {
+                        username: new UntypedFormControl(user.username, {
                             validators: [
                                 Validators.required,
                                 Validators.minLength(4),
                             ],
                         }),
-                        email: new FormControl(
+                        email: new UntypedFormControl(
                             { value: user.email, disabled: true },
                             {
                                 validators: [
@@ -161,38 +161,38 @@ export class UserComponent implements OnInit, OnDestroy {
                             Object.assign({}, this.user, { username: newValue })
                         );
                     });
-                this.userSettings = new FormGroup({
-                    orderTasksDashboard: new FormControl(
+                this.userSettings = new UntypedFormGroup({
+                    orderTasksDashboard: new UntypedFormControl(
                         user.orderTasksDashboard,
                         { validators: [Validators.required] }
                     ),
-                    defaultTaskView: new FormControl(user.defaultTaskView, {
+                    defaultTaskView: new UntypedFormControl(user.defaultTaskView, {
                         validators: [Validators.required],
                     }),
-                    defaultTaskViewTodayView: new FormControl(
+                    defaultTaskViewTodayView: new UntypedFormControl(
                         user.defaultTaskViewTodayView,
                         { validators: [Validators.required] }
                     ),
-                    defaultTaskViewOverdueView: new FormControl(
+                    defaultTaskViewOverdueView: new UntypedFormControl(
                         user.defaultTaskViewOverdueView,
                         { validators: [Validators.required] }
                     ),
-                    defaultTaskViewFutureView: new FormControl(
+                    defaultTaskViewFutureView: new UntypedFormControl(
                         user.defaultTaskViewFutureView,
                         { validators: [Validators.required] }
                     ),
-                    defaultTaskViewTagsView: new FormControl(
+                    defaultTaskViewTagsView: new UntypedFormControl(
                         user.defaultTaskViewTagsView,
                         { validators: [Validators.required] }
                     ),
-                    overdueTasksSortBy: new FormControl(
+                    overdueTasksSortBy: new UntypedFormControl(
                         user.overdueTasksSortBy,
                         { validators: [Validators.required] }
                     ),
-                    futureTasksSortBy: new FormControl(user.futureTasksSortBy, {
+                    futureTasksSortBy: new UntypedFormControl(user.futureTasksSortBy, {
                         validators: [Validators.required],
                     }),
-                    dialogTimeWhenTaskFinishedInProject: new FormControl(
+                    dialogTimeWhenTaskFinishedInProject: new UntypedFormControl(
                         user.dialogTimeWhenTaskFinishedInProject,
                         { validators: [Validators.required] }
                     ),
@@ -302,45 +302,45 @@ export class UserComponent implements OnInit, OnDestroy {
                         );
                     });
 
-                this.userNotificationSettings = new FormGroup({
-                    dailySummaryHour: new FormControl({
+                this.userNotificationSettings = new UntypedFormGroup({
+                    dailySummaryHour: new UntypedFormControl({
                         value: user.dailySummaryHour,
                         disabled: !this.dailySummaryCheckbox,
                     }),
-                    dailySummaryCheckbox: new FormControl(
+                    dailySummaryCheckbox: new UntypedFormControl(
                         this.dailySummaryCheckbox
                     ),
-                    removesMeFromSharedList: new FormControl(
+                    removesMeFromSharedList: new UntypedFormControl(
                         {
                             value: user.removesMeFromSharedList,
                             disabled: !this.isNotificationAllowed,
                         },
                         { validators: [Validators.required] }
                     ),
-                    assignsTaskToMe: new FormControl(user.assignsTaskToMe, {
+                    assignsTaskToMe: new UntypedFormControl(user.assignsTaskToMe, {
                         validators: [Validators.required],
                     }),
-                    completesTaskFromSharedList: new FormControl(
+                    completesTaskFromSharedList: new UntypedFormControl(
                         user.completesTaskFromSharedList,
                         { validators: [Validators.required] }
                     ),
                     changesTaskFromSharedListThatIsAssignedToMe:
-                        new FormControl(
+                        new UntypedFormControl(
                             user.changesTaskFromSharedListThatIsAssignedToMe,
                             { validators: [Validators.required] }
                         ),
                     changesTaskFromSharedListThatIAssignedToHimHer:
-                        new FormControl(
+                        new UntypedFormControl(
                             user.changesTaskFromSharedListThatIAssignedToHimHer,
                             { validators: [Validators.required] }
                         ),
-                    leavesSharedList: new FormControl(user.leavesSharedList, {
+                    leavesSharedList: new UntypedFormControl(user.leavesSharedList, {
                         validators: [Validators.required],
                     }),
-                    sharesListWithMe: new FormControl(user.sharesListWithMe, {
+                    sharesListWithMe: new UntypedFormControl(user.sharesListWithMe, {
                         validators: [Validators.required],
                     }),
-                    deletesListSharedWithMe: new FormControl(
+                    deletesListSharedWithMe: new UntypedFormControl(
                         user.deletesListSharedWithMe,
                         { validators: [Validators.required] }
                     ),
@@ -462,8 +462,8 @@ export class UserComponent implements OnInit, OnDestroy {
                     });
             });
 
-        this.changePasswordForm = new FormGroup({
-            email: new FormControl(
+        this.changePasswordForm = new UntypedFormGroup({
+            email: new UntypedFormControl(
                 "",
                 Validators.compose([Validators.required, Validators.email])
             ),

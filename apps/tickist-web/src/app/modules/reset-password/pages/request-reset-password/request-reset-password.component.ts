@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { UserService } from "../../../../core/services/user.service";
 import { NGXLogger } from "ngx-logger";
 
@@ -9,14 +9,14 @@ import { NGXLogger } from "ngx-logger";
     styleUrls: ["./request-reset-password.component.scss"],
 })
 export class RequestResetPasswordComponent implements OnInit {
-    requestChangePasswordForm: FormGroup;
+    requestChangePasswordForm: UntypedFormGroup;
     requestChangePasswordMessage: string;
 
     constructor(private userService: UserService, private logger: NGXLogger) {}
 
     ngOnInit() {
-        this.requestChangePasswordForm = new FormGroup({
-            email: new FormControl(
+        this.requestChangePasswordForm = new UntypedFormGroup({
+            email: new UntypedFormControl(
                 "",
                 Validators.compose([Validators.required, Validators.email])
             ),

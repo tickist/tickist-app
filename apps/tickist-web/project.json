@@ -1,4 +1,6 @@
 {
+    "name": "tickist-web",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "projectType": "application",
     "generators": {
         "@nrwl/angular:component": {
@@ -137,7 +139,7 @@
                 "jestConfig": "apps/tickist-web/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": ["coverage/apps/tickist-web"]
+            "outputs": ["{workspaceRoot}/coverage/apps/tickist-web"]
         },
         "deploy": {
             "executor": "@angular/fire:deploy",

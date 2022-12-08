@@ -1,5 +1,5 @@
 import { Task } from "@data/tasks/models/tasks";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { Step } from "@data/tasks/models/steps";
 import { TimeDialogComponent } from "../time-dialog/time-dialog.component";
 import { ChangeFinishDateDialogComponent } from "../change-finish-date-dialog/change-finish-date-dialog.component";

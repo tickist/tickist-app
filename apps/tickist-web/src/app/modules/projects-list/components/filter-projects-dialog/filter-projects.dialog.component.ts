@@ -1,4 +1,4 @@
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {Component, OnDestroy} from '@angular/core';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';

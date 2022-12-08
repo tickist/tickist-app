@@ -16,19 +16,19 @@ import { ConfigurationService } from "../../../../core/services/configuration.se
 import { User } from "@data/users/models";
 import {
     AbstractControl,
-    FormArray,
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormArray,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     Validators,
 } from "@angular/forms";
 import { Location } from "@angular/common";
 import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
 import {
-    MatAutocompleteSelectedEvent,
-    MatAutocompleteTrigger,
-} from "@angular/material/autocomplete";
-import { MatDialog } from "@angular/material/dialog";
+    MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent,
+    MatLegacyAutocompleteTrigger as MatAutocompleteTrigger,
+} from "@angular/material/legacy-autocomplete";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import moment from "moment";
 import { Tag } from "@data/tags/models/tags";
 import { DeleteTaskDialogComponent } from "../../../../single-task/delete-task-dialog/delete-task.dialog.component";
@@ -79,7 +79,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     selectedProject: Project;
     menu: Array<any>;
     user: User;
-    taskForm: FormGroup;
+    taskForm: UntypedFormGroup;
     defaultRepeatOptions: any;
     customRepeatOptions: any;
     fromRepetingOptions: any;
@@ -88,7 +88,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     minutes2Hours: Minutes2hoursPipe;
     steps: Step[];
     minDate: Date;
-    tagsCtrl: FormControl;
+    tagsCtrl: UntypedFormControl;
     filteredTags: Observable<any>;
     tags: Tag[] = [];
     test: any;
@@ -103,7 +103,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     @ViewChild("autocompleteTags") autocompleteTags;
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private route: ActivatedRoute,
         private taskService: TaskService,
         private store: Store,
@@ -188,7 +188,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 // this.filteredTags = this.tags.filter((tag) => this.task)
             });
 
-        this.tagsCtrl = new FormControl();
+        this.tagsCtrl = new UntypedFormControl();
         this.filteredTags = this.tagsCtrl.valueChanges.pipe(
             startWith(null),
             map((name) => this.filterTags(name))
@@ -326,59 +326,59 @@ export class TaskComponent implements OnInit, OnDestroy {
         }
         repeat.repeatCustom = task.repeat > 0 ? task.repeat : 1;
 
-        return new FormGroup({
-            main: new FormGroup(
+        return new UntypedFormGroup({
+            main: new UntypedFormGroup(
                 {
-                    name: new FormControl(task.name, {
+                    name: new UntypedFormControl(task.name, {
                         validators: [Validators.required, Validators.max(500)],
                     }),
-                    priority: new FormControl(task.priority, {
+                    priority: new UntypedFormControl(task.priority, {
                         updateOn: "change",
                     }),
-                    taskType: new FormControl(
+                    taskType: new UntypedFormControl(
                         task.taskType,
                         Validators.required
                     ),
-                    taskProjectPk: new FormControl(
+                    taskProjectPk: new UntypedFormControl(
                         task.taskProject.id,
                         Validators.required
                     ),
-                    typeFinishDate: new FormControl(
+                    typeFinishDate: new UntypedFormControl(
                         task.typeFinishDate,
                         Validators.required
                     ),
-                    finishDate: new FormControl(finishDate),
-                    finishTime: new FormControl(finishTime),
+                    finishDate: new UntypedFormControl(finishDate),
+                    finishTime: new UntypedFormControl(finishTime),
                 },
                 { updateOn: "blur" }
             ),
-            extra: new FormGroup(
+            extra: new UntypedFormGroup(
                 {
-                    description: new FormControl(task.description),
-                    time: new FormControl(
+                    description: new UntypedFormControl(task.description),
+                    time: new UntypedFormControl(
                         this.minutes2Hours.transform(task.time)
                     ),
-                    estimateTime: new FormControl(
+                    estimateTime: new UntypedFormControl(
                         this.minutes2Hours.transform(task.estimateTime)
                     ),
-                    ownerId: new FormControl(task.owner.id, {
+                    ownerId: new UntypedFormControl(task.owner.id, {
                         validators: Validators.required,
                     }),
-                    suspended: new FormControl(task.onHold === true, {
+                    suspended: new UntypedFormControl(task.onHold === true, {
                         validators: Validators.required,
                     }),
-                    suspendedDate: new FormControl(task.suspendDate),
+                    suspendedDate: new UntypedFormControl(task.suspendDate),
                 },
                 { validators: this.finishTimeWithFinishDate }
             ),
-            repeat: new FormGroup({
-                repeatDefault: new FormControl(repeat.repeatDefault),
-                repeatDelta: new FormControl(repeat.repeatDelta),
-                repeatCustom: new FormControl(repeat.repeatCustom),
-                fromRepeating: new FormControl(task.fromRepeating),
+            repeat: new UntypedFormGroup({
+                repeatDefault: new UntypedFormControl(repeat.repeatDefault),
+                repeatDelta: new UntypedFormControl(repeat.repeatDelta),
+                repeatCustom: new UntypedFormControl(repeat.repeatCustom),
+                fromRepeating: new UntypedFormControl(task.fromRepeating),
             }),
-            tags: new FormGroup({
-                tags: new FormControl(""),
+            tags: new UntypedFormGroup({
+                tags: new UntypedFormControl(""),
             }),
             steps: this.initSteps(task.steps),
         });
@@ -390,19 +390,19 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     clearFinishDate($event): void {
-        const main = <FormGroup>this.taskForm.controls["main"];
+        const main = <UntypedFormGroup>this.taskForm.controls["main"];
         main.controls["finishDate"].setValue("");
         $event.stopPropagation();
     }
 
     clearFinishTime($event): void {
-        const main = <FormGroup>this.taskForm.controls["main"];
+        const main = <UntypedFormGroup>this.taskForm.controls["main"];
         main.controls["finishTime"].setValue("");
         $event.stopPropagation();
     }
 
     clearSuspendedDate($event): void {
-        const main = <FormGroup>this.taskForm.controls["extra"];
+        const main = <UntypedFormGroup>this.taskForm.controls["extra"];
         main.controls["suspendedDate"].setValue("");
         $event.stopPropagation();
     }
@@ -739,12 +739,12 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     addNewStep() {
-        const control = <FormArray>this.taskForm.controls["steps"];
+        const control = <UntypedFormArray>this.taskForm.controls["steps"];
         control.push(this.initStep());
     }
 
     removeStep(i: number) {
-        const control = <FormArray>this.taskForm.controls["steps"];
+        const control = <UntypedFormArray>this.taskForm.controls["steps"];
         // delete steps from task model
         const steps = [...this.task.steps];
         if (control.controls[i].value.id) {
@@ -769,7 +769,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.projects.find((project) => project.id === event.value)
             ),
         });
-        const extra = <FormGroup>this.taskForm.controls["extra"];
+        const extra = <UntypedFormGroup>this.taskForm.controls["extra"];
         extra.controls["ownerId"].setValue(this.user.id);
         this.selectedProject = newProject;
     }

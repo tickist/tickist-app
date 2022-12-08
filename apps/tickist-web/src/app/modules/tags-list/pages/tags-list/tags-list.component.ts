@@ -5,16 +5,16 @@ import { Tag } from "@data/tags/models/tags";
 import { Task } from "@data/tasks/models/tasks";
 import { TaskService } from "../../../../core/services/task.service";
 import {
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     Validators,
 } from "@angular/forms";
 import { UserService } from "../../../../core/services/user.service";
 import { User } from "@data/users/models";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { FilterTagsDialogComponent } from "../../components/filter-tags-dialog/filter-tags-dialog.component";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { TasksFiltersService } from "../../../../core/services/tasks-filters.service";
 import { Store } from "@ngrx/store";
 import { takeUntil } from "rxjs/operators";
@@ -34,14 +34,14 @@ export class TagsListComponent implements OnInit, OnDestroy {
     tags: Tag[];
     tasks: Task[];
     user: User;
-    createTagForm: FormGroup;
+    createTagForm: UntypedFormGroup;
     defaultTaskView: string;
     taskView: string;
     filteredTagsList$: Observable<TagWithTaskCounter[]>;
     @ViewChild("form", { static: true }) createTagFormDOM;
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private tagService: TagService,
         private taskService: TaskService,
         private userService: UserService,
@@ -54,8 +54,8 @@ export class TagsListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.filteredTagsList$ = this.store.select(selectFilteredTagsList);
-        this.createTagForm = new FormGroup({
-            name: new FormControl("", Validators.required),
+        this.createTagForm = new UntypedFormGroup({
+            name: new UntypedFormControl("", Validators.required),
         });
         this.store
             .select(selectLoggedInUser)

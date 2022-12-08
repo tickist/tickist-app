@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { login } from "../../../../core/actions/auth.actions";
 import { AuthService } from "../../../auth/services/auth.service";
@@ -17,7 +17,7 @@ import { OperationType } from "@firebase/auth";
     styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnDestroy {
-    loginForm: FormGroup;
+    loginForm: UntypedFormGroup;
     message = "";
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -27,9 +27,9 @@ export class LoginComponent implements OnDestroy {
         private store: Store,
         private logger: NGXLogger
     ) {
-        this.loginForm = new FormGroup({
-            email: new FormControl("", [Validators.required, Validators.email]),
-            password: new FormControl("", Validators.required),
+        this.loginForm = new UntypedFormGroup({
+            email: new UntypedFormControl("", [Validators.required, Validators.email]),
+            password: new UntypedFormControl("", Validators.required),
         });
         this.loginForm.controls["email"].valueChanges
             .pipe(takeUntil(this.ngUnsubscribe))

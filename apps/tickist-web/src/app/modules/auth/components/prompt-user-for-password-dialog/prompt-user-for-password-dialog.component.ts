@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 
 @Component({
     selector: 'tickist-prompt-user-for-password-dialog',
@@ -8,14 +8,14 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
     styleUrls: ['./prompt-user-for-password-dialog.component.scss']
 })
 export class PromptUserForPasswordDialogComponent implements OnInit {
-    passwordFormGroup: FormGroup;
+    passwordFormGroup: UntypedFormGroup;
 
     constructor(public dialogRef: MatDialogRef<PromptUserForPasswordDialogComponent>) {
     }
 
     ngOnInit() {
-        this.passwordFormGroup = new FormGroup({
-            'password': new FormControl('',
+        this.passwordFormGroup = new UntypedFormGroup({
+            'password': new UntypedFormControl('',
                 {validators: [Validators.required, Validators.minLength(6)]}),
         });
     }

@@ -10,8 +10,8 @@ import {
 import { Project, Task, TaskProject, TaskUser, User } from "@data";
 import { Subject } from "rxjs";
 import {
-    FormControl,
-    FormGroup,
+    UntypedFormControl,
+    UntypedFormGroup,
     FormGroupDirective,
     Validators,
 } from "@angular/forms";
@@ -33,15 +33,15 @@ export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
     @Input() enableLastElement = false;
     @ViewChild("addTaskInput", { static: false }) addTaskInput: ElementRef;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    createTaskForm: FormGroup;
+    createTaskForm: UntypedFormGroup;
     user: User;
     showCreateTaskForm = false;
     submitted = false;
     matcher = new ShowOnDirtyErrorStateMatcher();
 
     constructor(private store: Store) {
-        this.createTaskForm = new FormGroup({
-            name: new FormControl("", Validators.required),
+        this.createTaskForm = new UntypedFormGroup({
+            name: new UntypedFormControl("", Validators.required),
         });
     }
 

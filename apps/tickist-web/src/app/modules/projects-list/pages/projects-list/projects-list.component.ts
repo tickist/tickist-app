@@ -13,7 +13,7 @@ import { ConfigurationService } from "../../../../core/services/configuration.se
 import { User } from "@data/users/models";
 import { UserService } from "../../../../core/services/user.service";
 import { MediaObserver } from "@angular/flex-layout";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { FilterProjectDialogComponent } from "../../components/filter-projects-dialog/filter-projects.dialog.component";
 import { ProjectsFiltersService } from "../../projects-filters.service";
 import { Store } from "@ngrx/store";

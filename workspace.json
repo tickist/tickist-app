@@ -1,10 +1,11 @@
 {
-  "version": 2,
-  "projects": {
-    "data": "libs/data",
-    "tickist-functions": "apps/tickist-functions",
-    "tickist-web": "apps/tickist-web",
-    "tickist-web-e2e": "apps/tickist-web-e2e",
-    "utils": "libs/utils"
-  }
+    "version": 2,
+    "projects": {
+        "data": "libs/data",
+        "tickist-functions": "apps/tickist-functions",
+        "tickist-web": "apps/tickist-web",
+        "tickist-web-e2e": "apps/tickist-web-e2e",
+        "utils": "libs/utils"
+    },
+    "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

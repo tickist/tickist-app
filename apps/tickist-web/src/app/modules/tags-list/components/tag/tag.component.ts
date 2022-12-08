@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Tag} from '@data/tags/models/tags';
 import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
 import {requestDeleteTag, requestUpdateTag} from '../../../../core/actions/tags.actions';
@@ -24,12 +24,12 @@ export class TagComponent implements OnInit, OnDestroy {
     tagsIds: string | Set<string>;
     isActive: boolean;
     isChecked: boolean;
-    editTagForm: FormGroup;
+    editTagForm: UntypedFormGroup;
     editMode = false;
     isCheckboxModeEnabled = false;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private fb: FormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store) {
+    constructor(private fb: UntypedFormBuilder, private tasksFiltersService: TasksFiltersService, private store: Store) {
         this.isActive = false;
     }
 
@@ -47,8 +47,8 @@ export class TagComponent implements OnInit, OnDestroy {
             this.isChecked = ((this.tagsIds instanceof Set && this.tagsIds.has(this.id)) || this.tagsIds === this.id);
             this.isCheckboxModeEnabled = this.isId(this.id) && (this.tagsIds instanceof Set) && this.tagsIds.size > 0;
         });
-        this.editTagForm = new FormGroup({
-            'name': new FormControl(this.label, Validators.required)
+        this.editTagForm = new UntypedFormGroup({
+            'name': new UntypedFormControl(this.label, Validators.required)
         });
     }
 
