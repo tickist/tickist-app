@@ -1,16 +1,10 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    OnDestroy,
-    OnInit,
-} from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { Task } from "@data/tasks/models/tasks";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import * as _ from "lodash";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@angular/flex-layout";
 import { TaskService } from "../../../../core/services/task.service";
 import { UserService } from "../../../../core/services/user.service";
 import { User } from "@data/users/models";
@@ -35,7 +29,6 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     today: Date;
     tasks: Task[] = [];
     week: Array<any> = [];
-    mediaChange: MediaChange;
     user: User;
     timer: any;
 
@@ -54,11 +47,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
 
     regenerateWeekListAfterMidnight() {
         const today = new Date();
-        const tomorrow = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate() + 1
-        );
+        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
         const timeToMidnight = tomorrow.getTime() - today.getTime();
         // this.timer = setTimeout(() => {
         //      this.feelWeekData();
@@ -83,11 +72,6 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         //     .subscribe((param) => {
         //         this.store.dispatch(new UpdateActiveDate({date: param, state: stateActiveDateElement.weekdays}));
         //     });
-        this.media.media$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((mediaChange: MediaChange) => {
-                this.mediaChange = mediaChange;
-            });
         this.store
             .select(selectActiveDate)
             .pipe(takeUntil(this.ngUnsubscribe))
@@ -104,13 +88,11 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
                 this.cd.detectChanges();
             });
 
-        this.userService.user$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((user) => {
-                this.user = user;
-                this.feelWeekData();
-                this.cd.detectChanges();
-            });
+        this.userService.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((user) => {
+            this.user = user;
+            this.feelWeekData();
+            this.cd.detectChanges();
+        });
     }
 
     ngOnDestroy() {
@@ -125,15 +107,9 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     }
 
     navigateTo(arg) {
-        this.router.navigate([
-            `${homeRoutesName.home}`,
-            `${weekdaysRoutesName.weekdays}`,
-            arg,
-        ]);
+        this.router.navigate([`${homeRoutesName.home}`, `${weekdaysRoutesName.weekdays}`, arg]);
         if (this.media.isActive("sm") || this.media.isActive("xs")) {
-            this.configurationService.changeOpenStateLeftSidenavVisibility(
-                "close"
-            );
+            this.configurationService.changeOpenStateLeftSidenavVisibility("close");
         }
     }
 
@@ -153,16 +129,11 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
                 name: format(nextDay, "EEEE"),
                 date: format(nextDay, "dd-MM-yyyy"),
                 tasksCounter: this.tasks
-                    .filter(
-                        (task) =>
-                            task.owner.id === userId && task.isDone === false
-                    )
+                    .filter((task) => task.owner.id === userId && task.isDone === false)
                     .filter((task) => {
                         const finishDate = task.finishDate;
                         return (
-                            (finishDate &&
-                                format(finishDate, "dd-MM-yyyy") ===
-                                    format(nextDay, "dd-MM-yyyy")) ||
+                            (finishDate && format(finishDate, "dd-MM-yyyy") === format(nextDay, "dd-MM-yyyy")) ||
                             (this.isToday(nextDay) && task.pinned)
                         );
                     }).length,

@@ -41,21 +41,13 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
         protected media: MediaObserver,
         private store: Store
     ) {
-        this.stream$ = combineLatest([
-            this.taskService.tasks$,
-            this.store.select(selectActiveDate),
-            this.userService.user$,
-        ]);
+        this.stream$ = combineLatest([this.taskService.tasks$, this.store.select(selectActiveDate), this.userService.user$]);
         this.changeActiveDayAfterMidnight();
     }
 
     changeActiveDayAfterMidnight() {
         const today = new Date();
-        const tommorow = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate() + 1
-        );
+        const tommorow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
         const timeToMidnight = tommorow.getTime() - today.getTime();
         // this.timer = setTimeout(() => {
         //     if (this.isTomorrow()) {
@@ -75,56 +67,30 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.stream$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(([tasks, activeDateElement, user]) => {
-                this.activeDateElement = activeDateElement;
-                this.user = user;
-                if (tasks && tasks.length > 0 && this.user) {
-                    this.tasks = tasks.filter(
-                        (task) =>
-                            task.owner.id === this.user.id &&
-                            task.isDone === false &&
-                            task.onHold === false
-                    );
-                    this.todayTasks = this.tasks.filter(
-                        (task: Task) =>
-                            (task.finishDate &&
-                                format(task.finishDate, "dd-MM-yyyy") ===
-                                    format(
-                                        this.activeDateElement.date,
-                                        "dd-MM-yyyy"
-                                    )) ||
-                            (task.pinned === true && this.isToday())
-                    );
+        this.stream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([tasks, activeDateElement, user]) => {
+            this.activeDateElement = activeDateElement;
+            this.user = user;
+            if (tasks && tasks.length > 0 && this.user) {
+                this.tasks = tasks.filter((task) => task.owner.id === this.user.id && task.isDone === false && task.onHold === false);
+                this.todayTasks = this.tasks.filter(
+                    (task: Task) =>
+                        (task.finishDate && format(task.finishDate, "dd-MM-yyyy") === format(this.activeDateElement.date, "dd-MM-yyyy")) ||
+                        (task.pinned === true && this.isToday())
+                );
 
-                    this.overdueTasks = this.tasks.filter(
-                        (task: Task) =>
-                            task.pinned === false &&
-                            task.finishDate &&
-                            task.finishDate < this.activeDateElement.date
-                    );
+                this.overdueTasks = this.tasks.filter(
+                    (task: Task) => task.pinned === false && task.finishDate && task.finishDate < this.activeDateElement.date
+                );
 
-                    const overdueTasksSortBy = JSON.parse(
-                        this.user.overdueTasksSortBy
-                    );
-                    this.todayTasks = _.orderBy(
-                        this.todayTasks,
-                        [
-                            "priority",
-                            "finishDate",
-                            "finishTime",
-                            (task) => _.deburr(task.name.toLowerCase()),
-                        ],
-                        ["asc", "desc", "asc", "asc"]
-                    );
-                    this.overdueTasks = _.orderBy(
-                        this.overdueTasks,
-                        overdueTasksSortBy.fields,
-                        overdueTasksSortBy.orders
-                    );
-                }
-            });
+                const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
+                this.todayTasks = _.orderBy(
+                    this.todayTasks,
+                    ["priority", "finishDate", "finishTime", (task) => _.deburr(task.name.toLowerCase())],
+                    ["asc", "desc", "asc", "asc"]
+                );
+                this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);
+            }
+        });
         this.route.params
             .pipe(
                 map((params) => params["date"]),
@@ -140,11 +106,6 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
                     );
                 }
             });
-        this.media.media$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((mediaChange: MediaChange) => {
-                this.mediaChange = mediaChange;
-            });
     }
 
     ngOnDestroy() {
@@ -156,9 +117,7 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
     navigateTo(path, arg) {
         this.router.navigate([path, arg]);
         if (this.media.isActive("sm") || this.media.isActive("xs")) {
-            this.configurationService.changeOpenStateLeftSidenavVisibility(
-                "close"
-            );
+            this.configurationService.changeOpenStateLeftSidenavVisibility("close");
         }
     }
 }

@@ -53,21 +53,20 @@ export class HomeComponent implements OnInit, OnDestroy {
             position: "start",
         });
 
-        this.media.media$
+        this.media
+            .asObservable()
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((change: MediaChange) => {
+            .subscribe(() => {
                 this.configurationService.updateLeftSidenavVisibility();
                 this.cd.detectChanges();
             });
 
-        this.configurationService.leftSidenavVisibility$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((visibility: SideNavVisibility) => {
-                if (!_.isEmpty(visibility)) {
-                    this.leftSidenavVisibility = visibility;
-                    this.cd.detectChanges();
-                }
-            });
+        this.configurationService.leftSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((visibility: SideNavVisibility) => {
+            if (!_.isEmpty(visibility)) {
+                this.leftSidenavVisibility = visibility;
+                this.cd.detectChanges();
+            }
+        });
 
         this.store
             .pipe(
@@ -76,14 +75,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe((user: User) => {
-                if (
-                    user.notificationPermission ===
-                    NotificationPermission.unknown
-                ) {
-                    this.snackBar.openFromComponent(
-                        SnackBarNotificationComponent,
-                        this.config
-                    );
+                if (user.notificationPermission === NotificationPermission.unknown) {
+                    this.snackBar.openFromComponent(SnackBarNotificationComponent, this.config);
                 }
             });
     }

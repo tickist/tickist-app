@@ -1,10 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    OnDestroy,
-    OnInit,
-} from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { TaskService } from "../../../../core/services/task.service";
 import { Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
@@ -42,7 +36,6 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
     taskView: string;
     defaultTaskView = TASK_EXTENDED_VIEW.value;
     currentFilter: Filter;
-    mediaChange: MediaChange;
 
     constructor(
         private taskService: TaskService,
@@ -60,11 +53,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         this.activeDateElement$ = this.store.select(selectActiveDate);
         this.route.params
             .pipe(
-                map((params) =>
-                    params["date"]
-                        ? params["date"]
-                        : format(new Date(), "LLLL-uuuu")
-                ),
+                map((params) => (params["date"] ? params["date"] : format(new Date(), "LLLL-uuuu"))),
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe((param) => {
@@ -74,12 +63,6 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
                         state: StateActiveDateElement.future,
                     })
                 );
-            });
-
-        this.media.media$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((mediaChange: MediaChange) => {
-                this.mediaChange = mediaChange;
             });
 
         this.store
