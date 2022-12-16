@@ -51,7 +51,7 @@ export function removeOldFirebaseData() {
 }
 
 export function clickMenuElement(element: string) {
-    cy.get("mat-list").contains(element).click();
+    cy.get("mat-list").contains(element).click({ force: true });
 }
 
 export function clickOnProject(projectName: string, projectType = "Active projects") {

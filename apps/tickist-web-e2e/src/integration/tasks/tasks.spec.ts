@@ -16,6 +16,7 @@ import { TaskType } from "@data";
 
 describe("Tasks", () => {
     beforeEach(() => {
+        removeOldFirebaseData();
         cy.login("7mr64tVcVv3085oo0Y1VheOQYJXV");
         createFirebase();
         cy.visit("/");
@@ -48,10 +49,11 @@ describe("Tasks", () => {
             cy.get("input[name=taskName]", { timeout: 20000 }).type("Task 3").should("have.value", "Task 3");
             cy.get("tickist-priority").find("button").contains("A").click();
 
-            cy.get("input[name=finishDate]").focus();
-            cy.get("mat-calendar").find(".mat-calendar-body-today").click();
-            // cy.get('body').type('{esc}');
-            cy.get("input[name=finishTime]").type("10:00").should("have.value", "10:00");
+            cy.get("input[name=finishDate]").click();
+            cy.get("mat-calendar").find(".mat-calendar-body-today").click({ timeout: 10000 });
+
+            cy.get("mat-calendar").should("not.exist");
+            cy.get("input[name=finishTime]").type("10:00");
 
             cy.log("fill repeat form");
             clickMenuElement("Repeat");

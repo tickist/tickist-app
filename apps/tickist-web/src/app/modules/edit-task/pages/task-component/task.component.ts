@@ -1,10 +1,4 @@
-import {
-    Component,
-    HostListener,
-    OnDestroy,
-    OnInit,
-    ViewChild,
-} from "@angular/core";
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { TaskService } from "../../../../core/services/task.service";
 import { TagService } from "../../../../core/services/tag.service";
@@ -14,14 +8,7 @@ import { UserService } from "../../../../core/services/user.service";
 import { Project, ProjectType, ShareWithUser } from "@data//projects";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { User } from "@data/users/models";
-import {
-    AbstractControl,
-    UntypedFormArray,
-    UntypedFormBuilder,
-    UntypedFormControl,
-    UntypedFormGroup,
-    Validators,
-} from "@angular/forms";
+import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { Location } from "@angular/common";
 import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
 import {
@@ -36,32 +23,19 @@ import { map, startWith, takeUntil } from "rxjs/operators";
 import { Step } from "@data/tasks/models/steps";
 import { MyErrorStateMatcher } from "../../../../shared/error-state-matcher";
 import { Store } from "@ngrx/store";
-import {
-    deleteTask,
-    requestCreateTask,
-    requestUpdateTask,
-} from "../../../../core/actions/tasks/task.actions";
+import { deleteTask, requestCreateTask, requestUpdateTask } from "../../../../core/actions/tasks/task.actions";
 import { selectAllTags } from "../../../../core/selectors/tags.selectors";
 import { selectAllTasks } from "../../../../core/selectors/task.selectors";
-import {
-    moveFinishDateFromPreviousFinishDate,
-    removeTag,
-} from "../../../../single-task/utils/task-utils";
+import { moveFinishDateFromPreviousFinishDate, removeTag } from "../../../../single-task/utils/task-utils";
 import { ITaskUser, TaskUser } from "@data/tasks/models/task-user";
 import { TaskProject } from "@data/tasks/models/task-project";
 import { addClickableLinks, createUniqueId } from "@tickist/utils";
 import { CHOICES_DEFAULT_FINISH_DATE, ProjectWithLevel } from "@data/projects";
-import {
-    selectActiveProject,
-    selectAllProjectsWithLevelAndTreeStructures,
-} from "../../../../core/selectors/projects.selectors";
+import { selectActiveProject, selectAllProjectsWithLevelAndTreeStructures } from "../../../../core/selectors/projects.selectors";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task } from "@data";
 import { zip } from "ramda";
-import {
-    hideAddTaskButton,
-    showAddTaskButton,
-} from "../../../../core/actions/add-task-button-visibility.actions";
+import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
 import { changeTimeStringFormatToValue } from "@tickist/utils";
 
 @Component({
@@ -114,10 +88,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         private location: Location,
         private tagService: TagService
     ) {
-        this.taskTypesWithIcons = zip(
-            AVAILABLE_TASK_TYPES,
-            AVAILABLE_TASK_TYPES_ICONS
-        ).map((taskType) => ({
+        this.taskTypesWithIcons = zip(AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS).map((taskType) => ({
             value: taskType[0],
             icon: taskType[1],
         }));
@@ -126,17 +97,12 @@ export class TaskComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.minutes2Hours = new Minutes2hoursPipe();
         this.minDate = new Date();
-        this.defaultRepeatOptions =
-            this.configurationService.loadConfiguration().commons.defaultRepeatOptions;
-        this.customRepeatOptions =
-            this.configurationService.loadConfiguration().commons.customRepeatOptions;
-        this.fromRepetingOptions =
-            this.configurationService.loadConfiguration().commons.fromRepeatingOptions;
-        this.typeFinishDateOptions =
-            this.configurationService.loadConfiguration().commons.typeFinishDateOptions;
+        this.defaultRepeatOptions = this.configurationService.loadConfiguration().commons.defaultRepeatOptions;
+        this.customRepeatOptions = this.configurationService.loadConfiguration().commons.customRepeatOptions;
+        this.fromRepetingOptions = this.configurationService.loadConfiguration().commons.fromRepeatingOptions;
+        this.typeFinishDateOptions = this.configurationService.loadConfiguration().commons.typeFinishDateOptions;
         this.defaultFinishDateOptions = CHOICES_DEFAULT_FINISH_DATE;
-        this.typeFinishDateOptions =
-            this.configurationService.configuration.commons.typeFinishDateOptions;
+        this.typeFinishDateOptions = this.configurationService.configuration.commons.typeFinishDateOptions;
         this.stream$ = combineLatest([
             this.store.select(selectAllTasks),
             this.route.params.pipe(map((params) => params["taskId"])),
@@ -146,39 +112,32 @@ export class TaskComponent implements OnInit, OnDestroy {
         ]);
         this.menu = this.createMenuDict();
 
-        this.stream$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(([tasks, taskId, selectedProject, projects, user]) => {
-                let task: Task;
-                if (projects && tasks && projects.length > 0 && user) {
-                    this.user = user;
+        this.stream$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(([tasks, taskId, selectedProject, projects, user]) => {
+            let task: Task;
+            if (projects && tasks && projects.length > 0 && user) {
+                this.user = user;
 
-                    this.projects = projects;
-                    if (taskId) {
-                        task = tasks.filter((t) => t.id === taskId)[0];
-                        this.selectedProject = projects.find(
-                            (project) => project.id === task.taskProject.id
-                        );
+                this.projects = projects;
+                if (taskId) {
+                    task = tasks.filter((t) => t.id === taskId)[0];
+                    this.selectedProject = projects.find((project) => project.id === task.taskProject.id);
+                } else {
+                    if (!selectedProject) {
+                        this.selectedProject = projects.find((project) => project.projectType === ProjectType.inbox);
                     } else {
-                        if (!selectedProject) {
-                            this.selectedProject = projects.find(
-                                (project) =>
-                                    project.projectType === ProjectType.inbox
-                            );
-                        } else {
-                            this.selectedProject = selectedProject;
-                        }
-                        if (this.selectedProject) {
-                            task = this.createNewTask(this.selectedProject);
-                        }
+                        this.selectedProject = selectedProject;
+                    }
+                    if (this.selectedProject) {
+                        task = this.createNewTask(this.selectedProject);
                     }
                 }
-                if (task) {
-                    this.task = task;
-                    this.createFinishDateFilter();
-                    this.taskForm = this.createTaskForm(task);
-                }
-            });
+            }
+            if (task) {
+                this.task = task;
+                this.createFinishDateFilter();
+                this.taskForm = this.createTaskForm(task);
+            }
+        });
 
         this.store
             .select(selectAllTags)
@@ -221,9 +180,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         if (previousIndex < 1) {
             previousIndex = this.menu.length;
         }
-        return this.changeActiveItemInMenu(
-            this.menu.find((item) => item.id === previousIndex).name
-        );
+        return this.changeActiveItemInMenu(this.menu.find((item) => item.id === previousIndex).name);
     }
 
     nextMenuElement() {
@@ -232,9 +189,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         if (nextIndex > this.menu.length) {
             nextIndex = 1;
         }
-        return this.changeActiveItemInMenu(
-            this.menu.find((item) => item.id === nextIndex).name
-        );
+        return this.changeActiveItemInMenu(this.menu.find((item) => item.id === nextIndex).name);
     }
 
     filterTags(val: string) {
@@ -244,9 +199,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 tagsIds.push(tag.id);
             });
             return [
-                ...this.tags
-                    .filter((u) => tagsIds.indexOf(u["id"]) === -1)
-                    .filter((u) => new RegExp(val, "gi").test(u.name)),
+                ...this.tags.filter((u) => tagsIds.indexOf(u["id"]) === -1).filter((u) => new RegExp(val, "gi").test(u.name)),
                 { name: val },
             ];
         }
@@ -259,8 +212,7 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     private createFinishDateFilter() {
         if (!this.task.finishDate || this.task.finishDate >= this.minDate) {
-            this.minFilter = (d: Date): boolean =>
-                this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
+            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
         } else {
             this.minFilter = (d: Date): boolean => true;
         }
@@ -335,18 +287,9 @@ export class TaskComponent implements OnInit, OnDestroy {
                     priority: new UntypedFormControl(task.priority, {
                         updateOn: "change",
                     }),
-                    taskType: new UntypedFormControl(
-                        task.taskType,
-                        Validators.required
-                    ),
-                    taskProjectPk: new UntypedFormControl(
-                        task.taskProject.id,
-                        Validators.required
-                    ),
-                    typeFinishDate: new UntypedFormControl(
-                        task.typeFinishDate,
-                        Validators.required
-                    ),
+                    taskType: new UntypedFormControl(task.taskType, Validators.required),
+                    taskProjectPk: new UntypedFormControl(task.taskProject.id, Validators.required),
+                    typeFinishDate: new UntypedFormControl(task.typeFinishDate, Validators.required),
                     finishDate: new UntypedFormControl(finishDate),
                     finishTime: new UntypedFormControl(finishTime),
                 },
@@ -355,12 +298,8 @@ export class TaskComponent implements OnInit, OnDestroy {
             extra: new UntypedFormGroup(
                 {
                     description: new UntypedFormControl(task.description),
-                    time: new UntypedFormControl(
-                        this.minutes2Hours.transform(task.time)
-                    ),
-                    estimateTime: new UntypedFormControl(
-                        this.minutes2Hours.transform(task.estimateTime)
-                    ),
+                    time: new UntypedFormControl(this.minutes2Hours.transform(task.time)),
+                    estimateTime: new UntypedFormControl(this.minutes2Hours.transform(task.estimateTime)),
                     ownerId: new UntypedFormControl(task.owner.id, {
                         validators: Validators.required,
                     }),
@@ -410,13 +349,10 @@ export class TaskComponent implements OnInit, OnDestroy {
     createNewTask(selectedProject: Project): Task {
         let defaultTypeFinishDate = 1;
         const finishDateOption = this.defaultFinishDateOptions.find(
-            (defaultFinishDateOption) =>
-                defaultFinishDateOption.id === selectedProject.defaultFinishDate
+            (defaultFinishDateOption) => defaultFinishDateOption.id === selectedProject.defaultFinishDate
         );
         const isTypeFinishDateOptionsDefined = this.typeFinishDateOptions.some(
-            (typeFinishDateOption) =>
-                typeFinishDateOption.id ===
-                selectedProject.defaultTypeFinishDate
+            (typeFinishDateOption) => typeFinishDateOption.id === selectedProject.defaultTypeFinishDate
         );
 
         if (isTypeFinishDateOptionsDefined) {
@@ -503,10 +439,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                             name: newTag.option.value.name,
                             author: this.user.id,
                         });
-                        tag.id =
-                            await this.tagService.createTagDuringEditingTask(
-                                tag
-                            );
+                        tag.id = await this.tagService.createTagDuringEditingTask(tag);
                         tags.push(tag);
                         if (!this.isNewTask()) {
                             this.store.dispatch(
@@ -529,9 +462,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     }
                 }
             } else {
-                const existingTag = this.tags.filter(
-                    (t: Tag) => t.name === this.tagsCtrl.value
-                )[0];
+                const existingTag = this.tags.filter((t: Tag) => t.name === this.tagsCtrl.value)[0];
                 if (existingTag) {
                     tags.push(existingTag);
                     if (!this.isNewTask()) {
@@ -557,9 +488,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         name: this.tagsCtrl.value,
                         author: this.user.id,
                     });
-                    tag.id = await this.tagService.createTagDuringEditingTask(
-                        tag
-                    );
+                    tag.id = await this.tagService.createTagDuringEditingTask(tag);
                     tags.push(tag);
                     if (!this.isNewTask()) {
                         this.store.dispatch(
@@ -593,28 +522,19 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(values, withoutClose = false): void {
+        console.log({ values });
         const updatedTask = Object.assign({}, this.task);
         if (this.taskForm.valid) {
-            const selectedTaskProject = this.projects.find(
-                (project) => project.id === values["main"]["taskProjectPk"]
-            );
+            const selectedTaskProject = this.projects.find((project) => project.id === values["main"]["taskProjectPk"]);
             updatedTask.name = values["main"]["name"];
             updatedTask.richName = addClickableLinks(values["main"]["name"]);
             updatedTask.priority = values["main"]["priority"];
             updatedTask.description = values["extra"]["description"];
             updatedTask.taskType = values["main"]["taskType"];
-            updatedTask.richDescription = addClickableLinks(
-                values["extra"]["description"]
-            );
-            updatedTask.finishDate = values["main"]["finishDate"]
-                ? values["main"]["finishDate"]
-                : null;
-            updatedTask.finishTime = values["main"]["finishTime"]
-                ? values["main"]["finishTime"]
-                : "";
-            updatedTask.suspendDate = values["extra"]["suspendedDate"]
-                ? moment(values["extra"]["suspendedDate"], "DD-MM-YYYY")
-                : "";
+            updatedTask.richDescription = addClickableLinks(values["extra"]["description"]);
+            updatedTask.finishDate = values["main"]["finishDate"] ? values["main"]["finishDate"] : null;
+            updatedTask.finishTime = values["main"]["finishTime"] ? values["main"]["finishTime"] : "";
+            updatedTask.suspendDate = values["extra"]["suspendedDate"] ? moment(values["extra"]["suspendedDate"], "DD-MM-YYYY") : "";
             updatedTask.typeFinishDate = values["main"]["typeFinishDate"];
             updatedTask.taskProject = new TaskProject({
                 id: selectedTaskProject.id,
@@ -623,12 +543,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 name: selectedTaskProject.name,
                 icon: selectedTaskProject.icon,
             });
-            const user = <ShareWithUser>(
-                selectedTaskProject.shareWith.find(
-                    (sharedUser) =>
-                        sharedUser["id"] === values["extra"]["ownerId"]
-                )
-            );
+            const user = <ShareWithUser>selectedTaskProject.shareWith.find((sharedUser) => sharedUser["id"] === values["extra"]["ownerId"]);
             updatedTask.owner = new TaskUser(<ITaskUser>{
                 id: user.id,
                 avatarUrl: user.avatarUrl,
@@ -646,12 +561,8 @@ export class TaskComponent implements OnInit, OnDestroy {
             updatedTask.onHold = values["extra"]["suspended"];
 
             updatedTask.fromRepeating = values["repeat"]["fromRepeating"];
-            updatedTask.estimateTime = changeTimeStringFormatToValue(
-                values["extra"]["estimateTime"]
-            );
-            updatedTask.time = changeTimeStringFormatToValue(
-                values["extra"]["time"]
-            );
+            updatedTask.estimateTime = changeTimeStringFormatToValue(values["extra"]["estimateTime"]);
+            updatedTask.time = changeTimeStringFormatToValue(values["extra"]["time"]);
             // We need to know which step will be deleted in the backend
             updatedTask.steps = this.task.steps.filter((step) => step.delete);
             values["steps"].forEach((step, index) => {
@@ -688,11 +599,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     getSelectedTaskType() {
-        return this.taskTypesWithIcons.find(
-            (taskType) =>
-                taskType.value ===
-                this.taskForm.get("main").get("taskType").value
-        );
+        return this.taskTypesWithIcons.find((taskType) => taskType.value === this.taskForm.get("main").get("taskType").value);
     }
 
     close(): void {
@@ -701,11 +608,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     getErrorMessage(field: AbstractControl): string {
-        return field.hasError("maxLength")
-            ? "Name is too long"
-            : field.hasError("required")
-            ? "You have to add task name"
-            : "";
+        return field.hasError("maxLength") ? "Name is too long" : field.hasError("required") ? "You have to add task name" : "";
     }
 
     hasErrorMessage(field: AbstractControl): boolean {
@@ -761,13 +664,9 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
 
     changeProjectInTask(event): void {
-        const newProject = this.projects.find(
-            (project) => project.id === event.value
-        );
+        const newProject = this.projects.find((project) => project.id === event.value);
         this.task = Object.assign({}, this.task, {
-            taskProject: new TaskProject(
-                this.projects.find((project) => project.id === event.value)
-            ),
+            taskProject: new TaskProject(this.projects.find((project) => project.id === event.value)),
         });
         const extra = <UntypedFormGroup>this.taskForm.controls["extra"];
         extra.controls["ownerId"].setValue(this.user.id);
@@ -784,9 +683,7 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     updateImmediately(source, formControlName, values): void {
         if (this.task.id) {
-            if (
-                this.task[source] !== this.taskForm.get(formControlName).value
-            ) {
+            if (this.task[source] !== this.taskForm.get(formControlName).value) {
                 this.onSubmit(values, true);
             }
         }
