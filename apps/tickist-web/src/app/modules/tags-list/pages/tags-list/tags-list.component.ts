@@ -14,7 +14,7 @@ import { UserService } from "../../../../core/services/user.service";
 import { User } from "@data/users/models";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { FilterTagsDialogComponent } from "../../components/filter-tags-dialog/filter-tags-dialog.component";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import {  MatDialog } from "@angular/material/dialog";
 import { TasksFiltersService } from "../../../../core/services/tasks-filters.service";
 import { Store } from "@ngrx/store";
 import { takeUntil } from "rxjs/operators";

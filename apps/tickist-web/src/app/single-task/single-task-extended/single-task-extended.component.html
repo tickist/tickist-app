@@ -115,12 +115,16 @@
             </tickist-menu-button>
         </div>
         <mat-form-field>
-            <mat-select placeholder="Project:" [formControl]="selectTaskProject"
-                        (selectionChange)="changeProject($event)">
-                <mat-option *ngFor="let project of projects$ | async" [ngClass]="project.matOptionClass"
-                            [value]="project.id"> {{ project.name }}
+
+            <input #inputAutoComplete type="text" placeholder="Choose project" matInput [formControl]="selectTaskProject"  [matAutocomplete]="auto" (keydown.enter)="changeProject($event)" [errorStateMatcher]="matcher">
+            <mat-autocomplete #auto="matAutocomplete"  [displayWith]="displayFn" (optionSelected)="changeProject($event)">
+                <mat-option *ngFor="let project of filteredProjects$ | async"  [value]="project.id" [ngClass]="project.matOptionClass">
+                    {{project.name}}
                 </mat-option>
-            </mat-select>
+            </mat-autocomplete>
+            <mat-error *ngIf="selectTaskProject.hasError('forbiddenNames')">
+                Please select a valid project
+            </mat-error>
         </mat-form-field>
 
     </div>

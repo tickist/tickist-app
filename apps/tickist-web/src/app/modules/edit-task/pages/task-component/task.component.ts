@@ -12,9 +12,9 @@ import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormContr
 import { Location } from "@angular/common";
 import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
 import {
-    MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent,
-    MatLegacyAutocompleteTrigger as MatAutocompleteTrigger,
-} from "@angular/material/legacy-autocomplete";
+    MatAutocompleteSelectedEvent,
+    MatAutocompleteTrigger,
+} from "@angular/material/autocomplete";
 import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import moment from "moment";
 import { Tag } from "@data/tags/models/tags";

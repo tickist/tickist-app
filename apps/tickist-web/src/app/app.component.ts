@@ -2,10 +2,10 @@ import { Component, HostListener, OnDestroy, OnInit } from "@angular/core";
 import { SwUpdate } from "@angular/service-worker";
 import { Meta } from "@angular/platform-browser";
 import {
-    MatLegacySnackBar as MatSnackBar,
-    MatLegacySnackBarRef as MatSnackBarRef,
-    MatLegacySnackBarConfig as MatSnackBarConfig,
-} from "@angular/material/legacy-snack-bar";
+    MatSnackBar,
+    MatSnackBarRef,
+    MatSnackBarConfig,
+} from "@angular/material/snack-bar";
 import { SnackBarMessageComponent } from "./components/snack-bar-message/snack-bar-message.component";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";

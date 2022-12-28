@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FilterTagsDialogComponent} from './filter-tags-dialog.component';
 import {TickistMaterialModule} from '../../../../material.module';
 import {FormsModule} from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {MockTagsFiltersService} from '../../../../testing/mocks/tags-filters-service';
 import {StoreModule} from '@ngrx/store';
 

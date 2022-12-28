@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { InviteUser, InviteUserStatus, Project } from "@data/projects";
 import { SimpleUser, User } from "@data/users/models";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { TasksFiltersService } from "./tasks-filters.service";
 import { selectActiveProject, selectActiveProjectsIds, selectAllProjects } from "../selectors/projects.selectors";

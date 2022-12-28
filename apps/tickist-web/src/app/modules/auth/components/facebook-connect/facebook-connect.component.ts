@@ -10,7 +10,7 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
 } from "@angular/fire/auth";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import {  MatDialog } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { OperationType } from "@firebase/auth";
 import { NGXLogger } from "ngx-logger";

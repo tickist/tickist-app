@@ -29,7 +29,7 @@ import { Task } from "@data/tasks/models/tasks";
 import { ROUTER_NAVIGATED } from "@ngrx/router-store";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Update } from "@ngrx/entity";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { selectLoggedInUser } from "../selectors/user.selectors";
 import { switchOnProgressBar } from "../actions/progress-bar.actions";
 import { selectTeam } from "../selectors/team.selectors";

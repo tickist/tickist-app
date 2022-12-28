@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Tag} from '@data/tags/models/tags';
-import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {TagService} from '../../core/services/tag.service';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {Store} from '@ngrx/store';

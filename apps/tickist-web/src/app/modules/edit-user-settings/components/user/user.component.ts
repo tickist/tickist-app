@@ -40,7 +40,7 @@ import {
 } from "../../../../core/actions/add-task-button-visibility.actions";
 import { DeleteUserConfirmationDialogComponent } from "../../../edit-project/components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component";
 import { DeleteAccountDialogComponent } from "../delete-account-dialog/delete-account-dialog.component";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import {  MatDialog } from "@angular/material/dialog";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { NGXLogger } from "ngx-logger";
 import { UploadTask } from "@angular/fire/storage";

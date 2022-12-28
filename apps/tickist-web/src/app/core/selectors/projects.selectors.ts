@@ -17,6 +17,9 @@ export const selectProjectById = (projectId: string) =>
 
 export const selectAllProjects = createSelector(selectProjectsState, fromCourse.selectAll);
 
+
+// eslint-disable-next-line max-len
+export const selectProjectByIdOrName = (idOrName: string) => createSelector(selectAllProjects, projects => projects.find(project => project.name === idOrName || project.id === idOrName))
 // @TODO Fix it
 // export const selectAllProjectsL0L1 = createSelector(
 //     selectAllProjects,

@@ -14,7 +14,7 @@ import {
 } from "../actions/projects/projects.actions";
 import { ProjectService } from "../services/project.service";
 import { Project } from "@data/projects";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { selectLoggedInUser } from "../selectors/user.selectors";
 import { collection, collectionChanges, Firestore, query, where } from "@angular/fire/firestore";
 

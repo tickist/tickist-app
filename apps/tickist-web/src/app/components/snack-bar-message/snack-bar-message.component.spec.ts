@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SnackBarMessageComponent} from './snack-bar-message.component';
 import {TickistMaterialModule} from '../../material.module';
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar, MatSnackBarModule as MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('SnackBarMessageComponent', () => {
     let component: SnackBarMessageComponent;

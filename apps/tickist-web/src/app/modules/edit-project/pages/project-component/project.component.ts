@@ -25,7 +25,7 @@ import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SimpleUser, User } from "@data/users/models";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import {  MatDialog } from "@angular/material/dialog";
 import { filter, map, startWith, takeUntil } from "rxjs/operators";
 import {
     requestCreateProject,

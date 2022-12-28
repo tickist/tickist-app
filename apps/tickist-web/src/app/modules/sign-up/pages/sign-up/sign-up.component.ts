@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { AuthService } from "../../../auth/services/auth.service";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import {  MatDialog } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 
 @Component({

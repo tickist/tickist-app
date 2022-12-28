@@ -19,7 +19,7 @@ import { Router } from "@angular/router";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { MediaObserver } from "@angular/flex-layout";
 import { DeleteProjectConfirmationDialogComponent } from "../delete-project-dialog/delete-project-dialog.component";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import {  MatDialog } from "@angular/material/dialog";
 import { User } from "@data/users/models";
 import { Store } from "@ngrx/store";
 import { Observable, Subject } from "rxjs";
