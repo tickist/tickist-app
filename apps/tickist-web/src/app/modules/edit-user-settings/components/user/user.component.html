@@ -11,30 +11,36 @@
                 <mat-list>
                     <mat-list-item (click)="changeActiveItemInMenu('main')"
                                    [ngClass]="{'active': checkActiveItemInMenu('main')}">
-                        <fa-icon [icon]="'edit'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Account</span></p>
+                        <div>
+                            <fa-icon [icon]="'edit'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>Account</span></p>
+                        </div>
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('password')"
                                    [ngClass]="{'active': checkActiveItemInMenu('password')}">
-                        <fa-icon [icon]="'wrench'"></fa-icon>
+                        <div>
+                            <fa-icon [icon]="'wrench'"></fa-icon>
 
-                        <p [fxHide.xs]="1"><span>Password</span></p>
+                            <p [fxHide.xs]="1"><span>Password</span></p></div>
 
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('notifications')"
                                    [ngClass]="{'active': checkActiveItemInMenu('notifications')}">
-                        <fa-icon [icon]="'bell'"></fa-icon>
+                        <div>
+                            <fa-icon [icon]="'bell'"></fa-icon>
 
-                        <p [fxHide.xs]="1"><span>Notifications</span></p>
+                            <p [fxHide.xs]="1"><span>Notifications</span></p></div>
 
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('settings')"
                                    [ngClass]="{'active': checkActiveItemInMenu('settings')}">
-                        <fa-icon [icon]="'cog'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Settings</span></p>
+                        <div>
+                            <fa-icon [icon]="'cog'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>Settings</span></p>
+                        </div>
 
                     </mat-list-item>
 
@@ -73,8 +79,11 @@
                     </div>
 
                     <div>
-                        <button id="delete-button" data-cy="delete-user-account" (click)="showDeleteAccountDialog()" mat-button>Delete my Tickist account</button>
-                        <p id="delete-button-description">Deleting your account is permanent. All your data will be wiped out immediately and you won't
+                        <button id="delete-button" data-cy="delete-user-account" (click)="showDeleteAccountDialog()" mat-button>Delete my
+                            Tickist account
+                        </button>
+                        <p id="delete-button-description">Deleting your account is permanent. All your data will be wiped out immediately
+                            and you won't
                             be able to get it back. Requires password.</p>
                     </div>
                 </div>
@@ -110,10 +119,12 @@
                                 <span> Browser notification permission for this website is </span>
                                 <span [ngClass]="browserNotificationPermission">{{ browserNotificationPermission }} </span>
                             </div>
-                            <mat-slide-toggle (change)="updateNotificationPermission()" [checked]="isNotificationAllowed">Send me a push notification</mat-slide-toggle>
+                            <mat-slide-toggle (change)="updateNotificationPermission()" [checked]="isNotificationAllowed">Send me a push
+                                notification
+                            </mat-slide-toggle>
 
                             <span class="type-of-notifications"> Type of notifications</span>
-                            <mat-checkbox  formControlName="removesMeFromSharedList" aria-label="Switch 2">
+                            <mat-checkbox formControlName="removesMeFromSharedList" aria-label="Switch 2">
                                 when another user removes me from a shared list
                             </mat-checkbox>
 

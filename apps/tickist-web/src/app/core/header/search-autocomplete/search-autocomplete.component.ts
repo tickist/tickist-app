@@ -18,7 +18,7 @@ import {
     takeUntil,
 } from "rxjs/operators";
 import { NavigationEnd, Router } from "@angular/router";
-import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from "@angular/material/legacy-autocomplete";
+import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { Store } from "@ngrx/store";
 import { selectAllUndoneTasks } from "../../selectors/task.selectors";
 import { editTaskRoutesName } from "../../../modules/edit-task/routes-names";

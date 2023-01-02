@@ -7,6 +7,15 @@
     min-width: 150px;
     max-width: 500px;
     width: 100%;
+    ::ng-deep .mat-mdc-form-field-infix {
+        padding-top: 24px !important;
+        padding-bottom: 0 !important;
+    }
+    ::ng-deep .mat-mdc-form-field-icon-suffix {
+        padding-top: 24px !important;
+        padding-bottom: 8px !important;
+    }
+
 }
 
 .search-input {

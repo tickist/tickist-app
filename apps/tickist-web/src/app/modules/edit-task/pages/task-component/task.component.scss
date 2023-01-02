@@ -7,7 +7,11 @@
 }
 
 mat-list-item {
-    cursor: pointer;
+
+    div {
+        display: flex;
+        cursor: pointer;
+    }
     p {
         margin: 0 5px 0 5px;
     }

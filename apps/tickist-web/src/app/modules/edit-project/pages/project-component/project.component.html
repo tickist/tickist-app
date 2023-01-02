@@ -15,10 +15,12 @@
                                     'active': checkActiveItemInMenu('main'),
                                     'invalid': !projectForm.controls['main'].valid && projectForm.controls['main'].touched
                                    }">
+                        <div>
+                            <fa-icon [icon]="'edit'"></fa-icon>
 
-                        <fa-icon [icon]="'edit'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>General</span></p>
+                        </div>
 
-                        <p [fxHide.xs]="1"><span>General</span></p>
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('extra')"
@@ -26,8 +28,9 @@
                                    'active': checkActiveItemInMenu('extra'),
                                    'invalid': !projectForm.controls['extra'].valid && projectForm.controls['extra'].touched
                                    }">
-                        <fa-icon [icon]="'wrench'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Extra</span></p>
+                        <div>
+                            <fa-icon [icon]="'wrench'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>Extra</span></p></div>
 
                     </mat-list-item>
 
@@ -35,9 +38,10 @@
                                    [ngClass]="{
                                    'active': checkActiveItemInMenu('sharing')
                                    }">
-                        <fa-icon [icon]="'tags'"></fa-icon>
+                        <div>
+                            <fa-icon [icon]="'tags'"></fa-icon>
 
-                        <p [fxHide.xs]="1"><span>Sharing</span></p>
+                            <p [fxHide.xs]="1"><span>Sharing</span></p></div>
 
                     </mat-list-item>
 
@@ -45,9 +49,10 @@
                                    [ngClass]="{
                                    'active': checkActiveItemInMenu('branding')
                                    }">
-                        <fa-icon [icon]="'icons'"></fa-icon>
+                        <div>
+                            <fa-icon [icon]="'icons'"></fa-icon>
 
-                        <p [fxHide.xs]="1"><span>Branding</span></p>
+                            <p [fxHide.xs]="1"><span>Branding</span></p></div>
 
                     </mat-list-item>
 

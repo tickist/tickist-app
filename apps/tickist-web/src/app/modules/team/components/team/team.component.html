@@ -3,6 +3,7 @@
         <span class="header">Team</span>
     </mat-card-header>
     <mat-list>
+<!--        @TODO rewrite it-->
         <mat-list-item *ngFor="let user of team$ | async">
             <div mat-list-icon><tickist-user-avatar [userId]="user.id" [avatarUrl]="user.avatarUrl" [size]="'32x32'"></tickist-user-avatar></div>
             <h4 mat-line>{{ user.username }}</h4>

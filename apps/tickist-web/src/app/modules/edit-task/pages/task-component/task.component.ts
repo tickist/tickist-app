@@ -15,7 +15,7 @@ import {
     MatAutocompleteSelectedEvent,
     MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import moment from "moment";
 import { Tag } from "@data/tags/models/tags";
 import { DeleteTaskDialogComponent } from "../../../../single-task/delete-task-dialog/delete-task.dialog.component";

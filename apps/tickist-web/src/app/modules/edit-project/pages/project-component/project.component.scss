@@ -4,11 +4,17 @@
 :host {
     margin-left: 16px;
     height: 500px;
+
 }
 
-mat-list-item {
-    cursor: pointer;
 
+
+mat-list-item {
+
+    div {
+        display: flex;
+        cursor: pointer;
+    }
     p {
         margin: 0 5px 0 5px;
     }

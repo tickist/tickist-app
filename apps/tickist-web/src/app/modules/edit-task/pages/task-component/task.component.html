@@ -7,48 +7,54 @@
         </span>
         </div>
         <div fxFlex=380px fxLayout="row">
-            <div fxFlex.gt-md="230px" class="left-menu" fxFlex.lt-md="30%" >
+            <div fxFlex.gt-md="230px" class="left-menu" fxFlex.lt-md="30%">
                 <mat-list>
                     <mat-list-item (click)="changeActiveItemInMenu('main')"
                                    [ngClass]="{'active': checkActiveItemInMenu('main'),
                                   'invalid': !taskForm.controls['main'].valid && taskForm.controls['main'].touched }">
-                        <fa-icon [icon]="'edit'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>General</span></p>
+                        <div>
+                            <fa-icon [icon]="'edit'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>General</span></p></div>
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('repeat')"
                                    [ngClass]="{'active': checkActiveItemInMenu('repeat'),
                                   'invalid': !taskForm.controls['repeat'].valid && taskForm.controls['repeat'].touched}">
-                        <fa-icon [icon]="'wrench'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Repeat</span></p>
+                        <div>
+                            <fa-icon [icon]="'wrench'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>Repeat</span></p></div>
                     </mat-list-item>
 
                     <mat-list-item (click)="changeActiveItemInMenu('tags')"
                                    [ngClass]="{'active': checkActiveItemInMenu('tags'),
                                   'invalid': !taskForm.controls['tags'].valid && taskForm.controls['tags'].touched}">
-                        <fa-icon [icon]="'tags'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Tags</span></p>
+                        <div>
+                            <fa-icon [icon]="'tags'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>Tags</span></p></div>
 
                     </mat-list-item>
                     <mat-list-item (click)="changeActiveItemInMenu('steps')"
                                    [ngClass]="{'active': checkActiveItemInMenu('steps'),
                                   'invalid': !taskForm.controls['steps'].valid && taskForm.controls['steps'].touched}">
-                        <fa-icon [icon]="'list'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Steps {{taskForm.controls['steps'].errors}}</span></p>
+                        <div>
+                            <fa-icon [icon]="'list'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>Steps {{taskForm.controls['steps'].errors}}</span></p></div>
                     </mat-list-item>
 
 
                     <mat-list-item (click)="changeActiveItemInMenu('extra')"
                                    [ngClass]="{'active': checkActiveItemInMenu('extra'),
                                   'invalid': !taskForm.controls['extra'].valid && taskForm.controls['extra'].touched}">
-                        <fa-icon [icon]="'wrench'"></fa-icon>
-                        <p [fxHide.xs]="1"><span>Extra</span></p>
+                        <div>
+                            <fa-icon [icon]="'wrench'"></fa-icon>
+                            <p [fxHide.xs]="1"><span>Extra</span></p>
+                        </div>
                     </mat-list-item>
 
-<!--                    <mat-list-item (click)="changeActiveItemInMenu('notifications')">-->
-<!--                         <fa-icon [icon]="'bell'"></fa-icon>-->
-<!--                        <p [fxHide.xs]="1"><span>Notifications</span></p>-->
-<!--                    </mat-list-item>-->
+                    <!--                    <mat-list-item (click)="changeActiveItemInMenu('notifications')">-->
+                    <!--                         <div><fa-icon [icon]="'bell'"></fa-icon>-->
+                    <!--                        <p [fxHide.xs]="1"><span>Notifications</span></p></div>-->
+                    <!--                    </mat-list-item>-->
                 </mat-list>
 
             </div>
@@ -82,10 +88,12 @@
                         <mat-form-field>
                             <mat-select data-cy='select-task-type' placeholder="Task type:" formControlName="taskType">
                                 <mat-select-trigger>
-                                    <fa-icon [icon]="getSelectedTaskType().icon"></fa-icon>  {{ getSelectedTaskType().value }}
+                                    <fa-icon [icon]="getSelectedTaskType().icon"></fa-icon>
+                                    {{ getSelectedTaskType().value }}
                                 </mat-select-trigger>
                                 <mat-option *ngFor="let taskType of taskTypesWithIcons" [value]="taskType.value">
-                                    <fa-icon [icon]="taskType.icon"></fa-icon>  {{taskType.value}}
+                                    <fa-icon [icon]="taskType.icon"></fa-icon>
+                                    {{taskType.value}}
                                 </mat-option>
                             </mat-select>
 
@@ -160,7 +168,8 @@
 
                         <div>
                             <div *ngIf="taskForm.controls['extra'].controls['suspended'].value">
-                                <h4><span class="radio-button-active-task">Choose a date when the task should become active (optional).</span>
+                                <h4><span
+                                    class="radio-button-active-task">Choose a date when the task should become active (optional).</span>
                                 </h4>
 
                                 <mat-form-field>
@@ -194,7 +203,8 @@
                         </mat-form-field>
 
                         <mat-form-field>
-                                <textarea matInput #taskDescription (blur)="updateImmediately('description', 'extra.description', taskForm.value)"
+                                <textarea matInput #taskDescription
+                                          (blur)="updateImmediately('description', 'extra.description', taskForm.value)"
                                           placeholder="Task description" formControlName="description"></textarea>
                             <mat-hint align="end">{{taskDescription.value?.length || 0}}/5000</mat-hint>
                         </mat-form-field>
@@ -225,7 +235,8 @@
                         <mat-chip *ngFor="let tag of task.tags">
                             <span>{{ tag.name }}</span>
                             <span fxFlex></span>
-                            <fa-icon [ngStyle]="{'margin-top': '2px', 'margin-left': '10px'}" matTooltip="Remove tag" [icon]="'times'" (click)="removeTagFromTask(tag)"></fa-icon>
+                            <fa-icon [ngStyle]="{'margin-top': '2px', 'margin-left': '10px'}" matTooltip="Remove tag" [icon]="'times'"
+                                     (click)="removeTagFromTask(tag)"></fa-icon>
                         </mat-chip>
 
                     </mat-chip-list>
@@ -237,7 +248,7 @@
                             <li class="step" fxFlex
                                 *ngFor="let step of taskForm.controls.steps.controls; let i=index; let last = last"
                                 [formGroupName]="i">
-                                <fa-icon [icon]="'arrows-alt'"[classes]="'hover-visible'"></fa-icon>
+                                <fa-icon [icon]="'arrows-alt'" [classes]="'hover-visible'"></fa-icon>
                                 <mat-form-field style="width: 80%;">
                                     <input matInput placeholder="Step name" formControlName="name"
                                            [cdkTrapFocus]="last && checkActiveItemInMenu('steps')"
