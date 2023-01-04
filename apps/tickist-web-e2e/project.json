@@ -7,9 +7,10 @@
         "e2e": {
             "executor": "@nrwl/cypress:cypress",
             "options": {
-                "cypressConfig": "apps/tickist-web-e2e/cypress.json",
+                "cypressConfig": "apps/tickist-web-e2e/cypress.config.ts",
                 "tsConfig": "apps/tickist-web-e2e/tsconfig.e2e.json",
-                "devServerTarget": "tickist-web:serve"
+                "devServerTarget": "tickist-web:serve",
+                "testingType": "e2e"
             },
             "configurations": {
                 "production": {

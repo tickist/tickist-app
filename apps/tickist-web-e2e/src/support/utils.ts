@@ -26,7 +26,11 @@ function setFirebaseData() {
     const database = new Database(userID);
     cy.wrap(database).as("database");
     cy.callFirestore("set", `projects/${database.inbox.id}`, JSON.parse(JSON.stringify(database.inbox)));
+    cy.callFirestore("set", `projects/${database.inbox.id}` + 1, JSON.parse(JSON.stringify(database.inbox)));
+    cy.log("test");
+    cy.log(database.projects.length);
     database.projects.forEach((project) => {
+        console.log({ project });
         cy.callFirestore("set", `projects/${project.id}`, JSON.parse(JSON.stringify(project)));
     });
     database.tasks.forEach((task) => {

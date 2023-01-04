@@ -1,9 +1,9 @@
-import { clickOnCreateNewProject, clickOnProject, createFirebase, login, removeOldFirebaseData } from "../../support/utils";
+import { clickOnCreateNewProject, clickOnProject, createFirebase, removeOldFirebaseData, userID } from "../../support/utils";
 
 describe("Add Projects", () => {
     beforeEach(() => {
-        // cy.logout();
-        cy.login("7mr64tVcVv3085oo0Y1VheOQYJXV");
+        removeOldFirebaseData();
+        cy.login(userID);
         createFirebase();
         cy.visit("/");
     });
@@ -29,7 +29,7 @@ describe("Add Projects", () => {
             cy.get("tickist-tasks-from-projects").should("contain", "Tasks list is empty");
         });
 
-        it("should add new project with ancestor", () => {
+        it.only("should add new project with ancestor", () => {
             const ancestorName = "Project 1";
             cy.log("Start creating a new project with ancestor");
             clickOnCreateNewProject();

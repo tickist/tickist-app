@@ -14,8 +14,8 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import 'cypress-pipe'
-import './commands'
+import "cypress-pipe";
+import "./commands";
 // require('cypress-failed-log');
 
 // Alternatively you can use CommonJS syntax:
