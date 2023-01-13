@@ -6,6 +6,7 @@ import {
     createFirebase,
     login,
     removeOldFirebaseData,
+    userID,
 } from "../../support/utils";
 import { TaskProject } from "@data/tasks/models/task-project";
 import { Task } from "@data/tasks/models/tasks";
@@ -17,7 +18,7 @@ import { TaskType } from "@data";
 describe("Tasks", () => {
     beforeEach(() => {
         removeOldFirebaseData();
-        cy.login("7mr64tVcVv3085oo0Y1VheOQYJXV");
+        cy.login(userID);
         createFirebase();
         cy.visit("/");
     });
@@ -30,7 +31,7 @@ describe("Tasks", () => {
         let task: any;
         beforeEach(() => {
             task = {
-                name: "Task 3",
+                name: "New task nr 1",
                 priority: "A",
                 description: "Task description",
                 tags: [],
@@ -41,19 +42,19 @@ describe("Tasks", () => {
             };
         });
 
-        it("should open the form, fills the form and next add new task to the Inbox", () => {
+        it.only("should open the form, fills the form and next add new task to the Inbox", () => {
             cy.get("tickist-add-task-footer-button", { timeout: 20000 }).find("button").click();
             cy.url().should("include", "home").should("include", "edit-task");
 
             cy.log("fill main form");
-            cy.get("input[name=taskName]", { timeout: 20000 }).type("Task 3").should("have.value", "Task 3");
-            cy.get("tickist-priority").find("button").contains("A").click();
+            cy.get("input[name=taskName]", { timeout: 20000 }).type(task.name).should("have.value", task.name);
+            cy.get("tickist-priority").find("button").contains(task.priority).click();
 
             cy.get("input[name=finishDate]").click();
             cy.get("mat-calendar").find(".mat-calendar-body-today").click({ timeout: 10000 });
 
             cy.get("mat-calendar").should("not.exist");
-            cy.get("input[name=finishTime]").type("10:00");
+            cy.get("input[name=finishTime]").type(task.finishTime);
 
             cy.log("fill repeat form");
             clickMenuElement("Repeat");
@@ -74,7 +75,7 @@ describe("Tasks", () => {
             cy.url().should("include", "home").should("include", "weekdays");
             clickOnProject("Inbox");
 
-            cy.get('tickist-single-task:contains("Task 3")').then(($task) => {
+            cy.get(`tickist-single-task:contains("${task.name}")`).then(($task) => {
                 compareTaskElementWithTaskObject($task, task);
             });
         });

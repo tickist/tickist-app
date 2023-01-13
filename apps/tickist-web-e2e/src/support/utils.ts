@@ -135,8 +135,15 @@ export function compareTaskElementWithTaskObject($taskElement, taskObject) {
         expect($taskElement).to.contain(taskObject.finishTime);
     }
     // project
-    $taskElement.find("#taskProjectNameIcon").click();
-    expect($taskElement.find("mat-select")).to.contain(taskObject.taskProject.name);
+    cy.wrap($taskElement.find("#taskProjectNameIcon", { timeout: 20000 }))
+        .click()
+        .then(() => {
+            cy.wrap($taskElement.find("mat-form-field")).should("have.visible");
+            cy.wrap($taskElement.find("mat-form-field", { timeout: 20000 }))
+                .get("[data-cy='taskProjectAutocomplete']", { timeout: 20000 })
+                .should("have.value", taskObject.taskProject.name);
+        });
+
     $taskElement.find(".close-menu-icon").click();
     // task description
     $taskElement.find("#taskDescriptionIcon").click();

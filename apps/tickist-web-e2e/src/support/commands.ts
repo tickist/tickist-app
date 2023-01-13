@@ -46,7 +46,7 @@ if (configuration.emulator) {
         // host: configuration.emulatorIPAddress,
         host: "localhost:8080",
         ssl: false,
-        // experimentalForceLongPolling: true,
+        experimentalForceLongPolling: true,
     });
     firebase.auth().useEmulator("http://localhost:9099/");
 }

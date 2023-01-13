@@ -114,9 +114,9 @@
             <tickist-menu-button class='close-menu-icon' [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
-        <mat-form-field>
+        <mat-form-field >
 
-            <input #inputAutoComplete type="text" placeholder="Choose project" matInput [formControl]="selectTaskProject"  [matAutocomplete]="auto" (keydown.enter)="changeProject($event)" [errorStateMatcher]="matcher">
+            <input data-cy="taskProjectAutocomplete" #inputAutoComplete type="text" placeholder="Choose project" matInput [formControl]="selectTaskProject"  [matAutocomplete]="auto" (keydown.enter)="changeProject($event)" [errorStateMatcher]="matcher">
             <mat-autocomplete #auto="matAutocomplete"  [displayWith]="displayFn" (optionSelected)="changeProject($event)">
                 <mat-option *ngFor="let project of filteredProjects$ | async"  [value]="project.id" [ngClass]="project.matOptionClass">
                     {{project.name}}
