@@ -16,7 +16,7 @@
     "test": "nx test",
     "lint": "nx workspace-lint && nx run-many --fix --all --target=lint",
     "cy:verify": "cypress verify",
-    "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=proven-reality-657 FIREBASE_PROJECT_ID=proven-reality-657 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 nx e2e tickist-web-e2e  --configuration e2e --browser chrome --e2e --watch",
+    "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=proven-reality-657 FIREBASE_PROJECT_ID=proven-reality-657 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 nx e2e tickist-web-e2e  --configuration ci --browser chrome",
     "e2e:watch": "cross-env CYPRESS_FIREBASE_PROJECT_ID=proven-reality-657 FIREBASE_PROJECT_ID=proven-reality-657 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 nx --project tickist-web-e2e e2e --watch --browser chrome -c e2e --e2e",
     "e2e:watchWithEmulator": "firebase emulators:exec \"nx  e2e  tickist-web-e2e --watch -c ci --browser chrome --e2e \"  --import=./tools/e2e-testing-data",
     "e2e:watch:ci": "nx --project tickist-web-e2e e2e --watch -c ci",
