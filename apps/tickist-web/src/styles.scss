@@ -467,9 +467,10 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
     border-top-color: $white !important;
 }
 
-.tickist-snack-bar {
+mat-snack-bar-container {
     background-color: $background_card_color;
-    span {
+    div {
+        background-color: $background_card_color !important;
         color: $white;
     }
     .mat-button-wrapper {
