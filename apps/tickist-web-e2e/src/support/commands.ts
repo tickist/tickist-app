@@ -3,8 +3,6 @@ import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { attachCustomCommands } from "cypress-firebase";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { environment } from "@env/environment";
 
 const configuration = {
     emulator: true,
@@ -17,6 +15,8 @@ const configuration = {
         messagingSenderId: "924613962771",
         appId: "1:924613962771:web:52fe355b5723d6af",
     },
+    emulatorIPAddress: "localhost:8080",
+    emulatorAuthAddress: "http://localhost:9099/",
 };
 
 const fbInstance = firebase.initializeApp(configuration.firebase);
@@ -25,11 +25,11 @@ if (fbInstance) {
 }
 if (configuration.emulator) {
     firebase.firestore().settings({
-        host: environment.emulatorIPAddress,
+        host: configuration.emulatorIPAddress,
         ssl: false,
         experimentalForceLongPolling: true,
     });
-    firebase.auth().useEmulator(environment.emulatorAuthAddress);
+    firebase.auth().useEmulator(configuration.emulatorAuthAddress);
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
