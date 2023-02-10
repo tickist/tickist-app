@@ -8,6 +8,7 @@ export const environment: IEnvironment = {
     emulator: true,
     authEmulator: true,
     emulatorIPAddress: "127.0.0.1:8080",
+    emulatorAuthAddress: "http://localhost:9099/",
     experimentalForceLongPolling: true,
     logger: {
         level: NgxLoggerLevel.DEBUG,

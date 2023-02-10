@@ -3,22 +3,8 @@ import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { attachCustomCommands } from "cypress-firebase";
-// eslint-disable-next-line
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { environment as ci } from "@env/environment.ci";
-// eslint-disable-next-line
-import { environment as e2e } from "@env/environment.e2e";
-import { createFirebase, login } from "./utils";
-
-const firebaseConfiguration = {};
-// let configuration;
-// if (Cypress.env("FIREBASE_PROJECT_ID") === "tickist-testing") {
-//     configuration = e2e;
-//     firebaseConfiguration = e2e.firebase;
-// } else {
-//     configuration = ci;
-//     firebaseConfiguration = ci.firebase;
-// }
+import { environment } from "@env/environment";
 
 const configuration = {
     emulator: true,
@@ -33,22 +19,17 @@ const configuration = {
     },
 };
 
-console.log(JSON.stringify(configuration));
-
 const fbInstance = firebase.initializeApp(configuration.firebase);
 if (fbInstance) {
     (window as any).fbInstance = fbInstance;
 }
 if (configuration.emulator) {
-    // firebase.firestore().settings({ experimentalForceLongPolling: true })
-    console.log({ firebase });
     firebase.firestore().settings({
-        // host: configuration.emulatorIPAddress,
-        host: "localhost:8080",
+        host: environment.emulatorIPAddress,
         ssl: false,
         experimentalForceLongPolling: true,
     });
-    firebase.auth().useEmulator("http://localhost:9099/");
+    firebase.auth().useEmulator(environment.emulatorAuthAddress);
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

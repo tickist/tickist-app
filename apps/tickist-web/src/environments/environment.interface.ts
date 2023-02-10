@@ -6,6 +6,7 @@ export interface IEnvironment {
     e2eTest: boolean;
     emulator: boolean;
     authEmulator?: boolean;
+    emulatorAuthAddress: string,
     logger: any;
     firebase: any;
     experimentalForceLongPolling: boolean;

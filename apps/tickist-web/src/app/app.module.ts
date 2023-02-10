@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { DateAdapter } from "@angular/material/core";
 import { BrowserModule } from "@angular/platform-browser";
@@ -26,7 +26,6 @@ import { TickistCoreModule } from "./core/core.module";
 import { SortablejsModule } from "ngx-sortablejs";
 import { SnackBarMessageComponent } from "./components/snack-bar-message/snack-bar-message.component";
 import { IconsModule } from "./icons.module";
-import { TickistNotificationsModule } from "./modules/notifications/notifications.module";
 import { TickistLeftPanelModule } from "./modules/left-panel/left-panel.module";
 import { reducer as addTaskComponentVisibilityReducer } from "./reducers/add-task-component-visibility";
 import { reducer as leftSidenavVisibility } from "./reducers/left-sidenav-visibility";
@@ -34,16 +33,9 @@ import { LoggerModule } from "ngx-logger";
 import { HttpClientModule } from "@angular/common/http";
 import { provideFirebaseApp } from "@angular/fire/app";
 import { initializeApp } from "firebase/app";
-import {
-    connectFirestoreEmulator,
-    enableIndexedDbPersistence,
-    enableMultiTabIndexedDbPersistence,
-    getFirestore,
-    provideFirestore,
-    setLogLevel,
-} from "@angular/fire/firestore";
+import { connectFirestoreEmulator, getFirestore, provideFirestore, setLogLevel } from "@angular/fire/firestore";
 import { connectStorageEmulator, getStorage, provideStorage } from "@angular/fire/storage";
-import { getMessaging, isSupported, provideMessaging } from "@angular/fire/messaging";
+import { getMessaging, provideMessaging } from "@angular/fire/messaging";
 import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
 import { connectFunctionsEmulator, getFunctions, provideFunctions } from "@angular/fire/functions";
 import { initializeFirestore } from "@firebase/firestore";
@@ -112,14 +104,11 @@ console.log({ environment });
             const firebase = initializeApp(environment.firebase);
             let config = {};
             if (environment.emulator) {
-                console.log("TEST ###############################################");
                 config = {
                     merge: true,
-                    // experimentalForceLongPolling: true,
                     experimentalAutoDetectLongPolling: true,
                 };
             }
-            console.log({ config });
             initializeFirestore(firebase, config);
             return firebase;
         }),
@@ -129,10 +118,6 @@ console.log({ environment });
             if (environment.emulator) {
                 connectFirestoreEmulator(firestore, "127.0.0.1", 8080, {});
             }
-            // if (!environment.e2eTest) {
-            //     enableIndexedDbPersistence(firestore);
-            // }
-            // enableMultiTabIndexedDbPersistence(firestore);
             return firestore;
         }),
         provideStorage(() => {

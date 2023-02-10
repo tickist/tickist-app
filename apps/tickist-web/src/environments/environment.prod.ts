@@ -8,6 +8,7 @@ export const environment: IEnvironment = {
     emulator: false,
     emulatorIPAddress: '',
     experimentalForceLongPolling: false,
+    emulatorAuthAddress: "",
     logger: {
         level: NgxLoggerLevel.LOG
     },
