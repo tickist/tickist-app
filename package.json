@@ -14,7 +14,7 @@
     "build": "nx build --configuration production",
     "build:functions": "nx build \"tickist-functions\" --configuration production --with-deps",
     "test": "nx test",
-    "lint": "nx workspace-lint && nx run-many --all --target=lint",
+    "lint": "nx run-many --all --target=lint",
     "cy:verify": "cypress verify",
     "e2e": "cross-env CYPRESS_FIREBASE_PROJECT_ID=proven-reality-657 FIREBASE_PROJECT_ID=proven-reality-657 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 nx e2e tickist-web-e2e  --configuration ci --browser chrome",
     "e2e:watch": "cross-env CYPRESS_FIREBASE_PROJECT_ID=proven-reality-657 FIREBASE_PROJECT_ID=proven-reality-657 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 nx --project tickist-web-e2e e2e --watch --browser chrome -c e2e --e2e",
