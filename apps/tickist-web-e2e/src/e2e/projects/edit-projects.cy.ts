@@ -32,9 +32,17 @@ describe("Edit Projects", () => {
         cy.get(`tickist-single-project:contains(${newProjectName})`).should("not.exist");
 
         clickOnEditProject(oldProjectName);
-        cy.get("input[name=projectName]")
+        /**
+* TODO(@nrwl/cypress): Nesting Cypress commands in a should assertion now throws.
+* You should use .then() to chain commands instead.
+* More Info: https://docs.cypress.io/guides/references/migration-guide#-should
+**/
+cy.get("input[name=projectName]")
             .focus()
             .type("{selectall}{backspace}{selectall}{backspace}")
+            .then(() => cy.get("input[name=projectName]").should("be.empty"))
+            .then(() => cy.get("input[name=projectName]").type(newProjectName))
+            .thenselectall}{backspace}{selectall}{backspace}")
             .then(() => cy.get("input[name=projectName]").should("be.empty"))
             .then(() => cy.get("input[name=projectName]").type(newProjectName))
             .then(() => cy.get("input[name=projectName]").should("have.value", newProjectName));
