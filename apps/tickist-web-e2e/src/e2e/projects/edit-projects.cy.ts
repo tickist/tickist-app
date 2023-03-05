@@ -37,12 +37,9 @@ describe("Edit Projects", () => {
 * You should use .then() to chain commands instead.
 * More Info: https://docs.cypress.io/guides/references/migration-guide#-should
 **/
-cy.get("input[name=projectName]")
-            .focus()
-            .type("{selectall}{backspace}{selectall}{backspace}")
-            .then(() => cy.get("input[name=projectName]").should("be.empty"))
-            .then(() => cy.get("input[name=projectName]").type(newProjectName))
-            .thenselectall}{backspace}{selectall}{backspace}")
+        cy.get("input[name=projectName]").focus()
+        cy.get("input[name=projectName]").type("{selectall}{backspace}{selectall}{backspace}")
+        cy.get("input[name=projectName]")
             .then(() => cy.get("input[name=projectName]").should("be.empty"))
             .then(() => cy.get("input[name=projectName]").type(newProjectName))
             .then(() => cy.get("input[name=projectName]").should("have.value", newProjectName));
