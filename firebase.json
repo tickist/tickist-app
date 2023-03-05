@@ -59,7 +59,7 @@
     },
     "functions": {
         "predeploy": [
-            "npm run lint tickist-functions",
+            "npm run lint",
             "npm run build:functions"
         ],
         "source": "dist/apps/tickist-functions",
