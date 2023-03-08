@@ -14,7 +14,7 @@ const cypressJsonConfig = {
     screenshotsFolder: "../../dist/cypress/apps/tickist-web-e2e/screenshots",
     chromeWebSecurity: false,
     retries: {
-        runMode: 2,
+        runMode: 3,
         openMode: 0,
     },
     projectId: "izprxt",
@@ -63,7 +63,7 @@ export default defineConfig({
             // return cypressFirebasePlugin(on, config, admin, { projectId: 'some-project' });
         },
     /**
-    * TODO(@nrwl/cypress): In Cypress v12,the testIsolation option is turned on by default. 
+    * TODO(@nrwl/cypress): In Cypress v12,the testIsolation option is turned on by default.
     * This can cause tests to start breaking where not indended.
     * You should consider enabling this once you verify tests do not depend on each other
     * More Info: https://docs.cypress.io/guides/references/migration-guide#Test-Isolation

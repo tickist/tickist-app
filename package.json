@@ -12,7 +12,7 @@
     "nx": "nx",
     "start": "cross-env FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 nx serve -c dev --host 0.0.0.0",
     "build": "nx build",
-    "build:functions": "nx build \"tickist-functions\" --configuration production",
+    "build:functions": "nx build \"tickist-functions\"",
     "test": "nx test",
     "lint": "nx run-many --all --target=lint",
     "cy:verify": "cypress verify",
