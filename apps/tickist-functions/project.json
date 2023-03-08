@@ -7,51 +7,69 @@
     "generators": {},
     "targets": {
         "build": {
-            "executor": "@nrwl/webpack:webpack",
+            "executor": "@simondotm/nx-firebase:build",
             "options": {
                 "outputPath": "dist/apps/tickist-functions",
                 "main": "apps/tickist-functions/src/main.ts",
                 "tsConfig": "apps/tickist-functions/tsconfig.app.json",
-                "assets": ["apps/tickist-functions/src/assets"],
-                "buildLibsFromSource": true,
-                "generatePackageJson": true,
-                "target": "node",
-                "compiler": "tsc"
-            },
-            "configurations": {
-                "production": {
-                    "optimization": true,
-                    "extractLicenses": true,
-                    "inspect": false,
-                    "fileReplacements": [
-                        {
-                            "replace": "apps/tickist-functions/src/environments/environment.ts",
-                            "with": "apps/tickist-functions/src/environments/environment.prod.ts"
-                        }
-                    ]
-                }
+                "packageJson": "apps/tickist-functions/package.json",
+                "assets": ["apps/tickist-functions/src/assets"]
             },
             "outputs": ["{options.outputPath}"]
         },
         "serve": {
-            "executor": "@nrwl/node:node",
+            "executor": "nx:run-commands",
             "options": {
-                "buildTarget": "tickist-functions-functions:build"
+                "commands": [
+                    "nx run tickist-functions:build && nx watch --projects=tickist-functions --includeDependentProjects -- nx build tickist-functions --clean=false",
+                    "nx run tickist-functions:emulate"
+                ]
             }
         },
         "lint": {
             "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": ["apps/tickist-functions/src/**/*.ts", "apps/tickist-functions/src/**/*.html"]
+                "lintFilePatterns": ["apps/tickist-functions/**/*.ts"]
+            }
+        },
+        "deploy": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "firebase deploy --config firebase.json"
+            }
+        },
+        "getconfig": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "firebase functions:config:get --config firebase.json > apps/tickist-functions/.runtimeconfig.json"
+            }
+        },
+        "emulate": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "node -e 'setTimeout(()=>{},5000)'",
+                    "kill-port --port 9099,5001,8080,9000,5000,8085,9199,9299,4000,4400,4500",
+                    "firebase functions:config:get  --config firebase.json > dist/apps/tickist-functions/.runtimeconfig.json",
+                    "firebase emulators:start  --config firebase.json"
+                ],
+                "parallel": false
             }
         },
         "test": {
             "executor": "@nrwl/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
             "options": {
                 "jestConfig": "apps/tickist-functions/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": ["{workspaceRoot}/coverage/apps/tickist-functions"]
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
         }
     }
 }

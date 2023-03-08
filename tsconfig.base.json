@@ -22,6 +22,7 @@
             "@data": ["libs/data/src/index.ts"],
             "@data/*": ["libs/data/src/*"],
             "@env/*": ["apps/tickist-web/src/environments/*"],
+            "@tickist/mynodelib": ["libs/mynodelib/src/index.ts"],
             "@tickist/utils": ["libs/utils/src/index.ts"]
         }
     },

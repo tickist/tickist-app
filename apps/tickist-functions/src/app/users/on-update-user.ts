@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import {db} from '../init';
-import {TaskUser} from '@data/tasks/models/task-user';
+import {TaskUser} from '@data';
 import * as diff from 'recursive-diff';
 
 export const onUpdateUser = functions.firestore.document('users/{userId}')

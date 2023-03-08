@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import {Task} from '@data/tasks/models/tasks';
 import * as diff from 'recursive-diff';
 import {createNotification} from '../notifications/create-notification';
-import {Notification} from '@data/notifications';
+import {Notification} from '@data';
 
 export const onUpdateTask = functions.firestore.document('tasks/{taskId}')
     .onUpdate(async (change, context) => {

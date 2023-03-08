@@ -3,10 +3,10 @@
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "libs/data/src",
     "projectType": "library",
-    "generators": {},
     "targets": {
         "lint": {
             "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["libs/data/src/**/*.ts", "libs/data/src/**/*.html"]
             }
@@ -17,7 +17,14 @@
                 "jestConfig": "libs/data/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": ["{workspaceRoot}/coverage/libs/data"]
+            "outputs": ["{workspaceRoot}/coverage/libs/data"],
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
         }
-    }
+    },
+    "tags": []
 }

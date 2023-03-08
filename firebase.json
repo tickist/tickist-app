@@ -59,9 +59,9 @@
     },
     "functions": {
         "predeploy": [
-            "npm run lint",
-            "npm run build:functions"
+            "npx nx build tickist-functions"
         ],
+        "runtime": "nodejs16",
         "source": "dist/apps/tickist-functions",
         "ignore": [
             "**/tests/**",
