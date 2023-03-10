@@ -1,23 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Location } from "@angular/common";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Actions, createEffect, ofType, concatLatestFrom } from "@ngrx/effects";
 import { fetchedLoginUser, login, logout } from "../actions/auth.actions";
-import {
-    catchError,
-    filter,
-    map,
-    mapTo,
-    switchMap,
-    tap,
-    withLatestFrom,
-} from "rxjs/operators";
+import { catchError, filter, map, mapTo, switchMap, tap, withLatestFrom } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { defer, of } from "rxjs";
 import { Store } from "@ngrx/store";
 import { UserService } from "../services/user.service";
 import { addUser } from "../actions/user.actions";
 import { resetStore } from "../../tickist.actions";
-import LogRocket from "logrocket";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "../../modules/auth/services/auth.service";
 import { signupRoutesName } from "../../modules/sign-up/routes-names";
@@ -30,30 +21,22 @@ import { doc, docSnapshots, Firestore } from "@angular/fire/firestore";
 
 @Injectable()
 export class AuthEffects {
-    login$ = createEffect(() =>
-        this.actions$.pipe(
+    login$ = createEffect(() => {
+        return this.actions$.pipe(
             ofType(login),
             tap(() => this.router.navigateByUrl("/")),
             map((action) => fetchedLoginUser({ uid: action.uid }))
-        )
-    );
+        );
+    });
 
-    fetchedLoginUser$ = createEffect(() =>
-        this.actions$.pipe(
+    fetchedLoginUser$ = createEffect(() => {
+        return this.actions$.pipe(
             ofType(fetchedLoginUser),
-            withLatestFrom(this.store.select(selectLoggedInUser)),
+            concatLatestFrom(() => this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
                 const docRef = doc(this.firestore, `users/${action.uid}`);
                 return docSnapshots(docRef).pipe(
                     filter((snapshot: any) => snapshot.exists),
-                    tap((snapshot: any) => {
-                        if (environment.production) {
-                            LogRocket.identify(snapshot.id, {
-                                name: snapshot.data().username,
-                                email: snapshot.data().email,
-                            });
-                        }
-                    }),
                     map((snapshot: any) =>
                         addUser({
                             user: new User({
@@ -62,13 +45,11 @@ export class AuthEffects {
                             }),
                         })
                     ),
-                    catchError((err) =>
-                        of(firebaseError({ error: new Error(err) }))
-                    )
+                    catchError((err) => of(firebaseError({ error: new Error(err) })))
                 );
             })
-        )
-    );
+        );
+    });
 
     logout$ = createEffect(() =>
         this.actions$.pipe(
@@ -77,16 +58,10 @@ export class AuthEffects {
             tap(() => {
                 if (this.location.path().includes(signupRoutesName.signUp)) {
                     this.router.navigateByUrl(`/${signupRoutesName.signUp}`);
-                } else if (
-                    this.location
-                        .path()
-                        .includes(resetPasswordRoutesName.resetPassword)
-                ) {
+                } else if (this.location.path().includes(resetPasswordRoutesName.resetPassword)) {
                     this.router.navigateByUrl(`/${this.location.path()}`);
                 } else {
-                    this.router
-                        .navigateByUrl("/login")
-                        .catch((error) => this.logger.error(error));
+                    this.router.navigateByUrl("/login").catch((error) => this.logger.error(error));
                 }
             }),
             mapTo(resetStore())

@@ -1,9 +1,6 @@
-import {ActionReducerMap, MetaReducer} from '@ngrx/store';
-import {environment} from '../environments/environment';
-import createNgrxMiddleware from 'logrocket-ngrx';
-import LogRocket from 'logrocket';
-import {IActiveDateElement} from '@data/active-data-element.interface';
-
+import { ActionReducerMap, MetaReducer } from "@ngrx/store";
+import { environment } from "../environments/environment";
+import { IActiveDateElement } from "@data/active-data-element.interface";
 
 export interface AppStore {
     projects: any;
@@ -37,7 +34,6 @@ export interface AppStore {
 //       tasksFilters, globalStatistics, dailyStatistics,activeDateElement, detectApiError, globalStatisticsDateRange, team,
 //       chartsData, selectedProjectsIds, leftSidenavVisibility, rightSidenavVisibility, progressBar}
 
-
 // const developmentReducer: ActionReducer<AppStore> = compose(storeFreeze, combineReducers)(reducers);
 // const productionReducer: ActionReducer<AppStore> = combineReducers(reducers);
 
@@ -46,10 +42,4 @@ export interface AppStore {
 //     leftSidenavVisibility: leftSidenavVisibility
 // };
 
-
-
-const logrocketMiddleware = createNgrxMiddleware(LogRocket, {});
-
-
-export const metaReducers: MetaReducer<AppStore>[] =
-    !environment.production ? [] : [logrocketMiddleware];
+export const metaReducers: MetaReducer<AppStore>[] = !environment.production ? [] : [];
