@@ -21,16 +21,16 @@ import { doc, docSnapshots, Firestore } from "@angular/fire/firestore";
 
 @Injectable()
 export class AuthEffects {
-    login$ = createEffect(() => {
-        return this.actions$.pipe(
+    login$ = createEffect(() =>
+        this.actions$.pipe(
             ofType(login),
             tap(() => this.router.navigateByUrl("/")),
             map((action) => fetchedLoginUser({ uid: action.uid }))
-        );
-    });
+        )
+    );
 
-    fetchedLoginUser$ = createEffect(() => {
-        return this.actions$.pipe(
+    fetchedLoginUser$ = createEffect(() =>
+        this.actions$.pipe(
             ofType(fetchedLoginUser),
             concatLatestFrom(() => this.store.select(selectLoggedInUser)),
             switchMap(([action, user]) => {
@@ -48,8 +48,8 @@ export class AuthEffects {
                     catchError((err) => of(firebaseError({ error: new Error(err) })))
                 );
             })
-        );
-    });
+        )
+    );
 
     logout$ = createEffect(() =>
         this.actions$.pipe(
