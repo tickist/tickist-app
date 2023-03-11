@@ -7,13 +7,10 @@ import { Routes } from "@angular/router";
 import { MockProjectService } from "../../../../testing/mocks/project-service";
 import { MockConfigurationService } from "../../../../testing/mocks/configurationService";
 import { MockUserService } from "../../../../testing/mocks/userService";
-import {
-    BlankComponent,
-    RootComponent,
-} from "../../../../testing/test.modules";
+import { BlankComponent, RootComponent } from "../../../../testing/test.modules";
 import { TickistMaterialModule } from "../../../../material.module";
 import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import { StoreModule } from "@ngrx/store";
 import { RouterTestingModule } from "@angular/router/testing";
 import { IconsModule } from "../../../../icons.module";
@@ -55,12 +52,7 @@ describe("SingleProjectComponent", () => {
                 IconsModule,
                 RouterTestingModule,
             ],
-            declarations: [
-                SingleProjectComponent,
-                RootComponent,
-                BlankComponent,
-                MenuButtonComponent,
-            ],
+            declarations: [SingleProjectComponent, RootComponent, BlankComponent, MenuButtonComponent],
             providers: [
                 userService.getProviders(),
                 projectService.getProviders(),

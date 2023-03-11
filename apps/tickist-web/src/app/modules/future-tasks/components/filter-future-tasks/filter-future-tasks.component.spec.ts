@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FilterFutureTasksComponent } from "./filter-future-tasks.component";
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { TickistMaterialModule } from "../../../../material.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { StoreModule } from "@ngrx/store";
@@ -16,14 +16,7 @@ describe("FilterFutureTasksComponent", () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [
-                FormsModule,
-                FlexLayoutModule,
-                TickistMaterialModule,
-                NoopAnimationsModule,
-                StoreModule.forRoot({}),
-                IconsModule,
-            ],
+            imports: [FormsModule, FlexLayoutModule, TickistMaterialModule, NoopAnimationsModule, StoreModule.forRoot({}), IconsModule],
             declarations: [FilterFutureTasksComponent],
             providers: [futureTaskFiltersService.getProviders()],
         }).compileComponents();

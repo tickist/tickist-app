@@ -1,13 +1,7 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    OnDestroy,
-    OnInit,
-} from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FutureListElement } from "./models";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { TaskService } from "../../../../core/services/task.service";
@@ -56,20 +50,16 @@ export class FutureListComponent implements OnInit, OnDestroy {
                 this.cd.detectChanges();
             });
         // @TODO we need only tasks with finishDate
-        this.taskService.tasks$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((tasks: Task[]) => {
-                this.tasks = tasks;
-                this.futureList = this.createFutureList();
-                this.cd.detectChanges();
-            });
-        this.userService.user$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((user: User) => {
-                this.user = user;
-                this.futureList = this.createFutureList();
-                this.cd.detectChanges();
-            });
+        this.taskService.tasks$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((tasks: Task[]) => {
+            this.tasks = tasks;
+            this.futureList = this.createFutureList();
+            this.cd.detectChanges();
+        });
+        this.userService.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((user: User) => {
+            this.user = user;
+            this.futureList = this.createFutureList();
+            this.cd.detectChanges();
+        });
     }
 
     ngOnDestroy(): void {
@@ -101,8 +91,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
 
     isSelected(elem: FutureListElement) {
         return (
-            this.activeDateElement.state ===
-                this.stateActiveDateElement.future &&
+            this.activeDateElement.state === this.stateActiveDateElement.future &&
             elem.url === format(this.activeDateElement.date, "MMMM-yyyy")
         );
     }

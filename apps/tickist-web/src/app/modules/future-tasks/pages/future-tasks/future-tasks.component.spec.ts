@@ -7,7 +7,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FilterFutureTasksComponent } from "../../components/filter-future-tasks/filter-future-tasks.component";
 import { MockComponent } from "ng-mocks";
 import { ChangeTaskViewComponent } from "../../../../shared/components/change-task-view-component/change-task-view.component";
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { MockTaskService } from "../../../../testing/mocks/task-service";
 import { MockConfigurationService } from "../../../../testing/mocks/configurationService";
 import { MockFutureTasksFiltersService } from "../../../../testing/mocks/future-tasks-fiters-service";
@@ -39,11 +39,7 @@ describe("FutureTasksComponent", () => {
                 NoopAnimationsModule,
                 StoreModule.forRoot({}),
             ],
-            declarations: [
-                FutureTasksComponent,
-                MockComponent(FilterFutureTasksComponent),
-                MockComponent(ChangeTaskViewComponent),
-            ],
+            declarations: [FutureTasksComponent, MockComponent(FilterFutureTasksComponent), MockComponent(ChangeTaskViewComponent)],
             providers: [
                 taskService.getProviders(),
                 configurationService.getProviders(),

@@ -1,8 +1,8 @@
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
-import { select, Store } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import { AppStore } from "../../store";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import * as configurationAction from "../../reducers/actions/configuration";
 import { isOffline } from "../selectors/offline-notifications.selectors";
 import { isLeftSideNavVisible } from "../selectors/sidenav-visibility.selectors";
@@ -20,10 +20,8 @@ export class ConfigurationService {
     typeFinishDateBy: any;
 
     constructor(private store: Store, protected media: MediaObserver) {
-        this.offlineModeNotification$ = this.store.pipe(select(isOffline));
-        this.leftSidenavVisibility$ = this.store.pipe(
-            select(isLeftSideNavVisible)
-        );
+        this.offlineModeNotification$ = this.store.select(isOffline);
+        this.leftSidenavVisibility$ = this.store.select(isLeftSideNavVisible);
         this.typeFinishDateBy = { id: 0, name: "by" };
         this.typeFinishDateOn = { id: 1, name: "on" };
         this.configuration = {

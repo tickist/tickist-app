@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest, Observable, Subject } from "rxjs";
 import { User } from "@data/users/models";
 import * as _ from "lodash";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@ngbracket/ngx-layout";
 import { map, takeUntil } from "rxjs/operators";
 import { updateActiveDate } from "../../../../core/actions/active-date.actions";
 import { Store } from "@ngrx/store";

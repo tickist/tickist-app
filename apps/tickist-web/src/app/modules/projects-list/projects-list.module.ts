@@ -8,7 +8,7 @@ import { DeleteProjectConfirmationDialogComponent } from "./components/delete-pr
 import { FilterProjectDialogComponent } from "./components/filter-projects-dialog/filter-projects.dialog.component";
 import { SingleProjectComponent } from "./components/single-project/single-project.component";
 import { RouterModule } from "@angular/router";
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { EffectsModule } from "@ngrx/effects";
 import { ProjectsFiltersEffects } from "./projects-filters.effects";
 import { StoreModule } from "@ngrx/store";

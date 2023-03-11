@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { TickistMaterialModule } from "../material.module";
 import { NavComponent } from "./header/nav-component/nav.component";
 import { SearchAutocompleteComponent } from "./header/search-autocomplete/search-autocomplete.component";
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ShowOfflineModeComponent } from "./header/show-offline-mode/show-offline-mode.component";
 import { ShowApiErrorComponent } from "./header/show-api-error/show-api-error.component";
@@ -63,10 +63,7 @@ import { PrivacyPolicyComponent } from "./footer/privacy-policy/privacy-policy.c
         StoreModule.forFeature("tags", fromTags.reducer),
         StoreModule.forFeature("projects", fromProjects.reducer),
         StoreModule.forFeature("activeProject", fromActiveProject.reducer),
-        StoreModule.forFeature(
-            "activeProjectsIds",
-            fromActiveProjectsId.reducer
-        ),
+        StoreModule.forFeature("activeProjectsIds", fromActiveProjectsId.reducer),
         StoreModule.forFeature("task", fromTask.reducer),
         StoreModule.forFeature("sortTasks", fromSortTasks.reducer),
         StoreModule.forFeature("activeDate", fromActiveDate.reducer),
@@ -74,23 +71,11 @@ import { PrivacyPolicyComponent } from "./footer/privacy-policy/privacy-policy.c
         StoreModule.forFeature("detectApiError", fromDetectApiError.reducer),
         StoreModule.forFeature("auth", from.reducer),
         StoreModule.forFeature("mainFiltersTasks", fromFilterTasks.reducer),
-        StoreModule.forFeature(
-            "assignedToFiltersTasks",
-            fromAssignedToFiltersTasks.reducer
-        ),
-        StoreModule.forFeature(
-            "estimateTimeFiltersTasks",
-            fromEstimateTimeFiltersTasks.reducer
-        ),
-        StoreModule.forFeature(
-            "tagsFiltersTasks",
-            fromTagsFiltersTasks.reducer
-        ),
+        StoreModule.forFeature("assignedToFiltersTasks", fromAssignedToFiltersTasks.reducer),
+        StoreModule.forFeature("estimateTimeFiltersTasks", fromEstimateTimeFiltersTasks.reducer),
+        StoreModule.forFeature("tagsFiltersTasks", fromTagsFiltersTasks.reducer),
         StoreModule.forFeature("searchTasks", fromSearchTasks.reducer),
-        StoreModule.forFeature(
-            "addTaskButtonVisibility",
-            fromAddTaskButtonVisibility.reducer
-        ),
+        StoreModule.forFeature("addTaskButtonVisibility", fromAddTaskButtonVisibility.reducer),
         StoreModule.forFeature("ui", ui.reducer),
         EffectsModule.forFeature([TaskEffects]),
         EffectsModule.forFeature([TaskEffects]),

@@ -12,7 +12,7 @@ import { Routes } from "@angular/router";
 import { MockComponent } from "ng-mocks";
 import { GlobalStatisticsComponent } from "../../../modules/statistics-view/components/global-statistics/global-statistics.component";
 import { TickistMaterialModule } from "../../../material.module";
-import { FlexLayoutModule, MediaObserver } from "@angular/flex-layout";
+import { FlexLayoutModule, MediaObserver } from "@ngbracket/ngx-layout";
 import { NavComponent } from "../../header/nav-component/nav.component";
 import { ActionReducerMap, StoreModule } from "@ngrx/store";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";

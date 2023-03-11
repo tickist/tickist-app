@@ -1,10 +1,4 @@
-import {
-    ChangeDetectorRef,
-    Component,
-    Input,
-    OnDestroy,
-    OnInit,
-} from "@angular/core";
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable, Subject } from "rxjs";
 import { TaskService } from "../../../../core/services/task.service";
@@ -12,8 +6,8 @@ import { ProjectType } from "@data/projects";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { User } from "@data/users/models";
 import { UserService } from "../../../../core/services/user.service";
-import { MediaObserver } from "@angular/flex-layout";
-import {  MatDialog } from "@angular/material/dialog";
+import { MediaObserver } from "@ngbracket/ngx-layout";
+import { MatDialog } from "@angular/material/dialog";
 import { FilterProjectDialogComponent } from "../../components/filter-projects-dialog/filter-projects.dialog.component";
 import { ProjectsFiltersService } from "../../projects-filters.service";
 import { Store } from "@ngrx/store";
@@ -36,8 +30,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     user: User;
     showOnlyProjectsWithTasks = true;
     filter: Filter;
-    tasksProjectsViewRoutingName =
-        tasksProjectsViewRoutesName.tasksProjectsView;
+    tasksProjectsViewRoutingName = tasksProjectsViewRoutesName.tasksProjectsView;
     projectsList$: Observable<ProjectLeftPanel[]>;
 
     constructor(
@@ -54,9 +47,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.projectsList$ = this.store.select(
-            selectFilteredProjectsList(this.projectType)
-        );
+        this.projectsList$ = this.store.select(selectFilteredProjectsList(this.projectType));
     }
 
     toggleProjectView() {
@@ -70,9 +61,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     navigateToAllProjects(path) {
         this.router.navigate([homeRoutesName.home, path, this.projectType]);
         if (this.media.isActive("sm") || this.media.isActive("xs")) {
-            this.configurationService.changeOpenStateLeftSidenavVisibility(
-                "close"
-            );
+            this.configurationService.changeOpenStateLeftSidenavVisibility("close");
         }
     }
 
@@ -88,10 +77,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     }
 
     navigateToCreateProjectView() {
-        this.router.navigate([
-            "home",
-            editProjectSettingsRoutesName.editProject,
-        ]);
+        this.router.navigate(["home", editProjectSettingsRoutesName.editProject]);
     }
 
     ngOnDestroy() {

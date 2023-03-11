@@ -7,7 +7,7 @@ import { ConfigurationService } from "../../../../core/services/configuration.se
 import { Task } from "@data/tasks/models/tasks";
 import { User } from "@data/users/models";
 import { FutureTasksFiltersService } from "../../core/services/future-tasks-filters.service";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@ngbracket/ngx-layout";
 import { updateUser } from "../../../../core/actions/user.actions";
 import { Store } from "@ngrx/store";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";

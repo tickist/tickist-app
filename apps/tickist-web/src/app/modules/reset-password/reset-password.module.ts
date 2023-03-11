@@ -1,14 +1,13 @@
-import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
-import {TickistMaterialModule} from '../../material.module';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {TickistSharedModule} from '../../shared/shared.module';
-import {ResetPasswordComponent} from './pages/reset-password';
-import {TickistResetPasswordRoutingModule} from './reset-password-routing.module';
-import { RequestResetPasswordComponent } from './pages/request-reset-password/request-reset-password.component';
-import {TickistCoreModule} from "../../core/core.module";
-
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { TickistMaterialModule } from "../../material.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
+import { TickistSharedModule } from "../../shared/shared.module";
+import { ResetPasswordComponent } from "./pages/reset-password";
+import { TickistResetPasswordRoutingModule } from "./reset-password-routing.module";
+import { RequestResetPasswordComponent } from "./pages/request-reset-password/request-reset-password.component";
+import { TickistCoreModule } from "../../core/core.module";
 
 @NgModule({
     imports: [
@@ -19,17 +18,10 @@ import {TickistCoreModule} from "../../core/core.module";
         ReactiveFormsModule,
         TickistResetPasswordRoutingModule,
         TickistSharedModule,
-        TickistCoreModule
+        TickistCoreModule,
     ],
     providers: [],
-    exports: [
-        ResetPasswordComponent,
-        RequestResetPasswordComponent
-    ],
-    declarations: [
-        ResetPasswordComponent,
-        RequestResetPasswordComponent
-    ]
+    exports: [ResetPasswordComponent, RequestResetPasswordComponent],
+    declarations: [ResetPasswordComponent, RequestResetPasswordComponent],
 })
-export class TickistResetPasswordModule {
-}
+export class TickistResetPasswordModule {}

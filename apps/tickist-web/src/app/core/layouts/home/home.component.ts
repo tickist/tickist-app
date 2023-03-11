@@ -7,7 +7,7 @@ import { ProjectService } from "../../services/project.service";
 import { TaskService } from "../../services/task.service";
 import { UserService } from "../../services/user.service";
 import { TagService } from "../../services/tag.service";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@ngbracket/ngx-layout";
 import { ConfigurationService } from "../../services/configuration.service";
 import _ from "lodash";
 import { Subject } from "rxjs";
@@ -69,8 +69,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
 
         this.store
+            .select(selectLoggedInUser)
             .pipe(
-                select(selectLoggedInUser),
                 filter((user) => !!user),
                 takeUntil(this.ngUnsubscribe)
             )

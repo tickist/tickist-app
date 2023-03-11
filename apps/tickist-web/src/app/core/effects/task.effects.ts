@@ -1,15 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
-import {
-    concatMap,
-    filter,
-    map,
-    mapTo,
-    mergeMap,
-    switchMap,
-    tap,
-    withLatestFrom,
-} from "rxjs/operators";
+import { Actions, createEffect, ofType, concatLatestFrom } from "@ngrx/effects";
+import { concatMap, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom } from "rxjs/operators";
 import { select, Store } from "@ngrx/store";
 import {
     addTasks,
@@ -54,20 +45,13 @@ export class TaskEffects {
     queryTasks$ = createEffect(() =>
         this.actions$.pipe(
             ofType(queryTasks),
-            withLatestFrom(this.store.select(selectLoggedInUser)),
+            concatLatestFrom(() => this.store.select(selectLoggedInUser)),
             switchMap(
                 ([action, user]) => {
-                    const firebaseCollection = collection(
-                        this.firestore,
-                        "tasks"
-                    );
+                    const firebaseCollection = collection(this.firestore, "tasks");
                     const firebaseQuery = query(
                         firebaseCollection,
-                        where(
-                            "taskProject.shareWithIds",
-                            "array-contains",
-                            user.id
-                        ),
+                        where("taskProject.shareWithIds", "array-contains", user.id),
                         where("isActive", "==", true),
                         where("isDone", "==", false)
                     );
@@ -132,17 +116,11 @@ export class TaskEffects {
             this.actions$.pipe(
                 ofType(requestCreateTask),
                 withLatestFrom(this.store.select(selectLoggedInUser)),
-                mergeMap(([action, user]) =>
-                    this.tasksService.createTask(action.task, user)
-                ),
+                mergeMap(([action, user]) => this.tasksService.createTask(action.task, user)),
                 tap(() =>
-                    this.snackBar.open(
-                        "Task has been created successfully",
-                        "",
-                        {
-                            duration: 2000,
-                        }
-                    )
+                    this.snackBar.open("Task has been created successfully", "", {
+                        duration: 2000,
+                    })
                 )
             ),
         { dispatch: false }
@@ -153,20 +131,11 @@ export class TaskEffects {
             this.actions$.pipe(
                 ofType(requestUpdateTask),
                 withLatestFrom(this.store.select(selectLoggedInUser)),
-                mergeMap(([action, user]) =>
-                    this.tasksService.updateTask(
-                        <Task>action.task.changes,
-                        user
-                    )
-                ),
+                mergeMap(([action, user]) => this.tasksService.updateTask(<Task>action.task.changes, user)),
                 tap(() =>
-                    this.snackBar.open(
-                        "Task has been updated successfully",
-                        "",
-                        {
-                            duration: 2000,
-                        }
-                    )
+                    this.snackBar.open("Task has been updated successfully", "", {
+                        duration: 200000,
+                    })
                 )
             ),
         { dispatch: false }
@@ -177,12 +146,7 @@ export class TaskEffects {
             this.actions$.pipe(
                 ofType(setStatusDone),
                 withLatestFrom(this.store.select(selectLoggedInUser)),
-                mergeMap(([action, user]) =>
-                    this.tasksService.setStatusDone(
-                        <Task>action.task.changes,
-                        user
-                    )
-                ),
+                mergeMap(([action, user]) => this.tasksService.setStatusDone(<Task>action.task.changes, user)),
                 tap(() =>
                     this.snackBar.open("Task is done. Great job!", "", {
                         duration: 2000,
@@ -204,17 +168,11 @@ export class TaskEffects {
         () =>
             this.actions$.pipe(
                 ofType(requestDeleteTask),
-                mergeMap((action) =>
-                    this.tasksService.deleteTask(action.taskId)
-                ),
+                mergeMap((action) => this.tasksService.deleteTask(action.taskId)),
                 tap(() =>
-                    this.snackBar.open(
-                        "Task has been deleted successfully",
-                        "",
-                        {
-                            duration: 2000,
-                        }
-                    )
+                    this.snackBar.open("Task has been deleted successfully", "", {
+                        duration: 2000,
+                    })
                 )
             ),
         { dispatch: false }
@@ -223,7 +181,7 @@ export class TaskEffects {
     closeMenuInTaskDuringRouterNavigator$ = createEffect(() =>
         this.actions$.pipe(
             ofType(ROUTER_NAVIGATED),
-            withLatestFrom(this.store.pipe(select(selectAllTasks))),
+            concatLatestFrom(() => this.store.select(selectAllTasks)),
             map(([action, tasks]) => {
                 const tasksWithCloseMenu = tasks.map((task) => ({
                     id: task.id,
@@ -250,9 +208,7 @@ export class TaskEffects {
             withLatestFrom(this.store.select(selectTeam)),
             filter(([, team]) => team.length > 0),
             map(([action, team]) => {
-                const ownerAvatarUrl = team.find(
-                    (user) => user.id === action.task.owner.id
-                ).avatarUrl;
+                const ownerAvatarUrl = team.find((user) => user.id === action.task.owner.id).avatarUrl;
                 const task = Object.assign({}, action.task, {
                     owner: { ...action.task.owner, avatarUrl: ownerAvatarUrl },
                 });

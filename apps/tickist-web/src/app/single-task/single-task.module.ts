@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TickistMaterialModule } from "../material.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { ProgressBarComponent } from "./progress-bar/progress-bar.component";
 import { PinButtonComponent } from "./pin-button/pin-button.component";
 import { RightMenuComponent } from "./right-menu/right-menu.component";

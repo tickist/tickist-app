@@ -1,15 +1,14 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {TickistMaterialModule} from '../../material.module';
-import {TickistSingleTaskModule} from '../../single-task/single-task.module';
-import {TickistSharedModule} from '../../shared/shared.module';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {TickistTasksModule} from '../../tasks/tasks.module';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {TasksFromProjectsComponent} from './pages/tasks-from-projects/tasks-from-projects.component';
-import {TickistTasksProjectsViewRoutingModule} from './tasks-projects-view-routing.module';
-import {IconsModule} from "../../icons.module";
-
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { TickistMaterialModule } from "../../material.module";
+import { TickistSingleTaskModule } from "../../single-task/single-task.module";
+import { TickistSharedModule } from "../../shared/shared.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { TickistTasksModule } from "../../tasks/tasks.module";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
+import { TasksFromProjectsComponent } from "./pages/tasks-from-projects/tasks-from-projects.component";
+import { TickistTasksProjectsViewRoutingModule } from "./tasks-projects-view-routing.module";
+import { IconsModule } from "../../icons.module";
 
 @NgModule({
     imports: [
@@ -22,9 +21,9 @@ import {IconsModule} from "../../icons.module";
         FormsModule,
         ReactiveFormsModule,
         TickistTasksProjectsViewRoutingModule,
-        IconsModule
+        IconsModule,
     ],
     declarations: [TasksFromProjectsComponent],
-    exports: []
+    exports: [],
 })
-export class TickistTasksProjectsViewModule { }
+export class TickistTasksProjectsViewModule {}

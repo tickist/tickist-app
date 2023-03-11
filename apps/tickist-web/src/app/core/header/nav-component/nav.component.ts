@@ -1,16 +1,8 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    OnDestroy,
-    OnInit,
-    Renderer2,
-    ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { User } from "@data/users/models";
 import { ConfigurationService } from "../../services/configuration.service";
 import { environment } from "../../../../environments/environment";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import { NavigationEnd, Router } from "@angular/router";
 import { ProjectService } from "../../services/project.service";
 import { Observable, Subject } from "rxjs";
@@ -75,26 +67,18 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.addClassToActiveElement(event.urlAfterRedirects);
             });
 
-        this.progressBarIsEnabled$ = this.store.select(
-            selectProgressBarIsEnabled
-        );
+        this.progressBarIsEnabled$ = this.store.select(selectProgressBarIsEnabled);
         this.user$ = this.store.select(selectLoggedInUser);
 
-        this.user$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((user: User) => (this.user = user));
+        this.user$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((user: User) => (this.user = user));
 
-        this.configurationService.leftSidenavVisibility$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((state) => {
-                this.leftSideNavVisibility = state;
-            });
+        this.configurationService.leftSidenavVisibility$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((state) => {
+            this.leftSideNavVisibility = state;
+        });
 
-        this.configurationService.offlineModeNotification$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((value) => {
-                this.isOffline = value;
-            });
+        this.configurationService.offlineModeNotification$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+            this.isOffline = value;
+        });
     }
 
     ngAfterViewInit(): void {
@@ -108,17 +92,10 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
             newOpenState = "open";
         }
-        this.configurationService.changeOpenStateLeftSidenavVisibility(
-            newOpenState
-        );
+        this.configurationService.changeOpenStateLeftSidenavVisibility(newOpenState);
     }
 
-    navigateTo(
-        path,
-        primaryPath = null,
-        primaryArg = null,
-        leftSideNavPath = null
-    ): void {
+    navigateTo(path, primaryPath = null, primaryArg = null, leftSideNavPath = null): void {
         const navigate = [];
         navigate.push(path);
         if (primaryPath) {
@@ -139,9 +116,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.store.dispatch(setActiveProject({ project: undefined }));
         this.router.navigate(navigate);
         if (this.media.isActive("sm") || this.media.isActive("xs")) {
-            this.configurationService.changeOpenStateLeftSidenavVisibility(
-                "close"
-            );
+            this.configurationService.changeOpenStateLeftSidenavVisibility("close");
         }
     }
 
@@ -150,10 +125,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     navigateToUserSettings() {
-        this.router.navigate([
-            "home",
-            editUserSettingsRoutesName.editUserSettings,
-        ]);
+        this.router.navigate(["home", editUserSettingsRoutesName.editUserSettings]);
     }
 
     navigateToWeekdays() {
@@ -173,42 +145,24 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.removeActiveClassFromMenu();
         if (url.indexOf("projects") > -1) {
             if (this.projectsElement) {
-                this.renderer.addClass(
-                    this.projectsElement.nativeElement,
-                    "active"
-                );
+                this.renderer.addClass(this.projectsElement.nativeElement, "active");
             }
             if (this.projectsMobileElement) {
-                this.renderer.addClass(
-                    this.projectsMobileElement.nativeElement,
-                    "active"
-                );
+                this.renderer.addClass(this.projectsMobileElement.nativeElement, "active");
             }
         } else if (url.indexOf("tags") > -1) {
             if (this.tagsElement) {
-                this.renderer.addClass(
-                    this.tagsElement.nativeElement,
-                    "active"
-                );
+                this.renderer.addClass(this.tagsElement.nativeElement, "active");
             }
             if (this.tagsMobileElement) {
-                this.renderer.addClass(
-                    this.tagsMobileElement.nativeElement,
-                    "active"
-                );
+                this.renderer.addClass(this.tagsMobileElement.nativeElement, "active");
             }
         } else if (url === "/home") {
             if (this.homeElement) {
-                this.renderer.addClass(
-                    this.homeElement.nativeElement,
-                    "active"
-                );
+                this.renderer.addClass(this.homeElement.nativeElement, "active");
             }
             if (this.homeMobileElement) {
-                this.renderer.addClass(
-                    this.homeMobileElement.nativeElement,
-                    "active"
-                );
+                this.renderer.addClass(this.homeMobileElement.nativeElement, "active");
             }
         }
     }
@@ -218,31 +172,19 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
             this.renderer.removeClass(this.homeElement.nativeElement, "active");
         }
         if (this.homeMobileElement) {
-            this.renderer.removeClass(
-                this.homeMobileElement.nativeElement,
-                "active"
-            );
+            this.renderer.removeClass(this.homeMobileElement.nativeElement, "active");
         }
         if (this.projectsElement) {
-            this.renderer.removeClass(
-                this.projectsElement.nativeElement,
-                "active"
-            );
+            this.renderer.removeClass(this.projectsElement.nativeElement, "active");
         }
         if (this.projectsMobileElement) {
-            this.renderer.removeClass(
-                this.projectsMobileElement.nativeElement,
-                "active"
-            );
+            this.renderer.removeClass(this.projectsMobileElement.nativeElement, "active");
         }
         if (this.tagsElement) {
             this.renderer.removeClass(this.tagsElement.nativeElement, "active");
         }
         if (this.tagsMobileElement) {
-            this.renderer.removeClass(
-                this.tagsMobileElement.nativeElement,
-                "active"
-            );
+            this.renderer.removeClass(this.tagsMobileElement.nativeElement, "active");
         }
     }
 }

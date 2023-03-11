@@ -401,8 +401,8 @@ mat-sidenav-content::-webkit-scrollbar-thumb {
     transition: none;
 }
 
-.mat-mdc-input-element {
-    caret-color: $white;
+input {
+    caret-color: $white !important;
 }
 
 .mat-mdc-input-element:disabled {
@@ -478,8 +478,14 @@ mat-snack-bar-container {
     }
 }
 
-.mat-progress-spinner circle, .mat-spinner circle {
-    stroke: white;
+simple-snack-bar {
+    div {
+        color: $white !important;
+    }
+}
+
+.mat-progress-spinner circle, .mat-spinner circle, .mat-mdc-progress-spinner {
+    stroke: $white;
 }
 
 body {

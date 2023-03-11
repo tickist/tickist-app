@@ -4,7 +4,7 @@ import { Task } from "@data/tasks/models/tasks";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import * as _ from "lodash";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import { TaskService } from "../../../../core/services/task.service";
 import { UserService } from "../../../../core/services/user.service";
 import { User } from "@data/users/models";

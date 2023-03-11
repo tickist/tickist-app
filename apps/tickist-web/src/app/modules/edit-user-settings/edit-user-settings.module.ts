@@ -1,14 +1,13 @@
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
-import {TickistMaterialModule} from '../../material.module';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {TickistEditUserSettingsRoutingModule} from './edit-user-settings-routing.module';
-import {UserComponent} from './components/user/user.component';
-import {TickistSharedModule} from '../../shared/shared.module';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import { DeleteAccountDialogComponent } from './components/delete-account-dialog/delete-account-dialog.component';
-
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { TickistMaterialModule } from "../../material.module";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
+import { TickistEditUserSettingsRoutingModule } from "./edit-user-settings-routing.module";
+import { UserComponent } from "./components/user/user.component";
+import { TickistSharedModule } from "../../shared/shared.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DeleteAccountDialogComponent } from "./components/delete-account-dialog/delete-account-dialog.component";
 
 @NgModule({
     imports: [
@@ -19,16 +18,10 @@ import { DeleteAccountDialogComponent } from './components/delete-account-dialog
         TickistSharedModule,
         ReactiveFormsModule,
         TickistEditUserSettingsRoutingModule,
-        FontAwesomeModule
+        FontAwesomeModule,
     ],
     providers: [],
-    exports: [
-        UserComponent
-    ],
-    declarations: [
-        UserComponent,
-        DeleteAccountDialogComponent
-    ]
+    exports: [UserComponent],
+    declarations: [UserComponent, DeleteAccountDialogComponent],
 })
-export class TickistEditUserSettingsModule {
-}
+export class TickistEditUserSettingsModule {}

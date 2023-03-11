@@ -9,38 +9,25 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
-import {
-    AVAILABLE_PROJECT_TYPES,
-    ProjectType,
-    ProjectWithAllDescendants,
-} from "@data/projects";
+import { AVAILABLE_PROJECT_TYPES, ProjectType, ProjectWithAllDescendants } from "@data/projects";
 import { ProjectService } from "../../../../core/services/project.service";
 import { Router } from "@angular/router";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import { DeleteProjectConfirmationDialogComponent } from "../delete-project-dialog/delete-project-dialog.component";
-import {  MatDialog } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { User } from "@data/users/models";
 import { Store } from "@ngrx/store";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { tasksProjectsViewRoutesName } from "../../../tasks-projects-view/routes.names";
 import { editProjectSettingsRoutesName } from "../../../edit-project/routes-names";
-import {
-    selectActiveProjectsIds,
-    selectActiveProjectWithAllDescendants,
-} from "../../../../core/selectors/projects.selectors";
+import { selectActiveProjectsIds, selectActiveProjectWithAllDescendants } from "../../../../core/selectors/projects.selectors";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
-import {
-    requestDeleteProject,
-    requestUpdateProject,
-} from "../../../../core/actions/projects/projects.actions";
+import { requestDeleteProject, requestUpdateProject } from "../../../../core/actions/projects/projects.actions";
 import { homeRoutesName } from "../../../../routing.module.name";
 import { ProjectLeftPanel } from "../../models/project-list";
-import {
-    addNewActiveProjectId,
-    deleteActiveProjectId,
-} from "../../../../core/actions/projects/active-projects-ids.actions";
+import { addNewActiveProjectId, deleteActiveProjectId } from "../../../../core/actions/projects/active-projects-ids.actions";
 import { NGXLogger } from "ngx-logger";
 
 @Component({
@@ -83,11 +70,8 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.anotherProjectTypes = this.availableProjectTypes.filter(
-            (projectType) => projectType !== this.project.projectType
-        );
-        this.deleteOrLeave =
-            this.project.shareWith.length > 1 ? "Leave" : "Delete";
+        this.anotherProjectTypes = this.availableProjectTypes.filter((projectType) => projectType !== this.project.projectType);
+        this.deleteOrLeave = this.project.shareWith.length > 1 ? "Leave" : "Delete";
         this.canHaveChildProjects = this.project.level < 2;
         this.store
             .select(selectLoggedInUser)
@@ -95,48 +79,31 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
             .subscribe((user) => {
                 this.user = user;
             });
-        this.selectedProject$ = this.store.select(
-            selectActiveProjectWithAllDescendants
-        );
-        this.selectedProject$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((project) => {
-                if (
-                    project &&
-                    project.allDescendants.indexOf(this.project.id) > -1
-                ) {
-                    this.isSelected = true;
-                    if (project.allDescendants.length > 1) {
-                        this.activeCheckboxMode = true;
-                    }
-                } else {
-                    this.isSelected = false;
-                    this.activeCheckboxMode = false;
+        this.selectedProject$ = this.store.select(selectActiveProjectWithAllDescendants);
+        this.selectedProject$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((project) => {
+            if (project && project.allDescendants.indexOf(this.project.id) > -1) {
+                this.isSelected = true;
+                if (project.allDescendants.length > 1) {
+                    this.activeCheckboxMode = true;
                 }
-                this.cd.detectChanges();
-            });
+            } else {
+                this.isSelected = false;
+                this.activeCheckboxMode = false;
+            }
+            this.cd.detectChanges();
+        });
         this.selectedProjectsIds$ = this.store.select(selectActiveProjectsIds);
-        this.selectedProjectsIds$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((ids) => {
-                this.isActive = ids && ids.indexOf(this.project.id) > -1;
-                this.cd.detectChanges();
-            });
+        this.selectedProjectsIds$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((ids) => {
+            this.isActive = ids && ids.indexOf(this.project.id) > -1;
+            this.cd.detectChanges();
+        });
     }
 
     onResized() {
-        if (
-            this.el.nativeElement.offsetWidth <
-                this.el.nativeElement.scrollWidth &&
-            !this.tooltip
-        ) {
+        if (this.el.nativeElement.offsetWidth < this.el.nativeElement.scrollWidth && !this.tooltip) {
             this.tooltip = true;
             this.cd.detectChanges();
-        } else if (
-            this.el.nativeElement.offsetWidth >=
-                this.el.nativeElement.scrollWidth &&
-            this.tooltip
-        ) {
+        } else if (this.el.nativeElement.offsetWidth >= this.el.nativeElement.scrollWidth && this.tooltip) {
             this.tooltip = false;
             this.cd.detectChanges();
         }
@@ -182,13 +149,9 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
 
     changeId() {
         if (this.isActive) {
-            this.store.dispatch(
-                addNewActiveProjectId({ projectId: this.project.id })
-            );
+            this.store.dispatch(addNewActiveProjectId({ projectId: this.project.id }));
         } else {
-            this.store.dispatch(
-                deleteActiveProjectId({ projectId: this.project.id })
-            );
+            this.store.dispatch(deleteActiveProjectId({ projectId: this.project.id }));
         }
     }
 
@@ -221,9 +184,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
                         All tasks assigned to you will be deleted.`;
         }
 
-        const dialogRef = this.dialog.open(
-            DeleteProjectConfirmationDialogComponent
-        );
+        const dialogRef = this.dialog.open(DeleteProjectConfirmationDialogComponent);
         dialogRef.componentInstance.setTitle(title);
         dialogRef.componentInstance.setContent(content);
         dialogRef
@@ -231,44 +192,23 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((result) => {
                 if (result) {
-                    this.store.dispatch(
-                        requestDeleteProject({ projectId: this.project.id })
-                    );
-                    this.router.navigate([
-                        "home",
-                        tasksProjectsViewRoutesName.tasksProjectsView,
-                        this.user.inboxPk,
-                    ]);
+                    this.store.dispatch(requestDeleteProject({ projectId: this.project.id }));
+                    this.router.navigate(["home", tasksProjectsViewRoutesName.tasksProjectsView, this.user.inboxPk]);
                 }
             });
     }
 
     navigateToEditProjectView(projectId: string) {
-        this.router.navigate([
-            homeRoutesName.home,
-            editProjectSettingsRoutesName.editProject,
-            projectId,
-        ]);
+        this.router.navigate([homeRoutesName.home, editProjectSettingsRoutesName.editProject, projectId]);
     }
 
     navigateTo(path, projectId, $event) {
-        const elementClickPath =
-            $event.path || ($event.composedPath && $event.composedPath());
-        const mdCheckbox = elementClickPath.find(
-            (elem) => elem.localName === "mat-checkbox"
-        );
+        const elementClickPath = $event.path || ($event.composedPath && $event.composedPath());
+        const mdCheckbox = elementClickPath.find((elem) => elem.localName === "mat-checkbox");
         if (!mdCheckbox) {
-            this.router
-                .navigate([
-                    "home",
-                    tasksProjectsViewRoutesName.tasksProjectsView,
-                    projectId,
-                ])
-                .catch((err) => this.logger.error(err));
+            this.router.navigate(["home", tasksProjectsViewRoutesName.tasksProjectsView, projectId]).catch((err) => this.logger.error(err));
             if (this.media.isActive("sm") || this.media.isActive("xs")) {
-                this.configurationService.changeOpenStateLeftSidenavVisibility(
-                    "close"
-                );
+                this.configurationService.changeOpenStateLeftSidenavVisibility("close");
             }
         }
     }

@@ -9,7 +9,7 @@ import {
     SimpleChange,
     ViewChild,
 } from "@angular/core";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 
 @Component({
     selector: "tickist-progress-bar",
@@ -25,11 +25,7 @@ export class ProgressBarComponent implements AfterViewChecked, OnChanges {
     showIcon = false;
     tooltipString: string;
 
-    constructor(
-        private elRef: ElementRef,
-        private media: MediaObserver,
-        private renderer: Renderer2
-    ) {}
+    constructor(private elRef: ElementRef, private media: MediaObserver, private renderer: Renderer2) {}
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         if (this.media.isActive("xs") && !changes.isDisabled.currentValue) {

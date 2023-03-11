@@ -7,7 +7,7 @@ import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { WeekdaysComponent } from "./weekdays.component";
 import { MockTaskService } from "../../../../testing/mocks/task-service";
 import { MockUserService } from "../../../../testing/mocks/userService";
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { StoreModule } from "@ngrx/store";
 import { RouterTestingModule } from "@angular/router/testing";
 
@@ -22,12 +22,7 @@ describe("Component: Dashboard", () => {
         const configurationService = new MockConfigurationService();
 
         TestBed.configureTestingModule({
-            imports: [
-                TickistMaterialModule,
-                RouterTestingModule,
-                FlexLayoutModule,
-                StoreModule.forRoot({}),
-            ],
+            imports: [TickistMaterialModule, RouterTestingModule, FlexLayoutModule, StoreModule.forRoot({})],
             declarations: [WeekdaysComponent],
             providers: [
                 projectService.getProviders(),

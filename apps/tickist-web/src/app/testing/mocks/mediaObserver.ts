@@ -1,6 +1,6 @@
-import {Observable} from 'rxjs';
-import {MediaObserver} from '@angular/flex-layout';
-import {SpyObject} from '../test.helpers';
+import { Observable } from "rxjs";
+import { MediaObserver } from "@ngbracket/ngx-layout";
+import { SpyObject } from "../test.helpers";
 
 export class MockObservableMedia extends SpyObject {
     fakeResponse: any;
@@ -11,20 +11,18 @@ export class MockObservableMedia extends SpyObject {
     constructor() {
         super(MediaObserver);
         this.media = this;
-
     }
-    isActive() {
-    }
+    isActive() {}
 
     subscribe(success, error) {
         if (this.responseSuccess) {
-          success(this.fakeResponse);
+            success(this.fakeResponse);
         } else {
-          error(this.fakeResponse);
+            error(this.fakeResponse);
         }
     }
 
     getProviders(): Array<any> {
-        return [{provide: MediaObserver, useValue: this}];
+        return [{ provide: MediaObserver, useValue: this }];
     }
 }
