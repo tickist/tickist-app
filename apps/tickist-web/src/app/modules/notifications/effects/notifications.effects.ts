@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Actions, createEffect, ofType, concatLatestFrom } from "@ngrx/effects";
 import { concatMap, map, switchMap, withLatestFrom } from "rxjs/operators";
 import { Update } from "@ngrx/entity";
 import {
@@ -76,7 +76,7 @@ export class NotificationsEffects {
         () =>
             this.actions$.pipe(
                 ofType(markAllNotificationsAsRead),
-                withLatestFrom(this.store.select(selectAllUnreadNotificationsIds)),
+                concatLatestFrom(() => this.store.select(selectAllUnreadNotificationsIds)),
                 map(([, unreadNotificationsIds]) => {
                     this.notificationsService.markAllAsRead(unreadNotificationsIds);
                 })

@@ -8,7 +8,7 @@ interface INotification {
     isRead?: boolean;
     type: string;
     icon?: any;
-    date?: Timestamp;
+    date?: Timestamp | Date;
 }
 
 enum NotificationIcon {}
@@ -25,6 +25,8 @@ export class Notification {
 
     constructor(notification: INotification) {
         Object.assign(this, notification);
-        this.date = new Date(notification.date.seconds * 1000);
+        if (notification.date instanceof Timestamp) {
+            this.date = new Date(notification.date.seconds * 1000);
+        }
     }
 }
