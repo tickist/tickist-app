@@ -25,8 +25,5 @@ export class Notification {
 
     constructor(notification: INotification) {
         Object.assign(this, notification);
-        if (notification.date instanceof Timestamp) {
-            this.date = new Date(notification.date.seconds * 1000);
-        }
     }
 }

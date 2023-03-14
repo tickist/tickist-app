@@ -10,12 +10,6 @@
     "sourceRoot": "apps/tickist-web/src",
     "prefix": "tickist",
     "targets": {
-        "deploy": {
-            "builder": "@angular/fire:deploy",
-            "options": {
-                "functionsNodeVersion": 16
-            }
-        },
         "build": {
             "executor": "@angular-devkit/build-angular:browser",
             "options": {

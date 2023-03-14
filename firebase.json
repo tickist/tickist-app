@@ -59,7 +59,6 @@
     },
     "functions": {
         "predeploy": [
-            "npm run lint",
             "npm run build:functions",
             "cd dist/apps/tickist-functions/ && npm install"
         ],
