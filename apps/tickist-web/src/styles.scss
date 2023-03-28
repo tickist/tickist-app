@@ -231,8 +231,8 @@ mat-button-toggle-group {
     color: grey;
 }
 
-.mat-dialog-container {
-    background: $background_card_color;
+.mat-mdc-dialog-surface {
+    background: $background_card_color !important;
 }
 
 // radio button

@@ -30,7 +30,7 @@ import { selectProjectByIdOrName } from "../../core/selectors/projects.selectors
 import { FormControl, UntypedFormControl } from "@angular/forms";
 import { ProjectLeftPanel } from "../../modules/projects-list/models/project-list";
 import { forbiddenNamesValidator } from "../utils/forbidden-name-validator";
-import {MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from "@angular/material/autocomplete";
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { MyErrorStateMatcher } from "../../shared/error-state-matcher";
 
 @Component({
@@ -58,7 +58,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
     iconPrefix: string;
     filteredProjects$: Observable<ProjectLeftPanel[]>;
     matcher = new MyErrorStateMatcher();
-    @ViewChild(MatAutocompleteTrigger, {read: MatAutocompleteTrigger}) inputAutoComplete: MatAutocompleteTrigger;
+    @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger }) inputAutoComplete: MatAutocompleteTrigger;
 
     @HostListener("mouseenter")
     onMouseEnter() {
@@ -114,7 +114,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
                 this.selectTaskProject.addValidators([forbiddenNamesValidator(projects)]);
                 this.filteredProjects$ = this.selectTaskProject.valueChanges.pipe(
                     startWith(""),
-                    map(([value]) => {
+                    map((value) => {
                         const name = typeof value === "string" ? value : value?.name;
                         return name ? projects.filter((project) => project.name.toLowerCase().includes(name.toLowerCase())) : projects;
                     })
