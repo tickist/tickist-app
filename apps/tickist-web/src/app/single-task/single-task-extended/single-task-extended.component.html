@@ -90,13 +90,13 @@
             <tickist-menu-button [icon]="'times'" (click)="hideAllMenuElements()">
             </tickist-menu-button>
         </div>
-        <mat-chip-list>
-            <mat-chip *ngFor="let tag of tags">
+        <mat-chip-listbox>
+            <mat-chip-option *ngFor="let tag of tags" selectable="false">
                 <span class="chip-name">{{ tag.name }}</span>
                 <span fxFlex></span>
-                <fa-icon [ngStyle]="{'margin-left': '5px'}" matTooltip="Remove tag" (click)="removeTag(tag)" [icon]="'times'"></fa-icon>
-            </mat-chip>
-        </mat-chip-list>
+                <fa-icon [ngStyle]="{'margin-left': '5px', 'color': 'white'}" matTooltip="Remove tag" (click)="removeTag(tag)" [icon]="'times'"></fa-icon>
+            </mat-chip-option>
+        </mat-chip-listbox>
 
     </div>
 

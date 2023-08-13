@@ -230,16 +230,16 @@
                     </mat-autocomplete>
 
 
-                    <mat-chip-list>
+                    <mat-chip-listbox>
 
-                        <mat-chip *ngFor="let tag of task.tags">
-                            <span>{{ tag.name }}</span>
+                        <mat-chip-option *ngFor="let tag of task.tags">
+                            <span class="chip-name">{{ tag.name }}</span>
                             <span fxFlex></span>
-                            <fa-icon [ngStyle]="{'margin-top': '2px', 'margin-left': '10px'}" matTooltip="Remove tag" [icon]="'times'"
+                            <fa-icon [ngStyle]="{'margin-top': '2px', 'margin-left': '10px', 'color': 'white'}" matTooltip="Remove tag" [icon]="'times'"
                                      (click)="removeTagFromTask(tag)"></fa-icon>
-                        </mat-chip>
+                        </mat-chip-option>
 
-                    </mat-chip-list>
+                    </mat-chip-listbox>
                 </div>
 
                 <div id='stepContainer' [hidden]="!checkActiveItemInMenu('steps')" formArrayName="steps">
