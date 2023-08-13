@@ -209,11 +209,15 @@ mat-sidenav {
 
 // Progress bar
 
-.mat-progress-bar-fill::after {
+.mdc-linear-progress__bar, mdc-linear-progress__primary-bar {
     background-color: $progress_bar_color;
 }
 
-.mat-progress-bar-buffer {
+.mdc-linear-progress__bar-inner {
+    border-color: $progress_bar_color !important;
+}
+
+.mdc-progress-bar-buffer {
     background-color: $background_card_color;
 }
 
