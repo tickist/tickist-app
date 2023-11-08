@@ -1,6 +1,7 @@
 <div fxLayout="column">Repeat:
 
-    <mat-radio-group [ngStyle]="{'margin-bottom': '10px'}" [(ngModel)]="repeatDefault" (change)="saveTask($event, 'repeatDefault')" fxLayout="column">
+    <mat-radio-group [ngStyle]="{'margin-bottom': '10px'}" [(ngModel)]="repeatDefault" (change)="saveTask($event, 'repeatDefault')"
+                     fxLayout="column">
         <mat-radio-button *ngFor="let option of defaultRepeatOptions" [value]="option.id">
             {{ option.name }}
         </mat-radio-button>
@@ -19,7 +20,7 @@
             <mat-form-field fxFlex="40">
                 <mat-select (selectionChange)="saveTask($event, 'repeatCustom')" [(ngModel)]="repeatCustom">
                     <mat-option *ngFor="let option of customRepeatOptions"
-                                [value]="option.id"> {{ option.name_of_extension }}
+                                [value]="option.id"> {{ option.nameOfExtension }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -28,7 +29,8 @@
 
     <div [hidden]="repeatDefault === 0">
         <span>From:</span>
-        <mat-radio-group  [ngStyle]="{'margin-top': '5px'}" [value]="fromRepeating" fxLayout="column" (change)="saveTask($event, 'fromRepeating')">
+        <mat-radio-group [ngStyle]="{'margin-top': '5px'}" [value]="fromRepeating" fxLayout="column"
+                         (change)="saveTask($event, 'fromRepeating')">
             <mat-radio-button *ngFor="let option of fromRepeatingOptions" [value]="option.id">
                 {{ option.name }}
             </mat-radio-button>

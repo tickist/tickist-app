@@ -10,7 +10,7 @@ export class RepeatStringExtension implements PipeTransform {
 
     transform(value: any): any {
         if (value) {
-            return this.configurationService.loadConfiguration().commons.defaultRepeatOptions[value].name_of_extension;
+            return this.configurationService.loadConfiguration().commons.defaultRepeatOptions[value].nameOfExtension;
         }
     }
 }

@@ -38,7 +38,7 @@
                                   'invalid': !taskForm.controls['steps'].valid && taskForm.controls['steps'].touched}">
                         <div>
                             <fa-icon [icon]="'list'"></fa-icon>
-                            <p [fxHide.xs]="1"><span>Steps {{taskForm.controls['steps'].errors}}</span></p></div>
+                            <p [fxHide.xs]="1"><span>Steps {{ taskForm.controls['steps'].errors }}</span></p></div>
                     </mat-list-item>
 
 
@@ -68,9 +68,9 @@
                                    (blur)="updateImmediately('name', 'main.name', taskForm.value)"
                                    placeholder="Task name" maxlength="500" formControlName="name"
                                    [errorStateMatcher]="matcher">
-                            <mat-hint align="end">{{taskName.value?.length || 0}}/500</mat-hint>
+                            <mat-hint align="end">{{ taskName.value?.length || 0 }}/500</mat-hint>
                             <mat-error *ngIf="hasErrorMessage(taskForm.controls['main'].controls['name'])">
-                                {{getErrorMessage(taskForm.controls['main'].controls['name'])}}
+                                {{ getErrorMessage(taskForm.controls['main'].controls['name']) }}
                             </mat-error>
                         </mat-form-field>
 
@@ -93,7 +93,7 @@
                                 </mat-select-trigger>
                                 <mat-option *ngFor="let taskType of taskTypesWithIcons" [value]="taskType.value">
                                     <fa-icon [icon]="taskType.icon"></fa-icon>
-                                    {{taskType.value}}
+                                    {{ taskType.value }}
                                 </mat-option>
                             </mat-select>
 
@@ -206,7 +206,7 @@
                                 <textarea matInput #taskDescription
                                           (blur)="updateImmediately('description', 'extra.description', taskForm.value)"
                                           placeholder="Task description" formControlName="description"></textarea>
-                            <mat-hint align="end">{{taskDescription.value?.length || 0}}/5000</mat-hint>
+                            <mat-hint align="end">{{ taskDescription.value?.length || 0 }}/5000</mat-hint>
                         </mat-form-field>
 
                     </div>
@@ -235,7 +235,8 @@
                         <mat-chip-option *ngFor="let tag of task.tags">
                             <span class="chip-name">{{ tag.name }}</span>
                             <span fxFlex></span>
-                            <fa-icon [ngStyle]="{'margin-top': '2px', 'margin-left': '10px', 'color': 'white'}" matTooltip="Remove tag" [icon]="'times'"
+                            <fa-icon [ngStyle]="{'margin-top': '2px', 'margin-left': '10px', 'color': 'white'}" matTooltip="Remove tag"
+                                     [icon]="'times'"
                                      (click)="removeTagFromTask(tag)"></fa-icon>
                         </mat-chip-option>
 
@@ -244,7 +245,7 @@
 
                 <div id='stepContainer' [hidden]="!checkActiveItemInMenu('steps')" formArrayName="steps">
                     <div fxLayout="column">
-                        <ul cdkDropList  id="steps" (cdkDropListDropped)="drop($event)" fxLayout="column">
+                        <ul cdkDropList id="steps" (cdkDropListDropped)="drop($event)" fxLayout="column">
                             <li class="step" fxFlex cdkDrag
                                 *ngFor="let step of taskForm.controls.steps.controls; let i=index; let last = last"
                                 [formGroupName]="i">
@@ -285,13 +286,13 @@
                                        max="100">
 
                             </mat-form-field>
-
-                            <mat-select formControlName="repeatCustom" fxFlex="45">
-                                <mat-option *ngFor="let option of customRepeatOptions"
-                                            [value]="option.id"> {{ option.name_of_extension }}
-                                </mat-option>
-                            </mat-select>
-
+                            <mat-form-field fxFlex="45">
+                                <mat-select formControlName="repeatCustom">
+                                    <mat-option *ngFor="let option of customRepeatOptions"
+                                                [value]="option.id"> {{ option.nameOfExtension }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div id="from-repeating-wrapper"
                              *ngIf="taskForm.controls['repeat'].controls['repeatDefault'].value !== 0">

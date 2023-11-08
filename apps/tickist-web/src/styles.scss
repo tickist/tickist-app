@@ -184,12 +184,12 @@ mat-sidenav {
 }
 
 .mat-option {
-    color: white
+    color: white !important;
 }
 
 .mat-option.mat-selected, .mdc-list-item--selected {
     background-color: grey !important;
-    color: white;
+    color: white !important;
 }
 
 .mat-mdc-select-value {
