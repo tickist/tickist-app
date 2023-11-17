@@ -481,11 +481,11 @@ input {
 }
 
 .mat-button-toggle-group-appearance-standard {
-    border: none;
+    border: none !important;
 }
 
 .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
-    border-left: none;
+    border-left: none !important;
 }
 
 .mat-calendar-previous-button {

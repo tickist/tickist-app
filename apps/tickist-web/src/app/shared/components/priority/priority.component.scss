@@ -2,15 +2,18 @@
 
 .priority_A {
     ::ng-deep .mat-button-toggle-label-content {
-        color: $priority_A
+        color: $priority_A !important;
     }
+
     ::ng-deep &.mat-button-toggle-checked {
         ::ng-deep .mat-button-toggle-label-content {
-             color: $white;
+            color: $white !important;
         }
-        background-color: $priority_A;
+
+        background-color: $priority_A !important;
 
     }
+
     ::ng-deep .mat-button-toggle-focus-overlay {
         background-color: transparent !important;
     }
@@ -18,15 +21,18 @@
 
 .priority_B {
     ::ng-deep .mat-button-toggle-label-content {
-        color: $priority_B
+        color: $priority_B !important;
     }
+
     ::ng-deep &.mat-button-toggle-checked {
         ::ng-deep .mat-button-toggle-label-content {
-             color: $white;
+            color: $white !important;
         }
-        background-color: $priority_B;
+
+        background-color: $priority_B !important;
 
     }
+
     ::ng-deep .mat-button-toggle-focus-overlay {
         background-color: transparent !important;
     }
@@ -34,15 +40,18 @@
 
 .priority_C {
     ::ng-deep .mat-button-toggle-label-content {
-        color: $priority_C
+        color: $priority_C !important;
     }
+
     ::ng-deep &.mat-button-toggle-checked {
         ::ng-deep .mat-button-toggle-label-content {
-             color: grey;
+            color: grey !important;
         }
-        background-color: $priority_C;
+
+        background-color: $priority_C !important;
 
     }
+
     ::ng-deep .mat-button-toggle-focus-overlay {
         background-color: transparent !important;
     }
