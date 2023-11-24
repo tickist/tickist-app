@@ -23,7 +23,6 @@ import { TickistSingleTaskModule } from "./single-task/single-task.module";
 import { EffectsModule } from "@ngrx/effects";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { TickistCoreModule } from "./core/core.module";
-// import { SortablejsModule } from "ngx-sortablejs";
 import { SnackBarMessageComponent } from "./components/snack-bar-message/snack-bar-message.component";
 import { IconsModule } from "./icons.module";
 import { TickistLeftPanelModule } from "./modules/left-panel/left-panel.module";
@@ -81,9 +80,6 @@ console.log({ environment });
             logOnly: environment.production, // Restrict extension to log-only mode
             connectInZone: true,
         }),
-        // SortablejsModule.forRoot({
-        //     animation: 150,
-        // }),
         TickistMaterialModule,
         FlexLayoutModule,
         ServiceWorkerModule.register("/combined-sw.js", {
@@ -102,6 +98,7 @@ console.log({ environment });
         // TickistNotificationsModule,
         TickistLeftPanelModule,
         provideFirebaseApp(() => {
+            debugger;
             const firebase = initializeApp(environment.firebase);
             let config = {};
             if (environment.emulator) {

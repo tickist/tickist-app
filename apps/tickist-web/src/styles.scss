@@ -134,7 +134,7 @@ $tickist-app-theme: custom-theme($tickist-app-primary, $tickist-app-accent, $tic
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
-@include mat.all-legacy-component-themes($tickist-app-theme);
+
 @include mat.all-component-themes($tickist-app-theme);
 
 //// Define the palettes for your theme using the Material Design palettes available in palette.scss
