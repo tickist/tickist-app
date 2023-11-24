@@ -1,20 +1,19 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
-import {Tag} from '@data/tags/models/tags';
-import {TasksFiltersService} from '../../../../core/services/tasks-filters.service';
-import {requestDeleteTag, requestUpdateTag} from '../../../../core/actions/tags.actions';
-import {Store} from '@ngrx/store';
-import {selectCurrentTagsFilter} from '../../../../core/selectors/filters-tasks.selectors';
-import {Filter} from '@data/filter';
-import {takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
-import {setCurrentTagsFilters} from "../../../../core/actions/tasks/tags-filters-tasks.actions";
-
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import { Tag } from "@data/tags/models/tags";
+import { TasksFiltersService } from "../../../../core/services/tasks-filters.service";
+import { requestDeleteTag, requestUpdateTag } from "../../../../core/actions/tags.actions";
+import { Store } from "@ngrx/store";
+import { selectCurrentTagsFilter } from "../../../../core/selectors/filters-tasks.selectors";
+import { Filter } from "@data/filter";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { setCurrentTagsFilters } from "../../../../core/actions/tasks/tags-filters-tasks.actions";
 
 @Component({
-    selector: 'tickist-tag',
-    templateUrl: './tag.component.html',
-    styleUrls: ['./tag.component.scss']
+    selector: "tickist-tag",
+    templateUrl: "./tag.component.html",
+    styleUrls: ["./tag.component.scss"],
 })
 export class TagComponent implements OnInit, OnDestroy {
     @Input() label: string;
@@ -34,33 +33,34 @@ export class TagComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.store.select(selectCurrentTagsFilter).pipe(
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe((filter) => {
-            if (!filter) return;
-            if (filter.value instanceof Array) {
-                this.tagsIds = new Set(filter.value);
-            } else {
-                this.tagsIds = filter.value;
-            }
-            this.isActive = ((this.tagsIds instanceof Set && this.tagsIds.has(this.id)) || this.tagsIds === this.id);
-            this.isChecked = ((this.tagsIds instanceof Set && this.tagsIds.has(this.id)) || this.tagsIds === this.id);
-            this.isCheckboxModeEnabled = this.isId(this.id) && (this.tagsIds instanceof Set) && this.tagsIds.size > 0;
-        });
+        this.store
+            .select(selectCurrentTagsFilter)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((filter) => {
+                if (!filter) return;
+                if (filter.value instanceof Array) {
+                    this.tagsIds = new Set(filter.value);
+                } else {
+                    this.tagsIds = filter.value;
+                }
+                this.isActive = (this.tagsIds instanceof Set && this.tagsIds.has(this.id)) || this.tagsIds === this.id;
+                this.isChecked = (this.tagsIds instanceof Set && this.tagsIds.has(this.id)) || this.tagsIds === this.id;
+                this.isCheckboxModeEnabled = this.isId(this.id) && this.tagsIds instanceof Set && this.tagsIds.size > 0;
+            });
         this.editTagForm = new UntypedFormGroup({
-            'name': new UntypedFormControl(this.label, Validators.required)
+            name: new UntypedFormControl(this.label, Validators.required),
         });
     }
 
     editTag(values) {
         const tag = JSON.parse(JSON.stringify(this.tag));
-        tag.name = values['name'];
-        this.store.dispatch(requestUpdateTag({tag: {id: tag.id, changes: tag}}));
+        tag.name = values["name"];
+        this.store.dispatch(requestUpdateTag({ tag: { id: tag.id, changes: tag } }));
         this.editMode = !this.editMode;
     }
 
     deleteTag() {
-        this.store.dispatch(requestDeleteTag(<any> {tagId: this.tag.id}));
+        this.store.dispatch(requestDeleteTag(<any>{ tagId: this.tag.id }));
     }
 
     toggleEditMode() {
@@ -75,9 +75,11 @@ export class TagComponent implements OnInit, OnDestroy {
             const set = new Set([this.id]);
             value = Array.from(set);
         }
-        this.store.dispatch(setCurrentTagsFilters({
-            currentTagsFilter: new Filter({'id': 1, 'label': 'tags', 'value': value})
-        }));
+        this.store.dispatch(
+            setCurrentTagsFilters({
+                currentTagsFilter: new Filter({ id: 1, label: "tags", value: value }),
+            })
+        );
     }
 
     selectTags() {
@@ -93,13 +95,11 @@ export class TagComponent implements OnInit, OnDestroy {
             }
             result = Array.from(value);
         }
-        this.store.dispatch(setCurrentTagsFilters({
-            currentTagsFilter: new Filter({'id': 1, 'label': 'tags', 'value': result})
-        }));
-    }
-
-    private isId(value: any): boolean {
-        return value !== 'allTasks' && value !== 'allTags' && value !== 'withoutTags' && typeof value === 'string';
+        this.store.dispatch(
+            setCurrentTagsFilters({
+                currentTagsFilter: new Filter({ id: 1, label: "tags", value: result }),
+            })
+        );
     }
 
     ngOnDestroy() {
@@ -107,7 +107,7 @@ export class TagComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
+    private isId(value: any): boolean {
+        return value !== "allTasks" && value !== "allTags" && value !== "withoutTags" && typeof value === "string";
+    }
 }
-
-
-

@@ -37,7 +37,6 @@ import { NGXLogger } from "ngx-logger";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SingleProjectComponent implements OnInit, OnDestroy {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     @Input() project: ProjectLeftPanel;
     @Input() isSmallScreen: boolean;
     @ViewChild("projectNameDiv") el: ElementRef;
@@ -57,7 +56,7 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
     editProjectSettingsRoutesName = editProjectSettingsRoutesName.editProject;
     canHaveChildProjects: boolean;
     tooltip = false;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(
         private projectService: ProjectService,
         protected router: Router,
@@ -68,6 +67,22 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         private cd: ChangeDetectorRef,
         private logger: NGXLogger
     ) {}
+
+    @HostListener("mouseenter")
+    onMouseEnter() {
+        this.isMouseOver = true;
+        this.changeMenuVisiblity();
+        this.isMenuVisible = true;
+    }
+
+    @HostListener("mouseleave")
+    onMouseLeave() {
+        this.isMouseOver = false;
+        this.changeMenuVisiblity();
+        if (!this.isFastMenuVisible) {
+            this.isMenuVisible = false;
+        }
+    }
 
     ngOnInit() {
         this.anotherProjectTypes = this.availableProjectTypes.filter((projectType) => projectType !== this.project.projectType);
@@ -106,22 +121,6 @@ export class SingleProjectComponent implements OnInit, OnDestroy {
         } else if (this.el.nativeElement.offsetWidth >= this.el.nativeElement.scrollWidth && this.tooltip) {
             this.tooltip = false;
             this.cd.detectChanges();
-        }
-    }
-
-    @HostListener("mouseenter")
-    onMouseEnter() {
-        this.isMouseOver = true;
-        this.changeMenuVisiblity();
-        this.isMenuVisible = true;
-    }
-
-    @HostListener("mouseleave")
-    onMouseLeave() {
-        this.isMouseOver = false;
-        this.changeMenuVisiblity();
-        if (!this.isFastMenuVisible) {
-            this.isMenuVisible = false;
         }
     }
 

@@ -1,33 +1,42 @@
-import {Component, EventEmitter, forwardRef, Input, Output} from '@angular/core';
-import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
+import { Component, EventEmitter, forwardRef, Input, Output } from "@angular/core";
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from "@angular/forms";
 
-
-const noop = () => {
-};
-
+const noop = () => {};
 
 @Component({
-    selector: 'tickist-priority',
-    templateUrl: './priority.component.html',
-    styleUrls: ['./priority.component.scss'],
-    providers: [{
-        provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => PriorityComponent),
-        multi: true
-    }]
+    selector: "tickist-priority",
+    templateUrl: "./priority.component.html",
+    styleUrls: ["./priority.component.scss"],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => PriorityComponent),
+            multi: true,
+        },
+    ],
 })
 export class PriorityComponent implements ControlValueAccessor {
     @Output() changePriority = new EventEmitter();
-
     @Input() set manualValue(manualValue) {
         this.innerValue = manualValue;
     }
+    innerValue: any = "";
     get manualValue() {
         return this.innerValue;
     }
 
+    get value(): any {
+        return this.innerValue;
+    }
+
+    set value(v: any) {
+        if (v !== this.innerValue) {
+            this.innerValue = v;
+            this.onChangeCallback(v);
+        }
+    }
+
     // The internal data model
-    innerValue: any = '';
 
     // Placeholders for the callbacks which are later providesd
     // by the Control Value Accessor
@@ -35,17 +44,8 @@ export class PriorityComponent implements ControlValueAccessor {
     private onChangeCallback: (_: any) => void = noop;
 
     // get accessor
-    get value(): any {
-        return this.innerValue;
-    }
 
     // set accessor including call the onchange callback
-    set value(v: any) {
-        if (v !== this.innerValue) {
-            this.innerValue = v;
-            this.onChangeCallback(v);
-        }
-    }
 
     constructor() {}
 
@@ -71,12 +71,9 @@ export class PriorityComponent implements ControlValueAccessor {
         this.changePriority.emit($event.value);
         this.writeValue($event.value);
         this.onChangeCallback($event.value);
-
     }
 
     onClickChangePriority(priority) {
-         this.changePriority.emit(priority);
+        this.changePriority.emit(priority);
     }
-
-
 }

@@ -1,10 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    Output,
-} from "@angular/core";
+import { Component, EventEmitter, HostListener, Input, Output } from "@angular/core";
 import { Project } from "@data/projects";
 import { SelectionModel } from "@angular/cdk/collections";
 import { editProjectSettingsRoutesName } from "../../../edit-project/routes-names";
@@ -24,7 +18,7 @@ export class ProjectTreeComponent {
     @Input() node: any;
     @Output() toggleNode = new EventEmitter();
     showEditProjectButton = false;
-
+    constructor(private router: Router) {}
     @HostListener("mouseenter")
     onMouseEnter() {
         this.showEditProjectButton = true;
@@ -35,26 +29,15 @@ export class ProjectTreeComponent {
         this.showEditProjectButton = false;
     }
 
-    constructor(private router: Router) {}
-
     toggle() {
         this.toggleNode.emit(this.node);
     }
 
     navigateToEditProjectView(projectId: string) {
-        this.router.navigate([
-            homeRoutesName.home,
-            editProjectSettingsRoutesName.editProject,
-            projectId,
-        ]);
+        this.router.navigate([homeRoutesName.home, editProjectSettingsRoutesName.editProject, projectId]);
     }
 
     navigateToCreateNewChildProject(projectId: string) {
-        this.router.navigate([
-            homeRoutesName.home,
-            editProjectSettingsRoutesName.editProject,
-            "createWithAncestor",
-            projectId,
-        ]);
+        this.router.navigate([homeRoutesName.home, editProjectSettingsRoutesName.editProject, "createWithAncestor", projectId]);
     }
 }

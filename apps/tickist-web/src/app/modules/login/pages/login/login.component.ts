@@ -21,32 +21,18 @@ export class LoginComponent implements OnDestroy {
     message = "";
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(
-        protected router: Router,
-        private authService: AuthService,
-        private store: Store,
-        private logger: NGXLogger
-    ) {
+    constructor(protected router: Router, private authService: AuthService, private store: Store, private logger: NGXLogger) {
         this.loginForm = new UntypedFormGroup({
             email: new UntypedFormControl("", [Validators.required, Validators.email]),
             password: new UntypedFormControl("", Validators.required),
         });
-        this.loginForm.controls["email"].valueChanges
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(() => {
-                this.resetValidationError();
-            });
+        this.loginForm.controls["email"].valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+            this.resetValidationError();
+        });
 
-        this.loginForm.controls["password"].valueChanges
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(() => {
-                this.resetValidationError();
-            });
-    }
-
-    private resetValidationError() {
-        this.loginForm.controls["email"].setErrors(null);
-        this.loginForm.controls["password"].setErrors(null);
+        this.loginForm.controls["password"].valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+            this.resetValidationError();
+        });
     }
 
     getErrorMessage() {
@@ -80,15 +66,10 @@ export class LoginComponent implements OnDestroy {
         this.authService.googleAuth().then((userCredential) => {
             this.logger.debug({ userCredential });
             if (userCredential.operationType === OperationType.SIGN_IN) {
-                this.authService.save(
-                    userCredential.user.uid,
-                    userCredential.user.displayName,
-                    userCredential.user.email,
-                    {
-                        avatarUrl: userCredential.user.providerData[0].photoURL,
-                        isGoogleConnection: true,
-                    }
-                );
+                this.authService.save(userCredential.user.uid, userCredential.user.displayName, userCredential.user.email, {
+                    avatarUrl: userCredential.user.providerData[0].photoURL,
+                    isGoogleConnection: true,
+                });
             } else {
                 this.router.navigateByUrl("/");
             }
@@ -102,5 +83,10 @@ export class LoginComponent implements OnDestroy {
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    private resetValidationError() {
+        this.loginForm.controls["email"].setErrors(null);
+        this.loginForm.controls["password"].setErrors(null);
     }
 }

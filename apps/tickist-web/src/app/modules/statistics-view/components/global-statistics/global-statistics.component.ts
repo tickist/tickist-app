@@ -1,33 +1,27 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Minutes2hoursPipe} from '../../../../shared/pipes/minutes2hours';
-import {Store} from '@ngrx/store';
-import {selectChartStatistics, selectGlobalStatistics} from '../../statistics.selectors';
-import {Observable, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {ChartStatistics, GlobalStatistics} from '@data/statistics';
-import {format} from 'date-fns';
-
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
+import { Store } from "@ngrx/store";
+import { selectChartStatistics, selectGlobalStatistics } from "../../statistics.selectors";
+import { Observable, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { ChartStatistics, GlobalStatistics } from "@data/statistics";
+import { format } from "date-fns";
 
 @Component({
-    selector: 'tickist-global-statistics',
-    templateUrl: './global-statistics.component.html',
-    styleUrls: ['./global-statistics.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "tickist-global-statistics",
+    templateUrl: "./global-statistics.component.html",
+    styleUrls: ["./global-statistics.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalStatisticsComponent implements OnInit, OnDestroy {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     global$: Observable<GlobalStatistics>;
     charts$: Observable<ChartStatistics>;
     global: GlobalStatistics;
     charts: ChartStatistics;
     dataTasksCounter: any;
     dataTimeChart: any;
-    optionsTasksCounter: any = {};
-    optionsTimeChart: any = {};
     minutes2Hours: Minutes2hoursPipe;
-    // @ViewChild('tasksCounterChart', { read: BaseChartDirective }) tasksCounterChart: any;
-    // @ViewChild('timeChart', { read: BaseChartDirective }) timeChart: any;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(private store: Store, private cd: ChangeDetectorRef) {
         this.minutes2Hours = new Minutes2hoursPipe();
     }
@@ -40,7 +34,6 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
         console.log(e);
     }
 
-
     ngOnInit() {
         this.global$ = this.store.select(selectGlobalStatistics);
         this.global$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((global) => {
@@ -51,17 +44,20 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
         });
         this.charts$ = this.store.select(selectChartStatistics);
         this.charts$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((charts) => {
-            const tasksCounterX: string[] = [], tasksCounterY = [], timeChartX: string[] = [], estimateTimeChartY = [],
+            const tasksCounterX: string[] = [],
+                tasksCounterY = [],
+                timeChartX: string[] = [],
+                estimateTimeChartY = [],
                 timeChartY = [];
 
             this.charts = charts;
             if (this.charts) {
                 this.charts.tasksChart.forEach((elem) => {
-                    tasksCounterX.push(format(new Date(elem.x), 'ddd'));
+                    tasksCounterX.push(format(new Date(elem.x), "ddd"));
                     tasksCounterY.push(elem.tasksCounter);
                 });
                 this.charts.timeChart.forEach((elem) => {
-                    timeChartX.push(format(new Date(elem.x), 'ddd'));
+                    timeChartX.push(format(new Date(elem.x), "ddd"));
                     timeChartY.push(elem.time);
                     estimateTimeChartY.push(elem.estimateTime);
                 });
@@ -69,85 +65,93 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
                     labels: timeChartX,
                     datasets: [
                         {
-                            label: 'Estimated time',
-                            data: estimateTimeChartY
+                            label: "Estimated time",
+                            data: estimateTimeChartY,
                         },
                         {
-                            label: 'Real time',
-                            data: timeChartY
-                        }
+                            label: "Real time",
+                            data: timeChartY,
+                        },
                     ],
-                    chartType: 'line',
+                    chartType: "line",
                     legend: true,
                     options: {
                         scaleShowVerticalLines: false,
                         responsive: true,
                         scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true,
-                                    callback: (value) => {
-                                        if (value % 1 === 0) {
-                                            return this.minutes2Hours.transform(value);
-                                        }
+                            yAxes: [
+                                {
+                                    ticks: {
+                                        beginAtZero: true,
+                                        callback: (value) => {
+                                            if (value % 1 === 0) {
+                                                return this.minutes2Hours.transform(value);
+                                            }
+                                        },
+                                        fontColor: "white",
                                     },
-                                    fontColor: 'white'
-                                }
-                            }],
-                            xAxes: [{
-                                ticks: {
-                                    fontColor: 'white',
-                                    fontSize: 10,
-                                }
-                            }]
+                                },
+                            ],
+                            xAxes: [
+                                {
+                                    ticks: {
+                                        fontColor: "white",
+                                        fontSize: 10,
+                                    },
+                                },
+                            ],
                         },
                         legend: {
-                            position: 'bottom',
+                            position: "bottom",
                             labels: {
-                                fontColor: '#fff'
-                            }
-                        }
-                    }
+                                fontColor: "#fff",
+                            },
+                        },
+                    },
                 };
                 this.dataTasksCounter = {
                     labels: tasksCounterX,
                     datasets: [
                         {
-                            label: 'Task counter',
-                            data: tasksCounterY
-                        }
+                            label: "Task counter",
+                            data: tasksCounterY,
+                        },
                     ],
-                    chartType: 'line',
+                    chartType: "line",
                     legend: true,
                     options: {
                         scaleShowVerticalLines: false,
                         responsive: true,
                         scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true,
-                                    callback: function (value) {
-                                        if (value % 1 === 0) {
-                                            return value;
-                                        }
+                            yAxes: [
+                                {
+                                    ticks: {
+                                        beginAtZero: true,
+                                        callback: function (value) {
+                                            if (value % 1 === 0) {
+                                                return value;
+                                            }
+                                        },
+                                        fontColor: "white",
                                     },
-                                    fontColor: 'white'
-                                }
-                            }],
-                            xAxes: [{
-                                ticks: {
-                                    fontColor: 'white',
-                                    fontSize: 10,
-                                }
-                            }]
+                                },
+                            ],
+                            xAxes: [
+                                {
+                                    ticks: {
+                                        fontColor: "white",
+                                        fontSize: 10,
+                                    },
+                                },
+                            ],
                         },
                         legend: {
-                            position: 'bottom',
+                            position: "bottom",
                             labels: {
-                                fontColor: '#fff'
-                            }
-                        }
-                    }
+                                fontColor: "#fff",
+                            },
+                        },
+                    },
                 };
                 // if (this.tasksCounterChart) {
                 //     this.tasksCounterChart.chart.update();
@@ -156,7 +160,6 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
                 //     this.timeChart.chart.update();
                 // }
                 this.cd.detectChanges();
-
             }
         });
     }
@@ -165,5 +168,4 @@ export class GlobalStatisticsComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
-
 }

@@ -67,6 +67,22 @@ export class FutureListComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
+    isSelected(elem: FutureListElement) {
+        return (
+            this.activeDateElement.state === this.stateActiveDateElement.future &&
+            elem.url === format(this.activeDateElement.date, "MMMM-yyyy")
+        );
+    }
+
+    navigateTo(path, arg) {
+        // @TODO please fix it
+        this.router.navigate(["home", futureTasksRoutesName.futureTasks, arg]);
+        if (this.media.isActive("sm") || this.media.isActive("xs")) {
+            // @TODO add action
+            // this.contentfigurationService.changeOpenStateLeftSidenavVisibility('close');
+        }
+    }
+
     private createFutureList(): FutureListElement[] {
         if (!this.tasks.length || !this.user) return [];
         const futureList = [];
@@ -87,21 +103,5 @@ export class FutureListComponent implements OnInit, OnDestroy {
         }
 
         return futureList;
-    }
-
-    isSelected(elem: FutureListElement) {
-        return (
-            this.activeDateElement.state === this.stateActiveDateElement.future &&
-            elem.url === format(this.activeDateElement.date, "MMMM-yyyy")
-        );
-    }
-
-    navigateTo(path, arg) {
-        // @TODO please fix it
-        this.router.navigate(["home", futureTasksRoutesName.futureTasks, arg]);
-        if (this.media.isActive("sm") || this.media.isActive("xs")) {
-            // @TODO add action
-            // this.contentfigurationService.changeOpenStateLeftSidenavVisibility('close');
-        }
     }
 }

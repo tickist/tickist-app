@@ -1,11 +1,5 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    HostListener,
-    Input,
-    OnInit,
-} from "@angular/core";
-import {  MatDialog } from "@angular/material/dialog";
+import { ChangeDetectionStrategy, Component, HostListener, Input, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { TaskService } from "../../core/services/task.service";
 import { SingleTask2Component } from "../shared/single-task";
 import { AppStore } from "../../store";
@@ -18,14 +12,13 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
     styleUrls: ["./single-task-simplified.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SingleTaskSimplifiedComponent
-    extends SingleTask2Component
-    implements OnInit
-{
+export class SingleTaskSimplifiedComponent extends SingleTask2Component implements OnInit {
     @Input() task;
     icon: IconProp;
     finishDateVisible = true;
-
+    constructor(public dialog: MatDialog, public store: Store) {
+        super(store, dialog);
+    }
     @HostListener("mouseenter")
     onMouseEnter(): void {
         this.isMouseOver = true;
@@ -40,10 +33,6 @@ export class SingleTaskSimplifiedComponent
         if (!this.isFastMenuVisible) {
             this.isRightMenuVisible = false;
         }
-    }
-
-    constructor(public dialog: MatDialog, public store: Store) {
-        super(store, dialog);
     }
 
     ngOnInit() {

@@ -1,19 +1,7 @@
-import {
-    Component,
-    ElementRef,
-    OnDestroy,
-    OnInit,
-    ViewChild,
-} from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { User } from "@data/users/models";
 import { UserService } from "../../../../core/services/user.service";
-import {
-    AbstractControl,
-    UntypedFormBuilder,
-    UntypedFormControl,
-    UntypedFormGroup,
-    Validators,
-} from "@angular/forms";
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { Location } from "@angular/common";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { environment } from "../../../../../environments/environment";
@@ -22,25 +10,14 @@ import { Observable, Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
 import { select, Store } from "@ngrx/store";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
-import {
-    changeAvatar,
-    removeNotificationPermission,
-    requestUpdateUser,
-} from "../../../../core/actions/user.actions";
-import {
-    DEFAULT_DAILY_SUMMARY_HOUR,
-    DEFAULT_USER_AVATAR,
-    TASKS_ORDER_OPTIONS,
-} from "@data/users/config-user";
+import { changeAvatar, removeNotificationPermission, requestUpdateUser } from "../../../../core/actions/user.actions";
+import { DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS } from "@data/users/config-user";
 import { NotificationPermission, TASKS_VIEWS_LIST } from "@data";
 import { NotificationsService } from "../../../notifications/services/notifications.service";
-import {
-    hideAddTaskButton,
-    showAddTaskButton,
-} from "../../../../core/actions/add-task-button-visibility.actions";
+import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
 import { DeleteUserConfirmationDialogComponent } from "../../../edit-project/components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component";
 import { DeleteAccountDialogComponent } from "../delete-account-dialog/delete-account-dialog.component";
-import {  MatDialog } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { NGXLogger } from "ngx-logger";
 import { UploadTask } from "@angular/fire/storage";
@@ -52,6 +29,7 @@ import { getDownloadURL } from "@angular/fire/storage";
     styleUrls: ["./user.component.scss"],
 })
 export class UserComponent implements OnInit, OnDestroy {
+    @ViewChild("changeAvatarInput") changeAvatarInput: ElementRef;
     menu: Array<any>;
     changePasswordForm: UntypedFormGroup;
     userData: UntypedFormGroup;
@@ -71,8 +49,6 @@ export class UserComponent implements OnInit, OnDestroy {
     isNotificationAllowed: boolean;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild("changeAvatarInput") changeAvatarInput: ElementRef;
-
     constructor(
         private fb: UntypedFormBuilder,
         private store: Store,
@@ -86,10 +62,8 @@ export class UserComponent implements OnInit, OnDestroy {
         this.staticUrl = environment["staticUrl"];
         this.tasksOrderOptions = TASKS_ORDER_OPTIONS;
         this.defaultTaskViewOptions = TASKS_VIEWS_LIST;
-        this.overdueTasksSortByOptions =
-            this.configurationService.loadConfiguration().commons.overdueTasksSortByOptions;
-        this.futureTasksSortByOptions =
-            this.configurationService.loadConfiguration().commons.futureTasksSortByOptions;
+        this.overdueTasksSortByOptions = this.configurationService.loadConfiguration().commons.overdueTasksSortByOptions;
+        this.futureTasksSortByOptions = this.configurationService.loadConfiguration().commons.futureTasksSortByOptions;
         this.menu = this.createMenuDict();
     }
 
@@ -127,26 +101,19 @@ export class UserComponent implements OnInit, OnDestroy {
             )
             .subscribe((user) => {
                 // @TODO too much logic. Fix It
-                this.isNotificationAllowed =
-                    user.notificationPermission === NotificationPermission.yes;
+                this.isNotificationAllowed = user.notificationPermission === NotificationPermission.yes;
                 // this.uploadPercent = new Observable<number>();
                 this.user = user;
                 this.dailySummaryCheckbox = !!user.dailySummaryHour;
                 this.userData = new UntypedFormGroup(
                     {
                         username: new UntypedFormControl(user.username, {
-                            validators: [
-                                Validators.required,
-                                Validators.minLength(4),
-                            ],
+                            validators: [Validators.required, Validators.minLength(4)],
                         }),
                         email: new UntypedFormControl(
                             { value: user.email, disabled: true },
                             {
-                                validators: [
-                                    Validators.required,
-                                    Validators.email,
-                                ],
+                                validators: [Validators.required, Validators.email],
                             }
                         ),
                     },
@@ -157,45 +124,28 @@ export class UserComponent implements OnInit, OnDestroy {
                     .get("username")
                     .valueChanges.pipe(takeUntil(this.ngUnsubscribe))
                     .subscribe((newValue) => {
-                        this.changeUserDetails(
-                            Object.assign({}, this.user, { username: newValue })
-                        );
+                        this.changeUserDetails(Object.assign({}, this.user, { username: newValue }));
                     });
                 this.userSettings = new UntypedFormGroup({
-                    orderTasksDashboard: new UntypedFormControl(
-                        user.orderTasksDashboard,
-                        { validators: [Validators.required] }
-                    ),
+                    orderTasksDashboard: new UntypedFormControl(user.orderTasksDashboard, { validators: [Validators.required] }),
                     defaultTaskView: new UntypedFormControl(user.defaultTaskView, {
                         validators: [Validators.required],
                     }),
-                    defaultTaskViewTodayView: new UntypedFormControl(
-                        user.defaultTaskViewTodayView,
-                        { validators: [Validators.required] }
-                    ),
-                    defaultTaskViewOverdueView: new UntypedFormControl(
-                        user.defaultTaskViewOverdueView,
-                        { validators: [Validators.required] }
-                    ),
-                    defaultTaskViewFutureView: new UntypedFormControl(
-                        user.defaultTaskViewFutureView,
-                        { validators: [Validators.required] }
-                    ),
-                    defaultTaskViewTagsView: new UntypedFormControl(
-                        user.defaultTaskViewTagsView,
-                        { validators: [Validators.required] }
-                    ),
-                    overdueTasksSortBy: new UntypedFormControl(
-                        user.overdueTasksSortBy,
-                        { validators: [Validators.required] }
-                    ),
+                    defaultTaskViewTodayView: new UntypedFormControl(user.defaultTaskViewTodayView, { validators: [Validators.required] }),
+                    defaultTaskViewOverdueView: new UntypedFormControl(user.defaultTaskViewOverdueView, {
+                        validators: [Validators.required],
+                    }),
+                    defaultTaskViewFutureView: new UntypedFormControl(user.defaultTaskViewFutureView, {
+                        validators: [Validators.required],
+                    }),
+                    defaultTaskViewTagsView: new UntypedFormControl(user.defaultTaskViewTagsView, { validators: [Validators.required] }),
+                    overdueTasksSortBy: new UntypedFormControl(user.overdueTasksSortBy, { validators: [Validators.required] }),
                     futureTasksSortBy: new UntypedFormControl(user.futureTasksSortBy, {
                         validators: [Validators.required],
                     }),
-                    dialogTimeWhenTaskFinishedInProject: new UntypedFormControl(
-                        user.dialogTimeWhenTaskFinishedInProject,
-                        { validators: [Validators.required] }
-                    ),
+                    dialogTimeWhenTaskFinishedInProject: new UntypedFormControl(user.dialogTimeWhenTaskFinishedInProject, {
+                        validators: [Validators.required],
+                    }),
                 });
                 // @TODO Fix it a lot of duplicated code.
 
@@ -206,9 +156,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             orderTasksDashboard: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userSettings
                     .get("defaultTaskView")
@@ -217,9 +165,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             defaultTaskView: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userSettings
@@ -229,9 +175,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             defaultTaskViewTodayView: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userSettings
                     .get("defaultTaskViewOverdueView")
@@ -240,9 +184,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             defaultTaskViewOverdueView: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userSettings
                     .get("defaultTaskViewFutureView")
@@ -251,9 +193,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             defaultTaskViewFutureView: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userSettings
                     .get("defaultTaskViewTagsView")
@@ -262,9 +202,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             defaultTaskViewTagsView: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userSettings
@@ -274,9 +212,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             overdueTasksSortBy: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userSettings
                     .get("futureTasksSortBy")
@@ -285,9 +221,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             futureTasksSortBy: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userSettings
@@ -297,9 +231,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             dialogTimeWhenTaskFinishedInProject: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userNotificationSettings = new UntypedFormGroup({
@@ -307,9 +239,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         value: user.dailySummaryHour,
                         disabled: !this.dailySummaryCheckbox,
                     }),
-                    dailySummaryCheckbox: new UntypedFormControl(
-                        this.dailySummaryCheckbox
-                    ),
+                    dailySummaryCheckbox: new UntypedFormControl(this.dailySummaryCheckbox),
                     removesMeFromSharedList: new UntypedFormControl(
                         {
                             value: user.removesMeFromSharedList,
@@ -320,30 +250,23 @@ export class UserComponent implements OnInit, OnDestroy {
                     assignsTaskToMe: new UntypedFormControl(user.assignsTaskToMe, {
                         validators: [Validators.required],
                     }),
-                    completesTaskFromSharedList: new UntypedFormControl(
-                        user.completesTaskFromSharedList,
+                    completesTaskFromSharedList: new UntypedFormControl(user.completesTaskFromSharedList, {
+                        validators: [Validators.required],
+                    }),
+                    changesTaskFromSharedListThatIsAssignedToMe: new UntypedFormControl(user.changesTaskFromSharedListThatIsAssignedToMe, {
+                        validators: [Validators.required],
+                    }),
+                    changesTaskFromSharedListThatIAssignedToHimHer: new UntypedFormControl(
+                        user.changesTaskFromSharedListThatIAssignedToHimHer,
                         { validators: [Validators.required] }
                     ),
-                    changesTaskFromSharedListThatIsAssignedToMe:
-                        new UntypedFormControl(
-                            user.changesTaskFromSharedListThatIsAssignedToMe,
-                            { validators: [Validators.required] }
-                        ),
-                    changesTaskFromSharedListThatIAssignedToHimHer:
-                        new UntypedFormControl(
-                            user.changesTaskFromSharedListThatIAssignedToHimHer,
-                            { validators: [Validators.required] }
-                        ),
                     leavesSharedList: new UntypedFormControl(user.leavesSharedList, {
                         validators: [Validators.required],
                     }),
                     sharesListWithMe: new UntypedFormControl(user.sharesListWithMe, {
                         validators: [Validators.required],
                     }),
-                    deletesListSharedWithMe: new UntypedFormControl(
-                        user.deletesListSharedWithMe,
-                        { validators: [Validators.required] }
-                    ),
+                    deletesListSharedWithMe: new UntypedFormControl(user.deletesListSharedWithMe, { validators: [Validators.required] }),
                 });
 
                 this.userNotificationSettings
@@ -353,9 +276,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             dailySummaryHour: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userNotificationSettings
@@ -371,9 +292,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             removesMeFromSharedList: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userNotificationSettings
@@ -383,9 +302,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             assignsTaskToMe: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userNotificationSettings
                     .get("completesTaskFromSharedList")
@@ -394,33 +311,25 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             completesTaskFromSharedList: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userNotificationSettings
                     .get("changesTaskFromSharedListThatIsAssignedToMe")
                     .valueChanges.pipe(takeUntil(this.ngUnsubscribe))
                     .subscribe((newValue) => {
                         const updatedUser = Object.assign({}, this.user, {
-                            changesTaskFromSharedListThatIsAssignedToMe:
-                                newValue,
+                            changesTaskFromSharedListThatIsAssignedToMe: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userNotificationSettings
                     .get("changesTaskFromSharedListThatIAssignedToHimHer")
                     .valueChanges.pipe(takeUntil(this.ngUnsubscribe))
                     .subscribe((newValue) => {
                         const updatedUser = Object.assign({}, this.user, {
-                            changesTaskFromSharedListThatIAssignedToHimHer:
-                                newValue,
+                            changesTaskFromSharedListThatIAssignedToHimHer: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userNotificationSettings
@@ -430,9 +339,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             leavesSharedList: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
                 this.userNotificationSettings
                     .get("sharesListWithMe")
@@ -441,9 +348,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         const updatedUser = Object.assign({}, this.user, {
                             sharesListWithMe: newValue,
                         });
-                        this.store.dispatch(
-                            requestUpdateUser({ user: updatedUser })
-                        );
+                        this.store.dispatch(requestUpdateUser({ user: updatedUser }));
                     });
 
                 this.userNotificationSettings
@@ -455,18 +360,13 @@ export class UserComponent implements OnInit, OnDestroy {
                         });
                     });
 
-                this.userNotificationSettings.valueChanges
-                    .pipe(takeUntil(this.ngUnsubscribe))
-                    .subscribe((newValue) => {
-                        this.logger.debug({ newValue });
-                    });
+                this.userNotificationSettings.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe((newValue) => {
+                    this.logger.debug({ newValue });
+                });
             });
 
         this.changePasswordForm = new UntypedFormGroup({
-            email: new UntypedFormControl(
-                "",
-                Validators.compose([Validators.required, Validators.email])
-            ),
+            email: new UntypedFormControl("", Validators.compose([Validators.required, Validators.email])),
         });
         this.store.dispatch(hideAddTaskButton());
     }
@@ -491,9 +391,7 @@ export class UserComponent implements OnInit, OnDestroy {
         } else {
             dailySummaryHour = DEFAULT_DAILY_SUMMARY_HOUR;
         }
-        this.changeUserDetails(
-            Object.assign({}, this.user, { dailySummaryHour: dailySummaryHour })
-        );
+        this.changeUserDetails(Object.assign({}, this.user, { dailySummaryHour: dailySummaryHour }));
     }
 
     changeAvatarTrigger(): void {
@@ -510,8 +408,7 @@ export class UserComponent implements OnInit, OnDestroy {
             (snapshot) => {
                 // Observe state change events such as progress, pause, and resume
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                const progress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 console.log("Upload is " + progress + "% done");
                 switch (snapshot.state) {
                     case "paused":
@@ -528,11 +425,9 @@ export class UserComponent implements OnInit, OnDestroy {
             () => {
                 // Handle successful uploads on complete
                 // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                getDownloadURL(this.uploadTask.snapshot.ref).then(
-                    (downloadURL) => {
-                        console.log("File available at", downloadURL);
-                    }
-                );
+                getDownloadURL(this.uploadTask.snapshot.ref).then((downloadURL) => {
+                    console.log("File available at", downloadURL);
+                });
             }
         );
     }
@@ -565,18 +460,12 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     hasErrorMessage(field: AbstractControl): boolean {
-        return (
-            field.hasError("minLength") ||
-            field.hasError("email") ||
-            field.hasError("required")
-        );
+        return field.hasError("minLength") || field.hasError("email") || field.hasError("required");
     }
 
     async changePassword($event, values: any): Promise<void> {
         try {
-            const result = await this.userService.requestChangePassword(
-                values.email
-            );
+            const result = await this.userService.requestChangePassword(values.email);
             this.logger.debug({ result });
             this.requestChangePasswordMessage = "Check your inbox.";
         } catch (err) {

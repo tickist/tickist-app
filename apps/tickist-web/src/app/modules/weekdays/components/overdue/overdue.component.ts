@@ -14,12 +14,11 @@ import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
     styleUrls: ["./overdue.component.scss"],
 })
 export class OverdueComponent implements OnInit, OnDestroy {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     @Input() tasks: Task[];
     @Input() defaultTaskView: string;
     taskView: string;
     user: User;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(private taskService: TaskService, private store: Store) {}
 
     ngOnInit() {

@@ -29,9 +29,8 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
     today: Date;
     stream$: Observable<any>;
     user: User;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     mediaChange: MediaChange;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(
         private taskService: TaskService,
         protected route: ActivatedRoute,

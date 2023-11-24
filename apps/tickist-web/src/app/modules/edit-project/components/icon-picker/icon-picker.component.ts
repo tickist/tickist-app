@@ -3,11 +3,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import {
-    ControlValueAccessor,
-    UntypedFormControl,
-    NG_VALUE_ACCESSOR,
-} from "@angular/forms";
+import { ControlValueAccessor, UntypedFormControl, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { noop, Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
 
@@ -24,18 +20,18 @@ import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
     ],
 })
 export class IconPickerComponent implements ControlValueAccessor, OnDestroy {
+    @Input() color: string;
     iconDefinitions: Array<IconDefinition> = [];
     iconDefinitionsGroups: Array<Array<IconDefinition>> = [];
     size = 4;
-    @Input() color: string;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     searchText: string;
     searchControl: UntypedFormControl;
 
     innerValue: any = "";
     private onTouchedCallback: () => void = noop;
     private onChangeCallback: (_: any) => void = noop;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     get value(): any {
         return this.innerValue;
     }
@@ -53,17 +49,11 @@ export class IconPickerComponent implements ControlValueAccessor, OnDestroy {
         this.iconDefinitions = this.iconDefinitions.concat(Object.values(fas));
         this.iconDefinitionsGroups = [];
         while (this.iconDefinitions.length > 0) {
-            this.iconDefinitionsGroups.push(
-                this.iconDefinitions.splice(0, this.size)
-            );
+            this.iconDefinitionsGroups.push(this.iconDefinitions.splice(0, this.size));
         }
         this.searchControl = new UntypedFormControl("");
         this.searchControl.valueChanges
-            .pipe(
-                debounceTime(400),
-                distinctUntilChanged(),
-                takeUntil(this.ngUnsubscribe)
-            )
+            .pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.ngUnsubscribe))
             .subscribe((value) => {
                 this.searchText = value;
             });

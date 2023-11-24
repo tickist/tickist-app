@@ -4,17 +4,12 @@ import { TagService } from "../../../../core/services/tag.service";
 import { Tag } from "@data/tags/models/tags";
 import { Task } from "@data/tasks/models/tasks";
 import { TaskService } from "../../../../core/services/task.service";
-import {
-    UntypedFormBuilder,
-    UntypedFormControl,
-    UntypedFormGroup,
-    Validators,
-} from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { UserService } from "../../../../core/services/user.service";
 import { User } from "@data/users/models";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { FilterTagsDialogComponent } from "../../components/filter-tags-dialog/filter-tags-dialog.component";
-import {  MatDialog } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { TasksFiltersService } from "../../../../core/services/tasks-filters.service";
 import { Store } from "@ngrx/store";
 import { takeUntil } from "rxjs/operators";
@@ -30,7 +25,7 @@ import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
     styleUrls: ["./tags-list.component.scss"],
 })
 export class TagsListComponent implements OnInit, OnDestroy {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    @ViewChild("form", { static: true }) createTagFormDOM;
     tags: Tag[];
     tasks: Task[];
     user: User;
@@ -38,8 +33,8 @@ export class TagsListComponent implements OnInit, OnDestroy {
     defaultTaskView: string;
     taskView: string;
     filteredTagsList$: Observable<TagWithTaskCounter[]>;
-    @ViewChild("form", { static: true }) createTagFormDOM;
 
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(
         private fb: UntypedFormBuilder,
         private tagService: TagService,

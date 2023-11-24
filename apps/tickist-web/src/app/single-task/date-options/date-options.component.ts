@@ -1,10 +1,4 @@
-import {
-    Component,
-    OnInit,
-    Input,
-    ChangeDetectionStrategy,
-    ViewChild,
-} from "@angular/core";
+import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild } from "@angular/core";
 import { ConfigurationService } from "../../core/services/configuration.service";
 import { Task } from "@data/tasks/models/tasks";
 import { requestUpdateTask } from "../../core/actions/tasks/task.actions";
@@ -18,20 +12,17 @@ import { AppStore } from "../../store";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateOptionsComponent implements OnInit {
+    @Input() task: Task;
+    @ViewChild("finishDateInputViewChild") finishDateInputViewChild;
+    @ViewChild("finishTimeInputViewChild") finishTimeInputViewChild;
     typeFinishDateOptions: any;
     minDate: Date;
     typeFinishDate: number;
     finishDate: any;
     finishTime: any;
     minFilter: any;
-    @Input() task: Task;
-    @ViewChild("finishDateInputViewChild") finishDateInputViewChild;
-    @ViewChild("finishTimeInputViewChild") finishTimeInputViewChild;
 
-    constructor(
-        protected configurationService: ConfigurationService,
-        private store: Store
-    ) {
+    constructor(protected configurationService: ConfigurationService, private store: Store) {
         this.minDate = new Date();
     }
 
@@ -39,8 +30,7 @@ export class DateOptionsComponent implements OnInit {
         if (this.task === null) {
             throw new Error(`Attribute 'task' is required`);
         }
-        this.typeFinishDateOptions =
-            this.configurationService.loadConfiguration().commons.typeFinishDateOptions;
+        this.typeFinishDateOptions = this.configurationService.loadConfiguration().commons.typeFinishDateOptions;
         this.finishDate = this.task.finishDate;
         this.finishTime = this.task.finishTime;
         this.typeFinishDate = this.task.typeFinishDate;
@@ -61,22 +51,11 @@ export class DateOptionsComponent implements OnInit {
                         changes: Object.assign({}, this.task, {
                             finishDate: this.finishDate ? this.finishDate : "",
                             finishTime: this.finishTime,
-                            typeFinishDate: $event.value
-                                ? $event.value
-                                : this.task.typeFinishDate,
+                            typeFinishDate: $event.value ? $event.value : this.task.typeFinishDate,
                         }),
                     },
                 })
             );
-        }
-    }
-
-    private createFinishDateFilter() {
-        if (!this.finishDate || this.finishDate >= this.minDate) {
-            this.minFilter = (d: Date): boolean =>
-                this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
-        } else {
-            this.minFilter = (d: Date): boolean => true;
         }
     }
 
@@ -90,5 +69,13 @@ export class DateOptionsComponent implements OnInit {
         this.finishTime = "";
         this.saveTask({ value: null }, "finishTime");
         $event.stopPropagation();
+    }
+
+    private createFinishDateFilter() {
+        if (!this.finishDate || this.finishDate >= this.minDate) {
+            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
+        } else {
+            this.minFilter = (d: Date): boolean => true;
+        }
     }
 }

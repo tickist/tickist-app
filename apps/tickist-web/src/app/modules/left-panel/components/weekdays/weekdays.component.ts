@@ -24,14 +24,13 @@ import { weekdaysRoutesName } from "../../../weekdays/routes.names";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WeekDaysComponent implements OnInit, OnDestroy {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     activeDateElement: IActiveDateElement;
     today: Date;
     tasks: Task[] = [];
     week: Array<any> = [];
     user: User;
     timer: any;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(
         private route: ActivatedRoute,
         private cd: ChangeDetectorRef,

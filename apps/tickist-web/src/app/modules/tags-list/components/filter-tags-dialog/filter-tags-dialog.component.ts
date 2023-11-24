@@ -1,27 +1,24 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {Observable, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {selectAllTagsFilters, selectCurrentTagFilter} from '../../tags-filters.selectors';
-import {Store} from '@ngrx/store';
-import {Filter} from '@data/filter';
-import {setCurrentTagsListFilter} from "../../tags-filters.actions";
-
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { MatDialogRef } from "@angular/material/dialog";
+import { Observable, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { selectAllTagsFilters, selectCurrentTagFilter } from "../../tags-filters.selectors";
+import { Store } from "@ngrx/store";
+import { Filter } from "@data/filter";
+import { setCurrentTagsListFilter } from "../../tags-filters.actions";
 
 @Component({
-    selector: 'tickist-filter-tags-dialog',
-    templateUrl: './filter-tags-dialog.component.html',
-    styleUrls: ['./filter-tags-dialog.component.css']
+    selector: "tickist-filter-tags-dialog",
+    templateUrl: "./filter-tags-dialog.component.html",
+    styleUrls: ["./filter-tags-dialog.component.css"],
 })
 export class FilterTagsDialogComponent implements OnInit, OnDestroy {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     filterValueId: number;
     filters: Filter[];
     filters$: Observable<Filter[]>;
     currentFilter$: Observable<Filter>;
-
-    constructor(public dialogRef: MatDialogRef<FilterTagsDialogComponent>, private store: Store) {
-    }
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    constructor(public dialogRef: MatDialogRef<FilterTagsDialogComponent>, private store: Store) {}
 
     ngOnInit() {
         this.filters$ = this.store.select(selectAllTagsFilters);
@@ -42,10 +39,9 @@ export class FilterTagsDialogComponent implements OnInit, OnDestroy {
 
     changeFilter($event) {
         if (this.filters.length > 0) {
-            const newCurrentFilter = this.filters.find(filter => filter.id === $event.value);
-            this.store.dispatch(setCurrentTagsListFilter({currentFilter: newCurrentFilter}));
+            const newCurrentFilter = this.filters.find((filter) => filter.id === $event.value);
+            this.store.dispatch(setCurrentTagsListFilter({ currentFilter: newCurrentFilter }));
             this.dialogRef.close();
-
         }
     }
 

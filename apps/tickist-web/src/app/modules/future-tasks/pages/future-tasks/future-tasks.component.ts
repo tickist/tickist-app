@@ -27,7 +27,6 @@ import { format } from "date-fns";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FutureTasksComponent implements OnInit, OnDestroy {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     tasks: Task[] = [];
     tasks$: Observable<Task[]>;
     user: User;
@@ -36,7 +35,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
     taskView: string;
     defaultTaskView = TASK_EXTENDED_VIEW.value;
     currentFilter: Filter;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(
         private taskService: TaskService,
         private route: ActivatedRoute,

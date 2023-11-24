@@ -44,6 +44,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
     @Input() user: User;
     @Input() mediaChange;
     @ViewChild("container", { static: true }) container: ElementRef;
+    @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger }) inputAutoComplete: MatAutocompleteTrigger;
     isArchive = false;
     dateFormat = "dd-MM-yyyy";
     projects$: Observable<ProjectLeftPanel[]>;
@@ -58,7 +59,20 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
     iconPrefix: string;
     filteredProjects$: Observable<ProjectLeftPanel[]>;
     matcher = new MyErrorStateMatcher();
-    @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger }) inputAutoComplete: MatAutocompleteTrigger;
+
+    constructor(
+        private taskService: TaskService,
+        private configurationService: ConfigurationService,
+        public dialog: MatDialog,
+        private projectService: ProjectService,
+        private renderer: Renderer2,
+        public store: Store,
+        private cd: ChangeDetectorRef
+    ) {
+        super(store, dialog);
+        this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
+        this.selectTaskProject = new FormControl<string | Project>("", { updateOn: "change" });
+    }
 
     @HostListener("mouseenter")
     onMouseEnter() {
@@ -86,20 +100,6 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
         if (!this.isMouseOver && !this.isFastMenuVisible) {
             this.isRightMenuVisible = false;
         }
-    }
-
-    constructor(
-        private taskService: TaskService,
-        private configurationService: ConfigurationService,
-        public dialog: MatDialog,
-        private projectService: ProjectService,
-        private renderer: Renderer2,
-        public store: Store,
-        private cd: ChangeDetectorRef
-    ) {
-        super(store, dialog);
-        this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
-        this.selectTaskProject = new FormControl<string | Project>("", { updateOn: "change" });
     }
 
     ngOnInit() {

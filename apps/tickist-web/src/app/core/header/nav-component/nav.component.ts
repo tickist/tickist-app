@@ -23,7 +23,6 @@ import { setActiveProject } from "../../actions/projects/active-project.actions"
     styleUrls: ["./nav.component.scss"],
 })
 export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     user: User;
     user$: Observable<User>;
     progressBarIsEnabled$: Observable<boolean>;
@@ -33,7 +32,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     progressBar = false;
     isOffline = false;
     avatar: any;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     @ViewChild("homeElement", { read: ElementRef }) homeElement: ElementRef;
     @ViewChild("homeMobileElement", { read: ElementRef })
     homeMobileElement: ElementRef;

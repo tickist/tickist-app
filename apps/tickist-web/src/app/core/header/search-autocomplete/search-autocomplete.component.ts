@@ -1,32 +1,15 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    OnDestroy,
-    OnInit,
-    ViewChild,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Task } from "@data/tasks/models/tasks";
 import { UntypedFormControl } from "@angular/forms";
 import { Observable, Subject } from "rxjs";
-import {
-    debounceTime,
-    distinctUntilChanged,
-    filter,
-    map,
-    startWith,
-    takeUntil,
-} from "rxjs/operators";
+import { debounceTime, distinctUntilChanged, filter, map, startWith, takeUntil } from "rxjs/operators";
 import { NavigationEnd, Router } from "@angular/router";
 import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { Store } from "@ngrx/store";
 import { selectAllUndoneTasks } from "../../selectors/task.selectors";
 import { editTaskRoutesName } from "../../../modules/edit-task/routes-names";
 import { homeRoutesName } from "../../../routing.module.name";
-import {
-    clearSearchTasksFilter,
-    setCurrentSearchTasksFilter,
-} from "../../actions/tasks/search-tasks.actions";
+import { clearSearchTasksFilter, setCurrentSearchTasksFilter } from "../../actions/tasks/search-tasks.actions";
 import { searchInputIsFocus } from "../../selectors/ui.selectors";
 import { blurOnSearchInput } from "../../actions/ui.actions";
 import { tasksProjectsViewRoutesName } from "../../../modules/tasks-projects-view/routes.names";
@@ -40,10 +23,10 @@ import { selectSearchTasksTextIsEnabled } from "../../selectors/filters-tasks.se
 })
 export class SearchAutocompleteComponent implements OnInit, OnDestroy {
     @ViewChild("searchInput", { static: true }) searchInput: ElementRef;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     tasks: Task[];
     searchControl = new UntypedFormControl();
     filteredOptions: Observable<Task[]>;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(private store: Store, private router: Router) {}
 
     ngOnInit() {
@@ -76,16 +59,10 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
         );
 
         this.searchControl.valueChanges
-            .pipe(
-                debounceTime(400),
-                distinctUntilChanged(),
-                takeUntil(this.ngUnsubscribe)
-            )
+            .pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.ngUnsubscribe))
             .subscribe((value) => {
                 if (value) {
-                    this.store.dispatch(
-                        setCurrentSearchTasksFilter({ searchText: value })
-                    );
+                    this.store.dispatch(setCurrentSearchTasksFilter({ searchText: value }));
                 } else {
                     this.store.dispatch(clearSearchTasksFilter());
                 }
@@ -97,37 +74,25 @@ export class SearchAutocompleteComponent implements OnInit, OnDestroy {
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe((event) => {
-                if (
-                    (event as NavigationEnd).urlAfterRedirects.indexOf(
-                        "goToElement"
-                    ) === -1
-                ) {
+                if ((event as NavigationEnd).urlAfterRedirects.indexOf("goToElement") === -1) {
                     this.searchControl.reset();
                 }
             });
     }
 
     goToTask($event: MatAutocompleteSelectedEvent) {
-        this.router.navigate(
-            [
-                homeRoutesName.home,
-                tasksProjectsViewRoutesName.tasksProjectsView,
-                $event.option.value.projectId,
-            ],
-            { queryParams: { goToElement: true } }
-        );
+        this.router.navigate([homeRoutesName.home, tasksProjectsViewRoutesName.tasksProjectsView, $event.option.value.projectId], {
+            queryParams: { goToElement: true },
+        });
         this.searchControl.setValue($event.option.value.taskName);
     }
 
     private _filter(value: string | number): Task[] {
-        const filterValue =
-            typeof value === "string" ? value.toLowerCase() : value;
+        const filterValue = typeof value === "string" ? value.toLowerCase() : value;
         if (!value) {
             return [];
         }
-        return this.tasks.filter((taskName) =>
-            taskName.name.toLowerCase().includes(filterValue.toString())
-        );
+        return this.tasks.filter((taskName) => taskName.name.toLowerCase().includes(filterValue.toString()));
     }
 
     ngOnDestroy(): void {

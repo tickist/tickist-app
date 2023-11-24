@@ -1,9 +1,8 @@
-import {ComponentFactoryResolver, Injectable, ViewContainerRef} from '@angular/core';
-import {SimpleUser, User} from '@data/users/models';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
-import {icon} from '@fortawesome/fontawesome-svg-core';
-import {Filter} from '@data/filter';
-
+import { ComponentFactoryResolver, Injectable, ViewContainerRef } from "@angular/core";
+import { SimpleUser, User } from "@data/users/models";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { icon } from "@fortawesome/fontawesome-svg-core";
+import { Filter } from "@data/filter";
 
 @Injectable()
 export class FutureTasksFiltersService {
@@ -11,29 +10,35 @@ export class FutureTasksFiltersService {
     filters: Filter[];
     user: User;
 
-    static getAllFutureTasksFilters () {
+    static getAllFutureTasksFilters() {
         return [
             new Filter({
-                'id': 1, 'label': 'filter', 'name': 'all',
-                'value': `task => task`, 'icon': ''
+                id: 1,
+                label: "filter",
+                name: "all",
+                value: `task => task`,
+                icon: "",
             }),
             new Filter({
-                'id': 2, 'label': 'filter', 'name': 'statusBy',
-                'value': `task => task.typeFinishDate === 0`, icon: 'arrow-right'
+                id: 2,
+                label: "filter",
+                name: "statusBy",
+                value: `task => task.typeFinishDate === 0`,
+                icon: "arrow-right",
             }),
             new Filter({
-                'id': 3, 'label': 'filter', 'name': 'statusOn',
-                'value': `tag => tag.typeFinishDate === 1`, icon: 'dot-circle'
-            })
+                id: 3,
+                label: "filter",
+                name: "statusOn",
+                value: `tag => tag.typeFinishDate === 1`,
+                icon: "dot-circle",
+            }),
         ];
     }
 
     static getDefaultCurrentTagsFilter(filterId) {
         const filters = FutureTasksFiltersService.getAllFutureTasksFilters();
-        return filters.find(filter => filter.id === filterId);
-    }
-
-    constructor() {
+        return filters.find((filter) => filter.id === filterId);
     }
 
     loadCurrentFutureTasksFilters() {

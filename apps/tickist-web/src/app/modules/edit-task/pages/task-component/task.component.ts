@@ -50,6 +50,9 @@ import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
     styleUrls: ["./task.component.scss"],
 })
 export class TaskComponent implements OnInit, OnDestroy {
+    @ViewChild("trigger", { read: MatAutocompleteTrigger })
+    @ViewChild("autocompleteTags")
+    autocompleteTags;
     enter = "Enter";
     arrowDown = "ArrowDown";
     arrowUp = "ArrowUp";
@@ -76,11 +79,9 @@ export class TaskComponent implements OnInit, OnDestroy {
     matcher = new MyErrorStateMatcher();
     taskTypes = AVAILABLE_TASK_TYPES;
     taskTypesWithIcons: any;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild("trigger", { read: MatAutocompleteTrigger })
     trigger: MatAutocompleteTrigger;
-    @ViewChild("autocompleteTags") autocompleteTags;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
         private fb: UntypedFormBuilder,

@@ -26,13 +26,13 @@ import { ProjectLeftPanel } from "../../models/project-list";
 })
 export class ProjectsListComponent implements OnInit, OnDestroy {
     @Input() projectType: ProjectType;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     user: User;
     showOnlyProjectsWithTasks = true;
     filter: Filter;
     tasksProjectsViewRoutingName = tasksProjectsViewRoutesName.tasksProjectsView;
     projectsList$: Observable<ProjectLeftPanel[]>;
-
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(
         private taskService: TaskService,
         private projectsFiltersService: ProjectsFiltersService,

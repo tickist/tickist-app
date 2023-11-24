@@ -1,20 +1,7 @@
-import {
-    Component,
-    ElementRef,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    ViewChild,
-} from "@angular/core";
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Project, Task, TaskProject, TaskUser, User } from "@data";
 import { Subject } from "rxjs";
-import {
-    UntypedFormControl,
-    UntypedFormGroup,
-    FormGroupDirective,
-    Validators,
-} from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, FormGroupDirective, Validators } from "@angular/forms";
 import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
 import { takeUntil } from "rxjs/operators";
 import { Store } from "@ngrx/store";
@@ -32,13 +19,14 @@ export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
     @Input() project: Project;
     @Input() enableLastElement = false;
     @ViewChild("addTaskInput", { static: false }) addTaskInput: ElementRef;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     createTaskForm: UntypedFormGroup;
     user: User;
     showCreateTaskForm = false;
     submitted = false;
     matcher = new ShowOnDirtyErrorStateMatcher();
 
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
     constructor(private store: Store) {
         this.createTaskForm = new UntypedFormGroup({
             name: new UntypedFormControl("", Validators.required),
@@ -67,6 +55,25 @@ export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
         this.showCreateTaskForm = !!this.project;
     }
 
+    createTask(values, formDirective: FormGroupDirective) {
+        this.submitted = true;
+        if (this.createTaskForm.valid) {
+            Object.keys(this.createTaskForm.controls).forEach((key) => {
+                this.createTaskForm.get(key).setErrors(null);
+            });
+            this.createTaskForm.reset();
+            formDirective.resetForm();
+            this.store.dispatch(requestCreateTask({ task: this.createTaskModel(values.name) }));
+        } else {
+            this.submitted = false;
+        }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
     private createTaskModel(taskName: string) {
         return new Task(<any>{
             name: taskName,
@@ -88,26 +95,5 @@ export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
             steps: [],
             tags: [],
         });
-    }
-
-    createTask(values, formDirective: FormGroupDirective) {
-        this.submitted = true;
-        if (this.createTaskForm.valid) {
-            Object.keys(this.createTaskForm.controls).forEach((key) => {
-                this.createTaskForm.get(key).setErrors(null);
-            });
-            this.createTaskForm.reset();
-            formDirective.resetForm();
-            this.store.dispatch(
-                requestCreateTask({ task: this.createTaskModel(values.name) })
-            );
-        } else {
-            this.submitted = false;
-        }
-    }
-
-    ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
     }
 }
