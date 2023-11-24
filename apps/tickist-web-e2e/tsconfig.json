@@ -2,15 +2,19 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "sourceMap": false,
-        "types": ["cypress", "node"],
         "outDir": "../../dist/out-tsc",
         "target": "es2021",
         "module": "esnext",
-        "typeRoots": ["node_modules/@types"],
-        "lib": ["esnext", "dom"]
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "lib": [
+            "esnext",
+            "dom"
+        ]
     },
-    "include": ["src/**/*.ts", "cypress.config.ts"],
-    "files": [],
-    "references": [],
-    "exclude": []
+    "include": [
+        "src/**/*.ts",
+        "cypress.config.ts"
+    ]
 }

@@ -46,7 +46,7 @@ export default defineConfig({
                                     test: /\.ts$/,
                                     loader: "ts-loader",
                                     options: {
-                                        configFile: path.join(__dirname, "./tsconfig.e2e.json"),
+                                        configFile: path.join(__dirname, "./tsconfig.json"),
                                         // https://github.com/TypeStrong/ts-loader/pull/685
                                         experimentalWatchApi: true,
                                     },
