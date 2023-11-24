@@ -79,7 +79,7 @@ console.log({ environment });
         StoreDevtoolsModule.instrument({
             maxAge: 50, // Retains last 25 states
             logOnly: environment.production, // Restrict extension to log-only mode
-        }),
+        , connectInZone: true}),
         // SortablejsModule.forRoot({
         //     animation: 150,
         // }),
