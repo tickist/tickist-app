@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Actions, ofType, createEffect } from "@ngrx/effects";
+import { Actions, createEffect, ofType } from "@ngrx/effects";
 import {
     LoadChartStatistics,
     LoadDailyStatistics,
@@ -7,7 +7,6 @@ import {
     LoadGlobalStatisticsDateRange,
     StatisticsActionTypes,
     UpdateChartStatistics,
-    UpdateDailyStatistics,
     UpdateGlobalStatistics,
 } from "../actions/statistics.actions";
 import { StatisticsService } from "../../../core/services/statistics.service";
@@ -16,56 +15,48 @@ import { defer } from "rxjs";
 import { addUser } from "../../../core/actions/user.actions";
 import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
 import { Store } from "@ngrx/store";
-import {
-    ChartStatistics,
-    DailyStatistics,
-    GlobalStatistics,
-} from "@data/statistics";
+import { ChartStatistics, GlobalStatistics } from "@data/statistics";
 
 @Injectable()
 export class StatisticsEffects {
     loadGlobalStatistics$ = createEffect(() =>
         this.actions$.pipe(
-            ofType<LoadGlobalStatistics>(
-                StatisticsActionTypes.loadGlobalStatistics
-            ),
+            ofType<LoadGlobalStatistics>(StatisticsActionTypes.loadGlobalStatistics),
             mergeMap(() => this.statisticsService.loadGlobalStatistics()),
             map(
                 (globalStatistics: GlobalStatistics) =>
                     new UpdateGlobalStatistics({
                         globalStatistics: globalStatistics,
-                    })
-            )
-        )
+                    }),
+            ),
+        ),
     );
 
     loadChartStatistics$ = createEffect(() =>
         this.actions$.pipe(
-            ofType<LoadChartStatistics>(
-                StatisticsActionTypes.loadChartStatistics
-            ),
+            ofType<LoadChartStatistics>(StatisticsActionTypes.loadChartStatistics),
             mergeMap(() => this.statisticsService.loadChartsData()),
             map(
                 (chartStaticstics: ChartStatistics) =>
                     new UpdateChartStatistics({
                         chartStatistics: chartStaticstics,
-                    })
-            )
-        )
+                    }),
+            ),
+        ),
     );
 
-    loadDailyStatistics$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType<LoadDailyStatistics>(
-                StatisticsActionTypes.loadDailyStatistics
-            ),
-            mergeMap(() => this.statisticsService.loadDailyStatistics()),
-            map(
-                (dailyStatistics: DailyStatistics) =>
-                    new UpdateDailyStatistics({ dailyStatistics })
-            )
-        )
-    );
+    // loadDailyStatistics$ = createEffect(() =>
+    //     this.actions$.pipe(
+    //         ofType<LoadDailyStatistics>(
+    //             StatisticsActionTypes.loadDailyStatistics
+    //         ),
+    //         mergeMap(() => this.statisticsService.loadDailyStatistics()),
+    //         map(
+    //             (dailyStatistics: DailyStatistics) =>
+    //                 new UpdateDailyStatistics({ dailyStatistics })
+    //         )
+    //     )
+    // );
     //
     // @Effect({dispatch: false})
     // LoadGlobalStatisticsDateRange = this.actions$
@@ -81,8 +72,8 @@ export class StatisticsEffects {
                 new LoadDailyStatistics(),
                 new LoadGlobalStatistics(),
                 new LoadGlobalStatisticsDateRange(),
-            ])
-        )
+            ]),
+        ),
     );
 
     init$ = createEffect(() =>
@@ -95,14 +86,14 @@ export class StatisticsEffects {
                         new LoadDailyStatistics(),
                         new LoadGlobalStatistics(),
                         new LoadGlobalStatisticsDateRange(),
-                    ])
-                )
-        )
+                    ]),
+                ),
+        ),
     );
 
     constructor(
         private actions$: Actions,
         private statisticsService: StatisticsService,
-        private store: Store
+        private store: Store,
     ) {}
 }

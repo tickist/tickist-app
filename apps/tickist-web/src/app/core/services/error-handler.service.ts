@@ -1,29 +1,30 @@
-import {ErrorHandler, Injectable, Injector} from '@angular/core';
-import {ErrorService} from './error.service';
-import {NGXLogger} from "ngx-logger";
+import { ErrorHandler, Injectable, Injector } from "@angular/core";
+import { ErrorService } from "./error.service";
+import { NGXLogger } from "ngx-logger";
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: "root",
 })
 export class MyErrorHandler implements ErrorHandler {
-  errorService: ErrorService;
-  constructor(private injector: Injector, private logger: NGXLogger) {
-  }
+    errorService: ErrorService;
 
-  handleError(error: any): void {
-    if (!this.errorService) {
-      this.errorService = <ErrorService>this.injector.get(ErrorService);
+    constructor(
+        private injector: Injector,
+        private logger: NGXLogger,
+    ) {}
+
+    handleError(error: any): void {
+        if (!this.errorService) {
+            this.errorService = <ErrorService>this.injector.get(ErrorService);
+        }
+        try {
+            this.errorService.logError();
+            console.group("ErrorHandler");
+            console.error(error.message);
+            console.error(error.stack);
+            console.groupEnd();
+        } catch (handlingError) {
+            this.logger.error(handlingError);
+        }
     }
-    try {
-      this.errorService.logError(error, window.location.href, window.localStorage['USER_ID']);
-      console.group('ErrorHandler');
-      console.error(error.message);
-      console.error(error.stack);
-      console.groupEnd();
-    } catch (handlingError) {
-      this.logger.error(handlingError);
-    }
-  }
 }
-
-

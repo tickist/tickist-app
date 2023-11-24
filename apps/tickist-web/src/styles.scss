@@ -2,15 +2,15 @@
 @import './app/shared/variables';
 
 * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    font-family: 'Roboto', 'sans-serif';
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: 'Roboto', 'sans-serif';
 
 }
 
 input[type="time"]::-webkit-clear-button {
-    display: none;
+  display: none;
 }
 
 // Include the base styles for Angular Material core. We include this here so that you only
@@ -24,10 +24,8 @@ input[type="time"]::-webkit-clear-button {
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
 /* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated*/
-@include mat.all-legacy-component-typographies();
 @include mat.all-component-typographies();
 /* TODO(mdc-migration): Remove legacy-core once all legacy components are migrated*/
-@include mat.legacy-core();
 @include mat.core();
 
 $black-87-opacity: rgba(yellow, 0.87);
@@ -38,84 +36,84 @@ $black-6-opacity: rgba(black, 0.06);
 $white-6-opacity: rgba(white, 0.06);
 
 $tickist-color-palette: (
-    50: #E2E2E6,
-    100: #8F929E,
-    200: #616676,
-    300: #616676,
-    400: #404559,
-    500: #1F253D,
-    600: #1C2137,
-    700: #191E31,
-    800: #161A2B,
-    900: #444444,
-    A100: #ff8a80,
-    A200: #ff5252,
-    A400: #ff1744,
-    A700: #d50000,
-    contrast: (
-        50: yellow,
-        100: yellow,
-        200: yellow,
-        300: yellow,
-        400: yellow,
-        500: yellow,
-        600: yellow,
-        700: yellow,
-        800: yellow,
-        900: yellow,
-        A100: yellow,
-        A200: yellow,
-        A400: yellow,
-        A700: yellow,
-    )
+        50: #E2E2E6,
+        100: #8F929E,
+        200: #616676,
+        300: #616676,
+        400: #404559,
+        500: #1F253D,
+        600: #1C2137,
+        700: #191E31,
+        800: #161A2B,
+        900: #444444,
+        A100: #ff8a80,
+        A200: #ff5252,
+        A400: #ff1744,
+        A700: #d50000,
+        contrast: (
+                50: yellow,
+                100: yellow,
+                200: yellow,
+                300: yellow,
+                400: yellow,
+                500: yellow,
+                600: yellow,
+                700: yellow,
+                800: yellow,
+                900: yellow,
+                A100: yellow,
+                A200: yellow,
+                A400: yellow,
+                A700: yellow,
+        )
 );
 
 // Background palette for light themes.
 $tickist-theme-background: (
-    status-bar: map_get($tickist-color-palette, 300),
-    app-bar: #394264,
-    background: #394264,
-    hover: rgba(black, 0.04), // TODO(kara): check style with Material Design UX
-    card: #394264,
-    dialog: white,
-    disabled-button: rgba(black, 0.12),
-    raised-button: white,
-    focused-button: white,
-    selected-button: white, // map_get(mat.$grey-palette, 300),
-    selected-disabled-button: white, // map_get(mat.$grey-palette, 400),
-    disabled-button-toggle: white, // map_get(mat.$grey-palette, 200),
-    unselected-chip: grey, //map_get(mat.$grey-palette, 700),
-    disabled-list-option: black,
+        status-bar: map_get($tickist-color-palette, 300),
+        app-bar: #394264,
+        background: #394264,
+        hover: rgba(black, 0.04), // TODO(kara): check style with Material Design UX
+        card: #394264,
+        dialog: white,
+        disabled-button: rgba(black, 0.12),
+        raised-button: white,
+        focused-button: white,
+        selected-button: white, // map_get(mat.$grey-palette, 300),
+        selected-disabled-button: white, // map_get(mat.$grey-palette, 400),
+        disabled-button-toggle: white, // map_get(mat.$grey-palette, 200),
+        unselected-chip: grey, //map_get(mat.$grey-palette, 700),
+        disabled-list-option: black,
 );
 
 // Foreground palette for light themes.
 $tickist-theme-foreground: (
-    base: white,
-    divider: grey,
-    dividers: grey,
-    disabled: rgba(black, 0.38),
-    disabled-button: rgba(black, 0.38),
-    disabled-text: rgba(black, 0.38),
-    hint-text: grey,
-    secondary-text: grey,
-    icon: rgba(black, 0.54),
-    icons: rgba(black, 0.54),
-    text: white,
-    slider-off: rgba(black, 0.26),
-    slider-off-active: rgba(black, 0.38),
-    slider-min: rgba(black, 0.87)
+        base: white,
+        divider: grey,
+        dividers: grey,
+        disabled: rgba(black, 0.38),
+        disabled-button: rgba(black, 0.38),
+        disabled-text: rgba(black, 0.38),
+        hint-text: grey,
+        secondary-text: grey,
+        icon: rgba(black, 0.54),
+        icons: rgba(black, 0.54),
+        text: white,
+        slider-off: rgba(black, 0.26),
+        slider-off-active: rgba(black, 0.38),
+        slider-min: rgba(black, 0.87)
 );
 
 // Creates a container object for a light theme to be given to individual component theme mixins.
 @function custom-theme($primary, $accent, $warn: mat.define-palette(mat.$red-palette)) {
-    @return (
-        primary: $primary,
-        accent: $accent,
-        warn: $warn,
-        is-dark: false,
-        foreground: $tickist-theme-foreground,
-        background: $tickist-theme-background,
-    );
+  @return (
+          primary: $primary,
+          accent: $accent,
+          warn: $warn,
+          is-dark: false,
+          foreground: $tickist-theme-foreground,
+          background: $tickist-theme-background,
+  );
 }
 
 // Plus imports for other components in your app.
@@ -157,367 +155,380 @@ $tickist-app-theme: custom-theme($tickist-app-primary, $tickist-app-accent, $tic
 //@include mat.all-component-themes($candy-app-theme);
 
 html, body, .my-content {
-    background-color: #1F253D;
+  background-color: #1F253D;
 }
 
 .mdc-card {
-    padding: 16px
+  padding: 16px
 }
 
 mat-sidenav-container {
-    background-color: #1F253D !important;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1;
+  background-color: #1F253D !important;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1;
 
 }
 
 mat-sidenav {
-    width: 320px;
-    background-color: $main_background !important;
+  width: 320px;
+  background-color: $main_background !important;
 }
 
 .mat-sidenav-content {
-    background-color: $background_color !important;
+  background-color: $background_color !important;
 }
 
 // maybe we need to rewrite it after update to new version
 .left-sidenav {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .right-sidenav {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .mat-option {
-    color: white
+  color: white
 }
 
 .mat-option.mat-selected {
-    background-color: grey !important;
-    color: white;
+  background-color: grey !important;
+  color: white;
 }
 
 .mat-option:hover {
-    background-color: grey !important;
+  background-color: grey !important;
 }
 
 .mat-select-trigger {
-    color: grey !important;
+  color: grey !important;
 }
 
 // Progress bar
 
 .mdc-linear-progress__bar, mdc-linear-progress__primary-bar {
-    background-color: $progress_bar_color;
+  background-color: $progress_bar_color;
 }
 
 .mdc-linear-progress__bar-inner {
-    border-color: $progress_bar_color !important;
+  border-color: $progress_bar_color !important;
 }
 
 .mdc-progress-bar-buffer {
-    background-color: $background_card_color;
+  background-color: $background_card_color;
 }
 
 // mat-button-toggle group
 mat-button-toggle-group {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    -webkit-box-shadow: none !important;
-    -moz-box-shadow: none !important;
-    box-shadow: none !important;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
 
 }
 
 .mat-button-toggle-checked {
-    color: grey;
+  color: grey;
 }
 
 .mat-mdc-dialog-surface {
-    background: $background_card_color !important;
+  background: $background_card_color !important;
 }
 
 // radio button
 
 .mat-radio-button {
-    span {
-        color: $white;
-    }
+  span {
+    color: $white;
+  }
 }
 
 // end
 
 .disappear {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 :focus {
-    outline: 0;
-    /* or */
-    outline: none;
+  outline: 0;
+  /* or */
+  outline: none;
 }
 
 .viewport::-webkit-scrollbar {
-    width: 10px;
-    background-color: #F5F5F5;
+  width: 10px;
+  background-color: #F5F5F5;
 }
 
 /**  STYLE 4 */
 .viewport::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #F5F5F5;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
 }
 
 .viewport::-webkit-scrollbar-thumb {
-    background-color: #000000;
-    border: 2px solid #555555;
+  background-color: #000000;
+  border: 2px solid #555555;
 }
 
 .mat-menu-panel::-webkit-scrollbar {
-    width: 10px;
-    background-color: #F5F5F5;
+  width: 10px;
+  background-color: #F5F5F5;
 }
 
 .mat-menu-panel::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #F5F5F5;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
 }
 
 .mat-menu-panel::-webkit-scrollbar-thumb {
-    background-color: #000000;
-    border: 2px solid #555555;
+  background-color: #000000;
+  border: 2px solid #555555;
 }
 
 mat-sidenav-content::-webkit-scrollbar {
-    width: 10px;
-    background-color: #F5F5F5;
+  width: 10px;
+  background-color: #F5F5F5;
 }
 
 /**  STYLE 4 */
 mat-sidenav-content::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #F5F5F5;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
 }
 
 mat-sidenav-content::-webkit-scrollbar-thumb {
-    background-color: #000000;
-    border: 2px solid #555555;
+  background-color: #000000;
+  border: 2px solid #555555;
 }
 
 .viewport {
-    margin-left: 16px;
-    height: 100%;
-    max-height: 100%;
-    min-height: 100%;
+  margin-left: 16px;
+  height: 100%;
+  max-height: 100%;
+  min-height: 100%;
 
-    .item {
-        height: 83px;
-    }
+  .item {
+    height: 83px;
+  }
 }
 
 .mat-drawer-inner-container::-webkit-scrollbar {
-    width: 10px;
-    background-color: #F5F5F5;
+  width: 10px;
+  background-color: #F5F5F5;
 }
 
 .mat-drawer-inner-container::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #F5F5F5;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
 }
 
 .mat-drawer-inner-container::-webkit-scrollbar-thumb {
-    background-color: #000000;
-    border: 2px solid #555555;
+  background-color: #000000;
+  border: 2px solid #555555;
 }
 
 .content {
-    min-height: 100%;
+  min-height: 100%;
 }
 
 .mat-mdc-focused .mat-mdc-form-field-placeholder {
-    color: grey;
+  color: grey;
 }
 
 .mat-mdc-form-field.mat-mdc-focused .mat-mdc-form-field-label {
-    color: grey;
+  color: grey;
 }
 
-.mat-mdc-form-field.mat-focused .mat-mdc-form-field-ripple .mdc-line-ripple  {
-    background-color: grey;
+.mat-mdc-form-field.mat-focused .mat-mdc-form-field-ripple .mdc-line-ripple {
+  background-color: grey;
 }
 
-.mat-mdc-form-field.mat-mdc-form-field-invalid .mat-mdc-form-field-ripple .mdc-line-ripple  {
-    background-color: #f44336;
+.mat-mdc-form-field.mat-mdc-form-field-invalid .mat-mdc-form-field-ripple .mdc-line-ripple {
+  background-color: #f44336;
 }
 
 .mat-mdc-form-field.mat-mdc-form-field-invalid .mat-mdc-form-field-label .mdc-line-ripple {
-    color: #f44336;
+  color: #f44336;
 }
 
 .mdc-line-ripple::after {
-    border-bottom-color: grey !important;
+  border-bottom-color: grey !important;
 }
 
 .mat-mdc-form-field-ripple {
-    background-color: grey
+  background-color: grey
 }
 
 .mdc-text-field--filled .mdc-text-field__input {
+  background-color: $background_card_color !important;
+
+  &:hover {
     background-color: $background_card_color !important;
-    &:hover {
-        background-color: $background_card_color !important;
-    }
+  }
 }
 
 .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-    background-color: $background_card_color !important;
-    .mdc-text-field__input:hover {
-        background-color: $background_card_color;
-    }
+  background-color: $background_card_color !important;
+
+  .mdc-text-field__input:hover {
+    background-color: $background_card_color;
+  }
 }
 
 .mat-mdc-form-field-focus-overlay {
-    &:hover {
-        background-color: $background_card_color !important;
-    }
+  &:hover {
     background-color: $background_card_color !important;
+  }
+
+  background-color: $background_card_color !important;
 }
+
 // mat-checkbox
 .mat-checkbox {
-    .mat-checkbox-layout {
-        white-space: normal !important;
-        span {
-            line-height: normal !important;
-        }
+  .mat-checkbox-layout {
+    white-space: normal !important;
+
+    span {
+      line-height: normal !important;
     }
-    .mat-checkbox-background {
-        border: 1px solid orange;
-    }
-     margin-top: 10px;
+  }
+
+  .mat-checkbox-background {
+    border: 1px solid orange;
+  }
+
+  margin-top: 10px;
 }
 
 // mat-badge
 .mat-badge-content {
-    color: $white;
-    background-color: $background_card_color;
-    transition: none;
+  color: $white;
+  background-color: $background_card_color;
+  transition: none;
 }
 
 input {
-    caret-color: $white !important;
+  caret-color: $white !important;
 }
 
 .mat-mdc-input-element:disabled {
-    color: $white;
+  color: $white;
 }
 
 .level_1 {
-    .mat-option-text {
-        padding-left: 20px
-    }
+  .mat-option-text {
+    padding-left: 20px
+  }
 }
 
 .level_2 {
-    .mat-option-text {
-        padding-left: 40px
-    }
+  .mat-option-text {
+    padding-left: 40px
+  }
 }
 
 
 // expansion-panel
 .mat-expansion-panel:not([class*=mat-elevation-z]) {
-    -webkit-box-shadow: none !important;
-    -moz-box-shadow:  none !important;
-    box-shadow:  none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
 
 }
+
 .mat-expansion-panel-header {
-    padding: 0 !important;
+  padding: 0 !important;
 }
 
 .mat-expansion-panel-body {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 .mat-drawer-side {
-    border-right: none;
-    border-left: none;
+  border-right: none;
+  border-left: none;
 }
 
 .mat-drawer-side.mat-drawer-end {
-    border-right: none;
-    border-left: none;
+  border-right: none;
+  border-left: none;
 }
 
 .mat-button-toggle-group-appearance-standard {
-    border: none;
+  border: none;
 }
+
 .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
-    border-left: none;
+  border-left: none;
 }
 
 .mat-calendar-previous-button {
-    color: $white !important;
+  color: $white !important;
 }
 
 .mat-calendar-next-button {
-    color: $white !important;
+  color: $white !important;
 }
 
 .mat-calendar-arrow {
-    border-top-color: $white !important;
+  border-top-color: $white !important;
 }
 
 mat-snack-bar-container {
-    background-color: $background_card_color;
-    div {
-        background-color: $background_card_color !important;
-        color: $white;
-    }
-    .mat-button-wrapper {
-        color: $orange;
-    }
+  background-color: $background_card_color;
+
+  div {
+    background-color: $background_card_color !important;
+    color: $white;
+  }
+
+  .mat-button-wrapper {
+    color: $orange;
+  }
 }
 
 simple-snack-bar {
-    div {
-        color: $white !important;
-    }
+  div {
+    color: $white !important;
+  }
 }
 
 .mat-progress-spinner circle, .mat-spinner circle, .mat-mdc-progress-spinner {
-    stroke: $white;
+  stroke: $white;
 }
 
 body {
+  a {
+    color: $white !important;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  mat-accordion {
     a {
-        color: $white !important;
+      &:hover {
         text-decoration: none;
-        &:hover {
-            text-decoration: underline;
-        }
+      }
     }
-    mat-accordion {
-        a {
-            &:hover {
-                text-decoration: none;
-            }
-        }
-    }
+  }
 }
 
 .mat-tooltip {
-    background: $background_card_color;
+  background: $background_card_color;
 }
 
 .mat-expansion-panel-header {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .mat-chip-selected {
-    background-color: $orange !important;
-    color: $white !important;
+  background-color: $orange !important;
+  color: $white !important;
 }

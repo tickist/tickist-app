@@ -66,14 +66,16 @@ export class AppComponent implements OnInit, OnDestroy {
         //         .then(() => this.logger.info("Using functions emulator"));
         // }
         if (this.swUpdate.isEnabled) {
-            this.swUpdate.available.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-                this.snackBarRef = this.snackBar.openFromComponent(SnackBarMessageComponent, this.config);
-                this.snackBarRef
-                    .onAction()
-                    .pipe(takeUntil(this.ngUnsubscribe))
-                    .subscribe(() => {
-                        window.location.reload();
-                    });
+            this.swUpdate.checkForUpdate().then((isUpdateAvailable) => {
+                if (isUpdateAvailable) {
+                    this.snackBarRef = this.snackBar.openFromComponent(SnackBarMessageComponent, this.config);
+                    this.snackBarRef
+                        .onAction()
+                        .pipe(takeUntil(this.ngUnsubscribe))
+                        .subscribe(() => {
+                            window.location.reload();
+                        });
+                }
             });
         }
         // @TODO  not working

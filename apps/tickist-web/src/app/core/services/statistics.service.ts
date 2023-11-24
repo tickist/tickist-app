@@ -12,7 +12,6 @@ export class StatisticsService {
 
     constructor(private store: Store) {
         this.store.select(selectActiveDate).subscribe((activeDateElement: IActiveDateElement) => {
-            this.loadDailyStatistics(activeDateElement.date);
             this.activeDateElement = activeDateElement;
         });
         // this.globalStatisticsDateRage$.subscribe((dateRange) => {
@@ -26,19 +25,6 @@ export class StatisticsService {
     //     this.loadGlobalStatistics();
     //     this.loadChartsData();
     // }
-
-    loadDailyStatistics(): any {
-        // const formatedDate = activeDateElement ?
-        //     activeDateElement.date.format('YYYY-MM-DD') :
-        //     this.activeDateElement.date.format('YYYY-MM-DD');
-
-        return of({});
-        // this.http.get(`${environment['apiUrl']}/day_statistics/?date=${formatedDate}`)
-        //     .pipe(
-        //         map(payload => new DailyStatistics(payload))
-        //     );
-        // .subscribe(payload => this.store.dispatch((new statisticsAction.UpdateDailyStatistics(payload))));
-    }
 
     loadGlobalStatistics(): any {
         return of({});
