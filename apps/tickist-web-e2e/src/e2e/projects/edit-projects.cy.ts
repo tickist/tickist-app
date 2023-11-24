@@ -33,12 +33,12 @@ describe("Edit Projects", () => {
 
         clickOnEditProject(oldProjectName);
         /**
-* TODO(@nrwl/cypress): Nesting Cypress commands in a should assertion now throws.
-* You should use .then() to chain commands instead.
-* More Info: https://docs.cypress.io/guides/references/migration-guide#-should
-**/
-        cy.get("input[name=projectName]").focus()
-        cy.get("input[name=projectName]").type("{selectall}{backspace}{selectall}{backspace}")
+         * TODO(@nx/cypress): Nesting Cypress commands in a should assertion now throws.
+         * You should use .then() to chain commands instead.
+         * More Info: https://docs.cypress.io/guides/references/migration-guide#-should
+         **/
+        cy.get("input[name=projectName]").focus();
+        cy.get("input[name=projectName]").type("{selectall}{backspace}{selectall}{backspace}");
         cy.get("input[name=projectName]")
             .then(() => cy.get("input[name=projectName]").should("be.empty"))
             .then(() => cy.get("input[name=projectName]").type(newProjectName))

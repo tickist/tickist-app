@@ -244,8 +244,8 @@
 
                 <div id='stepContainer' [hidden]="!checkActiveItemInMenu('steps')" formArrayName="steps">
                     <div fxLayout="column">
-                        <ul id="steps" [sortablejs]="taskForm.controls.steps" fxLayout="column">
-                            <li class="step" fxFlex
+                        <ul cdkDropList  id="steps" (cdkDropListDropped)="drop($event)" fxLayout="column">
+                            <li class="step" fxFlex cdkDrag
                                 *ngFor="let step of taskForm.controls.steps.controls; let i=index; let last = last"
                                 [formGroupName]="i">
                                 <fa-icon [icon]="'arrows-alt'" [classes]="'hover-visible'"></fa-icon>

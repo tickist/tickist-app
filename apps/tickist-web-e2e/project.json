@@ -5,10 +5,9 @@
     "projectType": "application",
     "targets": {
         "e2e": {
-            "executor": "@nrwl/cypress:cypress",
+            "executor": "@nx/cypress:cypress",
             "options": {
                 "cypressConfig": "apps/tickist-web-e2e/cypress.config.ts",
-                "tsConfig": "apps/tickist-web-e2e/tsconfig.e2e.json",
                 "devServerTarget": "tickist-web:serve",
                 "testingType": "e2e"
             },
@@ -25,7 +24,7 @@
             }
         },
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["apps/tickist-web-e2e/**/*.{js,ts}"]

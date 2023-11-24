@@ -8,13 +8,18 @@ import { UserService } from "../../../../core/services/user.service";
 import { Project, ProjectType, ShareWithUser } from "@data//projects";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { User } from "@data/users/models";
-import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import {
+    AbstractControl,
+    FormGroup,
+    UntypedFormArray,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
+    Validators,
+} from "@angular/forms";
 import { Location } from "@angular/common";
 import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
-import {
-    MatAutocompleteSelectedEvent,
-    MatAutocompleteTrigger,
-} from "@angular/material/autocomplete";
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { MatDialog } from "@angular/material/dialog";
 import moment from "moment";
 import { Tag } from "@data/tags/models/tags";
@@ -37,6 +42,7 @@ import { AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task } from "@data";
 import { zip } from "ramda";
 import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
 import { changeTimeStringFormatToValue } from "@tickist/utils";
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 
 @Component({
     selector: "tickist-task-component",
@@ -704,5 +710,17 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     isNewTask(): boolean {
         return !this.task.id;
+    }
+
+    drop(event: CdkDragDrop<string[]>) {
+        const stepsArray = this.taskForm.get("steps") as UntypedFormArray;
+        const fromIndex = event.previousIndex;
+        const toIndex = event.currentIndex;
+
+        const movedFormGroup = stepsArray.at(fromIndex) as FormGroup;
+
+        stepsArray.removeAt(fromIndex);
+        stepsArray.insert(toIndex, movedFormGroup);
+        // moveItemInArray(stepsArray["controls"], event.previousIndex, event.currentIndex);
     }
 }

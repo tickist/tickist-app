@@ -9,6 +9,7 @@ import { TickistSharedModule } from "../../shared/shared.module";
 import { SortablejsModule } from "ngx-sortablejs";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { A11yModule } from "@angular/cdk/a11y";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 
 @NgModule({
     imports: [
@@ -20,9 +21,7 @@ import { A11yModule } from "@angular/cdk/a11y";
         ReactiveFormsModule,
         TickistEditTaskRoutingModule,
         TickistSharedModule,
-        SortablejsModule.forRoot({
-            animation: 150,
-        }),
+        DragDropModule,
         A11yModule,
     ],
     providers: [],

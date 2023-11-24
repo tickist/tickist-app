@@ -3,7 +3,7 @@
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "projectType": "application",
     "generators": {
-        "@nrwl/angular:component": {
+        "@nx/angular:component": {
             "style": "scss"
         }
     },
@@ -35,14 +35,8 @@
                     "apps/tickist-web/src/manifest.json",
                     "apps/tickist-web/src/robots.txt"
                 ],
-                "styles": [
-                    "apps/tickist-web/src/styles.scss",
-                    "node_modules/primeng/resources/primeng.css"
-                ],
-                "scripts": [
-                    "node_modules/chart.js/dist/Chart.js",
-                    "node_modules/quill/dist/quill.js"
-                ],
+                "styles": ["apps/tickist-web/src/styles.scss", "node_modules/primeng/resources/primeng.css"],
+                "scripts": ["node_modules/chart.js/dist/Chart.js", "node_modules/quill/dist/quill.js"],
                 "vendorChunk": true,
                 "extractLicenses": false,
                 "buildOptimizer": false,
@@ -100,9 +94,7 @@
                     ]
                 }
             },
-            "outputs": [
-                "{options.outputPath}"
-            ]
+            "outputs": ["{options.outputPath}"]
         },
         "serve": {
             "executor": "@angular-devkit/build-angular:dev-server",
@@ -132,23 +124,18 @@
             }
         },
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/linter:eslint",
             "options": {
-                "lintFilePatterns": [
-                    "apps/tickist-web/src/**/*.ts",
-                    "apps/tickist-web/src/**/*.html"
-                ]
+                "lintFilePatterns": ["apps/tickist-web/src/**/*.ts", "apps/tickist-web/src/**/*.html"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
+            "executor": "@nx/jest:jest",
             "options": {
                 "jestConfig": "apps/tickist-web/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": [
-                "{workspaceRoot}/coverage/apps/tickist-web"
-            ]
+            "outputs": ["{workspaceRoot}/coverage/apps/tickist-web"]
         },
         "deploy": {
             "executor": "@angular/fire:deploy",

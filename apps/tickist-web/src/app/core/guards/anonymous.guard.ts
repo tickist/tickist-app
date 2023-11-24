@@ -1,9 +1,4 @@
-import {
-    ActivatedRouteSnapshot,
-    CanActivate,
-    Router,
-    RouterStateSnapshot,
-} from "@angular/router";
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from "@angular/router";
 import { Injectable } from "@angular/core";
 import { AuthService } from "../../modules/auth/services/auth.service";
 import { map } from "rxjs/operators";
@@ -12,7 +7,7 @@ import { homeRoutesName } from "../../routing.module.name";
 import { dashboardRoutesName } from "../../modules/dashboard/routes.names";
 
 @Injectable()
-export class AnonymousGuard implements CanActivate {
+export class AnonymousGuard  {
     constructor(protected router: Router, private authService: AuthService) {}
 
     canActivate(

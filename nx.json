@@ -17,11 +17,11 @@
     },
     "defaultProject": "tickist-web",
     "generators": {
-        "@nrwl/angular:application": {
+        "@nx/angular:application": {
             "unitTestRunner": "jest",
             "e2eTestRunner": "cypress"
         },
-        "@nrwl/angular:library": {
+        "@nx/angular:library": {
             "unitTestRunner": "jest"
         }
     },
@@ -54,7 +54,8 @@
             "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
             "!{projectRoot}/tsconfig.spec.json",
             "!{projectRoot}/jest.config.[jt]s",
-            "!{projectRoot}/.eslintrc.json"
+            "!{projectRoot}/.eslintrc.json",
+            "!{projectRoot}/src/test-setup.[jt]s"
         ]
     }
 }
