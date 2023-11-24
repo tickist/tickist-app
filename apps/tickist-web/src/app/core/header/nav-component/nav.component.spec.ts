@@ -1,4 +1,4 @@
-import { TestBed, ComponentFixture, async } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { MockProjectService } from "../../../testing/mocks/project-service";
 import { MockConfigurationService } from "../../../testing/mocks/configurationService";
 import { TickistMaterialModule } from "../../../material.module";
@@ -7,8 +7,6 @@ import { NavComponent } from "./nav.component";
 import { TickistSharedModule } from "../../../shared/shared.module";
 import { MockUserService } from "../../../testing/mocks/userService";
 import { FlexLayoutModule } from "@ngbracket/ngx-layout";
-import { RouterModule } from "@angular/router";
-import { APP_BASE_HREF } from "@angular/common";
 import { MockTaskService } from "../../../testing/mocks/task-service";
 import { MockTasksFiltersService } from "../../../testing/mocks/tasks-filters-service";
 import { StoreModule } from "@ngrx/store";

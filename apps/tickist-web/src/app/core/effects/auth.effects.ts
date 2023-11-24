@@ -1,15 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Location } from "@angular/common";
-import { Actions, createEffect, ofType, concatLatestFrom } from "@ngrx/effects";
+import { Actions, concatLatestFrom, createEffect, ofType } from "@ngrx/effects";
 import { fetchedLoginUser, login, logout } from "../actions/auth.actions";
-import { catchError, filter, map, mapTo, switchMap, tap, withLatestFrom } from "rxjs/operators";
+import { catchError, filter, map, mapTo, switchMap, tap } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { defer, of } from "rxjs";
 import { Store } from "@ngrx/store";
 import { UserService } from "../services/user.service";
 import { addUser } from "../actions/user.actions";
 import { resetStore } from "../../tickist.actions";
-import { environment } from "../../../environments/environment";
 import { AuthService } from "../../modules/auth/services/auth.service";
 import { signupRoutesName } from "../../modules/sign-up/routes-names";
 import { User } from "@data/users/models";
@@ -25,15 +24,15 @@ export class AuthEffects {
         this.actions$.pipe(
             ofType(login),
             tap(() => this.router.navigateByUrl("/")),
-            map((action) => fetchedLoginUser({ uid: action.uid }))
-        )
+            map((action) => fetchedLoginUser({ uid: action.uid })),
+        ),
     );
 
     fetchedLoginUser$ = createEffect(() =>
         this.actions$.pipe(
             ofType(fetchedLoginUser),
             concatLatestFrom(() => this.store.select(selectLoggedInUser)),
-            switchMap(([action, user]) => {
+            switchMap(([action]) => {
                 const docRef = doc(this.firestore, `users/${action.uid}`);
                 return docSnapshots(docRef).pipe(
                     filter((snapshot: any) => snapshot.exists),
@@ -43,12 +42,12 @@ export class AuthEffects {
                                 id: snapshot.id,
                                 ...snapshot.data(),
                             }),
-                        })
+                        }),
                     ),
-                    catchError((err) => of(firebaseError({ error: new Error(err) })))
+                    catchError((err) => of(firebaseError({ error: new Error(err) }))),
                 );
-            })
-        )
+            }),
+        ),
     );
 
     logout$ = createEffect(() =>
@@ -64,8 +63,8 @@ export class AuthEffects {
                     this.router.navigateByUrl("/login").catch((error) => this.logger.error(error));
                 }
             }),
-            mapTo(resetStore())
-        )
+            mapTo(resetStore()),
+        ),
     );
 
     init$ = createEffect(() =>
@@ -77,9 +76,9 @@ export class AuthEffects {
                         return fetchedLoginUser({ uid: state.uid });
                     }
                     return logout();
-                })
-            )
-        )
+                }),
+            ),
+        ),
     );
 
     constructor(
@@ -90,6 +89,6 @@ export class AuthEffects {
         private store: Store,
         private userService: UserService,
         private firestore: Firestore,
-        private logger: NGXLogger
+        private logger: NGXLogger,
     ) {}
 }

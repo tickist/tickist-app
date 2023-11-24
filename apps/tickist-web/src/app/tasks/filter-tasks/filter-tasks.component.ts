@@ -36,69 +36,41 @@ export class FilterTasksComponent implements OnInit, OnDestroy {
     matDialogConfig: MatDialogConfig;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(
-        public dialog: MatDialog,
-        private tasksFiltersService: TasksFiltersService,
-        private store: Store
-    ) {
+    constructor(public dialog: MatDialog, private tasksFiltersService: TasksFiltersService, private store: Store) {
         this.matDialogConfig = { width: "300px" };
     }
 
     openTasksFilterDialog() {
-        const dialogRef = this.dialog.open(
-            TasksFilterDialogComponent,
-            this.matDialogConfig
-        );
+        this.dialog.open(TasksFilterDialogComponent, this.matDialogConfig);
     }
 
     openAssignedToDialog() {
-        const dialogRef = this.dialog.open(
-            AssignedToDialogComponent,
-            this.matDialogConfig
-        );
+        this.dialog.open(AssignedToDialogComponent, this.matDialogConfig);
     }
 
     openTagsFilterDialog() {
-        const dialogRef = this.dialog.open(
-            TagsFilterDialogComponent,
-            this.matDialogConfig
-        );
+        this.dialog.open(TagsFilterDialogComponent, this.matDialogConfig);
     }
 
     openEstimateTimeDialog() {
-        const dialogRef = this.dialog.open(
-            EstimateTimeDialogComponent,
-            this.matDialogConfig
-        );
+        this.dialog.open(EstimateTimeDialogComponent, this.matDialogConfig);
     }
 
     ngOnInit() {
         this.currentMainFilter$ = this.store.select(selectCurrentMainFilter);
-        this.currentAssignedToFilter$ = this.store.select(
-            selectCurrentAssignedToFilter
-        );
-        this.currentEstimateTimeFilter$ = this.store.select(
-            selectCurrentEstimateTimeFilter
-        );
+        this.currentAssignedToFilter$ = this.store.select(selectCurrentAssignedToFilter);
+        this.currentEstimateTimeFilter$ = this.store.select(selectCurrentEstimateTimeFilter);
         this.currentTagsFilter$ = this.store.select(selectCurrentTagsFilter);
-        this.currentTagsFilter$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((tagsFilter) => {
-                this.tagsFilter = tagsFilter;
-            });
+        this.currentTagsFilter$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((tagsFilter) => {
+            this.tagsFilter = tagsFilter;
+        });
     }
 
     tagsValue() {
         if (this.tagsFilter) {
-            if (
-                this.tagsFilter.value instanceof Array &&
-                this.tagsFilter.value?.length === 1
-            ) {
+            if (this.tagsFilter.value instanceof Array && this.tagsFilter.value?.length === 1) {
                 return `${this.tagsFilter.name} selected`;
-            } else if (
-                this.tagsFilter.value instanceof Array &&
-                this.tagsFilter.value?.length
-            ) {
+            } else if (this.tagsFilter.value instanceof Array && this.tagsFilter.value?.length) {
                 return `${this.tagsFilter.value.length} selected`;
             } else {
                 return this.tagsFilter.name;

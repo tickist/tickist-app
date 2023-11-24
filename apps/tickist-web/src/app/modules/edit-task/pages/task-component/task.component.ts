@@ -34,15 +34,14 @@ import { selectAllTasks } from "../../../../core/selectors/task.selectors";
 import { moveFinishDateFromPreviousFinishDate, removeTag } from "../../../../single-task/utils/task-utils";
 import { ITaskUser, TaskUser } from "@data/tasks/models/task-user";
 import { TaskProject } from "@data/tasks/models/task-project";
-import { addClickableLinks, createUniqueId } from "@tickist/utils";
+import { addClickableLinks, changeTimeStringFormatToValue, createUniqueId } from "@tickist/utils";
 import { CHOICES_DEFAULT_FINISH_DATE, ProjectWithLevel } from "@data/projects";
 import { selectActiveProject, selectAllProjectsWithLevelAndTreeStructures } from "../../../../core/selectors/projects.selectors";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task } from "@data";
 import { zip } from "ramda";
 import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
-import { changeTimeStringFormatToValue } from "@tickist/utils";
-import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
 
 @Component({
     selector: "tickist-task-component",
@@ -93,12 +92,26 @@ export class TaskComponent implements OnInit, OnDestroy {
         public dialog: MatDialog,
         private configurationService: ConfigurationService,
         private location: Location,
-        private tagService: TagService
+        private tagService: TagService,
     ) {
         this.taskTypesWithIcons = zip(AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS).map((taskType) => ({
             value: taskType[0],
             icon: taskType[1],
         }));
+    }
+
+    @HostListener("window:keyup", ["$event"])
+    keyEvent(event: KeyboardEvent) {
+        if (event.key === this.enter && this.checkActiveItemInMenu("steps")) {
+            this.addNewStep();
+        }
+        if (event.key === this.arrowDown && event.shiftKey) {
+            this.nextMenuElement();
+        }
+
+        if (event.key === this.arrowUp && event.shiftKey) {
+            this.previousMenuElement();
+        }
     }
 
     ngOnInit() {
@@ -157,24 +170,10 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.tagsCtrl = new UntypedFormControl();
         this.filteredTags = this.tagsCtrl.valueChanges.pipe(
             startWith(null),
-            map((name) => this.filterTags(name))
+            map((name) => this.filterTags(name)),
         );
 
         this.store.dispatch(hideAddTaskButton());
-    }
-
-    @HostListener("window:keyup", ["$event"])
-    keyEvent(event: KeyboardEvent) {
-        if (event.key === this.enter && this.checkActiveItemInMenu("steps")) {
-            this.addNewStep();
-        }
-        if (event.key === this.arrowDown && event.shiftKey) {
-            this.nextMenuElement();
-        }
-
-        if (event.key === this.arrowUp && event.shiftKey) {
-            this.previousMenuElement();
-        }
     }
 
     getActiveMenuElement() {
@@ -215,14 +214,6 @@ export class TaskComponent implements OnInit, OnDestroy {
 
     autocompleteTagsDisplayFn(tag: Tag): string | Tag {
         return tag ? tag.name : tag;
-    }
-
-    private createFinishDateFilter() {
-        if (!this.task.finishDate || this.task.finishDate >= this.minDate) {
-            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
-        } else {
-            this.minFilter = (d: Date): boolean => true;
-        }
     }
 
     ngOnDestroy() {
@@ -300,7 +291,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     finishDate: new UntypedFormControl(finishDate),
                     finishTime: new UntypedFormControl(finishTime),
                 },
-                { updateOn: "blur" }
+                { updateOn: "blur" },
             ),
             extra: new UntypedFormGroup(
                 {
@@ -315,7 +306,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                     }),
                     suspendedDate: new UntypedFormControl(task.suspendDate),
                 },
-                { validators: this.finishTimeWithFinishDate }
+                { validators: this.finishTimeWithFinishDate },
             ),
             repeat: new UntypedFormGroup({
                 repeatDefault: new UntypedFormControl(repeat.repeatDefault),
@@ -328,11 +319,6 @@ export class TaskComponent implements OnInit, OnDestroy {
             }),
             steps: this.initSteps(task.steps),
         });
-    }
-
-    private finishTimeWithFinishDate(g) {
-        const result = null;
-        return result;
     }
 
     clearFinishDate($event): void {
@@ -356,10 +342,10 @@ export class TaskComponent implements OnInit, OnDestroy {
     createNewTask(selectedProject: Project): Task {
         let defaultTypeFinishDate = 1;
         const finishDateOption = this.defaultFinishDateOptions.find(
-            (defaultFinishDateOption) => defaultFinishDateOption.id === selectedProject.defaultFinishDate
+            (defaultFinishDateOption) => defaultFinishDateOption.id === selectedProject.defaultFinishDate,
         );
         const isTypeFinishDateOptionsDefined = this.typeFinishDateOptions.some(
-            (typeFinishDateOption) => typeFinishDateOption.id === selectedProject.defaultTypeFinishDate
+            (typeFinishDateOption) => typeFinishDateOption.id === selectedProject.defaultTypeFinishDate,
         );
 
         if (isTypeFinishDateOptionsDefined) {
@@ -433,7 +419,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                                             tags: tags,
                                         }),
                                     },
-                                })
+                                }),
                             );
                         } else {
                             this.task = Object.assign({}, this.task, {
@@ -458,7 +444,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                                             tagsIds: tags.map((t) => t.id),
                                         }),
                                     },
-                                })
+                                }),
                             );
                         } else {
                             this.task = Object.assign({}, this.task, {
@@ -482,7 +468,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                                         tagsIds: tags.map((t) => t.id),
                                     }),
                                 },
-                            })
+                            }),
                         );
                     } else {
                         this.task = Object.assign({}, this.task, {
@@ -507,7 +493,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                                         tagsIds: tags.map((t) => t.id),
                                     }),
                                 },
-                            })
+                            }),
                         );
                     } else {
                         this.task = Object.assign({}, this.task, {
@@ -580,7 +566,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                             name: step.name,
                             order: index,
                             status: step.status,
-                        })
+                        }),
                     );
                 }
             });
@@ -590,7 +576,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                 this.store.dispatch(
                     requestUpdateTask({
                         task: { id: updatedTask.id, changes: updatedTask },
-                    })
+                    }),
                 );
             }
 
@@ -632,7 +618,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                         name: [step.name, Validators.required],
                         id: [step.id, Validators.required],
                         status: [step.status, Validators.required],
-                    })
+                    }),
                 );
             });
         array.push(this.initStep());
@@ -723,5 +709,17 @@ export class TaskComponent implements OnInit, OnDestroy {
         stepsArray.removeAt(fromIndex);
         stepsArray.insert(toIndex, movedFormGroup);
         // moveItemInArray(stepsArray["controls"], event.previousIndex, event.currentIndex);
+    }
+
+    private finishTimeWithFinishDate() {
+        return null;
+    }
+
+    private createFinishDateFilter() {
+        if (!this.task.finishDate || this.task.finishDate >= this.minDate) {
+            this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
+        } else {
+            this.minFilter = (): boolean => true;
+        }
     }
 }

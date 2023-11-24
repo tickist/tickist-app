@@ -3,7 +3,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { ControlValueAccessor, UntypedFormControl, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, UntypedFormControl } from "@angular/forms";
 import { noop, Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
 
@@ -32,16 +32,6 @@ export class IconPickerComponent implements ControlValueAccessor, OnDestroy {
     private onTouchedCallback: () => void = noop;
     private onChangeCallback: (_: any) => void = noop;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    get value(): any {
-        return this.innerValue;
-    }
-
-    set value(v: any) {
-        if (v !== this.innerValue) {
-            this.innerValue = v;
-            this.onChangeCallback(v);
-        }
-    }
 
     constructor() {
         this.iconDefinitions = this.iconDefinitions.concat(Object.values(fab));
@@ -57,6 +47,17 @@ export class IconPickerComponent implements ControlValueAccessor, OnDestroy {
             .subscribe((value) => {
                 this.searchText = value;
             });
+    }
+
+    get value(): any {
+        return this.innerValue;
+    }
+
+    set value(v: any) {
+        if (v !== this.innerValue) {
+            this.innerValue = v;
+            this.onChangeCallback(v);
+        }
     }
 
     ngOnDestroy(): void {

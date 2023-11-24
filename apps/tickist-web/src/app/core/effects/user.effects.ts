@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Actions, concatLatestFrom, createEffect, ofType } from "@ngrx/effects";
 import {
     addUser,
     changeAvatar,
@@ -33,8 +33,8 @@ export class UserEffects {
     queryUser = createEffect(() =>
         this.actions$.pipe(
             ofType(queryUser),
-            withLatestFrom(this.store.select(selectLoggedInUser)),
-            switchMap(([action, user]) => {
+            concatLatestFrom(() => this.store.select(selectLoggedInUser)),
+            switchMap(([, user]) => {
                 const firebaseCollection = collection(this.firestore, "users");
                 const firebaseQuery = query(firebaseCollection, where("id", "==", user.id));
                 return collectionData(firebaseQuery, { idField: "id" });
@@ -52,8 +52,8 @@ export class UserEffects {
                     returnsActions.push(updateUser({ user: updatedUser }));
                 }
                 return returnsActions;
-            })
-        )
+            }),
+        ),
     );
 
     addDefaultAssignedToFilters = createEffect(() =>
@@ -67,8 +67,8 @@ export class UserEffects {
                         currentFilter: assignedToFilters[0],
                     }),
                 ];
-            })
-        )
+            }),
+        ),
     );
 
     addDefaultEstimateTime = createEffect(() =>
@@ -84,8 +84,8 @@ export class UserEffects {
                         currentFilterLt,
                     }),
                 ];
-            })
-        )
+            }),
+        ),
     );
 
     addDefaultMainFilters = createEffect(() =>
@@ -98,8 +98,8 @@ export class UserEffects {
                 addMainFilters({
                     filters: TasksFiltersService.getDefaultMainFilters(),
                 }),
-            ])
-        )
+            ]),
+        ),
     );
 
     addSortBy = createEffect(() =>
@@ -112,8 +112,8 @@ export class UserEffects {
                 setCurrentSortBy({
                     currentSortBy: TasksFiltersService.getDefaultSortByTask(),
                 }),
-            ])
-        )
+            ]),
+        ),
     );
 
     addDefaultTagsFilters = createEffect(() =>
@@ -122,13 +122,13 @@ export class UserEffects {
             mapTo(
                 setCurrentTagsFilters({
                     currentTagsFilter: TasksFiltersService.getDefaultCurrentTagsFilters(),
-                })
-            )
-        )
+                }),
+            ),
+        ),
     );
 
     loadUserData$ = createEffect(() =>
-        this.actions$.pipe(ofType(addUser), concatMapTo([queryUser(), queryTasks(), queryTags(), queryProjects(), queryNotifications()]))
+        this.actions$.pipe(ofType(addUser), concatMapTo([queryUser(), queryTasks(), queryTags(), queryProjects(), queryNotifications()])),
     );
 
     updateUser$ = createEffect(
@@ -136,17 +136,17 @@ export class UserEffects {
             this.actions$.pipe(
                 ofType(requestUpdateUser),
                 mergeMap((action) => this.userService.updateUser(action.user)),
-                mapTo(switchOffProgressBar())
+                mapTo(switchOffProgressBar()),
             ),
-        { dispatch: false }
+        { dispatch: false },
     );
 
     progressBar$ = createEffect(() =>
         this.actions$.pipe(
             ofType(requestUpdateUser),
             filter((action) => action.progressBar),
-            mapTo(switchOnProgressBar())
-        )
+            mapTo(switchOnProgressBar()),
+        ),
     );
 
     changeAvatar$ = createEffect(() =>
@@ -158,9 +158,9 @@ export class UserEffects {
                     user: Object.assign({}, user, {
                         avatarUrl: action.avatarUrl,
                     }),
-                })
-            )
-        )
+                }),
+            ),
+        ),
     );
 
     savefcmToken$ = createEffect(() =>
@@ -173,9 +173,9 @@ export class UserEffects {
                         fcmToken: action.token,
                         notificationPermission: NotificationPermission.yes,
                     }),
-                })
-            )
-        )
+                }),
+            ),
+        ),
     );
 
     removeNotificationPermission$ = createEffect(() =>
@@ -188,10 +188,15 @@ export class UserEffects {
                         fcmToken: null,
                         notificationPermission: NotificationPermission.no,
                     }),
-                })
-            )
-        )
+                }),
+            ),
+        ),
     );
 
-    constructor(private actions$: Actions, private firestore: Firestore, private store: Store, private userService: UserService) {}
+    constructor(
+        private actions$: Actions,
+        private firestore: Firestore,
+        private store: Store,
+        private userService: UserService,
+    ) {}
 }

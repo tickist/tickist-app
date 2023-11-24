@@ -9,6 +9,7 @@
                 "project": ["libs/data/tsconfig.*?.json"]
             },
             "rules": {
+                "@typescript-eslint/no-explicit-any": "warn",
                 "@angular-eslint/directive-selector": [
                     "error",
                     {

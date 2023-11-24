@@ -5,7 +5,6 @@ import { ChangeTaskViewComponent } from "../../../../shared/components/change-ta
 import { TickistMaterialModule } from "../../../../material.module";
 import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
-import { RouterModule, Routes } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
 import { TaskNameComponent } from "../../../../single-task/task-name/task-name.component";
@@ -23,7 +22,6 @@ import { AvatarSize } from "../../../../shared/pipes/avatarSize";
 import { MockTaskService } from "../../../../testing/mocks/task-service";
 import { MockProjectService } from "../../../../testing/mocks/project-service";
 import { MockConfigurationService } from "../../../../testing/mocks/configurationService";
-import { APP_BASE_HREF } from "@angular/common";
 import { MockActivatedRoute } from "../../../../testing/mocks/activatedRoute";
 import { MockUserService } from "../../../../testing/mocks/userService";
 import { MockTagService } from "../../../../testing/mocks/tag-service";
@@ -36,22 +34,6 @@ import { SingleTaskSimplifiedComponent } from "../../../../single-task/single-ta
 import { NoTasksComponent } from "../../../../single-task/no-tasks/no-tasks.component";
 import { StoreModule } from "@ngrx/store";
 import { RouterTestingModule } from "@angular/router/testing";
-
-const routes: Routes = [
-    {
-        path: "",
-        redirectTo: "home",
-        pathMatch: "full",
-    },
-    {
-        path: "home",
-        component: RootComponent,
-    },
-    {
-        path: "home/task",
-        component: BlankComponent,
-    },
-];
 
 describe("TasksFromProjectsComponent", () => {
     let component: TasksFromProjectsComponent;

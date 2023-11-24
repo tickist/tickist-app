@@ -1,7 +1,5 @@
-import {SpyObject} from '../test.helpers';
-import {of} from 'rxjs';
-import {StatisticsService} from '../../core/services/statistics.service';
-
+import { SpyObject } from "../test.helpers";
+import { StatisticsService } from "../../core/services/statistics.service";
 
 export class MockStatisticsService extends SpyObject {
     fakeResponse;
@@ -32,6 +30,6 @@ export class MockStatisticsService extends SpyObject {
     }
 
     getProviders(): Array<any> {
-        return [{provide: StatisticsService, useValue: this}];
+        return [{ provide: StatisticsService, useValue: this }];
     }
 }

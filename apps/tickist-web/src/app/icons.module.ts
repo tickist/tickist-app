@@ -1,62 +1,12 @@
-import {NgModule} from '@angular/core';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {
-    faArrowDown,
-    faArrowRight,
-    faArrowsAlt,
-    faArrowsAltV,
-    faArrowUp,
-    faBars,
-    faCalendar,
-    faCalendarDay,
-    faChartLine,
-    faCog,
-    faComment,
-    faCompress,
-    faCompressArrowsAlt,
-    faDesktop,
-    faEdit,
-    faEllipsisV,
-    faExpand,
-    faFastForward,
-    faFilter,
-    faFolder,
-    faList,
-    faPause,
-    faPenSquare,
-    faPlus,
-    faQuestion,
-    faRedo,
-    faReply,
-    faReplyAll,
-    faSearch,
-    faShare,
-    faSignInAlt,
-    faSitemap,
-    faSort,
-    faSun,
-    faTag,
-    faTags,
-    faThumbtack,
-    faTimes,
-    faTrashAlt,
-    faUserPlus,
-    faWrench,
-    faExclamationCircle,
-    faCircleNotch
-} from '@fortawesome/free-solid-svg-icons';
-import {faArrowAltCircleRight, faCheckSquare, faClock, faDotCircle, faSquare, faBell, faCircle} from '@fortawesome/free-regular-svg-icons';
-import {faSign} from '@fortawesome/free-solid-svg-icons/faSign';
-import {faCircle as fasCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
-import {faBell as fasBell} from '@fortawesome/free-solid-svg-icons/faBell';
-import {faFacebookF, faGoogle, fab} from '@fortawesome/free-brands-svg-icons';
-import {FaIconLibrary} from '@fortawesome/angular-fontawesome';
-import {far, IconName} from '@fortawesome/free-regular-svg-icons';
-import {fas} from '@fortawesome/free-solid-svg-icons';
+import { NgModule } from "@angular/core";
+import { FaIconLibrary, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
 
 @NgModule({
     imports: [FontAwesomeModule],
-    exports: [FontAwesomeModule]
+    exports: [FontAwesomeModule],
 })
 export class IconsModule {
     constructor(private library: FaIconLibrary) {

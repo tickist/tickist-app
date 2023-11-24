@@ -7,10 +7,9 @@ import { ConfigurationService } from "../../core/services/configuration.service"
 export class RepeatStringExtension implements PipeTransform {
     constructor(protected configurationService: ConfigurationService) {}
 
-    transform(value: any, args: string[]): any {
+    transform(value: any): any {
         if (value) {
-            return this.configurationService.loadConfiguration().commons
-                .defaultRepeatOptions[value].name_of_extension;
+            return this.configurationService.loadConfiguration().commons.defaultRepeatOptions[value].name_of_extension;
         }
     }
 }

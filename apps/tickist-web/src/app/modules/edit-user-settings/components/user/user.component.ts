@@ -6,22 +6,19 @@ import { Location } from "@angular/common";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { environment } from "../../../../../environments/environment";
 import { MyErrorStateMatcher } from "../../../../shared/error-state-matcher";
-import { Observable, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
-import { select, Store } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { changeAvatar, removeNotificationPermission, requestUpdateUser } from "../../../../core/actions/user.actions";
 import { DEFAULT_DAILY_SUMMARY_HOUR, DEFAULT_USER_AVATAR, TASKS_ORDER_OPTIONS } from "@data/users/config-user";
 import { NotificationPermission, TASKS_VIEWS_LIST } from "@data";
 import { NotificationsService } from "../../../notifications/services/notifications.service";
 import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
-import { DeleteUserConfirmationDialogComponent } from "../../../edit-project/components/delete-user-confirmation-dialog/delete-user-confirmation-dialog.component";
 import { DeleteAccountDialogComponent } from "../delete-account-dialog/delete-account-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { NGXLogger } from "ngx-logger";
-import { UploadTask } from "@angular/fire/storage";
-import { getDownloadURL } from "@angular/fire/storage";
+import { getDownloadURL, UploadTask } from "@angular/fire/storage";
 
 @Component({
     selector: "tickist-user",
@@ -57,7 +54,7 @@ export class UserComponent implements OnInit, OnDestroy {
         public dialog: MatDialog,
         private configurationService: ConfigurationService,
         private userService: UserService,
-        private logger: NGXLogger
+        private logger: NGXLogger,
     ) {
         this.staticUrl = environment["staticUrl"];
         this.tasksOrderOptions = TASKS_ORDER_OPTIONS;
@@ -94,10 +91,10 @@ export class UserComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.store
+            .select(selectLoggedInUser)
             .pipe(
-                select(selectLoggedInUser),
                 filter((user) => !!user),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe((user) => {
                 // @TODO too much logic. Fix It
@@ -114,10 +111,10 @@ export class UserComponent implements OnInit, OnDestroy {
                             { value: user.email, disabled: true },
                             {
                                 validators: [Validators.required, Validators.email],
-                            }
+                            },
                         ),
                     },
-                    { updateOn: "blur" }
+                    { updateOn: "blur" },
                 );
 
                 this.userData
@@ -245,7 +242,7 @@ export class UserComponent implements OnInit, OnDestroy {
                             value: user.removesMeFromSharedList,
                             disabled: !this.isNotificationAllowed,
                         },
-                        { validators: [Validators.required] }
+                        { validators: [Validators.required] },
                     ),
                     assignsTaskToMe: new UntypedFormControl(user.assignsTaskToMe, {
                         validators: [Validators.required],
@@ -258,7 +255,7 @@ export class UserComponent implements OnInit, OnDestroy {
                     }),
                     changesTaskFromSharedListThatIAssignedToHimHer: new UntypedFormControl(
                         user.changesTaskFromSharedListThatIAssignedToHimHer,
-                        { validators: [Validators.required] }
+                        { validators: [Validators.required] },
                     ),
                     leavesSharedList: new UntypedFormControl(user.leavesSharedList, {
                         validators: [Validators.required],
@@ -282,7 +279,7 @@ export class UserComponent implements OnInit, OnDestroy {
                 this.userNotificationSettings
                     .get("dailySummaryCheckbox")
                     .valueChanges.pipe(takeUntil(this.ngUnsubscribe))
-                    .subscribe((newValue) => {
+                    .subscribe(() => {
                         this.toggleDailySummary();
                     });
                 this.userNotificationSettings
@@ -419,7 +416,7 @@ export class UserComponent implements OnInit, OnDestroy {
                         break;
                 }
             },
-            (error) => {
+            () => {
                 // Handle unsuccessful uploads
             },
             () => {
@@ -428,7 +425,7 @@ export class UserComponent implements OnInit, OnDestroy {
                 getDownloadURL(this.uploadTask.snapshot.ref).then((downloadURL) => {
                     console.log("File available at", downloadURL);
                 });
-            }
+            },
         );
     }
 
@@ -453,10 +450,10 @@ export class UserComponent implements OnInit, OnDestroy {
         return field.hasError("minLength")
             ? "Field is too short."
             : field.hasError("required")
-            ? "This field is required."
-            : field.hasError("email")
-            ? "This email is invalid."
-            : "";
+              ? "This field is required."
+              : field.hasError("email")
+                ? "This email is invalid."
+                : "";
     }
 
     hasErrorMessage(field: AbstractControl): boolean {
@@ -488,6 +485,6 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     showDeleteAccountDialog() {
-        const dialogRef = this.dialog.open(DeleteAccountDialogComponent);
+        this.dialog.open(DeleteAccountDialogComponent);
     }
 }

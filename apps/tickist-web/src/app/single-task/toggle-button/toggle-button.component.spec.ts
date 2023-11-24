@@ -1,20 +1,17 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {ToggleButtonComponent} from './toggle-button.component';
-import {TickistMaterialModule} from '../../material.module';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {IconsModule} from '../../icons.module';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ToggleButtonComponent } from "./toggle-button.component";
+import { TickistMaterialModule } from "../../material.module";
+import { IconsModule } from "../../icons.module";
 
-
-describe('ToggleButtonComponent', () => {
+describe("ToggleButtonComponent", () => {
     let component: ToggleButtonComponent;
     let fixture: ComponentFixture<ToggleButtonComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, IconsModule],
-            declarations: [ToggleButtonComponent]
-        })
-            .compileComponents();
+            declarations: [ToggleButtonComponent],
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -23,7 +20,7 @@ describe('ToggleButtonComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

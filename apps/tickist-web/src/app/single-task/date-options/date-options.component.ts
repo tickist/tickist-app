@@ -1,9 +1,8 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from "@angular/core";
 import { ConfigurationService } from "../../core/services/configuration.service";
 import { Task } from "@data/tasks/models/tasks";
 import { requestUpdateTask } from "../../core/actions/tasks/task.actions";
 import { Store } from "@ngrx/store";
-import { AppStore } from "../../store";
 
 @Component({
     selector: "tickist-date-options",
@@ -22,7 +21,10 @@ export class DateOptionsComponent implements OnInit {
     finishTime: any;
     minFilter: any;
 
-    constructor(protected configurationService: ConfigurationService, private store: Store) {
+    constructor(
+        protected configurationService: ConfigurationService,
+        private store: Store,
+    ) {
         this.minDate = new Date();
     }
 
@@ -54,7 +56,7 @@ export class DateOptionsComponent implements OnInit {
                             typeFinishDate: $event.value ? $event.value : this.task.typeFinishDate,
                         }),
                     },
-                })
+                }),
             );
         }
     }
@@ -75,7 +77,7 @@ export class DateOptionsComponent implements OnInit {
         if (!this.finishDate || this.finishDate >= this.minDate) {
             this.minFilter = (d: Date): boolean => this.minDate.setHours(0, 0, 0, 0) <= d?.setHours(0, 0, 0, 0);
         } else {
-            this.minFilter = (d: Date): boolean => true;
+            this.minFilter = (): boolean => true;
         }
     }
 }

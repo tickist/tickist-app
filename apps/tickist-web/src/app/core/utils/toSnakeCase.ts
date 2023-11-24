@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
-
+// eslint-disable-next-line @typescript-eslint/naming-convention
+import * as _ from "lodash";
 
 export function toSnakeCase(object) {
     const objectSnakeCase = {};
@@ -16,7 +16,6 @@ export function toSnakeCase(object) {
         } else {
             objectSnakeCase[_.snakeCase(elem)] = object[elem];
         }
-
     });
     return objectSnakeCase;
 }

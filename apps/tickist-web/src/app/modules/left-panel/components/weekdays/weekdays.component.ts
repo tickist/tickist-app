@@ -3,6 +3,7 @@ import { ConfigurationService } from "../../../../core/services/configuration.se
 import { Task } from "@data/tasks/models/tasks";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import * as _ from "lodash";
 import { MediaObserver } from "@ngbracket/ngx-layout";
 import { TaskService } from "../../../../core/services/task.service";
@@ -31,6 +32,7 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
     user: User;
     timer: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     constructor(
         private route: ActivatedRoute,
         private cd: ChangeDetectorRef,
@@ -39,19 +41,12 @@ export class WeekDaysComponent implements OnInit, OnDestroy {
         private router: Router,
         private store: Store,
         private userService: UserService,
-        private media: MediaObserver
+        private media: MediaObserver,
     ) {
         this.regenerateWeekListAfterMidnight();
     }
 
-    regenerateWeekListAfterMidnight() {
-        const today = new Date();
-        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-        const timeToMidnight = tomorrow.getTime() - today.getTime();
-        // this.timer = setTimeout(() => {
-        //      this.feelWeekData();
-        // }, timeToMidnight);
-    }
+    regenerateWeekListAfterMidnight() {}
 
     isToday(date: Date | string = this.activeDateElement.date): boolean {
         const today: Date = new Date();

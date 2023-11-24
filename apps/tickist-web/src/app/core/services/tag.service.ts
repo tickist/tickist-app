@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Tag } from "@data/tags/models/tags";
-import { addDoc, collection, deleteDoc, doc, Firestore, setDoc, updateDoc } from "@angular/fire/firestore";
+import { collection, deleteDoc, doc, Firestore, setDoc, updateDoc } from "@angular/fire/firestore";
 
 const tagsCollectionName = "tags";
 

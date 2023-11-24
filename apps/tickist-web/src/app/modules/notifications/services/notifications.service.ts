@@ -1,10 +1,9 @@
-import { Injectable, Injector, Optional } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { savefcmToken } from "../../../core/actions/user.actions";
 import { getToken, isSupported, Messaging } from "@angular/fire/messaging";
 import { doc, Firestore, runTransaction, updateDoc } from "@angular/fire/firestore";
-import { EMPTY, from, Observable } from "rxjs";
-import { environment } from "../../../../environments/environment";
+import { EMPTY, Observable } from "rxjs";
 
 @Injectable({
     providedIn: "root",

@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from "@angular/core";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { Observable, Subject, Subscription } from "rxjs";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import * as _ from "lodash";
 import { Chart } from "../../models";
 import { Store } from "@ngrx/store";
-import { AppStore } from "../../../../store";
 import { selectDailyStatistics } from "../../statistics.selectors";
 import { takeUntil } from "rxjs/operators";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";

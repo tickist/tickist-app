@@ -4,7 +4,6 @@ import {
     clickOnWeekDay,
     compareTaskElementWithTaskObject,
     createFirebase,
-    login,
     removeOldFirebaseData,
     userID,
 } from "../../support/utils";
@@ -47,7 +46,8 @@ describe("Tasks", () => {
             cy.url().should("include", "home").should("include", "edit-task");
 
             cy.log("fill main form");
-            cy.get("input[name=taskName]", { timeout: 20000 }).type(task.name).should("have.value", task.name);
+            cy.get("input[name=taskName]", { timeout: 20000 }).type(task.name);
+            cy.get("input[name=taskName]", { timeout: 20000 }).should("have.value", task.name);
             cy.get("tickist-priority").find("button").contains(task.priority).click();
 
             cy.get("input[name=finishDate]").click();
@@ -62,13 +62,15 @@ describe("Tasks", () => {
 
             cy.log("fill steps");
             clickMenuElement("Steps");
-            cy.get("#steps").find("input").last().type("step 1").should("have.value", "step 1");
+            cy.get("#steps").find("input").last().type("step 1");
+            cy.get("#steps").find("input").last().should("have.value", "step 1");
             cy.get("#add-step").contains("Add new step").click();
             cy.get("#steps").find("input").last().type("step 2");
             // extra
             clickMenuElement("Extra");
 
-            cy.get("textarea").type("Task description").should("have.value", "Task description");
+            cy.get("textarea").type("Task description");
+            cy.get("textarea").should("have.value", "Task description");
 
             cy.get("button[type='submit']").click();
 
@@ -245,14 +247,16 @@ describe("Tasks", () => {
             cy.get('tickist-single-task:contains("Task 4")').should("not.exist");
             clickOnProject("Project 2");
             cy.get('tickist-single-task:contains("Task 4")').then(($task) => {
-                cy.wrap($task.find("#first-row")).trigger("mouseenter").wrap($task.find("tickist-pin-button")).click();
+                cy.wrap($task.find("#first-row")).trigger("mouseenter");
+                cy.wrap($task.find("tickist-pin-button")).click();
             });
             clickOnWeekDay("today");
 
             cy.get('tickist-single-task:contains("Task 4")').then(($task) => {
                 // eslint-disable-next-line no-unused-expressions, @typescript-eslint/no-unused-expressions
                 expect($task.find("tickist-pin-button")).to.be.visible;
-                cy.wrap($task.find("#first-row")).trigger("mouseenter").wrap($task.find("tickist-pin-button")).click();
+                cy.wrap($task.find("#first-row")).trigger("mouseenter");
+                cy.wrap($task.find("tickist-pin-button")).click();
             });
             cy.get('tickist-single-task:contains("Task 4")').should("not.exist");
         });

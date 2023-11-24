@@ -1,25 +1,22 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import {TeamComponent} from './components/team/team.component';
-import {TasksTreeViewComponent} from '../tasks-tree-view/pages/tasks-tree-view/tasks-tree-view.component';
-
-
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { TeamComponent } from "./components/team/team.component";
 
 const routes: Routes = [
     {
-        path: '',
+        path: "",
         children: [
             {
-                path: '',
-                outlet: 'content',
-                component: TeamComponent
-            }
-        ]
-    }
+                path: "",
+                outlet: "content",
+                component: TeamComponent,
+            },
+        ],
+    },
 ];
 
 @NgModule({
     imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+    exports: [RouterModule],
 })
 export class TickistTeamRoutingModule {}

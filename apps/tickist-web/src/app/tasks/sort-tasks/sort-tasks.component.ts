@@ -11,8 +11,6 @@ export class SortTasksComponent {
     constructor(public dialog: MatDialog) {}
 
     openSortByDialog() {
-        const dialogRef = this.dialog.open(SortByDialogComponent, <
-            MatDialogConfig
-        >{ height: "360px", width: "305px" });
+        this.dialog.open(SortByDialogComponent, <MatDialogConfig>{ height: "360px", width: "305px" });
     }
 }

@@ -1,7 +1,6 @@
-import { Task } from '@data';
-import {Action, createReducer, on} from "@ngrx/store";
-import {AuthState} from "../../../core/reducers/auth.reducer";
-import {clearArchive, getArchivedTasks, saveToStore, startFetching, stopFetching} from "../actions/archive.actions";
+import { Task } from "@data";
+import { Action, createReducer, on } from "@ngrx/store";
+import { clearArchive, getArchivedTasks, saveToStore, startFetching, stopFetching } from "../actions/archive.actions";
 
 export interface ArchiveState {
     isLoading: boolean;
@@ -10,32 +9,32 @@ export interface ArchiveState {
 
 export const initialState: ArchiveState = {
     isLoading: false,
-    tasks: []
+    tasks: [],
 };
 
 const archiveReducer = createReducer(
     initialState,
-    on(getArchivedTasks, (state, props) => ({
-            isLoading: true,
-            tasks: []
-        })),
-    on(startFetching, (state, props) => ({
-            isLoading: true,
-            tasks: [...state.tasks]
-        })),
-    on(stopFetching, (state, props) => ({
-            isLoading: false,
-            tasks: [...state.tasks]
-        })),
+    on(getArchivedTasks, () => ({
+        isLoading: true,
+        tasks: [],
+    })),
+    on(startFetching, (state) => ({
+        isLoading: true,
+        tasks: [...state.tasks],
+    })),
+    on(stopFetching, (state) => ({
+        isLoading: false,
+        tasks: [...state.tasks],
+    })),
     on(saveToStore, (state, props) => ({
-            isLoading: false,
-            tasks: [...props.archivedTasks]
-        })),
-    on(clearArchive, (state, props) => ({
-            isLoading: false,
-            tasks: []
-        }))
-)
+        isLoading: false,
+        tasks: [...props.archivedTasks],
+    })),
+    on(clearArchive, () => ({
+        isLoading: false,
+        tasks: [],
+    })),
+);
 
 export function reducer(state: ArchiveState, action: Action) {
     return archiveReducer(state, action);

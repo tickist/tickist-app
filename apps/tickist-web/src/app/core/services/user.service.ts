@@ -4,31 +4,13 @@ import { Store } from "@ngrx/store";
 import { User } from "@data/users/models";
 import { TasksFiltersService } from "./tasks-filters.service";
 import { selectLoggedInUser } from "../selectors/user.selectors";
-import {
-    Auth,
-    confirmPasswordReset,
-    sendPasswordResetEmail,
-} from "@angular/fire/auth";
-import { finalize } from "rxjs/operators";
-import {
-    ref,
-    Storage,
-    uploadBytes,
-    uploadBytesResumable,
-} from "@angular/fire/storage";
-import { changeAvatar } from "../actions/user.actions";
+import { Auth, confirmPasswordReset, sendPasswordResetEmail } from "@angular/fire/auth";
+import { ref, Storage, uploadBytesResumable } from "@angular/fire/storage";
 import { USER_AVATAR_PATH } from "@data/users/config-user";
 import { NotificationPermission } from "@data";
+import { doc, Firestore, updateDoc } from "@angular/fire/firestore";
 
 const userCollectionName = "users";
-import {
-    Firestore,
-    doc,
-    onSnapshot,
-    DocumentReference,
-    docSnapshots,
-    updateDoc,
-} from "@angular/fire/firestore";
 
 @Injectable({
     providedIn: "root",
@@ -42,7 +24,7 @@ export class UserService {
         private firestore: Firestore,
         private storage: Storage,
         private tasksFiltersService: TasksFiltersService,
-        private authFire: Auth
+        private authFire: Auth,
     ) {
         this.user$ = this.store.select(selectLoggedInUser);
     }
@@ -62,9 +44,9 @@ export class UserService {
             () => {
                 // success, show some message
             },
-            (err) => {
+            () => {
                 // handle errors
-            }
+            },
         );
     }
 

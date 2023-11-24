@@ -43,7 +43,6 @@ import { TasksFiltersEffects } from "./effects/tasks-filters.effects";
 import { ShowNotificationAboutNewDayComponent } from "./header/show-notification-about-new-day/show-notification-about-new-day.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AngularFireAuthModule } from "@angular/fire/compat/auth";
-import { AngularFirestoreModule } from "@angular/fire/compat/firestore";
 import { AngularFireStorageModule } from "@angular/fire/compat/storage";
 import { TickistSingleTaskModule } from "../single-task/single-task.module";
 import { TickistNotificationsModule } from "../modules/notifications/notifications.module";

@@ -1,11 +1,10 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {ShowOfflineModeComponent} from './show-offline-mode.component';
-import {MockConfigurationService} from '../../../testing/mocks/configurationService';
-import {APP_BASE_HREF} from '@angular/common';
-import {StoreModule} from '@ngrx/store';
+import { ShowOfflineModeComponent } from "./show-offline-mode.component";
+import { MockConfigurationService } from "../../../testing/mocks/configurationService";
+import { StoreModule } from "@ngrx/store";
 
-describe('ShowOfflineModeComponent', () => {
+describe("ShowOfflineModeComponent", () => {
     let component: ShowOfflineModeComponent;
     let fixture: ComponentFixture<ShowOfflineModeComponent>;
 
@@ -14,16 +13,16 @@ describe('ShowOfflineModeComponent', () => {
         TestBed.configureTestingModule({
             imports: [StoreModule.forRoot({})],
             declarations: [ShowOfflineModeComponent],
-            providers: [
-                configurationService.getProviders()
-            ]
-        }).compileComponents().then(() => {
-            fixture = TestBed.createComponent(ShowOfflineModeComponent);
-            component = fixture.componentInstance;
-        });
+            providers: [configurationService.getProviders()],
+        })
+            .compileComponents()
+            .then(() => {
+                fixture = TestBed.createComponent(ShowOfflineModeComponent);
+                component = fixture.componentInstance;
+            });
     }));
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

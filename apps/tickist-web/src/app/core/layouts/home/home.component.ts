@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { select, Store } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import { Router } from "@angular/router";
 import { Task } from "@data/tasks/models/tasks";
 import { Project } from "@data/projects";
@@ -7,13 +7,13 @@ import { ProjectService } from "../../services/project.service";
 import { TaskService } from "../../services/task.service";
 import { UserService } from "../../services/user.service";
 import { TagService } from "../../services/tag.service";
-import { MediaChange, MediaObserver } from "@ngbracket/ngx-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import { ConfigurationService } from "../../services/configuration.service";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import _ from "lodash";
 import { Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
 import { SideNavVisibility } from "@data/configurations";
-import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { selectLoggedInUser } from "../../selectors/user.selectors";
 import { NotificationPermission, User } from "@data";
@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         private media: MediaObserver,
         private configurationService: ConfigurationService,
         private cd: ChangeDetectorRef,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
     ) {
         this.config = new MatSnackBarConfig();
     }
@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             .select(selectLoggedInUser)
             .pipe(
                 filter((user) => !!user),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe((user: User) => {
                 if (user.notificationPermission === NotificationPermission.unknown) {

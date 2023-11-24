@@ -12,18 +12,6 @@ import { Editor } from "../../users";
 import { addClickableLinks } from "@tickist/utils";
 import { ProjectType } from "./projects-type";
 
-interface IProject {
-    id: string;
-    name: string;
-    isActive?: boolean;
-    isInbox?: boolean;
-    description?: string;
-    ancestor?: string;
-    color?: string;
-    inviteUserByEmail?: string;
-    lastEditor: Editor;
-}
-
 export enum InviteUserStatus {
     processing,
     error,
@@ -67,8 +55,6 @@ export class Project {
         if (project.defaultTypeFinishDate === null) {
             this.defaultTypeFinishDate = DEFAULT_TYPE_FINISH_DATE;
         }
-        this.shareWith = this.shareWith.map(
-            (user) => new ShareWithUser(<IShareWithUser>user)
-        );
+        this.shareWith = this.shareWith.map((user) => new ShareWithUser(<IShareWithUser>user));
     }
 }

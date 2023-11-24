@@ -1,32 +1,25 @@
-import {Component, forwardRef, Input} from '@angular/core';
-import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
+import { Component, forwardRef, Input } from "@angular/core";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
-
-const noop = () => {
-};
-
-// export const COLOR_PICKER_INPUT_CONTROL_VALUE_ACCESSOR: any = {
-//     provide: NG_VALUE_ACCESSOR,
-//     useExisting: forwardRef(() => ColorPickerComponent),
-//     multi: true
-// };
+const noop = () => {};
 
 @Component({
-    selector: 'tickist-color-picker',
-    templateUrl: './color-picker.html',
-    styleUrls: ['./color-picker.scss'],
-    providers: [{
-        provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => ColorPickerComponent),
-        multi: true
-    }]
+    selector: "tickist-color-picker",
+    templateUrl: "./color-picker.html",
+    styleUrls: ["./color-picker.scss"],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => ColorPickerComponent),
+            multi: true,
+        },
+    ],
 })
 export class ColorPickerComponent implements ControlValueAccessor {
-
     @Input() colors;
 
     // The internal data model
-    innerValue: any = '';
+    innerValue: any = "";
 
     // Placeholders for the callbacks which are later providesd
     // by the Control Value Accessor
@@ -44,10 +37,6 @@ export class ColorPickerComponent implements ControlValueAccessor {
             this.innerValue = v;
             this.onChangeCallback(v);
         }
-    }
-
-
-    constructor() {
     }
 
     // From ControlValueAccessor interface
@@ -71,6 +60,4 @@ export class ColorPickerComponent implements ControlValueAccessor {
         this.innerValue = color;
         this.onChangeCallback(color);
     }
-
-
 }

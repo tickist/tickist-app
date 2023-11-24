@@ -1,10 +1,4 @@
-import {
-    Component,
-    HostListener,
-    OnDestroy,
-    OnInit,
-    ViewChild,
-} from "@angular/core";
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import {
     DEFAULT_PRIORITY,
     DEFAULT_TYPE_FINISH_DATE,
@@ -15,22 +9,14 @@ import {
     ShareWithUser,
 } from "@data/projects";
 import { Location } from "@angular/common";
-import {
-    UntypedFormBuilder,
-    UntypedFormControl,
-    UntypedFormGroup,
-    Validators,
-} from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SimpleUser, User } from "@data/users/models";
-import {  MatDialog } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { filter, map, startWith, takeUntil } from "rxjs/operators";
-import {
-    requestCreateProject,
-    requestUpdateProject,
-} from "../../../../core/actions/projects/projects.actions";
+import { requestCreateProject, requestUpdateProject } from "../../../../core/actions/projects/projects.actions";
 import { Store } from "@ngrx/store";
 import { selectAllProjectsWithLevelAndTreeStructures } from "../../../../core/selectors/projects.selectors";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
@@ -40,10 +26,7 @@ import { DeleteUserConfirmationDialogComponent } from "../../components/delete-u
 import { addClickableLinks } from "@tickist/utils";
 import { ProjectService } from "../../../../core/services/project.service";
 import { TASKS_VIEWS_LIST } from "@data";
-import {
-    hideAddTaskButton,
-    showAddTaskButton,
-} from "../../../../core/actions/add-task-button-visibility.actions";
+import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
 
 @Component({
     selector: "tickist-project",
@@ -51,6 +34,8 @@ import {
     styleUrls: ["./project.component.scss"],
 })
 export class ProjectComponent implements OnInit, OnDestroy {
+    @ViewChild("auto") auto: any;
+    @ViewChild("matAutocomplete") matAutocomplete: any;
     enter = "Enter";
     project: Project;
     projects: Project[];
@@ -80,9 +65,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     projectTypes: ProjectType[];
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @ViewChild("auto") auto: any;
-    @ViewChild("matAutocomplete") matAutocomplete: any;
-
     constructor(
         private fb: UntypedFormBuilder,
         private route: ActivatedRoute,
@@ -91,23 +73,28 @@ export class ProjectComponent implements OnInit, OnDestroy {
         public dialog: MatDialog,
         private configurationService: ConfigurationService,
         private router: Router,
-        private projectService: ProjectService
+        private projectService: ProjectService,
     ) {
         this.addUserToShareWithListCtrl = new UntypedFormControl();
         this.menu = this.createMenuDict();
     }
 
+    @HostListener("window:keyup", ["$event"])
+    keyEvent(event: KeyboardEvent) {
+        if (event.key === this.enter && this.checkActiveItemInMenu("sharing")) {
+            this.inviteUser();
+        }
+    }
+
     ngOnInit() {
-        this.typeFinishDateOptions =
-            this.configurationService.configuration.commons.typeFinishDateOptions;
-        this.defaultFinishDateOptions =
-            this.configurationService.configuration.commons.choicesDefaultFinishDate;
+        this.typeFinishDateOptions = this.configurationService.configuration.commons.typeFinishDateOptions;
+        this.defaultFinishDateOptions = this.configurationService.configuration.commons.choicesDefaultFinishDate;
         this.defaultTaskView = TASKS_VIEWS_LIST;
         this.colors = this.configurationService.configuration.commons.colorList;
         this.route.params
             .pipe(
                 map((params) => params["ancestorProjectId"]),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe((ancestorProjectId) => {
                 this.ancestorProjectId = ancestorProjectId;
@@ -121,7 +108,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.subscription = this.stream$
             .pipe(
                 filter(([projects, , user]) => projects.length > 0 && user),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe(([projects, projectId, user, team]) => {
                 let project: Project;
@@ -129,9 +116,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 this.team = team;
                 this.projectsAncestors = [
                     { id: "", name: "No ancestor project" },
-                    ...projects
-                        .filter((p) => p.level < 2)
-                        .filter((p) => p.id !== projectId),
+                    ...projects.filter((p) => p.level < 2).filter((p) => p.id !== projectId),
                 ];
                 if (projectId) {
                     project = projects.find((p) => p.id === projectId);
@@ -146,13 +131,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.deleteOrLeaveProjectLabel = "Leave project";
                 }
                 this.project = project;
-                this.shareWith = project.shareWith.filter(
-                    (shareWithUser) => shareWithUser.id !== user.id
-                );
+                this.shareWith = project.shareWith.filter((shareWithUser) => shareWithUser.id !== user.id);
                 this.usersWithoutAccount = project.inviteUserByEmail;
-                this.submitButtonLabel = this.isNewProject()
-                    ? "Create"
-                    : "Save";
+                this.submitButtonLabel = this.isNewProject() ? "Create" : "Save";
                 if (this.projectForm) {
                     this.icon$ = this.projectForm
                         .get("branding")
@@ -160,7 +141,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                         .valueChanges.pipe(
                             startWith(this.project.icon),
                             filter((value) => !!value),
-                            takeUntil(this.ngUnsubscribe)
+                            takeUntil(this.ngUnsubscribe),
                         );
                     this.color$ = this.projectForm
                         .get("branding")
@@ -168,7 +149,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                         .valueChanges.pipe(
                             startWith(this.project.color),
                             filter((value) => !!value),
-                            takeUntil(this.ngUnsubscribe)
+                            takeUntil(this.ngUnsubscribe),
                         );
                     this.projectForm
                         .get("main")
@@ -176,35 +157,22 @@ export class ProjectComponent implements OnInit, OnDestroy {
                         .valueChanges.pipe(takeUntil(this.ngUnsubscribe))
                         .subscribe((value) => {
                             if (value) {
-                                this.projectForm
-                                    .get("main")
-                                    .get("projectType")
-                                    .disable();
+                                this.projectForm.get("main").get("projectType").disable();
                             } else {
-                                this.projectForm
-                                    .get("main")
-                                    .get("projectType")
-                                    .enable();
+                                this.projectForm.get("main").get("projectType").enable();
                             }
                         });
                 }
                 if (project.projectType === ProjectType.inbox) {
                     this.projectTypes = [ProjectType.inbox];
                 } else {
-                    this.projectTypes = [
-                        ProjectType.active,
-                        ProjectType.routineReminder,
-                        ProjectType.maybe,
-                    ];
+                    this.projectTypes = [ProjectType.active, ProjectType.routineReminder, ProjectType.maybe];
                 }
             });
-        this.addUserToShareWithListCtrl = new UntypedFormControl(
-            "",
-            Validators.compose([Validators.required, Validators.email])
-        );
+        this.addUserToShareWithListCtrl = new UntypedFormControl("", Validators.compose([Validators.required, Validators.email]));
         this.filteredUsers = this.addUserToShareWithListCtrl.valueChanges.pipe(
             startWith(""),
-            map((name) => this.filterUsers(name))
+            map((name) => this.filterUsers(name)),
         );
         this.store.dispatch(hideAddTaskButton());
     }
@@ -249,33 +217,21 @@ export class ProjectComponent implements OnInit, OnDestroy {
         return this.menu.find((item) => item.name === name).isActive;
     }
 
-    @HostListener("window:keyup", ["$event"])
-    keyEvent(event: KeyboardEvent) {
-        if (event.key === this.enter && this.checkActiveItemInMenu("sharing")) {
-            this.inviteUser();
-        }
-    }
-
     onSubmit(values) {
         if (this.projectForm.valid) {
             const project = Object.assign({}, this.project);
             project.name = values["main"]["name"];
             project.description = values["main"]["description"];
-            project.richDescription = addClickableLinks(
-                values["main"]["description"]
-            );
+            project.richDescription = addClickableLinks(values["main"]["description"]);
             project.ancestor = values["main"]["ancestor"];
             project.projectType = values["main"]["projectType"];
             project.color = values["branding"]["color"];
             project.defaultFinishDate = values["extra"]["defaultFinishDate"];
             project.defaultPriority = values["extra"]["defaultPriority"];
-            project.defaultTypeFinishDate =
-                values["extra"]["defaultTypeFinishDate"];
-            project.defaultTypeFinishDate =
-                values["extra"]["defaultTypeFinishDate"];
+            project.defaultTypeFinishDate = values["extra"]["defaultTypeFinishDate"];
+            project.defaultTypeFinishDate = values["extra"]["defaultTypeFinishDate"];
             project.taskView = values["extra"]["taskView"];
-            project.dialogTimeWhenTaskFinished =
-                values["extra"]["dialogTimeWhenTaskFinished"];
+            project.dialogTimeWhenTaskFinished = values["extra"]["dialogTimeWhenTaskFinished"];
             project.icon = values["branding"]["icon"];
             // @TODO maybe whole object instead of ID
 
@@ -290,7 +246,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 this.store.dispatch(
                     requestUpdateProject({
                         project: { id: project.id, changes: project },
-                    })
+                    }),
                 );
             }
             this.close();
@@ -322,12 +278,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
             extra: new UntypedFormGroup({
                 defaultFinishDate: new UntypedFormControl(project.defaultFinishDate),
                 defaultPriority: new UntypedFormControl(project.defaultPriority),
-                defaultTypeFinishDate: new UntypedFormControl(
-                    project.defaultTypeFinishDate
-                ),
-                dialogTimeWhenTaskFinished: new UntypedFormControl(
-                    project.dialogTimeWhenTaskFinished
-                ),
+                defaultTypeFinishDate: new UntypedFormControl(project.defaultTypeFinishDate),
+                dialogTimeWhenTaskFinished: new UntypedFormControl(project.dialogTimeWhenTaskFinished),
                 taskView: new UntypedFormControl(project.taskView),
             }),
             branding: new UntypedFormGroup({
@@ -357,8 +309,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             ],
             shareWithIds: [this.user.id],
             tags: [],
-            dialogTimeWhenTaskFinished:
-                this.user.dialogTimeWhenTaskFinishedInProject,
+            dialogTimeWhenTaskFinished: this.user.dialogTimeWhenTaskFinishedInProject,
         });
     }
 
@@ -367,9 +318,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         const content = `If you are sure you want to remove  ${user.username} from the shared list ${this.project.name},
                           click Yes. All tasks assigned to this person will be moved to her/his Inbox.`;
 
-        const dialogRef = this.dialog.open(
-            DeleteUserConfirmationDialogComponent
-        );
+        const dialogRef = this.dialog.open(DeleteUserConfirmationDialogComponent);
         dialogRef.componentInstance.setTitle(title);
         dialogRef.componentInstance.setContent(content);
         dialogRef
@@ -377,10 +326,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((result) => {
                 if (result) {
-                    this.projectService.removeUserFormShareWithList(
-                        this.project,
-                        user
-                    );
+                    this.projectService.removeUserFormShareWithList(this.project, user);
                 }
             });
     }
@@ -389,16 +335,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
         if (val) {
             const userIds = this.project.shareWith.map((u) => u.id);
 
-            if (
-                this.addUserToShareWithListCtrl.hasError("pattern") ||
-                this.addUserToShareWithListCtrl.hasError("required")
-            ) {
+            if (this.addUserToShareWithListCtrl.hasError("pattern") || this.addUserToShareWithListCtrl.hasError("required")) {
                 return [{ id: "", email: "Please write a valid email" }];
             } else {
                 return [
-                    ...this.team
-                        .filter((u) => !userIds.includes(u.id))
-                        .filter((u) => new RegExp(val, "gi").test(u.email)),
+                    ...this.team.filter((u) => !userIds.includes(u.id)).filter((u) => new RegExp(val, "gi").test(u.email)),
                     { email: val },
                 ];
             }
@@ -408,10 +349,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     inviteUser() {
         if (this.addUserToShareWithListCtrl.valid) {
-            this.projectService.addUserToProject(
-                this.project,
-                this.addUserToShareWithListCtrl.value
-            );
+            this.projectService.addUserToProject(this.project, this.addUserToShareWithListCtrl.value);
         } else {
             this.addUserToShareWithListCtrl.markAsDirty();
         }
@@ -423,13 +361,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     ancestorChange($event) {
         if ($event.value) {
-            const ancestorProjectType = this.projectsAncestors.find(
-                (project) => project.id === $event.value
-            ).projectType;
-            this.projectForm
-                .get("main")
-                .get("projectType")
-                .setValue(ancestorProjectType, { emitEvent: false });
+            const ancestorProjectType = this.projectsAncestors.find((project) => project.id === $event.value).projectType;
+            this.projectForm.get("main").get("projectType").setValue(ancestorProjectType, { emitEvent: false });
         }
     }
 

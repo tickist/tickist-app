@@ -1,24 +1,14 @@
 import { Task } from "@data/tasks/models/tasks";
-import {  MatDialog } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { Step } from "@data/tasks/models/steps";
 import { TimeDialogComponent } from "../time-dialog/time-dialog.component";
 import { ChangeFinishDateDialogComponent } from "../change-finish-date-dialog/change-finish-date-dialog.component";
 import { DeleteTaskDialogComponent } from "../delete-task-dialog/delete-task.dialog.component";
-import {
-    requestDeleteTask,
-    requestUpdateTask,
-    setStatusDone,
-} from "../../core/actions/tasks/task.actions";
+import { requestDeleteTask, requestUpdateTask, setStatusDone } from "../../core/actions/tasks/task.actions";
 import { Store } from "@ngrx/store";
-import {
-    hideAllMenuElements,
-    isOverdue,
-    isRepeated,
-    moveFinishDateFromPreviousFinishDate,
-} from "../utils/task-utils";
+import { hideAllMenuElements, isOverdue, isRepeated, moveFinishDateFromPreviousFinishDate } from "../utils/task-utils";
 import { filter, takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { parse } from "date-fns";
 import { Component, OnDestroy } from "@angular/core";
 
 @Component({
@@ -32,7 +22,10 @@ export class SingleTask2Component implements OnDestroy {
     ngUnsubscribe: Subject<void> = new Subject<void>();
     amountOfStepsDoneInPercent: number;
 
-    constructor(public store: Store, public dialog: MatDialog) {}
+    constructor(
+        public store: Store,
+        public dialog: MatDialog,
+    ) {}
 
     changeShowing(show) {
         const oldValue = this.task.menuShowing[show];
@@ -63,14 +56,10 @@ export class SingleTask2Component implements OnDestroy {
             steps.push(Object.assign({}, step, { status: newStatus }));
         });
         const task = Object.assign({}, this.task, { steps: steps });
-        this.amountOfStepsDoneInPercent =
-            (task.steps.filter((step) => step.status === 1).length * 100) /
-            task.steps.length;
+        this.amountOfStepsDoneInPercent = (task.steps.filter((step) => step.status === 1).length * 100) / task.steps.length;
 
         // if amount is 100 then status === 1
-        this.store.dispatch(
-            requestUpdateTask({ task: { id: task.id, changes: task } })
-        );
+        this.store.dispatch(requestUpdateTask({ task: { id: task.id, changes: task } }));
         if (this.amountOfStepsDoneInPercent === 100) {
             this.toggleDone();
         }
@@ -83,7 +72,7 @@ export class SingleTask2Component implements OnDestroy {
                     id: this.task.id,
                     changes: Object.assign({}, this.task, { taskType }),
                 },
-            })
+            }),
         );
     }
 
@@ -109,52 +98,39 @@ export class SingleTask2Component implements OnDestroy {
                         this.store.dispatch(
                             setStatusDone({
                                 task: { id: task.id, changes: task },
-                            })
+                            }),
                         );
                     });
-            } else if (
-                isRepeated(this.task) &&
-                isOverdue(this.task) &&
-                this.task.fromRepeating === 1
-            ) {
-                const dialogRef = this.dialog.open(
-                    ChangeFinishDateDialogComponent,
-                    {
-                        data: { task: task },
-                    }
-                );
+            } else if (isRepeated(this.task) && isOverdue(this.task) && this.task.fromRepeating === 1) {
+                const dialogRef = this.dialog.open(ChangeFinishDateDialogComponent, {
+                    data: { task: task },
+                });
                 dialogRef
                     .afterClosed()
                     .pipe(
                         filter((finishDate) => !!finishDate),
-                        takeUntil(this.ngUnsubscribe)
+                        takeUntil(this.ngUnsubscribe),
                     )
                     .subscribe((finishDate) => {
                         task.finishDate = finishDate;
                         this.store.dispatch(
                             setStatusDone({
                                 task: { id: task.id, changes: task },
-                            })
+                            }),
                         );
                     });
             } else {
-                this.store.dispatch(
-                    setStatusDone({ task: { id: task.id, changes: task } })
-                );
+                this.store.dispatch(setStatusDone({ task: { id: task.id, changes: task } }));
             }
         } else if (this.task.isDone === true) {
             task = Object.assign({}, this.task, {
                 isDone: false,
                 whenComplete: null,
             });
-            this.store.dispatch(
-                requestUpdateTask({ task: { id: task.id, changes: task } })
-            );
+            this.store.dispatch(requestUpdateTask({ task: { id: task.id, changes: task } }));
         } else if (this.task.onHold === true) {
             task = Object.assign({}, this.task, { isDone: false });
-            this.store.dispatch(
-                requestUpdateTask({ task: { id: task.id, changes: task } })
-            );
+            this.store.dispatch(requestUpdateTask({ task: { id: task.id, changes: task } }));
         }
     }
 
@@ -162,17 +138,13 @@ export class SingleTask2Component implements OnDestroy {
         const task = Object.assign({}, this.task, {
             pinned: !this.task.pinned,
         });
-        this.store.dispatch(
-            requestUpdateTask({ task: { id: task.id, changes: task } })
-        );
+        this.store.dispatch(requestUpdateTask({ task: { id: task.id, changes: task } }));
     }
 
     changePriority(priority: string) {
         if (this.task.priority !== priority) {
             const task = Object.assign({}, this.task, { priority: priority });
-            this.store.dispatch(
-                requestUpdateTask({ task: { id: task.id, changes: task } })
-            );
+            this.store.dispatch(requestUpdateTask({ task: { id: task.id, changes: task } }));
         }
     }
 
@@ -190,9 +162,7 @@ export class SingleTask2Component implements OnDestroy {
             delta = 30;
         }
         const task = moveFinishDateFromPreviousFinishDate(this.task, delta);
-        this.store.dispatch(
-            requestUpdateTask({ task: { id: this.task.id, changes: task } })
-        );
+        this.store.dispatch(requestUpdateTask({ task: { id: this.task.id, changes: task } }));
     }
 
     deleteTask() {
@@ -202,9 +172,7 @@ export class SingleTask2Component implements OnDestroy {
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((result) => {
                 if (result) {
-                    this.store.dispatch(
-                        requestDeleteTask({ taskId: this.task.id })
-                    );
+                    this.store.dispatch(requestDeleteTask({ taskId: this.task.id }));
                 }
             });
     }

@@ -1,19 +1,18 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {SnackBarMessageComponent} from './snack-bar-message.component';
-import {TickistMaterialModule} from '../../material.module';
-import { MatSnackBar, MatSnackBarModule as MatSnackBarModule } from '@angular/material/snack-bar';
+import { SnackBarMessageComponent } from "./snack-bar-message.component";
+import { TickistMaterialModule } from "../../material.module";
+import { MatSnackBarModule as MatSnackBarModule } from "@angular/material/snack-bar";
 
-describe('SnackBarMessageComponent', () => {
+describe("SnackBarMessageComponent", () => {
     let component: SnackBarMessageComponent;
     let fixture: ComponentFixture<SnackBarMessageComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-                imports: [TickistMaterialModule, MatSnackBarModule],
-                declarations: [SnackBarMessageComponent]
-            })
-            .compileComponents();
+            imports: [TickistMaterialModule, MatSnackBarModule],
+            declarations: [SnackBarMessageComponent],
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -22,7 +21,7 @@ describe('SnackBarMessageComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

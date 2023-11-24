@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
 import { Store } from "@ngrx/store";
 import { selectChartStatistics, selectGlobalStatistics } from "../../statistics.selectors";

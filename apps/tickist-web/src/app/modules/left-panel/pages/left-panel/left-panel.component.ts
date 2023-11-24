@@ -27,9 +27,9 @@ export class LeftPanelComponent implements OnInit, OnDestroy {
     maybeProjectCounter$: Observable<number>;
     remiderProjectCounter$: Observable<number>;
     inboxTasksCounter$: Observable<number>;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     home = "/" + homeRoutesName.home;
     dashboard = dashboardRoutesName.dashboard;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private router: Router, private store: Store) {}
 

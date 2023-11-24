@@ -1,7 +1,5 @@
-import {SpyObject} from '../test.helpers';
-import {ProjectsFiltersService} from '../../modules/projects-list/projects-filters.service';
-import {of} from 'rxjs';
-
+import { SpyObject } from "../test.helpers";
+import { ProjectsFiltersService } from "../../modules/projects-list/projects-filters.service";
 
 export class MockProjectsFiltersService extends SpyObject {
     currentTasksFilters$: any;
@@ -11,6 +9,6 @@ export class MockProjectsFiltersService extends SpyObject {
     }
 
     getProviders(): Array<any> {
-        return [{provide: ProjectsFiltersService, useValue: this}];
+        return [{ provide: ProjectsFiltersService, useValue: this }];
     }
 }

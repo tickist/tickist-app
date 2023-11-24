@@ -1,19 +1,17 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {PinButtonComponent} from './pin-button.component';
-import {TickistMaterialModule} from '../../material.module';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {IconsModule} from '../../icons.module';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { PinButtonComponent } from "./pin-button.component";
+import { TickistMaterialModule } from "../../material.module";
+import { IconsModule } from "../../icons.module";
 
-describe('PinButtonComponent', () => {
+describe("PinButtonComponent", () => {
     let component: PinButtonComponent;
     let fixture: ComponentFixture<PinButtonComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, IconsModule],
-            declarations: [PinButtonComponent]
-        })
-            .compileComponents();
+            declarations: [PinButtonComponent],
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -22,7 +20,7 @@ describe('PinButtonComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

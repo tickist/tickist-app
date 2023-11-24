@@ -10,6 +10,7 @@ import {
 } from "./filters-tasks.selectors";
 import { Task } from "@data/tasks/models/tasks";
 import { Tag } from "@data/tags/models/tags";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import * as _ from "lodash";
 import { orderBy } from "lodash";
 
@@ -72,7 +73,7 @@ export const selectTasksStreamInTagsView = createSelector(
         }
         tasks = orderBy(tasks, currentSortBy.sortKeys, currentSortBy.order);
         return tasks;
-    }
+    },
 );
 
 export const selectTasksStreamInProjectsView = createSelector(
@@ -118,7 +119,7 @@ export const selectTasksStreamInProjectsView = createSelector(
         }
 
         return tasks;
-    }
+    },
 );
 
 export const nextActionTasks = createSelector(selectAllTasks, selectLoggedInUser, selectSearchTasksText, (tasks, user, searchFilter) => {
@@ -129,7 +130,7 @@ export const nextActionTasks = createSelector(selectAllTasks, selectLoggedInUser
     return orderBy(
         tasks.filter((task) => task.owner.id === user.id).filter((task) => task.taskType === TaskType.nextAction),
         ["priority", (task) => _.deburr(task.name.toLowerCase())],
-        ["asc", "asc"]
+        ["asc", "asc"],
     );
 });
 
@@ -157,7 +158,7 @@ export const projectWithoutNextActionTasks = createSelector(
             projectsWithoutNextActionTasks = projectsWithoutNextActionTasks.filter((task) => re.test(task.name));
         }
         return projectsWithoutNextActionTasks;
-    }
+    },
 );
 
 export const nextActionTasksLength = createSelector(nextActionTasks, (tasks) => tasks.length);

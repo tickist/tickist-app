@@ -1,12 +1,12 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {DeleteUserConfirmationDialogComponent} from './delete-user-confirmation-dialog.component';
-import {TickistMaterialModule} from '../../../../material.module';
-import {ReactiveFormsModule} from '@angular/forms';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DeleteUserConfirmationDialogComponent } from "./delete-user-confirmation-dialog.component";
+import { TickistMaterialModule } from "../../../../material.module";
+import { ReactiveFormsModule } from "@angular/forms";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
-describe('DeleteUserConfirmationDialogComponent', () => {
+describe("DeleteUserConfirmationDialogComponent", () => {
     let component: DeleteUserConfirmationDialogComponent;
     let fixture: ComponentFixture<DeleteUserConfirmationDialogComponent>;
 
@@ -14,17 +14,18 @@ describe('DeleteUserConfirmationDialogComponent', () => {
         TestBed.configureTestingModule({
             imports: [TickistMaterialModule, ReactiveFormsModule, NoopAnimationsModule],
             declarations: [DeleteUserConfirmationDialogComponent],
-            providers: [{
-                provide: MatDialogRef,
-                useValue: {
-                    close: (dialogResult: any) => {
-                    }
-                }
-            }, {
-                provide: MAT_DIALOG_DATA,
-            }]
-        })
-            .compileComponents();
+            providers: [
+                {
+                    provide: MatDialogRef,
+                    useValue: {
+                        close: () => {},
+                    },
+                },
+                {
+                    provide: MAT_DIALOG_DATA,
+                },
+            ],
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -33,7 +34,7 @@ describe('DeleteUserConfirmationDialogComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

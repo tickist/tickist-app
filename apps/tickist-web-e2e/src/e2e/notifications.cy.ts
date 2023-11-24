@@ -1,7 +1,6 @@
-import { createFirebase, login, removeOldFirebaseData, userID } from "../support/utils";
+import { createFirebase, removeOldFirebaseData, userID } from "../support/utils";
 import { Notification } from "@data";
 import { createUniqueId } from "@tickist/utils";
-import { Timestamp } from "@angular/fire/firestore";
 
 describe("Notifications feature", () => {
     beforeEach(() => {

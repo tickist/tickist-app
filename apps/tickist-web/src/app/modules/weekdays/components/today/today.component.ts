@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, OnDestroy } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { Task } from "@data/tasks/models/tasks";
 import { User } from "@data/users/models";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { Store } from "@ngrx/store";
-import { AppStore } from "../../../../store";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { updateUser } from "../../../../core/actions/user.actions";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
@@ -23,6 +22,7 @@ export class TodayComponent implements OnInit, OnDestroy {
     activeDateElement: IActiveDateElement;
     user: User;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     constructor(private store: Store) {}
 
     ngOnInit() {

@@ -64,6 +64,7 @@ export function clickOnProject(projectName: string, projectType = "Active projec
         cy.get("mat-sidenav").find("mat-panel-title").contains(projectName).click();
     } else if (projectName !== "All projects") {
         // @TODO remove force
+        // eslint-disable-next-line cypress/unsafe-to-chain-command
         cy.get("tickist-single-project")
             .contains(projectName)
             .click({ force: true })
@@ -85,6 +86,7 @@ export function clickOnProjectTypeLeftPanelMenu(projectType) {
 
 export function clickOnEditProject(projectName: string, projectType = "Active projects") {
     cy.get("mat-sidenav").find("mat-panel-title").contains(projectType).click();
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.get("tickist-single-project")
         .contains(projectName)
         .click({ force: true })
@@ -135,6 +137,7 @@ export function compareTaskElementWithTaskObject($taskElement, taskObject) {
         expect($taskElement).to.contain(taskObject.finishTime);
     }
     // project
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.wrap($taskElement.find("#taskProjectNameIcon", { timeout: 20000 }))
         .click()
         .then(() => {

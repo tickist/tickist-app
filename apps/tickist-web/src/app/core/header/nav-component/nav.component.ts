@@ -23,16 +23,6 @@ import { setActiveProject } from "../../actions/projects/active-project.actions"
     styleUrls: ["./nav.component.scss"],
 })
 export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
-    user: User;
-    user$: Observable<User>;
-    progressBarIsEnabled$: Observable<boolean>;
-    staticUrl: string;
-    leftSideNavVisibility: any = {};
-    rightSideNavVisibility: any = {};
-    progressBar = false;
-    isOffline = false;
-    avatar: any;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
     @ViewChild("homeElement", { read: ElementRef }) homeElement: ElementRef;
     @ViewChild("homeMobileElement", { read: ElementRef })
     homeMobileElement: ElementRef;
@@ -43,6 +33,16 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild("tagsElement", { read: ElementRef }) tagsElement: ElementRef;
     @ViewChild("tagsMobileElement", { read: ElementRef })
     tagsMobileElement: ElementRef;
+    user: User;
+    user$: Observable<User>;
+    progressBarIsEnabled$: Observable<boolean>;
+    staticUrl: string;
+    leftSideNavVisibility: any = {};
+    rightSideNavVisibility: any = {};
+    progressBar = false;
+    isOffline = false;
+    avatar: any;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
         private configurationService: ConfigurationService,
@@ -51,7 +51,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         private router: Router,
         private renderer: Renderer2,
         private storage: Storage,
-        private store: Store
+        private store: Store,
     ) {}
 
     ngOnInit() {
@@ -60,7 +60,7 @@ export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
         this.router.events
             .pipe(
                 filter((event) => event instanceof NavigationEnd),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe((event: NavigationEnd) => {
                 this.addClassToActiveElement(event.urlAfterRedirects);

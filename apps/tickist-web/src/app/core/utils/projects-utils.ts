@@ -1,11 +1,7 @@
-import {
-    InviteUserStatus,
-    Project,
-    ProjectType,
-    ProjectWithLevel,
-} from "@data/projects";
+import { InviteUserStatus, Project, ProjectType, ProjectWithLevel } from "@data/projects";
 import { ProjectLeftPanel } from "../../modules/projects-list/models/project-list";
-import * as _ from "lodash";
+// eslint-disable-next-line @typescript-eslint/naming-convention
+import _ from "lodash";
 
 export function addUserToShareList(project: Project, email) {
     // const shareWith = [...project.shareWith];
@@ -22,24 +18,18 @@ export function addUserToShareList(project: Project, email) {
 
 export function calculateProjectDescendants(activeProject, projects) {
     const projectDescendants = [activeProject.id];
-    const children = projects.filter(
-        (project) => activeProject.id === project.ancestor
-    );
+    const children = projects.filter((project) => activeProject.id === project.ancestor);
     const childrenIds = children.map((project) => project.id);
-    const grandChildren = projects.filter((project) =>
-        childrenIds.includes(project.ancestor)
-    );
+    const grandChildren = projects.filter((project) => childrenIds.includes(project.ancestor));
     return projectDescendants.concat(
         childrenIds,
-        grandChildren.map((project) => project.id)
+        grandChildren.map((project) => project.id),
     );
 }
 
 export function calculateTasksCounter(projects, tasks) {
     return projects.map((project) => {
-        const tasksCounter = tasks.filter(
-            (task) => task.taskProject.id === project.id
-        ).length;
+        const tasksCounter = tasks.filter((task) => task.taskProject.id === project.id).length;
         return new ProjectLeftPanel({
             name: project.name,
             id: project.id,
@@ -57,9 +47,7 @@ export function calculateTasksCounter(projects, tasks) {
 }
 
 export function calculateProjectsLevel(projects) {
-    const firstLevel = projects
-        .filter((project) => !project.ancestor)
-        .map((project) => new ProjectWithLevel({ ...project, level: 0 }));
+    const firstLevel = projects.filter((project) => !project.ancestor).map((project) => new ProjectWithLevel({ ...project, level: 0 }));
     const firstLevelIds = firstLevel.map((project) => project.id);
     const secondLevel = projects
         .filter((project) => firstLevelIds.includes(project.ancestor))
@@ -69,34 +57,19 @@ export function calculateProjectsLevel(projects) {
         .filter((project) => secondLevelIds.includes(project.ancestor))
         .map((project) => new ProjectWithLevel({ ...project, level: 2 }));
     const thirdLevelIds = thirdLevel.map((project) => project.id);
-    const usedProjectsIds = [
-        ...firstLevelIds,
-        ...secondLevelIds,
-        ...thirdLevelIds,
-    ];
+    const usedProjectsIds = [...firstLevelIds, ...secondLevelIds, ...thirdLevelIds];
     const projectsFromSharedLists = projects
         .filter((project) => !usedProjectsIds.includes(project.id))
         .map((project) => new ProjectWithLevel({ ...project, level: 0 }));
-    return [
-        [...firstLevel, ...projectsFromSharedLists],
-        secondLevel,
-        thirdLevel,
-    ];
+    return [[...firstLevel, ...projectsFromSharedLists], secondLevel, thirdLevel];
 }
 
-export function generateDifferentLevelsOfProjects(
-    projects: Project[]
-): ProjectWithLevel[] {
+export function generateDifferentLevelsOfProjects(projects: Project[]): ProjectWithLevel[] {
     // @TODO change listOfList => ProjectsTreeview
-    projects = _.orderBy(
-        projects,
-        [(project) => _.deburr(project.name.toLowerCase())],
-        ["asc"]
-    );
+    projects = _.orderBy(projects, [(project) => _.deburr(project.name.toLowerCase())], ["asc"]);
 
     const listOfList = [];
-    const [firstLevel, secondLevel, thirdLevel] =
-        calculateProjectsLevel(projects);
+    const [firstLevel, secondLevel, thirdLevel] = calculateProjectsLevel(projects);
 
     firstLevel.forEach((item0) => {
         listOfList.push(item0);

@@ -4,6 +4,7 @@ import { User } from "@data/users/models";
 import { SortBy } from "@data/tasks/models/sortBy";
 import { Filter } from "@data/filter";
 import { updateCurrentFilter } from "../../reducers/actions/tasks";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import * as _ from "lodash";
 
 @Injectable({
@@ -124,10 +125,7 @@ export class TasksFiltersService {
     }
 
     static getDefaultAssignedToFilters(user: User) {
-        return [
-            TasksFiltersService.getAssignedToMeFilter(user),
-            TasksFiltersService.getAssignedToAllFilter(),
-        ];
+        return [TasksFiltersService.getAssignedToMeFilter(user), TasksFiltersService.getAssignedToAllFilter()];
     }
 
     static getDefaultCurrentAssignedToFilter(user: User) {
@@ -187,10 +185,7 @@ export class TasksFiltersService {
             new SortBy({
                 id: 1,
                 label: "sorting",
-                sortKeys: [
-                    "priority",
-                    (task) => _.deburr(task.name.toLowerCase()),
-                ],
+                sortKeys: ["priority", (task) => _.deburr(task.name.toLowerCase())],
                 order: ["desc"],
                 name: "priority",
                 icon: "arrow-up",
@@ -222,10 +217,7 @@ export class TasksFiltersService {
             new SortBy({
                 id: 5,
                 label: "sorting",
-                sortKeys: [
-                    "priority",
-                    (task) => _.deburr(task.name.toLowerCase()),
-                ],
+                sortKeys: ["priority", (task) => _.deburr(task.name.toLowerCase())],
                 order: ["asc"],
                 name: "priority",
                 icon: "arrow-down",
@@ -309,7 +301,7 @@ export class TasksFiltersService {
                 label: "tags",
                 value: "allTasks",
                 name: "all tasks",
-            })
+            }),
         );
     }
 

@@ -1,13 +1,4 @@
-import {
-    clickMenuElement,
-    clickOnEditProject,
-    clickOnProject,
-    clickOnProjectTypeLeftPanelMenu,
-    createFirebase,
-    login,
-    logout,
-    removeOldFirebaseData,
-} from "../../support/utils";
+import { clickOnEditProject, clickOnProjectTypeLeftPanelMenu, createFirebase, removeOldFirebaseData } from "../../support/utils";
 import { Project, ProjectType } from "@data";
 import { createUniqueId } from "@tickist/utils";
 
@@ -107,7 +98,8 @@ describe("Change project type", () => {
         cy.get(`tickist-single-project:contains(${projectName})`, {
             timeout: 20000,
         }).then(($project) => {
-            cy.wrap($project.find("div#project")).trigger("mouseenter").get('[data-cy="project-fast-menu"]').click();
+            cy.wrap($project.find("div#project")).trigger("mouseenter");
+            cy.get('[data-cy="project-fast-menu"]').click();
             cy.get("button").contains("Convert to Someday/maybe").click();
         });
         clickOnProjectTypeLeftPanelMenu("Someday/maybe projects");

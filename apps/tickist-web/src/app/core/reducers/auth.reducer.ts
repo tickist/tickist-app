@@ -1,6 +1,5 @@
-import {fetchedLoginUser, login, logout} from '../actions/auth.actions';
-import {Action, createReducer, on} from "@ngrx/store";
-
+import { fetchedLoginUser, login, logout } from "../actions/auth.actions";
+import { Action, createReducer, on } from "@ngrx/store";
 
 export interface AuthState {
     loggedIn: boolean;
@@ -9,24 +8,24 @@ export interface AuthState {
 
 export const initialState: AuthState = {
     loggedIn: false,
-    uid: undefined
+    uid: undefined,
 };
 
 const authReducer = createReducer(
     initialState,
     on(login, (state, props) => ({
-            loggedIn: true,
-            uid: props.uid
-        })),
-    on(fetchedLoginUser, (state, props) => ({
-            loggedIn: true,
-            ...state
-        })),
+        loggedIn: true,
+        uid: props.uid,
+    })),
+    on(fetchedLoginUser, (state) => ({
+        loggedIn: true,
+        ...state,
+    })),
     on(logout, () => ({
-            loggedIn: false,
-            uid: undefined
-        })),
-)
+        loggedIn: false,
+        uid: undefined,
+    })),
+);
 
 export function reducer(state: AuthState, action: Action) {
     return authReducer(state, action);

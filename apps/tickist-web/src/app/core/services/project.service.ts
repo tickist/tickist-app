@@ -27,7 +27,7 @@ export class ProjectService {
         private store: Store,
         public snackBar: MatSnackBar,
         private router: Router,
-        private tasksFiltersService: TasksFiltersService
+        private tasksFiltersService: TasksFiltersService,
     ) {
         this.projects$ = this.store.select(selectAllProjects);
         this.selectedProject$ = this.store.select(selectActiveProject);
@@ -45,7 +45,7 @@ export class ProjectService {
                         inviteUserByEmail: [...project.inviteUserByEmail, entry],
                     }),
                 },
-            })
+            }),
         );
     }
 
@@ -61,7 +61,7 @@ export class ProjectService {
                         shareWithIds,
                     }),
                 },
-            })
+            }),
         );
     }
 
@@ -73,7 +73,7 @@ export class ProjectService {
                     id: project.id,
                     changes: Object.assign({}, project, { inviteUserByEmail }),
                 },
-            })
+            }),
         );
     }
 
@@ -100,8 +100,8 @@ export class ProjectService {
                 JSON.stringify({
                     ...newProjectWithLastEditor,
                     id: docRef.id,
-                })
-            )
+                }),
+            ),
         );
 
         // const newProject = this.db.collection(projectsCollectionName).ref.doc();
@@ -121,7 +121,7 @@ export class ProjectService {
         // );
     }
 
-    async updateProject(project: Project, user: User, withoutSnackBar = false) {
+    async updateProject(project: Project, user: User) {
         const editor = {
             id: user.id,
             email: user.email,

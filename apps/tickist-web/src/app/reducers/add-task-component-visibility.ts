@@ -1,21 +1,20 @@
-import {Action, createReducer, on} from "@ngrx/store";
-import {updateAddTaskComponentVisibility} from "./actions/configuration";
-import {ProjectsState} from "../core/reducers/projects/projects.reducer";
+import { Action, createReducer, on } from "@ngrx/store";
+import { updateAddTaskComponentVisibility } from "./actions/configuration";
 
 interface AddTaskComponentVisibilityState {
-    visible: boolean
+    visible: boolean;
 }
 
-const initialState =  {
-    visible: true
-}
+const initialState = {
+    visible: true,
+};
 
 const addTaskComponentVisibilityReducer = createReducer(
     initialState,
     on(updateAddTaskComponentVisibility, (state, props) => ({
-            visible: props.visible
-        }))
-)
+        visible: props.visible,
+    })),
+);
 
 export function reducer(state: AddTaskComponentVisibilityState, action: Action) {
     return addTaskComponentVisibilityReducer(state, action);

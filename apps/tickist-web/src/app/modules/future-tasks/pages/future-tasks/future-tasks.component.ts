@@ -7,7 +7,7 @@ import { ConfigurationService } from "../../../../core/services/configuration.se
 import { Task } from "@data/tasks/models/tasks";
 import { User } from "@data/users/models";
 import { FutureTasksFiltersService } from "../../core/services/future-tasks-filters.service";
-import { MediaChange, MediaObserver } from "@ngbracket/ngx-layout";
+import { MediaObserver } from "@ngbracket/ngx-layout";
 import { updateUser } from "../../../../core/actions/user.actions";
 import { Store } from "@ngrx/store";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
@@ -36,6 +36,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
     defaultTaskView = TASK_EXTENDED_VIEW.value;
     currentFilter: Filter;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     constructor(
         private taskService: TaskService,
         private route: ActivatedRoute,
@@ -44,7 +45,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         private store: Store,
         private futureTasksFiltersService: FutureTasksFiltersService,
         private cd: ChangeDetectorRef,
-        private media: MediaObserver
+        private media: MediaObserver,
     ) {}
 
     ngOnInit(): void {
@@ -53,14 +54,14 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
         this.route.params
             .pipe(
                 map((params) => (params["date"] ? params["date"] : format(new Date(), "LLLL-uuuu"))),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe((param) => {
                 this.store.dispatch(
                     updateActiveDate({
                         date: param,
                         state: StateActiveDateElement.future,
-                    })
+                    }),
                 );
             });
 
@@ -68,7 +69,7 @@ export class FutureTasksComponent implements OnInit, OnDestroy {
             .select(selectLoggedInUser)
             .pipe(
                 filter((user) => !!user),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe((user) => {
                 this.user = user;

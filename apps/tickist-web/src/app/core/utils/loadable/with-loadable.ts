@@ -1,5 +1,4 @@
-import {Loadable, onLoadableError, onLoadableLoad, onLoadableSuccess} from './loadable';
-import {ActionCreator} from "@ngrx/store";
+import { Loadable, onLoadableError, onLoadableLoad, onLoadableSuccess } from "./loadable";
 
 export interface Action {
     type: string;
@@ -13,8 +12,10 @@ export interface ActionTypes {
     errorActionType: string | string[];
 }
 
-export function withLoadable<T extends Loadable, U extends Action =
-    Action>(reducer: ReducerFunction<T, U>, {loadingActionType, successActionType, errorActionType}: ActionTypes) {
+export function withLoadable<T extends Loadable, U extends Action = Action>(
+    reducer: ReducerFunction<T, U>,
+    { loadingActionType, successActionType, errorActionType }: ActionTypes,
+) {
     return (state: T, action: U): T => {
         if (matchType(loadingActionType, action.type)) {
             state = onLoadableLoad(state);
@@ -30,5 +31,5 @@ export function withLoadable<T extends Loadable, U extends Action =
 }
 
 function matchType(actionType: string | string[], type: string): boolean {
-    return typeof actionType === 'string' ? actionType === type : actionType.indexOf(type) !== -1;
+    return typeof actionType === "string" ? actionType === type : actionType.indexOf(type) !== -1;
 }

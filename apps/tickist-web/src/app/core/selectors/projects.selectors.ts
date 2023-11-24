@@ -4,7 +4,7 @@ import { ActiveProjectState } from "../reducers/active-project.reducer";
 import * as fromCourse from "../reducers/projects/projects.reducer";
 import { ProjectsState } from "../reducers/projects/projects.reducer";
 import { calculateProjectDescendants, generateDifferentLevelsOfProjects } from "../utils/projects-utils";
-import { ProjectType, ProjectWithAllDescendants } from "@data/projects";
+import { ProjectType } from "@data/projects";
 
 export const selectActiveProjectsIdsState = createFeatureSelector<ActiveProjectsIdsState>("activeProjectsIds");
 export const selectActiveProjectState = createFeatureSelector<ActiveProjectState>("activeProject");
@@ -17,9 +17,9 @@ export const selectProjectById = (projectId: string) =>
 
 export const selectAllProjects = createSelector(selectProjectsState, fromCourse.selectAll);
 
-
 // eslint-disable-next-line max-len
-export const selectProjectByIdOrName = (idOrName: string) => createSelector(selectAllProjects, projects => projects.find(project => project.name === idOrName || project.id === idOrName))
+export const selectProjectByIdOrName = (idOrName: string) =>
+    createSelector(selectAllProjects, (projects) => projects.find((project) => project.name === idOrName || project.id === idOrName));
 // @TODO Fix it
 // export const selectAllProjectsL0L1 = createSelector(
 //     selectAllProjects,
@@ -27,7 +27,7 @@ export const selectProjectByIdOrName = (idOrName: string) => createSelector(sele
 // );
 
 export const selectAllProjectsWithLevelAndTreeStructures = createSelector(selectAllProjects, (projects) =>
-    generateDifferentLevelsOfProjects(projects)
+    generateDifferentLevelsOfProjects(projects),
 );
 
 export const selectActiveProjectsIds = createSelector(selectActiveProjectsIdsState, (activeProjectsIds) => activeProjectsIds.projectsIds);
@@ -50,5 +50,5 @@ export const selectProjectTypeCounter = (projectType) =>
     });
 
 export const selectActiveProjects = createSelector(selectAllProjects, (projects) =>
-    projects.filter((project) => project.projectType === ProjectType.active)
+    projects.filter((project) => project.projectType === ProjectType.active),
 );

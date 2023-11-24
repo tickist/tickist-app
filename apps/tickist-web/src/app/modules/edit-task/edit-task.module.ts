@@ -6,7 +6,6 @@ import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 import { TaskComponent } from "./pages/task-component/task.component";
 import { TickistEditTaskRoutingModule } from "./edit-task-routing.module";
 import { TickistSharedModule } from "../../shared/shared.module";
-import { SortablejsModule } from "ngx-sortablejs";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { A11yModule } from "@angular/cdk/a11y";
 import { DragDropModule } from "@angular/cdk/drag-drop";

@@ -38,7 +38,8 @@ export class ResetPasswordComponent implements OnInit {
             .changePassword(values.password, this.code)
             .then(() => this.router.navigate(["login"]))
             .catch((err) => {
-                const errorMessage = FirebaseErrors.Parse(err.code); // check this helper class at the bottom
+                const errorMessage = FirebaseErrors.Parse(err.code);
+                console.log({ errorMessage }); // check this helper class at the bottom
             });
     }
 
@@ -68,27 +69,22 @@ export class FirebaseErrors {
                 message = "Please check your internet connection";
                 break;
             case "auth/too-many-requests":
-                message =
-                    "We have detected too many requests from your device. Take a break please!";
+                message = "We have detected too many requests from your device. Take a break please!";
                 break;
             case "auth/user-disabled":
-                message =
-                    "Your account has been disabled or deleted. Please contact the system administrator.";
+                message = "Your account has been disabled or deleted. Please contact the system administrator.";
                 break;
             case "auth/requires-recent-login":
                 message = "Please login again and try again!";
                 break;
             case "auth/email-already-exists":
-                message =
-                    "Email address is already in use by an existing user.";
+                message = "Email address is already in use by an existing user.";
                 break;
             case "auth/user-not-found":
-                message =
-                    "We could not find user account associated with the email address or phone number.";
+                message = "We could not find user account associated with the email address or phone number.";
                 break;
             case "auth/phone-number-already-exists":
-                message =
-                    "The phone number is already in use by an existing user.";
+                message = "The phone number is already in use by an existing user.";
                 break;
             case "auth/invalid-phone-number":
                 message = "The phone number is not a valid phone number!";

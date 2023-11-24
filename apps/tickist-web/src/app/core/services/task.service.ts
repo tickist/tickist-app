@@ -1,25 +1,12 @@
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { environment } from "../../../environments/environment";
-import { AppStore } from "../../store";
 import { Task } from "@data/tasks/models/tasks";
 import { selectAllTasks } from "../selectors/task.selectors";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { setStatusDoneLogic } from "../../single-task/utils/set-status-to-done-logic";
 import { Editor, User } from "@data/users";
-import {
-    Firestore,
-    doc,
-    onSnapshot,
-    DocumentReference,
-    docSnapshots,
-    setDoc,
-    updateDoc,
-    deleteDoc,
-    addDoc,
-    collection,
-} from "@angular/fire/firestore";
+import { collection, doc, Firestore, setDoc, updateDoc } from "@angular/fire/firestore";
+
 const tasksCollectionName = "tasks";
 
 @Injectable({
@@ -28,7 +15,10 @@ const tasksCollectionName = "tasks";
 export class TaskService {
     tasks$: Observable<Task[]>;
 
-    constructor(private firestore: Firestore, private store: Store) {
+    constructor(
+        private firestore: Firestore,
+        private store: Store,
+    ) {
         this.tasks$ = this.store.select(selectAllTasks);
     }
 

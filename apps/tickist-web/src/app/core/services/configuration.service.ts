@@ -1,13 +1,11 @@
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { AppStore } from "../../store";
 import { MediaObserver } from "@ngbracket/ngx-layout";
-import * as configurationAction from "../../reducers/actions/configuration";
+import { updateLeftSidenavVisibility } from "../../reducers/actions/configuration";
 import { isOffline } from "../selectors/offline-notifications.selectors";
 import { isLeftSideNavVisible } from "../selectors/sidenav-visibility.selectors";
 import { showApiErrorBar } from "../actions/detect-api-error.actions";
-import { updateLeftSidenavVisibility } from "../../reducers/actions/configuration";
 
 @Injectable({
     providedIn: "root",
@@ -19,7 +17,10 @@ export class ConfigurationService {
     typeFinishDateOn: any;
     typeFinishDateBy: any;
 
-    constructor(private store: Store, protected media: MediaObserver) {
+    constructor(
+        private store: Store,
+        protected media: MediaObserver,
+    ) {
         this.offlineModeNotification$ = this.store.select(isOffline);
         this.leftSidenavVisibility$ = this.store.select(isLeftSideNavVisible);
         this.typeFinishDateBy = { id: 0, name: "by" };
@@ -123,11 +124,11 @@ export class ConfigurationService {
         return this.configuration;
     }
 
-    updateDetectApiError(isVisible: boolean): void {
+    updateDetectApiError(): void {
         this.store.dispatch(showApiErrorBar());
     }
 
-    updateOfflineModeNotification(isActive: boolean): void {
+    updateOfflineModeNotification(): void {
         // this.store.dispatch(new configurationAction.UpdateOfflineModeNotification(isActive));
     }
 
@@ -157,7 +158,7 @@ export class ConfigurationService {
                 position: position,
                 mode: mode,
                 open: open,
-            })
+            }),
         );
     }
 }

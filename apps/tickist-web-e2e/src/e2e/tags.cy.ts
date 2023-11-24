@@ -1,4 +1,4 @@
-import { clickOnTagsLeftPanelMenu, createFirebase, login, logout, removeOldFirebaseData } from "../support/utils";
+import { clickOnTagsLeftPanelMenu, createFirebase, removeOldFirebaseData } from "../support/utils";
 
 describe("Tags", () => {
     beforeEach(() => {
@@ -22,14 +22,17 @@ describe("Tags", () => {
             const newTagName2 = "New tag name2";
             cy.get("tickist-user-avatar", { timeout: 40000 }).should("be.visible");
             cy.log("Create tag name");
-            cy.get("input[name=tag-name]").type(newTagName).should("have.value", newTagName);
+            cy.get("input[name=tag-name]").type(newTagName);
+            cy.get("input[name=tag-name]").should("have.value", newTagName);
             cy.get('[data-cy="createTag"]').click();
             cy.log("Edit tag name");
             cy.get(`tickist-tag:contains("${newTagName}")`, { timeout: 20000 }).then(($tag) => {
                 cy.wrap($tag.find('[data-cy="editTag"]')).click({
                     force: true,
                 });
-                cy.get("input[name=edit-tag-name]").clear().type(newTagName2).should("have.value", newTagName2);
+                cy.get("input[name=edit-tag-name]").clear();
+                cy.get("input[name=edit-tag-name]").type(newTagName2);
+                cy.get("input[name=edit-tag-name]").should("have.value", newTagName2);
                 cy.get('[data-cy="changeTagName"]').click();
                 cy.get(`tickist-tag:contains("${newTagName2}")`).should("exist");
             });

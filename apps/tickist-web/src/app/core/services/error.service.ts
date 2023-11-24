@@ -1,16 +1,14 @@
-import {environment} from '../../../environments/environment';
-import {Injectable} from '@angular/core';
-import {ConfigurationService} from './configuration.service';
-
+import { environment } from "../../../environments/environment";
+import { Injectable } from "@angular/core";
+import { ConfigurationService } from "./configuration.service";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class ErrorService {
-    constructor(private configurationService: ConfigurationService) {
-    }
+    constructor(private configurationService: ConfigurationService) {}
 
-    logError(error: Error, location, user): void {
+    logError(): void {
         // if (!environment.production) {
         //   return;
         // }
@@ -23,5 +21,4 @@ export class ErrorService {
         //     return res;
         // });
     }
-
 }

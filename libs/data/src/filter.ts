@@ -1,6 +1,3 @@
-import {Task} from './tasks/models/tasks';
-import {Project} from './projects/models';
-
 export class Filter {
     id: number;
     label: string;

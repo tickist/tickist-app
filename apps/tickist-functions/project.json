@@ -40,7 +40,7 @@
             }
         },
         "lint": {
-            "executor": "@nx/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "options": {
                 "lintFilePatterns": ["apps/tickist-functions/src/**/*.ts", "apps/tickist-functions/src/**/*.html"]
             }
@@ -48,8 +48,7 @@
         "test": {
             "executor": "@nx/jest:jest",
             "options": {
-                "jestConfig": "apps/tickist-functions/jest.config.ts",
-                "passWithNoTests": true
+                "jestConfig": "apps/tickist-functions/jest.config.ts"
             },
             "outputs": ["{workspaceRoot}/coverage/apps/tickist-functions"]
         }

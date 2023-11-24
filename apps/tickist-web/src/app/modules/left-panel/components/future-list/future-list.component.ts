@@ -12,7 +12,6 @@ import { StateActiveDateElement } from "@data/state-active-date-element.enum";
 import { futureTasksRoutesName } from "../../../future-tasks/routes.names";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
 import { Store } from "@ngrx/store";
-import { AppStore } from "../../../../store";
 import { IActiveDateElement } from "@data/active-data-element.interface";
 import { addMonths, format, getMonth, getYear } from "date-fns";
 
@@ -38,7 +37,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
         private media: MediaObserver,
         private taskService: TaskService,
         private userService: UserService,
-        private cd: ChangeDetectorRef
+        private cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit(): void {
@@ -97,7 +96,7 @@ export class FutureListComponent implements OnInit, OnDestroy {
                         task.isDone === false &&
                         task.finishDate &&
                         getMonth(task.finishDate) === getMonth(momentDate) &&
-                        getYear(task.finishDate) === getYear(momentDate)
+                        getYear(task.finishDate) === getYear(momentDate),
                 ).length,
             });
         }

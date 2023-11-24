@@ -1,12 +1,11 @@
-import {of} from 'rxjs';
-import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {selectActiveDate} from '../selectors/active-date.selectors';
-import {IActiveDateElement} from '@data/active-data-element.interface';
-import {format} from 'date-fns';
+import { of } from "rxjs";
+import { Injectable } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { selectActiveDate } from "../selectors/active-date.selectors";
+import { IActiveDateElement } from "@data/active-data-element.interface";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class StatisticsService {
     activeDateElement: IActiveDateElement;
@@ -28,18 +27,17 @@ export class StatisticsService {
     //     this.loadChartsData();
     // }
 
-    loadDailyStatistics(date: Date = new Date()): any{
+    loadDailyStatistics(): any {
         // const formatedDate = activeDateElement ?
         //     activeDateElement.date.format('YYYY-MM-DD') :
         //     this.activeDateElement.date.format('YYYY-MM-DD');
-        const formatedDate = format(date, 'yyyy-MM-dd');
 
         return of({});
         // this.http.get(`${environment['apiUrl']}/day_statistics/?date=${formatedDate}`)
         //     .pipe(
         //         map(payload => new DailyStatistics(payload))
         //     );
-            // .subscribe(payload => this.store.dispatch((new statisticsAction.UpdateDailyStatistics(payload))));
+        // .subscribe(payload => this.store.dispatch((new statisticsAction.UpdateDailyStatistics(payload))));
     }
 
     loadGlobalStatistics(): any {

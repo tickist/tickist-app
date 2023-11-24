@@ -1,26 +1,23 @@
-import {TestBed, inject} from '@angular/core/testing';
-import {provideMockActions} from '@ngrx/effects/testing';
-import {Observable, ReplaySubject} from 'rxjs';
+import { TestBed } from "@angular/core/testing";
+import { provideMockActions } from "@ngrx/effects/testing";
+import { Observable, ReplaySubject } from "rxjs";
 
-import {GaEffects} from './ga.effects';
+import { GaEffects } from "./ga.effects";
 
-describe('GaEffectsEffects', () => {
+describe("GaEffectsEffects", () => {
     let actions$: Observable<any>;
     let effects: GaEffects;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [
-                GaEffects,
-                provideMockActions(() => actions$)
-            ]
+            providers: [GaEffects, provideMockActions(() => actions$)],
         });
 
         effects = TestBed.get(GaEffects);
         actions$ = new ReplaySubject(1);
     });
 
-    it('should be created', () => {
+    it("should be created", () => {
         expect(effects).toBeTruthy();
     });
 });

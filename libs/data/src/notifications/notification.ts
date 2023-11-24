@@ -11,8 +11,6 @@ interface INotification {
     date?: Timestamp | Date;
 }
 
-enum NotificationIcon {}
-
 export class Notification {
     id?: string;
     title: string;

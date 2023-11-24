@@ -4,10 +4,8 @@ import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms
 import { Store } from "@ngrx/store";
 import { login } from "../../../../core/actions/auth.actions";
 import { AuthService } from "../../../auth/services/auth.service";
-import { signupRoutesName } from "../../../sign-up/routes-names";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { NGXLogger } from "ngx-logger";
 import { OperationType } from "@firebase/auth";
 
@@ -77,7 +75,9 @@ export class LoginComponent implements OnDestroy {
     }
 
     facebookAuth(): void {
-        this.authService.facebookAuth().then((user) => {});
+        this.authService.facebookAuth().then((user) => {
+            console.log({ user });
+        });
     }
 
     ngOnDestroy() {

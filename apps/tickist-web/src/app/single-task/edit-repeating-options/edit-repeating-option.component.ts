@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from "@angular/core
 import { ConfigurationService } from "../../core/services/configuration.service";
 import { Task } from "@data/tasks/models/tasks";
 import { requestUpdateTask } from "../../core/actions/tasks/task.actions";
-import { AppStore } from "../../store";
 import { Store } from "@ngrx/store";
 
 @Component({
@@ -21,7 +20,10 @@ export class EditRepeatingOptionComponent implements OnInit {
     repeatCustom: any;
     fromRepeating: any;
 
-    constructor(protected configurationService: ConfigurationService, private store: Store) {}
+    constructor(
+        protected configurationService: ConfigurationService,
+        private store: Store,
+    ) {}
 
     ngOnInit() {
         if (!this.task) {

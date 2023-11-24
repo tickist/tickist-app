@@ -99,32 +99,32 @@
         "serve": {
             "executor": "@angular-devkit/build-angular:dev-server",
             "options": {
-                "browserTarget": "tickist-web:build",
-                "host": "0.0.0.0"
+                "host": "0.0.0.0",
+                "buildTarget": "tickist-web:build"
             },
             "configurations": {
                 "dev": {
-                    "browserTarget": "tickist-web:build:dev"
+                    "buildTarget": "tickist-web:build:dev"
                 },
                 "e2e": {
-                    "browserTarget": "tickist-web:build:e2e"
+                    "buildTarget": "tickist-web:build:e2e"
                 },
                 "ci": {
-                    "browserTarget": "tickist-web:build:ci"
+                    "buildTarget": "tickist-web:build:ci"
                 },
                 "production": {
-                    "browserTarget": "tickist-web:build:production"
+                    "buildTarget": "tickist-web:build:production"
                 }
             }
         },
         "extract-i18n": {
             "executor": "@angular-devkit/build-angular:extract-i18n",
             "options": {
-                "browserTarget": "tickist-web:build"
+                "buildTarget": "tickist-web:build"
             }
         },
         "lint": {
-            "executor": "@nx/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "options": {
                 "lintFilePatterns": ["apps/tickist-web/src/**/*.ts", "apps/tickist-web/src/**/*.html"]
             }
@@ -132,8 +132,7 @@
         "test": {
             "executor": "@nx/jest:jest",
             "options": {
-                "jestConfig": "apps/tickist-web/jest.config.ts",
-                "passWithNoTests": true
+                "jestConfig": "apps/tickist-web/jest.config.ts"
             },
             "outputs": ["{workspaceRoot}/coverage/apps/tickist-web"]
         },

@@ -1,4 +1,4 @@
-import {Project} from './project';
+import { Project } from "./project";
 
 export class ProjectWithLevel extends Project {
     level: number;
@@ -6,5 +6,4 @@ export class ProjectWithLevel extends Project {
     constructor(kwargs: any) {
         super(kwargs);
     }
-
 }

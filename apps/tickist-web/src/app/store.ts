@@ -1,4 +1,4 @@
-import { ActionReducerMap, MetaReducer } from "@ngrx/store";
+import { MetaReducer } from "@ngrx/store";
 import { environment } from "../environments/environment";
 import { IActiveDateElement } from "@data/active-data-element.interface";
 

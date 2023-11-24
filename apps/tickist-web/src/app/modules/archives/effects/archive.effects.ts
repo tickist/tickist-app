@@ -1,27 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Store } from "@ngrx/store";
 import { getArchivedTasks, saveToStore } from "../actions/archive.actions";
-import { concatMap, map, switchMap, withLatestFrom } from "rxjs/operators";
-import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
-import { combineLatest, forkJoin } from "rxjs";
-import { Task } from "@data";
-import {
-    Firestore,
-    doc,
-    onSnapshot,
-    DocumentReference,
-    docSnapshots,
-    collection,
-    query,
-    where,
-    limit,
-    orderBy,
-    collectionData,
-    sortedChanges,
-    collectionChanges,
-} from "@angular/fire/firestore";
+import { map, switchMap } from "rxjs/operators";
+import { collection, collectionChanges, Firestore, query, where } from "@angular/fire/firestore";
 
 @Injectable()
 export class ArchiveEffects {
@@ -36,11 +18,11 @@ export class ArchiveEffects {
                         where("isActive", "==", true),
                         where("taskProject.shareWithIds", "array-contains", userId),
                         where("taskProject.id", "==", projectId),
-                        where("isDone", "==", true)
+                        where("isDone", "==", true),
                     );
                     console.log(collectionChanges(firebaseQuery));
                     return collectionChanges(firebaseQuery);
-                }
+                },
                 // this.db
                 //     .collection("tasks", (ref) =>
                 //         ref
@@ -65,9 +47,13 @@ export class ArchiveEffects {
                     archivedTasks.push(task.doc.data());
                 });
                 return saveToStore({ archivedTasks });
-            })
-        )
+            }),
+        ),
     );
 
-    constructor(private actions$: Actions, private firestore: Firestore, private store: Store) {}
+    constructor(
+        private actions$: Actions,
+        private firestore: Firestore,
+        private store: Store,
+    ) {}
 }

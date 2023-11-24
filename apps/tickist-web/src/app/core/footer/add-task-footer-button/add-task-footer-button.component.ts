@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { editTaskRoutesName } from "../../../modules/edit-task/routes-names";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { AppStore } from "../../../store";
 import { selectAddTaskButtonVisibility } from "../../../reducers/core.selectors";
 import { Observable } from "rxjs";
 import { homeRoutesName } from "../../../routing.module.name";
@@ -16,18 +15,16 @@ import { homeRoutesName } from "../../../routing.module.name";
 export class AddTaskFooterButtonComponent implements OnInit {
     addTaskButtonVisibility$: Observable<boolean>;
 
-    constructor(private store: Store, private router: Router) {}
+    constructor(
+        private store: Store,
+        private router: Router,
+    ) {}
 
     ngOnInit() {
-        this.addTaskButtonVisibility$ = this.store.select(
-            selectAddTaskButtonVisibility
-        );
+        this.addTaskButtonVisibility$ = this.store.select(selectAddTaskButtonVisibility);
     }
 
     navigateToCreateNewTask() {
-        this.router.navigate([
-            homeRoutesName.home,
-            editTaskRoutesName.editTask,
-        ]);
+        this.router.navigate([homeRoutesName.home, editTaskRoutesName.editTask]);
     }
 }

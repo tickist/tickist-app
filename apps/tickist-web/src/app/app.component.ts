@@ -1,21 +1,13 @@
 import { Component, HostListener, OnDestroy, OnInit } from "@angular/core";
 import { SwUpdate } from "@angular/service-worker";
 import { Meta } from "@angular/platform-browser";
-import {
-    MatSnackBar,
-    MatSnackBarRef,
-    MatSnackBarConfig,
-} from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from "@angular/material/snack-bar";
 import { SnackBarMessageComponent } from "./components/snack-bar-message/snack-bar-message.component";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { Functions } from "@angular/fire/functions";
-import { environment } from "../environments/environment";
 import { Store } from "@ngrx/store";
-import {
-    focusOnAddTaskInput,
-    focusOnSearchInput,
-} from "./core/actions/ui.actions";
+import { focusOnAddTaskInput, focusOnSearchInput } from "./core/actions/ui.actions";
 import { homeRoutesName } from "./routing.module.name";
 import { editTaskRoutesName } from "./modules/edit-task/routes-names";
 import { Router } from "@angular/router";
@@ -40,7 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private store: Store,
         private readonly aff: Functions,
         private readonly router: Router,
-        private logger: NGXLogger
+        private logger: NGXLogger,
     ) {
         this.config = new MatSnackBarConfig();
         this.config.panelClass = ["tickist-web-snack-bar"];
@@ -56,28 +48,14 @@ export class AppComponent implements OnInit, OnDestroy {
             event.preventDefault();
             this.store.dispatch(focusOnAddTaskInput());
         }
-        if (
-            (event.key === "a" || event.key === "A") &&
-            event.ctrlKey &&
-            event.shiftKey
-        ) {
+        if ((event.key === "a" || event.key === "A") && event.ctrlKey && event.shiftKey) {
             event.preventDefault();
-            this.router.navigate([
-                homeRoutesName.home,
-                editTaskRoutesName.editTask,
-            ]);
+            this.router.navigate([homeRoutesName.home, editTaskRoutesName.editTask]);
         }
 
-        if (
-            (event.key === "p" || event.key === "P") &&
-            event.ctrlKey &&
-            event.shiftKey
-        ) {
+        if ((event.key === "p" || event.key === "P") && event.ctrlKey && event.shiftKey) {
             event.preventDefault();
-            this.router.navigate([
-                homeRoutesName.home,
-                editProjectSettingsRoutesName.editProject,
-            ]);
+            this.router.navigate([homeRoutesName.home, editProjectSettingsRoutesName.editProject]);
         }
     }
 
@@ -88,20 +66,15 @@ export class AppComponent implements OnInit, OnDestroy {
         //         .then(() => this.logger.info("Using functions emulator"));
         // }
         if (this.swUpdate.isEnabled) {
-            this.swUpdate.available
-                .pipe(takeUntil(this.ngUnsubscribe))
-                .subscribe(() => {
-                    this.snackBarRef = this.snackBar.openFromComponent(
-                        SnackBarMessageComponent,
-                        this.config
-                    );
-                    this.snackBarRef
-                        .onAction()
-                        .pipe(takeUntil(this.ngUnsubscribe))
-                        .subscribe(() => {
-                            window.location.reload();
-                        });
-                });
+            this.swUpdate.available.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+                this.snackBarRef = this.snackBar.openFromComponent(SnackBarMessageComponent, this.config);
+                this.snackBarRef
+                    .onAction()
+                    .pipe(takeUntil(this.ngUnsubscribe))
+                    .subscribe(() => {
+                        window.location.reload();
+                    });
+            });
         }
         // @TODO  not working
         // this.afMessaging.messages
@@ -126,8 +99,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 { name: "author", content: "Tickist" },
                 {
                     name: "keywords",
-                    content:
-                        "Todo list, Todo-list, GTD, tickist-web, task, project",
+                    content: "Todo list, Todo-list, GTD, tickist-web, task, project",
                 },
                 { httpEquiv: "Content-Type", content: "text/html" },
                 {
@@ -137,7 +109,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 { property: "og:type", content: "website" },
                 { charset: "UTF-8" },
             ],
-            true
+            true,
         );
     }
 

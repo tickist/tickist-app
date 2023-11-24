@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, NgZone, OnDestroy } from "@angular/core";
 import { Observable, Subject } from "rxjs";
-import { AppStore } from "../../../store";
 import { Store } from "@ngrx/store";
 
 @Component({
@@ -16,7 +15,12 @@ export class ShowOfflineModeComponent implements OnDestroy {
     pingCheck: any;
     ping: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    constructor(private store: Store, private cd: ChangeDetectorRef, private ngZone: NgZone) {}
+
+    constructor(
+        private store: Store,
+        private cd: ChangeDetectorRef,
+        private ngZone: NgZone,
+    ) {}
 
     // ngOnInit() {
     // this.isOffline$ = this.store.select(selectOfflineModeBarIsVisible);

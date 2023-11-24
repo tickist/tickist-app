@@ -61,3 +61,5 @@ pubsub-debug.log
 ui-debug.log
 
 .vscode
+
+.nx/cache

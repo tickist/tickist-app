@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType, concatLatestFrom } from "@ngrx/effects";
+import { Actions, concatLatestFrom, createEffect, ofType } from "@ngrx/effects";
 import { concatMap, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom } from "rxjs/operators";
-import { select, Store } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import {
     addTasks,
     closeMenuInAllTasks,
@@ -18,27 +18,12 @@ import { TaskService } from "../services/task.service";
 import { selectAllTasks } from "../selectors/task.selectors";
 import { Task } from "@data/tasks/models/tasks";
 import { ROUTER_NAVIGATED } from "@ngrx/router-store";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Update } from "@ngrx/entity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { selectLoggedInUser } from "../selectors/user.selectors";
 import { switchOnProgressBar } from "../actions/progress-bar.actions";
 import { selectTeam } from "../selectors/team.selectors";
-import {
-    Firestore,
-    doc,
-    onSnapshot,
-    DocumentReference,
-    docSnapshots,
-    collection,
-    query,
-    where,
-    limit,
-    orderBy,
-    collectionData,
-    sortedChanges,
-    collectionChanges,
-} from "@angular/fire/firestore";
+import { collection, collectionChanges, Firestore, query, where } from "@angular/fire/firestore";
 
 @Injectable()
 export class TaskEffects {
@@ -47,16 +32,16 @@ export class TaskEffects {
             ofType(queryTasks),
             concatLatestFrom(() => this.store.select(selectLoggedInUser)),
             switchMap(
-                ([action, user]) => {
+                ([, user]) => {
                     const firebaseCollection = collection(this.firestore, "tasks");
                     const firebaseQuery = query(
                         firebaseCollection,
                         where("taskProject.shareWithIds", "array-contains", user.id),
                         where("isActive", "==", true),
-                        where("isDone", "==", false)
+                        where("isDone", "==", false),
                     );
                     return collectionChanges(firebaseQuery);
-                }
+                },
                 // this.db
                 //     .collection("tasks", (ref) =>
                 //         ref
@@ -81,7 +66,7 @@ export class TaskEffects {
                             new Task({
                                 id: action.doc.id,
                                 ...data,
-                            })
+                            }),
                         );
                     }
                     if (action.type === "modified") {
@@ -92,7 +77,6 @@ export class TaskEffects {
                         };
                     }
                     if (action.type === "removed") {
-                        const data: any = action.doc.data();
                         deletedTaskId = action.doc.id;
                     }
                 });
@@ -107,8 +91,8 @@ export class TaskEffects {
                     returnsActions.push(deleteTask({ taskId: deletedTaskId }));
                 }
                 return returnsActions;
-            })
-        )
+            }),
+        ),
     );
 
     createTask$ = createEffect(
@@ -120,10 +104,10 @@ export class TaskEffects {
                 tap(() =>
                     this.snackBar.open("Task has been created successfully", "", {
                         duration: 2000,
-                    })
-                )
+                    }),
+                ),
             ),
-        { dispatch: false }
+        { dispatch: false },
     );
 
     updateTask$ = createEffect(
@@ -135,10 +119,10 @@ export class TaskEffects {
                 tap(() =>
                     this.snackBar.open("Task has been updated successfully", "", {
                         duration: 200000,
-                    })
-                )
+                    }),
+                ),
             ),
-        { dispatch: false }
+        { dispatch: false },
     );
 
     setStatusDone$ = createEffect(
@@ -150,18 +134,18 @@ export class TaskEffects {
                 tap(() =>
                     this.snackBar.open("Task is done. Great job!", "", {
                         duration: 2000,
-                    })
-                )
+                    }),
+                ),
             ),
-        { dispatch: false }
+        { dispatch: false },
     );
 
     progressBar$ = createEffect(() =>
         this.actions$.pipe(
             ofType(requestUpdateTask),
             filter((action) => action.progressBar),
-            mapTo(switchOnProgressBar())
-        )
+            mapTo(switchOnProgressBar()),
+        ),
     );
 
     deleteTask$ = createEffect(
@@ -172,17 +156,17 @@ export class TaskEffects {
                 tap(() =>
                     this.snackBar.open("Task has been deleted successfully", "", {
                         duration: 2000,
-                    })
-                )
+                    }),
+                ),
             ),
-        { dispatch: false }
+        { dispatch: false },
     );
 
     closeMenuInTaskDuringRouterNavigator$ = createEffect(() =>
         this.actions$.pipe(
             ofType(ROUTER_NAVIGATED),
             concatLatestFrom(() => this.store.select(selectAllTasks)),
-            map(([action, tasks]) => {
+            map(([, tasks]) => {
                 const tasksWithCloseMenu = tasks.map((task) => ({
                     id: task.id,
                     changes: <Partial<Task>>{
@@ -198,8 +182,8 @@ export class TaskEffects {
                     },
                 }));
                 return closeMenuInAllTasks({ tasks: tasksWithCloseMenu });
-            })
-        )
+            }),
+        ),
     );
 
     repairAvatarUrl$ = createEffect(() =>
@@ -215,8 +199,8 @@ export class TaskEffects {
                 return requestUpdateTask({
                     task: { id: action.task.id, changes: task },
                 });
-            })
-        )
+            }),
+        ),
     );
 
     constructor(
@@ -224,6 +208,6 @@ export class TaskEffects {
         private tasksService: TaskService,
         private firestore: Firestore,
         private store: Store,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
     ) {}
 }

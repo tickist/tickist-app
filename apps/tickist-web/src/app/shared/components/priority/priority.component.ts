@@ -1,5 +1,5 @@
 import { Component, EventEmitter, forwardRef, Input, Output } from "@angular/core";
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from "@angular/forms";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 const noop = () => {};
 
@@ -17,24 +17,7 @@ const noop = () => {};
 })
 export class PriorityComponent implements ControlValueAccessor {
     @Output() changePriority = new EventEmitter();
-    @Input() set manualValue(manualValue) {
-        this.innerValue = manualValue;
-    }
     innerValue: any = "";
-    get manualValue() {
-        return this.innerValue;
-    }
-
-    get value(): any {
-        return this.innerValue;
-    }
-
-    set value(v: any) {
-        if (v !== this.innerValue) {
-            this.innerValue = v;
-            this.onChangeCallback(v);
-        }
-    }
 
     // The internal data model
 
@@ -48,6 +31,25 @@ export class PriorityComponent implements ControlValueAccessor {
     // set accessor including call the onchange callback
 
     constructor() {}
+
+    get manualValue() {
+        return this.innerValue;
+    }
+
+    get value(): any {
+        return this.innerValue;
+    }
+
+    @Input() set manualValue(manualValue) {
+        this.innerValue = manualValue;
+    }
+
+    set value(v: any) {
+        if (v !== this.innerValue) {
+            this.innerValue = v;
+            this.onChangeCallback(v);
+        }
+    }
 
     // From ControlValueAccessor interface
     writeValue(value: any) {

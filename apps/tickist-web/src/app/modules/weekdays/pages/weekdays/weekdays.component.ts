@@ -6,6 +6,7 @@ import { Task } from "@data/tasks/models/tasks";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest, Observable, Subject } from "rxjs";
 import { User } from "@data/users/models";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import * as _ from "lodash";
 import { MediaChange, MediaObserver } from "@ngbracket/ngx-layout";
 import { map, takeUntil } from "rxjs/operators";
@@ -31,6 +32,7 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
     user: User;
     mediaChange: MediaChange;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     constructor(
         private taskService: TaskService,
         protected route: ActivatedRoute,
@@ -38,22 +40,13 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
         private configurationService: ConfigurationService,
         protected router: Router,
         protected media: MediaObserver,
-        private store: Store
+        private store: Store,
     ) {
         this.stream$ = combineLatest([this.taskService.tasks$, this.store.select(selectActiveDate), this.userService.user$]);
         this.changeActiveDayAfterMidnight();
     }
 
-    changeActiveDayAfterMidnight() {
-        const today = new Date();
-        const tommorow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-        const timeToMidnight = tommorow.getTime() - today.getTime();
-        // this.timer = setTimeout(() => {
-        //     if (this.isTomorrow()) {
-        //         this.router.navigate(['/home']);
-        //     }
-        // }, timeToMidnight);
-    }
+    changeActiveDayAfterMidnight() {}
 
     isToday(activeDateElement = this.activeDateElement) {
         const today = format(new Date(), "dd-MM-yyyy");
@@ -74,18 +67,18 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
                 this.todayTasks = this.tasks.filter(
                     (task: Task) =>
                         (task.finishDate && format(task.finishDate, "dd-MM-yyyy") === format(this.activeDateElement.date, "dd-MM-yyyy")) ||
-                        (task.pinned === true && this.isToday())
+                        (task.pinned === true && this.isToday()),
                 );
 
                 this.overdueTasks = this.tasks.filter(
-                    (task: Task) => task.pinned === false && task.finishDate && task.finishDate < this.activeDateElement.date
+                    (task: Task) => task.pinned === false && task.finishDate && task.finishDate < this.activeDateElement.date,
                 );
 
                 const overdueTasksSortBy = JSON.parse(this.user.overdueTasksSortBy);
                 this.todayTasks = _.orderBy(
                     this.todayTasks,
                     ["priority", "finishDate", "finishTime", (task) => _.deburr(task.name.toLowerCase())],
-                    ["asc", "desc", "asc", "asc"]
+                    ["asc", "desc", "asc", "asc"],
                 );
                 this.overdueTasks = _.orderBy(this.overdueTasks, overdueTasksSortBy.fields, overdueTasksSortBy.orders);
             }
@@ -93,7 +86,7 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
         this.route.params
             .pipe(
                 map((params) => params["date"]),
-                takeUntil(this.ngUnsubscribe)
+                takeUntil(this.ngUnsubscribe),
             )
             .subscribe((param) => {
                 if (param) {
@@ -101,7 +94,7 @@ export class WeekdaysComponent implements OnInit, OnDestroy {
                         updateActiveDate({
                             date: param,
                             state: StateActiveDateElement.weekdays,
-                        })
+                        }),
                     );
                 }
             });

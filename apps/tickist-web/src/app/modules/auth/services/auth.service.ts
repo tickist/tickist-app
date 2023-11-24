@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { select, Store } from "@ngrx/store";
+import {  Store } from "@ngrx/store";
 import { User, UserLogin } from "@data/users/models";
 import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
 import {
@@ -16,13 +16,7 @@ import { fetchedLoginUser } from "../../../core/actions/auth.actions";
 import { Router } from "@angular/router";
 import { NGXLogger } from "ngx-logger";
 
-import {
-    collection,
-    doc,
-    Firestore,
-    setDoc,
-    updateDoc,
-} from "@angular/fire/firestore";
+import { collection, doc, Firestore, setDoc } from "@angular/fire/firestore";
 
 @Injectable({
     providedIn: "root",
@@ -36,17 +30,13 @@ export class AuthService {
         private fireAuth: Auth,
         private firestore: Firestore,
         private router: Router,
-        private logger: NGXLogger
+        private logger: NGXLogger,
     ) {
-        this.user$ = this.store.pipe(select(selectLoggedInUser));
+        this.user$ = this.store.select((selectLoggedInUser));
     }
 
     login(user: UserLogin) {
-        return signInWithEmailAndPassword(
-            this.fireAuth,
-            user.email,
-            user.password
-        );
+        return signInWithEmailAndPassword(this.fireAuth, user.email, user.password);
     }
 
     facebookAuth() {
@@ -69,12 +59,7 @@ export class AuthService {
         return this.fireAuth.signOut();
     }
 
-    async save(
-        uid: string,
-        username: string,
-        email: string,
-        additionalData?: Partial<User>
-    ) {
+    async save(uid: string, username: string, email: string, additionalData?: Partial<User>) {
         const user = new User(<any>{
             id: uid,
             username,

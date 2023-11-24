@@ -1,7 +1,5 @@
-import { ComponentFactoryResolver, Injectable, ViewContainerRef } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { SimpleUser, User } from "@data/users/models";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { icon } from "@fortawesome/fontawesome-svg-core";
 import { Filter } from "@data/filter";
 
 @Injectable()
@@ -51,7 +49,7 @@ export class FutureTasksFiltersService {
         // this.store.dispatch(new tasksAction.AddFutureTasksFilters(this.filters));
     }
 
-    updateCurrentFutureTasksFilter(currentFilter) {
+    updateCurrentFutureTasksFilter() {
         // // @TODO fix it when the filter will be store in database
         // // this.user.updateTagsFilterId(currentFilter);
         // // this.userService.updateUser(this.user, false);

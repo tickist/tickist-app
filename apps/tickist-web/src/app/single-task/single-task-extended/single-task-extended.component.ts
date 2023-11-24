@@ -20,14 +20,14 @@ import { ProjectService } from "../../core/services/project.service";
 import { DEFAULT_PROJECT_ICON, Project, removeTagsNotBelongingToUser, ShareWithUser, Tag, Task, TaskProject, TaskType, User } from "@data";
 import { Observable, Subject } from "rxjs";
 import { RepeatStringExtension } from "../../shared/pipes/repeatStringExtension";
-import { filter, map, startWith, takeUntil, withLatestFrom } from "rxjs/operators";
+import { filter, map, startWith, takeUntil } from "rxjs/operators";
 import { SingleTask2Component } from "../shared/single-task";
 import { repairAvatarUrl, requestUpdateTask } from "../../core/actions/tasks/task.actions";
 import { Store } from "@ngrx/store";
 import { removeTag } from "../utils/task-utils";
 import { selectAllProjectLeftPanel } from "../../modules/projects-list/projects-filters.selectors";
 import { selectProjectByIdOrName } from "../../core/selectors/projects.selectors";
-import { FormControl, UntypedFormControl } from "@angular/forms";
+import { FormControl } from "@angular/forms";
 import { ProjectLeftPanel } from "../../modules/projects-list/models/project-list";
 import { forbiddenNamesValidator } from "../utils/forbidden-name-validator";
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
@@ -67,7 +67,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
         private projectService: ProjectService,
         private renderer: Renderer2,
         public store: Store,
-        private cd: ChangeDetectorRef
+        private cd: ChangeDetectorRef,
     ) {
         super(store, dialog);
         this.repeatStringExtension = new RepeatStringExtension(this.configurationService);
@@ -107,7 +107,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
         this.projects$
             .pipe(
                 takeUntil(this.ngUnsubscribe),
-                filter((projects) => projects.length > 0)
+                filter((projects) => projects.length > 0),
             )
             .subscribe((projects) => {
                 this.projects = projects;
@@ -117,7 +117,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
                     map((value) => {
                         const name = typeof value === "string" ? value : value?.name;
                         return name ? projects.filter((project) => project.name.toLowerCase().includes(name.toLowerCase())) : projects;
-                    })
+                    }),
                 );
             });
 
@@ -180,7 +180,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
                     this.store.dispatch(
                         requestUpdateTask({
                             task: { id: this.task.id, changes: task },
-                        })
+                        }),
                     );
                     this.selectTaskProject.setValue(value, { emitEvent: false });
                     this.selectTaskProject.setErrors(null);
@@ -207,7 +207,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
         this.store.dispatch(
             requestUpdateTask({
                 task: { id: this.task.id, changes: this.task },
-            })
+            }),
         );
         // this.taskService.updateTask(this.task, true, true);
     }
@@ -221,7 +221,7 @@ export class SingleTaskExtendedComponent extends SingleTask2Component implements
         this.store.dispatch(
             requestUpdateTask({
                 task: { id: this.task.id, changes: this.task },
-            })
+            }),
         );
     }
 

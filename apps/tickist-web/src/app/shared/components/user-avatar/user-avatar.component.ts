@@ -10,9 +10,8 @@ import {
     Output,
 } from "@angular/core";
 import { Storage } from "@angular/fire/storage";
-import { Observable, of, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { DEFAULT_USER_AVATAR, USER_AVATAR_PATH } from "@data/users/config-user";
-import { delay, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
 
 @Component({
     selector: "tickist-user-avatar",
@@ -33,7 +32,10 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     url: string;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private storage: Storage, private cd: ChangeDetectorRef) {}
+    constructor(
+        private storage: Storage,
+        private cd: ChangeDetectorRef,
+    ) {}
 
     ngOnInit() {
         const [width, height] = this.size.split("x");
@@ -57,7 +59,7 @@ export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    handleError($event) {
+    handleError() {
         this.url = "";
         setTimeout(() => {
             this.updateUrlFromFirebaseStorage();
