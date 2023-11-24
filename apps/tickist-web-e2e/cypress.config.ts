@@ -35,7 +35,7 @@ export default defineConfig({
                             extensions: [".ts", ".js"],
                             plugins: [
                                 new pathsPlugin({
-                                    configFile: path.join(__dirname, "./tsconfig.e2e.json"),
+                                    configFile: path.join(__dirname, "./tsconfig.json"),
                                     extensions: [".ts", ".js"],
                                 }),
                             ],
@@ -54,7 +54,7 @@ export default defineConfig({
                             ],
                         },
                     },
-                })
+                }),
             );
             return cypressFirebasePlugin(on, config, admin, {
                 projectId: "proven-reality-657",
