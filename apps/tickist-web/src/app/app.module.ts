@@ -98,7 +98,6 @@ console.log({ environment });
         // TickistNotificationsModule,
         TickistLeftPanelModule,
         provideFirebaseApp(() => {
-            debugger;
             const firebase = initializeApp(environment.firebase);
             let config = {};
             if (environment.emulator) {
