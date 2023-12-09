@@ -9,8 +9,8 @@
         </div>
         <div fxLayout="row" class="main-view" fxFlex>
             <div fxFlex.gt-md="230px" fxFlex.lt-md="30%" class="left-menu">
-                <mat-list>
-                    <mat-list-item (click)="changeActiveItemInMenu('main')"
+                <mat-list role="list">
+                    <mat-list-item role="listitem" (click)="changeActiveItemInMenu('main')"
                                    [ngClass]="{
                                     'active': checkActiveItemInMenu('main'),
                                     'invalid': !projectForm.controls['main'].valid && projectForm.controls['main'].touched
@@ -23,7 +23,7 @@
 
                     </mat-list-item>
 
-                    <mat-list-item (click)="changeActiveItemInMenu('extra')"
+                    <mat-list-item role="listitem" (click)="changeActiveItemInMenu('extra')"
                                    [ngClass]="{
                                    'active': checkActiveItemInMenu('extra'),
                                    'invalid': !projectForm.controls['extra'].valid && projectForm.controls['extra'].touched
@@ -34,7 +34,7 @@
 
                     </mat-list-item>
 
-                    <mat-list-item (click)="changeActiveItemInMenu('sharing')"
+                    <mat-list-item role="listitem" (click)="changeActiveItemInMenu('sharing')"
                                    [ngClass]="{
                                    'active': checkActiveItemInMenu('sharing')
                                    }">
@@ -45,7 +45,7 @@
 
                     </mat-list-item>
 
-                    <mat-list-item (click)="changeActiveItemInMenu('branding')"
+                    <mat-list-item role="listitem" (click)="changeActiveItemInMenu('branding')"
                                    [ngClass]="{
                                    'active': checkActiveItemInMenu('branding')
                                    }">
@@ -57,6 +57,7 @@
                     </mat-list-item>
 
                 </mat-list>
+                
             </div>
             <div fxFlex="68%" class="right-menu">
                 <div [hidden]="!checkActiveItemInMenu('main')" formGroupName="main">
@@ -79,7 +80,8 @@
                         </mat-form-field>
 
                         <mat-form-field>
-                            <mat-select (selectionChange)=ancestorChange($event) data-cy='select-ancestor' placeholder="Ancestor" formControlName="ancestor">
+                            <mat-select (selectionChange)=ancestorChange($event) data-cy='select-ancestor' placeholder="Ancestor"
+                                        formControlName="ancestor">
                                 <mat-option *ngFor="let project of projectsAncestors"
                                             [ngClass]="'level_' + project.level"
                                             [value]="project.id"> {{ project.name }}
@@ -92,7 +94,7 @@
                                           formControlName="description"
                                           placeholder="Project description">
                                 </textarea>
-                            <mat-hint align="end">{{projectDescription.value?.length || 0}}/5000</mat-hint>
+                            <mat-hint align="end">{{ projectDescription.value?.length || 0 }}/5000</mat-hint>
                         </mat-form-field>
                     </div>
                 </div>
@@ -211,7 +213,8 @@
                                              diameter="32"></mat-spinner>
                                 <span *ngIf="u.status === userWithoutAccountStatus.Error"
                                       (click)="deleteUserFromInviteList(u)">
-                                    <fa-icon [matTooltip]="'Delete an invitation'" [icon]="'times'" [ngStyle]="{'font-size': '32px'}"></fa-icon>
+                                    <fa-icon [matTooltip]="'Delete an invitation'" [icon]="'times'"
+                                             [ngStyle]="{'font-size': '32px'}"></fa-icon>
                                 </span>
                             </mat-list-item>
 
@@ -219,9 +222,11 @@
 
                     </div>
                 </div>
-                <div [hidden]="!checkActiveItemInMenu('branding')" formGroupName="branding" [ngStyle]="{height: '100%', overflow: 'hidden'}">
+                <div [hidden]="!checkActiveItemInMenu('branding')" formGroupName="branding"
+                     [ngStyle]="{height: '100%', overflow: 'hidden'}">
                     <div class="selected-branding" *ngIf="{icon: icon$ | async, color: color$ | async } as data">
-                        Selected icon: <fa-icon size="lg" [icon]="data.icon" [styles]="{color: data.color}"></fa-icon>
+                        Selected icon:
+                        <fa-icon size="lg" [icon]="data.icon" [styles]="{color: data.color}"></fa-icon>
                     </div>
                     <tickist-color-picker [colors]="colors" customColorPicker="true"
                                           formControlName="color"></tickist-color-picker>
