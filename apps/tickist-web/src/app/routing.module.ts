@@ -2,9 +2,9 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FutureTasksFiltersService } from "./modules/future-tasks/core/services/future-tasks-filters.service";
 import { RouterModule, Routes } from "@angular/router";
-import { LoggedInGuard } from "./core/guards/loggedIn.guard";
+import { loggedInGuard } from "./core/guards/loggedIn.guard";
 import { AnonymousGuard } from "./core/guards/anonymous.guard";
-import { RouterStateSerializer, StoreRouterConnectingModule, FullRouterStateSerializer } from "@ngrx/router-store";
+import { FullRouterStateSerializer, RouterStateSerializer, StoreRouterConnectingModule } from "@ngrx/router-store";
 import { CustomSerializer } from "./routing/custom-serializer";
 import { HomeComponent } from "./core/layouts/home";
 import { futureTasksRoutesName } from "./modules/future-tasks/routes.names";
@@ -29,74 +29,74 @@ export const routes: Routes = [
     {
         path: "home",
         component: HomeComponent,
-        canActivate: [LoggedInGuard],
+        canActivate: [loggedInGuard],
         children: [
             {
                 path: "",
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 outlet: "left",
                 component: LeftPanelComponent,
             },
             {
                 path: dashboardRoutesName.dashboard,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/dashboard/dashboard.module").then((m) => m.TickistDashboardModule),
             },
             {
                 path: weekdaysRoutesName.weekdays,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/weekdays/weekdays.module").then((m) => m.TickistWeekdaysModule),
             },
             {
                 path: futureTasksRoutesName.futureTasks,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/future-tasks/future-tasks.module").then((m) => m.TickistFutureTasksModule),
             },
             {
                 path: tasksTreeViewRoutesName.tasksTreeView,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/tasks-tree-view/tasks-tree-view.module").then((m) => m.TickistTasksTreeViewModule),
             },
             {
                 path: tasksProjectsViewRoutesName.tasksProjectsView,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () =>
                     import("./modules/tasks-projects-view/tasks-projects-view.module").then((m) => m.TickistTasksProjectsViewModule),
             },
             {
                 path: tasksTagsViewRoutesName.tasksTagsView,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/tasks-tags-view/tasks-tags-view.module").then((m) => m.TickistTasksTagsViewModule),
             },
             {
                 path: statisticsRoutesName.statistics,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/statistics-view/statistics-view.module").then((m) => m.TickistStatisticsViewModule),
             },
             {
                 path: editTaskRoutesName.editTask,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/edit-task/edit-task.module").then((m) => m.TickistEditTaskModule),
             },
             {
                 path: editUserSettingsRoutesName.editUserSettings,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () =>
                     import("./modules/edit-user-settings/edit-user-settings.module").then((m) => m.TickistEditUserSettingsModule),
             },
             {
                 path: teamRoutesName.team,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/team/team.module").then((m) => m.TickistTeamModule),
             },
             {
                 path: editProjectSettingsRoutesName.editProject,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/edit-project/edit-project.module").then((m) => m.TickistEditProjectModule),
             },
             {
                 path: archiveRoutesName.archive,
-                canActivate: [LoggedInGuard],
+                canActivate: [loggedInGuard],
                 loadChildren: () => import("./modules/archives/archive.module").then((m) => m.ArchiveModule),
             },
             {
@@ -141,7 +141,7 @@ export const routes: Routes = [
         }),
     ],
     declarations: [],
-    providers: [FutureTasksFiltersService, LoggedInGuard, AnonymousGuard, { provide: RouterStateSerializer, useClass: CustomSerializer }],
+    providers: [FutureTasksFiltersService, AnonymousGuard, { provide: RouterStateSerializer, useClass: CustomSerializer }],
     exports: [RouterModule],
 })
 export class TickistRoutingModule {}
