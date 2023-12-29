@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FutureTasksFiltersService } from "./modules/future-tasks/core/services/future-tasks-filters.service";
 import { RouterModule, Routes } from "@angular/router";
 import { loggedInGuard } from "./core/guards/loggedIn.guard";
-import { AnonymousGuard } from "./core/guards/anonymous.guard";
+import { anonymousGuard } from "./core/guards/anonymous.guard";
 import { FullRouterStateSerializer, RouterStateSerializer, StoreRouterConnectingModule } from "@ngrx/router-store";
 import { CustomSerializer } from "./routing/custom-serializer";
 import { HomeComponent } from "./core/layouts/home";
@@ -109,19 +109,19 @@ export const routes: Routes = [
     {
         path: signupRoutesName.signUp,
         component: AuthLayoutComponent,
-        canActivate: [AnonymousGuard],
+        canActivate: [anonymousGuard],
         loadChildren: () => import("./modules/sign-up/sign-up.module").then((m) => m.TickistSignUpModule),
     },
     {
         path: loginRoutesName.login,
         component: AuthLayoutComponent,
-        canActivate: [AnonymousGuard],
+        canActivate: [anonymousGuard],
         loadChildren: () => import("./modules/login/login.module").then((m) => m.TickistLoginModule),
     },
     {
         path: resetPasswordRoutesName.resetPassword,
         component: AuthLayoutComponent,
-        canActivate: [AnonymousGuard],
+        canActivate: [anonymousGuard],
         loadChildren: () => import("./modules/reset-password/reset-password.module").then((m) => m.TickistResetPasswordModule),
     },
     {
@@ -141,7 +141,7 @@ export const routes: Routes = [
         }),
     ],
     declarations: [],
-    providers: [FutureTasksFiltersService, AnonymousGuard, { provide: RouterStateSerializer, useClass: CustomSerializer }],
+    providers: [FutureTasksFiltersService, { provide: RouterStateSerializer, useClass: CustomSerializer }],
     exports: [RouterModule],
 })
 export class TickistRoutingModule {}
