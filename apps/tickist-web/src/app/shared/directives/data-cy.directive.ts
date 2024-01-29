@@ -4,6 +4,7 @@ import { environment } from "../../../environments/environment";
 @Directive({
     // eslint-disable-next-line @angular-eslint/directive-selector
     selector: "[dataCy], [data-cy]",
+    standalone: true,
 })
 export class DataCyDirective {
     @Input() dataCy: any;

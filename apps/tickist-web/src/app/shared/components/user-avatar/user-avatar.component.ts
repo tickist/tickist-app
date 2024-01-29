@@ -12,12 +12,24 @@ import {
 import { Storage } from "@angular/fire/storage";
 import { Subject } from "rxjs";
 import { DEFAULT_USER_AVATAR, USER_AVATAR_PATH } from "@data/users/config-user";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgIf, NgStyle } from "@angular/common";
 
 @Component({
     selector: "tickist-user-avatar",
     templateUrl: "./user-avatar.component.html",
     styleUrls: ["./user-avatar.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        NgIf,
+        NgStyle,
+        ExtendedModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule,
+    ],
 })
 export class UserAvatarComponent implements OnInit, OnChanges, OnDestroy {
     @Input() userId: string;

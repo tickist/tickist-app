@@ -3,11 +3,15 @@ import { AuthService } from "../../services/auth.service";
 import { Router } from "@angular/router";
 import { NGXLogger } from "ngx-logger";
 import { OperationType } from "@firebase/auth";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
     selector: "tickist-google-connect",
     templateUrl: "./google-connect.component.html",
     styleUrls: ["./google-connect.component.scss"],
+    standalone: true,
+    imports: [MatButtonModule, FaIconComponent],
 })
 export class GoogleConnectComponent {
     constructor(

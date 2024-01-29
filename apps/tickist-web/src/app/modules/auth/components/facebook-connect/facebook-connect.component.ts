@@ -14,11 +14,15 @@ import {  MatDialog } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { OperationType } from "@firebase/auth";
 import { NGXLogger } from "ngx-logger";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
     selector: "tickist-facebook-connect",
     templateUrl: "./facebook-connect.component.html",
     styleUrls: ["./facebook-connect.component.scss"],
+    standalone: true,
+    imports: [MatButtonModule, FaIconComponent],
 })
 export class FacebookConnectComponent implements OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();

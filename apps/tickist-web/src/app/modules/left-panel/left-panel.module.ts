@@ -29,8 +29,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
         TickistProjectListModule,
         TickistTagsListModule,
         FontAwesomeModule,
+        LeftPanelComponent, WeekDaysComponent, ChooseDayComponent, FutureListComponent,
     ],
-    declarations: [LeftPanelComponent, WeekDaysComponent, ChooseDayComponent, FutureListComponent],
     providers: [],
     exports: [LeftPanelComponent],
 })

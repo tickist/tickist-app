@@ -11,12 +11,34 @@ import { editTaskRoutesName } from "../../modules/edit-task/routes-names";
 import { Router } from "@angular/router";
 import { homeRoutesName } from "../../routing.module.name";
 import { TaskType } from "@data";
+import { MatButtonModule } from "@angular/material/button";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { PriorityComponent } from "../../shared/components/priority/priority.component";
+import { MatMenuModule } from "@angular/material/menu";
+import { DataCyDirective } from "../../shared/directives/data-cy.directive";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MenuButtonComponent } from "../../shared/components/menu-button/menu-button.component";
+import { PinButtonComponent } from "../pin-button/pin-button.component";
+import { NgIf, NgStyle } from "@angular/common";
 
 @Component({
     selector: "tickist-right-menu",
     templateUrl: "./right-menu.component.html",
     styleUrls: ["./right-menu.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        NgIf,
+        PinButtonComponent,
+        MenuButtonComponent,
+        MatTooltipModule,
+        DataCyDirective,
+        MatMenuModule,
+        PriorityComponent,
+        NgStyle,
+        ExtendedModule,
+        MatButtonModule,
+    ],
 })
 export class RightMenuComponent implements OnInit {
     @Input() task: Task;

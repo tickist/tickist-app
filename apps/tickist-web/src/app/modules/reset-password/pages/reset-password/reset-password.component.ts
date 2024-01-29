@@ -1,13 +1,33 @@
 import { Component, OnInit } from "@angular/core";
 import { Auth } from "@angular/fire/auth";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UserService } from "../../../../core/services/user.service";
+import { MatButtonModule } from "@angular/material/button";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { NgIf, NgClass } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-reset-password",
     templateUrl: "./reset-password.component.html",
     styleUrls: ["./reset-password.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgIf,
+        MatFormFieldModule,
+        MatInputModule,
+        NgClass,
+        ExtendedModule,
+        MatButtonModule,
+    ],
 })
 export class ResetPasswordComponent implements OnInit {
     setNewPasswordForm: UntypedFormGroup;

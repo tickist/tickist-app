@@ -8,12 +8,16 @@ import {
 } from "@angular/core";
 import { Task } from "@data/tasks/models/tasks";
 import { format, isDate } from "date-fns";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { NgIf } from "@angular/common";
 
 @Component({
     selector: "tickist-display-finish-date",
     templateUrl: "./display-finish-date.component.html",
     styleUrls: ["./display-finish-date.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, FaIconComponent],
 })
 export class DisplayFinishDateComponent implements OnInit, OnChanges {
     @Input() task: Task;

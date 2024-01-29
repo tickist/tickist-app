@@ -89,17 +89,6 @@ import { PrivacyPolicyComponent } from "./footer/privacy-policy/privacy-policy.c
         TickistSingleTaskModule,
         TickistNotificationsModule,
         A11yModule,
-    ],
-    exports: [
-        NavComponent,
-        SearchAutocompleteComponent,
-        NavBarAuthPageComponent,
-        AuthLayoutComponent,
-        HomeComponent,
-        AddTaskFooterButtonComponent,
-        PrivacyPolicyComponent,
-    ],
-    declarations: [
         NavComponent,
         SearchAutocompleteComponent,
         ShowOfflineModeComponent,
@@ -109,6 +98,15 @@ import { PrivacyPolicyComponent } from "./footer/privacy-policy/privacy-policy.c
         HomeComponent,
         AddTaskFooterButtonComponent,
         ShowNotificationAboutNewDayComponent,
+        PrivacyPolicyComponent,
+    ],
+    exports: [
+        NavComponent,
+        SearchAutocompleteComponent,
+        NavBarAuthPageComponent,
+        AuthLayoutComponent,
+        HomeComponent,
+        AddTaskFooterButtonComponent,
         PrivacyPolicyComponent,
     ],
 })

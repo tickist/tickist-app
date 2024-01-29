@@ -19,9 +19,9 @@ import { TickistCoreModule } from "../../core/core.module";
         TickistResetPasswordRoutingModule,
         TickistSharedModule,
         TickistCoreModule,
+        ResetPasswordComponent, RequestResetPasswordComponent,
     ],
     providers: [],
     exports: [ResetPasswordComponent, RequestResetPasswordComponent],
-    declarations: [ResetPasswordComponent, RequestResetPasswordComponent],
 })
 export class TickistResetPasswordModule {}

@@ -1,17 +1,23 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import { MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import {selectCurrentSortBy, selectSortByOptions} from '../../core/selectors/sort-by-tasks.selectors';
 import {Store} from '@ngrx/store';
 import {SortBy} from '@data/tasks/models/sortBy';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {setCurrentSortBy} from '../../core/actions/tasks/sort-tasks.actions';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @Component({
     selector: 'tickist-sort-by-dialog',
     templateUrl: './sort-tasks.dialog.component.html',
-    styleUrls: ['./sort-tasks.dialog.component.scss']
+    styleUrls: ['./sort-tasks.dialog.component.scss'],
+    standalone: true,
+    imports: [MatDialogTitle, MatDialogContent, MatRadioModule, FormsModule, NgFor, FaIconComponent]
 })
 export class SortByDialogComponent implements  OnInit, OnDestroy {
     sortByValues: SortBy[] = [];

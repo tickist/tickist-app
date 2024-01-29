@@ -8,7 +8,6 @@ import {TickistMaterialModule} from '../../material.module';
 import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
-    declarations: [GoogleConnectComponent, FacebookConnectComponent, PromptUserForPasswordDialogComponent, ],
     exports: [
         FacebookConnectComponent,
         GoogleConnectComponent
@@ -17,7 +16,8 @@ import {ReactiveFormsModule} from '@angular/forms';
         CommonModule,
         IconsModule,
         TickistMaterialModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        GoogleConnectComponent, FacebookConnectComponent, PromptUserForPasswordDialogComponent
     ]
 })
 export class AuthModule { }

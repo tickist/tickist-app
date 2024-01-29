@@ -22,9 +22,9 @@ import { TickistSingleTaskModule } from "../../single-task/single-task.module";
         TickistSharedModule,
         TickistSingleTaskModule,
         TickistTasksModule,
+        WeekdaysComponent, TodayComponent, OverdueComponent,
     ],
     providers: [],
     exports: [WeekdaysComponent],
-    declarations: [WeekdaysComponent, TodayComponent, OverdueComponent],
 })
 export class TickistWeekdaysModule {}

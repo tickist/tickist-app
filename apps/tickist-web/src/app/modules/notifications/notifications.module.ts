@@ -24,9 +24,9 @@ import { SnackBarNotificationComponent } from "./components/snack-bar-notificati
         TickistSharedModule,
         IconsModule,
         StoreModule.forFeature(notificationsFeatureKey, notificationReducer),
+        NotificationsIconComponent, NotificationComponent, SnackBarNotificationComponent,
     ],
     providers: [],
     exports: [NotificationsIconComponent, SnackBarNotificationComponent],
-    declarations: [NotificationsIconComponent, NotificationComponent, SnackBarNotificationComponent],
 })
 export class TickistNotificationsModule {}

@@ -4,7 +4,7 @@ import { TagService } from "../../../../core/services/tag.service";
 import { Tag } from "@data/tags/models/tags";
 import { Task } from "@data/tasks/models/tasks";
 import { TaskService } from "../../../../core/services/task.service";
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { UserService } from "../../../../core/services/user.service";
 import { User } from "@data/users/models";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
@@ -18,11 +18,37 @@ import { selectFilteredTagsList } from "../../tags-filters.selectors";
 import { Auth } from "@angular/fire/auth";
 import { TagWithTaskCounter } from "@data/tags/models/tag-with-task-counter";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { MatInputModule } from "@angular/material/input";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { NgFor, NgStyle, NgIf, AsyncPipe } from "@angular/common";
+import { TagComponent } from "../../components/tag/tag.component";
+import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-tags-list",
     templateUrl: "./tags-list.component.html",
     styleUrls: ["./tags-list.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        MenuButtonComponent,
+        TagComponent,
+        NgFor,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        NgStyle,
+        ExtendedModule,
+        MatInputModule,
+        NgIf,
+        MatButtonModule,
+        DataCyDirective,
+        AsyncPipe,
+    ],
 })
 export class TagsListComponent implements OnInit, OnDestroy {
     @ViewChild("form", { static: true }) createTagFormDOM;

@@ -1,5 +1,9 @@
 import { Component, forwardRef, Input } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgFor, NgClass, NgStyle } from "@angular/common";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 const noop = () => {};
 
@@ -13,6 +17,15 @@ const noop = () => {};
             useExisting: forwardRef(() => ColorPickerComponent),
             multi: true,
         },
+    ],
+    standalone: true,
+    imports: [
+        FlexModule,
+        NgFor,
+        NgClass,
+        ExtendedModule,
+        FaIconComponent,
+        NgStyle,
     ],
 })
 export class ColorPickerComponent implements ControlValueAccessor {

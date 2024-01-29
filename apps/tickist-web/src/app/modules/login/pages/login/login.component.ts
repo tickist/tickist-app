@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
-import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { login } from "../../../../core/actions/auth.actions";
 import { AuthService } from "../../../auth/services/auth.service";
@@ -8,11 +8,35 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { NGXLogger } from "ngx-logger";
 import { OperationType } from "@firebase/auth";
+import { PrivacyPolicyComponent } from "../../../../core/footer/privacy-policy/privacy-policy.component";
+import { FacebookConnectComponent } from "../../../auth/components/facebook-connect/facebook-connect.component";
+import { GoogleConnectComponent } from "../../../auth/components/google-connect/google-connect.component";
+import { MatButtonModule } from "@angular/material/button";
+import { NgIf } from "@angular/common";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatCardModule } from "@angular/material/card";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-login",
     templateUrl: "./login.component.html",
     styleUrls: ["./login.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgIf,
+        MatButtonModule,
+        GoogleConnectComponent,
+        FacebookConnectComponent,
+        RouterLink,
+        PrivacyPolicyComponent,
+    ],
 })
 export class LoginComponent implements OnDestroy {
     loginForm: UntypedFormGroup;

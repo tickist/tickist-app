@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
-import { UntypedFormControl } from "@angular/forms";
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
@@ -7,12 +7,23 @@ import { Store } from "@ngrx/store";
 import { IActiveDateElement } from "@data/active-data-element.interface";
 import { StateActiveDateElement } from "@data/state-active-date-element.enum";
 import { differenceInDays, format, isDate } from "date-fns";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
     selector: "tickist-choose-day",
     templateUrl: "./choose-day.component.html",
     styleUrls: ["./choose-day.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
+    ],
 })
 export class ChooseDayComponent implements OnInit, OnDestroy {
     @Output() selectedDate = new EventEmitter();

@@ -4,7 +4,8 @@ import truncate from 'truncate-html';
 
 @Pipe({
     name: 'truncate',
-    pure: true
+    pure: true,
+    standalone: true
 })
 export class TruncatePipe implements PipeTransform {
     transform(value: string, arg1?, arg2?): string {

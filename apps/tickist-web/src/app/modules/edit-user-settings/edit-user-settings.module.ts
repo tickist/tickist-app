@@ -19,9 +19,9 @@ import { DeleteAccountDialogComponent } from "./components/delete-account-dialog
         ReactiveFormsModule,
         TickistEditUserSettingsRoutingModule,
         FontAwesomeModule,
+        UserComponent, DeleteAccountDialogComponent,
     ],
     providers: [],
     exports: [UserComponent],
-    declarations: [UserComponent, DeleteAccountDialogComponent],
 })
 export class TickistEditUserSettingsModule {}

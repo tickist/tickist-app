@@ -14,7 +14,6 @@ import { FlexModule } from "@ngbracket/ngx-layout";
 import { NoArchivedTasksComponent } from "./components/no-archived-tasks/no-archived-tasks.component";
 
 @NgModule({
-    declarations: [ArchiveComponent, ProjectHeaderComponent, NoArchivedTasksComponent],
     imports: [
         TickistMaterialModule,
         CommonModule,
@@ -24,6 +23,7 @@ import { NoArchivedTasksComponent } from "./components/no-archived-tasks/no-arch
         TickistSingleTaskModule,
         TickistSharedModule,
         FlexModule,
+        ArchiveComponent, ProjectHeaderComponent, NoArchivedTasksComponent,
     ],
     exports: [ArchiveComponent],
 })

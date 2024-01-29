@@ -29,13 +29,11 @@ import {TickistStatisticsRoutingModule} from './statistics-routing.module';
         StoreModule.forFeature('dailyStatistics', fromDailyStatistics.reducer),
         StoreModule.forFeature('chartStatistics', fromChartStatistics.reducer),
         StoreModule.forFeature('globalStatisticsDateRange', fromGlobalStatisticsDateRange.reducer),
-        TickistStatisticsRoutingModule
+        TickistStatisticsRoutingModule,
+        DayStatisticsComponent, ChartLegendComponent, GlobalStatisticsComponent, StatisticsComponent
     ],
     providers: [],
-    exports:
-        [],
-    declarations:
-        [DayStatisticsComponent, ChartLegendComponent, GlobalStatisticsComponent, StatisticsComponent]
+    exports: []
 })
 
 export class TickistStatisticsViewModule {

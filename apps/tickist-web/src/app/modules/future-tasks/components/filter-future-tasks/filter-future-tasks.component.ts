@@ -5,12 +5,18 @@ import {Store} from '@ngrx/store';
 import {selectAllFutureTasksFilters, selectCurrentFutureTasksFilter} from '../../core/selectors/future-tasks.selectors';
 import {Filter} from '@data/filter';
 import {setCurrentFutureTaskFilter} from "../../core/actions/future-tasks-filters.actions";
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NgFor, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @Component({
     selector: 'tickist-filter-future-tasks',
     templateUrl: './filter-future-tasks.component.html',
-    styleUrls: ['./filter-future-tasks.component.scss']
+    styleUrls: ['./filter-future-tasks.component.scss'],
+    standalone: true,
+    imports: [MatRadioModule, FormsModule, NgFor, NgIf, FaIconComponent]
 })
 export class FilterFutureTasksComponent implements OnInit, OnDestroy {
     filterValueId: number;

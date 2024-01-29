@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Task } from "@data/tasks/models/tasks";
-import { UntypedFormControl } from "@angular/forms";
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Observable, Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, map, startWith, takeUntil } from "rxjs/operators";
 import { NavigationEnd, Router } from "@angular/router";
-import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
+import { MatAutocompleteSelectedEvent, MatAutocompleteModule } from "@angular/material/autocomplete";
 import { Store } from "@ngrx/store";
 import { selectAllUndoneTasks } from "../../selectors/task.selectors";
 import { homeRoutesName } from "../../../routing.module.name";
@@ -13,12 +13,32 @@ import { searchInputIsFocus } from "../../selectors/ui.selectors";
 import { blurOnSearchInput } from "../../actions/ui.actions";
 import { tasksProjectsViewRoutesName } from "../../../modules/tasks-projects-view/routes.names";
 import { selectSearchTasksTextIsEnabled } from "../../selectors/filters-tasks.selectors";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatOptionModule } from "@angular/material/core";
+import { NgFor, NgStyle, AsyncPipe } from "@angular/common";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
     selector: "tickist-search-autocomplete",
     templateUrl: "./search-autocomplete.component.html",
     styleUrls: ["./search-autocomplete.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
+        FaIconComponent,
+        NgFor,
+        MatOptionModule,
+        NgStyle,
+        ExtendedModule,
+        AsyncPipe,
+    ],
 })
 export class SearchAutocompleteComponent implements OnInit, OnDestroy {
     @ViewChild("searchInput", { static: true }) searchInput: ElementRef;

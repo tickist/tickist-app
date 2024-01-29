@@ -1,10 +1,22 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, Renderer2 } from "@angular/core";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { NgIf, NgClass } from "@angular/common";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
     selector: "tickist-pin-button",
     templateUrl: "./pin-button.component.html",
     styleUrls: ["./pin-button.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatTooltipModule,
+        NgIf,
+        FaIconComponent,
+        NgClass,
+        ExtendedModule,
+    ],
 })
 export class PinButtonComponent {
     @Input() pinned: boolean;

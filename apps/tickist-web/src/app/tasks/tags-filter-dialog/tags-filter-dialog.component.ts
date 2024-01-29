@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Tag} from '@data/tags/models/tags';
-import {MatDialogRef} from '@angular/material/dialog';
+import { MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import {TagService} from '../../core/services/tag.service';
 import {TasksFiltersService} from '../../core/services/tasks-filters.service';
 import {Store} from '@ngrx/store';
@@ -10,11 +10,16 @@ import {selectAllTags} from '../../core/selectors/tags.selectors';
 import {Filter} from '@data/filter';
 import {takeUntil} from 'rxjs/operators';
 import {setCurrentTagsFilters} from "../../core/actions/tasks/tags-filters-tasks.actions";
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { MatChipsModule } from '@angular/material/chips';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
     selector: 'tickist-tags-filter-dialog',
     templateUrl: './tags-filter-dialog.html',
-    styleUrls: ['./tags-filter-dialog.component.scss']
+    styleUrls: ['./tags-filter-dialog.component.scss'],
+    standalone: true,
+    imports: [MatDialogTitle, MatDialogContent, NgIf, MatChipsModule, FaIconComponent, NgFor]
 })
 export class TagsFilterDialogComponent implements OnInit, OnDestroy {
     tagsFilterValue: any;

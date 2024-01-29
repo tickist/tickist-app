@@ -3,12 +3,30 @@ import { MatDialog } from "@angular/material/dialog";
 import { SingleTask2Component } from "../shared/single-task";
 import { Store } from "@ngrx/store";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { DisplayFinishDateComponent } from "../display-finish-date/display-finish-date.component";
+import { RightMenuComponent } from "../right-menu/right-menu.component";
+import { TaskNameComponent } from "../task-name/task-name.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgClass, NgIf } from "@angular/common";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-single-task-simplified",
     templateUrl: "./single-task-simplified.component.html",
     styleUrls: ["./single-task-simplified.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FlexModule,
+        NgClass,
+        ExtendedModule,
+        FaIconComponent,
+        TaskNameComponent,
+        RightMenuComponent,
+        NgIf,
+        DisplayFinishDateComponent,
+    ],
 })
 export class SingleTaskSimplifiedComponent extends SingleTask2Component implements OnInit {
     @Input() task;

@@ -6,7 +6,8 @@ import {takeUntil} from 'rxjs/operators';
 import {User} from '@data/users/models';
 
 @Directive({
-    selector: '[tickistFeatureFlag], [featureFlag]'
+    selector: '[tickistFeatureFlag], [featureFlag]',
+    standalone: true
 })
 export class FeatureFlagDirective implements OnInit, OnDestroy {
     @Input() featureFlag: string;

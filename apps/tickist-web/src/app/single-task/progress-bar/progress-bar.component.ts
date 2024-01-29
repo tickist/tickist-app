@@ -10,12 +10,23 @@ import {
     ViewChild,
 } from "@angular/core";
 import { MediaObserver } from "@ngbracket/ngx-layout";
+import { MenuButtonComponent } from "../../shared/components/menu-button/menu-button.component";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgIf } from "@angular/common";
 
 @Component({
     selector: "tickist-progress-bar",
     templateUrl: "./progress-bar.component.html",
     styleUrls: ["./progress-bar.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        NgIf,
+        MatTooltipModule,
+        MatProgressBarModule,
+        MenuButtonComponent,
+    ],
 })
 export class ProgressBarComponent implements AfterViewChecked, OnChanges {
     @Input() percent: number;

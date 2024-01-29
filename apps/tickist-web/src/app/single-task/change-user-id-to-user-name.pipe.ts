@@ -5,6 +5,7 @@ import { selectTeam } from "../core/selectors/team.selectors";
 @Pipe({
     name: "changeUserIdToUserName",
     pure: true,
+    standalone: true,
 })
 export class ChangeUserIdToUserNamePipe implements PipeTransform {
     team: any;

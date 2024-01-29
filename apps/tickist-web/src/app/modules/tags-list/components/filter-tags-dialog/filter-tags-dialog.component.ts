@@ -1,16 +1,30 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from "@angular/material/dialog";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { selectAllTagsFilters, selectCurrentTagFilter } from "../../tags-filters.selectors";
 import { Store } from "@ngrx/store";
 import { Filter } from "@data/filter";
 import { setCurrentTagsListFilter } from "../../tags-filters.actions";
+import { NgFor } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { MatRadioModule } from "@angular/material/radio";
 
 @Component({
     selector: "tickist-filter-tags-dialog",
     templateUrl: "./filter-tags-dialog.component.html",
     styleUrls: ["./filter-tags-dialog.component.css"],
+    standalone: true,
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        MatRadioModule,
+        FlexModule,
+        FormsModule,
+        NgFor,
+        MatDialogActions,
+    ],
 })
 export class FilterTagsDialogComponent implements OnInit, OnDestroy {
     filterValueId: number;

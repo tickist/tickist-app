@@ -22,9 +22,9 @@ import { TickistCoreModule } from "../../core/core.module";
         IconsModule,
         AuthModule,
         TickistCoreModule,
+        LoginComponent,
     ],
     providers: [],
     exports: [LoginComponent],
-    declarations: [LoginComponent],
 })
 export class TickistLoginModule {}

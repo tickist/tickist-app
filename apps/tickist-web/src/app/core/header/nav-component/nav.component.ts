@@ -16,11 +16,46 @@ import { teamRoutesName } from "../../../modules/team/routes-names";
 import { Storage } from "@angular/fire/storage";
 import { dashboardRoutesName } from "../../../modules/dashboard/routes.names";
 import { setActiveProject } from "../../actions/projects/active-project.actions";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MenuButtonComponent } from "../../../shared/components/menu-button/menu-button.component";
+import { MatMenuModule } from "@angular/material/menu";
+import { DataCyDirective } from "../../../shared/directives/data-cy.directive";
+import { UserAvatarComponent } from "../../../shared/components/user-avatar/user-avatar.component";
+import { NotificationsIconComponent } from "../../../modules/notifications/components/notifications-icon/notifications-icon.component";
+import { SearchAutocompleteComponent } from "../search-autocomplete/search-autocomplete.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgClass, NgIf, AsyncPipe } from "@angular/common";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { ShowOfflineModeComponent } from "../show-offline-mode/show-offline-mode.component";
+import { ShowApiErrorComponent } from "../show-api-error/show-api-error.component";
 
 @Component({
     selector: "tickist-nav",
     templateUrl: "./nav.component.html",
     styleUrls: ["./nav.component.scss"],
+    standalone: true,
+    imports: [
+        ShowApiErrorComponent,
+        ShowOfflineModeComponent,
+        MatToolbarModule,
+        NgClass,
+        ExtendedModule,
+        MatButtonModule,
+        FaIconComponent,
+        FlexModule,
+        SearchAutocompleteComponent,
+        NotificationsIconComponent,
+        NgIf,
+        UserAvatarComponent,
+        DataCyDirective,
+        MatMenuModule,
+        MenuButtonComponent,
+        MatProgressBarModule,
+        AsyncPipe,
+    ],
 })
 export class NavComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild("homeElement", { read: ElementRef }) homeElement: ElementRef;

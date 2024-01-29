@@ -3,6 +3,7 @@ import { ConfigurationService } from "../../core/services/configuration.service"
 
 @Pipe({
     name: "typeFinishDateString",
+    standalone: true,
 })
 export class TypeFinishDateString implements PipeTransform {
     constructor(protected configurationService: ConfigurationService) {}

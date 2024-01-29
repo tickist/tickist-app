@@ -42,15 +42,7 @@ import { initializeFirestore } from "@firebase/firestore";
 console.log({ environment });
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        DeleteTaskDialogComponent,
-        TimeDialogComponent,
-        TypeFinishDateString,
-        ChangeFinishDateDialogComponent,
-        RootComponent,
-        SnackBarMessageComponent,
-    ],
+    declarations: [AppComponent],
     imports: [
         HttpClientModule,
         LoggerModule.forRoot(environment.logger),
@@ -61,23 +53,20 @@ console.log({ environment });
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        StoreModule.forRoot(
-            {
-                addTaskComponentVisibilityReducer: addTaskComponentVisibilityReducer,
-                leftSidenavVisibility: leftSidenavVisibility,
-            } as ActionReducerMap<any>,
-            {
-                initialState: {},
-                metaReducers,
-                runtimeChecks: {
-                    strictStateImmutability: true,
-                    strictActionImmutability: true,
-                },
+        StoreModule.forRoot({
+            addTaskComponentVisibilityReducer: addTaskComponentVisibilityReducer,
+            leftSidenavVisibility: leftSidenavVisibility,
+        } as ActionReducerMap<any>, {
+            initialState: {},
+            metaReducers,
+            runtimeChecks: {
+                strictStateImmutability: true,
+                strictActionImmutability: true,
             },
-        ),
+        }),
         StoreDevtoolsModule.instrument({
-            maxAge: 50, // Retains last 25 states
-            logOnly: environment.production, // Restrict extension to log-only mode
+            maxAge: 50,
+            logOnly: environment.production,
             connectInZone: true,
         }),
         TickistMaterialModule,
@@ -94,7 +83,6 @@ console.log({ environment });
         TickistRoutingModule,
         TickistCoreModule,
         IconsModule,
-
         // TickistNotificationsModule,
         TickistLeftPanelModule,
         provideFirebaseApp(() => {
@@ -142,6 +130,12 @@ console.log({ environment });
             }
             return functions;
         }),
+        DeleteTaskDialogComponent,
+        TimeDialogComponent,
+        TypeFinishDateString,
+        ChangeFinishDateDialogComponent,
+        RootComponent,
+        SnackBarMessageComponent,
     ],
     bootstrap: [AppComponent],
     providers: [{ provide: DateAdapter, useClass: MyDateAdapter }],

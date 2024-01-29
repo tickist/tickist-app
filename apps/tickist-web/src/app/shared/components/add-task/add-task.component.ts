@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Project, Task, TaskProject, TaskUser, User } from "@data";
 import { Subject } from "rxjs";
-import { UntypedFormControl, UntypedFormGroup, FormGroupDirective, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, FormGroupDirective, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { selectLoggedInUser } from "../../../core/selectors/user.selectors";
 import { takeUntil } from "rxjs/operators";
 import { Store } from "@ngrx/store";
@@ -9,11 +9,29 @@ import { requestCreateTask } from "../../../core/actions/tasks/task.actions";
 import { ShowOnDirtyErrorStateMatcher } from "@angular/material/core";
 import { addTaskInputIsFocus } from "../../../core/selectors/ui.selectors";
 import { blurOnAddTaskInput } from "../../../core/actions/ui.actions";
+import { MatButtonModule } from "@angular/material/button";
+import { MatInputModule } from "@angular/material/input";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { NgIf, NgStyle } from "@angular/common";
 
 @Component({
     selector: "tickist-add-task",
     templateUrl: "./add-task.component.html",
     styleUrls: ["./add-task.component.scss"],
+    standalone: true,
+    imports: [
+        NgIf,
+        FormsModule,
+        FlexModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        NgStyle,
+        ExtendedModule,
+        MatInputModule,
+        MatButtonModule,
+    ],
 })
 export class AddTaskComponent implements OnInit, OnDestroy, OnChanges {
     @Input() project: Project;

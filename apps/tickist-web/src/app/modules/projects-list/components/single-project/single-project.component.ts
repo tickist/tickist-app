@@ -11,7 +11,7 @@ import {
 } from "@angular/core";
 import { AVAILABLE_PROJECT_TYPES, ProjectType, ProjectWithAllDescendants } from "@data/projects";
 import { ProjectService } from "../../../../core/services/project.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { MediaObserver } from "@ngbracket/ngx-layout";
 import { DeleteProjectConfirmationDialogComponent } from "../delete-project-dialog/delete-project-dialog.component";
@@ -29,12 +29,41 @@ import { homeRoutesName } from "../../../../routing.module.name";
 import { ProjectLeftPanel } from "../../models/project-list";
 import { addNewActiveProjectId, deleteActiveProjectId } from "../../../../core/actions/projects/active-projects-ids.actions";
 import { NGXLogger } from "ngx-logger";
+import { MatMenuModule } from "@angular/material/menu";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { AngularResizeEventModule } from "angular-resize-event";
+import { FormsModule } from "@angular/forms";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgClass, NgIf, NgStyle, NgFor } from "@angular/common";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-single-project",
     templateUrl: "./single-project.component.html",
     styleUrls: ["./single-project.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FlexModule,
+        NgClass,
+        ExtendedModule,
+        NgIf,
+        FaIconComponent,
+        NgStyle,
+        MatCheckboxModule,
+        FormsModule,
+        AngularResizeEventModule,
+        MatTooltipModule,
+        MenuButtonComponent,
+        DataCyDirective,
+        MatMenuModule,
+        NgFor,
+        RouterLink,
+    ],
 })
 export class SingleProjectComponent implements OnInit, OnDestroy {
     @Input() project: ProjectLeftPanel;

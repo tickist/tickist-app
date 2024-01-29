@@ -1,12 +1,32 @@
 import { Component, OnInit } from "@angular/core";
-import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { UserService } from "../../../../core/services/user.service";
 import { NGXLogger } from "ngx-logger";
+import { MatButtonModule } from "@angular/material/button";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { NgIf, NgClass } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-request-reset-password",
     templateUrl: "./request-reset-password.component.html",
     styleUrls: ["./request-reset-password.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        MatCardModule,
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgClass,
+        ExtendedModule,
+        MatButtonModule,
+    ],
 })
 export class RequestResetPasswordComponent implements OnInit {
     requestChangePasswordForm: UntypedFormGroup;

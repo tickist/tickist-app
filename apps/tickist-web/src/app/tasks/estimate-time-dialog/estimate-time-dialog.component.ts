@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef, MatDialogTitle, MatDialogContent } from "@angular/material/dialog";
 import { Observable, Subject } from "rxjs";
 import {
     selectCurrentEstimateTimeFilter,
@@ -9,11 +9,22 @@ import { Store } from "@ngrx/store";
 import { takeUntil } from "rxjs/operators";
 import { Filter } from "@data/filter";
 import { setCurrentEstimateTimeFiltersTasks } from "../../core/actions/tasks/estimate-time-filters-tasks.actions";
+import { MatButtonModule } from "@angular/material/button";
+import { FormsModule } from "@angular/forms";
+import { SliderModule } from "primeng/slider";
 
 @Component({
     selector: "tickist-task-estimate-time-filter-dialog",
     styleUrls: ["./estimate-time-dialog.component.scss"],
     templateUrl: "./task-estimate-time-filter-dialog.html",
+    standalone: true,
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        SliderModule,
+        FormsModule,
+        MatButtonModule,
+    ],
 })
 export class EstimateTimeDialogComponent implements OnInit, OnDestroy {
     estimateTimeCurrentFilter$: Observable<{

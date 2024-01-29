@@ -14,12 +14,6 @@ import {TickistProjectListModule} from "../projects-list/projects-list.module";
 
 
 @NgModule({
-    declarations: [
-        DashboardComponent,
-        ProjectWithoutNextActionTasksComponent,
-        NextActionTasksComponent,
-        NeedInfoTasksComponent
-    ],
     imports: [
         CommonModule,
         TickistDashboardRoutingModule,
@@ -28,7 +22,11 @@ import {TickistProjectListModule} from "../projects-list/projects-list.module";
         TickistSharedModule,
         TickistMaterialModule,
         IconsModule,
-        TickistProjectListModule
+        TickistProjectListModule,
+        DashboardComponent,
+        ProjectWithoutNextActionTasksComponent,
+        NextActionTasksComponent,
+        NeedInfoTasksComponent
     ]
 })
 export class TickistDashboardModule {

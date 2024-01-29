@@ -14,12 +14,24 @@ import { selectActiveDate } from "../../../../core/selectors/active-date.selecto
 import { Store } from "@ngrx/store";
 import { IActiveDateElement } from "@data/active-data-element.interface";
 import { addMonths, format, getMonth, getYear } from "date-fns";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { NgFor, NgClass } from "@angular/common";
+import { MatListModule } from "@angular/material/list";
 
 @Component({
     selector: "tickist-future-list",
     templateUrl: "./future-list.component.html",
     styleUrls: ["./future-list.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatListModule,
+        NgFor,
+        FlexModule,
+        NgClass,
+        ExtendedModule,
+    ],
 })
 export class FutureListComponent implements OnInit, OnDestroy {
     futureList: FutureListElement[];

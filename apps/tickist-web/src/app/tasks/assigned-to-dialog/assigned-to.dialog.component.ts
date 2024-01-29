@@ -1,17 +1,22 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import { MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import {Observable, Subject} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {selectAssignedToFilters, selectCurrentAssignedToFilter} from '../../core/selectors/filters-tasks.selectors';
 import {takeUntil} from 'rxjs/operators';
 import {Filter} from '@data/filter';
 import {setCurrentAssignedToFilter} from "../../core/actions/tasks/assigned-to-filters-tasks.actions";
+import { NgFor, AsyncPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @Component({
     selector: 'tickist-assigned-to-dialog',
     styleUrls: ['./assigned-to.dialog.component.scss'],
-    templateUrl: './assigned-to.dialog.component.html'
+    templateUrl: './assigned-to.dialog.component.html',
+    standalone: true,
+    imports: [MatDialogTitle, MatDialogContent, MatRadioModule, FormsModule, NgFor, AsyncPipe]
 })
 export class AssignedToDialogComponent implements OnInit, OnDestroy {
     assignedToCurrentFilter$: Observable<Filter>;

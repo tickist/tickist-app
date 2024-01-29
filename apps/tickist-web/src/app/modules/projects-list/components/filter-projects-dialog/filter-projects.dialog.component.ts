@@ -1,4 +1,4 @@
-import {  MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from "@angular/material/dialog";
 import {Component, OnDestroy} from '@angular/core';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
@@ -6,12 +6,18 @@ import {Store} from '@ngrx/store';
 import {selectAllProjectsFilters, selectCurrentProjectFilter} from '../../projects-filters.selectors';
 import {Filter} from '@data/filter';
 import {setCurrentProjectFilter} from "../../projects-filters.actions";
+import { NgFor } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { MatRadioModule } from "@angular/material/radio";
 
 
 @Component({
     selector: 'tickist-filter-projects',
     templateUrl: './filter-projects.dialog.component.html',
-    styleUrls: ['./filter-projects.dialog.component.scss']
+    styleUrls: ['./filter-projects.dialog.component.scss'],
+    standalone: true,
+    imports: [MatDialogTitle, MatDialogContent, MatRadioModule, FlexModule, FormsModule, NgFor, MatDialogActions]
 })
 export class FilterProjectDialogComponent implements OnDestroy {
     filterValueId: number;

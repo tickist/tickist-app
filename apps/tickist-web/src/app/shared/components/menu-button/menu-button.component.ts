@@ -6,12 +6,21 @@ import {
     SimpleChange,
 } from "@angular/core";
 import { IconPrefix } from "@fortawesome/fontawesome-common-types";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgClass } from "@angular/common";
 
 @Component({
     selector: "tickist-menu-button",
     templateUrl: "./menu-button.component.html",
     styleUrls: ["./menu-button.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        NgClass,
+        ExtendedModule,
+        FaIconComponent,
+    ],
 })
 export class MenuButtonComponent implements OnChanges {
     @Input() icon: any;

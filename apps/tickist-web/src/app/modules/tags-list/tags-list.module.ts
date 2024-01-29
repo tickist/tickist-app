@@ -24,9 +24,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
         FontAwesomeModule,
         StoreModule.forFeature("tagsFilters", fromTagsFilters.reducer),
         EffectsModule.forFeature([TagsFiltersEffects]),
+        TagComponent, FilterTagsDialogComponent, TagsListComponent,
     ],
     providers: [],
     exports: [TagsListComponent],
-    declarations: [TagComponent, FilterTagsDialogComponent, TagsListComponent],
 })
 export class TickistTagsListModule {}

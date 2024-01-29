@@ -3,6 +3,7 @@ import { ConfigurationService } from "../../core/services/configuration.service"
 
 @Pipe({
     name: "repeatstringextension",
+    standalone: true,
 })
 export class RepeatStringExtension implements PipeTransform {
     constructor(protected configurationService: ConfigurationService) {}

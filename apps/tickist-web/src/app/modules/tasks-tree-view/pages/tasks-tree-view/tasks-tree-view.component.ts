@@ -10,14 +10,19 @@ import { Store } from "@ngrx/store";
 import { Task } from "@data/tasks/models/tasks";
 import { selectAllTasksTreeView } from "../../tasks-tree-view.selectors";
 import { Observable, Subject } from "rxjs";
-import {
-    MatTreeFlatDataSource,
-    MatTreeFlattener,
-} from "@angular/material/tree";
+import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from "@angular/material/tree";
 import { FlatTreeControl } from "@angular/cdk/tree";
 import { takeUntil } from "rxjs/operators";
 import { editProjectSettingsRoutesName } from "../../../edit-project/routes-names";
 import { Router } from "@angular/router";
+import { AddTaskComponent } from "../../../../shared/components/add-task/add-task.component";
+import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
+import { ProjectTreeComponent } from "../../components/project-tree/project-tree.component";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgClass, NgIf } from "@angular/common";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 interface TaskTreeViewNode {
     project?: Project;
@@ -44,6 +49,19 @@ interface FlatNode {
     templateUrl: "./tasks-tree-view.component.html",
     styleUrls: ["./tasks-tree-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FlexModule,
+        FaIconComponent,
+        MatTooltipModule,
+        NgClass,
+        ExtendedModule,
+        MatTreeModule,
+        NgIf,
+        ProjectTreeComponent,
+        SingleTaskComponent,
+        AddTaskComponent,
+    ],
 })
 export class TasksTreeViewComponent implements OnInit, OnDestroy {
     transformer: any;

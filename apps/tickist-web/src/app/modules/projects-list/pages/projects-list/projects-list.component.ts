@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { Observable, Subject } from "rxjs";
 import { TaskService } from "../../../../core/services/task.service";
 import { ProjectType } from "@data/projects";
@@ -18,11 +18,29 @@ import { homeRoutesName } from "../../../../routing.module.name";
 import { Filter } from "@data/filter";
 import { takeUntil } from "rxjs/operators";
 import { ProjectLeftPanel } from "../../models/project-list";
+import { SingleProjectComponent } from "../../components/single-project/single-project.component";
+import { NgIf, NgFor, AsyncPipe } from "@angular/common";
+import { MatMenuModule } from "@angular/material/menu";
+import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-projects-list",
     templateUrl: "./projects-list.component.html",
     styleUrls: ["./projects-list.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        DataCyDirective,
+        MenuButtonComponent,
+        MatMenuModule,
+        RouterLink,
+        NgIf,
+        NgFor,
+        SingleProjectComponent,
+        AsyncPipe,
+    ],
 })
 export class ProjectsListComponent implements OnInit, OnDestroy {
     @Input() projectType: ProjectType;

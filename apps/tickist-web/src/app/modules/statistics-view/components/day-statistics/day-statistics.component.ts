@@ -10,12 +10,27 @@ import { takeUntil } from "rxjs/operators";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
 import { IActiveDateElement } from "@data/active-data-element.interface";
 import { DailyStatistics } from "@data/statistics";
+import { DateToString } from "../../../../shared/pipes/datetostring";
+import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
+import { ChartLegendComponent } from "./chart-legend/chart-legend.component";
+import { NgIf, NgFor, NgClass } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
 
 @Component({
     selector: "tickist-day-statistics",
     templateUrl: "./day-statistics.component.html",
     styleUrls: ["./day-statistics.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatCardModule,
+        NgIf,
+        NgFor,
+        NgClass,
+        ChartLegendComponent,
+        Minutes2hoursPipe,
+        DateToString,
+    ],
 })
 export class DayStatisticsComponent implements OnInit, OnDestroy {
     dayStatistics: any;

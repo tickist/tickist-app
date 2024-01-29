@@ -25,8 +25,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
         RouterModule,
         TickistTasksTreeViewRoutingModule,
         FontAwesomeModule,
+        TasksTreeViewComponent, ProjectTreeComponent,
     ],
-    declarations: [TasksTreeViewComponent, ProjectTreeComponent],
     providers: [],
     exports: [TasksTreeViewComponent],
 })

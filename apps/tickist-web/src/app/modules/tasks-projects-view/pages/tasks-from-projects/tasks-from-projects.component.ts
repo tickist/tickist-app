@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { combineLatest, Observable, Subject } from "rxjs";
 import { Task } from "@data/tasks/models/tasks";
 import { Project } from "@data/projects";
@@ -21,11 +21,44 @@ import { setActiveProject } from "../../../../core/actions/projects/active-proje
 import { archiveRoutesName } from "../../../archives/routes.names";
 import { selectSearchTasksTextIsEnabled } from "../../../../core/selectors/filters-tasks.selectors";
 import { clearSearchTasksFilter } from "../../../../core/actions/tasks/search-tasks.actions";
+import { AddTaskComponent } from "../../../../shared/components/add-task/add-task.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { NoTasksComponent } from "../../../../single-task/no-tasks/no-tasks.component";
+import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
+import { ChangeTaskViewComponent } from "../../../../shared/components/change-task-view-component/change-task-view.component";
+import { FilterTasksComponent } from "../../../../tasks/filter-tasks/filter-tasks.component";
+import { SortTasksComponent } from "../../../../tasks/sort-tasks/sort-tasks.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { NgIf, AsyncPipe } from "@angular/common";
+import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from "@angular/cdk/scrolling";
 
 @Component({
     selector: "tickist-tasks-from-projects",
     templateUrl: "./tasks-from-projects.component.html",
     styleUrls: ["./tasks-from-projects.component.scss"],
+    standalone: true,
+    imports: [
+        CdkVirtualScrollViewport,
+        CdkFixedSizeVirtualScroll,
+        NgIf,
+        FlexModule,
+        SortTasksComponent,
+        FilterTasksComponent,
+        ChangeTaskViewComponent,
+        MenuButtonComponent,
+        DataCyDirective,
+        MatTooltipModule,
+        RouterLink,
+        CdkVirtualForOf,
+        SingleTaskComponent,
+        NoTasksComponent,
+        FaIconComponent,
+        AddTaskComponent,
+        AsyncPipe,
+    ],
 })
 export class TasksFromProjectsComponent implements OnInit, OnDestroy {
     selectedProjectsStream$: Observable<any>;

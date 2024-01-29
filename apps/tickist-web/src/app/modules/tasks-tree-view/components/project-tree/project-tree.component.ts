@@ -4,11 +4,33 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { editProjectSettingsRoutesName } from "../../../edit-project/routes-names";
 import { Router } from "@angular/router";
 import { homeRoutesName } from "../../../../routing.module.name";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
+import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { MatBadgeModule } from "@angular/material/badge";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgStyle, NgClass } from "@angular/common";
+import { MatTreeModule } from "@angular/material/tree";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
     selector: "tickist-project-tree",
     templateUrl: "./project-tree.component.html",
     styleUrls: ["./project-tree.component.scss"],
+    standalone: true,
+    imports: [
+        MatIconModule,
+        MatTreeModule,
+        NgStyle,
+        ExtendedModule,
+        MatBadgeModule,
+        FlexModule,
+        MenuButtonComponent,
+        MatMenuModule,
+        FaIconComponent,
+        NgClass,
+    ],
 })
 export class ProjectTreeComponent {
     @Input() isExpanded: boolean;

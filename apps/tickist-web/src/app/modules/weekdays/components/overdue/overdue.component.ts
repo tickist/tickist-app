@@ -7,11 +7,26 @@ import { takeUntil } from "rxjs/operators";
 import { updateUser } from "../../../../core/actions/user.actions";
 import { Store } from "@ngrx/store";
 import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
+import { NoTasksComponent } from "../../../../single-task/no-tasks/no-tasks.component";
+import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
+import { NgFor } from "@angular/common";
+import { ChangeTaskViewComponent } from "../../../../shared/components/change-task-view-component/change-task-view.component";
+import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-overdue",
     templateUrl: "./overdue.component.html",
     styleUrls: ["./overdue.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        MenuButtonComponent,
+        ChangeTaskViewComponent,
+        NgFor,
+        SingleTaskComponent,
+        NoTasksComponent,
+    ],
 })
 export class OverdueComponent implements OnInit, OnDestroy {
     @Input() tasks: Task[];

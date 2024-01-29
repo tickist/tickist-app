@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Router } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import { Task } from "@data/tasks/models/tasks";
 import { Project } from "@data/projects";
 import { ProjectService } from "../../services/project.service";
@@ -18,11 +18,23 @@ import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { selectLoggedInUser } from "../../selectors/user.selectors";
 import { NotificationPermission, User } from "@data";
 import { SnackBarNotificationComponent } from "../../../modules/notifications/components/snack-bar-notification/snack-bar-notification.component";
+import { AddTaskFooterButtonComponent } from "../../footer/add-task-footer-button/add-task-footer-button.component";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { NgIf } from "@angular/common";
+import { NavComponent } from "../../header/nav-component/nav.component";
 
 @Component({
     selector: "tickist-home",
     templateUrl: "./home.component.html",
     styleUrls: ["./home.component.scss"],
+    standalone: true,
+    imports: [
+        NavComponent,
+        NgIf,
+        MatSidenavModule,
+        RouterOutlet,
+        AddTaskFooterButtonComponent,
+    ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
     tasks: Task[];

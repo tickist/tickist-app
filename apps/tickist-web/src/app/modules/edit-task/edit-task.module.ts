@@ -22,9 +22,9 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
         TickistSharedModule,
         DragDropModule,
         A11yModule,
+        TaskComponent,
     ],
     providers: [],
     exports: [TaskComponent],
-    declarations: [TaskComponent],
 })
 export class TickistEditTaskModule {}

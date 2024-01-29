@@ -16,9 +16,9 @@ import { TickistSharedModule } from "../../shared/shared.module";
         ReactiveFormsModule,
         TickistTeamRoutingModule,
         TickistSharedModule,
+        TeamComponent,
     ],
     providers: [],
     exports: [],
-    declarations: [TeamComponent],
 })
 export class TickistTeamModule {}

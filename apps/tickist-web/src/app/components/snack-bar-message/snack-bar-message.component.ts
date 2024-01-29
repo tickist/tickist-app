@@ -2,11 +2,16 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {interval, noop, Observable, Subject} from 'rxjs';
 import {map, shareReplay, take, takeUntil} from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { FlexModule } from '@ngbracket/ngx-layout/flex';
 
 @Component({
     selector: 'tickist-snack-bar-message',
     templateUrl: './snack-bar-message.component.html',
-    styleUrls: ['./snack-bar-message.component.scss']
+    styleUrls: ['./snack-bar-message.component.scss'],
+    standalone: true,
+    imports: [FlexModule, MatButtonModule, AsyncPipe]
 })
 export class SnackBarMessageComponent implements OnInit, OnDestroy {
     timer$: Observable<number>;

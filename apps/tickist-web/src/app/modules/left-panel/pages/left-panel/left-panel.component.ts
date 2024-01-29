@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { tasksTreeViewRoutesName } from "../../../tasks-tree-view/routes.names";
 import { statisticsRoutesName } from "../../../statistics-view/routes.names";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { tasksTagsViewRoutesName } from "../../../tasks-tags-view/routes.names";
 import { homeRoutesName } from "../../../../routing.module.name";
 import { ProjectType, User } from "@data";
@@ -13,11 +13,33 @@ import { tasksProjectsViewRoutesName } from "../../../tasks-projects-view/routes
 import { selectInboxTasksCounter } from "../../../../core/selectors/task.selectors";
 import { selectProjectTypeCounter } from "../../../../core/selectors/projects.selectors";
 import { dashboardRoutesName } from "../../../dashboard/routes.names";
+import { AsyncPipe } from "@angular/common";
+import { FeatureFlagDirective } from "../../../../shared/directives/feature-flag.directive";
+import { TagsListComponent } from "../../../tags-list/pages/tags-list/tags-list.component";
+import { ProjectsListComponent } from "../../../projects-list/pages/projects-list/projects-list.component";
+import { FutureListComponent } from "../../components/future-list/future-list.component";
+import { WeekDaysComponent } from "../../components/weekdays/weekdays.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatCardModule } from "@angular/material/card";
 
 @Component({
     selector: "tickist-left-panel",
     templateUrl: "./left-panel.component.html",
     styleUrls: ["./left-panel.component.scss"],
+    standalone: true,
+    imports: [
+        MatCardModule,
+        MatExpansionModule,
+        RouterLink,
+        FaIconComponent,
+        WeekDaysComponent,
+        FutureListComponent,
+        ProjectsListComponent,
+        TagsListComponent,
+        FeatureFlagDirective,
+        AsyncPipe,
+    ],
 })
 export class LeftPanelComponent implements OnInit, OnDestroy {
     projectsTypes = ProjectType;

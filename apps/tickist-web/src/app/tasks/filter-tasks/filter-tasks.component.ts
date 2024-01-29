@@ -15,11 +15,21 @@ import { Store } from "@ngrx/store";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { Filter } from "@data/filter";
+import { NgIf, AsyncPipe } from "@angular/common";
+import { MatMenuModule } from "@angular/material/menu";
+import { MenuButtonComponent } from "../../shared/components/menu-button/menu-button.component";
 
 @Component({
     selector: "tickist-filter-tasks",
     templateUrl: "./filter-tasks.component.html",
     styleUrls: ["./filter-tasks.component.scss"],
+    standalone: true,
+    imports: [
+        MenuButtonComponent,
+        MatMenuModule,
+        NgIf,
+        AsyncPipe,
+    ],
 })
 export class FilterTasksComponent implements OnInit, OnDestroy {
     @Input() showTags: boolean;

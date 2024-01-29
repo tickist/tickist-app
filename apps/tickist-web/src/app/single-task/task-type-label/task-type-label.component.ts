@@ -1,12 +1,16 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from "@angular/core";
 import { AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task } from "@data";
 import { zip } from "ramda";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
     selector: "tickist-task-type-label",
     templateUrl: "./task-type-label.component.html",
     styleUrls: ["./task-type-label.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [FaIconComponent, ExtendedModule],
 })
 export class TaskTypeLabelComponent implements OnChanges {
     @Input() task: Task;

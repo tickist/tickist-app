@@ -26,12 +26,10 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         FontAwesomeModule,
         StoreModule.forFeature('futureTasks', fromFutureTasks.reducer),
         EffectsModule.forFeature([FutureTasksEffects]),
+        FutureTasksComponent, FilterFutureTasksComponent,
     ],
     providers: [],
-    exports:
-        [FutureTasksComponent],
-    declarations:
-        [FutureTasksComponent, FilterFutureTasksComponent]
+    exports: [FutureTasksComponent]
 })
 
 export class TickistFutureTasksModule {

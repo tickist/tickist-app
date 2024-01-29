@@ -16,11 +16,22 @@ import { selectActiveDate } from "../../../../core/selectors/active-date.selecto
 import { IActiveDateElement } from "@data/active-data-element.interface";
 import { StateActiveDateElement } from "@data/state-active-date-element.enum";
 import { addDays, format } from "date-fns";
+import { OverdueComponent } from "../../components/overdue/overdue.component";
+import { TodayComponent } from "../../components/today/today.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { NgIf } from "@angular/common";
 
 @Component({
     selector: "tickist-weekdays",
     templateUrl: "./weekdays.component.html",
     styleUrls: ["./weekdays.component.scss"],
+    standalone: true,
+    imports: [
+        NgIf,
+        FlexModule,
+        TodayComponent,
+        OverdueComponent,
+    ],
 })
 export class WeekdaysComponent implements OnInit, OnDestroy {
     todayTasks: Task[] = [];

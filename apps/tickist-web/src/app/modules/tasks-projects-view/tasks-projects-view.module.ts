@@ -22,8 +22,8 @@ import { IconsModule } from "../../icons.module";
         ReactiveFormsModule,
         TickistTasksProjectsViewRoutingModule,
         IconsModule,
+        TasksFromProjectsComponent,
     ],
-    declarations: [TasksFromProjectsComponent],
     exports: [],
 })
 export class TickistTasksProjectsViewModule {}

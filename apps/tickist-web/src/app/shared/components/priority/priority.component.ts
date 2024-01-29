@@ -1,5 +1,8 @@
 import { Component, EventEmitter, forwardRef, Input, Output } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgStyle } from "@angular/common";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 
 const noop = () => {};
 
@@ -13,6 +16,12 @@ const noop = () => {};
             useExisting: forwardRef(() => PriorityComponent),
             multi: true,
         },
+    ],
+    standalone: true,
+    imports: [
+        MatButtonToggleModule,
+        NgStyle,
+        ExtendedModule,
     ],
 })
 export class PriorityComponent implements ControlValueAccessor {

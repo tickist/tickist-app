@@ -8,11 +8,26 @@ import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { updateUser } from "../../../../core/actions/user.actions";
 import { selectActiveDate } from "../../../../core/selectors/active-date.selectors";
 import { IActiveDateElement } from "@data/active-data-element.interface";
+import { DateToString } from "../../../../shared/pipes/datetostring";
+import { NoTasksComponent } from "../../../../single-task/no-tasks/no-tasks.component";
+import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
+import { NgFor } from "@angular/common";
+import { ChangeTaskViewComponent } from "../../../../shared/components/change-task-view-component/change-task-view.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-today",
     templateUrl: "./today.component.html",
     styleUrls: ["./today.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        ChangeTaskViewComponent,
+        NgFor,
+        SingleTaskComponent,
+        NoTasksComponent,
+        DateToString,
+    ],
 })
 export class TodayComponent implements OnInit, OnDestroy {
     @Input() tasks: Task[];

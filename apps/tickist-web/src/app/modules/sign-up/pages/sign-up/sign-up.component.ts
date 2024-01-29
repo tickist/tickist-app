@@ -1,13 +1,38 @@
 import { Component, OnDestroy } from "@angular/core";
-import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AuthService } from "../../../auth/services/auth.service";
 import {  MatDialog } from "@angular/material/dialog";
 import { Subject } from "rxjs";
+import { PrivacyPolicyComponent } from "../../../../core/footer/privacy-policy/privacy-policy.component";
+import { RouterLink } from "@angular/router";
+import { FacebookConnectComponent } from "../../../auth/components/facebook-connect/facebook-connect.component";
+import { GoogleConnectComponent } from "../../../auth/components/google-connect/google-connect.component";
+import { MatButtonModule } from "@angular/material/button";
+import { NgIf } from "@angular/common";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatCardModule } from "@angular/material/card";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-sign-up",
     templateUrl: "./sign-up.component.html",
     styleUrls: ["./sign-up.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgIf,
+        MatButtonModule,
+        GoogleConnectComponent,
+        FacebookConnectComponent,
+        RouterLink,
+        PrivacyPolicyComponent,
+    ],
 })
 export class SignUpComponent implements OnDestroy {
     userForm: UntypedFormGroup;

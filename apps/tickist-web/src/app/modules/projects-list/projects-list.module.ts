@@ -28,8 +28,8 @@ import { AngularResizeEventModule } from "angular-resize-event";
         StoreModule.forFeature("projectsFilters", fromProjectsFilters.reducer),
         EffectsModule.forFeature([ProjectsFiltersEffects]),
         AngularResizeEventModule,
+        ProjectsListComponent, SingleProjectComponent, FilterProjectDialogComponent, DeleteProjectConfirmationDialogComponent,
     ],
     exports: [ProjectsListComponent, SingleProjectComponent],
-    declarations: [ProjectsListComponent, SingleProjectComponent, FilterProjectDialogComponent, DeleteProjectConfirmationDialogComponent],
 })
 export class TickistProjectListModule {}

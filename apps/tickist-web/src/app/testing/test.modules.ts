@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 // @Component({
 //   selector: 'tickist-blank-cmp',
@@ -8,8 +9,10 @@ import {Component} from '@angular/core';
 // }
 
 @Component({
-  selector: 'tickist-root-cmp',
-  template: `<router-outlet></router-outlet>`
+    selector: 'tickist-root-cmp',
+    template: `<router-outlet></router-outlet>`,
+    standalone: true,
+    imports: [RouterOutlet]
 })
 export class RootComponent {
 }

@@ -17,12 +17,28 @@ import { homeRoutesName } from "../../../../routing.module.name";
 import { IActiveDateElement } from "@data/active-data-element.interface";
 import { addDays, format, isDate } from "date-fns";
 import { weekdaysRoutesName } from "../../../weekdays/routes.names";
+import { DateToString } from "../../../../shared/pipes/datetostring";
+import { ChooseDayComponent } from "../choose-day/choose-day.component";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { NgFor, NgClass } from "@angular/common";
+import { MatListModule } from "@angular/material/list";
 
 @Component({
     selector: "tickist-weekdays-list",
     templateUrl: "./weekdays.component.html",
     styleUrls: ["./weekdays.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatListModule,
+        NgFor,
+        FlexModule,
+        NgClass,
+        ExtendedModule,
+        ChooseDayComponent,
+        DateToString,
+    ],
 })
 export class WeekDaysComponent implements OnInit, OnDestroy {
     activeDateElement: IActiveDateElement;

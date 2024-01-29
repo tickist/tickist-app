@@ -24,9 +24,9 @@ import { A11yModule } from "@angular/cdk/a11y";
         TickistEditProjectRoutingModule,
         FontAwesomeModule,
         A11yModule,
+        ColorPickerComponent, ProjectComponent, DeleteUserConfirmationDialogComponent, IconPickerComponent, FilterPipe,
     ],
     providers: [],
     exports: [ProjectComponent],
-    declarations: [ColorPickerComponent, ProjectComponent, DeleteUserConfirmationDialogComponent, IconPickerComponent, FilterPipe],
 })
 export class TickistEditProjectModule {}

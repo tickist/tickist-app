@@ -27,17 +27,71 @@ import { Store } from "@ngrx/store";
 import { removeTag } from "../utils/task-utils";
 import { selectAllProjectLeftPanel } from "../../modules/projects-list/projects-filters.selectors";
 import { selectProjectByIdOrName } from "../../core/selectors/projects.selectors";
-import { FormControl } from "@angular/forms";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ProjectLeftPanel } from "../../modules/projects-list/models/project-list";
 import { forbiddenNamesValidator } from "../utils/forbidden-name-validator";
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger, MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MyErrorStateMatcher } from "../../shared/error-state-matcher";
+import { ChangeUserIdToUserNamePipe } from "../change-user-id-to-user-name.pipe";
+import { DateOptionsComponent } from "../date-options/date-options.component";
+import { MatSelectModule } from "@angular/material/select";
+import { MatOptionModule } from "@angular/material/core";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { EditRepeatingOptionComponent } from "../edit-repeating-options/edit-repeating-option.component";
+import { MatChipsModule } from "@angular/material/chips";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { DataCyDirective } from "../../shared/directives/data-cy.directive";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { DisplayFinishDateComponent } from "../display-finish-date/display-finish-date.component";
+import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
+import { UserAvatarComponent } from "../../shared/components/user-avatar/user-avatar.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MenuButtonComponent } from "../../shared/components/menu-button/menu-button.component";
+import { RightMenuComponent } from "../right-menu/right-menu.component";
+import { TaskNameComponent } from "../task-name/task-name.component";
+import { TaskTypeLabelComponent } from "../task-type-label/task-type-label.component";
+import { NgIf, NgFor, NgClass, NgStyle, AsyncPipe } from "@angular/common";
+import { ToggleButtonComponent } from "../toggle-button/toggle-button.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-single-task-extended",
     templateUrl: "./single-task-extended.component.html",
     styleUrls: ["./single-task-extended.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FlexModule,
+        ToggleButtonComponent,
+        NgIf,
+        TaskTypeLabelComponent,
+        TaskNameComponent,
+        RightMenuComponent,
+        MenuButtonComponent,
+        MatTooltipModule,
+        UserAvatarComponent,
+        ProgressBarComponent,
+        DisplayFinishDateComponent,
+        NgFor,
+        FaIconComponent,
+        DataCyDirective,
+        NgClass,
+        ExtendedModule,
+        MatChipsModule,
+        NgStyle,
+        EditRepeatingOptionComponent,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
+        MatOptionModule,
+        MatSelectModule,
+        DateOptionsComponent,
+        AsyncPipe,
+        ChangeUserIdToUserNamePipe,
+    ],
 })
 export class SingleTaskExtendedComponent extends SingleTask2Component implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     @Input() task: Task;

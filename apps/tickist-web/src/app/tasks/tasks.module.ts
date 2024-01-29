@@ -26,10 +26,10 @@ import {SliderModule} from 'primeng/slider';
         FormsModule,
         ReactiveFormsModule,
         SliderModule,
-        FontAwesomeModule
+        FontAwesomeModule,
+        SortTasksComponent, SortByDialogComponent, EstimateTimeDialogComponent, AssignedToDialogComponent, FilterTasksComponent,
+        TagsFilterDialogComponent, TasksFilterDialogComponent
     ],
-    declarations: [SortTasksComponent, SortByDialogComponent, EstimateTimeDialogComponent, AssignedToDialogComponent, FilterTasksComponent,
-        TagsFilterDialogComponent, TasksFilterDialogComponent],
     providers: [
         TaskService
     ],

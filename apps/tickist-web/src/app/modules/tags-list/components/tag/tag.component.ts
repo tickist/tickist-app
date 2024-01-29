@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Tag } from "@data/tags/models/tags";
 import { TasksFiltersService } from "../../../../core/services/tasks-filters.service";
 import { requestDeleteTag, requestUpdateTag } from "../../../../core/actions/tags.actions";
@@ -9,11 +9,38 @@ import { Filter } from "@data/filter";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { setCurrentTagsFilters } from "../../../../core/actions/tasks/tags-filters-tasks.actions";
+import { MatButtonModule } from "@angular/material/button";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgClass, NgIf, NgStyle } from "@angular/common";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-tag",
     templateUrl: "./tag.component.html",
     styleUrls: ["./tag.component.scss"],
+    standalone: true,
+    imports: [
+        FlexModule,
+        NgClass,
+        ExtendedModule,
+        MatTooltipModule,
+        NgIf,
+        MatCheckboxModule,
+        FaIconComponent,
+        DataCyDirective,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        NgStyle,
+        MatInputModule,
+        MatButtonModule,
+    ],
 })
 export class TagComponent implements OnInit, OnDestroy {
     @Input() label: string;

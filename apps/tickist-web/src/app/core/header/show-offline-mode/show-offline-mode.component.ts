@@ -1,11 +1,14 @@
 import { ChangeDetectorRef, Component, NgZone, OnDestroy } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { Store } from "@ngrx/store";
+import { NgIf, AsyncPipe } from "@angular/common";
 
 @Component({
     selector: "tickist-show-offline-mode",
     templateUrl: "./show-offline-mode.component.html",
     styleUrls: ["./show-offline-mode.component.scss"],
+    standalone: true,
+    imports: [NgIf, AsyncPipe],
 })
 export class ShowOfflineModeComponent implements OnDestroy {
     isOffline$: Observable<boolean>;

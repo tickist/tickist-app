@@ -13,6 +13,7 @@ import { Component, OnDestroy } from "@angular/core";
 
 @Component({
     template: "",
+    standalone: true,
 })
 export class SingleTask2Component implements OnDestroy {
     task: Task;

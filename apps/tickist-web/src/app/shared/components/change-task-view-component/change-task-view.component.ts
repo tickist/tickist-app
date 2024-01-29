@@ -1,11 +1,20 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild } from "@angular/core";
 import { ConfigurationService } from "../../../core/services/configuration.service";
 import { TASKS_VIEWS_LIST } from "@data";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FormsModule } from "@angular/forms";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @Component({
     selector: "tickist-change-task-view",
     templateUrl: "./change-task-view.component.html",
     styleUrls: ["./change-task-view.component.scss"],
+    standalone: true,
+    imports: [
+        MatSlideToggleModule,
+        FormsModule,
+        MatTooltipModule,
+    ],
 })
 export class ChangeTaskViewComponent implements OnChanges, AfterViewInit {
     @Input() defaultTaskView: string;

@@ -20,8 +20,8 @@ import { TickistTasksTagsViewRoutingModule } from "./tasks-tags-view-routing.mod
         FormsModule,
         ReactiveFormsModule,
         TickistTasksTagsViewRoutingModule,
+        TagsComponent,
     ],
-    declarations: [TagsComponent],
     providers: [],
     exports: [TagsComponent],
 })

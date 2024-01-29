@@ -8,8 +8,8 @@ import {
     ProjectType,
     ShareWithUser,
 } from "@data/projects";
-import { Location } from "@angular/common";
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
+import { Location, NgIf, NgClass, NgFor, NgStyle, AsyncPipe } from "@angular/common";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -27,11 +27,63 @@ import { addClickableLinks } from "@tickist/utils";
 import { ProjectService } from "../../../../core/services/project.service";
 import { TASKS_VIEWS_LIST } from "@data";
 import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
+import { IconPickerComponent } from "../../components/icon-picker/icon-picker.component";
+import { ColorPickerComponent } from "../../components/color-picker/color-picker.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { UserAvatarComponent } from "../../../../shared/components/user-avatar/user-avatar.component";
+import { MatButtonModule } from "@angular/material/button";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatRadioModule } from "@angular/material/radio";
+import { PriorityComponent } from "../../../../shared/components/priority/priority.component";
+import { MatOptionModule } from "@angular/material/core";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { MatSelectModule } from "@angular/material/select";
+import { A11yModule } from "@angular/cdk/a11y";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatListModule } from "@angular/material/list";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { MatCardModule } from "@angular/material/card";
 
 @Component({
     selector: "tickist-project",
     templateUrl: "./project.component.html",
     styleUrls: ["./project.component.scss"],
+    standalone: true,
+    imports: [
+        MatCardModule,
+        FlexModule,
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        FaIconComponent,
+        MatListModule,
+        NgClass,
+        ExtendedModule,
+        MatFormFieldModule,
+        MatInputModule,
+        A11yModule,
+        MatSelectModule,
+        DataCyDirective,
+        NgFor,
+        MatOptionModule,
+        PriorityComponent,
+        MatRadioModule,
+        NgStyle,
+        MatCheckboxModule,
+        MatAutocompleteModule,
+        MatButtonModule,
+        UserAvatarComponent,
+        MatProgressSpinnerModule,
+        MatTooltipModule,
+        ColorPickerComponent,
+        IconPickerComponent,
+        AsyncPipe,
+    ],
 })
 export class ProjectComponent implements OnInit, OnDestroy {
     @ViewChild("auto") auto: any;

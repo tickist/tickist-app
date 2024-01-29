@@ -6,12 +6,16 @@ import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { ChartStatistics, GlobalStatistics } from "@data/statistics";
 import { format } from "date-fns";
+import { NgIf } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
 
 @Component({
     selector: "tickist-global-statistics",
     templateUrl: "./global-statistics.component.html",
     styleUrls: ["./global-statistics.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatCardModule, NgIf],
 })
 export class GlobalStatisticsComponent implements OnInit, OnDestroy {
     global$: Observable<GlobalStatistics>;

@@ -1,7 +1,8 @@
 import {Pipe, PipeTransform} from '@angular/core';
 
 @Pipe({
-    name: 'avatarsize'
+    name: 'avatarsize',
+    standalone: true
 })
 export class AvatarSize implements PipeTransform {
     transform(value: any, args: string): any {

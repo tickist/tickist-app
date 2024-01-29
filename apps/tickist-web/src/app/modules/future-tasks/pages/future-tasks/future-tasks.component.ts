@@ -19,12 +19,30 @@ import { Filter } from "@data/filter";
 import { StateActiveDateElement } from "@data/state-active-date-element.enum";
 import { TASK_EXTENDED_VIEW } from "@data";
 import { format } from "date-fns";
+import { AsyncPipe, DatePipe } from "@angular/common";
+import { NoTasksComponent } from "../../../../single-task/no-tasks/no-tasks.component";
+import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
+import { FilterFutureTasksComponent } from "../../components/filter-future-tasks/filter-future-tasks.component";
+import { ChangeTaskViewComponent } from "../../../../shared/components/change-task-view-component/change-task-view.component";
+import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from "@angular/cdk/scrolling";
 
 @Component({
     selector: "tickist-future-tasks",
     templateUrl: "./future-tasks.component.html",
     styleUrls: ["./future-tasks.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        CdkVirtualScrollViewport,
+        CdkFixedSizeVirtualScroll,
+        ChangeTaskViewComponent,
+        FilterFutureTasksComponent,
+        CdkVirtualForOf,
+        SingleTaskComponent,
+        NoTasksComponent,
+        AsyncPipe,
+        DatePipe,
+    ],
 })
 export class FutureTasksComponent implements OnInit, OnDestroy {
     tasks: Task[] = [];

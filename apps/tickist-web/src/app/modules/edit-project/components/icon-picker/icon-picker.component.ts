@@ -3,9 +3,17 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, UntypedFormControl } from "@angular/forms";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, UntypedFormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { noop, Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
+import { FilterPipe } from "../../pipes/filter.pipe";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from "@angular/cdk/scrolling";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatInputModule } from "@angular/material/input";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgStyle, NgFor, NgClass } from "@angular/common";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
     selector: "tickist-icon-picker",
@@ -17,6 +25,23 @@ import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
             useExisting: forwardRef(() => IconPickerComponent),
             multi: true,
         },
+    ],
+    standalone: true,
+    imports: [
+        MatFormFieldModule,
+        NgStyle,
+        ExtendedModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        FaIconComponent,
+        CdkVirtualScrollViewport,
+        CdkFixedSizeVirtualScroll,
+        CdkVirtualForOf,
+        FlexModule,
+        NgFor,
+        NgClass,
+        FilterPipe,
     ],
 })
 export class IconPickerComponent implements ControlValueAccessor, OnDestroy {

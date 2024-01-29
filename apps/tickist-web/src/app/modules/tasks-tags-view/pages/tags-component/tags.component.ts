@@ -9,11 +9,30 @@ import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { takeUntil } from "rxjs/operators";
 import { updateUser } from "../../../../core/actions/user.actions";
 import { TASK_EXTENDED_VIEW } from "@data";
+import { AsyncPipe } from "@angular/common";
+import { NoTasksComponent } from "../../../../single-task/no-tasks/no-tasks.component";
+import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
+import { FilterTasksComponent } from "../../../../tasks/filter-tasks/filter-tasks.component";
+import { ChangeTaskViewComponent } from "../../../../shared/components/change-task-view-component/change-task-view.component";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from "@angular/cdk/scrolling";
 
 @Component({
     selector: "tickist-tags",
     templateUrl: "./tags.component.html",
     styleUrls: ["./tags.component.scss"],
+    standalone: true,
+    imports: [
+        CdkVirtualScrollViewport,
+        CdkFixedSizeVirtualScroll,
+        FlexModule,
+        ChangeTaskViewComponent,
+        FilterTasksComponent,
+        CdkVirtualForOf,
+        SingleTaskComponent,
+        NoTasksComponent,
+        AsyncPipe,
+    ],
 })
 export class TagsComponent implements OnInit, OnDestroy {
     tags: Tag[];

@@ -8,11 +8,31 @@ import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { filter, takeUntil } from "rxjs/operators";
 import { Project, Task, TASK_EXTENDED_VIEW } from "@data";
 import { selectProjectById } from "../../../../core/selectors/projects.selectors";
+import { NoArchivedTasksComponent } from "../no-archived-tasks/no-archived-tasks.component";
+import { SingleTaskComponent } from "../../../../single-task/single-task/single-task.component";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { NgIf, AsyncPipe } from "@angular/common";
+import { ProjectHeaderComponent } from "../project-header/project-header.component";
+import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from "@angular/cdk/scrolling";
 
 @Component({
     selector: "tickist-archive",
     templateUrl: "./archive.component.html",
     styleUrls: ["./archive.component.scss"],
+    standalone: true,
+    imports: [
+        CdkVirtualScrollViewport,
+        CdkFixedSizeVirtualScroll,
+        ProjectHeaderComponent,
+        NgIf,
+        FlexModule,
+        MatProgressSpinnerModule,
+        CdkVirtualForOf,
+        SingleTaskComponent,
+        NoArchivedTasksComponent,
+        AsyncPipe,
+    ],
 })
 export class ArchiveComponent implements OnInit, OnDestroy {
     projectId: string;

@@ -22,9 +22,13 @@ import { AddTaskComponent } from "./components/add-task/add-task.component";
 import { FlexLayoutModule } from "@ngbracket/ngx-layout";
 
 @NgModule({
-    imports: [CommonModule, TickistMaterialModule, FormsModule, FontAwesomeModule, ReactiveFormsModule, FlexLayoutModule],
-    providers: [ConfigurationService],
-    declarations: [
+    imports: [
+        CommonModule,
+        TickistMaterialModule,
+        FormsModule,
+        FontAwesomeModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
         ChangeTaskViewComponent,
         MenuButtonComponent,
         AvatarSize,
@@ -41,6 +45,7 @@ import { FlexLayoutModule } from "@ngbracket/ngx-layout";
         DataCyDirective,
         AddTaskComponent,
     ],
+    providers: [ConfigurationService],
     exports: [
         ChangeTaskViewComponent,
         MenuButtonComponent,

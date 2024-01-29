@@ -23,9 +23,9 @@ import { TickistCoreModule } from "../../core/core.module";
         IconsModule,
         AuthModule,
         TickistCoreModule,
+        SignUpComponent,
     ],
     providers: [],
     exports: [SignUpComponent],
-    declarations: [SignUpComponent],
 })
 export class TickistSignUpModule {}

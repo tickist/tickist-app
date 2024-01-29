@@ -3,12 +3,34 @@ import { ConfigurationService } from "../../core/services/configuration.service"
 import { Task } from "@data/tasks/models/tasks";
 import { requestUpdateTask } from "../../core/actions/tasks/task.actions";
 import { Store } from "@ngrx/store";
+import { MatOptionModule } from "@angular/material/core";
+import { MatSelectModule } from "@angular/material/select";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormsModule } from "@angular/forms";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { NgStyle, NgFor } from "@angular/common";
+import { MatRadioModule } from "@angular/material/radio";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
 
 @Component({
     selector: "tickist-edit-repeating-option",
     templateUrl: "./edit-repeating-option.html",
     styleUrls: ["./edit-repeating-option.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FlexModule,
+        MatRadioModule,
+        NgStyle,
+        ExtendedModule,
+        FormsModule,
+        NgFor,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatOptionModule,
+    ],
 })
 export class EditRepeatingOptionComponent implements OnInit {
     @Input() task: Task;

@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { User } from "@data/users/models";
 import { UserService } from "../../../../core/services/user.service";
-import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
-import { Location } from "@angular/common";
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Location, NgIf, NgClass, NgFor, NgStyle, AsyncPipe } from "@angular/common";
 import { ConfigurationService } from "../../../../core/services/configuration.service";
 import { environment } from "../../../../../environments/environment";
 import { MyErrorStateMatcher } from "../../../../shared/error-state-matcher";
@@ -19,11 +19,53 @@ import { DeleteAccountDialogComponent } from "../delete-account-dialog/delete-ac
 import { MatDialog } from "@angular/material/dialog";
 import { NGXLogger } from "ngx-logger";
 import { getDownloadURL, UploadTask } from "@angular/fire/storage";
+import { MatRadioModule } from "@angular/material/radio";
+import { MatOptionModule } from "@angular/material/core";
+import { MatSelectModule } from "@angular/material/select";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonModule } from "@angular/material/button";
+import { UserAvatarComponent } from "../../../../shared/components/user-avatar/user-avatar.component";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatListModule } from "@angular/material/list";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { MatCardModule } from "@angular/material/card";
 
 @Component({
     selector: "tickist-user",
     templateUrl: "./user.component.html",
     styleUrls: ["./user.component.scss"],
+    standalone: true,
+    imports: [
+        NgIf,
+        MatCardModule,
+        FlexModule,
+        FaIconComponent,
+        MatListModule,
+        NgClass,
+        ExtendedModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        UserAvatarComponent,
+        MatButtonModule,
+        MatProgressBarModule,
+        DataCyDirective,
+        MatSlideToggleModule,
+        MatCheckboxModule,
+        MatSelectModule,
+        NgFor,
+        MatOptionModule,
+        MatRadioModule,
+        NgStyle,
+        AsyncPipe,
+    ],
 })
 export class UserComponent implements OnInit, OnDestroy {
     @ViewChild("changeAvatarInput") changeAvatarInput: ElementRef;
