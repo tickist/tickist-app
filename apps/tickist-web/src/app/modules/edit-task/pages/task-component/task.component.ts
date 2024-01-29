@@ -11,15 +11,17 @@ import { User } from "@data/users/models";
 import {
     AbstractControl,
     FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
     UntypedFormArray,
     UntypedFormBuilder,
     UntypedFormControl,
     UntypedFormGroup,
     Validators,
 } from "@angular/forms";
-import { Location } from "@angular/common";
+import { AsyncPipe, Location, NgClass, NgFor, NgIf, NgStyle } from "@angular/common";
 import { Minutes2hoursPipe } from "../../../../shared/pipes/minutes2hours";
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { MatDialog } from "@angular/material/dialog";
 import moment from "moment";
 import { Tag } from "@data/tags/models/tags";
@@ -41,12 +43,70 @@ import { selectLoggedInUser } from "../../../../core/selectors/user.selectors";
 import { AVAILABLE_TASK_TYPES, AVAILABLE_TASK_TYPES_ICONS, Task } from "@data";
 import { zip } from "ramda";
 import { hideAddTaskButton, showAddTaskButton } from "../../../../core/actions/add-task-button-visibility.actions";
-import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
+import { MatCardModule } from "@angular/material/card";
+import { FlexModule } from "@ngbracket/ngx-layout/flex";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatListModule } from "@angular/material/list";
+import { ExtendedModule } from "@ngbracket/ngx-layout/extended";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { A11yModule } from "@angular/cdk/a11y";
+import { MatSelectModule } from "@angular/material/select";
+import { DataCyDirective } from "../../../../shared/directives/data-cy.directive";
+import { MatOptionModule } from "@angular/material/core";
+import { PriorityComponent } from "../../../../shared/components/priority/priority.component";
+import { MatRadioModule } from "@angular/material/radio";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatButtonModule } from "@angular/material/button";
+import { UserAvatarComponent } from "../../../../shared/components/user-avatar/user-avatar.component";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ColorPickerComponent } from "../../../edit-project/components/color-picker/color-picker.component";
+import { IconPickerComponent } from "../../../edit-project/components/icon-picker/icon-picker.component";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MenuButtonComponent } from "../../../../shared/components/menu-button/menu-button.component";
 
 @Component({
     selector: "tickist-task-component",
     templateUrl: "./task.component.html",
     styleUrls: ["./task.component.scss"],
+    standalone: true,
+    imports: [
+        MatCardModule,
+        FlexModule,
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        FaIconComponent,
+        MatListModule,
+        NgClass,
+        ExtendedModule,
+        MatFormFieldModule,
+        MatInputModule,
+        A11yModule,
+        MatSelectModule,
+        DataCyDirective,
+        NgFor,
+        MatOptionModule,
+        PriorityComponent,
+        MatRadioModule,
+        NgStyle,
+        MatCheckboxModule,
+        MatAutocompleteModule,
+        MatButtonModule,
+        UserAvatarComponent,
+        MatProgressSpinnerModule,
+        MatTooltipModule,
+        ColorPickerComponent,
+        IconPickerComponent,
+        AsyncPipe,
+        DragDropModule,
+        MatChipsModule,
+        MatDatepickerModule,
+        MenuButtonComponent,
+    ],
 })
 export class TaskComponent implements OnInit, OnDestroy {
     @ViewChild("trigger", { read: MatAutocompleteTrigger })
