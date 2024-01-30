@@ -10,7 +10,7 @@ import { Store } from "@ngrx/store";
 import { focusOnAddTaskInput, focusOnSearchInput } from "./core/actions/ui.actions";
 import { homeRoutesName } from "./routing.module.name";
 import { editTaskRoutesName } from "./modules/edit-task/routes-names";
-import { Router } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import { editProjectSettingsRoutesName } from "./modules/edit-project/routes-names";
 import { NGXLogger } from "ngx-logger";
 
@@ -18,6 +18,8 @@ import { NGXLogger } from "ngx-logger";
     selector: "tickist-root",
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
+    standalone: true,
+    imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit, OnDestroy {
     snackBarRef: MatSnackBarRef<any>;
