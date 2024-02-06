@@ -18,11 +18,7 @@ const noop = () => {};
         },
     ],
     standalone: true,
-    imports: [
-        MatButtonToggleModule,
-        NgStyle,
-        ExtendedModule,
-    ],
+    imports: [MatButtonToggleModule, NgStyle, ExtendedModule],
 })
 export class PriorityComponent implements ControlValueAccessor {
     @Output() changePriority = new EventEmitter();
@@ -37,20 +33,19 @@ export class PriorityComponent implements ControlValueAccessor {
 
     // get accessor
 
-    // set accessor including call the onchange callback
-
     constructor() {}
 
     get manualValue() {
         return this.innerValue;
     }
 
-    get value(): any {
-        return this.innerValue;
-    }
-
     @Input() set manualValue(manualValue) {
         this.innerValue = manualValue;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    get value(): any {
+        return this.innerValue;
     }
 
     set value(v: any) {
