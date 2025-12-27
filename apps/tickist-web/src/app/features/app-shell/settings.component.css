@@ -1,0 +1,59 @@
+.settings {
+  @apply grid gap-6 md:grid-cols-[260px_1fr];
+}
+
+.settings__nav {
+  @apply flex flex-col gap-2 rounded-2xl border border-white/10 bg-base-200 bg-opacity-70 p-3;
+}
+
+.settings__tab {
+  @apply flex items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-semibold text-base-content opacity-80 transition hover:bg-base-100 hover:bg-opacity-50;
+}
+
+.settings__tab.active {
+  @apply bg-primary bg-opacity-20 text-primary;
+}
+
+.settings__panel {
+  @apply rounded-2xl border border-white/10 bg-base-200 bg-opacity-70 p-6 shadow shadow-black/20;
+}
+
+.panel__header h2 {
+  @apply text-xl font-semibold;
+}
+
+.eyebrow {
+  @apply text-xs uppercase tracking-[0.4em] text-base-content opacity-60;
+}
+
+.panel__form {
+  @apply mt-4 space-y-4;
+}
+
+.field {
+  @apply flex flex-col gap-2;
+}
+
+.field__label {
+  @apply text-sm font-semibold text-base-content opacity-70;
+}
+
+.field__error {
+  @apply text-xs text-error;
+}
+
+.field__hint {
+  @apply text-xs text-base-content opacity-60;
+}
+
+.panel__actions {
+  @apply mt-2 flex justify-end;
+}
+
+.danger-card {
+  @apply mt-6 flex items-center justify-between gap-3 rounded-xl border border-error border-opacity-40 bg-error bg-opacity-10 p-4 text-base-content;
+}
+
+.placeholder {
+  @apply flex items-center justify-center text-sm text-base-content opacity-60;
+}

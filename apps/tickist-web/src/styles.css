@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+[data-theme='tickist'] {
+  /* DaisyUI expects space-separated rgb values for base tokens */
+  --b1: 25 33 58; /* #19213a */
+  --b2: 27 34 54; /* #1b2236 */
+  --b3: 16 21 41; /* #101529 */
+  --bc: 247 247 250; /* #f7f7fa */
+  --fallback-b1: #19213a;
+  --fallback-b2: #1b2236;
+  --fallback-b3: #101529;
+  --fallback-bc: #f7f7fa;
+  background-color: #19213a;
+}
+
+* {
+  @apply box-border;
+}
+
+body {
+  @apply m-0 min-h-screen bg-base-100 text-base-content font-sans antialiased;
+}
+
+@layer base {
+  [data-theme='tickist'] .bg-base-100 {
+    background-color: #19213a !important;
+  }
+  [data-theme='tickist'] .bg-base-200 {
+    background-color: #1b2236 !important;
+  }
+  [data-theme='tickist'] .bg-base-300 {
+    background-color: #101529 !important;
+  }
+  [data-theme='tickist'] .text-base-content {
+    color: #f7f7fa !important;
+  }
+  [data-theme='tickist'] body {
+    background-color: #19213a !important;
+    color: #f7f7fa !important;
+  }
+  [data-theme='tickist'] .border-base-300 {
+    border-color: #101529 !important;
+  }
+}
+
+.theme-light {
+  @apply bg-base-100 text-base-content;
+  color-scheme: light;
+}

@@ -1,0 +1,181 @@
+<article class="task-card" [class.simple]="viewMode === 'simple'" [class.completed]="task.isDone">
+  <div class="task-card__row">
+    <label class="task-card__check">
+      <input
+        type="checkbox"
+        [checked]="task.isDone"
+        (change)="toggleDone($any($event.target).checked)"
+        [style.borderColor]="priorityColor(task.priority)"
+        [style.boxShadow]="'0 0 0 1px ' + priorityColor(task.priority)"
+      />
+    </label>
+    <div class="task-card__title">
+      <p>{{ task.name }}</p>
+      <span class="task-card__time" *ngIf="taskTimeLabel() as summary">({{ summary }})</span>
+    </div>
+    <div class="task-card__actions">
+      <button type="button" class="icon-btn" [class.active]="task.pinned" title="Pin task" (click)="togglePin()">
+        📌
+      </button>
+      <button type="button" class="icon-btn" title="Edit task" (click)="editTask()">✏️</button>
+      <div class="task-card__menu">
+        <button type="button" class="icon-btn" title="More actions" (click)="menuOpen.set(!menuOpen())">⋮</button>
+        <div class="menu" *ngIf="menuOpen()">
+          <div class="menu__section">
+            <p>Priority</p>
+            <button
+              type="button"
+              *ngFor="let level of ['A','B','C']"
+              [class.active]="task.priority?.toUpperCase() === level"
+              (click)="setPriority(level)"
+            >
+              {{ level }}
+            </button>
+          </div>
+          <div class="menu__section">
+            <p>Task type</p>
+            <button
+              type="button"
+              [class.active]="task.taskType?.toLowerCase() === 'normal'"
+              (click)="setTaskType('normal')"
+            >
+              ▢ Normal
+            </button>
+            <button
+              type="button"
+              [class.active]="task.taskType?.toLowerCase() === 'next_action'"
+              (click)="setTaskType('next_action')"
+            >
+              ⚡ Next action
+            </button>
+            <button
+              type="button"
+              [class.active]="task.taskType?.toLowerCase() === 'need_info'"
+              (click)="setTaskType('need_info')"
+            >
+              🛈 Need info
+            </button>
+          </div>
+          <div class="menu__section">
+            <p>Schedule</p>
+            <button type="button" (click)="setDueToday()">Do it today</button>
+            <button type="button" (click)="shiftDue(1)">+1 day</button>
+            <button type="button" (click)="shiftDue(7)">+1 week</button>
+            <button type="button" (click)="clearDue()">Clear date</button>
+          </div>
+          <button type="button" class="menu__danger" (click)="deleteTask()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-card__progress" *ngIf="viewMode === 'extended' && progressPercent() as percent">
+    <div class="progress">
+      <div class="progress__fill" [style.width.%]="percent"></div>
+    </div>
+  </div>
+
+  <div class="task-card__toolbar" *ngIf="viewMode === 'extended'">
+    <button type="button" class="toolbar-btn" title="Change project" (click)="toggleProjectPicker()">📁</button>
+    <button
+      type="button"
+      class="toolbar-btn"
+      title="Description"
+      [class.active]="descriptionOpen()"
+      (click)="toggleDescription()"
+    >
+      💬
+    </button>
+    <button type="button" class="toolbar-btn" title="Tags" [class.active]="tagsOpen()" (click)="toggleTags()">🏷️</button>
+    <button type="button" class="toolbar-btn" title="Repeat" [class.active]="repeatOpen()" (click)="toggleRepeat()">
+      🔁
+    </button>
+    <button type="button" class="toolbar-btn" title="Steps" [class.active]="stepsOpen()" (click)="toggleSteps()">
+      ☑️
+    </button>
+  </div>
+
+  <section class="task-card__panel" *ngIf="projectPickerOpen()">
+    <label class="panel-field">
+      <span class="panel-label">Project</span>
+      <select [value]="task.projectId || ''" (change)="changeProject($any($event.target).value)">
+        <option value="">Inbox</option>
+        <option *ngFor="let option of projects()" [value]="option.id">
+          {{ option.name }}
+        </option>
+      </select>
+    </label>
+  </section>
+
+  <section class="task-card__panel" *ngIf="descriptionOpen()">
+    <label class="panel-field">
+      <span class="panel-label">Description</span>
+      <textarea
+        rows="4"
+        [value]="descriptionDraft()"
+        (input)="descriptionDraft.set($any($event.target).value)"
+      ></textarea>
+    </label>
+    <div class="panel-actions">
+      <button class="btn btn-xs" type="button" (click)="saveDescription()">Save</button>
+    </div>
+    <p class="panel-hint" *ngIf="!task.description">No description yet.</p>
+  </section>
+
+  <section class="task-card__panel" *ngIf="tagsOpen()">
+    <div class="tag-chips" *ngIf="task.tags.length; else noTags">
+      <span class="chip" *ngFor="let tagId of task.tags">
+        {{ tagName(tagId) }}
+        <button type="button" (click)="removeTag(tagId)">×</button>
+      </span>
+    </div>
+    <ng-template #noTags>
+      <p class="panel-hint">No tags yet.</p>
+    </ng-template>
+    <div class="tag-add" *ngIf="availableTagsToAdd().length">
+      <select (change)="addTagFromSelect($any($event.target))">
+        <option value="">Add tag…</option>
+        <option *ngFor="let option of availableTagsToAdd()" [value]="option.id">
+          {{ option.name }}
+        </option>
+      </select>
+    </div>
+  </section>
+
+  <section class="task-card__panel" *ngIf="repeatOpen()">
+    <p class="panel-label">Repeat</p>
+    <div class="repeat-grid">
+      <button
+        type="button"
+        *ngFor="let option of repeatOptions"
+        [class.active]="currentRepeatMode() === option.mode"
+        (click)="setRepeatInterval(option.mode)"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </section>
+
+  <section class="task-card__panel" *ngIf="stepsOpen()">
+    <div class="step-list" *ngIf="task.steps.length; else noSteps">
+      <div class="step-item" *ngFor="let step of task.steps; index as i">
+        <label class="step-check">
+          <input type="checkbox" [checked]="step.isDone" (change)="toggleStep(step, $any($event.target).checked)" />
+        </label>
+        <span class="step-title" [class.line-through]="step.isDone">{{ step.content }}</span>
+        <div class="step-controls">
+          <button type="button" (click)="moveStep(step, 'up')" [disabled]="i === 0">↑</button>
+          <button type="button" (click)="moveStep(step, 'down')" [disabled]="i === task.steps.length - 1">↓</button>
+          <button type="button" (click)="removeStep(step)">✕</button>
+        </div>
+      </div>
+    </div>
+    <ng-template #noSteps>
+      <p class="panel-hint">No steps yet.</p>
+    </ng-template>
+    <div class="step-add">
+      <input type="text" placeholder="Add step" [value]="newStepDraft()" (input)="newStepDraft.set($any($event.target).value)" />
+      <button type="button" (click)="addStep()">Add</button>
+    </div>
+  </section>
+</article>

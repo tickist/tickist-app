@@ -1,0 +1,70 @@
+<section
+  class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl border border-white/10 bg-base-200/60 p-8 shadow-2xl shadow-black/30 backdrop-blur"
+>
+  <header class="space-y-2 text-center">
+    <p class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60">
+      Sign in
+    </p>
+    <h1 class="text-2xl font-semibold text-base-content">
+      Continue with your email
+    </h1>
+    <p class="text-sm text-base-content/70">
+      Enter your Supabase credentials. You’ll be redirected to the workspace on success.
+    </p>
+  </header>
+
+  <form class="flex flex-col gap-6" [formGroup]="form" (ngSubmit)="handleSubmit()">
+    <label class="form-control w-full">
+      <span class="label">
+        <span class="label-text text-base-content/70">Email</span>
+      </span>
+      <input
+        formControlName="email"
+        type="email"
+        class="input input-bordered w-full bg-base-100/60"
+        placeholder="team@tickist.app"
+        autocomplete="email"
+      />
+      <span class="label-text-alt text-error" *ngIf="form.controls.email.touched && form.controls.email.invalid">
+        Provide a valid email address
+      </span>
+    </label>
+
+    <label class="form-control w-full">
+      <span class="label">
+        <span class="label-text text-base-content/70">Password</span>
+      </span>
+      <input
+        formControlName="password"
+        type="password"
+        class="input input-bordered w-full bg-base-100/60"
+        placeholder="••••••••"
+        autocomplete="current-password"
+      />
+      <span class="label-text-alt text-error" *ngIf="form.controls.password.touched && form.controls.password.invalid">
+        Min. 6 characters
+      </span>
+    </label>
+
+    <button class="btn btn-primary text-neutral" type="submit" [disabled]="isDisabled">
+      <span *ngIf="!isSubmitting()">Sign in</span>
+      <span class="loading loading-spinner" *ngIf="isSubmitting()"></span>
+      <span *ngIf="isSubmitting()">Signing in…</span>
+    </button>
+  </form>
+
+  <p class="text-sm text-base-content/70" *ngIf="message() as feedback" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
+    {{ feedback.text }}
+  </p>
+
+  <footer class="text-center text-xs text-base-content/60 space-y-1">
+    <div>
+      Need an account?
+      <a routerLink="/auth/signup" class="link link-primary">Sign up</a>
+    </div>
+    <div>
+      Forgot password?
+      <a routerLink="/auth/reset" class="link link-primary">Reset it</a>
+    </div>
+  </footer>
+</section>

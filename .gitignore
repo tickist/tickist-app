@@ -1,65 +1,60 @@
-/.angular/cache
-# Created by https://www.gitignore.io
-.idea
-.idea/*
-dist/*
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# compiled output
 dist
-### Python ###
-# Byte-compiled / optimized / DLL files
-__pycache__/
+tmp
+out-tsc
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# dependencies
+node_modules
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*,cover
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# Translations
-*.mo
-*.pot
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+.env*
+.local_env
+.mcp.json
+*.log
+*.bak
+*:Zone.Identifier
 
-
-# ZSH env file
-.env
-# node modules
-*node_modules
-
-
+# System Files
 .DS_Store
-debug.log
-
-git-version.json
-firebase-debug.log
-proven-reality-657-ea57273a5a76.json
-credentials.json
-serviceAccount.json
-serviceAccountTesting.json
-serviceAccount*.json
-cypressaa/config.json
-cypress.env.json
-/proven-reality-657-firebase-adminsdk-etp92-6397074848.json
-apps/tickist-web-e2e/cypress/logs/*
-firestore-debug.log
-.firebase/*
-
-database-debug.log
-pubsub-debug.log
-ui-debug.log
-
-.vscode
+Thumbs.db
 
 .nx/cache
+.nx/workspace-data
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+.angular
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+
+ignore/*
+.gemini
+supabase/.branches/
+supabase/.temp/

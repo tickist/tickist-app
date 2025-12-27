@@ -1,0 +1,6 @@
+:host {
+  display: block;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(28, 33, 61, 0.8), rgba(28, 33, 61, 1));
+}

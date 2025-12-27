@@ -1,0 +1,163 @@
+<div class="composer">
+  <header class="composer__header">
+    <div>
+      <p class="composer__eyebrow">Project</p>
+      <h2 class="composer__title">Design your list</h2>
+    </div>
+    <button type="button" class="composer__close" (click)="dismiss.emit()">×</button>
+  </header>
+
+  <div class="composer__body">
+    <aside class="composer__tabs">
+      <button class="composer__tab" [class.active]="activeTab() === 'general'" (click)="selectTab('general')">
+        ✏️ General
+      </button>
+      <button class="composer__tab" [class.active]="activeTab() === 'extra'" (click)="selectTab('extra')">
+        ⚙️ Extra
+      </button>
+      <button class="composer__tab" [class.active]="activeTab() === 'sharing'" (click)="selectTab('sharing')">
+        🤝 Sharing
+      </button>
+      <button class="composer__tab" [class.active]="activeTab() === 'branding'" (click)="selectTab('branding')">
+        🎨 Branding
+      </button>
+    </aside>
+
+    <section class="composer__panel">
+      <form class="panel" *ngIf="activeTab() === 'general'" [formGroup]="form">
+        <label class="field">
+          <span class="field__label">Project name</span>
+          <input class="input" formControlName="name" placeholder="Wyjazd do Włoch" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Project type</span>
+          <select class="input" formControlName="projectType">
+            <option value="active">Active</option>
+            <option value="someday">Someday/maybe</option>
+            <option value="routine">Routine</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Active</span>
+          <select class="input" formControlName="isActive">
+            <option [value]="true">Active</option>
+            <option [value]="false">Archived</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Ancestor project</span>
+          <select class="input" formControlName="ancestorId">
+            <option value="">No parent</option>
+            <option
+              *ngFor="let option of projectOptions()"
+              [value]="option.id"
+              [disabled]="editingProject()?.id === option.id"
+            >
+              {{ option.name }}
+            </option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Description</span>
+          <textarea class="input" rows="5" formControlName="description" placeholder="Describe this list"></textarea>
+        </label>
+      </form>
+
+      <form class="panel" *ngIf="activeTab() === 'extra'" [formGroup]="form">
+        <div class="field">
+          <span class="field__label">Default priority</span>
+          <div class="priority-group">
+            <button type="button" [class.active]="form.controls.defaultPriority.value === level"
+              *ngFor="let level of ['A','B','C']" (click)="form.controls.defaultPriority.setValue(level)">
+              {{ level }}
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field__label">Default due date</span>
+          <div class="complete-group">
+            <label>
+              <input type="radio" value="by" formControlName="defaultDueMode" />
+              by
+            </label>
+            <label>
+              <input type="radio" value="on" formControlName="defaultDueMode" />
+              on
+            </label>
+          </div>
+          <input type="date" class="input" formControlName="defaultDueDate" />
+        </div>
+
+        <div class="field">
+          <span class="field__label">Default task view</span>
+          <div class="complete-group">
+            <label>
+              <input type="radio" value="extended" formControlName="taskView" />
+              extended
+            </label>
+            <label>
+              <input type="radio" value="simple" formControlName="taskView" />
+              simple
+            </label>
+          </div>
+        </div>
+
+        <label class="field inline">
+          <input type="checkbox" formControlName="dialogTime" />
+          <span class="field__label">Open time dialog when completing tasks</span>
+        </label>
+      </form>
+
+      <div class="panel" *ngIf="activeTab() === 'sharing'">
+        <div class="field">
+          <span class="field__label">Invite teammates</span>
+          <div class="share-input">
+            <input class="input" placeholder="Email address" [value]="inviteInput()" (input)="inviteInput.set($any($event.target).value)" />
+            <button type="button" class="btn-secondary" (click)="addInvite()">Invite</button>
+          </div>
+        </div>
+        <div class="invite-chips" *ngIf="invites().length">
+          <span class="chip" *ngFor="let email of invites()">
+            {{ email }}
+            <button type="button" (click)="removeInvite(email)">×</button>
+          </span>
+        </div>
+        <p class="text-sm text-base-content/60">
+          Invitations will be sent when sharing is available.
+        </p>
+      </div>
+
+      <form class="panel branding" *ngIf="activeTab() === 'branding'" [formGroup]="form">
+        <span class="field__label">Accent color</span>
+        <div class="color-row">
+          <button type="button" *ngFor="let swatch of colors" class="color-dot"
+            [style.background-color]="swatch"
+            [class.active]="form.controls.color.value === swatch"
+            (click)="chooseColor(swatch)">
+          </button>
+        </div>
+
+        <span class="field__label">Icon</span>
+        <div class="icon-grid">
+          <button type="button" *ngFor="let icon of iconOptions" class="icon-pill"
+            [class.active]="form.controls.icon.value === icon"
+            (click)="chooseIcon(icon)">
+            {{ icon }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <footer class="composer__footer">
+    <button type="button" class="btn-ghost" (click)="dismiss.emit()">Cancel</button>
+    <button type="button" class="btn-primary" [disabled]="submitting()" (click)="submit()">
+      Save project
+    </button>
+  </footer>
+</div>

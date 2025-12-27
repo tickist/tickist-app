@@ -1,0 +1,139 @@
+<nav class="flex flex-col gap-2 text-base-content">
+  <button type="button" class="sidebar-link" (click)="goToDashboard()">
+    <span class="emoji">🏠</span>
+    <span>Dashboard</span>
+  </button>
+
+  <button
+    type="button"
+    class="sidebar-link"
+    *ngFor="let inbox of inboxProjects()"
+    (click)="selectProject(inbox.id)"
+    [class.text-primary]="selectedProjectId() === inbox.id"
+  >
+    <span class="emoji">📬</span>
+    <span class="flex-1">{{ inbox.name }}</span>
+    <span class="project-count">{{ projectTaskCount(inbox.id) }}</span>
+    <span class="dot" [style.background-color]="inbox.color"></span>
+  </button>
+
+  <button type="button" class="sidebar-link" (click)="toggle('active')">
+    <span class="emoji">📁</span>
+    <span class="flex-1">Active projects ({{ activeProjectsList().length }})</span>
+    <span class="chevron" [class.rotate-180]="navState().active">⌃</span>
+  </button>
+  <ul *ngIf="navState().active" class="sidebar-sublist">
+    <ng-container *ngTemplateOutlet="projectTree; context: { nodes: activeTree(), level: 0, type: 'active' }"></ng-container>
+    <li>
+      <button type="button" class="sidebar-create" (click)="openCreateProject('active')">
+        + Create new project
+      </button>
+    </li>
+  </ul>
+
+  <button type="button" class="sidebar-link" (click)="toggle('someday')">
+    <span class="emoji">💡</span>
+    <span class="flex-1">Someday / Maybe ({{ somedayProjectsList().length }})</span>
+    <span class="chevron" [class.rotate-180]="navState().someday">⌃</span>
+  </button>
+  <ul *ngIf="navState().someday" class="sidebar-sublist">
+    <ng-container *ngTemplateOutlet="projectTree; context: { nodes: somedayTree(), level: 0, type: 'someday' }"></ng-container>
+    <li>
+      <button type="button" class="sidebar-create" (click)="openCreateProject('someday')">
+        + Create new project
+      </button>
+    </li>
+  </ul>
+
+  <button type="button" class="sidebar-link" (click)="toggle('routine')">
+    <span class="emoji">♻️</span>
+    <span class="flex-1">Routine reminder ({{ routineProjectsList().length }})</span>
+    <span class="chevron" [class.rotate-180]="navState().routine">⌃</span>
+  </button>
+  <ul *ngIf="navState().routine" class="sidebar-sublist">
+    <ng-container *ngTemplateOutlet="projectTree; context: { nodes: routineTree(), level: 0, type: 'routine' }"></ng-container>
+    <li>
+      <button type="button" class="sidebar-create" (click)="openCreateProject('routine')">
+        + Create new project
+      </button>
+    </li>
+  </ul>
+
+  <a class="sidebar-link" routerLink="/app/tree">
+    <span class="emoji">🌲</span>
+    <span>Tasks tree view</span>
+  </a>
+  <a class="sidebar-link" routerLink="/app/tags">
+    <span class="emoji">🏷️</span>
+    <span>Tags</span>
+  </a>
+  <button class="sidebar-link" type="button" disabled>
+    <span class="emoji">📊</span>
+    <span>Statistics</span>
+  </button>
+</nav>
+
+<ng-template #projectTree let-nodes="nodes" let-level="level" let-type="type">
+  <li
+    *ngFor="let node of nodes"
+    class="sidebar-project"
+    (mouseenter)="onProjectEnter(node.project.id)"
+    (mouseleave)="onProjectLeave(node.project.id)"
+  >
+    <div class="project-row" [style.padding-left.px]="level * 12">
+      <button
+        type="button"
+        class="sidebar-subitem"
+        [class.text-primary]="selectedProjectId() === node.project.id"
+        (click)="selectProject(node.project.id)"
+      >
+        <span class="project-name">{{ node.project.name }}</span>
+        <span class="project-count">{{ projectTaskCount(node.project.id) }}</span>
+        <span class="dot" [style.background-color]="node.project.color"></span>
+      </button>
+      <div
+        class="project-options"
+        *ngIf="hoveredProjectId() === node.project.id || menuProjectId() === node.project.id"
+      >
+        <button type="button" class="options-trigger" (click)="toggleMenu(node.project.id, $event)">⋮</button>
+        <div
+          class="project-menu"
+          *ngIf="menuProjectId() === node.project.id"
+          [ngStyle]="menuPosition() || {}"
+        >
+          <button type="button" (click)="editProject(node.project)">Edit</button>
+          <button
+            type="button"
+            *ngIf="type !== 'active'"
+            (click)="convertProjectType(node.project, 'active')"
+          >
+            Convert to Active
+          </button>
+          <button
+            type="button"
+            *ngIf="type !== 'someday'"
+            (click)="convertProjectType(node.project, 'someday')"
+          >
+            Convert to Someday/maybe
+          </button>
+          <button
+            type="button"
+            *ngIf="type !== 'routine'"
+            (click)="convertProjectType(node.project, 'routine')"
+          >
+            Convert to Routine Reminder
+          </button>
+          <button type="button" (click)="createChildProject(node.project)">
+            Create child project
+          </button>
+          <button type="button" class="text-error" (click)="deleteProject(node.project)">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+    <ul *ngIf="node.children.length" class="sidebar-sublist">
+      <ng-container *ngTemplateOutlet="projectTree; context: { nodes: node.children, level: level + 1, type: type }"></ng-container>
+    </ul>
+  </li>
+</ng-template>

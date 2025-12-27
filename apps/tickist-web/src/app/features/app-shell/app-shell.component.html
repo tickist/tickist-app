@@ -1,0 +1,49 @@
+<section class="space-y-6">
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(320px,1fr)]">
+    <div class="space-y-6">
+      <ng-container *ngIf="activeProject() as project; else selectProject">
+        <div class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20">
+          <app-project-header
+            *ngIf="activeProject() as headerProject"
+            [project]="headerProject"
+            [viewMode]="headerProject.taskView === 'simple' ? 'simple' : 'extended'"
+            [sort]="sortOption()"
+            [filter]="filterOption()"
+            (toggleSimple)="setProjectTaskView(headerProject, $event ? 'simple' : 'extended')"
+            (openEdit)="openProjectEdit(headerProject)"
+            (changeSort)="setSort($event)"
+            (changeFilter)="setFilter($event)"
+          ></app-project-header>
+
+          <div class="space-y-4">
+            <app-task-card
+              *ngFor="let task of filteredTasks()"
+              [task]="task"
+              [project]="project"
+              [viewMode]="project.taskView === 'simple' ? 'simple' : 'extended'"
+            ></app-task-card>
+            <p *ngIf="!filteredTasks().length" class="text-sm text-base-content/60">
+              No tasks yet. Add one below.
+            </p>
+          </div>
+
+          <form class="new-task-form mt-6 flex flex-col gap-3 md:flex-row" [formGroup]="projectTaskForm" (ngSubmit)="addTaskToProject()">
+            <label class="form-control flex-1">
+              <span class="label-text text-sm text-base-content/60">New task</span>
+              <input class="input input-bordered" placeholder="Task name" formControlName="name" />
+            </label>
+            <button class="btn btn-primary text-neutral md:self-end" type="submit">Add</button>
+          </form>
+        </div>
+      </ng-container>
+
+      <ng-template #selectProject>
+        <div class="rounded-2xl border border-dashed border-white/20 bg-base-200/40 p-6 text-center text-base-content/70">
+          <p class="text-lg font-semibold">Select a project from the sidebar</p>
+          <p class="text-sm text-base-content/60">The task list will appear here once you choose a GTD list.</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+</section>

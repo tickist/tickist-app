@@ -1,0 +1,260 @@
+.composer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 90vh;
+  color: #f7f8ff;
+}
+
+.composer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.composer__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.composer__title {
+  margin-top: 0.35rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.composer__close {
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.composer__body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  overflow: auto;
+  min-height: 0;
+}
+
+.composer__tabs {
+  padding: 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.composer__tab {
+  text-align: left;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.composer__tab.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.composer__panel {
+  padding: 2rem;
+  overflow-y: auto;
+  min-height: 0;
+  padding-bottom: 3rem;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field__label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.field__error {
+  color: #ff8585;
+  font-size: 0.75rem;
+}
+
+.field__hint {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input {
+  background: rgba(15, 19, 36, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.65rem 0.9rem;
+  color: #f7f8ff;
+}
+
+.priority-group,
+.type-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.priority-group button,
+.type-group button {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.priority-group button.active,
+.type-group button.active {
+  background: rgba(255, 186, 73, 0.2);
+  color: #ffba49;
+}
+
+.complete-group {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.complete-inputs {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  margin-top: 0.5rem;
+}
+
+.repeat-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tag-chip {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tag-chip.active {
+  background: rgba(9, 132, 227, 0.15);
+  color: #65c2ff;
+  border-color: rgba(9, 132, 227, 0.4);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.step-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.step-index {
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+.step-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.step-actions button {
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: transparent;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.composer__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem 2rem;
+  position: sticky;
+  bottom: 0;
+  background: rgba(8, 11, 24, 0.95);
+}
+
+.btn-ghost {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.btn-primary {
+  border: none;
+  border-radius: 12px;
+  padding: 0.55rem 1.2rem;
+  background: linear-gradient(120deg, #ffaa3b, #ff7b1a);
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary.secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.composer__cta {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.extra-grid {
+  display: grid;
+  gap: 1rem;
+}

@@ -1,0 +1,249 @@
+<div class="composer">
+  <header class="composer__header">
+    <div>
+      <p class="composer__eyebrow">
+        {{ editingTask() ? 'Edit task' : 'Create task' }}
+      </p>
+      <h2 class="composer__title">
+        {{ editingTask() ? editingTask()!.name : 'Capture a next step' }}
+      </h2>
+    </div>
+    <button type="button" class="composer__close" (click)="dismiss.emit()">
+      ×
+    </button>
+  </header>
+
+  <div class="composer__body">
+    <aside class="composer__tabs">
+      <button
+        type="button"
+        class="composer__tab"
+        [class.active]="activeTab() === 'general'"
+        (click)="selectTab('general')"
+      >
+        ✏️ General
+      </button>
+      <button
+        type="button"
+        class="composer__tab"
+        [class.active]="activeTab() === 'repeat'"
+        (click)="selectTab('repeat')"
+      >
+        🔁 Repeat
+      </button>
+      <button
+        type="button"
+        class="composer__tab"
+        [class.active]="activeTab() === 'tags'"
+        (click)="selectTab('tags')"
+      >
+        🏷️ Tags
+      </button>
+      <button
+        type="button"
+        class="composer__tab"
+        [class.active]="activeTab() === 'steps'"
+        (click)="selectTab('steps')"
+      >
+        ☑️ Steps
+      </button>
+      <button
+        type="button"
+        class="composer__tab"
+        [class.active]="activeTab() === 'extra'"
+        (click)="selectTab('extra')"
+      >
+        ✨ Extra
+      </button>
+    </aside>
+
+    <section class="composer__panel" [ngSwitch]="activeTab()">
+      <form *ngSwitchCase="'general'" [formGroup]="taskForm" class="panel">
+        <label class="field">
+          <span class="field__label">Task name</span>
+          <input class="input" formControlName="name" placeholder="e.g. Podsumować wyjazd" />
+          <small class="field__error" *ngIf="taskForm.controls.name.touched && taskForm.controls.name.invalid">
+            A task name is required.
+          </small>
+        </label>
+
+        <div class="field">
+          <span class="field__label">Priority</span>
+          <div class="priority-group">
+            <button
+              type="button"
+              *ngFor="let level of ['A','B','C']"
+              [class.active]="taskForm.controls.priority.value === level"
+              [class.prio-a]="level === 'A'"
+              [class.prio-b]="level === 'B'"
+              [class.prio-c]="level === 'C'"
+              (click)="taskForm.controls.priority.setValue(level)"
+            >
+              {{ level }}
+            </button>
+          </div>
+        </div>
+
+        <label class="field">
+          <span class="field__label">Project</span>
+          <select class="input" formControlName="projectId">
+            <option value="">Inbox</option>
+            <option *ngFor="let project of projects()" [value]="project.id">
+              {{ project.name }}
+            </option>
+          </select>
+        </label>
+
+        <div class="field">
+          <span class="field__label">Task type</span>
+          <div class="type-group">
+            <button type="button" [class.active]="taskForm.controls.taskType.value === 'normal'" (click)="taskForm.controls.taskType.setValue('normal')">
+              Normal
+            </button>
+            <button type="button" [class.active]="taskForm.controls.taskType.value === 'next_action'" (click)="taskForm.controls.taskType.setValue('next_action')">
+              Next action
+            </button>
+            <button type="button" [class.active]="taskForm.controls.taskType.value === 'need_info'" (click)="taskForm.controls.taskType.setValue('need_info')">
+              Need info
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field__label">Complete</span>
+          <div class="complete-group">
+            <label>
+              <input type="radio" value="by" formControlName="completeMode" />
+              by
+            </label>
+            <label>
+              <input type="radio" value="on" formControlName="completeMode" />
+              on
+            </label>
+          </div>
+          <div class="complete-inputs">
+            <input type="date" class="input" formControlName="finishDate" />
+            <input type="time" class="input" formControlName="finishTime" />
+          </div>
+        </div>
+
+        <label class="field">
+          <span class="field__label">Description</span>
+          <textarea
+            class="input"
+            rows="4"
+            formControlName="description"
+            placeholder="Add helpful context"
+          ></textarea>
+        </label>
+      </form>
+
+      <form *ngSwitchCase="'repeat'" [formGroup]="taskForm" class="panel">
+        <p class="field__label">Repetition</p>
+        <div class="repeat-options">
+          <label *ngFor="let option of ['never','daily','daily_work','weekly','monthly','yearly','custom']">
+            <input type="radio" [value]="option" formControlName="repeatMode" />
+            {{ option === 'daily_work' ? 'daily (workweek)' : option }}
+          </label>
+        </div>
+        <div class="field" *ngIf="taskForm.controls.repeatMode.value === 'custom'">
+          <span class="field__label">Every</span>
+          <input type="number" min="1" class="input" formControlName="repeatEvery" />
+          <p class="field__hint">Number of days between repeats.</p>
+        </div>
+      </form>
+
+      <section *ngSwitchCase="'tags'" class="panel">
+        <div class="field">
+          <span class="field__label">Search tags</span>
+          <input class="input" placeholder="Type to filter or create" [value]="tagSearch()" (input)="tagSearch.set($any($event.target).value)" />
+        </div>
+        <div class="tags-grid">
+          <button
+            type="button"
+            *ngFor="let tag of filteredTags()"
+            class="tag-chip"
+            [class.active]="taskForm.controls.tags.value.includes(tag.id)"
+            (click)="toggleTag(tag.id)"
+          >
+            {{ tag.name }}
+          </button>
+        </div>
+        <div class="field inline">
+          <input class="input" placeholder="Create new tag" [value]="tagSearch()" (input)="tagSearch.set($any($event.target).value)" />
+          <button type="button" class="btn-secondary" (click)="createTag(tagSearch())">Add tag</button>
+        </div>
+      </section>
+
+      <section *ngSwitchCase="'steps'" class="panel">
+        <div class="steps" *ngIf="steps.length; else noSteps">
+          <div class="step-row" *ngFor="let step of steps.controls; index as i" [formGroup]="step">
+            <span class="step-index">{{ i + 1 }}</span>
+            <label class="step-check">
+              <input type="checkbox" formControlName="isDone" />
+            </label>
+            <input class="input" formControlName="content" placeholder="Write the next action" />
+            <div class="step-actions">
+              <button type="button" (click)="moveStep(i, 'up')" [disabled]="i === 0">↑</button>
+              <button type="button" (click)="moveStep(i, 'down')" [disabled]="i === steps.length - 1">↓</button>
+              <button type="button" (click)="removeStep(i)">✕</button>
+            </div>
+          </div>
+        </div>
+        <ng-template #noSteps>
+          <p class="text-sm text-base-content/60">No steps yet.</p>
+        </ng-template>
+        <button type="button" class="btn-secondary mt-3" (click)="addStep()">Add step</button>
+      </section>
+
+      <form *ngSwitchCase="'extra'" [formGroup]="taskForm" class="panel extra-grid">
+        <label class="field">
+          <span class="field__label">Status</span>
+          <div class="complete-group">
+            <label>
+              <input type="radio" [value]="true" formControlName="isActive" />
+              Active
+            </label>
+            <label>
+              <input type="radio" [value]="false" formControlName="isActive" />
+              Suspended
+            </label>
+          </div>
+        </label>
+
+        <label class="field inline">
+          <input type="checkbox" formControlName="pinned" />
+          <span class="field__label">Pinned</span>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Estimate (min)</span>
+          <input type="number" min="0" class="input" formControlName="estimateMinutes" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Real time (min)</span>
+          <input type="number" min="0" class="input" formControlName="spentMinutes" />
+        </label>
+      </form>
+    </section>
+  </div>
+
+  <footer class="composer__footer">
+    <button type="button" class="btn-ghost" (click)="dismiss.emit()">Cancel</button>
+    <div class="composer__cta">
+      <button
+        *ngIf="!editingTask()"
+        type="button"
+        class="btn-primary secondary"
+        [disabled]="submitting()"
+        (click)="submit(true)"
+      >
+        Create and add more
+      </button>
+      <button type="button" class="btn-primary" [disabled]="submitting()" (click)="submit(false)">
+        {{ editingTask() ? 'Update task' : 'Save' }}
+      </button>
+    </div>
+  </footer>
+</div>

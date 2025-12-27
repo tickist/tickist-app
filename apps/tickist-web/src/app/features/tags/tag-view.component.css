@@ -1,0 +1,43 @@
+.tag-view {
+  @apply space-y-6 rounded-2xl bg-base-200 bg-opacity-60 p-6 shadow shadow-black/20;
+}
+
+.tag-view__header {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.tag-view__header h1 {
+  @apply text-2xl font-semibold;
+}
+
+.eyebrow {
+  @apply text-xs uppercase tracking-[0.4em] text-base-content opacity-60;
+}
+
+.controls {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.match-toggle {
+  @apply inline-flex items-center gap-1 rounded-lg bg-base-100 bg-opacity-30 p-1;
+}
+
+.tag-cloud {
+  @apply flex flex-wrap gap-2;
+}
+
+.tag-pill {
+  @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-base-100 bg-opacity-40 px-3 py-2 text-sm transition hover:border-primary hover:text-primary;
+}
+
+.tag-pill.active {
+  @apply border-primary bg-primary bg-opacity-10 text-primary;
+}
+
+.tag-pill .count {
+  @apply rounded-full bg-base-200 bg-opacity-70 px-2 py-0.5 text-xs;
+}
+
+.results {
+  @apply pt-2;
+}

@@ -1,0 +1,176 @@
+.task-card {
+  @apply rounded-2xl border border-white/10 bg-base-200 bg-opacity-60 p-4 text-base-content transition;
+}
+
+.task-card.completed {
+  @apply opacity-70;
+}
+
+.task-card.simple {
+  @apply p-3;
+}
+
+.task-card__row {
+  @apply flex items-center gap-3;
+}
+
+.task-card__check input {
+  @apply checkbox checkbox-sm;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card__title {
+  @apply flex flex-1 flex-wrap items-center gap-2 font-medium;
+}
+
+.task-card__time {
+  @apply text-sm text-base-content opacity-70;
+}
+
+.task-card__actions {
+  @apply flex items-center gap-2;
+}
+
+.icon-btn {
+  @apply rounded-full px-2 py-1 text-sm transition hover:bg-base-100 hover:bg-opacity-50;
+  color: inherit;
+}
+
+.icon-btn.active {
+  @apply bg-primary bg-opacity-20 text-primary;
+}
+
+.task-card__menu {
+  @apply relative;
+}
+
+.menu {
+  @apply absolute right-0 top-8 z-20 w-60 rounded-2xl border border-white/10 bg-base-200 bg-opacity-95 p-3 shadow-xl shadow-black/40;
+}
+
+.menu__section {
+  @apply mb-3 space-y-1 text-sm last:mb-0;
+}
+
+.menu__section p {
+  @apply text-xs font-semibold uppercase tracking-[0.3em] text-base-content opacity-50;
+}
+
+.menu__section button {
+  @apply w-full rounded-xl px-2 py-1 text-left transition hover:bg-base-100 hover:bg-opacity-40;
+}
+
+.menu__section button.active {
+  @apply bg-primary bg-opacity-20 text-primary;
+}
+
+.menu__danger {
+  @apply w-full rounded-xl px-2 py-1 text-left text-error transition hover:bg-error hover:bg-opacity-10;
+}
+
+.task-card__progress {
+  @apply mt-3;
+}
+
+.progress {
+  @apply h-2 w-full overflow-hidden rounded-full bg-base-100 bg-opacity-40;
+}
+
+.progress__fill {
+  @apply h-full rounded-full bg-primary transition-all duration-300;
+}
+
+:host-context([data-theme='tickist']) .task-card {
+  background-color: rgb(var(--b2));
+  border-color: rgb(var(--bc) / 12%);
+  color: rgb(var(--bc));
+}
+
+.task-card__toolbar {
+  @apply mt-3 flex items-center gap-2;
+}
+
+.toolbar-btn {
+  @apply btn btn-ghost btn-sm btn-circle;
+}
+
+.toolbar-btn.active {
+  @apply bg-primary bg-opacity-20 text-primary;
+}
+
+.task-card__panel {
+  @apply mt-4 space-y-3 text-sm;
+}
+
+.panel-field {
+  @apply flex flex-col gap-2;
+}
+
+.panel-label {
+  @apply text-xs font-semibold uppercase tracking-[0.4em] text-base-content opacity-50;
+}
+
+.panel-actions {
+  @apply flex justify-end;
+}
+
+.panel-hint {
+  @apply text-xs text-base-content opacity-60;
+}
+
+.tag-chips {
+  @apply flex flex-wrap gap-2;
+}
+
+.chip {
+  @apply inline-flex items-center gap-1 rounded-full bg-base-100 bg-opacity-40 px-3 py-1 text-xs;
+}
+
+.chip button {
+  @apply text-base-content opacity-70;
+}
+
+.repeat-grid {
+  @apply grid grid-cols-2 gap-2;
+}
+
+.repeat-grid button {
+  @apply rounded-xl border border-white/10 px-3 py-2 text-left transition hover:bg-base-100 hover:bg-opacity-40;
+}
+
+.repeat-grid button.active {
+  @apply bg-primary bg-opacity-20 text-primary;
+}
+
+.step-list {
+  @apply space-y-2;
+}
+
+.step-item {
+  @apply flex items-center gap-2 rounded-xl bg-base-100 bg-opacity-20 px-3 py-2;
+}
+
+.step-title {
+  @apply flex-1;
+}
+
+.step-title.line-through {
+  text-decoration: line-through;
+  @apply text-base-content opacity-50;
+}
+
+.step-controls button {
+  @apply rounded-lg px-2 py-1 text-xs text-base-content opacity-70 transition hover:bg-base-100 hover:bg-opacity-40 disabled:opacity-50;
+}
+
+.step-add {
+  @apply flex items-center gap-2;
+}
+
+.step-add input {
+  @apply w-full flex-1 rounded-lg border border-white/10 bg-base-100 bg-opacity-20 px-3 py-2 text-sm text-base-content;
+}
+
+.step-add button {
+  @apply btn btn-sm;
+}

@@ -1,0 +1,35 @@
+<section class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl border border-white/10 bg-base-200/60 p-8 shadow-2xl shadow-black/30 backdrop-blur">
+  <header class="space-y-2 text-center">
+    <p class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60">
+      Reset password
+    </p>
+    <h1 class="text-2xl font-semibold text-base-content">
+      Send a reset link
+    </h1>
+    <p class="text-sm text-base-content/70">
+      Enter your account email. We’ll send you a secure link to set a new password via Supabase.
+    </p>
+  </header>
+
+  <form class="flex flex-col gap-6" [formGroup]="form" (ngSubmit)="handleSubmit()">
+    <label class="form-control w-full">
+      <span class="label">
+        <span class="label-text text-base-content/70">Email</span>
+      </span>
+      <input formControlName="email" type="email" class="input input-bordered w-full bg-base-100/60" placeholder="team@tickist.app" />
+    </label>
+    <button class="btn btn-primary text-neutral" type="submit" [disabled]="isDisabled">
+      <span *ngIf="!isSubmitting()">Send link</span>
+      <span class="loading loading-spinner" *ngIf="isSubmitting()"></span>
+      <span *ngIf="isSubmitting()">Sending…</span>
+    </button>
+  </form>
+
+  <p class="text-sm text-base-content/70" *ngIf="message() as feedback" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
+    {{ feedback.text }}
+  </p>
+
+  <footer class="text-center text-xs text-base-content/60">
+    Remember your password? <a routerLink="/auth" class="link link-primary">Sign in</a>
+  </footer>
+</section>

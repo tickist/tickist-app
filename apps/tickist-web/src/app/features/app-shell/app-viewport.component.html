@@ -1,0 +1,130 @@
+<section class="min-h-screen bg-base-100 text-base-content">
+  <nav class="app-navbar sticky top-0 z-30 flex w-full items-center justify-between border-b border-white/10 bg-base-200/90 px-4 py-3 shadow-lg shadow-black/20 backdrop-blur lg:px-8">
+    <div class="flex items-center gap-4">
+      <button type="button" class="btn btn-sm btn-ghost lg:hidden" (click)="toggleSidebar()">☰</button>
+      <a routerLink="/app" class="text-2xl font-semibold tracking-wide text-primary">
+        tick<span class="text-secondary">ist</span>
+      </a>
+    </div>
+    <div class="flex flex-1 items-center justify-end gap-3">
+      <div class="relative hidden w-full max-w-md items-center md:flex">
+        <input
+          type="search"
+          class="input input-bordered input-sm w-full bg-base-100/60 pr-10"
+          placeholder="Search in Tickist…"
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+        />
+        <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 fill-current">
+            <path
+              d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.71.71l.27.28v.79L20 21.5 21.5 20l-5.5-6zM10 15a5 5 0 1 1 5-5 5 5 0 0 1-5 5Z"
+            />
+          </svg>
+        </span>
+      </div>
+      <button type="button" class="btn btn-circle btn-ghost border border-white/10" (click)="toggleNotifications()">
+        <div class="indicator">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 fill-current">
+            <path
+              d="M12 2a5 5 0 0 0-5 5v2.382a3 3 0 0 1-.879 2.121L5 12.624V14h14v-1.376l-1.121-1.121A3 3 0 0 1 17 9.382V7a5 5 0 0 0-5-5Zm-3 17h6a3 3 0 0 1-6 0Z"
+            />
+          </svg>
+          <span class="badge badge-primary badge-xs" *ngIf="unreadNotifications() as unread" [class.hidden]="!unread">
+            {{ unread }}
+          </span>
+        </div>
+      </button>
+      <button type="button" class="btn btn-circle border border-white/10 bg-base-100/70 p-0 shadow-inner" (click)="toggleProfileMenu()">
+        <ng-container *ngIf="user()?.user_metadata?.avatar_url as avatar; else initialsAvatar">
+          <img [src]="avatar" alt="Avatar" class="h-10 w-10 rounded-full object-cover" />
+        </ng-container>
+        <ng-template #initialsAvatar>
+          <span class="text-lg font-semibold text-primary">{{ avatarInitial() }}</span>
+        </ng-template>
+      </button>
+    </div>
+
+    <div
+      *ngIf="profileMenuOpen()"
+      class="app-menu absolute right-3 top-16 z-40 w-48 rounded-2xl border border-white/10 bg-base-200/95 p-1 shadow-xl shadow-black/40"
+    >
+      <button class="btn btn-ghost btn-sm w-full justify-start text-left" type="button" routerLink="/app/team" (click)="closeProfileMenu()">
+        Team
+      </button>
+      <button class="btn btn-ghost btn-sm w-full justify-start text-left" type="button" routerLink="/app/settings" (click)="closeProfileMenu()">
+        Settings
+      </button>
+      <button class="btn btn-ghost btn-sm w-full justify-start text-left text-error" type="button" (click)="signOut(); closeProfileMenu()">
+        Logout
+      </button>
+    </div>
+
+    <div
+      *ngIf="notificationsOpen()"
+      class="app-menu absolute right-20 top-16 z-40 w-80 rounded-2xl border border-white/10 bg-base-200/95 p-3 shadow-xl shadow-black/50"
+    >
+      <div class="mb-2 flex items-center justify-between">
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-base-content/60">Notifications</p>
+        <button class="btn btn-ghost btn-xs text-base-content/60" type="button" (click)="toggleNotifications()">
+          Close
+        </button>
+      </div>
+      <div *ngIf="notificationsLoading(); else notificationsList" class="flex items-center gap-2 text-sm text-base-content/60">
+        <span class="loading loading-spinner text-primary"></span>
+        Syncing alerts…
+      </div>
+      <ng-template #notificationsList>
+        <p class="text-sm text-base-content/60" *ngIf="!notifications().length">
+          Nothing new right now.
+        </p>
+        <ul class="max-h-80 space-y-2 overflow-y-auto pr-1" *ngIf="notifications().length">
+          <li *ngFor="let alert of notifications()" class="rounded-xl border border-white/10 bg-base-100/60 p-3 text-sm">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <p class="font-semibold">{{ alert.title }}</p>
+                <p class="text-xs text-base-content/60">{{ alert.createdAt | date: 'medium' }}</p>
+              </div>
+              <button
+                *ngIf="!alert.isRead"
+                class="btn btn-ghost btn-xs text-primary"
+                type="button"
+                (click)="markNotificationAsRead(alert.id)"
+              >
+                Mark read
+              </button>
+            </div>
+            <p class="mt-2 text-base-content/80" *ngIf="alert.description">
+              {{ alert.description }}
+            </p>
+          </li>
+        </ul>
+      </ng-template>
+    </div>
+  </nav>
+
+  <div class="relative flex min-h-[calc(100vh-72px)]">
+    <aside class="relative z-30 hidden w-96 border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block">
+      <app-sidebar></app-sidebar>
+    </aside>
+
+    <aside
+      class="fixed inset-y-0 left-0 z-40 w-96 bg-base-200 px-5 py-6 shadow-2xl shadow-black/40 transition lg:hidden"
+      *ngIf="sidebarOpen()"
+    >
+      <div class="flex justify-end">
+        <button type="button" class="btn btn-ghost btn-xs" (click)="closeSidebar()">Close ✕</button>
+      </div>
+      <app-sidebar></app-sidebar>
+    </aside>
+    <div class="fixed inset-0 z-30 bg-black/50 lg:hidden" *ngIf="sidebarOpen()" (click)="closeSidebar()"></div>
+
+    <main class="flex-1 px-4 py-8 lg:px-8">
+      <div class="mx-auto w-full max-w-6xl">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+  <app-task-fab></app-task-fab>
+  <app-toast-container></app-toast-container>
+</section>

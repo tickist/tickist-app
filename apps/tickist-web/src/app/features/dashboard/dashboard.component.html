@@ -1,0 +1,133 @@
+<section class="flex flex-col gap-6">
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Today</h2>
+      <span class="badge badge-primary badge-outline">{{ todayTasks().length }}</span>
+    </header>
+    <ng-container *ngIf="sortedTodayTasks().length; else emptyToday">
+      <div class="space-y-3">
+        <app-task-card
+          *ngFor="let task of sortedTodayTasks(); trackBy: trackTask"
+          [task]="task"
+          [project]="projectOf(task.projectId)"
+          viewMode="extended"
+        />
+      </div>
+    </ng-container>
+    <ng-template #emptyToday>
+      <p class="text-sm text-base-content/60">No tasks scheduled for today.</p>
+    </ng-template>
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Overdue</h2>
+      <span class="badge badge-error badge-outline">{{ overdueTasks().length }}</span>
+    </header>
+    <ng-container *ngIf="sortedOverdueTasks().length; else emptyOverdue">
+      <div class="space-y-3">
+        <app-task-card
+          *ngFor="let task of sortedOverdueTasks(); trackBy: trackTask"
+          [task]="task"
+          [project]="projectOf(task.projectId)"
+          viewMode="extended"
+        />
+      </div>
+    </ng-container>
+    <ng-template #emptyOverdue>
+      <p class="text-sm text-base-content/60">You're all caught up.</p>
+    </ng-template>
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Pinned</h2>
+      <span class="badge badge-outline">{{ pinnedTasks().length }}</span>
+    </header>
+    <ng-container *ngIf="pinnedTasks().length; else emptyPinned">
+      <div class="space-y-3">
+        <app-task-card
+          *ngFor="let task of pinnedTasks(); trackBy: trackTask"
+          [task]="task"
+          [project]="projectOf(task.projectId)"
+          viewMode="extended"
+        />
+      </div>
+    </ng-container>
+    <ng-template #emptyPinned>
+      <p class="text-sm text-base-content/60">No pinned tasks yet.</p>
+    </ng-template>
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold">Next actions</h2>
+        <p class="text-xs text-base-content/60">Tasks marked as next action</p>
+      </div>
+      <span class="badge badge-info badge-outline">{{ nextActionTasks().length }}</span>
+    </header>
+    <ng-container *ngIf="nextActionTasks().length; else emptyNextActions">
+      <div class="space-y-3">
+        <app-task-card
+          *ngFor="let task of nextActionTasks(); trackBy: trackTask"
+          [task]="task"
+          [project]="projectOf(task.projectId)"
+          viewMode="extended"
+        />
+      </div>
+    </ng-container>
+    <ng-template #emptyNextActions>
+      <p class="text-sm text-base-content/60">No next actions yet.</p>
+    </ng-template>
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold">Need info</h2>
+        <p class="text-xs text-base-content/60">Tasks waiting on information</p>
+      </div>
+      <span class="badge badge-warning badge-outline">{{ needInfoTasks().length }}</span>
+    </header>
+    <ng-container *ngIf="needInfoTasks().length; else emptyNeedInfo">
+      <div class="space-y-3">
+        <app-task-card
+          *ngFor="let task of needInfoTasks(); trackBy: trackTask"
+          [task]="task"
+          [project]="projectOf(task.projectId)"
+          viewMode="extended"
+        />
+      </div>
+    </ng-container>
+    <ng-template #emptyNeedInfo>
+      <p class="text-sm text-base-content/60">Nothing is blocked right now.</p>
+    </ng-template>
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-3 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold">Projects missing next action</h2>
+        <p class="text-xs text-base-content/60">Active projects without a next step</p>
+      </div>
+      <span class="badge badge-outline">{{ projectsMissingNextAction().length }}</span>
+    </header>
+    <ul class="space-y-3" *ngIf="projectsMissingNextAction().length; else emptyProjects">
+      <li *ngFor="let project of projectsMissingNextAction() | slice:0:5">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <p class="font-medium">{{ project.name }}</p>
+            <p class="text-xs text-base-content/60">{{ project.description || 'No description' }}</p>
+          </div>
+          <a class="btn btn-ghost btn-xs" [routerLink]="['/app/tasks', project.id]">
+            Open ({{ projectTaskCount(project.id) }})
+          </a>
+        </div>
+      </li>
+    </ul>
+    <ng-template #emptyProjects>
+      <p class="text-sm text-base-content/60">Every project has a next action 🎯</p>
+    </ng-template>
+  </article>
+</section>

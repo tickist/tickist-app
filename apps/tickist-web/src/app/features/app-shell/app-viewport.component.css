@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.app-navbar {
+  min-height: 64px;
+}
+
+.app-menu {
+  max-height: 80vh;
+  overflow-y: auto;
+  backdrop-filter: blur(6px);
+}

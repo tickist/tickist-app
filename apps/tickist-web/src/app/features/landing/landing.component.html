@@ -1,0 +1,108 @@
+<main
+  class="min-h-screen w-full px-4 py-8 sm:px-8 lg:px-24 flex flex-col gap-16 text-base-content"
+  data-testid="landing-root"
+>
+  <header
+    class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-base-200/40 p-6 shadow-2xl shadow-black/20 backdrop-blur lg:flex-row lg:items-center lg:justify-between"
+  >
+    <div class="flex items-center gap-3 text-primary">
+      <span class="h-3 w-3 rounded-full bg-primary shadow-[0_0_18px_rgba(255,234,0,0.9)]"></span>
+      <span class="text-sm font-semibold uppercase tracking-[0.8em] text-primary">
+        Tickist
+      </span>
+    </div>
+    <nav class="flex flex-wrap items-center gap-4 text-sm text-base-content/70" aria-label="Primary navigation">
+      <span class="opacity-60">Product</span>
+      <span class="opacity-60">Pricing</span>
+      <span class="opacity-60">Changelog</span>
+      <a routerLink="/auth" class="link-hover text-base-content">Log in</a>
+      <a routerLink="/auth/signup" class="link text-primary">Create account</a>
+    </nav>
+    <div class="flex flex-wrap gap-3">
+      <button type="button" class="btn btn-sm btn-outline btn-secondary gap-2" disabled>
+        <span class="opacity-70">Light mode (soon)</span>
+      </button>
+      <button type="button" class="btn btn-sm btn-primary text-neutral">
+        Join waitlist
+      </button>
+    </div>
+  </header>
+
+  <section class="grid gap-12 lg:grid-cols-2 lg:items-center">
+    <div class="flex flex-col gap-6">
+      <p class="text-xs font-semibold uppercase tracking-[0.5em] text-base-content/60">
+        Precision taskcraft for teams
+      </p>
+      <h1 class="text-4xl font-semibold leading-tight text-base-content md:text-5xl" data-testid="landing-title">
+        Keep the Tickist rhythm
+      </h1>
+      <p class="max-w-2xl text-base leading-relaxed text-base-content/80">
+        Tickist wraca w nowej odsłonie: Angular 20, Supabase, Tailwind i DaisyUI zachowają skupiony workflow, ale
+        uproszczą onboarding, współdzielenie list i automatyzacje. Ten landing to placeholder – docelowa wersja
+        pojawi się równolegle z Supabase MVP.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <button type="button" class="btn btn-primary btn-lg text-neutral">
+          Get product updates
+        </button>
+        <a routerLink="/auth" class="btn btn-outline btn-lg border-white/30 text-base-content">
+          Log in to Tickist
+        </a>
+        <a routerLink="/auth/signup" class="btn btn-ghost btn-lg text-primary">
+          Create account
+        </a>
+      </div>
+    </div>
+
+    <article class="card relative overflow-hidden border border-white/10 bg-base-200/60 shadow-tickist-glow">
+      <div class="card-body gap-4">
+        <p class="text-lg font-semibold">Supabase migration in progress</p>
+        <ul class="space-y-2 text-sm text-base-content/80">
+          <li class="flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-primary"></span>
+            Email + password auth ships first
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-primary"></span>
+            Tailwind + DaisyUI replace Material
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-primary"></span>
+            Edge functions replacing Firebase
+          </li>
+        </ul>
+        <div class="rounded-2xl border border-dashed border-white/20 bg-base-100/40 p-4 text-sm text-base-content/70">
+          UI mock placeholder — final cards + illustrations arrive after the first Supabase release.
+        </div>
+      </div>
+      <div class="pointer-events-none absolute inset-3 rounded-2xl bg-gradient-to-b from-primary/10 to-transparent"></div>
+    </article>
+  </section>
+
+  <section class="grid gap-4 md:grid-cols-3">
+    <article class="card border border-white/5 bg-base-200/40">
+      <div class="card-body gap-2">
+        <h2 class="card-title text-base-content">What stays</h2>
+        <p class="text-sm text-base-content/80">
+          Nested projects, tags, repeat rules, reminders, sharing, and the Tickist palette.
+        </p>
+      </div>
+    </article>
+    <article class="card border border-white/5 bg-base-200/40">
+      <div class="card-body gap-2">
+        <h2 class="card-title text-base-content">What improves</h2>
+        <p class="text-sm text-base-content/80">
+          Supabase reliability, GitHub Actions CI, DaisyUI widgets, optional light mode.
+        </p>
+      </div>
+    </article>
+    <article class="card border border-white/5 bg-base-200/40">
+      <div class="card-body gap-2">
+        <h2 class="card-title text-base-content">What’s next</h2>
+        <p class="text-sm text-base-content/80">
+          Edge functions, landing redesign, public roadmap, plus automation APIs.
+        </p>
+      </div>
+    </article>
+  </section>
+</main>

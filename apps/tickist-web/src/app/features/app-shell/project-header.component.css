@@ -1,0 +1,49 @@
+.project-header {
+  @apply mb-4 flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-white/10 bg-base-200 bg-opacity-80 px-4 py-3 shadow-lg shadow-black/30;
+  background-color: rgb(var(--b2)) !important;
+  color: rgb(var(--bc)) !important;
+  border-color: rgb(var(--bc) / 12%) !important;
+}
+
+.project-header__text h1 {
+  @apply text-2xl font-semibold;
+}
+
+.project-desc {
+  @apply mt-1 text-sm text-base-content opacity-70;
+}
+
+.project-header__actions {
+  @apply flex items-center gap-2;
+}
+
+.simple-toggle {
+  @apply relative inline-flex h-6 w-12 cursor-pointer items-center;
+}
+
+.simple-toggle input {
+  @apply sr-only;
+}
+
+.toggle-pill {
+  @apply block h-6 w-12 rounded-full bg-base-100 bg-opacity-20 transition;
+}
+
+.simple-toggle input:checked + .toggle-pill {
+  @apply bg-primary bg-opacity-40;
+}
+
+.toggle-pill::after {
+  content: '';
+  @apply relative left-1 top-1 block h-4 w-4 rounded-full bg-base-100 transition;
+}
+
+.simple-toggle input:checked + .toggle-pill::after {
+  @apply translate-x-6 bg-primary;
+}
+
+:host-context([data-theme='tickist']) .project-header,
+:host-context([data-theme='tickist']) .project-header__text h1,
+:host-context([data-theme='tickist']) .project-desc {
+  color: rgb(var(--bc));
+}

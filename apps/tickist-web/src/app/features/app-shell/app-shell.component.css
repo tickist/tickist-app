@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+:host-context([data-theme='tickist']) .new-task-form .input {
+  @apply bg-base-200 text-base-content border-white/10;
+}
+
+:host-context([data-theme='tickist']) .new-task-form .btn-primary {
+  @apply bg-primary text-neutral;
+}

@@ -1,0 +1,95 @@
+.sidebar-link {
+  @apply flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-base-content opacity-80 transition hover:bg-base-100 hover:bg-opacity-40;
+}
+
+.sidebar-sublist {
+  @apply ml-4 mt-2 space-y-1 text-sm text-base-content opacity-70;
+  overflow: visible;
+}
+
+.sidebar-subitem {
+  @apply flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1 text-left transition hover:bg-base-100 hover:bg-opacity-40;
+  min-width: 0;
+}
+
+.dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.emoji {
+  font-size: 1rem;
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.sidebar-project {
+  @apply relative;
+  overflow: visible;
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.35rem;
+  width: 100%;
+  overflow: visible;
+  padding-right: 0.25rem;
+}
+
+.project-name {
+  @apply flex-1 truncate;
+}
+
+.project-count {
+  @apply text-xs font-semibold text-base-content opacity-50;
+  min-width: 1.5rem;
+  text-align: right;
+}
+
+.project-options {
+  @apply relative shrink-0;
+  width: 32px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.options-trigger {
+  @apply rounded-full px-2 py-1 text-lg text-base-content opacity-70 transition hover:bg-base-100 hover:bg-opacity-60;
+  line-height: 1;
+}
+
+.project-menu {
+  @apply fixed z-[1400] w-56 rounded-2xl border border-white/10 bg-base-200 bg-opacity-95 p-2 shadow-lg shadow-black/40;
+}
+
+.project-menu button {
+  @apply w-full rounded-xl px-3 py-2 text-left text-sm text-base-content opacity-80 transition hover:bg-base-100 hover:bg-opacity-50;
+}
+
+.sidebar-create {
+  @apply flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-primary transition hover:bg-base-100 hover:bg-opacity-40;
+}
+
+:host-context([data-theme='tickist']) nav,
+:host-context([data-theme='tickist']) .sidebar-link,
+:host-context([data-theme='tickist']) .sidebar-subitem,
+:host-context([data-theme='tickist']) .project-menu button,
+:host-context([data-theme='tickist']) .sidebar-create {
+  color: #f7f7fa !important;
+}
+
+:host-context([data-theme='tickist']) .project-menu {
+  background-color: #1b2236;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:host-context([data-theme='tickist']) .sidebar-link,
+:host-context([data-theme='tickist']) .sidebar-subitem {
+  background-color: transparent;
+}
