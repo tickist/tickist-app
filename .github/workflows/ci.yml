@@ -27,10 +27,11 @@ jobs:
 
       - run: npm ci
 
-      - name: Lint, test, and build
-      # This placeholder job will grow once hosting/environment steps are defined.
-        run: npx nx run-many -t lint test build
+      - name: Lint
+        run: npx nx lint tickist-web
 
-      - name: Analyze and suggest fixes
-        run: npx nx fix-ci
-        if: always()
+      - name: Unit tests
+        run: npx nx test tickist-web
+
+      # - name: E2E tests
+      #   run: npx nx e2e tickist-web
