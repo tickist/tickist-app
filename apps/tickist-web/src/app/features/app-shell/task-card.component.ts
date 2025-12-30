@@ -86,18 +86,22 @@ export class TaskCardComponent implements OnChanges {
   }
 
   taskTimeLabel(): string | null {
-    const estimate = this.formatDuration(this.task.estimateMinutes);
-    const spent = this.formatDuration(this.task.spentMinutes);
-    if (estimate && spent) {
-      return `${estimate} / ${spent}`;
+    const estimateMinutes = this.task.estimateMinutes;
+    const spentMinutes = this.task.spentMinutes;
+    if (
+      estimateMinutes == null ||
+      estimateMinutes <= 0 ||
+      spentMinutes == null ||
+      spentMinutes <= 0
+    ) {
+      return null;
     }
-    if (estimate) {
-      return estimate;
+    const estimate = this.formatDuration(estimateMinutes);
+    const spent = this.formatDuration(spentMinutes);
+    if (!estimate || !spent) {
+      return null;
     }
-    if (spent) {
-      return spent;
-    }
-    return null;
+    return `${estimate} / ${spent}`;
   }
 
   progressPercent(): number | null {

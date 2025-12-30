@@ -24,7 +24,7 @@
 }
 
 .task-card__time {
-  @apply text-sm text-base-content opacity-70;
+  @apply rounded-full bg-base-100 bg-opacity-40 px-2 py-0.5 text-xs text-base-content;
 }
 
 .task-card__actions {
