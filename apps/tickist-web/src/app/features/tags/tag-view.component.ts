@@ -3,6 +3,7 @@ import { NgFor, NgIf, UpperCasePipe } from '@angular/common';
 import { TagDataService } from '../../data/tag-data.service';
 import { TaskDataService, Task } from '../../data/task-data.service';
 import { TaskCardComponent } from '../app-shell/task-card.component';
+import { AppViewStateService } from '../app-shell/app-view-state.service';
 
 @Component({
   selector: 'app-tag-view',
@@ -14,9 +15,11 @@ import { TaskCardComponent } from '../app-shell/task-card.component';
 export class TagViewComponent {
   private readonly tagsService = inject(TagDataService);
   private readonly tasksService = inject(TaskDataService);
+  private readonly viewState = inject(AppViewStateService);
 
   readonly tags = computed(() => this.tagsService.list());
   readonly tasks = computed(() => this.tasksService.list());
+  readonly searchTerm = this.viewState.searchTerm;
 
   readonly selectedTags = signal<Set<string>>(new Set());
   readonly includeCompleted = signal(false);
@@ -54,7 +57,15 @@ export class TagViewComponent {
     const includeCompleted = this.includeCompleted();
     const matchMode = this.matchMode();
 
+    const normalizedSearch = this.searchTerm().trim().toLowerCase();
     let list: Task[] = this.tasks();
+    if (normalizedSearch) {
+      list = list.filter(
+        (task) =>
+          task.name.toLowerCase().includes(normalizedSearch) ||
+          (task.description ?? '').toLowerCase().includes(normalizedSearch)
+      );
+    }
     if (!includeCompleted) {
       list = list.filter((task) => !task.isDone);
     }

@@ -1,21 +1,41 @@
 <section class="min-h-screen bg-base-100 text-base-content">
-  <nav class="app-navbar sticky top-0 z-30 flex w-full items-center justify-between border-b border-white/10 bg-base-200/90 px-4 py-3 shadow-lg shadow-black/20 backdrop-blur lg:px-8">
-    <div class="flex items-center gap-4">
+  <nav class="app-navbar sticky top-0 z-30 flex w-full flex-wrap items-center gap-3 gap-y-2 border-b border-white/10 bg-base-200/90 px-4 py-3 shadow-lg shadow-black/20 backdrop-blur lg:px-8 md:flex-nowrap relative">
+    <div class="flex items-center gap-4 shrink-0">
       <button type="button" class="btn btn-sm btn-ghost lg:hidden" (click)="toggleSidebar()">☰</button>
-      <a routerLink="/app" class="text-2xl font-semibold tracking-wide text-primary">
-        tick<span class="text-secondary">ist</span>
+      <a routerLink="/app" class="flex items-center gap-2">
+        <img
+          src="/images/logo.png"
+          srcset="/images/logo.png 1x, /images/logo_230.png 2x"
+          alt="Tickist"
+          class="h-8 w-auto"
+        />
       </a>
     </div>
-    <div class="flex flex-1 items-center justify-end gap-3">
-      <div class="relative hidden w-full max-w-md items-center md:flex">
+    <div class="order-3 flex w-full items-center md:order-none md:flex-1 md:w-auto">
+      <div class="relative w-full md:max-w-md md:mx-auto">
         <input
+          #taskSearchInput
           type="search"
-          class="input input-bordered input-sm w-full bg-base-100/60 pr-10"
-          placeholder="Search in Tickist…"
+          class="input input-bordered input-sm w-full bg-base-100/60 pl-4 pr-10"
+          placeholder="Search tasks (name or description)…"
           [value]="searchTerm()"
           (input)="onSearchInput($event)"
         />
-        <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50">
+        <button
+          *ngIf="searchTerm()"
+          type="button"
+          class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2"
+          aria-label="Clear search"
+          (click)="clearSearch(taskSearchInput)"
+        >
+          <svg viewBox="0 0 24 24" class="h-4 w-4 stroke-current" fill="none" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+          </svg>
+        </button>
+        <span
+          *ngIf="!searchTerm()"
+          class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 fill-current">
             <path
               d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.71.71l.27.28v.79L20 21.5 21.5 20l-5.5-6zM10 15a5 5 0 1 1 5-5 5 5 0 0 1-5 5Z"
@@ -23,6 +43,8 @@
           </svg>
         </span>
       </div>
+    </div>
+    <div class="ml-auto flex items-center gap-3 shrink-0">
       <button type="button" class="btn btn-circle btn-ghost border border-white/10" (click)="toggleNotifications()">
         <div class="indicator">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 fill-current">
@@ -47,7 +69,7 @@
 
     <div
       *ngIf="profileMenuOpen()"
-      class="app-menu absolute right-3 top-16 z-40 w-48 rounded-2xl border border-white/10 bg-base-200/95 p-1 shadow-xl shadow-black/40"
+      class="app-menu absolute right-3 top-full z-40 mt-2 w-48 rounded-2xl border border-white/10 bg-base-200/95 p-1 shadow-xl shadow-black/40"
     >
       <button class="btn btn-ghost btn-sm w-full justify-start text-left" type="button" routerLink="/app/team" (click)="closeProfileMenu()">
         Team
@@ -62,7 +84,7 @@
 
     <div
       *ngIf="notificationsOpen()"
-      class="app-menu absolute right-20 top-16 z-40 w-80 rounded-2xl border border-white/10 bg-base-200/95 p-3 shadow-xl shadow-black/50"
+      class="app-menu absolute right-20 top-full z-40 mt-2 w-80 rounded-2xl border border-white/10 bg-base-200/95 p-3 shadow-xl shadow-black/50"
     >
       <div class="mb-2 flex items-center justify-between">
         <p class="text-sm font-semibold uppercase tracking-[0.3em] text-base-content/60">Notifications</p>
@@ -102,7 +124,6 @@
       </ng-template>
     </div>
   </nav>
-
   <div class="relative flex min-h-[calc(100vh-72px)]">
     <aside class="relative z-30 hidden w-96 border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block">
       <app-sidebar></app-sidebar>
@@ -120,7 +141,7 @@
     <div class="fixed inset-0 z-30 bg-black/50 lg:hidden" *ngIf="sidebarOpen()" (click)="closeSidebar()"></div>
 
     <main class="flex-1 px-4 py-8 lg:px-8">
-      <div class="mx-auto w-full max-w-6xl">
+      <div class="w-full max-w-none">
         <router-outlet></router-outlet>
       </div>
     </main>

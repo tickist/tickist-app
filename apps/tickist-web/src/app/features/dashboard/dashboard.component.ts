@@ -5,6 +5,7 @@ import { NgFor, NgIf, SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TaskCardComponent } from '../app-shell/task-card.component';
+import { AppViewStateService } from '../app-shell/app-view-state.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,8 +18,10 @@ export class DashboardComponent {
   private readonly tasks = inject(TaskDataService);
   private readonly projects = inject(ProjectDataService);
   private readonly session = inject(SupabaseSessionService);
+  private readonly viewState = inject(AppViewStateService);
 
   readonly user = computed(() => this.session.user());
+  readonly searchTerm = this.viewState.searchTerm;
   readonly projectList = computed(() =>
     this.projects
       .list()
@@ -39,11 +42,21 @@ export class DashboardComponent {
   readonly inboxProject = computed(
     () => this.projectList().find((p) => p.isInbox) ?? null
   );
-  readonly taskList = computed(() =>
-    this.tasks.list().filter(
-      (task) => task.ownerId === this.user()?.id && !task.onHold
-    )
-  );
+  readonly taskList = computed(() => {
+    const normalizedSearch = this.searchTerm().trim().toLowerCase();
+    return this.tasks.list().filter((task) => {
+      if (task.ownerId !== this.user()?.id || task.onHold) {
+        return false;
+      }
+      if (!normalizedSearch) {
+        return true;
+      }
+      return (
+        task.name.toLowerCase().includes(normalizedSearch) ||
+        (task.description ?? '').toLowerCase().includes(normalizedSearch)
+      );
+    });
+  });
   readonly todayTasks = computed(() => {
     const today = new Date();
     return this.taskList().filter((task) => {

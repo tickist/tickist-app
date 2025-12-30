@@ -3,6 +3,7 @@ import { TaskDataService } from '../../data/task-data.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { AppViewStateService } from '../app-shell/app-view-state.service';
 
 interface TreeGroup {
   id: string;
@@ -28,11 +29,25 @@ export class TreeViewComponent {
   private readonly tasks = inject(TaskDataService);
   private readonly projects = inject(ProjectDataService);
   private readonly session = inject(SupabaseSessionService);
+  private readonly viewState = inject(AppViewStateService);
 
   readonly user = computed(() => this.session.user());
-  readonly taskList = computed(() =>
-    this.tasks.list().filter((task) => task.ownerId === this.user()?.id)
-  );
+  readonly searchTerm = this.viewState.searchTerm;
+  readonly taskList = computed(() => {
+    const normalizedSearch = this.searchTerm().trim().toLowerCase();
+    return this.tasks.list().filter((task) => {
+      if (task.ownerId !== this.user()?.id) {
+        return false;
+      }
+      if (!normalizedSearch) {
+        return true;
+      }
+      return (
+        task.name.toLowerCase().includes(normalizedSearch) ||
+        (task.description ?? '').toLowerCase().includes(normalizedSearch)
+      );
+    });
+  });
   readonly projectList = computed(() =>
     this.projects.list().filter((project) => project.ownerId === this.user()?.id)
   );

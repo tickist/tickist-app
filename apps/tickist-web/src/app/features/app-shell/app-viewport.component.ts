@@ -75,6 +75,11 @@ export class AppViewportComponent implements OnDestroy {
     this.viewState.updateSearchTerm(target?.value ?? '');
   }
 
+  clearSearch(input?: HTMLInputElement | null): void {
+    this.viewState.clearSearch();
+    input?.focus();
+  }
+
   toggleNotifications(): void {
     if (!this.notifications().length && !this.notificationsLoading()) {
       const userId = this.user()?.id;
