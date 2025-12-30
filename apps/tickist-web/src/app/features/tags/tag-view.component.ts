@@ -151,6 +151,10 @@ export class TagViewComponent {
     this.visibleCount.set(this.pageSize);
   }
 
+  trackTask(_index: number, task: Task): string {
+    return task.id;
+  }
+
   private sortTasks(tasks: Task[]): Task[] {
     const option = this.sortOption();
     const byString = (a: string, b: string) => a.localeCompare(b);

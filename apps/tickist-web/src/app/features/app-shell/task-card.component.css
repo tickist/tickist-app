@@ -233,7 +233,23 @@
 }
 
 .step-controls button {
-  @apply rounded-lg px-2 py-1 text-xs text-base-content opacity-70 transition hover:bg-base-100 hover:bg-opacity-40 disabled:opacity-50;
+  @apply rounded-lg px-2 py-1 text-sm transition disabled:opacity-40;
+  color: rgb(var(--bc));
+  background: rgb(var(--b1) / 0.45);
+  border: 1px solid rgb(var(--bc) / 0.15);
+}
+
+.step-controls .step-remove {
+  @apply text-error opacity-90;
+}
+
+.step-controls button:hover:not(:disabled) {
+  background: rgb(var(--b1) / 0.7);
+}
+
+.step-controls .step-remove:hover {
+  @apply text-error;
+  background: rgba(248, 113, 113, 0.2);
 }
 
 .step-add {

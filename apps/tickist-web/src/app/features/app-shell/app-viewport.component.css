@@ -4,6 +4,8 @@
 
 .app-navbar {
   min-height: 64px;
+  background-color: rgb(var(--b2));
+  backdrop-filter: none;
 }
 
 .app-menu {

@@ -17,7 +17,7 @@
 
           <div class="space-y-4">
             <app-task-card
-              *ngFor="let task of filteredTasks()"
+              *ngFor="let task of filteredTasks(); trackBy: trackTask"
               [task]="task"
               [project]="project"
               [viewMode]="project.taskView === 'simple' ? 'simple' : 'extended'"
@@ -57,7 +57,7 @@
             </div>
             <div class="space-y-4">
               <app-task-card
-                *ngFor="let task of filteredTasks()"
+                *ngFor="let task of filteredTasks(); trackBy: trackTask"
                 [task]="task"
                 [project]="projectForTask(task)"
                 [viewMode]="taskViewMode()"

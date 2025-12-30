@@ -74,9 +74,14 @@ export class TaskCardComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['task']) {
-      this.descriptionDraft.set(this.task?.description ?? '');
+      const previous = changes['task'].previousValue as Task | undefined;
+      const current = changes['task'].currentValue as Task | undefined;
+      this.descriptionDraft.set(current?.description ?? '');
       this.newStepDraft.set('');
-      this.menuOpen.set(false);
+      if (previous?.id && current?.id && previous.id !== current.id) {
+        this.menuOpen.set(false);
+        this.closeAllPanels();
+      }
     }
   }
 
@@ -108,11 +113,11 @@ export class TaskCardComponent implements OnChanges {
   }
 
   priorityColor(priority?: string | null): string {
-    switch ((priority ?? '').toUpperCase()) {
+    switch ((priority ?? '').trim().toUpperCase()) {
       case 'A':
         return '#ef4444'; // red
       case 'B':
-        return '#f97316'; // orange
+        return '#fbbf24'; // amber
       case 'C':
         return '#22c55e'; // green
       default:

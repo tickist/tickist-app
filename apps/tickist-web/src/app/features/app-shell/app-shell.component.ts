@@ -283,6 +283,10 @@ export class AppShellComponent {
     this.filterOption.set(option);
   }
 
+  trackTask(_index: number, task: Task): string {
+    return task.id;
+  }
+
   openProjectEdit(project: Project): void {
     this.composer.openProjectModal({
       mode: 'edit',

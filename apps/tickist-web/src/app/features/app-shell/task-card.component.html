@@ -174,7 +174,9 @@
         <div class="step-controls">
           <button type="button" (click)="moveStep(step, 'up')" [disabled]="i === 0">↑</button>
           <button type="button" (click)="moveStep(step, 'down')" [disabled]="i === task.steps.length - 1">↓</button>
-          <button type="button" (click)="removeStep(step)">✕</button>
+          <button type="button" class="step-remove" aria-label="Remove step" (click)="removeStep(step)">
+            ✕
+          </button>
         </div>
       </div>
     </div>
