@@ -153,6 +153,10 @@
   @apply text-xs text-base-content opacity-60;
 }
 
+.task-description {
+  @apply whitespace-pre-wrap rounded-xl border border-white/10 bg-base-100 bg-opacity-40 px-3 py-2;
+}
+
 .tag-chips {
   @apply flex flex-wrap gap-2;
 }

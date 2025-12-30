@@ -18,6 +18,7 @@ import { Project, ProjectDataService } from '../../data/project-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
+import { LinkifyPipe } from '../../core/text/linkify.pipe';
 
 type TaskViewMode = 'extended' | 'simple';
 type RepeatMode =
@@ -31,7 +32,7 @@ type RepeatMode =
 @Component({
   selector: 'app-task-card',
   standalone: true,
-  imports: [NgIf, NgFor],
+  imports: [NgIf, NgFor, LinkifyPipe],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
 })

@@ -30,7 +30,11 @@
         >
           <li *ngFor="let task of group.tasks" class="flex items-center justify-between text-sm">
             <div>
-              <p [class.line-through]="task.isDone" class="font-medium">{{ task.name }}</p>
+              <p
+                class="font-medium linkified"
+                [class.line-through]="task.isDone"
+                [innerHTML]="task.name | linkify"
+              ></p>
               <p class="text-xs text-base-content/60">
                 {{ task.priority || 'normal' }} ·
                 <span *ngIf="task.finishDate; else noDate">{{ task.finishDate | date: 'mediumDate' }}</span>

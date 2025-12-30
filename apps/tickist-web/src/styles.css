@@ -86,3 +86,15 @@ body {
   @apply bg-base-100 text-base-content;
   color-scheme: light;
 }
+
+.linkified a {
+  @apply text-primary underline underline-offset-2;
+}
+
+.linkified a:hover {
+  @apply opacity-80;
+}
+
+.linkified.line-through a {
+  text-decoration: line-through;
+}

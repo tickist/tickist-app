@@ -4,6 +4,7 @@ import { ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
+import { LinkifyPipe } from '../../core/text/linkify.pipe';
 
 interface TreeGroup {
   id: string;
@@ -21,7 +22,7 @@ interface TreeGroup {
 @Component({
   selector: 'app-tree-view',
   standalone: true,
-  imports: [NgIf, NgFor, DatePipe],
+  imports: [NgIf, NgFor, DatePipe, LinkifyPipe],
   templateUrl: './tree-view.component.html',
   styleUrl: './tree-view.component.css',
 })

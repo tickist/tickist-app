@@ -10,7 +10,7 @@
       />
     </label>
     <div class="task-card__title">
-      <p>{{ task.name }}</p>
+      <p class="linkified" [innerHTML]="task.name | linkify"></p>
       <span class="task-card__time" *ngIf="taskTimeLabel() as summary">({{ summary }})</span>
     </div>
     <div class="task-card__actions">
@@ -108,6 +108,10 @@
   </section>
 
   <section class="task-card__panel" *ngIf="descriptionOpen()">
+    <div class="panel-field" *ngIf="descriptionDraft().trim()">
+      <span class="panel-label">Preview</span>
+      <div class="task-description linkified" [innerHTML]="descriptionDraft() | linkify"></div>
+    </div>
     <label class="panel-field">
       <span class="panel-label">Description</span>
       <textarea
@@ -119,7 +123,7 @@
     <div class="panel-actions">
       <button class="btn btn-xs" type="button" (click)="saveDescription()">Save</button>
     </div>
-    <p class="panel-hint" *ngIf="!task.description">No description yet.</p>
+    <p class="panel-hint" *ngIf="!descriptionDraft().trim()">No description yet.</p>
   </section>
 
   <section class="task-card__panel" *ngIf="tagsOpen()">
@@ -162,7 +166,11 @@
         <label class="step-check">
           <input type="checkbox" [checked]="step.isDone" (change)="toggleStep(step, $any($event.target).checked)" />
         </label>
-        <span class="step-title" [class.line-through]="step.isDone">{{ step.content }}</span>
+        <span
+          class="step-title linkified"
+          [class.line-through]="step.isDone"
+          [innerHTML]="step.content | linkify"
+        ></span>
         <div class="step-controls">
           <button type="button" (click)="moveStep(step, 'up')" [disabled]="i === 0">↑</button>
           <button type="button" (click)="moveStep(step, 'down')" [disabled]="i === task.steps.length - 1">↓</button>
