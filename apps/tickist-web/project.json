@@ -5,7 +5,6 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/tickist-web/src",
-  "root": "apps/tickist-web",
   "tags": [],
   "targets": {
     "build": {

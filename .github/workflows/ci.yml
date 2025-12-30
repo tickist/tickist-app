@@ -35,3 +35,47 @@ jobs:
 
       # - name: E2E tests
       #   run: npx nx e2e tickist-web
+
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      E2E_ENV_FILE: .local_env.e2e
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase local stack
+        run: supabase start
+
+      - name: Export local Supabase credentials
+        run: |
+          supabase status -o env \
+            --override-name api.url=NG_APP_SUPABASE_URL \
+            --override-name api.anon_key=NG_APP_SUPABASE_ANON_KEY \
+            --override-name db.url=SUPABASE_DB_URL \
+            > "$E2E_ENV_FILE"
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: E2E tests
+        env:
+          E2E_ENV_FILE: ${{ env.E2E_ENV_FILE }}
+        run: npx nx e2e tickist-web-e2e
+
+      - name: Stop Supabase local stack
+        if: always()
+        run: supabase stop --no-backup
