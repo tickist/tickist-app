@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { NgFor, NgIf } from '@angular/common';
-import { TaskDataService, TaskCreateInput } from '../../data/task-data.service';
+import { Task, TaskDataService, TaskCreateInput } from '../../data/task-data.service';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -39,12 +39,16 @@ export class AppShellComponent {
   readonly taskList = computed(() => this.tasksService.list());
   readonly loading = this.tasksService.loadingSignal;
   readonly projectList = computed(() => this.projectsService.list());
+  readonly inboxProjectId = computed(
+    () => this.projectList().find((project) => project.isInbox)?.id ?? null
+  );
   readonly tagList = computed(() => this.tagsService.list());
   readonly loadingProjects = this.projectsService.loadingSignal;
   readonly loadingTags = this.tagsService.loadingSignal;
   readonly selectedProjectId = this.viewState.selectedProjectId;
   readonly selectedTaskId = signal<string | null>(null);
   readonly searchTerm = this.viewState.searchTerm;
+  readonly dueDateFilter = this.viewState.dueDateFilter;
   readonly activeProject = computed(() => {
     const projectId = this.selectedProjectId();
     if (!projectId) {
@@ -54,15 +58,52 @@ export class AppShellComponent {
       this.projectList().find((project) => project.id === projectId) ?? null
     );
   });
+  readonly projectLookup = computed(() => {
+    const map = new Map<string, Project>();
+    this.projectList().forEach((project) => map.set(project.id, project));
+    return map;
+  });
+  readonly dueDateLabel = computed(() => {
+    const filter = this.dueDateFilter();
+    if (!filter) {
+      return null;
+    }
+    if (filter.mode === 'day') {
+      const date = this.parseDateKey(filter.dateKey);
+      return date
+        ? date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+          })
+        : filter.dateKey;
+    }
+    const date = this.parseMonthKey(filter.monthKey);
+    return date
+      ? date.toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric',
+        })
+      : filter.monthKey;
+  });
+  readonly taskViewMode = computed(() =>
+    this.activeProject()?.taskView === 'simple' ? 'simple' : 'extended'
+  );
   readonly projectTaskForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
   });
   readonly filteredTasks = computed(() => {
     const tasks = this.taskList();
     const projectId = this.selectedProjectId();
+    const inboxId = this.inboxProjectId();
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
+    const dueFilter = this.dueDateFilter();
     const filtered = tasks.filter((task) => {
-      const matchesProject = projectId ? task.projectId === projectId : true;
+      const matchesProject = projectId
+        ? projectId === inboxId
+          ? task.projectId === projectId || !task.projectId
+          : task.projectId === projectId
+        : true;
       const matchesSearch = normalizedSearch
         ? task.name.toLowerCase().includes(normalizedSearch) ||
           (task.description ?? '').toLowerCase().includes(normalizedSearch)
@@ -73,7 +114,24 @@ export class AppShellComponent {
           : this.filterOption() === 'done'
           ? task.isDone
           : !task.isDone;
-      return matchesProject && matchesSearch && matchesFilter;
+      const matchesDueDate = (() => {
+        if (!dueFilter) {
+          return true;
+        }
+        if (!task.finishDate) {
+          return false;
+        }
+        const finishDate = new Date(task.finishDate);
+        if (Number.isNaN(finishDate.getTime())) {
+          return false;
+        }
+        finishDate.setHours(0, 0, 0, 0);
+        if (dueFilter.mode === 'day') {
+          return this.dateKey(finishDate) === dueFilter.dateKey;
+        }
+        return this.monthKey(finishDate) === dueFilter.monthKey;
+      })();
+      return matchesProject && matchesSearch && matchesFilter && matchesDueDate;
     });
     return this.sortTasks(filtered);
   });
@@ -130,6 +188,20 @@ export class AppShellComponent {
       const projectId = params.get('projectId');
       this.viewState.selectProject(projectId);
     });
+
+    this.route.queryParamMap.subscribe((params) => {
+      const due = params.get('due');
+      const month = params.get('month');
+      if (due) {
+        this.viewState.setDayFilter(due);
+        return;
+      }
+      if (month) {
+        this.viewState.setMonthFilter(month);
+        return;
+      }
+      this.viewState.clearDateFilter();
+    });
   }
 
   async createTask(): Promise<void> {
@@ -145,7 +217,7 @@ export class AppShellComponent {
       ownerId: currentUser.id,
       name: this.form.value.name ?? '',
       estimateMinutes: this.form.value.estimateMinutes ?? null,
-      projectId: this.form.value.projectId || null,
+      projectId: this.form.value.projectId || this.inboxProjectId() || null,
     };
     await this.tasksService.createTask(payload);
     this.form.reset({ name: '', estimateMinutes: 15, projectId: '' });
@@ -257,6 +329,19 @@ export class AppShellComponent {
     });
   }
 
+  private dateKey(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private monthKey(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    return `${year}-${month}`;
+  }
+
   async addTaskToProject(): Promise<void> {
     const projectId = this.selectedProjectId();
     const currentUser = this.user();
@@ -331,5 +416,34 @@ export class AppShellComponent {
 
   refreshTags(): void {
     void this.tagsService.refresh();
+  }
+
+  projectForTask(task: Task): Project | null {
+    const projectId = task.projectId ?? null;
+    if (!projectId) {
+      return null;
+    }
+    return this.projectLookup().get(projectId) ?? null;
+  }
+
+  clearDueDateFilter(): void {
+    this.viewState.clearDateFilter();
+    void this.router.navigate(['/app/tasks'], { queryParams: {} });
+  }
+
+  private parseDateKey(key: string): Date | null {
+    const [year, month, day] = key.split('-').map(Number);
+    if (!year || !month || !day) {
+      return null;
+    }
+    return new Date(year, month - 1, day);
+  }
+
+  private parseMonthKey(key: string): Date | null {
+    const [year, month] = key.split('-').map(Number);
+    if (!year || !month) {
+      return null;
+    }
+    return new Date(year, month - 1, 1);
   }
 }

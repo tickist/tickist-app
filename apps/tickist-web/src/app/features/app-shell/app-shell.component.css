@@ -2,10 +2,69 @@
   display: block;
 }
 
-:host-context([data-theme='tickist']) .new-task-form .input {
-  @apply bg-base-200 text-base-content border-white/10;
+.new-task-form__card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 19, 36, 0.65);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
-:host-context([data-theme='tickist']) .new-task-form .btn-primary {
-  @apply bg-primary text-neutral;
+.new-task-form__controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.new-task-form__input {
+  width: 100%;
+  padding: 0.7rem 0.95rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 11, 24, 0.75);
+  color: #f7f8ff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.new-task-form__input::placeholder {
+  color: rgba(247, 248, 255, 0.45);
+}
+
+.new-task-form__input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.new-task-form__button {
+  border: none;
+  border-radius: 12px;
+  padding: 0.65rem 1.2rem;
+  background: linear-gradient(120deg, #ffaa3b, #ff7b1a);
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.new-task-form__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(255, 122, 26, 0.25);
+}
+
+.new-task-form__button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .new-task-form__controls {
+    grid-template-columns: 1fr;
+  }
+
+  .new-task-form__button {
+    width: 100%;
+  }
 }

@@ -72,6 +72,9 @@ export class TaskComposerComponent {
   readonly projects = computed(() => this.projectService.list());
   readonly tags = computed(() => this.tagService.list());
   readonly user = computed(() => this.session.user());
+  readonly inboxProjectId = computed(
+    () => this.projects().find((project) => project.isInbox)?.id ?? ''
+  );
   readonly activeTab = signal<TabKey>('general');
   readonly submitting = signal(false);
   readonly tagSearch = signal('');
@@ -135,6 +138,19 @@ export class TaskComposerComponent {
         this.taskForm.enable();
       }
     });
+
+    effect(() => {
+      if (this.editingTask()) {
+        return;
+      }
+      const inboxId = this.inboxProjectId();
+      if (!inboxId) {
+        return;
+      }
+      if (!this.taskForm.controls.projectId.value) {
+        this.taskForm.controls.projectId.setValue(inboxId);
+      }
+    });
   }
 
   private applyPreset(preset: TaskComposerPreset | null): void {
@@ -143,7 +159,7 @@ export class TaskComposerComponent {
     if (!preset || preset.mode === 'create') {
       this.editingTask.set(null);
       this.resetForm({
-        projectId: preset?.defaults?.projectId ?? '',
+        projectId: preset?.defaults?.projectId ?? this.inboxProjectId(),
         tags: preset?.defaults?.tags ?? [],
         priority: preset?.defaults?.priority ?? 'B',
       });
@@ -310,7 +326,7 @@ export class TaskComposerComponent {
       const payload: TaskCreateInput = {
         ownerId: owner.id,
         name: value.name,
-        projectId: value.projectId || null,
+        projectId: value.projectId || this.inboxProjectId() || null,
         description: value.description ?? '',
         finishDate: value.finishDate || null,
         finishTime: value.finishTime || null,

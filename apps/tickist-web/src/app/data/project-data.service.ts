@@ -1,5 +1,6 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal, effect } from '@angular/core';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
+import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 
 export interface Project {
   id: string;
@@ -80,8 +81,11 @@ type ProjectRow = {
 export class ProjectDataService {
   private readonly supabase = inject(SUPABASE_CLIENT, { optional: true });
   private readonly supabaseConfig = inject(SUPABASE_CONFIG, { optional: true });
+  private readonly session = inject(SupabaseSessionService);
   private readonly projects = signal<Project[]>([]);
   private readonly loading = signal(false);
+  private readonly ensuredInboxOwners = new Set<string>();
+  private readonly ensureInboxInFlight = new Set<string>();
 
   readonly projectsSignal = computed(() => this.projects());
   readonly loadingSignal = computed(() => this.loading());
@@ -90,6 +94,14 @@ export class ProjectDataService {
     if (this.supabase) {
       void this.refresh();
     }
+
+    effect(() => {
+      const user = this.session.user();
+      if (!user) {
+        return;
+      }
+      void this.ensureInboxProject(user.id);
+    });
   }
 
   list() {
@@ -313,6 +325,58 @@ export class ProjectDataService {
       taskView: row.task_view ?? 'extended',
       shareWithIds: row.project_members?.map((m) => m.user_id) ?? [],
     };
+  }
+
+  private async ensureInboxProject(ownerId: string): Promise<void> {
+    if (!this.supabase) {
+      return;
+    }
+    if (
+      this.ensureInboxInFlight.has(ownerId) ||
+      this.ensuredInboxOwners.has(ownerId)
+    ) {
+      return;
+    }
+
+    this.ensureInboxInFlight.add(ownerId);
+    try {
+      await this.refresh();
+      const projects = this.projects();
+      const existingInbox = projects.find(
+        (project) => project.ownerId === ownerId && project.isInbox
+      );
+      if (existingInbox) {
+        this.ensuredInboxOwners.add(ownerId);
+        return;
+      }
+
+      const candidate = projects.find(
+        (project) =>
+          project.ownerId === ownerId &&
+          (project.projectType?.toLowerCase() === 'inbox' ||
+            project.name.trim().toLowerCase() === 'inbox')
+      );
+      if (candidate) {
+        await this.updateProject({ id: candidate.id, isInbox: true });
+        this.ensuredInboxOwners.add(ownerId);
+        return;
+      }
+
+      const created = await this.createProject({
+        ownerId,
+        name: 'Inbox',
+        isInbox: true,
+        projectType: 'active',
+        icon: 'inbox',
+        color: '#394264',
+        isActive: true,
+      });
+      if (created) {
+        this.ensuredInboxOwners.add(ownerId);
+      }
+    } finally {
+      this.ensureInboxInFlight.delete(ownerId);
+    }
   }
 
   private async broadcastShareChanges(previous: Project, current: Project) {

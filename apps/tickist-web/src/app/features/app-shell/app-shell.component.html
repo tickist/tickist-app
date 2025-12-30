@@ -1,7 +1,7 @@
 <section class="space-y-6">
-  <div class="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(320px,1fr)]">
+  <div class="grid gap-6">
     <div class="space-y-6">
-      <ng-container *ngIf="activeProject() as project; else selectProject">
+      <ng-container *ngIf="activeProject() as project; else filteredOrEmpty">
         <div class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20">
           <app-project-header
             *ngIf="activeProject() as headerProject"
@@ -27,21 +27,53 @@
             </p>
           </div>
 
-          <form class="new-task-form mt-6 flex flex-col gap-3 md:flex-row" [formGroup]="projectTaskForm" (ngSubmit)="addTaskToProject()">
-            <label class="form-control flex-1">
-              <span class="label-text text-sm text-base-content/60">New task</span>
-              <input class="input input-bordered" placeholder="Task name" formControlName="name" />
-            </label>
-            <button class="btn btn-primary text-neutral md:self-end" type="submit">Add</button>
+          <form class="new-task-form mt-6" [formGroup]="projectTaskForm" (ngSubmit)="addTaskToProject()">
+            <div class="new-task-form__card">
+              <div class="new-task-form__controls">
+                <input
+                  id="project-task-name"
+                  class="new-task-form__input"
+                  placeholder="What needs doing?"
+                  formControlName="name"
+                />
+                <button class="new-task-form__button" type="submit">Add task</button>
+              </div>
+            </div>
           </form>
         </div>
       </ng-container>
 
-      <ng-template #selectProject>
-        <div class="rounded-2xl border border-dashed border-white/20 bg-base-200/40 p-6 text-center text-base-content/70">
-          <p class="text-lg font-semibold">Select a project from the sidebar</p>
-          <p class="text-sm text-base-content/60">The task list will appear here once you choose a GTD list.</p>
-        </div>
+      <ng-template #filteredOrEmpty>
+        <ng-container *ngIf="dueDateLabel() as label; else selectProject">
+          <div class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20">
+            <div class="mb-4 flex items-center justify-between">
+              <div>
+                <p class="text-xs uppercase tracking-wide text-base-content/50">Due date</p>
+                <p class="text-lg font-semibold">{{ label }}</p>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="clearDueDateFilter()">
+                Clear filter
+              </button>
+            </div>
+            <div class="space-y-4">
+              <app-task-card
+                *ngFor="let task of filteredTasks()"
+                [task]="task"
+                [project]="projectForTask(task)"
+                [viewMode]="taskViewMode()"
+              ></app-task-card>
+              <p *ngIf="!filteredTasks().length" class="text-sm text-base-content/60">
+                No tasks for this date yet.
+              </p>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #selectProject>
+          <div class="rounded-2xl border border-dashed border-white/20 bg-base-200/40 p-6 text-center text-base-content/70">
+            <p class="text-lg font-semibold">Select a project from the sidebar</p>
+            <p class="text-sm text-base-content/60">The task list will appear here once you choose a GTD list.</p>
+          </div>
+        </ng-template>
       </ng-template>
     </div>
 

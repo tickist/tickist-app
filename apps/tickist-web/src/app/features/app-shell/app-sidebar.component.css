@@ -7,6 +7,67 @@
   overflow: visible;
 }
 
+.sidebar-weekdays {
+  @apply ml-4 mt-2 space-y-1 text-sm text-base-content;
+}
+
+.weekday-row {
+  @apply flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-base-content opacity-80 transition;
+  background-color: transparent;
+}
+
+.weekday-row.today {
+  @apply bg-base-100 bg-opacity-40 text-base-content;
+}
+
+.weekday-row.selected {
+  @apply text-base-content;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.weekday-row:hover,
+.future-row:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.weekday-name {
+  @apply truncate;
+}
+
+.weekday-count {
+  @apply text-xs font-semibold text-base-content opacity-60;
+}
+
+.weekday-picker {
+  @apply relative mt-2 flex w-full items-center justify-between rounded-lg border border-white/10 bg-base-200 bg-opacity-50 px-3 py-2 text-sm text-base-content opacity-60;
+}
+
+.weekday-date {
+  @apply absolute inset-0 h-full w-full cursor-pointer opacity-0;
+}
+
+.sidebar-future {
+  @apply ml-4 mt-2 space-y-1 text-sm text-base-content;
+}
+
+.future-row {
+  @apply flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-base-content opacity-80 transition;
+  background-color: transparent;
+}
+
+.future-row.selected {
+  @apply text-base-content;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.future-name {
+  @apply truncate;
+}
+
+.future-count {
+  @apply text-xs font-semibold text-base-content opacity-60;
+}
+
 .sidebar-subitem {
   @apply flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1 text-left transition hover:bg-base-100 hover:bg-opacity-40;
   min-width: 0;
@@ -65,23 +126,66 @@
 }
 
 .project-menu {
-  @apply fixed z-[1400] w-56 rounded-2xl border border-white/10 bg-base-200 bg-opacity-95 p-2 shadow-lg shadow-black/40;
+  @apply fixed w-56 rounded-2xl border border-white/10 p-2 shadow-lg shadow-black/40;
+  z-index: 2100;
+  background: rgba(16, 21, 41, 0.98);
+  backdrop-filter: blur(8px);
 }
 
 .project-menu button {
   @apply w-full rounded-xl px-3 py-2 text-left text-sm text-base-content opacity-80 transition hover:bg-base-100 hover:bg-opacity-50;
 }
 
+.project-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(3, 6, 12, 0.2);
+}
+
 .sidebar-create {
-  @apply flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-primary transition hover:bg-base-100 hover:bg-opacity-40;
+  @apply flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-primary transition;
+  background: transparent;
+}
+
+.sidebar-create:hover {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 :host-context([data-theme='tickist']) nav,
 :host-context([data-theme='tickist']) .sidebar-link,
 :host-context([data-theme='tickist']) .sidebar-subitem,
 :host-context([data-theme='tickist']) .project-menu button,
-:host-context([data-theme='tickist']) .sidebar-create {
+:host-context([data-theme='tickist']) .weekday-row,
+:host-context([data-theme='tickist']) .weekday-name,
+:host-context([data-theme='tickist']) .weekday-count,
+:host-context([data-theme='tickist']) .weekday-picker,
+:host-context([data-theme='tickist']) .future-row,
+:host-context([data-theme='tickist']) .future-name,
+:host-context([data-theme='tickist']) .future-count {
   color: #f7f7fa !important;
+}
+
+:host-context([data-theme='tickist']) .weekday-row.today {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+:host-context([data-theme='tickist']) .weekday-row:hover,
+:host-context([data-theme='tickist']) .future-row:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+:host-context([data-theme='tickist']) .weekday-row.selected,
+:host-context([data-theme='tickist']) .future-row.selected {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+:host-context([data-theme='tickist']) .sidebar-create {
+  color: #ffea00;
+}
+
+:host-context([data-theme='tickist']) .sidebar-create:hover {
+  background-color: rgba(255, 234, 0, 0.12);
 }
 
 :host-context([data-theme='tickist']) .project-menu {

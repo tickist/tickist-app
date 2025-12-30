@@ -12,8 +12,7 @@
     [class.text-primary]="selectedProjectId() === inbox.id"
   >
     <span class="emoji">📬</span>
-    <span class="flex-1">{{ inbox.name }}</span>
-    <span class="project-count">{{ projectTaskCount(inbox.id) }}</span>
+    <span class="flex-1">{{ inbox.name }} ({{ projectTaskCount(inbox.id) || 0 }})</span>
     <span class="dot" [style.background-color]="inbox.color"></span>
   </button>
 
@@ -59,6 +58,57 @@
     </li>
   </ul>
 
+  <button type="button" class="sidebar-link" (click)="toggle('weekdays')">
+    <span class="emoji">📅</span>
+    <span class="flex-1">Weekdays</span>
+    <span class="chevron" [class.rotate-180]="navState().weekdays">⌃</span>
+  </button>
+  <ul *ngIf="navState().weekdays" class="sidebar-weekdays">
+    <li *ngFor="let day of weekdayItems()">
+      <button
+        type="button"
+        class="weekday-row"
+        [class.today]="day.isToday"
+        [class.selected]="isWeekdaySelected(day)"
+        (click)="selectWeekday(day)"
+      >
+        <span class="weekday-name">{{ day.label }}</span>
+        <span class="weekday-count">{{ day.count }}</span>
+      </button>
+    </li>
+    <li>
+      <label class="weekday-picker">
+        <span>Select the specific date</span>
+        <span class="emoji">📅</span>
+        <input
+          class="weekday-date"
+          type="date"
+          [value]="dueDateFilter()?.mode === 'day' ? dueDateFilter()?.dateKey : ''"
+          (change)="selectSpecificDate($event)"
+        />
+      </label>
+    </li>
+  </ul>
+
+  <button type="button" class="sidebar-link" (click)="toggle('future')">
+    <span class="emoji">🗓️</span>
+    <span class="flex-1">Future</span>
+    <span class="chevron" [class.rotate-180]="navState().future">⌃</span>
+  </button>
+  <ul *ngIf="navState().future" class="sidebar-future">
+    <li *ngFor="let month of futureItems()">
+      <button
+        type="button"
+        class="future-row"
+        [class.selected]="isFutureSelected(month)"
+        (click)="selectFutureMonth(month)"
+      >
+        <span class="future-name">{{ month.label }}</span>
+        <span class="future-count">{{ month.count }}</span>
+      </button>
+    </li>
+  </ul>
+
   <a class="sidebar-link" routerLink="/app/tree">
     <span class="emoji">🌲</span>
     <span>Tasks tree view</span>
@@ -96,40 +146,6 @@
         *ngIf="hoveredProjectId() === node.project.id || menuProjectId() === node.project.id"
       >
         <button type="button" class="options-trigger" (click)="toggleMenu(node.project.id, $event)">⋮</button>
-        <div
-          class="project-menu"
-          *ngIf="menuProjectId() === node.project.id"
-          [ngStyle]="menuPosition() || {}"
-        >
-          <button type="button" (click)="editProject(node.project)">Edit</button>
-          <button
-            type="button"
-            *ngIf="type !== 'active'"
-            (click)="convertProjectType(node.project, 'active')"
-          >
-            Convert to Active
-          </button>
-          <button
-            type="button"
-            *ngIf="type !== 'someday'"
-            (click)="convertProjectType(node.project, 'someday')"
-          >
-            Convert to Someday/maybe
-          </button>
-          <button
-            type="button"
-            *ngIf="type !== 'routine'"
-            (click)="convertProjectType(node.project, 'routine')"
-          >
-            Convert to Routine Reminder
-          </button>
-          <button type="button" (click)="createChildProject(node.project)">
-            Create child project
-          </button>
-          <button type="button" class="text-error" (click)="deleteProject(node.project)">
-            Delete
-          </button>
-        </div>
       </div>
     </div>
     <ul *ngIf="node.children.length" class="sidebar-sublist">
@@ -137,3 +153,26 @@
     </ul>
   </li>
 </ng-template>
+
+<ng-container *ngIf="menuProject() as project">
+  <div class="project-menu-backdrop" (click)="closeMenu()"></div>
+  <div
+    class="project-menu project-menu--overlay"
+    [style.top.px]="menuPosition()?.top"
+    [style.left.px]="menuPosition()?.left"
+    (click)="$event.stopPropagation()"
+  >
+    <button type="button" (click)="editProject(project)">Edit</button>
+    <button type="button" *ngIf="projectTypeKey(project) !== 'active'" (click)="convertProjectType(project, 'active')">
+      Convert to Active
+    </button>
+    <button type="button" *ngIf="projectTypeKey(project) !== 'someday'" (click)="convertProjectType(project, 'someday')">
+      Convert to Someday/maybe
+    </button>
+    <button type="button" *ngIf="projectTypeKey(project) !== 'routine'" (click)="convertProjectType(project, 'routine')">
+      Convert to Routine Reminder
+    </button>
+    <button type="button" (click)="createChildProject(project)">Create child project</button>
+    <button type="button" class="text-error" (click)="deleteProject(project)">Delete</button>
+  </div>
+</ng-container>
