@@ -3,27 +3,56 @@
 }
 
 .settings__nav {
-  @apply flex flex-col gap-2 rounded-2xl border border-white/10 bg-base-200 bg-opacity-70 p-3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 19, 36, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .settings__tab {
-  @apply flex items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-semibold text-base-content opacity-80 transition hover:bg-base-100 hover:bg-opacity-50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(247, 247, 250, 0.78);
+  background: transparent;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.settings__tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f7f7fa;
 }
 
 .settings__tab.active {
-  @apply bg-primary bg-opacity-20 text-primary;
+  background: rgba(255, 234, 0, 0.18);
+  color: #ffea00;
 }
 
 .settings__panel {
-  @apply rounded-2xl border border-white/10 bg-base-200 bg-opacity-70 p-6 shadow shadow-black/20;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 19, 36, 0.72);
+  padding: 1.5rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
 }
 
 .panel__header h2 {
   @apply text-xl font-semibold;
+  color: #f7f7fa;
 }
 
 .eyebrow {
-  @apply text-xs uppercase tracking-[0.4em] text-base-content opacity-60;
+  @apply text-xs uppercase tracking-[0.4em];
+  color: rgba(247, 247, 250, 0.6);
 }
 
 .panel__form {
@@ -35,7 +64,8 @@
 }
 
 .field__label {
-  @apply text-sm font-semibold text-base-content opacity-70;
+  @apply text-sm font-semibold;
+  color: rgba(247, 247, 250, 0.7);
 }
 
 .field__error {
@@ -43,17 +73,34 @@
 }
 
 .field__hint {
-  @apply text-xs text-base-content opacity-60;
+  @apply text-xs;
+  color: rgba(247, 247, 250, 0.55);
 }
 
 .panel__actions {
   @apply mt-2 flex justify-end;
 }
 
+.settings .input {
+  background: rgba(8, 11, 24, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f7f7fa;
+}
+
+.settings .input:focus {
+  outline: none;
+  border-color: rgba(255, 234, 0, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 234, 0, 0.12);
+}
+
 .danger-card {
-  @apply mt-6 flex items-center justify-between gap-3 rounded-xl border border-error border-opacity-40 bg-error bg-opacity-10 p-4 text-base-content;
+  @apply mt-6 flex items-center justify-between gap-3 rounded-xl p-4;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.08);
+  color: #f7f7fa;
 }
 
 .placeholder {
-  @apply flex items-center justify-center text-sm text-base-content opacity-60;
+  @apply flex items-center justify-center text-sm;
+  color: rgba(247, 247, 250, 0.6);
 }

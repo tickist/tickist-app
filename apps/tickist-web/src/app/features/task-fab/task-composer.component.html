@@ -4,8 +4,8 @@
       <p class="composer__eyebrow">
         {{ editingTask() ? 'Edit task' : 'Create task' }}
       </p>
-      <h2 class="composer__title">
-        {{ editingTask() ? editingTask()!.name : 'Capture a next step' }}
+      <h2 class="composer__title" *ngIf="editingTask()">
+        {{ editingTask()!.name }}
       </h2>
     </div>
     <button type="button" class="composer__close" (click)="dismiss.emit()">

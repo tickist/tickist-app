@@ -16,7 +16,7 @@
       <span class="label">
         <span class="label-text text-base-content/70">Email</span>
       </span>
-      <input formControlName="email" type="email" class="input input-bordered w-full bg-base-100/60" placeholder="team@tickist.app" />
+      <input formControlName="email" type="email" class="input input-bordered w-full auth-input" placeholder="team@tickist.app" />
     </label>
     <button class="btn btn-primary text-neutral" type="submit" [disabled]="isDisabled">
       <span *ngIf="!isSubmitting()">Send link</span>

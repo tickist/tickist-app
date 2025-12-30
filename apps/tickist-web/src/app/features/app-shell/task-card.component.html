@@ -20,7 +20,7 @@
       <button type="button" class="icon-btn" title="Edit task" (click)="editTask()">✏️</button>
       <div class="task-card__menu">
         <button type="button" class="icon-btn" title="More actions" (click)="menuOpen.set(!menuOpen())">⋮</button>
-        <div class="menu" *ngIf="menuOpen()">
+        <div class="task-menu" *ngIf="menuOpen()">
           <div class="menu__section">
             <p>Priority</p>
             <button

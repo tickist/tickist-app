@@ -49,6 +49,39 @@ body {
   }
 }
 
+@layer components {
+  .auth-input {
+    @apply text-base-content border-white/10;
+    background-color: rgb(var(--b3) / 0.7);
+  }
+
+  .input {
+    color: rgb(var(--bc));
+    background-color: rgb(var(--b3) / 0.6);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.input::placeholder,
+.auth-input::placeholder {
+  color: rgba(247, 247, 250, 0.45);
+}
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active,
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+  -webkit-text-fill-color: #f7f7fa;
+  caret-color: #f7f7fa;
+  box-shadow: 0 0 0px 1000px rgba(16, 21, 41, 0.85) inset;
+  border-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .theme-light {
   @apply bg-base-100 text-base-content;
   color-scheme: light;

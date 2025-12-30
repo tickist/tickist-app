@@ -54,17 +54,16 @@
           Filter by
         </li>
         <li *ngFor="let option of filterOptions">
-          <label class="flex items-center gap-2 px-3 py-2 text-sm">
-            <input
-              type="radio"
-              name="filter"
-              class="radio radio-xs"
-              [value]="option.value"
-              [checked]="filter === option.value"
-              (change)="selectFilter(option.value)"
-            />
+          <button
+            type="button"
+            class="filter-option"
+            [class.active]="filter === option.value"
+            (click)="selectFilter(option.value)"
+            [attr.aria-pressed]="filter === option.value"
+          >
+            <span class="filter-dot" [class.active]="filter === option.value"></span>
             <span>{{ option.label }}</span>
-          </label>
+          </button>
         </li>
       </ul>
     </div>
