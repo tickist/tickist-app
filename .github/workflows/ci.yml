@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - '**'
   pull_request:
 
 permissions:
@@ -37,6 +37,7 @@ jobs:
       #   run: npx nx e2e tickist-web
 
   e2e:
+    if: github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'develop')
     runs-on: ubuntu-latest
     env:
       E2E_ENV_FILE: .local_env.e2e
