@@ -56,8 +56,8 @@ export class AppSidebarComponent {
     active: true,
     someday: false,
     routine: false,
-    weekdays: true,
-    future: true,
+    weekdays: false,
+    future: false,
     tags: false,
   });
   readonly hoveredProjectId = signal<string | null>(null);

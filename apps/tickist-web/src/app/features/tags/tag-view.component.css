@@ -1,5 +1,7 @@
 .tag-view {
-  @apply space-y-6 rounded-2xl bg-base-200 bg-opacity-60 p-6 shadow shadow-black/20;
+  @apply space-y-6 rounded-2xl border border-white/10 p-6 shadow-lg shadow-black/30;
+  background-color: rgb(var(--b2));
+  color: rgb(var(--bc));
 }
 
 .tag-view__header {
@@ -19,7 +21,8 @@
 }
 
 .match-toggle {
-  @apply inline-flex items-center gap-1 rounded-lg bg-base-100 bg-opacity-30 p-1;
+  @apply inline-flex items-center gap-1 rounded-lg border border-white/10 p-1;
+  background-color: rgb(var(--b1) / 55%);
 }
 
 .tag-cloud {
@@ -27,17 +30,69 @@
 }
 
 .tag-pill {
-  @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-base-100 bg-opacity-40 px-3 py-2 text-sm transition hover:border-primary hover:text-primary;
+  @apply inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-sm transition;
+  background-color: rgb(var(--b1) / 45%);
+  color: rgb(var(--bc) / 88%);
+}
+
+.tag-pill:hover {
+  @apply border-primary text-primary;
+  background-color: rgb(var(--b1) / 72%);
 }
 
 .tag-pill.active {
-  @apply border-primary bg-primary bg-opacity-10 text-primary;
+  @apply border-primary text-primary;
+  background-color: rgb(var(--p) / 12%);
 }
 
 .tag-pill .count {
-  @apply rounded-full bg-base-200 bg-opacity-70 px-2 py-0.5 text-xs;
+  @apply rounded-full px-2 py-0.5 text-xs;
+  background-color: rgb(var(--b2) / 88%);
+  color: rgb(var(--bc) / 75%);
 }
 
 .results {
   @apply pt-2;
+}
+
+.controls .btn,
+.controls .select {
+  @apply border border-white/10 text-base-content;
+  background-color: rgb(var(--b1) / 45%);
+}
+
+.controls .btn:hover,
+.controls .select:hover {
+  background-color: rgb(var(--b1) / 72%);
+}
+
+.controls .btn.btn-ghost {
+  background-color: rgb(var(--b1) / 45%);
+}
+
+.controls .btn.btn-primary {
+  border-color: rgba(255, 234, 0, 0.75);
+  background: #ffea00;
+  color: #1b2236;
+}
+
+.controls .btn.btn-primary:hover {
+  border-color: rgba(255, 234, 0, 0.9);
+  background: #fff06a;
+}
+
+.controls .select option {
+  color: rgb(var(--bc));
+  background-color: rgb(var(--b2));
+}
+
+.controls input[type='checkbox'] {
+  @apply checkbox checkbox-xs;
+  border-color: rgb(var(--bc) / 35%);
+  background-color: rgb(var(--b3) / 80%);
+}
+
+.controls input[type='checkbox']:checked {
+  border-color: #ffea00;
+  background-color: #ffea00;
 }
