@@ -1,8 +1,8 @@
 .project-header {
   @apply mb-4 flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-white/10 bg-base-200 bg-opacity-80 px-4 py-3 shadow-lg shadow-black/30;
-  background-color: rgb(var(--b2)) !important;
-  color: rgb(var(--bc)) !important;
-  border-color: rgb(var(--bc) / 12%) !important;
+  background-color: rgb(var(--b2) / 0.88);
+  color: rgb(var(--bc));
+  border-color: rgb(var(--bc) / 0.14);
 }
 
 .project-header__text h1 {
@@ -26,13 +26,13 @@
   border-radius: 12px;
   text-align: left;
   font-size: 0.9rem;
-  color: rgba(247, 247, 250, 0.75);
+  color: rgb(var(--bc) / 0.76);
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .filter-option:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #f7f7fa;
+  background: rgb(var(--bc) / 0.1);
+  color: rgb(var(--bc));
 }
 
 .filter-option.active {
@@ -44,7 +44,7 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(247, 247, 250, 0.5);
+  border: 1px solid rgb(var(--bc) / 0.5);
 }
 
 .filter-dot.active {
@@ -66,16 +66,16 @@
   height: 1.5rem;
   width: 3rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+  background: rgb(var(--bc) / 0.16);
+  border: 1px solid rgb(var(--bc) / 0.28);
+  box-shadow: inset 0 0 0 1px rgb(var(--b3) / 0.38);
   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .simple-toggle input:checked + .toggle-pill {
   background: #ffea00;
   border-color: rgba(255, 234, 0, 0.8);
-  box-shadow: inset 0 0 0 1px rgba(15, 19, 36, 0.4);
+  box-shadow: inset 0 0 0 1px rgb(var(--b3) / 0.5);
 }
 
 .toggle-pill::after {
@@ -87,23 +87,17 @@
   height: 1rem;
   width: 1rem;
   border-radius: 999px;
-  background: #f7f7fa;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  background: rgb(var(--bc));
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.32);
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .simple-toggle input:checked + .toggle-pill::after {
   transform: translateX(1.5rem);
-  background: #1b2236;
+  background: rgb(var(--b2));
 }
 
 .simple-toggle input:focus-visible + .toggle-pill {
   outline: 2px solid rgba(255, 234, 0, 0.6);
   outline-offset: 2px;
-}
-
-:host-context([data-theme='tickist']) .project-header,
-:host-context([data-theme='tickist']) .project-header__text h1,
-:host-context([data-theme='tickist']) .project-desc {
-  color: rgb(var(--bc));
 }

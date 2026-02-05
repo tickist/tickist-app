@@ -1,3 +1,16 @@
+<button
+  type="button"
+  class="theme-toggle-btn theme-toggle-btn--floating"
+  data-testid="theme-toggle"
+  [attr.aria-label]="themeButtonLabel()"
+  [attr.aria-pressed]="!isDarkTheme()"
+  [attr.title]="themeButtonLabel()"
+  (click)="toggleTheme()"
+>
+  <span class="theme-toggle-btn__icon" aria-hidden="true">
+    {{ isDarkTheme() ? '☀️' : '🌙' }}
+  </span>
+</button>
 <section class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl border border-white/10 bg-base-200/60 p-8 shadow-2xl shadow-black/30 backdrop-blur">
   <header class="space-y-2 text-center">
     <p class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60">
@@ -30,7 +43,7 @@
       </span>
       <input formControlName="confirm" type="password" class="input input-bordered w-full auth-input" placeholder="••••••••" />
     </label>
-    <button class="btn btn-primary text-neutral" type="submit" [disabled]="isDisabled">
+    <button class="btn btn-primary text-primary-content" type="submit" [disabled]="isDisabled">
       <span *ngIf="!isSubmitting()">Create account</span>
       <span class="loading loading-spinner" *ngIf="isSubmitting()"></span>
       <span *ngIf="isSubmitting()">Submitting…</span>

@@ -45,6 +45,19 @@
       </div>
     </div>
     <div class="ml-auto flex items-center gap-3 shrink-0">
+      <button
+        type="button"
+        class="theme-toggle-btn"
+        data-testid="theme-toggle"
+        [attr.aria-label]="themeButtonLabel()"
+        [attr.aria-pressed]="!isDarkTheme()"
+        [attr.title]="themeButtonLabel()"
+        (click)="toggleTheme()"
+      >
+        <span class="theme-toggle-btn__icon" aria-hidden="true">
+          {{ isDarkTheme() ? '☀️' : '🌙' }}
+        </span>
+      </button>
       <button type="button" class="btn btn-circle btn-ghost border border-white/10" (click)="toggleNotifications()">
         <div class="indicator">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 fill-current">

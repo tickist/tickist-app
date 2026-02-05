@@ -3,7 +3,7 @@
   flex-direction: column;
   height: 100%;
   max-height: 90vh;
-  color: #f7f8ff;
+  color: rgb(var(--bc));
 }
 
 .composer__header,
@@ -12,22 +12,22 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgb(var(--bc) / 0.12);
 }
 
 .composer__footer {
   border-bottom: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgb(var(--bc) / 0.12);
   position: sticky;
   bottom: 0;
-  background: rgba(8, 11, 24, 0.95);
+  background: rgb(var(--b2) / 0.95);
 }
 
 .composer__eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.4em;
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgb(var(--bc) / 0.54);
 }
 
 .composer__title {
@@ -40,7 +40,7 @@
   border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(var(--bc) / 0.74);
   cursor: pointer;
 }
 
@@ -54,7 +54,7 @@
 
 .composer__tabs {
   padding: 1.5rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgb(var(--bc) / 0.12);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -66,13 +66,13 @@
   padding: 0.55rem 1rem;
   text-align: left;
   background: transparent;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(var(--bc) / 0.74);
   cursor: pointer;
 }
 
 .composer__tab.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: rgb(var(--bc) / 0.14);
+  color: rgb(var(--bc));
 }
 
 .composer__panel {
@@ -100,18 +100,18 @@
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgb(var(--bc) / 0.62);
 }
 
 .input {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgb(var(--bc) / 0.12);
   border-radius: 12px;
   padding: 0.75rem 0.9rem;
   min-height: 2.75rem;
   line-height: 1.2;
   font-size: 0.95rem;
-  background: rgba(8, 11, 24, 0.6);
-  color: #f7f8ff;
+  background: rgb(var(--b1) / 0.66);
+  color: rgb(var(--bc));
   width: 100%;
 }
 
@@ -121,11 +121,11 @@ textarea.input {
 
 .priority-group button,
 .btn-secondary {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgb(var(--bc) / 0.14);
   border-radius: 12px;
   padding: 0.4rem 0.9rem;
   background: transparent;
-  color: #fff;
+  color: rgb(var(--bc));
   cursor: pointer;
 }
 
@@ -157,13 +157,13 @@ textarea.input {
   gap: 0.35rem;
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(var(--bc) / 0.14);
 }
 
 .chip button {
   border: none;
   background: transparent;
-  color: #fff;
+  color: rgb(var(--bc));
   cursor: pointer;
 }
 
@@ -182,7 +182,7 @@ textarea.input {
 }
 
 .color-dot.active {
-  border-color: #fff;
+  border-color: rgb(var(--bc));
 }
 
 .icon-grid {
@@ -192,17 +192,17 @@ textarea.input {
 }
 
 .icon-pill {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgb(var(--bc) / 0.14);
   border-radius: 12px;
   padding: 0.4rem 0.8rem;
   background: transparent;
-  color: #fff;
+  color: rgb(var(--bc));
   cursor: pointer;
   text-transform: capitalize;
 }
 
 .icon-pill.active {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(var(--bc) / 0.14);
 }
 
 .btn-ghost,
@@ -215,11 +215,11 @@ textarea.input {
 
 .btn-ghost {
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgb(var(--bc) / 0.62);
 }
 
 .btn-primary {
   background: linear-gradient(120deg, #ffaa3b, #ff7b1a);
-  color: #0f172a;
+  color: #172039;
   font-weight: 600;
 }

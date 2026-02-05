@@ -12,6 +12,10 @@ export default defineConfig(({ mode }) => {
       loaded.NG_APP_SUPABASE_URL ?? process.env.NG_APP_SUPABASE_URL ?? '',
     NG_APP_SUPABASE_ANON_KEY:
       loaded.NG_APP_SUPABASE_ANON_KEY ?? process.env.NG_APP_SUPABASE_ANON_KEY ?? '',
+    NG_APP_SUPABASE_FUNCTIONS_URL:
+      loaded.NG_APP_SUPABASE_FUNCTIONS_URL ??
+      process.env.NG_APP_SUPABASE_FUNCTIONS_URL ??
+      '',
     SUPABASE_DB_URL: loaded.SUPABASE_DB_URL ?? process.env.SUPABASE_DB_URL ?? '',
     SUPABASE_REMOTE_DB_URL:
       loaded.SUPABASE_REMOTE_DB_URL ?? process.env.SUPABASE_REMOTE_DB_URL ?? '',
@@ -56,6 +60,9 @@ export default defineConfig(({ mode }) => {
   define: {
     'import.meta.env.NG_APP_SUPABASE_URL': JSON.stringify(mergedEnv.NG_APP_SUPABASE_URL),
     'import.meta.env.NG_APP_SUPABASE_ANON_KEY': JSON.stringify(mergedEnv.NG_APP_SUPABASE_ANON_KEY),
+    'import.meta.env.NG_APP_SUPABASE_FUNCTIONS_URL': JSON.stringify(
+      mergedEnv.NG_APP_SUPABASE_FUNCTIONS_URL
+    ),
     'import.meta.env.SUPABASE_DB_URL': JSON.stringify(mergedEnv.SUPABASE_DB_URL),
     'import.meta.env.SUPABASE_REMOTE_DB_URL': JSON.stringify(mergedEnv.SUPABASE_REMOTE_DB_URL),
   },

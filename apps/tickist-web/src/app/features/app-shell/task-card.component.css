@@ -23,12 +23,41 @@
   @apply flex flex-1 flex-wrap items-center gap-2 font-medium;
 }
 
+.task-card__task-type {
+  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  color: rgb(var(--bc) / 0.95);
+  border: 1px solid rgb(var(--bc) / 0.22);
+  background: rgb(var(--b1) / 0.58);
+}
+
+.task-card__task-type--next-action {
+  border-color: rgb(148 163 184 / 0.46);
+  background: rgb(148 163 184 / 0.2);
+}
+
+.task-card__task-type--need-info {
+  border-color: rgb(251 191 36 / 0.48);
+  background: rgb(251 191 36 / 0.22);
+  color: rgb(var(--bc) / 0.95);
+}
+
 .task-card__time {
   @apply rounded-full bg-base-100 bg-opacity-40 px-2 py-0.5 text-xs text-base-content;
 }
 
 .task-card__actions {
   @apply flex items-center gap-2;
+}
+
+.task-card__date {
+  @apply mt-2 flex items-center justify-end gap-1 text-sm font-medium;
+  color: rgb(var(--bc) / 0.92);
+}
+
+.task-card__date-icon {
+  color: rgb(var(--bc) / 0.92);
 }
 
 .icon-btn {
@@ -51,9 +80,9 @@
   z-index: 20;
   width: 15rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(16, 21, 41, 0.96);
-  color: #f7f7fa;
+  border: 1px solid rgb(var(--bc) / 0.14);
+  background: rgb(var(--b1) / 0.96);
+  color: rgb(var(--bc));
   padding: 0.75rem;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px);
@@ -68,7 +97,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: rgba(247, 247, 250, 0.6);
+  color: rgb(var(--bc) / 0.64);
 }
 
 .menu__section button {
@@ -76,12 +105,12 @@
   border-radius: 12px;
   padding: 0.4rem 0.6rem;
   text-align: left;
-  color: #f7f7fa;
+  color: rgb(var(--bc));
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .menu__section button:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--bc) / 0.1);
 }
 
 .menu__section button.active {
@@ -127,14 +156,78 @@
 
 .toolbar-btn {
   @apply btn btn-ghost btn-sm btn-circle;
+  color: rgb(var(--bc) / 0.42);
+  border: 1px solid rgb(var(--bc) / 0.12);
+  background: rgb(var(--b1) / 0.24);
+}
+
+.toolbar-btn:hover,
+.toolbar-btn:focus-visible {
+  color: rgb(var(--bc) / 0.78);
+  border-color: rgb(var(--bc) / 0.24);
+  background: rgb(var(--b1) / 0.55);
+}
+
+.toolbar-btn.configured {
+  color: rgb(var(--bc) / 0.88);
+  border-color: rgb(var(--bc) / 0.28);
+  background: rgb(var(--b1) / 0.4);
 }
 
 .toolbar-btn.active {
-  @apply bg-primary bg-opacity-20 text-primary;
+  color: rgb(var(--bc));
+  border-color: rgb(var(--bc) / 0.42);
+  background: rgb(var(--b1) / 0.72);
+}
+
+.toolbar-btn.active.configured {
+  box-shadow: 0 0 0 1px rgb(var(--bc) / 0.2);
+}
+
+.toolbar-btn--persistent.active {
+  color: rgb(var(--bc) / 0.88);
+  border-color: rgb(var(--bc) / 0.28);
+  background: rgb(var(--b1) / 0.4);
+  box-shadow: none;
 }
 
 .task-card__panel {
   @apply mt-4 space-y-3 text-sm;
+}
+
+.task-card__panel--description {
+  @apply space-y-2;
+}
+
+.task-card__panel--description .panel-label {
+  color: rgb(var(--bc) / 0.72);
+}
+
+.description-header {
+  @apply flex items-center justify-between gap-3;
+}
+
+.description-edit-btn {
+  @apply inline-flex items-center justify-center rounded-full;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgb(var(--bc) / 0.86);
+  border: 1px solid rgb(var(--bc) / 0.16);
+  background: rgb(var(--b1) / 0.25);
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.description-edit-btn:hover {
+  background: rgb(var(--b1) / 0.48);
+  border-color: rgb(var(--bc) / 0.3);
+}
+
+.description-edit-btn:focus-visible {
+  outline: none;
+  border-color: rgb(var(--bc) / 0.45);
+  box-shadow: 0 0 0 1px rgb(var(--bc) / 0.2);
 }
 
 .panel-field {
@@ -142,11 +235,59 @@
 }
 
 .panel-label {
-  @apply text-xs font-semibold uppercase tracking-[0.4em] text-base-content opacity-50;
+  @apply text-xs font-semibold uppercase tracking-[0.4em];
+  color: rgb(var(--bc) / 0.72);
+  opacity: 1;
+}
+
+.panel-label--inline {
+  @apply flex items-center gap-2;
 }
 
 .panel-actions {
   @apply flex justify-end;
+}
+
+.description-actions {
+  @apply mt-1 items-center gap-2;
+}
+
+.description-btn {
+  @apply inline-flex items-center justify-center rounded-full;
+  min-width: 5.25rem;
+  padding: 0.42rem 0.9rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.description-btn--ghost {
+  color: rgb(var(--bc) / 0.82);
+  border: 1px solid rgb(var(--bc) / 0.2);
+  background: rgb(var(--b1) / 0.25);
+}
+
+.description-btn--ghost:hover {
+  color: rgb(var(--bc) / 0.96);
+  border-color: rgb(var(--bc) / 0.34);
+  background: rgb(var(--b1) / 0.52);
+}
+
+.description-btn--primary {
+  color: #0d142a;
+  border: 1px solid #8eb7ff;
+  background: linear-gradient(180deg, #9fc4ff, #79a9fb);
+}
+
+.description-btn--primary:hover {
+  border-color: #accdff;
+  background: linear-gradient(180deg, #b1d1ff, #8fbaff);
+}
+
+.description-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(var(--b2)), 0 0 0 3px rgb(var(--bc) / 0.28);
 }
 
 .panel-hint {
@@ -155,6 +296,51 @@
 
 .task-description {
   @apply whitespace-pre-wrap rounded-xl border border-white/10 bg-base-100 bg-opacity-40 px-3 py-2;
+}
+
+.task-card__panel--description .task-description {
+  min-height: 2.75rem;
+  border-color: rgb(var(--bc) / 0.2);
+  background: rgb(var(--b1) / 0.64);
+  color: rgb(var(--bc));
+}
+
+.task-card__panel--description .description-content {
+  line-height: 1.5;
+}
+
+.task-card__panel--description .description-content :where(a) {
+  color: #9cc2ff;
+}
+
+.description-empty {
+  @apply rounded-xl border border-dashed px-3 py-2 text-sm;
+  border-color: rgb(var(--bc) / 0.2);
+  color: rgb(var(--bc) / 0.58);
+  background: rgb(var(--b1) / 0.2);
+}
+
+.task-card__panel--description textarea {
+  width: 100%;
+  min-height: 6.5rem;
+  resize: vertical;
+  border-radius: 0.9rem;
+  border: 1px solid rgb(var(--bc) / 0.18);
+  background: rgb(var(--b1) / 0.82);
+  color: rgb(var(--bc) / 0.98);
+  caret-color: rgb(var(--bc) / 0.98);
+  padding: 0.7rem 0.85rem;
+  line-height: 1.45;
+}
+
+.task-card__panel--description textarea::placeholder {
+  color: rgb(var(--bc) / 0.45);
+}
+
+.task-card__panel--description textarea:focus-visible {
+  outline: none;
+  border-color: rgb(var(--bc) / 0.42);
+  box-shadow: 0 0 0 1px rgb(var(--bc) / 0.2);
 }
 
 .tag-chips {
@@ -174,11 +360,118 @@
 }
 
 .repeat-grid button {
-  @apply rounded-xl border border-white/10 px-3 py-2 text-left transition hover:bg-base-100 hover:bg-opacity-40;
+  @apply rounded-xl px-3 py-2 text-left transition;
+  color: rgb(var(--bc) / 0.86);
+  border: 1px solid rgb(var(--bc) / 0.16);
+  background: rgb(var(--b1) / 0.24);
+}
+
+.repeat-grid button:not(.active):hover,
+.repeat-grid button:not(.active):focus-visible {
+  color: rgb(var(--bc));
+  border-color: rgb(var(--bc) / 0.3);
+  background: rgb(var(--b1) / 0.58);
+  outline: none;
 }
 
 .repeat-grid button.active {
-  @apply bg-primary bg-opacity-20 text-primary;
+  @apply bg-primary text-primary-content;
+}
+
+.repeat-custom {
+  @apply space-y-2;
+}
+
+.repeat-custom__controls {
+  @apply grid gap-2;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+}
+
+.repeat-custom__input,
+.repeat-custom__select {
+  @apply rounded-xl px-3 py-2 text-sm;
+  color: rgb(var(--bc) / 0.96);
+  border: 1px solid rgb(var(--bc) / 0.16);
+  background: rgb(var(--b1) / 0.24);
+}
+
+.repeat-custom__input:focus-visible,
+.repeat-custom__select:focus-visible {
+  outline: none;
+  border-color: rgb(var(--bc) / 0.45);
+  box-shadow: 0 0 0 1px rgb(var(--bc) / 0.2);
+}
+
+.repeat-custom__apply {
+  @apply rounded-xl px-3 py-2 text-sm font-semibold transition;
+  color: rgb(var(--bc) / 0.92);
+  border: 1px solid rgb(var(--bc) / 0.18);
+  background: rgb(var(--b1) / 0.32);
+}
+
+.repeat-custom__apply:hover,
+.repeat-custom__apply:focus-visible {
+  color: rgb(var(--bc));
+  border-color: rgb(var(--bc) / 0.36);
+  background: rgb(var(--b1) / 0.6);
+  outline: none;
+}
+
+.repeat-from {
+  @apply space-y-2;
+}
+
+.repeat-from__options {
+  @apply grid grid-cols-2 gap-2;
+}
+
+.repeat-from__options button {
+  @apply rounded-xl px-3 py-2 text-left transition;
+  color: rgb(var(--bc) / 0.86);
+  border: 1px solid rgb(var(--bc) / 0.16);
+  background: rgb(var(--b1) / 0.24);
+}
+
+.repeat-from__options button:not(.active):hover,
+.repeat-from__options button:not(.active):focus-visible {
+  color: rgb(var(--bc));
+  border-color: rgb(var(--bc) / 0.3);
+  background: rgb(var(--b1) / 0.58);
+  outline: none;
+}
+
+.repeat-from__options button.active {
+  @apply bg-primary text-primary-content;
+}
+
+.repeat-from__info {
+  display: inline-flex;
+  height: 1rem;
+  width: 1rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--bc) / 0.36);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+  color: rgb(var(--bc) / 0.86);
+  cursor: help;
+}
+
+.repeat-from__info:hover,
+.repeat-from__info:focus-visible {
+  border-color: rgb(var(--bc) / 0.75);
+  color: rgb(var(--bc));
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .repeat-custom__controls {
+    grid-template-columns: 1fr;
+  }
 }
 
 .step-list {
@@ -187,8 +480,8 @@
 
 .step-item {
   @apply flex items-center gap-2 rounded-xl px-3 py-2;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 11, 24, 0.6);
+  border: 1px solid rgb(var(--bc) / 0.12);
+  background: rgb(var(--b1) / 0.62);
 }
 
 .step-check input {
@@ -196,8 +489,8 @@
   width: 1.05rem;
   height: 1.05rem;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(8, 11, 24, 0.85);
+  border: 1px solid rgb(var(--bc) / 0.46);
+  background: rgb(var(--b1) / 0.88);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -208,8 +501,8 @@
   content: '';
   width: 0.45rem;
   height: 0.25rem;
-  border-left: 2px solid #1b2236;
-  border-bottom: 2px solid #1b2236;
+  border-left: 2px solid rgb(var(--b2));
+  border-bottom: 2px solid rgb(var(--b2));
   transform: rotate(-45deg) scale(0);
   transition: transform 0.12s ease;
 }

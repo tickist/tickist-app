@@ -15,7 +15,7 @@
   border-radius: 9999px;
   border: none;
   background: linear-gradient(135deg, #ffaa3b, #ff7b1a);
-  color: #0f172a;
+  color: #172039;
   font-size: 2rem;
   display: flex;
   align-items: center;
@@ -29,8 +29,8 @@
   height: 36px;
   border-radius: 9999px;
   border: none;
-  background: rgba(15, 23, 42, 0.8);
-  color: #fff;
+  background: rgb(var(--b1) / 0.88);
+  color: rgb(var(--bc));
   font-size: 1.2rem;
   display: flex;
   align-items: center;
@@ -42,7 +42,7 @@
 .fab-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(9, 9, 20, 0.75);
+  background: rgb(0 0 0 / 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,10 +53,10 @@
 .fab-modal {
   width: min(1040px, 100%);
   max-height: 90vh;
-  background: #19213a;
+  background: rgb(var(--b2));
   border-radius: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgb(var(--bc) / 0.14);
+  box-shadow: 0 25px 60px rgb(0 0 0 / 0.36);
   overflow: hidden;
   animation: fadeIn 200ms ease-out;
 }

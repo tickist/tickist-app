@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -7,6 +7,7 @@ import {
 import { SupabaseAuthService } from './supabase-auth.service';
 import { NgClass, NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { ThemeService } from '../../core/ui/theme.service';
 
 @Component({
   selector: 'app-auth-signup',
@@ -19,6 +20,7 @@ export class AuthSignupComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(SupabaseAuthService);
   private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -29,6 +31,10 @@ export class AuthSignupComponent {
   readonly isSubmitting = signal(false);
   readonly message = signal<{ type: 'success' | 'error'; text: string } | null>(
     null
+  );
+  readonly isDarkTheme = this.themeService.isDark;
+  readonly themeButtonLabel = computed(() =>
+    this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
 
   get isDisabled(): boolean {
@@ -70,5 +76,9 @@ export class AuthSignupComponent {
     } finally {
       this.isSubmitting.set(false);
     }
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 }

@@ -86,6 +86,7 @@ export class ProjectDataService {
   private readonly loading = signal(false);
   private readonly ensuredInboxOwners = new Set<string>();
   private readonly ensureInboxInFlight = new Set<string>();
+  private recoveringInvalidOwner = false;
 
   readonly projectsSignal = computed(() => this.projects());
   readonly loadingSignal = computed(() => this.loading());
@@ -183,6 +184,7 @@ export class ProjectDataService {
       .single();
 
     if (error || !data) {
+      await this.handleOwnerConstraintError(error, input.ownerId);
       console.error('[Projects] Failed to create project', error);
       return null;
     }
@@ -207,6 +209,33 @@ export class ProjectDataService {
       this.projects.set([...this.projects(), created]);
     }
     return created;
+  }
+
+  private async handleOwnerConstraintError(
+    error: { code?: string; message?: string } | null,
+    ownerId: string
+  ): Promise<void> {
+    if (this.recoveringInvalidOwner) {
+      return;
+    }
+    const isInvalidOwner =
+      error?.code === '23503' && (error?.message ?? '').includes('owner_id');
+    if (!isInvalidOwner) {
+      return;
+    }
+
+    this.recoveringInvalidOwner = true;
+    try {
+      console.warn(
+        '[Projects] Session owner does not exist in database anymore. Signing out to recover.',
+        { ownerId }
+      );
+      this.projects.set([]);
+      this.ensuredInboxOwners.delete(ownerId);
+      await this.session.signOut();
+    } finally {
+      this.recoveringInvalidOwner = false;
+    }
   }
 
   async updateProject(input: ProjectUpdateInput): Promise<Project | null> {

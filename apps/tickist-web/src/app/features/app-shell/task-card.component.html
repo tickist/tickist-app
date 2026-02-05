@@ -4,12 +4,20 @@
       <input
         type="checkbox"
         [checked]="task.isDone"
-        (change)="toggleDone($any($event.target).checked)"
+        (click)="$event.preventDefault(); toggleDone(!task.isDone)"
         [style.borderColor]="priorityColor(task.priority)"
         [style.boxShadow]="'0 0 0 1px ' + priorityColor(task.priority)"
       />
     </label>
     <div class="task-card__title">
+      <span
+        *ngIf="taskTypeLabel() as taskTypeBadgeLabel"
+        class="task-card__task-type"
+        [class.task-card__task-type--next-action]="isNextActionTask()"
+        [class.task-card__task-type--need-info]="isNeedInfoTask()"
+      >
+        {{ taskTypeBadgeLabel }}
+      </span>
       <p class="linkified" [innerHTML]="task.name | linkify"></p>
       <span class="task-card__time" *ngIf="taskTimeLabel() as summary">({{ summary }})</span>
     </div>
@@ -69,6 +77,11 @@
     </div>
   </div>
 
+  <div class="task-card__date" *ngIf="finishDateLabel() as finishDateLabel">
+    <span class="task-card__date-icon">{{ finishDateModeIcon() }}</span>
+    <span>{{ finishDateLabel }}</span>
+  </div>
+
   <div class="task-card__progress" *ngIf="viewMode === 'extended' && progressPercent() as percent">
     <div class="progress">
       <div class="progress__fill" [style.width.%]="percent"></div>
@@ -76,21 +89,60 @@
   </div>
 
   <div class="task-card__toolbar" *ngIf="viewMode === 'extended'">
-    <button type="button" class="toolbar-btn" title="Change project" (click)="toggleProjectPicker()">📁</button>
+    <button
+      type="button"
+      class="toolbar-btn toolbar-btn--persistent active"
+      title="Change project"
+      (click)="toggleProjectPicker()"
+    >
+      📁
+    </button>
     <button
       type="button"
       class="toolbar-btn"
-      title="Description"
+      data-testid="task-toolbar-description"
+      [class.configured]="hasDescription()"
       [class.active]="descriptionOpen()"
+      [attr.title]="descriptionStatusLabel()"
+      [attr.aria-label]="descriptionStatusLabel()"
       (click)="toggleDescription()"
     >
       💬
     </button>
-    <button type="button" class="toolbar-btn" title="Tags" [class.active]="tagsOpen()" (click)="toggleTags()">🏷️</button>
-    <button type="button" class="toolbar-btn" title="Repeat" [class.active]="repeatOpen()" (click)="toggleRepeat()">
+    <button
+      type="button"
+      class="toolbar-btn"
+      data-testid="task-toolbar-tags"
+      [class.configured]="hasTags()"
+      [class.active]="tagsOpen()"
+      [attr.title]="tagsStatusLabel()"
+      [attr.aria-label]="tagsStatusLabel()"
+      (click)="toggleTags()"
+    >
+      🏷️
+    </button>
+    <button
+      type="button"
+      class="toolbar-btn"
+      data-testid="task-toolbar-repeat"
+      [class.configured]="hasRepeat()"
+      [class.active]="repeatOpen()"
+      [attr.title]="repeatStatusLabel()"
+      [attr.aria-label]="repeatStatusLabel()"
+      (click)="toggleRepeat()"
+    >
       🔁
     </button>
-    <button type="button" class="toolbar-btn" title="Steps" [class.active]="stepsOpen()" (click)="toggleSteps()">
+    <button
+      type="button"
+      class="toolbar-btn"
+      data-testid="task-toolbar-steps"
+      [class.configured]="hasSteps()"
+      [class.active]="stepsOpen()"
+      [attr.title]="stepsStatusLabel()"
+      [attr.aria-label]="stepsStatusLabel()"
+      (click)="toggleSteps()"
+    >
       ☑️
     </button>
   </div>
@@ -107,23 +159,49 @@
     </label>
   </section>
 
-  <section class="task-card__panel" *ngIf="descriptionOpen()">
-    <div class="panel-field" *ngIf="descriptionDraft().trim()">
-      <span class="panel-label">Preview</span>
-      <div class="task-description linkified" [innerHTML]="descriptionDraft() | linkify"></div>
+  <section class="task-card__panel task-card__panel--description" *ngIf="descriptionOpen()">
+    <div class="description-header">
+      <p class="panel-label">Description</p>
+      <button
+        *ngIf="!descriptionEditing()"
+        type="button"
+        class="description-edit-btn"
+        (click)="beginDescriptionEdit()"
+      >
+        {{ hasDescription() ? 'Edit' : 'Add' }}
+      </button>
     </div>
-    <label class="panel-field">
-      <span class="panel-label">Description</span>
-      <textarea
-        rows="4"
-        [value]="descriptionDraft()"
-        (input)="descriptionDraft.set($any($event.target).value)"
-      ></textarea>
-    </label>
-    <div class="panel-actions">
-      <button class="btn btn-xs" type="button" (click)="saveDescription()">Save</button>
-    </div>
-    <p class="panel-hint" *ngIf="!descriptionDraft().trim()">No description yet.</p>
+
+    <div
+      class="description-content task-description linkified"
+      *ngIf="!descriptionEditing() && hasDescription(); else descriptionEditState"
+      [innerHTML]="task.description | linkify"
+    ></div>
+
+    <ng-template #descriptionEditState>
+      <ng-container *ngIf="descriptionEditing(); else descriptionEmpty">
+        <label class="panel-field">
+          <textarea
+            rows="4"
+            placeholder="Add context, links, or notes..."
+            [value]="descriptionDraft()"
+            (input)="descriptionDraft.set($any($event.target).value)"
+          ></textarea>
+        </label>
+        <div class="panel-actions description-actions">
+          <button class="description-btn description-btn--ghost" type="button" (click)="cancelDescriptionEdit()">
+            Cancel
+          </button>
+          <button class="description-btn description-btn--primary" type="button" (click)="saveDescription()">
+            Save
+          </button>
+        </div>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #descriptionEmpty>
+      <p class="description-empty">No description yet.</p>
+    </ng-template>
   </section>
 
   <section class="task-card__panel" *ngIf="tagsOpen()">
@@ -152,11 +230,69 @@
       <button
         type="button"
         *ngFor="let option of repeatOptions"
-        [class.active]="currentRepeatMode() === option.mode"
+        [class.active]="isRepeatOptionActive(option.mode)"
         (click)="setRepeatInterval(option.mode)"
       >
         {{ option.label }}
       </button>
+    </div>
+    <div class="repeat-custom" *ngIf="isCustomRepeatEditorVisible()">
+      <p class="panel-label panel-label--inline">Every</p>
+      <div class="repeat-custom__controls">
+        <input
+          type="number"
+          min="1"
+          class="repeat-custom__input"
+          [value]="customRepeatEvery()"
+          (input)="setCustomRepeatEvery($any($event.target).value)"
+        />
+        <select
+          class="repeat-custom__select"
+          [value]="customRepeatUnit()"
+          (change)="setCustomRepeatUnit($any($event.target).value)"
+        >
+          <option value="day">days</option>
+          <option value="week">weeks</option>
+          <option value="month">months</option>
+          <option value="year">years</option>
+        </select>
+        <button type="button" class="repeat-custom__apply" (click)="applyCustomRepeat()">
+          Apply
+        </button>
+      </div>
+    </div>
+    <div class="repeat-from" *ngIf="currentRepeatMode() !== 'never'">
+      <p class="panel-label panel-label--inline">
+        From
+        <span
+          class="repeat-from__info"
+          role="note"
+          tabindex="0"
+          [attr.title]="repeatFromHelpText"
+          [attr.aria-label]="repeatFromHelpText"
+        >
+          i
+        </span>
+      </p>
+      <div class="repeat-from__options">
+        <button
+          type="button"
+          [class.active]="currentRepeatFromMode() === 'completion_date'"
+          (click)="setRepeatFrom('completion_date')"
+        >
+          completion date
+        </button>
+        <button
+          type="button"
+          [class.active]="currentRepeatFromMode() === 'due_date'"
+          (click)="setRepeatFrom('due_date')"
+        >
+          due date
+        </button>
+      </div>
+      <p class="panel-hint" *ngIf="!canRepeatFromDueDate()">
+        No due date set. Repeat uses completion date by default.
+      </p>
     </div>
   </section>
 

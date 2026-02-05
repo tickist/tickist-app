@@ -146,10 +146,37 @@
             {{ option === 'daily_work' ? 'daily (workweek)' : option }}
           </label>
         </div>
+        <div class="field" *ngIf="taskForm.controls.repeatMode.value !== 'never'">
+          <span class="field__label">From</span>
+          <div class="complete-group">
+            <label>
+              <input type="radio" value="completion_date" formControlName="repeatFrom" />
+              completion date
+            </label>
+            <label>
+              <input type="radio" value="due_date" formControlName="repeatFrom" />
+              due date
+            </label>
+          </div>
+          <p
+            class="field__hint"
+            *ngIf="taskForm.controls.repeatFrom.value === 'due_date' && !taskForm.controls.finishDate.value"
+          >
+            No due date set. Repeat will use completion date by default.
+          </p>
+        </div>
         <div class="field" *ngIf="taskForm.controls.repeatMode.value === 'custom'">
           <span class="field__label">Every</span>
-          <input type="number" min="1" class="input" formControlName="repeatEvery" />
-          <p class="field__hint">Number of days between repeats.</p>
+          <div class="repeat-custom-controls">
+            <input type="number" min="1" class="input" formControlName="repeatEvery" />
+            <select class="input" formControlName="repeatUnit">
+              <option value="day">days</option>
+              <option value="week">weeks</option>
+              <option value="month">months</option>
+              <option value="year">years</option>
+            </select>
+          </div>
+          <p class="field__hint">Choose how often this task repeats.</p>
         </div>
       </form>
 

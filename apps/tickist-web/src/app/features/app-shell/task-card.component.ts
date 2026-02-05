@@ -27,7 +27,10 @@ type RepeatMode =
   | 'daily_work'
   | 'weekly'
   | 'monthly'
-  | 'yearly';
+  | 'yearly'
+  | 'custom';
+type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+type RepeatFromMode = 'completion_date' | 'due_date';
 
 @Component({
   selector: 'app-task-card',
@@ -60,9 +63,13 @@ export class TaskCardComponent implements OnChanges {
   readonly repeatOpen = signal(false);
   readonly stepsOpen = signal(false);
   readonly projectPickerOpen = signal(false);
+  readonly descriptionEditing = signal(false);
   readonly menuOpen = signal(false);
   readonly descriptionDraft = signal('');
   readonly newStepDraft = signal('');
+  readonly customRepeatEvery = signal(1);
+  readonly customRepeatUnit = signal<RepeatUnit>('day');
+  readonly repeatDraftMode = signal<RepeatMode | null>(null);
   readonly repeatOptions: { label: string; mode: RepeatMode }[] = [
     { label: 'Never', mode: 'never' },
     { label: 'Daily', mode: 'daily' },
@@ -70,14 +77,22 @@ export class TaskCardComponent implements OnChanges {
     { label: 'Weekly', mode: 'weekly' },
     { label: 'Monthly', mode: 'monthly' },
     { label: 'Yearly', mode: 'yearly' },
+    { label: 'Custom', mode: 'custom' },
   ];
+  readonly repeatFromHelpText =
+    'If due date is empty, Tickist uses completion date as the repeat anchor.';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['task']) {
       const previous = changes['task'].previousValue as Task | undefined;
       const current = changes['task'].currentValue as Task | undefined;
       this.descriptionDraft.set(current?.description ?? '');
+      this.descriptionEditing.set(false);
       this.newStepDraft.set('');
+      this.repeatDraftMode.set(null);
+      if (current) {
+        this.syncCustomRepeatDraft(current.repeatInterval);
+      }
       if (previous?.id && current?.id && previous.id !== current.id) {
         this.menuOpen.set(false);
         this.closeAllPanels();
@@ -116,6 +131,24 @@ export class TaskCardComponent implements OnChanges {
     return Math.min(100, Math.max(0, Math.round(percent)));
   }
 
+  finishDateLabel(): string | null {
+    if (!this.task.finishDate) {
+      return null;
+    }
+    const date = new Date(this.task.finishDate);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+    const day = `${date.getDate()}`.padStart(2, '0');
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  finishDateModeIcon(): string {
+    return this.task.typeFinishDate === 0 ? '➜' : '◷';
+  }
+
   priorityColor(priority?: string | null): string {
     switch ((priority ?? '').trim().toUpperCase()) {
       case 'A':
@@ -129,10 +162,66 @@ export class TaskCardComponent implements OnChanges {
     }
   }
 
+  taskTypeLabel(): string | null {
+    const taskType = this.normalizedTaskType();
+    if (taskType === 'next_action') {
+      return 'Next action';
+    }
+    if (taskType === 'need_info') {
+      return 'Need info';
+    }
+    return null;
+  }
+
+  isNextActionTask(): boolean {
+    return this.normalizedTaskType() === 'next_action';
+  }
+
+  isNeedInfoTask(): boolean {
+    return this.normalizedTaskType() === 'need_info';
+  }
+
+  hasDescription(): boolean {
+    return this.task.description.trim().length > 0;
+  }
+
+  hasTags(): boolean {
+    return this.task.tags.length > 0;
+  }
+
+  hasRepeat(): boolean {
+    return (this.task.repeatInterval ?? 0) > 0;
+  }
+
+  hasSteps(): boolean {
+    return this.task.steps.length > 0;
+  }
+
+  descriptionStatusLabel(): string {
+    return this.hasDescription() ? 'Description: set' : 'Description: not set';
+  }
+
+  tagsStatusLabel(): string {
+    return this.hasTags() ? `Tags: ${this.task.tags.length}` : 'Tags: none';
+  }
+
+  repeatStatusLabel(): string {
+    return this.hasRepeat() ? 'Repeat: enabled' : 'Repeat: disabled';
+  }
+
+  stepsStatusLabel(): string {
+    return this.hasSteps() ? `Steps: ${this.task.steps.length}` : 'Steps: none';
+  }
+
   async toggleDone(isDone: boolean): Promise<void> {
+    const isRecurringCompletion = isDone && (this.task.repeatInterval ?? 0) > 0;
     await this.mutateTask(
       { id: this.task.id, isDone },
-      isDone ? 'Task marked done.' : 'Task reopened.',
+      isDone
+        ? isRecurringCompletion
+          ? 'Task completed and rescheduled.'
+          : 'Task marked done.'
+        : 'Task reopened.',
       'Failed to update completion.'
     );
   }
@@ -235,15 +324,29 @@ export class TaskCardComponent implements OnChanges {
     this.descriptionOpen.set(next);
     if (next) {
       this.descriptionDraft.set(this.task.description ?? '');
+      this.descriptionEditing.set(false);
     }
   }
 
+  beginDescriptionEdit(): void {
+    this.descriptionDraft.set(this.task.description ?? '');
+    this.descriptionEditing.set(true);
+  }
+
+  cancelDescriptionEdit(): void {
+    this.descriptionDraft.set(this.task.description ?? '');
+    this.descriptionEditing.set(false);
+  }
+
   async saveDescription(): Promise<void> {
-    await this.mutateTask(
+    const saved = await this.mutateTask(
       { id: this.task.id, description: this.descriptionDraft().trim() },
       'Description saved.',
       'Failed to save description.'
     );
+    if (saved) {
+      this.descriptionEditing.set(false);
+    }
   }
 
   tagName(tagId: string): string {
@@ -297,14 +400,89 @@ export class TaskCardComponent implements OnChanges {
     const next = !this.repeatOpen();
     this.closeAllPanels();
     this.repeatOpen.set(next);
+    this.repeatDraftMode.set(null);
+    if (next) {
+      this.syncCustomRepeatDraft(this.task.repeatInterval);
+    }
   }
 
   async setRepeatInterval(mode: RepeatMode): Promise<void> {
+    if (mode === 'custom') {
+      this.repeatDraftMode.set('custom');
+      return;
+    }
+    this.repeatDraftMode.set(null);
     const interval = this.getRepeatInterval(mode);
+    const fromRepeating = interval > 0 ? (this.task.fromRepeating ?? 0) : null;
     await this.mutateTask(
-      { id: this.task.id, repeatInterval: interval },
+      { id: this.task.id, repeatInterval: interval, fromRepeating },
       'Repeat cadence updated.',
       'Failed to update repeat.'
+    );
+  }
+
+  isRepeatOptionActive(mode: RepeatMode): boolean {
+    if (mode === 'custom') {
+      return (
+        this.currentRepeatMode() === 'custom' || this.repeatDraftMode() === 'custom'
+      );
+    }
+    return this.currentRepeatMode() === mode && this.repeatDraftMode() !== 'custom';
+  }
+
+  isCustomRepeatEditorVisible(): boolean {
+    return (
+      this.repeatOpen() &&
+      (this.currentRepeatMode() === 'custom' || this.repeatDraftMode() === 'custom')
+    );
+  }
+
+  setCustomRepeatEvery(rawValue: string): void {
+    const parsed = Number.parseInt(rawValue, 10);
+    const nextValue = Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+    this.customRepeatEvery.set(nextValue);
+  }
+
+  setCustomRepeatUnit(rawValue: string): void {
+    if (
+      rawValue === 'day' ||
+      rawValue === 'week' ||
+      rawValue === 'month' ||
+      rawValue === 'year'
+    ) {
+      this.customRepeatUnit.set(rawValue);
+    }
+  }
+
+  async applyCustomRepeat(): Promise<void> {
+    const interval = this.getRepeatInterval(
+      'custom',
+      this.customRepeatEvery(),
+      this.customRepeatUnit()
+    );
+    const fromRepeating = interval > 0 ? (this.task.fromRepeating ?? 0) : null;
+    await this.mutateTask(
+      { id: this.task.id, repeatInterval: interval, fromRepeating },
+      'Repeat cadence updated.',
+      'Failed to update repeat.'
+    );
+    this.repeatDraftMode.set('custom');
+  }
+
+  async setRepeatFrom(mode: RepeatFromMode): Promise<void> {
+    if ((this.task.repeatInterval ?? 0) <= 0) {
+      return;
+    }
+    const hasDueDate = !!this.task.finishDate;
+    const fromRepeating = mode === 'due_date' && hasDueDate ? 1 : 0;
+    const successMessage =
+      mode === 'due_date' && !hasDueDate
+        ? 'No due date set. Repeat will use completion date.'
+        : 'Repeat anchor updated.';
+    await this.mutateTask(
+      { id: this.task.id, fromRepeating },
+      successMessage,
+      'Failed to update repeat anchor.'
     );
   }
 
@@ -423,7 +601,11 @@ export class TaskCardComponent implements OnChanges {
     return `${minutes}m`;
   }
 
-  private getRepeatInterval(mode: RepeatMode): number {
+  private getRepeatInterval(
+    mode: RepeatMode,
+    every = 1,
+    unit: RepeatUnit = 'day'
+  ): number {
     switch (mode) {
       case 'never':
         return 0;
@@ -437,6 +619,10 @@ export class TaskCardComponent implements OnChanges {
         return 30;
       case 'yearly':
         return 365;
+      case 'custom':
+        return (
+          Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit)
+        );
       default:
         return this.task.repeatInterval ?? 0;
     }
@@ -446,24 +632,86 @@ export class TaskCardComponent implements OnChanges {
     return this.deriveRepeatMode(this.task.repeatInterval).mode;
   }
 
+  currentRepeatFromMode(): RepeatFromMode {
+    return this.task.fromRepeating === 1 ? 'due_date' : 'completion_date';
+  }
+
+  canRepeatFromDueDate(): boolean {
+    return !!this.task.finishDate;
+  }
+
   private deriveRepeatMode(
     interval: number | null | undefined
-  ): { mode: RepeatMode } {
+  ): { mode: RepeatMode; every: number; unit: RepeatUnit } {
     if (!interval || interval <= 0) {
-      return { mode: 'never' };
+      return { mode: 'never', every: 1, unit: 'day' };
     }
     switch (interval) {
       case 1:
-        return { mode: 'daily' };
+        return { mode: 'daily', every: 1, unit: 'day' };
       case 7:
-        return { mode: 'weekly' };
+        return { mode: 'weekly', every: 1, unit: 'week' };
       case 30:
-        return { mode: 'monthly' };
+        return { mode: 'monthly', every: 1, unit: 'month' };
       case 365:
-        return { mode: 'yearly' };
-      default:
-        return { mode: 'daily' };
+        return { mode: 'yearly', every: 1, unit: 'year' };
     }
+    const unit = this.repeatUnitFromInterval(interval);
+    const every = Math.max(
+      1,
+      Math.round(interval / this.repeatUnitMultiplier(unit))
+    );
+    return { mode: 'custom', every, unit };
+  }
+
+  private repeatUnitMultiplier(unit: RepeatUnit): number {
+    switch (unit) {
+      case 'week':
+        return 7;
+      case 'month':
+        return 30;
+      case 'year':
+        return 365;
+      default:
+        return 1;
+    }
+  }
+
+  private repeatUnitFromInterval(interval: number): RepeatUnit {
+    if (interval % 365 === 0) {
+      return 'year';
+    }
+    if (interval % 30 === 0) {
+      return 'month';
+    }
+    if (interval % 7 === 0) {
+      return 'week';
+    }
+    return 'day';
+  }
+
+  private syncCustomRepeatDraft(interval: number | null | undefined): void {
+    const { mode, every, unit } = this.deriveRepeatMode(interval);
+    if (mode === 'custom') {
+      this.customRepeatEvery.set(every);
+      this.customRepeatUnit.set(unit);
+      return;
+    }
+    switch (mode) {
+      case 'weekly':
+        this.customRepeatUnit.set('week');
+        break;
+      case 'monthly':
+        this.customRepeatUnit.set('month');
+        break;
+      case 'yearly':
+        this.customRepeatUnit.set('year');
+        break;
+      default:
+        this.customRepeatUnit.set('day');
+        break;
+    }
+    this.customRepeatEvery.set(1);
   }
 
   private generateStepId(): string {
@@ -474,11 +722,16 @@ export class TaskCardComponent implements OnChanges {
     return `step-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
+  private normalizedTaskType(): string {
+    return (this.task.taskType ?? '').trim().toLowerCase();
+  }
+
   private closeAllPanels(): void {
     this.projectPickerOpen.set(false);
     this.descriptionOpen.set(false);
     this.tagsOpen.set(false);
     this.repeatOpen.set(false);
+    this.repeatDraftMode.set(null);
     this.stepsOpen.set(false);
   }
 }

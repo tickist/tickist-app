@@ -36,6 +36,8 @@ type RepeatMode =
   | 'monthly'
   | 'yearly'
   | 'custom';
+type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+type RepeatFromMode = 'completion_date' | 'due_date';
 
 type TaskFormDefaults = {
   name: string;
@@ -48,6 +50,8 @@ type TaskFormDefaults = {
   description: string;
   repeatMode: RepeatMode;
   repeatEvery: number;
+  repeatUnit: RepeatUnit;
+  repeatFrom: RepeatFromMode;
   tags: string[];
   isActive: boolean;
   pinned: boolean;
@@ -100,6 +104,8 @@ export class TaskComposerComponent {
     description: '',
     repeatMode: 'never',
     repeatEvery: 1,
+    repeatUnit: 'day',
+    repeatFrom: 'completion_date',
     tags: [],
     isActive: true,
     pinned: false,
@@ -121,6 +127,8 @@ export class TaskComposerComponent {
     description: [''],
     repeatMode: ['never'],
     repeatEvery: [1],
+    repeatUnit: ['day'],
+    repeatFrom: ['completion_date'],
     tags: this.fb.nonNullable.control<string[]>([]),
     isActive: [true],
     pinned: [false],
@@ -169,7 +177,7 @@ export class TaskComposerComponent {
     if (preset.mode === 'edit' && preset.task) {
       const task = preset.task;
       this.editingTask.set(task);
-      const { mode, every } = this.repeatModeFromInterval(
+      const { mode, every, unit } = this.repeatModeFromInterval(
         task.repeatInterval
       );
       this.resetForm({
@@ -177,12 +185,14 @@ export class TaskComposerComponent {
         priority: (task.priority ?? 'B').toUpperCase(),
         projectId: task.projectId ?? '',
         taskType: task.taskType?.toLowerCase() ?? 'normal',
-        completeMode: task.finishDate ? 'by' : 'on',
+        completeMode: this.completeModeFromType(task.typeFinishDate),
         finishDate: task.finishDate ?? '',
         finishTime: task.finishTime ?? '',
         description: task.description ?? '',
         repeatMode: mode,
         repeatEvery: every,
+        repeatUnit: unit,
+        repeatFrom: this.repeatFromModeFromValue(task.fromRepeating),
         tags: [...task.tags],
         isActive: task.isActive,
         pinned: task.pinned,
@@ -277,7 +287,13 @@ export class TaskComposerComponent {
       }
       const repeatInterval = this.getRepeatInterval(
         value.repeatMode as RepeatMode,
-        value.repeatEvery
+        value.repeatEvery,
+        value.repeatUnit as RepeatUnit
+      );
+      const repeatFrom = this.getRepeatFromValue(
+        repeatInterval,
+        value.repeatFrom as RepeatFromMode,
+        !!value.finishDate
       );
       const stepsPayload = this.steps.controls
         .map((control, index) => {
@@ -306,9 +322,11 @@ export class TaskComposerComponent {
           description: value.description ?? '',
           finishDate: value.finishDate || null,
           finishTime: value.finishTime || null,
+          typeFinishDate: this.typeFinishDateFromMode(value.completeMode),
           priority: value.priority,
           taskType: value.taskType?.toUpperCase(),
           repeatInterval,
+          fromRepeating: repeatFrom,
           estimateMinutes: value.estimateMinutes ?? null,
           spentMinutes: value.spentMinutes ?? null,
           tags: value.tags,
@@ -330,9 +348,11 @@ export class TaskComposerComponent {
         description: value.description ?? '',
         finishDate: value.finishDate || null,
         finishTime: value.finishTime || null,
+        typeFinishDate: this.typeFinishDateFromMode(value.completeMode),
         priority: value.priority,
         taskType: value.taskType?.toUpperCase(),
         repeatInterval,
+        fromRepeating: repeatFrom,
         estimateMinutes: value.estimateMinutes ?? null,
         spentMinutes: value.spentMinutes ?? null,
         tags: value.tags,
@@ -374,6 +394,8 @@ export class TaskComposerComponent {
       description: next.description,
       repeatMode: next.repeatMode,
       repeatEvery: next.repeatEvery,
+      repeatUnit: next.repeatUnit,
+      repeatFrom: next.repeatFrom,
       tags: next.tags,
       isActive: next.isActive,
       pinned: next.pinned,
@@ -383,7 +405,11 @@ export class TaskComposerComponent {
     this.clearSteps();
   }
 
-  private getRepeatInterval(mode: RepeatMode, every: number): number {
+  private getRepeatInterval(
+    mode: RepeatMode,
+    every: number,
+    unit: RepeatUnit
+  ): number {
     switch (mode) {
       case 'daily':
         return 1;
@@ -396,29 +422,89 @@ export class TaskComposerComponent {
       case 'yearly':
         return 365;
       case 'custom':
-        return Math.max(1, every);
+        return (
+          Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit)
+        );
       default:
         return 0;
     }
   }
 
+  private getRepeatFromValue(
+    repeatInterval: number,
+    mode: RepeatFromMode,
+    hasDueDate: boolean
+  ): number | null {
+    if (repeatInterval <= 0) {
+      return null;
+    }
+    if (mode === 'due_date' && hasDueDate) {
+      return 1;
+    }
+    return 0;
+  }
+
   private repeatModeFromInterval(
     interval: number | null | undefined
-  ): { mode: RepeatMode; every: number } {
+  ): { mode: RepeatMode; every: number; unit: RepeatUnit } {
     if (!interval || interval <= 0) {
-      return { mode: 'never', every: 1 };
+      return { mode: 'never', every: 1, unit: 'day' };
     }
     switch (interval) {
       case 1:
-        return { mode: 'daily', every: 1 };
+        return { mode: 'daily', every: 1, unit: 'day' };
       case 7:
-        return { mode: 'weekly', every: 1 };
+        return { mode: 'weekly', every: 1, unit: 'week' };
       case 30:
-        return { mode: 'monthly', every: 1 };
+        return { mode: 'monthly', every: 1, unit: 'month' };
       case 365:
-        return { mode: 'yearly', every: 1 };
-      default:
-        return { mode: 'custom', every: interval };
+        return { mode: 'yearly', every: 1, unit: 'year' };
     }
+    const unit = this.repeatUnitFromInterval(interval);
+    const every = Math.max(
+      1,
+      Math.round(interval / this.repeatUnitMultiplier(unit))
+    );
+    return { mode: 'custom', every, unit };
+  }
+
+  private repeatUnitMultiplier(unit: RepeatUnit): number {
+    switch (unit) {
+      case 'week':
+        return 7;
+      case 'month':
+        return 30;
+      case 'year':
+        return 365;
+      default:
+        return 1;
+    }
+  }
+
+  private repeatUnitFromInterval(interval: number): RepeatUnit {
+    if (interval % 365 === 0) {
+      return 'year';
+    }
+    if (interval % 30 === 0) {
+      return 'month';
+    }
+    if (interval % 7 === 0) {
+      return 'week';
+    }
+    return 'day';
+  }
+
+  private repeatFromModeFromValue(
+    fromRepeating: number | null | undefined
+  ): RepeatFromMode {
+    return fromRepeating === 1 ? 'due_date' : 'completion_date';
+  }
+
+  private completeModeFromType(typeFinishDate: number | null | undefined): 'by' | 'on' {
+    return typeFinishDate === 0 ? 'on' : 'by';
+  }
+
+  private typeFinishDateFromMode(mode: string | null | undefined): number {
+    return mode === 'on' ? 0 : 1;
   }
 }

@@ -5,20 +5,33 @@ test('signup flow leads to app dashboard', async ({ page }, testInfo) => {
   const password = 'Test1234!';
 
   await page.goto('/');
+  const root = page.locator('html');
+  const initialTheme = (await root.getAttribute('data-theme')) ?? 'tickist';
+  const toggledTheme =
+    initialTheme === 'tickist' ? 'tickist-light' : 'tickist';
+
+  await page.getByTestId('theme-toggle').first().click();
+  await expect(root).toHaveAttribute('data-theme', toggledTheme);
+
+  await page.reload();
+  await expect(root).toHaveAttribute('data-theme', toggledTheme);
 
   await page.getByRole('link', { name: 'Create account' }).first().click();
   await page.waitForURL('**/auth/signup');
+  await expect(root).toHaveAttribute('data-theme', toggledTheme);
 
   await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill(password);
-  await page.getByLabel('Confirm password').fill(password);
+  await page.getByLabel('Password', { exact: true }).fill(password);
+  await page.getByLabel('Confirm password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Create account' }).click();
 
   await page.waitForURL('**/auth', { timeout: 10000 });
   await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill(password);
+  await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
 
   await page.waitForURL('**/app', { timeout: 10000 });
+  await expect(root).toHaveAttribute('data-theme', toggledTheme);
+  await expect(page.getByTestId('theme-toggle').first()).toBeVisible();
   await expect(page.getByPlaceholder(/Search tasks/)).toBeVisible();
 });

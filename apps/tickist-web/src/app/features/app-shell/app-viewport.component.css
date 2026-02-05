@@ -6,10 +6,13 @@
   min-height: 64px;
   background-color: rgb(var(--b2));
   backdrop-filter: none;
+  border-bottom-color: rgb(var(--bc) / 0.12);
 }
 
 .app-menu {
   max-height: 80vh;
   overflow-y: auto;
   backdrop-filter: blur(6px);
+  background-color: rgb(var(--b2) / 0.96);
+  border-color: rgb(var(--bc) / 0.14);
 }

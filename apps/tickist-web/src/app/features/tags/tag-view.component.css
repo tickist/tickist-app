@@ -57,17 +57,29 @@
 
 .controls .btn,
 .controls .select {
-  @apply border border-white/10 text-base-content;
+  @apply border border-white/10;
   background-color: rgb(var(--b1) / 45%);
+  color: rgb(var(--bc) / 96%);
 }
 
 .controls .btn:hover,
 .controls .select:hover {
   background-color: rgb(var(--b1) / 72%);
+  color: rgb(var(--bc));
+}
+
+.controls label,
+.controls label span {
+  color: rgb(var(--bc) / 96%);
 }
 
 .controls .btn.btn-ghost {
   background-color: rgb(var(--b1) / 45%);
+  color: rgb(var(--bc) / 96%);
+}
+
+.controls .btn.btn-ghost:hover {
+  color: rgb(var(--bc));
 }
 
 .controls .btn.btn-primary {

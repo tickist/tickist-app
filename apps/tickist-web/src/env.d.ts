@@ -1,6 +1,7 @@
 interface ImportMetaEnv {
   readonly NG_APP_SUPABASE_URL?: string;
   readonly NG_APP_SUPABASE_ANON_KEY?: string;
+  readonly NG_APP_SUPABASE_FUNCTIONS_URL?: string;
 }
 
 interface ImportMeta {

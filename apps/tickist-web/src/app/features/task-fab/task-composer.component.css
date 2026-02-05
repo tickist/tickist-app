@@ -3,7 +3,7 @@
   flex-direction: column;
   height: 100%;
   max-height: 90vh;
-  color: #f7f8ff;
+  color: rgb(var(--bc));
 }
 
 .composer__header {
@@ -11,14 +11,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgb(var(--bc) / 0.12);
 }
 
 .composer__eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.4em;
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgb(var(--bc) / 0.54);
 }
 
 .composer__title {
@@ -31,7 +31,7 @@
   border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(var(--bc) / 0.74);
   cursor: pointer;
 }
 
@@ -45,7 +45,7 @@
 
 .composer__tabs {
   padding: 1.5rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgb(var(--bc) / 0.12);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -57,13 +57,13 @@
   border-radius: 999px;
   padding: 0.5rem 0.9rem;
   background: transparent;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(var(--bc) / 0.74);
   cursor: pointer;
 }
 
 .composer__tab.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: rgb(var(--bc) / 0.14);
+  color: rgb(var(--bc));
 }
 
 .composer__panel {
@@ -88,7 +88,7 @@
 
 .field__label {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(var(--bc) / 0.74);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -100,15 +100,15 @@
 
 .field__hint {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgb(var(--bc) / 0.54);
 }
 
 .input {
-  background: rgba(15, 19, 36, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgb(var(--b1) / 0.72);
+  border: 1px solid rgb(var(--bc) / 0.12);
   border-radius: 12px;
   padding: 0.65rem 0.9rem;
-  color: #f7f8ff;
+  color: rgb(var(--bc));
   width: 100%;
 }
 
@@ -120,9 +120,9 @@
 
 .priority-group button,
 .type-group button {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgb(var(--bc) / 0.12);
   background: transparent;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgb(var(--bc) / 0.82);
   padding: 0.45rem 0.9rem;
   border-radius: 999px;
   cursor: pointer;
@@ -154,6 +154,18 @@
   font-size: 0.95rem;
 }
 
+.repeat-custom-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .repeat-custom-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tags-grid {
   display: flex;
   flex-wrap: wrap;
@@ -162,9 +174,9 @@
 }
 
 .tag-chip {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgb(var(--bc) / 0.12);
   background: transparent;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(var(--bc) / 0.74);
   padding: 0.35rem 0.8rem;
   border-radius: 999px;
   cursor: pointer;
@@ -191,7 +203,7 @@
 
 .step-index {
   padding: 0.25rem 0.5rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--bc) / 0.12);
   border-radius: 8px;
 }
 
@@ -202,18 +214,18 @@
 
 .step-actions button {
   border: none;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: rgb(var(--bc) / 0.12);
+  color: rgb(var(--bc));
   border-radius: 8px;
   padding: 0.3rem 0.5rem;
   cursor: pointer;
 }
 
 .btn-secondary {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgb(var(--bc) / 0.26);
   border-radius: 12px;
   background: transparent;
-  color: #fff;
+  color: rgb(var(--bc));
   padding: 0.5rem 1rem;
   cursor: pointer;
 }
@@ -222,17 +234,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgb(var(--bc) / 0.12);
   padding: 1rem 2rem;
   position: sticky;
   bottom: 0;
-  background: rgba(8, 11, 24, 0.95);
+  background: rgb(var(--b2) / 0.95);
 }
 
 .btn-ghost {
   border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(var(--bc) / 0.74);
   cursor: pointer;
 }
 
@@ -241,14 +253,14 @@
   border-radius: 12px;
   padding: 0.55rem 1.2rem;
   background: linear-gradient(120deg, #ffaa3b, #ff7b1a);
-  color: #0f172a;
+  color: #172039;
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn-primary.secondary {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  background: rgb(var(--bc) / 0.14);
+  color: rgb(var(--bc));
 }
 
 .composer__cta {

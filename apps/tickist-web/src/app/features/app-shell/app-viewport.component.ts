@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, DestroyRef, OnDestroy } from '@angular/core';
+import { Component, computed, effect, inject, signal, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { NgFor, NgIf, DatePipe } from '@angular/common';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -9,6 +9,7 @@ import { AppSidebarComponent } from './app-sidebar.component';
 import { TaskFabComponent } from '../task-fab/task-fab.component';
 import { filter, Subscription } from 'rxjs';
 import { ToastContainerComponent } from '../../core/ui/toast-container.component';
+import { ThemeService } from '../../core/ui/theme.service';
 
 @Component({
   selector: 'app-viewport',
@@ -32,7 +33,7 @@ export class AppViewportComponent implements OnDestroy {
   private readonly notificationsService = inject(NotificationDataService);
   private readonly viewState = inject(AppViewStateService);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly themeService = inject(ThemeService);
   private routerSub: Subscription | null = null;
 
   readonly user = computed(() => this.session.user());
@@ -45,6 +46,10 @@ export class AppViewportComponent implements OnDestroy {
   readonly profileMenuOpen = signal(false);
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
+  readonly isDarkTheme = this.themeService.isDark;
+  readonly themeButtonLabel = computed(() =>
+    this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
+  );
 
   constructor() {
     effect(() => {
@@ -124,5 +129,9 @@ export class AppViewportComponent implements OnDestroy {
 
   closeSidebar(): void {
     this.sidebarOpen.set(false);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 }

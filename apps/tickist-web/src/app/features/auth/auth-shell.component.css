@@ -1,6 +1,10 @@
 :host {
   display: block;
-  padding: 2rem 1rem;
+  position: relative;
+  padding: 2.5rem 1rem 2rem;
   min-height: 100vh;
-  background: linear-gradient(180deg, rgba(28, 33, 61, 0.8), rgba(28, 33, 61, 1));
+  background:
+    radial-gradient(circle at 90% 10%, rgb(var(--p) / 0.16), transparent 42%),
+    linear-gradient(180deg, rgb(var(--b1) / 0.88), rgb(var(--b2) / 1));
+  color: rgb(var(--bc));
 }

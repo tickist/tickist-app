@@ -7,9 +7,9 @@
   gap: 0.75rem;
   padding: 1rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 19, 36, 0.65);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  border: 1px solid rgb(var(--bc) / 0.14);
+  background: rgb(var(--b1) / 0.62);
+  box-shadow: inset 0 0 0 1px rgb(var(--bc) / 0.04);
 }
 
 .new-task-form__controls {
@@ -23,20 +23,20 @@
   width: 100%;
   padding: 0.7rem 0.95rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 11, 24, 0.75);
-  color: #f7f8ff;
+  border: 1px solid rgb(var(--bc) / 0.16);
+  background: rgb(var(--b3) / 0.74);
+  color: rgb(var(--bc));
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .new-task-form__input::placeholder {
-  color: rgba(247, 248, 255, 0.45);
+  color: rgb(var(--bc) / 0.5);
 }
 
 .new-task-form__input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  border-color: rgb(var(--bc) / 0.3);
+  box-shadow: 0 0 0 3px rgb(var(--bc) / 0.12);
 }
 
 .new-task-form__button {
@@ -44,7 +44,7 @@
   border-radius: 12px;
   padding: 0.65rem 1.2rem;
   background: linear-gradient(120deg, #ffaa3b, #ff7b1a);
-  color: #0f172a;
+  color: #172039;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;

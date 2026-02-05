@@ -10,13 +10,22 @@ import { ToastService } from './toast.service';
     <section class="toast-container">
       <article
         *ngFor="let toast of toasts()"
-        class="toast"
-        [class.toast-success]="toast.type === 'success'"
-        [class.toast-info]="toast.type === 'info'"
-        [class.toast-error]="toast.type === 'error'"
+        class="toast-item"
+        [class.toast-item--success]="toast.type === 'success'"
+        [class.toast-item--info]="toast.type === 'info'"
+        [class.toast-item--error]="toast.type === 'error'"
+        role="status"
+        aria-live="polite"
       >
-        <span>{{ toast.message }}</span>
-        <button type="button" (click)="dismiss(toast.id)">×</button>
+        <p class="toast-item__message">{{ toast.message }}</p>
+        <button
+          type="button"
+          class="toast-item__close"
+          aria-label="Dismiss notification"
+          (click)="dismiss(toast.id)"
+        >
+          ×
+        </button>
       </article>
     </section>
   `,
