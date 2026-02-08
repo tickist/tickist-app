@@ -410,7 +410,11 @@ export class ProjectDataService {
 
   private async broadcastShareChanges(previous: Project, current: Project) {
     const functionsUrl = this.supabaseConfig?.functionsUrl;
-    if (!functionsUrl) {
+    if (!functionsUrl || !this.supabase) {
+      return;
+    }
+    const headers = await this.getFunctionAuthHeaders();
+    if (!headers) {
       return;
     }
     const added = current.shareWithIds.filter(
@@ -425,7 +429,7 @@ export class ProjectDataService {
       requests.push(
         fetch(`${functionsUrl}/project-update`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({
             projectId: current.id,
             event: 'shared',
@@ -440,7 +444,7 @@ export class ProjectDataService {
       requests.push(
         fetch(`${functionsUrl}/project-update`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({
             projectId: current.id,
             event: 'removed',
@@ -462,5 +466,36 @@ export class ProjectDataService {
         }
       }
     }
+  }
+
+  private async getFunctionAuthHeaders(): Promise<Record<string, string> | null> {
+    if (!this.supabase) {
+      return null;
+    }
+    const { data, error } = await this.supabase.auth.getSession();
+    const accessToken = data.session?.access_token;
+    if (error || !accessToken) {
+      console.warn(
+        '[Projects] Missing active Supabase session; skipping edge function call.',
+        error
+      );
+      return null;
+    }
+    const anonKey = this.supabaseConfig?.anonKey?.trim();
+    if (!anonKey) {
+      console.warn(
+        '[Projects] Missing Supabase anon key; skipping edge function call.'
+      );
+      return null;
+    }
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      // Edge gateway validates this project key first.
+      Authorization: `Bearer ${anonKey}`,
+      apikey: anonKey,
+      // Function body verifies end-user identity from session JWT.
+      'x-user-jwt': accessToken,
+    };
+    return headers;
   }
 }

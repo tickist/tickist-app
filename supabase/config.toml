@@ -370,6 +370,15 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
+[functions.task-reminder]
+verify_jwt = true
+
+[functions.project-update]
+verify_jwt = true
+
+[functions.routine-runner]
+verify_jwt = true
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
