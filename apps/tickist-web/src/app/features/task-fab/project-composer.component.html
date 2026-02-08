@@ -23,133 +23,144 @@
     </aside>
 
     <section class="composer__panel">
-      <form class="panel" *ngIf="activeTab() === 'general'" [formGroup]="form">
-        <label class="field">
-          <span class="field__label">Project name</span>
-          <input class="input" formControlName="name" placeholder="Wyjazd do Włoch" />
-        </label>
+      @if (activeTab() === 'general') {
+        <form class="panel" [formGroup]="form">
+          <label class="field">
+            <span class="field__label">Project name</span>
+            <input class="input" formControlName="name" placeholder="Wyjazd do Włoch" />
+          </label>
+          <label class="field">
+            <span class="field__label">Project type</span>
+            <select class="input" formControlName="projectType">
+              <option value="active">Active</option>
+              <option value="someday">Someday/maybe</option>
+              <option value="routine">Routine</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field__label">Active</span>
+            <select class="input" formControlName="isActive">
+              <option [value]="true">Active</option>
+              <option [value]="false">Archived</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field__label">Ancestor project</span>
+            <select class="input" formControlName="ancestorId">
+              <option value="">No parent</option>
+              @for (option of projectOptions(); track option) {
+                <option
+                  [value]="option.id"
+                  [disabled]="editingProject()?.id === option.id"
+                  >
+                  {{ option.name }}
+                </option>
+              }
+            </select>
+          </label>
+          <label class="field">
+            <span class="field__label">Description</span>
+            <textarea class="input" rows="5" formControlName="description" placeholder="Describe this list"></textarea>
+          </label>
+        </form>
+      }
 
-        <label class="field">
-          <span class="field__label">Project type</span>
-          <select class="input" formControlName="projectType">
-            <option value="active">Active</option>
-            <option value="someday">Someday/maybe</option>
-            <option value="routine">Routine</option>
-          </select>
-        </label>
-
-        <label class="field">
-          <span class="field__label">Active</span>
-          <select class="input" formControlName="isActive">
-            <option [value]="true">Active</option>
-            <option [value]="false">Archived</option>
-          </select>
-        </label>
-
-        <label class="field">
-          <span class="field__label">Ancestor project</span>
-          <select class="input" formControlName="ancestorId">
-            <option value="">No parent</option>
-            <option
-              *ngFor="let option of projectOptions()"
-              [value]="option.id"
-              [disabled]="editingProject()?.id === option.id"
-            >
-              {{ option.name }}
-            </option>
-          </select>
-        </label>
-
-        <label class="field">
-          <span class="field__label">Description</span>
-          <textarea class="input" rows="5" formControlName="description" placeholder="Describe this list"></textarea>
-        </label>
-      </form>
-
-      <form class="panel" *ngIf="activeTab() === 'extra'" [formGroup]="form">
-        <div class="field">
-          <span class="field__label">Default priority</span>
-          <div class="priority-group">
-            <button type="button" [class.active]="form.controls.defaultPriority.value === level"
-              *ngFor="let level of ['A','B','C']" (click)="form.controls.defaultPriority.setValue(level)">
-              {{ level }}
-            </button>
+      @if (activeTab() === 'extra') {
+        <form class="panel" [formGroup]="form">
+          <div class="field">
+            <span class="field__label">Default priority</span>
+            <div class="priority-group">
+              @for (level of ['A','B','C']; track level) {
+                <button type="button" [class.active]="form.controls.defaultPriority.value === level"
+                  (click)="form.controls.defaultPriority.setValue(level)">
+                  {{ level }}
+                </button>
+              }
+            </div>
           </div>
-        </div>
-
-        <div class="field">
-          <span class="field__label">Default due date</span>
-          <div class="complete-group">
-            <label>
-              <input type="radio" value="by" formControlName="defaultDueMode" />
-              by
-            </label>
-            <label>
-              <input type="radio" value="on" formControlName="defaultDueMode" />
-              on
-            </label>
+          <div class="field">
+            <span class="field__label">Default due date</span>
+            <div class="complete-group">
+              <label>
+                <input type="radio" value="by" formControlName="defaultDueMode" />
+                by
+              </label>
+              <label>
+                <input type="radio" value="on" formControlName="defaultDueMode" />
+                on
+              </label>
+            </div>
+            <input type="date" class="input" formControlName="defaultDueDate" />
           </div>
-          <input type="date" class="input" formControlName="defaultDueDate" />
-        </div>
-
-        <div class="field">
-          <span class="field__label">Default task view</span>
-          <div class="complete-group">
-            <label>
-              <input type="radio" value="extended" formControlName="taskView" />
-              extended
-            </label>
-            <label>
-              <input type="radio" value="simple" formControlName="taskView" />
-              simple
-            </label>
+          <div class="field">
+            <span class="field__label">Default task view</span>
+            <div class="complete-group">
+              <label>
+                <input type="radio" value="extended" formControlName="taskView" />
+                extended
+              </label>
+              <label>
+                <input type="radio" value="simple" formControlName="taskView" />
+                simple
+              </label>
+            </div>
           </div>
-        </div>
+          <label class="field inline">
+            <input type="checkbox" formControlName="dialogTime" />
+            <span class="field__label">Open time dialog when completing tasks</span>
+          </label>
+        </form>
+      }
 
-        <label class="field inline">
-          <input type="checkbox" formControlName="dialogTime" />
-          <span class="field__label">Open time dialog when completing tasks</span>
-        </label>
-      </form>
-
-      <div class="panel" *ngIf="activeTab() === 'sharing'">
-        <div class="field">
-          <span class="field__label">Invite teammates</span>
-          <div class="share-input">
-            <input class="input" placeholder="Email address" [value]="inviteInput()" (input)="inviteInput.set($any($event.target).value)" />
-            <button type="button" class="btn-secondary" (click)="addInvite()">Invite</button>
+      @if (activeTab() === 'sharing') {
+        <div class="panel">
+          <div class="field">
+            <span class="field__label">Invite teammates</span>
+            <div class="share-input">
+              <input class="input" placeholder="Email address" [value]="inviteInput()" (input)="inviteInput.set($any($event.target).value)" />
+              <button type="button" class="btn-secondary" (click)="addInvite()">Invite</button>
+            </div>
           </div>
+          @if (invites().length) {
+            <div class="invite-chips">
+              @for (email of invites(); track email) {
+                <span class="chip">
+                  {{ email }}
+                  <button type="button" (click)="removeInvite(email)">×</button>
+                </span>
+              }
+            </div>
+          }
+          <p class="text-sm text-base-content/60">
+            Invitations will be sent when sharing is available.
+          </p>
         </div>
-        <div class="invite-chips" *ngIf="invites().length">
-          <span class="chip" *ngFor="let email of invites()">
-            {{ email }}
-            <button type="button" (click)="removeInvite(email)">×</button>
-          </span>
-        </div>
-        <p class="text-sm text-base-content/60">
-          Invitations will be sent when sharing is available.
-        </p>
-      </div>
+      }
 
-      <form class="panel branding" *ngIf="activeTab() === 'branding'" [formGroup]="form">
-        <span class="field__label">Accent color</span>
-        <div class="color-row">
-          <button type="button" *ngFor="let swatch of colors" class="color-dot"
-            [style.background-color]="swatch"
-            [class.active]="form.controls.color.value === swatch"
-            (click)="chooseColor(swatch)">
-          </button>
-        </div>
-
-        <span class="field__label">Icon</span>
-        <div class="icon-grid">
-          <button type="button" *ngFor="let icon of iconOptions" class="icon-pill"
-            [class.active]="form.controls.icon.value === icon"
-            (click)="chooseIcon(icon)">
-            {{ icon }}
-          </button>
-        </div>
-      </form>
+      @if (activeTab() === 'branding') {
+        <form class="panel branding" [formGroup]="form">
+          <span class="field__label">Accent color</span>
+          <div class="color-row">
+            @for (swatch of colors; track swatch) {
+              <button type="button" class="color-dot"
+                [style.background-color]="swatch"
+                [class.active]="form.controls.color.value === swatch"
+                (click)="chooseColor(swatch)">
+              </button>
+            }
+          </div>
+          <span class="field__label">Icon</span>
+          <div class="icon-grid">
+            @for (icon of iconOptions; track icon) {
+              <button type="button" class="icon-pill"
+                [class.active]="form.controls.icon.value === icon"
+                (click)="chooseIcon(icon)">
+                {{ icon }}
+              </button>
+            }
+          </div>
+        </form>
+      }
     </section>
   </div>
 

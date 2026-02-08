@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import {
   Task,
   TaskDataService,
@@ -35,7 +35,7 @@ type RepeatFromMode = 'completion_date' | 'due_date';
 @Component({
   selector: 'app-task-card',
   standalone: true,
-  imports: [NgIf, NgFor, LinkifyPipe],
+  imports: [LinkifyPipe],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
 })

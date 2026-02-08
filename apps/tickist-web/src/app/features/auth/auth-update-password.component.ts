@@ -4,7 +4,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseAuthService } from './supabase-auth.service';
 import { ThemeService } from '../../core/ui/theme.service';
@@ -12,7 +12,7 @@ import { ThemeService } from '../../core/ui/theme.service';
 @Component({
   selector: 'app-auth-update-password',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './auth-update-password.component.html',
   styleUrl: './auth-update-password.component.css',
 })

@@ -9,7 +9,7 @@ import {
   Input,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
+
 import {
   Project,
   ProjectDataService,
@@ -22,7 +22,7 @@ type ProjectTab = 'general' | 'extra' | 'sharing' | 'branding';
 @Component({
   selector: 'app-project-composer',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor],
+  imports: [ReactiveFormsModule],
   templateUrl: './project-composer.component.html',
   styleUrl: './project-composer.component.css',
 })
@@ -137,7 +137,8 @@ export class ProjectComposerComponent {
   }
 
   async submit(): Promise<void> {
-    if (this.form.invalid || !this.user()) {
+    const user = this.user();
+    if (this.form.invalid || !user) {
       this.form.markAllAsTouched();
       return;
     }
@@ -165,7 +166,7 @@ export class ProjectComposerComponent {
         });
       } else {
         await this.projects.createProject({
-          ownerId: this.user()!.id,
+          ownerId: user.id,
           name: this.form.value.name ?? '',
           description: this.form.value.description ?? '',
           projectType: this.form.value.projectType ?? 'active',

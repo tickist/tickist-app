@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ToastService } from '../../core/ui/toast.service';
@@ -9,7 +9,7 @@ type SettingsTab = 'account' | 'password' | 'notifications';
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [NgIf, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })

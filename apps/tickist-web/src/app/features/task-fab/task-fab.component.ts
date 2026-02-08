@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { TaskComposerComponent } from './task-composer.component';
 import { ProjectComposerComponent } from './project-composer.component';
 import { ComposerModalService } from './composer-modal.service';
@@ -7,7 +7,7 @@ import { ComposerModalService } from './composer-modal.service';
 @Component({
   selector: 'app-task-fab',
   standalone: true,
-  imports: [NgIf, TaskComposerComponent, ProjectComposerComponent],
+  imports: [TaskComposerComponent, ProjectComposerComponent],
   templateUrl: './task-fab.component.html',
   styleUrl: './task-fab.component.css',
 })

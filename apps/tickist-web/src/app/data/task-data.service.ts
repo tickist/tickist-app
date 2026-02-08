@@ -1,5 +1,4 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 
 export interface Task {

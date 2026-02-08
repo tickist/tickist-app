@@ -6,7 +6,7 @@
   [attr.aria-pressed]="!isDarkTheme()"
   [attr.title]="themeButtonLabel()"
   (click)="toggleTheme()"
->
+  >
   <span class="theme-toggle-btn__icon" aria-hidden="true">
     {{ isDarkTheme() ? '☀️' : '🌙' }}
   </span>
@@ -32,15 +32,23 @@
       <input formControlName="email" type="email" class="input input-bordered w-full auth-input" placeholder="team@tickist.app" />
     </label>
     <button class="btn btn-primary auth-reset-submit" type="submit" [disabled]="isDisabled">
-      <span *ngIf="!isSubmitting()">Send link</span>
-      <span class="loading loading-spinner" *ngIf="isSubmitting()"></span>
-      <span *ngIf="isSubmitting()">Sending…</span>
+      @if (!isSubmitting()) {
+        <span>Send link</span>
+      }
+      @if (isSubmitting()) {
+        <span class="loading loading-spinner"></span>
+      }
+      @if (isSubmitting()) {
+        <span>Sending…</span>
+      }
     </button>
   </form>
 
-  <p class="text-sm text-base-content/70" *ngIf="message() as feedback" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
-    {{ feedback.text }}
-  </p>
+  @if (message(); as feedback) {
+    <p class="text-sm text-base-content/70" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
+      {{ feedback.text }}
+    </p>
+  }
 
   <footer class="text-center text-xs text-base-content/60">
     Remember your password? <a routerLink="/auth" class="link link-primary">Sign in</a>

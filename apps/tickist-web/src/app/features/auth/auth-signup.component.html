@@ -6,7 +6,7 @@
   [attr.aria-pressed]="!isDarkTheme()"
   [attr.title]="themeButtonLabel()"
   (click)="toggleTheme()"
->
+  >
   <span class="theme-toggle-btn__icon" aria-hidden="true">
     {{ isDarkTheme() ? '☀️' : '🌙' }}
   </span>
@@ -44,15 +44,23 @@
       <input formControlName="confirm" type="password" class="input input-bordered w-full auth-input" placeholder="••••••••" />
     </label>
     <button class="btn btn-primary text-primary-content" type="submit" [disabled]="isDisabled">
-      <span *ngIf="!isSubmitting()">Create account</span>
-      <span class="loading loading-spinner" *ngIf="isSubmitting()"></span>
-      <span *ngIf="isSubmitting()">Submitting…</span>
+      @if (!isSubmitting()) {
+        <span>Create account</span>
+      }
+      @if (isSubmitting()) {
+        <span class="loading loading-spinner"></span>
+      }
+      @if (isSubmitting()) {
+        <span>Submitting…</span>
+      }
     </button>
   </form>
 
-  <p class="text-sm text-base-content/70" *ngIf="message() as feedback" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
-    {{ feedback.text }}
-  </p>
+  @if (message(); as feedback) {
+    <p class="text-sm text-base-content/70" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
+      {{ feedback.text }}
+    </p>
+  }
 
   <footer class="text-center text-xs text-base-content/60">
     Already have an account? <a routerLink="/auth" class="link link-primary">Sign in</a>

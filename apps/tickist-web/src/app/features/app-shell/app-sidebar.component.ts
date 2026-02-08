@@ -1,6 +1,6 @@
 import { Component, HostListener, ElementRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import { TaskDataService } from '../../data/task-data.service';
@@ -30,10 +30,15 @@ type FutureItem = {
   count: number;
 };
 
+type ProjectTreeNode = {
+  project: Project;
+  children: ProjectTreeNode[];
+};
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, NgIf, NgFor, NgTemplateOutlet],
+  imports: [RouterLink, NgTemplateOutlet],
   templateUrl: './app-sidebar.component.html',
   styleUrl: './app-sidebar.component.css',
 })
@@ -379,24 +384,27 @@ export class AppSidebarComponent {
     }
   }
 
-  private buildTree(type: string) {
+  private buildTree(type: string): ProjectTreeNode[] {
     const all = this.projectList().filter(
       (project) =>
         project.projectType?.toLowerCase() === type && !project.isInbox
     );
-    const nodeMap = new Map<string, { project: Project; children: any[] }>();
+    const nodeMap = new Map<string, ProjectTreeNode>();
     all.forEach((project) =>
       nodeMap.set(project.id, { project, children: [] })
     );
-    const roots: { project: Project; children: any[] }[] = [];
+    const roots: ProjectTreeNode[] = [];
     for (const node of nodeMap.values()) {
-      if (node.project.ancestorId && nodeMap.has(node.project.ancestorId)) {
-        nodeMap.get(node.project.ancestorId)!.children.push(node);
+      const parentNode = node.project.ancestorId
+        ? nodeMap.get(node.project.ancestorId)
+        : undefined;
+      if (parentNode) {
+        parentNode.children.push(node);
       } else {
         roots.push(node);
       }
     }
-    const sortNodes = (nodes: { project: Project; children: any[] }[]) => {
+    const sortNodes = (nodes: ProjectTreeNode[]) => {
       nodes.sort((a, b) => a.project.name.localeCompare(b.project.name));
       nodes.forEach((n) => sortNodes(n.children));
     };

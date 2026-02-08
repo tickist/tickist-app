@@ -7,49 +7,59 @@
 
   <div class="rounded-2xl border border-white/10 bg-base-200/60 p-4">
     <ul class="space-y-2">
-      <li *ngFor="let group of groups()">
-        <button
-          type="button"
-          class="flex w-full items-center justify-between rounded-xl border border-white/10 bg-base-100/60 px-4 py-3 text-left focus:ring focus:ring-primary"
-          (click)="toggle(group.id)"
-        >
-          <div class="flex items-center gap-3">
-            <span class="h-3 w-3 rounded-full" [style.background-color]="group.color"></span>
-            <div>
-              <p class="font-semibold">{{ group.name }}</p>
-              <p class="text-xs text-base-content/60">{{ group.tasks.length }} tasks</p>
+      @for (group of groups(); track group) {
+        <li>
+          <button
+            type="button"
+            class="flex w-full items-center justify-between rounded-xl border border-white/10 bg-base-100/60 px-4 py-3 text-left focus:ring focus:ring-primary"
+            (click)="toggle(group.id)"
+            >
+            <div class="flex items-center gap-3">
+              <span class="h-3 w-3 rounded-full" [style.background-color]="group.color"></span>
+              <div>
+                <p class="font-semibold">{{ group.name }}</p>
+                <p class="text-xs text-base-content/60">{{ group.tasks.length }} tasks</p>
+              </div>
             </div>
-          </div>
-          <span class="text-xs text-base-content/60">
-            {{ isExpanded(group.id) ? 'Hide' : 'Show' }}
-          </span>
-        </button>
-        <ul
-          *ngIf="isExpanded(group.id)"
-          class="mt-2 space-y-2 rounded-xl border border-white/5 bg-base-100/40 px-4 py-3"
-        >
-          <li *ngFor="let task of group.tasks" class="flex items-center justify-between text-sm">
-            <div>
-              <p
-                class="font-medium linkified"
-                [class.line-through]="task.isDone"
-                [innerHTML]="task.name | linkify"
-              ></p>
-              <p class="text-xs text-base-content/60">
-                {{ task.priority || 'normal' }} ·
-                <span *ngIf="task.finishDate; else noDate">{{ task.finishDate | date: 'mediumDate' }}</span>
-                <ng-template #noDate>no date</ng-template>
-              </p>
-            </div>
-            <span class="badge" [class.badge-success]="task.isDone" [class.badge-outline]="!task.isDone">
-              {{ task.isDone ? 'done' : 'open' }}
+            <span class="text-xs text-base-content/60">
+              {{ isExpanded(group.id) ? 'Hide' : 'Show' }}
             </span>
-          </li>
-          <li *ngIf="!group.tasks.length" class="text-xs text-base-content/60">
-            No tasks yet.
-          </li>
-        </ul>
-      </li>
+          </button>
+          @if (isExpanded(group.id)) {
+            <ul
+              class="mt-2 space-y-2 rounded-xl border border-white/5 bg-base-100/40 px-4 py-3"
+              >
+              @for (task of group.tasks; track task) {
+                <li class="flex items-center justify-between text-sm">
+                  <div>
+                    <p
+                      class="font-medium linkified"
+                      [class.line-through]="task.isDone"
+                      [innerHTML]="task.name | linkify"
+                    ></p>
+                    <p class="text-xs text-base-content/60">
+                      {{ task.priority || 'normal' }} ·
+                      @if (task.finishDate) {
+                        <span>{{ task.finishDate | date: 'mediumDate' }}</span>
+                      } @else {
+                        no date
+                      }
+                    </p>
+                  </div>
+                  <span class="badge" [class.badge-success]="task.isDone" [class.badge-outline]="!task.isDone">
+                    {{ task.isDone ? 'done' : 'open' }}
+                  </span>
+                </li>
+              }
+              @if (!group.tasks.length) {
+                <li class="text-xs text-base-content/60">
+                  No tasks yet.
+                </li>
+              }
+            </ul>
+          }
+        </li>
+      }
     </ul>
   </div>
 </section>

@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { TaskDataService, type Task } from '../../data/task-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
-import { NgFor, NgIf, SlicePipe } from '@angular/common';
+import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TaskCardComponent } from '../app-shell/task-card.component';
@@ -12,7 +12,7 @@ import { AppViewStateService } from '../app-shell/app-view-state.service';
   standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
-  imports: [NgIf, NgFor, SlicePipe, RouterLink, TaskCardComponent],
+  imports: [SlicePipe, RouterLink, TaskCardComponent],
 })
 export class DashboardComponent {
   private readonly tasks = inject(TaskDataService);

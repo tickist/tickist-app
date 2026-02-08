@@ -6,14 +6,14 @@
   [attr.aria-pressed]="!isDarkTheme()"
   [attr.title]="themeButtonLabel()"
   (click)="toggleTheme()"
->
+  >
   <span class="theme-toggle-btn__icon" aria-hidden="true">
     {{ isDarkTheme() ? '☀️' : '🌙' }}
   </span>
 </button>
 <section
   class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl border border-white/10 bg-base-200/60 p-8 shadow-2xl shadow-black/30 backdrop-blur"
->
+  >
   <header class="space-y-2 text-center">
     <p class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60">
       Sign in
@@ -37,10 +37,12 @@
         class="input input-bordered w-full auth-input"
         placeholder="team@tickist.app"
         autocomplete="email"
-      />
-      <span class="label-text-alt text-error" *ngIf="form.controls.email.touched && form.controls.email.invalid">
-        Provide a valid email address
-      </span>
+        />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <span class="label-text-alt text-error">
+          Provide a valid email address
+        </span>
+      }
     </label>
 
     <label class="form-control w-full">
@@ -53,22 +55,32 @@
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"
         autocomplete="current-password"
-      />
-      <span class="label-text-alt text-error" *ngIf="form.controls.password.touched && form.controls.password.invalid">
-        Min. 6 characters
-      </span>
+        />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <span class="label-text-alt text-error">
+          Min. 6 characters
+        </span>
+      }
     </label>
 
     <button class="btn btn-primary auth-signin-submit" type="submit" [disabled]="isDisabled">
-      <span *ngIf="!isSubmitting()">Sign in</span>
-      <span class="loading loading-spinner" *ngIf="isSubmitting()"></span>
-      <span *ngIf="isSubmitting()">Signing in…</span>
+      @if (!isSubmitting()) {
+        <span>Sign in</span>
+      }
+      @if (isSubmitting()) {
+        <span class="loading loading-spinner"></span>
+      }
+      @if (isSubmitting()) {
+        <span>Signing in…</span>
+      }
     </button>
   </form>
 
-  <p class="text-sm text-base-content/70" *ngIf="message() as feedback" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
-    {{ feedback.text }}
-  </p>
+  @if (message(); as feedback) {
+    <p class="text-sm text-base-content/70" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
+      {{ feedback.text }}
+    </p>
+  }
 
   <footer class="text-center text-xs text-base-content/60 space-y-1">
     <div>

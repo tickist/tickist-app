@@ -18,7 +18,7 @@
           class="btn btn-xs"
           [class.btn-primary]="matchMode() === 'or'"
           (click)="setMatchMode('or')"
-        >
+          >
           OR
         </button>
         <button
@@ -26,7 +26,7 @@
           class="btn btn-xs"
           [class.btn-primary]="matchMode() === 'and'"
           (click)="setMatchMode('and')"
-        >
+          >
           AND
         </button>
       </div>
@@ -44,40 +44,52 @@
   </header>
 
   <section class="tag-cloud">
-    <button
-      type="button"
-      class="tag-pill"
-      *ngFor="let tag of tags()"
-      [class.active]="selectedTags().has(tag.id)"
-      (click)="toggleTag(tag.id)"
-    >
-      <span>{{ tag.name }}</span>
-      <span class="count">{{ tagCount(tag.id) }}</span>
-    </button>
-    <p class="text-sm text-base-content/60" *ngIf="!tags().length">No tags yet.</p>
+    @for (tag of tags(); track tag) {
+      <button
+        type="button"
+        class="tag-pill"
+        [class.active]="selectedTags().has(tag.id)"
+        (click)="toggleTag(tag.id)"
+        >
+        <span>{{ tag.name }}</span>
+        <span class="count">{{ tagCount(tag.id) }}</span>
+      </button>
+    }
+    @if (!tags().length) {
+      <p class="text-sm text-base-content/60">No tags yet.</p>
+    }
   </section>
 
   <section class="results">
     <p class="text-sm text-base-content/60 mb-2">
       Showing {{ visibleTasks().length }} of {{ filteredTasks().length }} tasks
-      <span *ngIf="selectedTags().size">
-        · Filter: {{ matchMode() | uppercase }} across {{ selectedTags().size }} tag(s)
-      </span>
-      <span *ngIf="showUntagged()"> · Only untagged</span>
-      <span *ngIf="includeCompleted()"> · Completed included</span>
+      @if (selectedTags().size) {
+        <span>
+          · Filter: {{ matchMode() | uppercase }} across {{ selectedTags().size }} tag(s)
+        </span>
+      }
+      @if (showUntagged()) {
+        <span> · Only untagged</span>
+      }
+      @if (includeCompleted()) {
+        <span> · Completed included</span>
+      }
     </p>
 
     <div class="space-y-3">
-      <app-task-card
-        *ngFor="let task of visibleTasks(); trackBy: trackTask"
-        [task]="task"
-        [project]="null"
-        viewMode="extended"
-      ></app-task-card>
+      @for (task of visibleTasks(); track trackTask($index, task)) {
+        <app-task-card
+          [task]="task"
+          [project]="null"
+          viewMode="extended"
+        ></app-task-card>
+      }
     </div>
 
-    <div class="mt-4 flex justify-center" *ngIf="visibleTasks().length < filteredTasks().length">
-      <button type="button" class="btn btn-outline btn-sm" (click)="loadMore()">Load more</button>
-    </div>
+    @if (visibleTasks().length < filteredTasks().length) {
+      <div class="mt-4 flex justify-center">
+        <button type="button" class="btn btn-outline btn-sm" (click)="loadMore()">Load more</button>
+      </div>
+    }
   </section>
 </section>

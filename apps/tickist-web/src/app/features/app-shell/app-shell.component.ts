@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
-import { NgFor, NgIf } from '@angular/common';
+
 import { Task, TaskDataService, TaskCreateInput } from '../../data/task-data.service';
 import {
   FormBuilder,
@@ -19,7 +19,7 @@ import { ComposerModalService } from '../task-fab/composer-modal.service';
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [NgIf, NgFor, ReactiveFormsModule, TaskCardComponent, ProjectHeaderComponent],
+  imports: [ReactiveFormsModule, TaskCardComponent, ProjectHeaderComponent],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.css',
 })

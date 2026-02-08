@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
-import { NgFor, NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { NotificationDataService } from '../../data/notification-data.service';
@@ -17,13 +17,11 @@ import { ThemeService } from '../../core/ui/theme.service';
   imports: [
     RouterOutlet,
     RouterLink,
-    NgIf,
-    NgFor,
     DatePipe,
     AppSidebarComponent,
     TaskFabComponent,
-    ToastContainerComponent,
-  ],
+    ToastContainerComponent
+],
   templateUrl: './app-viewport.component.html',
   styleUrl: './app-viewport.component.css',
 })

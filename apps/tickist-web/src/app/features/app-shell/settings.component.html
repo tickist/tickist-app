@@ -5,7 +5,7 @@
       class="settings__tab"
       [class.active]="activeTab() === 'account'"
       (click)="select('account')"
-    >
+      >
       🧑 Account
     </button>
     <button
@@ -13,7 +13,7 @@
       class="settings__tab"
       [class.active]="activeTab() === 'password'"
       (click)="select('password')"
-    >
+      >
       🔒 Password
     </button>
     <button
@@ -21,66 +21,70 @@
       class="settings__tab"
       [class.active]="activeTab() === 'notifications'"
       (click)="select('notifications')"
-    >
+      >
       🔔 Notifications
     </button>
   </aside>
 
-  <section class="settings__panel" *ngIf="activeTab() === 'account'">
-    <header class="panel__header">
-      <div>
-        <p class="eyebrow">Profile</p>
-        <h2>{{ user()?.user_metadata?.full_name || user()?.email }}</h2>
+  @if (activeTab() === 'account') {
+    <section class="settings__panel">
+      <header class="panel__header">
+        <div>
+          <p class="eyebrow">Profile</p>
+          <h2>{{ user()?.user_metadata?.full_name || user()?.email }}</h2>
+        </div>
+      </header>
+      <form class="panel__form" [formGroup]="accountForm">
+        <label class="field">
+          <span class="field__label">Display name</span>
+          <input
+            class="input input-bordered"
+            placeholder="Your name"
+            formControlName="displayName"
+            />
+          @if (accountForm.controls.displayName.touched && accountForm.controls.displayName.invalid) {
+            <small class="field__error">
+              Name must be at least 2 characters.
+            </small>
+          }
+        </label>
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input class="input input-bordered" formControlName="email" />
+          <small class="field__hint text-warning">You cannot change your email in this build.</small>
+        </label>
+        <div class="panel__actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="updating()"
+            (click)="saveAccount()"
+            >
+            Save changes
+          </button>
+        </div>
+      </form>
+      <div class="danger-card">
+        <div>
+          <p class="text-sm font-semibold text-error">Delete account</p>
+          <p class="text-xs text-base-content/70">
+            Deleting your account is permanent. All data will be wiped immediately.
+          </p>
+        </div>
+        <button type="button" class="btn btn-error btn-sm" (click)="deleteAccount()">Delete</button>
       </div>
-    </header>
+    </section>
+  }
 
-    <form class="panel__form" [formGroup]="accountForm">
-      <label class="field">
-        <span class="field__label">Display name</span>
-        <input
-          class="input input-bordered"
-          placeholder="Your name"
-          formControlName="displayName"
-        />
-        <small class="field__error" *ngIf="accountForm.controls.displayName.touched && accountForm.controls.displayName.invalid">
-          Name must be at least 2 characters.
-        </small>
-      </label>
+  @if (activeTab() === 'password') {
+    <section class="settings__panel placeholder">
+      <p>Coming soon: password reset and recovery options.</p>
+    </section>
+  }
 
-      <label class="field">
-        <span class="field__label">Email</span>
-        <input class="input input-bordered" formControlName="email" />
-        <small class="field__hint text-warning">You cannot change your email in this build.</small>
-      </label>
-
-      <div class="panel__actions">
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="updating()"
-          (click)="saveAccount()"
-        >
-          Save changes
-        </button>
-      </div>
-    </form>
-
-    <div class="danger-card">
-      <div>
-        <p class="text-sm font-semibold text-error">Delete account</p>
-        <p class="text-xs text-base-content/70">
-          Deleting your account is permanent. All data will be wiped immediately.
-        </p>
-      </div>
-      <button type="button" class="btn btn-error btn-sm" (click)="deleteAccount()">Delete</button>
-    </div>
-  </section>
-
-  <section class="settings__panel placeholder" *ngIf="activeTab() === 'password'">
-    <p>Coming soon: password reset and recovery options.</p>
-  </section>
-
-  <section class="settings__panel placeholder" *ngIf="activeTab() === 'notifications'">
-    <p>Coming soon: notification preferences.</p>
-  </section>
+  @if (activeTab() === 'notifications') {
+    <section class="settings__panel placeholder">
+      <p>Coming soon: notification preferences.</p>
+    </section>
+  }
 </section>

@@ -5,14 +5,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { SupabaseAuthService } from './supabase-auth.service';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
 
 @Component({
   selector: 'app-auth-shell',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './auth-shell.component.html',
   styleUrl: './auth-shell.component.css',
 })

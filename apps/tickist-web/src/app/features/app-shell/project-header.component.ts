@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import { Project } from '../../data/project-data.service';
 
 type SortOption =
@@ -17,7 +17,7 @@ type FilterOption = 'all' | 'done' | 'not-done';
 @Component({
   selector: 'app-project-header',
   standalone: true,
-  imports: [NgIf, NgFor],
+  imports: [],
   templateUrl: './project-header.component.html',
   styleUrl: './project-header.component.css',
 })

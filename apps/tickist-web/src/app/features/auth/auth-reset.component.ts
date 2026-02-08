@@ -5,14 +5,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { SupabaseAuthService } from './supabase-auth.service';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
 
 @Component({
   selector: 'app-auth-reset',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './auth-reset.component.html',
   styleUrl: './auth-reset.component.css',
 })

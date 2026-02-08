@@ -16,6 +16,13 @@ Work inside `apps/tickist-web/`. Angular sources live in `apps/tickist-web/src/a
 
 Angular 20 standalone only—no NgModules. Prefer signals first; bridge to RxJS when streams are required. Use 2-space indent, PascalCase for components/services, camelCase for variables, snake_case for DB columns. Styling is Tailwind + DaisyUI; favor utility classes and `@apply` for reuse. Keep the Tickist dark palette; add light themes via `tailwind.config.ts` when approved. Forms and modals should stay keyboard-accessible and responsive down to mobile.
 
+### Lint Guardrails (must follow)
+
+- In Angular templates use built-in control flow only: `@if`, `@for`, `@switch`. Do not introduce `*ngIf`, `*ngFor`, or `*ngSwitch`.
+- Do not add `(click)` handlers to non-interactive elements unless they are keyboard-accessible too (`tabindex="0"` + Enter/Space handlers). Prefer semantic interactive elements (`button`) when possible.
+- Avoid `any` and non-null assertions (`!`) in TypeScript. Use explicit interfaces/types and guard values before use.
+- Remove unused imports/symbols immediately; keep `nx lint tickist-web` clean before finishing work.
+
 ## Testing Guidelines
 
 Cover services/guards/components with Vitest; stub Supabase via the official client helpers, not ad-hoc mocks. Avoid fake UI data—seed through `supabase/seed.sql` or fixtures. Playwright should exercise critical journeys (sign-up/sign-in/reset, project/task CRUD, tag filters, dashboard). Add regression tests when changing routing, auth, or data contracts.

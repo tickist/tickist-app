@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { NgFor, NgIf, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { TagDataService } from '../../data/tag-data.service';
 import { TaskDataService, Task } from '../../data/task-data.service';
 import { TaskCardComponent } from '../app-shell/task-card.component';
@@ -8,7 +8,7 @@ import { AppViewStateService } from '../app-shell/app-view-state.service';
 @Component({
   selector: 'app-tag-view',
   standalone: true,
-  imports: [NgIf, NgFor, UpperCasePipe, TaskCardComponent],
+  imports: [UpperCasePipe, TaskCardComponent],
   templateUrl: './tag-view.component.html',
   styleUrl: './tag-view.component.css',
 })

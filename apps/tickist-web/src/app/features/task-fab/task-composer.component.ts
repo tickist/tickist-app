@@ -15,7 +15,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+
 import {
   Task,
   TaskCreateInput,
@@ -62,7 +62,7 @@ type TaskFormDefaults = {
 @Component({
   selector: 'app-task-composer',
   standalone: true,
-  imports: [NgIf, NgFor, NgSwitch, NgSwitchCase, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './task-composer.component.html',
   styleUrl: './task-composer.component.css',
 })
