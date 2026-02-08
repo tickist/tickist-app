@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       E2E_ENV_FILE: .local_env.e2e
+      E2E_DB_RESET_ATTEMPTS: '5'
     steps:
       - uses: actions/checkout@v4
         with:

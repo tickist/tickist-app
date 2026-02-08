@@ -4,6 +4,8 @@ import { spawn } from 'node:child_process';
 import { workspaceRoot } from '@nx/devkit';
 
 type ResetPhase = 'setup' | 'teardown';
+const DEFAULT_RESET_ATTEMPTS = 3;
+const RETRY_BASE_DELAY_MS = 5000;
 
 export async function resetDatabase(phase: ResetPhase): Promise<void> {
   const envFile = resolveEnvFile();
@@ -35,7 +37,61 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
     );
   }
 
-  await runCommand('npx', ['supabase', 'db', 'reset', '--db-url', dbUrl]);
+  await resetDatabaseWithRetry(dbUrl, phase);
+}
+
+async function resetDatabaseWithRetry(
+  dbUrl: string,
+  phase: ResetPhase
+): Promise<void> {
+  const attempts = resolveResetAttempts();
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      await runCommand('npx', ['supabase', 'db', 'reset', '--db-url', dbUrl]);
+      return;
+    } catch (error) {
+      lastError = toError(error);
+      if (attempt >= attempts) {
+        break;
+      }
+
+      const delayMs = RETRY_BASE_DELAY_MS * attempt;
+      console.warn(
+        `[e2e-db] supabase db reset failed during ${phase} (attempt ${attempt}/${attempts}): ${lastError.message}`
+      );
+      console.warn(`[e2e-db] retrying in ${delayMs}ms...`);
+      await wait(delayMs);
+    }
+  }
+
+  throw new Error(
+    `[e2e-db] Failed to reset database during ${phase} after ${attempts} attempts. Last error: ${
+      lastError?.message ?? 'Unknown error'
+    }`
+  );
+}
+
+function resolveResetAttempts(): number {
+  const fromEnv = Number(process.env['E2E_DB_RESET_ATTEMPTS'] ?? '');
+  if (Number.isInteger(fromEnv) && fromEnv > 0) {
+    return fromEnv;
+  }
+  return DEFAULT_RESET_ATTEMPTS;
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolvePromise) => {
+    setTimeout(resolvePromise, ms);
+  });
+}
+
+function toError(error: unknown): Error {
+  if (error instanceof Error) {
+    return error;
+  }
+  return new Error(String(error));
 }
 
 function areSameDatabaseUrl(left: string, right: string): boolean {
