@@ -66,7 +66,7 @@ jobs:
           supabase status -o env \
             --override-name api.url=NG_APP_SUPABASE_URL \
             --override-name api.anon_key=NG_APP_SUPABASE_ANON_KEY \
-            --override-name db.url=SUPABASE_DB_URL \
+            --override-name db.url=SUPABASE_E2E_DB_URL \
             > "$E2E_ENV_FILE"
 
       - name: Install Playwright browsers

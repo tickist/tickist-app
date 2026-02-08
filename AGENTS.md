@@ -9,7 +9,7 @@ Work inside `apps/tickist-web/`. Angular sources live in `apps/tickist-web/src/a
 - `npm run start` (or `npx nx serve tickist-web`) – dev server on 4200; auto-loads `.local_env` so NG*APP*\* and DB URLs are set.
 - `npm run build` / `npx nx build tickist-web` – Vite build to `dist/tickist-web`.
 - `npm run test` / `npx nx test tickist-web` – Vitest via `@analogjs/vitest-angular`.
-- `npx nx e2e tickist-web` – Playwright UI flows (auth, dashboard, tasks).
+- `npx nx e2e tickist-web-e2e` – Playwright UI flows (auth, dashboard, tasks). Use `.local_env.e2e` or `.env.e2e` with dedicated `SUPABASE_E2E_DB_URL`.
 - Supabase: `db:push:*`, `db:pull:*`, `db:types:*`, `db:reset:*`, plus `supabase:start|stop|status`; always target `.local_env` (local) or `.env` (remote) to avoid WSL collisions.
 
 ## Coding Style & Naming Conventions
@@ -26,7 +26,7 @@ Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits ar
 
 ## Configuration & Supabase
 
-Copy `.env.example` to `.env` (remote) and `.local_env` (local). Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_ANON_KEY`, `SUPABASE_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY` (for Day-0 migration importer). Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
+Copy `.env.example` to `.env` (remote) and `.local_env` (local). For E2E, use a separate `.local_env.e2e` or `.env.e2e` file. Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_ANON_KEY`, `SUPABASE_DB_URL`, `SUPABASE_E2E_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY` (for Day-0 migration importer). E2E DB URL must point to a dedicated test database/branch and must not reuse local dev or remote shared DB URLs. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
