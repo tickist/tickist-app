@@ -60,7 +60,6 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'auth',
-    canActivate: [redirectIfAuthenticatedGuard],
     loadChildren: () =>
       import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },

@@ -19,6 +19,27 @@ psql "$YOUR_SUPABASE_DB_URL" -f supabase/migrations/0001_init_schema.sql
 
 Keep future schema changes as new numbered files in `supabase/migrations/`.
 
+## Firebase Day-0 import
+
+Use the one-time importer from `scripts/firebase-migration/import.mjs`.
+
+```bash
+# No writes, generates reports only
+npm run migration:firebase:dry-run:local
+
+# Writes to remote Supabase using service role key
+npm run migration:firebase:import:remote
+```
+
+Required env vars:
+
+```
+NG_APP_SUPABASE_URL=https://<your-project>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=...
+```
+
+Reports are written to `reports/firebase-migration/<timestamp>/`.
+
 ## Edge Functions
 
 - `functions/task-reminder/index.ts`: logs a notification whenever a task event occurs. This is the Supabase replacement for the Firebase function that wrote into `notifications`.

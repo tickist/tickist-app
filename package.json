@@ -18,7 +18,11 @@
     "supabase:init": "npx supabase init",
     "supabase:start": "npx supabase start",
     "supabase:stop": "npx supabase stop",
-    "supabase:status": "npx supabase status"
+    "supabase:status": "npx supabase status",
+    "migration:firebase:dry-run:local": "dotenv -e .local_env -- node scripts/firebase-migration/import.mjs --source ./backup_from_firebase --target local --scope active --dry-run",
+    "migration:firebase:import:local": "dotenv -e .local_env -- node scripts/firebase-migration/import.mjs --source ./backup_from_firebase --target local --scope active",
+    "migration:firebase:import:remote": "dotenv -e .env -- node scripts/firebase-migration/import.mjs --source ./backup_from_firebase --target remote --scope active",
+    "migration:firebase:import:remote:with-resets": "dotenv -e .env -- node scripts/firebase-migration/import.mjs --source ./backup_from_firebase --target remote --scope active --send-reset-links"
   },
   "private": true,
   "dependencies": {

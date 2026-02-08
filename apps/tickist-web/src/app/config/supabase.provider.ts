@@ -45,7 +45,7 @@ export function provideSupabase(config: SupabaseConfig): Provider[] {
         return createClient(url, anonKey, {
           auth: {
             persistSession: true,
-            detectSessionInUrl: false,
+            detectSessionInUrl: true,
           },
           global: {
             headers: config.functionsUrl

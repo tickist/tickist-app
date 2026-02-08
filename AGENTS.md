@@ -26,7 +26,7 @@ Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits ar
 
 ## Configuration & Supabase
 
-Copy `.env.example` to `.env` (remote) and `.local_env` (local). Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_ANON_KEY`, `SUPABASE_DB_URL`, `SUPABASE_REMOTE_DB_URL`. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
+Copy `.env.example` to `.env` (remote) and `.local_env` (local). Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_ANON_KEY`, `SUPABASE_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY` (for Day-0 migration importer). Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

@@ -45,7 +45,18 @@ export class SupabaseAuthService {
 
   async sendPasswordReset(email: string): Promise<void> {
     const client = this.ensureClient();
-    const { error } = await client.auth.resetPasswordForEmail(email);
+    const redirectTo = this.getPasswordResetRedirectTo();
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
+    if (error) {
+      throw error;
+    }
+  }
+
+  async updatePassword(password: string): Promise<void> {
+    const client = this.ensureClient();
+    const { error } = await client.auth.updateUser({ password });
     if (error) {
       throw error;
     }
@@ -53,5 +64,12 @@ export class SupabaseAuthService {
 
   async signOut(): Promise<void> {
     await this.session.signOut();
+  }
+
+  private getPasswordResetRedirectTo(): string {
+    if (typeof window === 'undefined') {
+      return 'http://localhost:4200/auth/update-password';
+    }
+    return `${window.location.origin}/auth/update-password`;
   }
 }

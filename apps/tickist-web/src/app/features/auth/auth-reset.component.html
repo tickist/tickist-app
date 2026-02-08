@@ -31,7 +31,7 @@
       </span>
       <input formControlName="email" type="email" class="input input-bordered w-full auth-input" placeholder="team@tickist.app" />
     </label>
-    <button class="btn btn-primary text-primary-content" type="submit" [disabled]="isDisabled">
+    <button class="btn btn-primary auth-reset-submit" type="submit" [disabled]="isDisabled">
       <span *ngIf="!isSubmitting()">Send link</span>
       <span class="loading loading-spinner" *ngIf="isSubmitting()"></span>
       <span *ngIf="isSubmitting()">Sending…</span>
