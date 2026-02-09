@@ -6,6 +6,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
 export default defineConfig(({ mode }) => {
+  const isTestMode = mode === 'test';
   const loaded = loadEnv(mode, __dirname, '');
   const mergedEnv = {
     NG_APP_SUPABASE_URL:
@@ -25,7 +26,10 @@ export default defineConfig(({ mode }) => {
     cacheDir: '../../node_modules/.vite/tickist-web',
   plugins: [
     angular({
-      tsconfig: resolve(__dirname, 'tsconfig.app.json'),
+      tsconfig: resolve(
+        __dirname,
+        isTestMode ? 'tsconfig.spec.json' : 'tsconfig.app.json'
+      ),
     }),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['../../*.md']),
