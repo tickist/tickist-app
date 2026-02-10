@@ -392,8 +392,8 @@ export class TaskDataService {
     }
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      // Edge gateway validates this project key first.
-      Authorization: `Bearer ${anonKey}`,
+      // Authorization must carry a user session JWT for verify_jwt=true functions.
+      Authorization: `Bearer ${accessToken}`,
       apikey: anonKey,
       // Function body verifies end-user identity from session JWT.
       'x-user-jwt': accessToken,
