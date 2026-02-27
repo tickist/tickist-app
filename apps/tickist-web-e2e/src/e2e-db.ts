@@ -43,19 +43,25 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
 export async function ensureE2EAuthUser(): Promise<void> {
   const envFile = resolveEnvFile();
   const supabaseUrl =
-    process.env['NG_APP_SUPABASE_URL'] ??
-    (envFile ? readEnvValue(envFile, 'NG_APP_SUPABASE_URL') : null);
-  const publishableKey =
-    process.env['NG_APP_SUPABASE_PUBLISHABLE_KEY'] ??
-    process.env['NG_APP_SUPABASE_ANON_KEY'] ??
-    (envFile
-      ? readEnvValue(envFile, 'NG_APP_SUPABASE_PUBLISHABLE_KEY') ??
-        readEnvValue(envFile, 'NG_APP_SUPABASE_ANON_KEY')
-      : null);
+    readFirstAvailableEnvValue(
+      ['NG_APP_SUPABASE_URL', 'SUPABASE_URL', 'API_URL'],
+      envFile
+    ) ?? 'http://127.0.0.1:54321';
+  const publishableKey = readFirstAvailableEnvValue(
+    [
+      'NG_APP_SUPABASE_PUBLISHABLE_KEY',
+      'NG_APP_SUPABASE_ANON_KEY',
+      'SUPABASE_PUBLISHABLE_KEY',
+      'SUPABASE_ANON_KEY',
+      'PUBLISHABLE_KEY',
+      'ANON_KEY',
+    ],
+    envFile
+  );
 
-  if (!supabaseUrl || !publishableKey) {
+  if (!publishableKey) {
     throw new Error(
-      'Missing NG_APP_SUPABASE_URL or publishable key for e2e auth bootstrap.'
+      `Missing Supabase publishable/anon key for e2e auth bootstrap. Checked keys: NG_APP_SUPABASE_PUBLISHABLE_KEY, NG_APP_SUPABASE_ANON_KEY, SUPABASE_PUBLISHABLE_KEY, SUPABASE_ANON_KEY, PUBLISHABLE_KEY, ANON_KEY${envFile ? ` (env file: ${envFile})` : ''}.`
     );
   }
 
@@ -223,6 +229,31 @@ function resolveEnvFile(): string | null {
   for (const file of candidates) {
     if (existsSync(resolve(workspaceRoot, file))) {
       return file;
+    }
+  }
+
+  return null;
+}
+
+function readFirstAvailableEnvValue(
+  keys: readonly string[],
+  envFile: string | null
+): string | null {
+  for (const key of keys) {
+    const fromProcess = process.env[key];
+    if (fromProcess) {
+      return fromProcess;
+    }
+  }
+
+  if (!envFile) {
+    return null;
+  }
+
+  for (const key of keys) {
+    const fromFile = readEnvValue(envFile, key);
+    if (fromFile) {
+      return fromFile;
     }
   }
 

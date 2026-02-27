@@ -64,11 +64,41 @@ jobs:
 
       - name: Export local Supabase credentials
         run: |
-          supabase status -o env \
-            --override-name api.url=NG_APP_SUPABASE_URL \
-            --override-name api.anon_key=NG_APP_SUPABASE_ANON_KEY \
-            --override-name db.url=SUPABASE_E2E_DB_URL \
-            > "$E2E_ENV_FILE"
+          supabase status -o env > "$E2E_ENV_FILE"
+
+          get_env_value() {
+            local key="$1"
+            grep -E "^${key}=" "$E2E_ENV_FILE" | tail -n1 | cut -d= -f2- || true
+          }
+
+          ng_supabase_url="$(get_env_value NG_APP_SUPABASE_URL)"
+          if [ -z "$ng_supabase_url" ]; then ng_supabase_url="$(get_env_value API_URL)"; fi
+          if [ -z "$ng_supabase_url" ]; then ng_supabase_url="$(get_env_value SUPABASE_URL)"; fi
+
+          ng_supabase_key="$(get_env_value NG_APP_SUPABASE_PUBLISHABLE_KEY)"
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value NG_APP_SUPABASE_ANON_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value PUBLISHABLE_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value ANON_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value SUPABASE_PUBLISHABLE_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value SUPABASE_ANON_KEY)"; fi
+
+          e2e_db_url="$(get_env_value SUPABASE_E2E_DB_URL)"
+          if [ -z "$e2e_db_url" ]; then e2e_db_url="$(get_env_value DB_URL)"; fi
+          if [ -z "$e2e_db_url" ]; then e2e_db_url="$(get_env_value SUPABASE_DB_URL)"; fi
+
+          {
+            echo "NG_APP_SUPABASE_URL=$ng_supabase_url"
+            echo "NG_APP_SUPABASE_PUBLISHABLE_KEY=$ng_supabase_key"
+            echo "NG_APP_SUPABASE_ANON_KEY=$ng_supabase_key"
+            echo "SUPABASE_E2E_DB_URL=$e2e_db_url"
+          } >> "$E2E_ENV_FILE"
+
+          if [ -z "$ng_supabase_url" ] || [ -z "$ng_supabase_key" ] || [ -z "$e2e_db_url" ]; then
+            echo "Error: Missing required Supabase env vars in $E2E_ENV_FILE" >&2
+            echo "Available keys:" >&2
+            cut -d= -f1 "$E2E_ENV_FILE" | sort -u >&2
+            exit 1
+          fi
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
