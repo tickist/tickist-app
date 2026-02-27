@@ -23,7 +23,7 @@ export class SupabaseAuthService {
   private ensureClient() {
     if (!this.supabase) {
       throw new Error(
-        'Supabase is not configured. Provide NG_APP_SUPABASE_URL and NG_APP_SUPABASE_ANON_KEY.'
+        'Supabase is not configured. Provide NG_APP_SUPABASE_URL and NG_APP_SUPABASE_PUBLISHABLE_KEY.'
       );
     }
     return this.supabase;
@@ -60,6 +60,15 @@ export class SupabaseAuthService {
     if (error) {
       throw error;
     }
+  }
+
+  async updateProfileMetadata(patch: Record<string, unknown>): Promise<void> {
+    const client = this.ensureClient();
+    const { error } = await client.auth.updateUser({ data: patch });
+    if (error) {
+      throw error;
+    }
+    await this.session.refreshUser();
   }
 
   async signOut(): Promise<void> {

@@ -383,10 +383,12 @@ export class TaskDataService {
       );
       return null;
     }
-    const anonKey = this.supabaseConfig?.anonKey?.trim();
-    if (!anonKey) {
+    const publishableKey = (
+      this.supabaseConfig?.publishableKey ?? this.supabaseConfig?.anonKey ?? ''
+    ).trim();
+    if (!publishableKey) {
       console.warn(
-        '[Tasks] Missing Supabase anon key; skipping edge function call.'
+        '[Tasks] Missing Supabase publishable key; skipping edge function call.'
       );
       return null;
     }
@@ -394,7 +396,7 @@ export class TaskDataService {
       'Content-Type': 'application/json',
       // Authorization must carry a user session JWT for verify_jwt=true functions.
       Authorization: `Bearer ${accessToken}`,
-      apikey: anonKey,
+      apikey: publishableKey,
       // Function body verifies end-user identity from session JWT.
       'x-user-jwt': accessToken,
     };

@@ -58,6 +58,18 @@ export class SupabaseSessionService {
     this.clearSession();
   }
 
+  async refreshUser(): Promise<void> {
+    if (!this.supabase || !this.isBrowser) {
+      return;
+    }
+    const { data, error } = await this.supabase.auth.getUser();
+    if (error) {
+      throw error;
+    }
+    this.currentUser.set(data.user ?? null);
+    this.markReady();
+  }
+
   client() {
     return this.supabase ?? null;
   }

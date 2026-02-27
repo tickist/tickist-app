@@ -137,7 +137,7 @@ export class ProjectDataService {
         name: row.name,
         description: row.description ?? '',
         color: row.color ?? '#394264',
-        icon: row.icon ?? 'tick',
+        icon: row.icon ?? 'folder',
         isActive: row.is_active,
         isInbox: row.is_inbox,
         projectType: row.project_type ?? 'active',
@@ -169,7 +169,7 @@ export class ProjectDataService {
         name: rest.name,
         description: rest.description ?? '',
         color: rest.color ?? '#394264',
-        icon: rest.icon ?? 'tick',
+        icon: rest.icon ?? 'folder',
         is_inbox: rest.isInbox ?? false,
         project_type: rest.projectType ?? 'active',
         is_active: rest.isActive ?? true,
@@ -346,7 +346,7 @@ export class ProjectDataService {
       name: row.name,
       description: row.description ?? '',
       color: row.color ?? '#394264',
-      icon: row.icon ?? 'tick',
+      icon: row.icon ?? 'folder',
       isActive: row.is_active,
       isInbox: row.is_inbox,
       projectType: row.project_type ?? 'active',
@@ -481,10 +481,12 @@ export class ProjectDataService {
       );
       return null;
     }
-    const anonKey = this.supabaseConfig?.anonKey?.trim();
-    if (!anonKey) {
+    const publishableKey = (
+      this.supabaseConfig?.publishableKey ?? this.supabaseConfig?.anonKey ?? ''
+    ).trim();
+    if (!publishableKey) {
       console.warn(
-        '[Projects] Missing Supabase anon key; skipping edge function call.'
+        '[Projects] Missing Supabase publishable key; skipping edge function call.'
       );
       return null;
     }
@@ -492,7 +494,7 @@ export class ProjectDataService {
       'Content-Type': 'application/json',
       // Authorization must carry a user session JWT for verify_jwt=true functions.
       Authorization: `Bearer ${accessToken}`,
-      apikey: anonKey,
+      apikey: publishableKey,
       // Function body verifies end-user identity from session JWT.
       'x-user-jwt': accessToken,
     };
