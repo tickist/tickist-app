@@ -1,28 +1,13 @@
 import { expect, type Page, test, type TestInfo } from '@playwright/test';
 
-async function waitForAuthOrApp(page: Page): Promise<'auth' | 'app'> {
-  await expect
-    .poll(
-      () => {
-        const { pathname } = new URL(page.url());
-        return pathname;
-      },
-      { timeout: 15000 }
-    )
-    .toMatch(/^\/(?:app(?:\/|$)|auth(?:\/|$))/);
-
-  const { pathname } = new URL(page.url());
-  return pathname.startsWith('/app') ? 'app' : 'auth';
-}
-
 function uniqueSuffix(testInfo: TestInfo): string {
   const randomPart = Math.random().toString(36).slice(2, 8);
   return `${testInfo.project.name}-${Date.now()}-${randomPart}`;
 }
 
 async function ensureAuthenticated(page: Page): Promise<void> {
-  const email = 'e2e-shared-user@tickist.dev';
-  const password = 'Test1234!';
+  const email = process.env['E2E_AUTH_EMAIL'] ?? 'e2e-shared-user@tickist.dev';
+  const password = process.env['E2E_AUTH_PASSWORD'] ?? 'Test1234!';
 
   await page.goto('/');
 
@@ -36,23 +21,6 @@ async function ensureAuthenticated(page: Page): Promise<void> {
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
-
-  const postSigninLocation = await waitForAuthOrApp(page);
-  if (postSigninLocation === 'auth') {
-    await page.goto('/auth/signup');
-    await page.getByLabel('Email').fill(email);
-    await page.getByLabel('Password', { exact: true }).fill(password);
-    await page.getByLabel('Confirm password', { exact: true }).fill(password);
-    await page.getByRole('button', { name: 'Create account' }).click();
-
-    const postSignupLocation = await waitForAuthOrApp(page);
-    if (postSignupLocation === 'auth') {
-      await page.goto('/auth');
-      await page.getByLabel('Email').fill(email);
-      await page.getByLabel('Password', { exact: true }).fill(password);
-      await page.getByRole('button', { name: 'Sign in' }).click();
-    }
-  }
 
   await expect(page).toHaveURL(/\/app(?:\/|$)/, { timeout: 15000 });
   await expect(page.getByPlaceholder(/Search tasks/)).toBeVisible();

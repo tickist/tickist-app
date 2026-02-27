@@ -40,6 +40,71 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
   await resetDatabaseWithRetry(dbUrl, phase);
 }
 
+export async function ensureE2EAuthUser(): Promise<void> {
+  const envFile = resolveEnvFile();
+  const supabaseUrl =
+    process.env['NG_APP_SUPABASE_URL'] ??
+    (envFile ? readEnvValue(envFile, 'NG_APP_SUPABASE_URL') : null);
+  const publishableKey =
+    process.env['NG_APP_SUPABASE_PUBLISHABLE_KEY'] ??
+    process.env['NG_APP_SUPABASE_ANON_KEY'] ??
+    (envFile
+      ? readEnvValue(envFile, 'NG_APP_SUPABASE_PUBLISHABLE_KEY') ??
+        readEnvValue(envFile, 'NG_APP_SUPABASE_ANON_KEY')
+      : null);
+
+  if (!supabaseUrl || !publishableKey) {
+    throw new Error(
+      'Missing NG_APP_SUPABASE_URL or publishable key for e2e auth bootstrap.'
+    );
+  }
+
+  const email = process.env['E2E_AUTH_EMAIL'] ?? 'e2e-shared-user@tickist.dev';
+  const password = process.env['E2E_AUTH_PASSWORD'] ?? 'Test1234!';
+  const baseUrl = supabaseUrl.replace(/\/+$/, '');
+
+  const signInAttempt = await callAuthTokenEndpoint(
+    baseUrl,
+    publishableKey,
+    email,
+    password
+  );
+  if (signInAttempt.ok) {
+    return;
+  }
+
+  const signUp = await fetch(`${baseUrl}/auth/v1/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: publishableKey,
+      Authorization: `Bearer ${publishableKey}`,
+    },
+    body: JSON.stringify({ email, password }),
+  });
+  const signUpText = await signUp.text();
+  if (
+    !signUp.ok &&
+    !signUpText.toLowerCase().includes('already registered')
+  ) {
+    throw new Error(
+      `[e2e-db] Failed to create e2e auth user (${signUp.status}): ${truncateForLog(signUpText)}`
+    );
+  }
+
+  const postSignUpSignIn = await callAuthTokenEndpoint(
+    baseUrl,
+    publishableKey,
+    email,
+    password
+  );
+  if (!postSignUpSignIn.ok) {
+    throw new Error(
+      `[e2e-db] Failed to sign in e2e auth user after signup (${postSignUpSignIn.status}): ${truncateForLog(postSignUpSignIn.body)}`
+    );
+  }
+}
+
 async function resetDatabaseWithRetry(
   dbUrl: string,
   phase: ResetPhase
@@ -180,4 +245,34 @@ function runCommand(command: string, args: string[]): Promise<void> {
       }
     });
   });
+}
+
+async function callAuthTokenEndpoint(
+  baseUrl: string,
+  publishableKey: string,
+  email: string,
+  password: string
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const response = await fetch(`${baseUrl}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: publishableKey,
+      Authorization: `Bearer ${publishableKey}`,
+    },
+    body: JSON.stringify({ email, password }),
+  });
+  const body = await response.text();
+  return {
+    ok: response.ok,
+    status: response.status,
+    body,
+  };
+}
+
+function truncateForLog(value: string, max = 300): string {
+  if (value.length <= max) {
+    return value;
+  }
+  return `${value.slice(0, max)}...`;
 }
