@@ -20,8 +20,8 @@ function uniqueSuffix(testInfo: TestInfo): string {
   return `${testInfo.project.name}-${Date.now()}-${randomPart}`;
 }
 
-async function ensureAuthenticated(page: Page, testInfo: TestInfo): Promise<void> {
-  const email = `e2e+${uniqueSuffix(testInfo)}@tickist.dev`;
+async function ensureAuthenticated(page: Page): Promise<void> {
+  const email = 'e2e-shared-user@tickist.dev';
   const password = 'Test1234!';
 
   await page.goto('/');
@@ -32,22 +32,29 @@ async function ensureAuthenticated(page: Page, testInfo: TestInfo): Promise<void
     return;
   }
 
-  await page.goto('/auth/signup');
-
+  await page.goto('/auth');
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(password);
-  await page.getByLabel('Confirm password', { exact: true }).fill(password);
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await page.getByRole('button', { name: 'Sign in' }).click();
 
-  const postSignupLocation = await waitForAuthOrApp(page);
-  if (postSignupLocation === 'auth') {
-    await page.goto('/auth');
+  const postSigninLocation = await waitForAuthOrApp(page);
+  if (postSigninLocation === 'auth') {
+    await page.goto('/auth/signup');
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password', { exact: true }).fill(password);
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.getByLabel('Confirm password', { exact: true }).fill(password);
+    await page.getByRole('button', { name: 'Create account' }).click();
+
+    const postSignupLocation = await waitForAuthOrApp(page);
+    if (postSignupLocation === 'auth') {
+      await page.goto('/auth');
+      await page.getByLabel('Email').fill(email);
+      await page.getByLabel('Password', { exact: true }).fill(password);
+      await page.getByRole('button', { name: 'Sign in' }).click();
+    }
   }
 
-  await expect(page).toHaveURL(/\/app(?:\/|$)/, { timeout: 10000 });
+  await expect(page).toHaveURL(/\/app(?:\/|$)/, { timeout: 15000 });
   await expect(page.getByPlaceholder(/Search tasks/)).toBeVisible();
 }
 
@@ -174,7 +181,7 @@ async function openProjectContextMenu(
 test('adds task to inbox and keeps it after reload', async ({ page }, testInfo) => {
   const taskName = `Inbox task ${uniqueSuffix(testInfo)}`;
 
-  await ensureAuthenticated(page, testInfo);
+  await ensureAuthenticated(page);
   await selectInbox(page);
 
   const initialCount = await inboxCount(page);
@@ -196,7 +203,7 @@ test('creates project and adds a task into that project', async ({ page }, testI
   const projectDescription = `Description ${uniqueSuffix(testInfo)}`;
   const taskName = `Project task ${uniqueSuffix(testInfo)}`;
 
-  await ensureAuthenticated(page, testInfo);
+  await ensureAuthenticated(page);
   await createProject(page, projectName, projectDescription);
   await selectProjectByName(page, projectName);
 
@@ -214,7 +221,7 @@ test('creates task, edits it via task menu and marks done', async ({ page }, tes
   const taskName = `Editable task ${uniqueSuffix(testInfo)}`;
   const description = `Updated description ${uniqueSuffix(testInfo)}`;
 
-  await ensureAuthenticated(page, testInfo);
+  await ensureAuthenticated(page);
   await createProject(page, projectName, `Project for ${taskName}`);
   await selectProjectByName(page, projectName);
 
@@ -263,7 +270,7 @@ test('creates project, edits it from project menu and persists changes', async (
   const initialDescription = `Initial ${uniqueSuffix(testInfo)}`;
   const updatedDescription = `Updated ${uniqueSuffix(testInfo)}`;
 
-  await ensureAuthenticated(page, testInfo);
+  await ensureAuthenticated(page);
   await createProject(page, baseName, initialDescription);
   await selectProjectByName(page, baseName);
 
