@@ -20,6 +20,6 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(
       compiled.querySelector('[data-testid="landing-title"]')?.textContent
-    ).toContain('Tickist');
+    ).toContain('Task planning');
   });
 });
