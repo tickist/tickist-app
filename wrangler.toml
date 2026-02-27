@@ -1,4 +1,4 @@
-name = "tickist-web"
+name = "tickist-app"
 main = "apps/tickist-web/worker.ts"
 compatibility_date = "2026-02-01"
 
