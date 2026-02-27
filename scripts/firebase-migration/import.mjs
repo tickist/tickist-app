@@ -25,6 +25,10 @@ async function main() {
   const sourceDir = path.resolve(process.cwd(), args.source);
   const reportDir = path.resolve(process.cwd(), args.reportDir);
   const isDryRun = args.dryRun;
+  const sharedPassword =
+    args.promptSharedPassword && !isDryRun
+      ? await promptForSharedPassword()
+      : null;
 
   const source = await loadSourceData(sourceDir);
   const rejects = [];
@@ -84,6 +88,7 @@ async function main() {
       users: plan.users,
       target: args.target,
       url: connection.url,
+      sharedPassword,
     });
 
     payload = buildDatabasePayload(plan, authUserIdByCanonicalUid, rejects);
@@ -146,6 +151,7 @@ function parseArgs(argv) {
     dryRun: false,
     sendResetLinks: false,
     resetRedirectTo: '',
+    promptSharedPassword: false,
     reportDir: `reports/firebase-migration/${new Date().toISOString().replace(/[:.]/g, '-')}`,
     allowNonEmpty: false,
     help: false,
@@ -175,6 +181,9 @@ function parseArgs(argv) {
       case '--send-reset-links':
         args.sendResetLinks = true;
         break;
+      case '--prompt-shared-password':
+        args.promptSharedPassword = true;
+        break;
       case '--allow-non-empty':
         args.allowNonEmpty = true;
         break;
@@ -189,6 +198,9 @@ function parseArgs(argv) {
 
   if (args.sendResetLinks && args.dryRun) {
     throw new Error('--send-reset-links cannot be used with --dry-run.');
+  }
+  if (args.promptSharedPassword && args.dryRun) {
+    throw new Error('--prompt-shared-password cannot be used with --dry-run.');
   }
 
   return args;
@@ -214,6 +226,7 @@ Options:
   --scope <active>           Import scope (only "active" is supported).
   --dry-run                  Build plan and reports only, without writing to Supabase.
   --send-reset-links         Send password reset emails after successful import.
+  --prompt-shared-password   Prompt once for one shared password used for all new users.
   --reset-redirect-to <url>  Optional redirect URL for password reset links.
   --report-dir <dir>         Output directory for reports.
   --allow-non-empty          Allow import into non-empty target tables.
@@ -946,7 +959,7 @@ function buildDatabasePayload(plan, authUserIdByCanonicalUid, rejects) {
   };
 }
 
-async function ensureAuthUsers({ supabase, users, target, url }) {
+async function ensureAuthUsers({ supabase, users, target, url, sharedPassword }) {
   const isLocalTarget = String(target).trim().toLowerCase() === 'local';
   let existingByEmail = new Map();
   try {
@@ -956,7 +969,7 @@ async function ensureAuthUsers({ supabase, users, target, url }) {
       console.warn(
         'Auth admin API is unavailable locally (JWT HS256/ES256 mismatch). Falling back to auth.signUp for user bootstrap.'
       );
-      return ensureAuthUsersViaSignup({ users, url });
+      return ensureAuthUsersViaSignup({ users, url, sharedPassword });
     }
     throw error;
   }
@@ -969,15 +982,22 @@ async function ensureAuthUsers({ supabase, users, target, url }) {
       continue;
     }
 
-    const password = randomBytes(24).toString('base64url');
+    const password = sharedPassword ?? randomBytes(24).toString('base64url');
+    const userMetadata = {
+      migration_source: 'firebase_day0',
+      canonical_uid: user.canonicalUid,
+      ...(user.avatarUrl
+        ? {
+            avatar_url: user.avatarUrl,
+            avatar_version: new Date().toISOString(),
+          }
+        : {}),
+    };
     const { data, error } = await supabase.auth.admin.createUser({
       email: user.email,
       password,
       email_confirm: true,
-      user_metadata: {
-        migration_source: 'firebase_day0',
-        canonical_uid: user.canonicalUid,
-      },
+      user_metadata: userMetadata,
     });
 
     if (error || !data?.user?.id) {
@@ -1001,11 +1021,13 @@ function isLocalAuthAdminJwtError(error) {
   );
 }
 
-async function ensureAuthUsersViaSignup({ users, url }) {
-  const publishableKey = process.env.NG_APP_SUPABASE_ANON_KEY?.trim();
+async function ensureAuthUsersViaSignup({ users, url, sharedPassword }) {
+  const publishableKey =
+    process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+    process.env.NG_APP_SUPABASE_ANON_KEY?.trim();
   if (!publishableKey) {
     throw new Error(
-      'Local fallback requires NG_APP_SUPABASE_ANON_KEY (publishable key) in environment.'
+      'Local fallback requires NG_APP_SUPABASE_PUBLISHABLE_KEY (or legacy NG_APP_SUPABASE_ANON_KEY) in environment.'
     );
   }
 
@@ -1020,15 +1042,22 @@ async function ensureAuthUsersViaSignup({ users, url }) {
   const authUserIdByCanonicalUid = new Map();
 
   for (const user of users) {
-    const password = randomBytes(24).toString('base64url');
+    const password = sharedPassword ?? randomBytes(24).toString('base64url');
+    const userMetadata = {
+      migration_source: 'firebase_day0',
+      canonical_uid: user.canonicalUid,
+      ...(user.avatarUrl
+        ? {
+            avatar_url: user.avatarUrl,
+            avatar_version: new Date().toISOString(),
+          }
+        : {}),
+    };
     const { data, error } = await signUpClient.auth.signUp({
       email: user.email,
       password,
       options: {
-        data: {
-          migration_source: 'firebase_day0',
-          canonical_uid: user.canonicalUid,
-        },
+        data: userMetadata,
       },
     });
 
@@ -1042,6 +1071,86 @@ async function ensureAuthUsersViaSignup({ users, url }) {
   }
 
   return authUserIdByCanonicalUid;
+}
+
+async function promptForSharedPassword() {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    throw new Error(
+      '--prompt-shared-password requires an interactive terminal (TTY).'
+    );
+  }
+
+  const password = await readHiddenInput(
+    'Enter shared password for all imported users: '
+  );
+  if (!password) {
+    throw new Error('Shared password cannot be empty.');
+  }
+  if (password.length < 6) {
+    throw new Error('Shared password must be at least 6 characters long.');
+  }
+
+  const confirmation = await readHiddenInput('Confirm shared password: ');
+  if (password !== confirmation) {
+    throw new Error('Shared password confirmation does not match.');
+  }
+
+  return password;
+}
+
+async function readHiddenInput(promptText) {
+  const stdin = process.stdin;
+  const stdout = process.stdout;
+  const wasRaw = stdin.isRaw ?? false;
+
+  return new Promise((resolve, reject) => {
+    let value = '';
+    let settled = false;
+
+    const finish = (handler) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      stdin.off('data', onData);
+      if (stdin.isTTY) {
+        stdin.setRawMode(wasRaw);
+      }
+      stdin.pause();
+      stdout.write('\n');
+      handler();
+    };
+
+    const onData = (chunk) => {
+      const input = chunk.toString('utf8');
+      for (const char of input) {
+        if (char === '\u0003') {
+          finish(() =>
+            reject(new Error('Shared password prompt cancelled by user.'))
+          );
+          return;
+        }
+        if (char === '\r' || char === '\n') {
+          finish(() => resolve(value));
+          return;
+        }
+        if (char === '\u0008' || char === '\u007f') {
+          if (value.length > 0) {
+            value = value.slice(0, -1);
+          }
+          continue;
+        }
+        value += char;
+      }
+    };
+
+    stdout.write(promptText);
+    stdin.resume();
+    if (stdin.isTTY) {
+      stdin.setRawMode(true);
+    }
+    stdin.on('data', onData);
+  });
 }
 
 async function listAuthUsersByEmail(supabase) {

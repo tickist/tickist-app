@@ -5,13 +5,19 @@ type AssetFetcher = {
 interface Env {
   ASSETS: AssetFetcher;
   NG_APP_SUPABASE_URL?: string;
+  NG_APP_SUPABASE_PUBLISHABLE_KEY?: string;
+  /** @deprecated Prefer NG_APP_SUPABASE_PUBLISHABLE_KEY. */
   NG_APP_SUPABASE_ANON_KEY?: string;
   NG_APP_SUPABASE_FUNCTIONS_URL?: string;
 }
 
 const buildEnvPayload = (env: Env): Record<string, string> => ({
   NG_APP_SUPABASE_URL: env.NG_APP_SUPABASE_URL ?? '',
-  NG_APP_SUPABASE_ANON_KEY: env.NG_APP_SUPABASE_ANON_KEY ?? '',
+  NG_APP_SUPABASE_PUBLISHABLE_KEY:
+    env.NG_APP_SUPABASE_PUBLISHABLE_KEY ?? env.NG_APP_SUPABASE_ANON_KEY ?? '',
+  // Backward compatibility for deployments still reading legacy variable name.
+  NG_APP_SUPABASE_ANON_KEY:
+    env.NG_APP_SUPABASE_ANON_KEY ?? env.NG_APP_SUPABASE_PUBLISHABLE_KEY ?? '',
   NG_APP_SUPABASE_FUNCTIONS_URL: env.NG_APP_SUPABASE_FUNCTIONS_URL ?? '',
 });
 

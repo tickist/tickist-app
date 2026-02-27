@@ -29,3 +29,33 @@ export const readSupabaseEnv = (key: string, fallback = ''): string => {
     fallback
   );
 };
+
+export const readSupabaseEnvAny = (
+  keys: string[],
+  fallback = ''
+): string => {
+  for (const key of keys) {
+    const value = readSupabaseEnv(key);
+    if (value !== '') {
+      return value;
+    }
+  }
+  return fallback;
+};
+
+export const deriveSupabaseFunctionsUrl = (
+  supabaseUrl: string,
+  fallback = ''
+): string => {
+  const trimmed = supabaseUrl.trim();
+  if (!trimmed) {
+    return fallback;
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+    return `${parsed.origin}/functions/v1`;
+  } catch {
+    return fallback;
+  }
+};

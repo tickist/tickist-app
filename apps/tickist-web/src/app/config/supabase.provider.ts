@@ -4,7 +4,9 @@ import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
 export interface SupabaseConfig {
   url: string;
-  anonKey: string;
+  publishableKey: string;
+  /** @deprecated Prefer publishableKey. */
+  anonKey?: string;
   functionsUrl?: string;
 }
 
@@ -28,21 +30,26 @@ export function provideSupabase(config: SupabaseConfig): Provider[] {
         }
 
         const url = config.url?.trim();
-        const anonKey = config.anonKey?.trim();
+        const publishableKey = (
+          config.publishableKey ??
+          config.anonKey ??
+          ''
+        ).trim();
         const isPlaceholder =
           !url ||
-          !anonKey ||
+          !publishableKey ||
           url.includes('YOUR_DEV_PROJECT') ||
-          anonKey.includes('anon-key');
+          publishableKey.includes('anon-key') ||
+          publishableKey.includes('publishable-key');
 
         if (isPlaceholder) {
           console.warn(
-            '[Supabase] Client not initialized. Configure NG_APP_SUPABASE_URL / NG_APP_SUPABASE_ANON_KEY.'
+            '[Supabase] Client not initialized. Configure NG_APP_SUPABASE_URL / NG_APP_SUPABASE_PUBLISHABLE_KEY.'
           );
           return null;
         }
 
-        return createClient(url, anonKey, {
+        return createClient(url, publishableKey, {
           auth: {
             persistSession: true,
             detectSessionInUrl: true,

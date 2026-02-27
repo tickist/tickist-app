@@ -29,8 +29,17 @@ npm run migration:firebase:dry-run:local
 # 2) import to remote Supabase (writes)
 npm run migration:firebase:import:remote
 
-# 3) import + send reset password emails
+# 3) import to remote with one shared password prompt
+npm run migration:firebase:import:remote:shared-password
+
+# 4) import + send reset password emails
 npm run migration:firebase:import:remote:with-resets
+
+# 5) backfill existing app_users.avatar_url -> auth metadata (local)
+npm run migration:firebase:avatars:backfill:local
+
+# 6) backfill existing app_users.avatar_url -> auth metadata (remote)
+npm run migration:firebase:avatars:backfill:remote
 ```
 
 ## Direct CLI usage
@@ -46,9 +55,23 @@ Optional flags:
 
 - `--dry-run`
 - `--send-reset-links`
+- `--prompt-shared-password` (asks once for one shared password for all new users)
 - `--reset-redirect-to <url>`
 - `--report-dir <dir>`
 - `--allow-non-empty`
+
+### Shared password mode
+
+Use this only for controlled migration/testing scenarios. The password is prompted in terminal,
+not written to repository files, and not included in reports.
+
+```bash
+dotenv -e .env -- node scripts/firebase-migration/import.mjs \
+  --source ./backup_from_firebase \
+  --target remote \
+  --scope active \
+  --prompt-shared-password
+```
 
 ## Reports
 
@@ -61,3 +84,24 @@ Each run writes:
 Default output directory:
 
 `reports/firebase-migration/<timestamp>/`
+
+## Avatar metadata backfill
+
+For legacy users imported with `app_users.avatar_url`, run one-off backfill to align with
+the app source of truth (`auth.users.raw_user_meta_data.avatar_url`).
+
+```bash
+# Preview only
+dotenv -e .env -- node scripts/firebase-migration/backfill-avatar-metadata.mjs \
+  --target remote \
+  --dry-run
+
+# Apply updates
+dotenv -e .env -- node scripts/firebase-migration/backfill-avatar-metadata.mjs \
+  --target remote
+```
+
+Backfill report files:
+
+- `avatar-backfill-summary.json`
+- `avatar-backfill-errors.json`

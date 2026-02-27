@@ -11,8 +11,19 @@ export default defineConfig(({ mode }) => {
   const mergedEnv = {
     NG_APP_SUPABASE_URL:
       loaded.NG_APP_SUPABASE_URL ?? process.env.NG_APP_SUPABASE_URL ?? '',
+    NG_APP_SUPABASE_PUBLISHABLE_KEY:
+      loaded.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
+      process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
+      loaded.NG_APP_SUPABASE_ANON_KEY ??
+      process.env.NG_APP_SUPABASE_ANON_KEY ??
+      '',
+    // Backward compatibility for local scripts still relying on legacy variable name.
     NG_APP_SUPABASE_ANON_KEY:
-      loaded.NG_APP_SUPABASE_ANON_KEY ?? process.env.NG_APP_SUPABASE_ANON_KEY ?? '',
+      loaded.NG_APP_SUPABASE_ANON_KEY ??
+      process.env.NG_APP_SUPABASE_ANON_KEY ??
+      loaded.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
+      process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
+      '',
     NG_APP_SUPABASE_FUNCTIONS_URL:
       loaded.NG_APP_SUPABASE_FUNCTIONS_URL ??
       process.env.NG_APP_SUPABASE_FUNCTIONS_URL ??
@@ -63,6 +74,9 @@ export default defineConfig(({ mode }) => {
   },
   define: {
     'import.meta.env.NG_APP_SUPABASE_URL': JSON.stringify(mergedEnv.NG_APP_SUPABASE_URL),
+    'import.meta.env.NG_APP_SUPABASE_PUBLISHABLE_KEY': JSON.stringify(
+      mergedEnv.NG_APP_SUPABASE_PUBLISHABLE_KEY
+    ),
     'import.meta.env.NG_APP_SUPABASE_ANON_KEY': JSON.stringify(mergedEnv.NG_APP_SUPABASE_ANON_KEY),
     'import.meta.env.NG_APP_SUPABASE_FUNCTIONS_URL': JSON.stringify(
       mergedEnv.NG_APP_SUPABASE_FUNCTIONS_URL
