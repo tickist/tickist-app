@@ -33,7 +33,7 @@ Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits ar
 
 ## Configuration & Supabase
 
-Copy `.env.example` to `.env` (remote) and `.local_env` (local). For E2E, use a separate `.local_env.e2e` or `.env.e2e` file. Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_ANON_KEY`, `SUPABASE_DB_URL`, `SUPABASE_E2E_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY` (for Day-0 migration importer). E2E DB URL must point to a dedicated test database/branch and must not reuse local dev or remote shared DB URLs. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
+Copy `.env.example` to `.env` (remote) and `.local_env` (local). For E2E, use a separate `.local_env.e2e` or `.env.e2e` file. Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_DB_URL`, `SUPABASE_E2E_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY` (for Day-0 migration importer). E2E DB URL must point to a dedicated test database/branch and must not reuse local dev or remote shared DB URLs. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

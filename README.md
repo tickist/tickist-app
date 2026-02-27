@@ -44,11 +44,11 @@ Create a local environment file based on `.env.example`:
 cp .env.example .env.local
 ```
 
-Fill in `NG_APP_SUPABASE_URL` and `NG_APP_SUPABASE_ANON_KEY`. The Angular app reads these via `environment.util.ts`. Without those values the Supabase client falls back to mock data so you can keep building the UI.
+Fill in `NG_APP_SUPABASE_URL` and `NG_APP_SUPABASE_PUBLISHABLE_KEY`. The Angular app reads these via `environment.util.ts`. Without those values the Supabase client falls back to mock data so you can keep building the UI.
 
 Schema migrations live in `supabase/migrations/`. Apply them with the Supabase CLI or `psql` before testing real data flows.
 
-If you run edge functions locally, set `NG_APP_SUPABASE_FUNCTIONS_URL` (defaults to `http://localhost:54321/functions/v1`) so the frontend knows where to fire notifications.
+`NG_APP_SUPABASE_FUNCTIONS_URL` is optional. If missing, the app derives it from `NG_APP_SUPABASE_URL` as `<supabase-url>/functions/v1`. Set it explicitly only when you want to override that default (for example local edge runtime/proxy).
 
 ## Add new projects
 

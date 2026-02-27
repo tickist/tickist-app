@@ -19,6 +19,21 @@ psql "$YOUR_SUPABASE_DB_URL" -f supabase/migrations/0001_init_schema.sql
 
 Keep future schema changes as new numbered files in `supabase/migrations/`.
 
+## Avatar storage
+
+Migration `0005_avatar_storage.sql` creates a public Storage bucket `avatars` with:
+
+- max file size `2 MB`,
+- allowed MIME types: `image/png`, `image/jpeg`, `image/webp`,
+- RLS policies restricting writes to `avatars/<auth.uid()>/...`.
+
+The app stores avatar image URL in `auth.users.raw_user_meta_data.avatar_url`.
+Legacy values from `public.app_users.avatar_url` can be backfilled with:
+
+```bash
+npm run migration:firebase:avatars:backfill:remote
+```
+
 ## Firebase Day-0 import
 
 Use the one-time importer from `scripts/firebase-migration/import.mjs`.
