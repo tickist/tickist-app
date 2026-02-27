@@ -75,7 +75,7 @@
         </div>
       </button>
       <button type="button" class="btn btn-circle border border-white/10 bg-base-100/70 p-0 shadow-inner" (click)="toggleProfileMenu()">
-        @if (user()?.user_metadata?.avatar_url; as avatar) {
+        @if (avatarUrl(); as avatar) {
           <img [src]="avatar" alt="Avatar" class="h-10 w-10 rounded-full object-cover" />
         } @else {
           <span class="text-lg font-semibold text-primary">{{ avatarInitial() }}</span>

@@ -16,13 +16,20 @@ import {
 } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ProjectComposerPreset } from './composer-modal.service';
+import {
+  PROJECT_ICON_OPTIONS,
+  ProjectIconKey,
+  resolveProjectIconKey,
+} from '../../core/icons/project-icons';
+import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
+import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 
 type ProjectTab = 'general' | 'extra' | 'sharing' | 'branding';
 
 @Component({
   selector: 'app-project-composer',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ProjectPickerComponent, ProjectIconComponent],
   templateUrl: './project-composer.component.html',
   styleUrl: './project-composer.component.css',
 })
@@ -41,6 +48,10 @@ export class ProjectComposerComponent {
   readonly projectOptions = computed(() =>
     this.projects.list().sort((a, b) => a.name.localeCompare(b.name))
   );
+  readonly availableAncestorOptions = computed(() => {
+    const editingProjectId = this.editingProject()?.id ?? null;
+    return this.projectOptions().filter((project) => project.id !== editingProjectId);
+  });
   readonly colors = [
     '#1D4ED8',
     '#0EA5E9',
@@ -53,18 +64,7 @@ export class ProjectComposerComponent {
     '#475569',
     '#94A3B8',
   ];
-  readonly iconOptions = [
-    'folder',
-    'calendar',
-    'inbox',
-    'lightbulb',
-    'flag',
-    'target',
-    'rocket',
-    'shield',
-    'star',
-    'gear',
-  ];
+  readonly iconOptions = PROJECT_ICON_OPTIONS;
 
   @Output() dismiss = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
@@ -132,7 +132,7 @@ export class ProjectComposerComponent {
     this.form.controls.color.setValue(color);
   }
 
-  chooseIcon(icon: string): void {
+  chooseIcon(icon: ProjectIconKey): void {
     this.form.controls.icon.setValue(icon);
   }
 
@@ -234,7 +234,7 @@ export class ProjectComposerComponent {
         ancestorId: project.ancestorId ?? '',
         isActive: project.isActive,
         color: project.color ?? '#1D4ED8',
-        icon: project.icon ?? 'folder',
+        icon: resolveProjectIconKey(project.icon),
         defaultPriority: project.defaultPriority ?? 'B',
         defaultDueMode: project.defaultTypeFinishDate === 0 ? 'by' : 'on',
         defaultDueDate: '',
@@ -249,7 +249,9 @@ export class ProjectComposerComponent {
       projectType: preset.defaults?.projectType ?? this.defaultFormState.projectType,
       ancestorId: preset.defaults?.ancestorId ?? this.defaultFormState.ancestorId,
       color: preset.defaults?.color ?? this.defaultFormState.color,
-      icon: preset.defaults?.icon ?? this.defaultFormState.icon,
+      icon: resolveProjectIconKey(
+        preset.defaults?.icon ?? this.defaultFormState.icon
+      ),
     });
   }
 

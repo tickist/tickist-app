@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 
 import { Project } from '../../data/project-data.service';
+import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 
 type SortOption =
   | 'priority-desc'
@@ -17,7 +18,7 @@ type FilterOption = 'all' | 'done' | 'not-done';
 @Component({
   selector: 'app-project-header',
   standalone: true,
-  imports: [],
+  imports: [ProjectIconComponent],
   templateUrl: './project-header.component.html',
   styleUrl: './project-header.component.css',
 })

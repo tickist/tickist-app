@@ -19,6 +19,7 @@ import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
+import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 
 type TaskViewMode = 'extended' | 'simple';
 type RepeatMode =
@@ -35,7 +36,7 @@ type RepeatFromMode = 'completion_date' | 'due_date';
 @Component({
   selector: 'app-task-card',
   standalone: true,
-  imports: [LinkifyPipe],
+  imports: [LinkifyPipe, ProjectPickerComponent],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
 })

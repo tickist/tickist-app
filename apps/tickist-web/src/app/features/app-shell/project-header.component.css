@@ -9,6 +9,20 @@
   @apply text-2xl font-semibold;
 }
 
+.project-header__title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.project-header__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  opacity: 0.95;
+}
+
 .project-desc {
   @apply mt-1 text-sm text-base-content opacity-70;
 }

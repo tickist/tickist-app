@@ -89,17 +89,18 @@
                 }
               </div>
             </div>
-            <label class="field">
+            <div class="field">
               <span class="field__label">Project</span>
-              <select class="input" formControlName="projectId">
-                <option value="">Inbox</option>
-                @for (project of projects(); track project) {
-                  <option [value]="project.id">
-                    {{ project.name }}
-                  </option>
-                }
-              </select>
-            </label>
+              <app-project-picker
+                ariaLabel="Select project for task"
+                [projects]="projects()"
+                [selectedProjectId]="taskForm.controls.projectId.value"
+                [disabled]="taskForm.disabled || submitting()"
+                emptyOptionLabel="Inbox"
+                emptyOptionIcon="inbox"
+                (selectedProjectIdChange)="taskForm.controls.projectId.setValue($event)"
+              ></app-project-picker>
+            </div>
             <div class="field">
               <span class="field__label">Task type</span>
               <div class="type-group">

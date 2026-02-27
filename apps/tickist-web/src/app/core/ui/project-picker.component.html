@@ -1,0 +1,54 @@
+<div class="project-picker">
+  <button
+    #triggerButton
+    type="button"
+    class="project-picker__trigger"
+    [disabled]="disabled"
+    [attr.aria-label]="ariaLabel"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="isOpen()"
+    (click)="toggle()"
+    (keydown)="onTriggerKeydown($event)"
+  >
+    <span class="project-picker__value">
+      <app-project-icon
+        [icon]="selectedOption().icon"
+        [size]="16"
+        className="project-picker__icon"
+      ></app-project-icon>
+      <span class="project-picker__text">{{ selectedOption().name }}</span>
+    </span>
+    <span class="project-picker__chevron" [class.project-picker__chevron--open]="isOpen()">
+      ▾
+    </span>
+  </button>
+
+  @if (isOpen()) {
+    <div class="project-picker__menu" role="listbox" [attr.aria-label]="ariaLabel">
+      @for (option of options(); track option.id; let index = $index) {
+        <button
+          #optionButton
+          type="button"
+          role="option"
+          class="project-picker__option"
+          [id]="optionId(index)"
+          [class.project-picker__option--active]="activeIndex() === index"
+          [class.project-picker__option--selected]="option.id === selectedProjectId"
+          [attr.aria-selected]="option.id === selectedProjectId"
+          (click)="selectOption(option.id)"
+          (keydown)="onOptionKeydown($event, index)"
+        >
+          <app-project-icon
+            [icon]="option.icon"
+            [size]="16"
+            className="project-picker__icon"
+          ></app-project-icon>
+          <span class="project-picker__option-text">{{ option.name }}</span>
+          @if (option.color; as color) {
+            <span class="project-picker__dot" [style.background-color]="color"></span>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>

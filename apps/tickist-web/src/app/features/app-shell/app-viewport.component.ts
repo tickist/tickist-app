@@ -35,6 +35,15 @@ export class AppViewportComponent implements OnDestroy {
   private routerSub: Subscription | null = null;
 
   readonly user = computed(() => this.session.user());
+  readonly avatarUrl = computed(() => {
+    const metadata = getUserMetadata(this.user()?.user_metadata);
+    const avatarUrl = asOptionalString(metadata['avatar_url']);
+    if (!avatarUrl) {
+      return null;
+    }
+    const version = asOptionalString(metadata['avatar_version']);
+    return appendCacheVersion(avatarUrl, version);
+  });
   readonly notifications = this.notificationsService.list;
   readonly notificationsLoading = this.notificationsService.loadingState;
   readonly unreadNotifications = computed(
@@ -132,4 +141,23 @@ export class AppViewportComponent implements OnDestroy {
   toggleTheme(): void {
     this.themeService.toggleTheme();
   }
+}
+
+function getUserMetadata(value: unknown): Record<string, unknown> {
+  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
+  return {};
+}
+
+function asOptionalString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+}
+
+function appendCacheVersion(url: string, version: string | null): string {
+  if (!version) {
+    return url;
+  }
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}v=${encodeURIComponent(version)}`;
 }

@@ -44,20 +44,18 @@
               <option [value]="false">Archived</option>
             </select>
           </label>
-          <label class="field">
+          <div class="field">
             <span class="field__label">Ancestor project</span>
-            <select class="input" formControlName="ancestorId">
-              <option value="">No parent</option>
-              @for (option of projectOptions(); track option) {
-                <option
-                  [value]="option.id"
-                  [disabled]="editingProject()?.id === option.id"
-                  >
-                  {{ option.name }}
-                </option>
-              }
-            </select>
-          </label>
+            <app-project-picker
+              ariaLabel="Select ancestor project"
+              [projects]="availableAncestorOptions()"
+              [selectedProjectId]="form.controls.ancestorId.value"
+              [disabled]="form.disabled || submitting()"
+              emptyOptionLabel="No parent"
+              emptyOptionIcon="folder"
+              (selectedProjectIdChange)="form.controls.ancestorId.setValue($event)"
+            ></app-project-picker>
+          </div>
           <label class="field">
             <span class="field__label">Description</span>
             <textarea class="input" rows="5" formControlName="description" placeholder="Describe this list"></textarea>
@@ -151,11 +149,13 @@
           </div>
           <span class="field__label">Icon</span>
           <div class="icon-grid">
-            @for (icon of iconOptions; track icon) {
+            @for (icon of iconOptions; track icon.key) {
               <button type="button" class="icon-pill"
-                [class.active]="form.controls.icon.value === icon"
-                (click)="chooseIcon(icon)">
-                {{ icon }}
+                [class.active]="form.controls.icon.value === icon.key"
+                [attr.aria-label]="icon.label"
+                [title]="icon.label"
+                (click)="chooseIcon(icon.key)">
+                <app-project-icon [icon]="icon.key" [size]="16"></app-project-icon>
               </button>
             }
           </div>

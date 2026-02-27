@@ -194,15 +194,20 @@ textarea.input {
 .icon-pill {
   border: 1px solid rgb(var(--bc) / 0.14);
   border-radius: 12px;
-  padding: 0.4rem 0.8rem;
+  width: 2.45rem;
+  height: 2.45rem;
+  padding: 0;
   background: transparent;
   color: rgb(var(--bc));
   cursor: pointer;
-  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon-pill.active {
   background: rgb(var(--bc) / 0.14);
+  border-color: rgb(var(--bc) / 0.34);
 }
 
 .btn-ghost,

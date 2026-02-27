@@ -6,6 +6,7 @@ import { AppViewStateService } from './app-view-state.service';
 import { TaskDataService } from '../../data/task-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
+import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 
 type NavSectionState = {
   inbox: boolean;
@@ -38,7 +39,7 @@ type ProjectTreeNode = {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, NgTemplateOutlet],
+  imports: [RouterLink, NgTemplateOutlet, ProjectIconComponent],
   templateUrl: './app-sidebar.component.html',
   styleUrl: './app-sidebar.component.css',
 })

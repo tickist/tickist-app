@@ -10,18 +10,18 @@
 }
 
 [data-theme='tickist'] {
-  --color-base-100: #222d4d;
-  --color-base-200: #2b365b;
-  --color-base-300: #1a2441;
-  --color-base-content: #eff4ff;
-  --color-primary: #ffdd63;
-  --color-primary-content: #172039;
-  --color-secondary: #9ba7c3;
-  --color-secondary-content: #101729;
-  --color-accent: #7f8eaf;
-  --color-accent-content: #0f172a;
+  --color-base-100: #0f172a;
+  --color-base-200: #1e293b;
+  --color-base-300: #020617;
+  --color-base-content: #f8fafc;
+  --color-primary: #6366f1;
+  --color-primary-content: #ffffff;
+  --color-secondary: #38bdf8;
+  --color-secondary-content: #0f172a;
+  --color-accent: #818cf8;
+  --color-accent-content: #ffffff;
   --color-neutral: #101729;
-  --color-neutral-content: #eff4ff;
+  --color-neutral-content: #f8fafc;
   --color-info: #38bdf8;
   --color-info-content: #0b2a3f;
   --color-success: #4ade80;
@@ -30,34 +30,21 @@
   --color-warning-content: #332606;
   --color-error: #fb7185;
   --color-error-content: #3f0b15;
-  --p: 255 221 99;
-  --pc: 23 32 57;
-  --er: 251 113 133;
-  --erc: 63 11 21;
-  /* DaisyUI expects space-separated rgb values for base tokens */
-  --b1: 34 45 77; /* #222d4d */
-  --b2: 43 54 91; /* #2b365b */
-  --b3: 26 36 65; /* #1a2441 */
-  --bc: 239 244 255; /* #eff4ff */
-  --fallback-b1: #222d4d;
-  --fallback-b2: #2b365b;
-  --fallback-b3: #1a2441;
-  --fallback-bc: #eff4ff;
-  background-color: #222d4d;
+  background-color: #0f172a;
   color-scheme: dark;
 }
 
 [data-theme='tickist-light'] {
-  --color-base-100: #f3f6fc;
+  --color-base-100: #f8fafc;
   --color-base-200: #ffffff;
-  --color-base-300: #e5ebf7;
-  --color-base-content: #16203b;
-  --color-primary: #1f2b4d;
-  --color-primary-content: #f8fbff;
-  --color-secondary: #55607d;
+  --color-base-300: #f1f5f9;
+  --color-base-content: #0f172a;
+  --color-primary: #4f46e5;
+  --color-primary-content: #ffffff;
+  --color-secondary: #0ea5e9;
   --color-secondary-content: #f6f8ff;
-  --color-accent: #7b86a4;
-  --color-accent-content: #111c36;
+  --color-accent: #6366f1;
+  --color-accent-content: #ffffff;
   --color-neutral: #15203d;
   --color-neutral-content: #f8fbff;
   --color-info: #0284c7;
@@ -68,19 +55,7 @@
   --color-warning-content: #fff9ec;
   --color-error: #be123c;
   --color-error-content: #fff1f4;
-  --p: 31 43 77;
-  --pc: 248 251 255;
-  --er: 190 18 60;
-  --erc: 255 241 244;
-  --b1: 243 246 252; /* #f3f6fc */
-  --b2: 255 255 255; /* #ffffff */
-  --b3: 229 235 247; /* #e5ebf7 */
-  --bc: 22 32 59; /* #16203b */
-  --fallback-b1: #f3f6fc;
-  --fallback-b2: #ffffff;
-  --fallback-b3: #e5ebf7;
-  --fallback-bc: #16203b;
-  background-color: #f3f6fc;
+  background-color: #f8fafc;
   color-scheme: light;
 }
 
@@ -108,6 +83,7 @@ body {
 }
 
 @layer components {
+
   .auth-input,
   .input {
     color: rgb(var(--bc));

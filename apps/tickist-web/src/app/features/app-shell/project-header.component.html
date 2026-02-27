@@ -1,6 +1,11 @@
 <header class="project-header">
   <div class="project-header__text">
-    <h1>{{ project.name }}</h1>
+    <div class="project-header__title-row">
+      <span class="project-header__icon" [style.color]="project.color">
+        <app-project-icon [icon]="project.icon" [size]="22"></app-project-icon>
+      </span>
+      <h1>{{ project.name }}</h1>
+    </div>
     @if (project.description) {
       <p class="project-desc">{{ project.description }}</p>
     }

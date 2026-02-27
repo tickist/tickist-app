@@ -11,7 +11,7 @@
       (click)="selectProject(inbox.id)"
       [class.text-primary]="selectedProjectId() === inbox.id"
       >
-      <span class="emoji">📬</span>
+      <app-project-icon [icon]="inbox.icon" [size]="16"></app-project-icon>
       <span class="flex-1">{{ inbox.name }} ({{ projectTaskCount(inbox.id) || 0 }})</span>
       <span class="dot" [style.background-color]="inbox.color"></span>
     </button>
@@ -152,7 +152,10 @@
           [class.text-primary]="selectedProjectId() === node.project.id"
           (click)="selectProject(node.project.id)"
           >
-          <span class="project-name">{{ node.project.name }}</span>
+          <span class="project-main">
+            <app-project-icon [icon]="node.project.icon" [size]="15"></app-project-icon>
+            <span class="project-name">{{ node.project.name }}</span>
+          </span>
           <span class="project-count">{{ projectTaskCount(node.project.id) }}</span>
           <span class="dot" [style.background-color]="node.project.color"></span>
         </button>

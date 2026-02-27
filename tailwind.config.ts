@@ -61,15 +61,15 @@ const config: Config = {
     themes: [
       {
         tickist: {
-          primary: '#ffdd63',
-          'primary-content': '#172039',
-          secondary: '#9ba7c3',
-          accent: '#7f8eaf',
+          primary: '#6366f1', /* Indigo 500 */
+          'primary-content': '#ffffff',
+          secondary: '#38bdf8', /* Sky 400 */
+          accent: '#818cf8', /* Indigo 400 */
           neutral: '#101729',
-          'base-100': '#222d4d',
-          'base-200': '#2b365b',
-          'base-300': '#1a2441',
-          'base-content': '#eff4ff',
+          'base-100': '#0f172a', /* Slate 900 */
+          'base-200': '#1e293b', /* Slate 800 */
+          'base-300': '#020617', /* Slate 950 */
+          'base-content': '#f8fafc',
           info: '#38bdf8',
           success: '#4ade80',
           warning: '#facc15',
@@ -78,15 +78,15 @@ const config: Config = {
       },
       {
         'tickist-light': {
-          primary: '#1f2b4d',
-          'primary-content': '#f8fbff',
-          secondary: '#55607d',
-          accent: '#7b86a4',
+          primary: '#4f46e5', /* Indigo 600 */
+          'primary-content': '#ffffff',
+          secondary: '#0ea5e9', /* Sky 500 */
+          accent: '#6366f1', /* Indigo 500 */
           neutral: '#15203d',
-          'base-100': '#f3f6fc',
+          'base-100': '#f8fafc', /* Slate 50 */
           'base-200': '#ffffff',
-          'base-300': '#e5ebf7',
-          'base-content': '#16203b',
+          'base-300': '#f1f5f9', /* Slate 100 */
+          'base-content': '#0f172a',
           info: '#0284c7',
           success: '#15803d',
           warning: '#ca8a04',

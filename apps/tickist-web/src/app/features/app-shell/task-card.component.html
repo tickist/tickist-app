@@ -161,17 +161,17 @@
 
   @if (projectPickerOpen()) {
     <section class="task-card__panel">
-      <label class="panel-field">
+      <div class="panel-field">
         <span class="panel-label">Project</span>
-        <select [value]="task.projectId || ''" (change)="changeProject($any($event.target).value)">
-          <option value="">Inbox</option>
-          @for (option of projects(); track option) {
-            <option [value]="option.id">
-              {{ option.name }}
-            </option>
-          }
-        </select>
-      </label>
+        <app-project-picker
+          ariaLabel="Select project for task"
+          [projects]="projects()"
+          [selectedProjectId]="task.projectId || ''"
+          emptyOptionLabel="Inbox"
+          emptyOptionIcon="inbox"
+          (selectedProjectIdChange)="changeProject($event)"
+        ></app-project-picker>
+      </div>
     </section>
   }
 

@@ -26,6 +26,7 @@ import { ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
+import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 
 type TabKey = 'general' | 'repeat' | 'tags' | 'steps' | 'extra';
 type RepeatMode =
@@ -62,7 +63,7 @@ type TaskFormDefaults = {
 @Component({
   selector: 'app-task-composer',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ProjectPickerComponent],
   templateUrl: './task-composer.component.html',
   styleUrl: './task-composer.component.css',
 })

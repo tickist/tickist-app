@@ -2,6 +2,12 @@
   display: block;
 }
 
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .new-task-form__card {
   display: grid;
   gap: 0.75rem;

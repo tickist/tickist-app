@@ -15,7 +15,7 @@
               (changeFilter)="setFilter($event)"
             ></app-project-header>
           }
-          <div class="space-y-4">
+          <div class="tasks-list">
             @for (task of filteredTasks(); track trackTask($index, task)) {
               <app-task-card
                 [task]="task"
@@ -55,7 +55,7 @@
                 Clear filter
               </button>
             </div>
-            <div class="space-y-4">
+            <div class="tasks-list">
               @for (task of filteredTasks(); track trackTask($index, task)) {
                 <app-task-card
                   [task]="task"
