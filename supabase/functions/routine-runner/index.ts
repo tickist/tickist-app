@@ -10,9 +10,29 @@ interface RoutineReminderRow {
   timezone: string;
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-user-jwt",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+const jsonResponse = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+    },
+  });
+
 serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
   if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+    return jsonResponse(405, { error: "Method not allowed" });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -24,7 +44,7 @@ serve(async (req) => {
     .select("id, owner_id, project_id, task_id, cron, timezone");
 
   if (error || !data) {
-    return new Response(JSON.stringify({ error }), { status: 500 });
+    return jsonResponse(500, { error });
   }
 
   const notifications = data.map((reminder: RoutineReminderRow) => ({
@@ -39,13 +59,9 @@ serve(async (req) => {
       .from("notifications")
       .insert(notifications);
     if (insertError) {
-      return new Response(JSON.stringify({ error: insertError }), {
-        status: 500,
-      });
+      return jsonResponse(500, { error: insertError });
     }
   }
 
-  return new Response(JSON.stringify({ processed: notifications.length }), {
-    status: 200,
-  });
+  return jsonResponse(200, { processed: notifications.length });
 });

@@ -7,16 +7,40 @@ interface ReminderPayload {
   message?: string;
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-user-jwt",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+const jsonResponse = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+    },
+  });
+
 serve(async (req) => {
-  if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
-  const payload: ReminderPayload = await req.json();
+  if (req.method !== "POST") {
+    return jsonResponse(405, { error: "Method not allowed" });
+  }
+
+  let payload: ReminderPayload;
+  try {
+    payload = (await req.json()) as ReminderPayload;
+  } catch {
+    return jsonResponse(400, { error: "Invalid JSON payload" });
+  }
+
   if (!payload?.taskId || !payload?.event) {
-    return new Response(JSON.stringify({ error: "Missing taskId or event" }), {
-      status: 400,
-    });
+    return jsonResponse(400, { error: "Missing taskId or event" });
   }
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -24,18 +48,14 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceRole);
   const userJwt = req.headers.get("x-user-jwt");
   if (!userJwt) {
-    return new Response(JSON.stringify({ error: "Missing x-user-jwt header" }), {
-      status: 401,
-    });
+    return jsonResponse(401, { error: "Missing x-user-jwt header" });
   }
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser(userJwt);
   if (userError || !user) {
-    return new Response(JSON.stringify({ error: "Invalid user session token" }), {
-      status: 401,
-    });
+    return jsonResponse(401, { error: "Invalid user session token" });
   }
 
   const { data: task, error } = await supabase
@@ -47,10 +67,7 @@ serve(async (req) => {
     .single();
 
   if (error || !task) {
-    return new Response(
-      JSON.stringify({ error: "Task not found", details: error }),
-      { status: 404 }
-    );
+    return jsonResponse(404, { error: "Task not found", details: error });
   }
 
   let isActorAllowed = task.owner_id === user.id;
@@ -64,7 +81,7 @@ serve(async (req) => {
     isActorAllowed = Boolean(membership);
   }
   if (!isActorAllowed) {
-    return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+    return jsonResponse(403, { error: "Forbidden" });
   }
 
   const message =
@@ -81,11 +98,8 @@ serve(async (req) => {
   });
 
   if (insertError) {
-    return new Response(
-      JSON.stringify({ error: "Failed to log notification" }),
-      { status: 500 }
-    );
+    return jsonResponse(500, { error: "Failed to log notification" });
   }
 
-  return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  return jsonResponse(200, { ok: true });
 });

@@ -564,6 +564,21 @@ export class ExportImportService {
       ])
     );
 
+    const { data: existingInboxData, error: existingInboxError } = await client
+      .from('projects')
+      .select('id, stable_id, updated_at')
+      .eq('owner_id', userId)
+      .eq('is_inbox', true)
+      .maybeSingle();
+
+    if (existingInboxError) {
+      result.ok = false;
+      result.errors.push(`Could not inspect existing inbox project: ${existingInboxError.message}`);
+      return new Map<string, string>();
+    }
+
+    const existingInbox = (existingInboxData as ExistingEntityRow | null) ?? null;
+
     const projectIdsByStableId = new Map<string, string>();
     const ancestorPatchCandidates: Array<{
       stableId: string;
@@ -571,7 +586,19 @@ export class ExportImportService {
     }> = [];
 
     for (const project of payload.projects) {
-      const existing = existingByStableId.get(project.stableId);
+      const stableMatch = existingByStableId.get(project.stableId);
+      let existing = stableMatch;
+      if (
+        project.isInbox &&
+        existingInbox &&
+        (!existing || existing.id !== existingInbox.id)
+      ) {
+        existing = {
+          id: existingInbox.id,
+          updatedAt: existingInbox.updated_at ?? null,
+        };
+      }
+
       const shouldSkip =
         !!existing &&
         shouldSkipImport(existing.updatedAt, project.updatedAt, options.skipOlder);
@@ -600,15 +627,22 @@ export class ExportImportService {
         continue;
       }
 
-      const basePayload = {
+      const shouldSetInboxFlag =
+        project.isInbox && (!existingInbox || existing?.id === existingInbox.id);
+      const inboxStableIdTakenByOtherProject =
+        project.isInbox &&
+        !!existingInbox &&
+        !!stableMatch &&
+        stableMatch.id !== existingInbox.id;
+
+      const basePayload: Record<string, unknown> = {
         owner_id: userId,
-        stable_id: project.stableId,
         name: project.name,
         description: project.description,
         color: project.color,
         icon: project.icon,
         is_active: project.isActive,
-        is_inbox: project.isInbox,
+        is_inbox: shouldSetInboxFlag,
         project_type: project.projectType,
         ancestor_id: null,
         task_view: project.taskView,
@@ -617,6 +651,9 @@ export class ExportImportService {
         default_type_finish_date: project.defaultTypeFinishDate,
         dialog_time_when_task_finished: project.dialogTimeWhenTaskFinished,
       };
+      if (!inboxStableIdTakenByOtherProject || !existing) {
+        basePayload.stable_id = project.stableId;
+      }
 
       if (existing) {
         const { error: updateError } = await client

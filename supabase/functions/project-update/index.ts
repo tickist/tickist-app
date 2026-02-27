@@ -9,14 +9,40 @@ interface ProjectEventPayload {
   event: "shared" | "removed" | "deleted";
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-user-jwt",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+const jsonResponse = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+    },
+  });
+
 serve(async (req) => {
-  if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
-  const payload: ProjectEventPayload = await req.json();
+  if (req.method !== "POST") {
+    return jsonResponse(405, { error: "Method not allowed" });
+  }
+
+  let payload: ProjectEventPayload;
+  try {
+    payload = (await req.json()) as ProjectEventPayload;
+  } catch {
+    return jsonResponse(400, { error: "Invalid JSON payload" });
+  }
+
   if (!payload.projectId || !payload.recipients?.length) {
-    return new Response("Missing projectId or recipients", { status: 400 });
+    return jsonResponse(400, { error: "Missing projectId or recipients" });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -24,18 +50,14 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceRole);
   const userJwt = req.headers.get("x-user-jwt");
   if (!userJwt) {
-    return new Response(JSON.stringify({ error: "Missing x-user-jwt header" }), {
-      status: 401,
-    });
+    return jsonResponse(401, { error: "Missing x-user-jwt header" });
   }
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser(userJwt);
   if (userError || !user) {
-    return new Response(JSON.stringify({ error: "Invalid user session token" }), {
-      status: 401,
-    });
+    return jsonResponse(401, { error: "Invalid user session token" });
   }
 
   const { data: project, error: projectError } = await supabase
@@ -44,12 +66,10 @@ serve(async (req) => {
     .eq("id", payload.projectId)
     .maybeSingle();
   if (projectError || !project) {
-    return new Response(JSON.stringify({ error: "Project not found" }), {
-      status: 404,
-    });
+    return jsonResponse(404, { error: "Project not found" });
   }
   if (project.owner_id !== user.id) {
-    return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+    return jsonResponse(403, { error: "Forbidden" });
   }
 
   const inserts = payload.recipients.map((recipientId) => ({
@@ -61,8 +81,8 @@ serve(async (req) => {
 
   const { error } = await supabase.from("notifications").insert(inserts);
   if (error) {
-    return new Response(JSON.stringify({ error }), { status: 500 });
+    return jsonResponse(500, { error });
   }
 
-  return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  return jsonResponse(200, { ok: true });
 });

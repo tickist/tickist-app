@@ -357,6 +357,9 @@ export class AppSidebarComponent {
 
   async deleteProject(project: Project): Promise<void> {
     this.closeMenu();
+    if (project.isInbox) {
+      return;
+    }
     const confirmed = confirm(
       `Delete project "${project.name}"? Tasks will be left unattached.`
     );

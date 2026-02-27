@@ -206,6 +206,8 @@
       </button>
     }
     <button type="button" (click)="createChildProject(project)">Create child project</button>
-    <button type="button" class="text-error" (click)="deleteProject(project)">Delete</button>
+    @if (!project.isInbox) {
+      <button type="button" class="text-error" (click)="deleteProject(project)">Delete</button>
+    }
   </div>
 }

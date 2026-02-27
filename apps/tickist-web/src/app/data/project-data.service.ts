@@ -131,24 +131,7 @@ export class ProjectDataService {
     }
 
     this.projects.set(
-      data.map((row) => ({
-        id: row.id,
-        ownerId: row.owner_id,
-        name: row.name,
-        description: row.description ?? '',
-        color: row.color ?? '#394264',
-        icon: row.icon ?? 'folder',
-        isActive: row.is_active,
-        isInbox: row.is_inbox,
-        projectType: row.project_type ?? 'active',
-        ancestorId: row.ancestor_id,
-        taskView: row.task_view ?? 'extended',
-        defaultPriority: row.default_priority ?? undefined,
-        defaultFinishDate: row.default_finish_date ?? undefined,
-        defaultTypeFinishDate: row.default_type_finish_date ?? undefined,
-        dialogTimeWhenTaskFinished: row.dialog_time_when_task_finished ?? undefined,
-        shareWithIds: row.project_members?.map((m) => m.user_id) ?? [],
-      }))
+      data.map((row) => this.mapProjectRow(row as ProjectRow))
     );
   }
 
@@ -314,12 +297,45 @@ export class ProjectDataService {
       console.warn('[Projects] Supabase client missing; cannot delete project.');
       return false;
     }
+
+    const cachedProject =
+      this.projects().find((project) => project.id === projectId) ?? null;
+    let ownerId = cachedProject?.ownerId ?? null;
+    let isInbox = cachedProject?.isInbox ?? false;
+
+    if (!cachedProject) {
+      const { data: projectData, error: projectFetchError } = await this.supabase
+        .from('projects')
+        .select('owner_id, is_inbox')
+        .eq('id', projectId)
+        .maybeSingle();
+      if (projectFetchError) {
+        console.error('[Projects] Failed to inspect project before delete', projectFetchError);
+        return false;
+      }
+      if (!projectData) {
+        console.warn('[Projects] Project not found before delete', { projectId });
+        return false;
+      }
+      const row = projectData as { owner_id: string; is_inbox: boolean };
+      ownerId = row.owner_id;
+      isInbox = row.is_inbox;
+    }
+
+    if (isInbox) {
+      console.warn('[Projects] Inbox project cannot be deleted.', { projectId, ownerId });
+      return false;
+    }
+
     const { error } = await this.supabase.from('projects').delete().eq('id', projectId);
     if (error) {
       console.error('[Projects] Failed to delete project', error);
       return false;
     }
     this.projects.set(this.projects().filter((project) => project.id !== projectId));
+    if (ownerId && isInbox) {
+      this.ensuredInboxOwners.delete(ownerId);
+    }
     return true;
   }
 
@@ -330,7 +346,7 @@ export class ProjectDataService {
     const { data, error } = await this.supabase
       .from('projects')
       .select(
-        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, project_members(user_id)'
+        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(user_id)'
       )
       .eq('id', id)
       .single();
@@ -339,7 +355,10 @@ export class ProjectDataService {
       console.error('[Projects] Failed to fetch project', error);
       return null;
     }
-    const row = data as ProjectRow;
+    return this.mapProjectRow(data as ProjectRow);
+  }
+
+  private mapProjectRow(row: ProjectRow): Project {
     return {
       id: row.id,
       ownerId: row.owner_id,
@@ -352,6 +371,10 @@ export class ProjectDataService {
       projectType: row.project_type ?? 'active',
       ancestorId: row.ancestor_id,
       taskView: row.task_view ?? 'extended',
+      defaultPriority: row.default_priority ?? undefined,
+      defaultFinishDate: row.default_finish_date ?? undefined,
+      defaultTypeFinishDate: row.default_type_finish_date ?? undefined,
+      dialogTimeWhenTaskFinished: row.dialog_time_when_task_finished ?? undefined,
       shareWithIds: row.project_members?.map((m) => m.user_id) ?? [],
     };
   }
