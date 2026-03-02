@@ -95,6 +95,11 @@ async function setProjectFilter(
   label: 'all tasks' | 'done' | 'not done'
 ): Promise<void> {
   const filterButton = page.locator('button[title="Filter"]').first();
+  const filterDropdown = page
+    .locator('div.dropdown.dropdown-end')
+    .filter({ has: filterButton })
+    .first();
+
   await filterButton.click();
   const option = page
     .locator('button.filter-option')
@@ -102,9 +107,18 @@ async function setProjectFilter(
     .first();
   await expect(option).toBeVisible();
   await option.click();
-  // Ensure dropdown is closed before interacting with task cards.
+  // Close filter menu in a deterministic way to avoid it intercepting task clicks.
   await page.keyboard.press('Escape');
-  await expect(option).toBeHidden();
+  const isOpen = async (): Promise<boolean> => {
+    const classes = await filterDropdown.getAttribute('class');
+    return classes?.includes('dropdown-open') ?? false;
+  };
+  if (await isOpen()) {
+    await filterButton.click();
+  }
+  await expect
+    .poll(isOpen)
+    .toBe(false);
 }
 
 async function inboxCount(page: Page): Promise<number> {
