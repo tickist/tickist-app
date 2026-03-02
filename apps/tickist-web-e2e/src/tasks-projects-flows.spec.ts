@@ -1,4 +1,4 @@
-import { expect, type Page, test, type TestInfo } from '@playwright/test';
+import { expect, type Locator, type Page, test, type TestInfo } from '@playwright/test';
 
 function uniqueSuffix(testInfo: TestInfo): string {
   const randomPart = Math.random().toString(36).slice(2, 8);
@@ -41,10 +41,13 @@ async function ensureActiveProjectsExpanded(page: Page): Promise<void> {
   await expect(page.locator('button.sidebar-create').first()).toBeVisible();
 }
 
-async function openCreateProjectModal(page: Page): Promise<void> {
+async function openCreateProjectModal(page: Page): Promise<Locator> {
   await ensureActiveProjectsExpanded(page);
   await page.locator('button.sidebar-create').first().click();
-  await expect(page.getByLabel('Project name')).toBeVisible();
+  const composer = page.locator('app-project-composer');
+  await expect(composer).toBeVisible();
+  await expect(composer.getByLabel('Project name')).toBeVisible();
+  return composer;
 }
 
 async function createProject(
@@ -52,10 +55,10 @@ async function createProject(
   name: string,
   description: string
 ): Promise<void> {
-  await openCreateProjectModal(page);
-  await page.getByLabel('Project name').fill(name);
-  await page.getByLabel('Description').fill(description);
-  await page.getByRole('button', { name: 'Save project' }).click();
+  const composer = await openCreateProjectModal(page);
+  await composer.getByLabel('Project name').fill(name);
+  await composer.getByRole('textbox', { name: 'Description' }).fill(description);
+  await composer.getByRole('button', { name: 'Save project' }).click();
   await expect(page.locator('app-project-composer')).toHaveCount(0);
 }
 
@@ -91,13 +94,17 @@ async function setProjectFilter(
   page: Page,
   label: 'all tasks' | 'done' | 'not done'
 ): Promise<void> {
-  await page.locator('button[title="Filter"]').first().click();
+  const filterButton = page.locator('button[title="Filter"]').first();
+  await filterButton.click();
   const option = page
     .locator('button.filter-option')
     .filter({ hasText: label })
     .first();
   await expect(option).toBeVisible();
   await option.click();
+  // Ensure dropdown is closed before interacting with task cards.
+  await page.keyboard.press('Escape');
+  await expect(option).toBeHidden();
 }
 
 async function inboxCount(page: Page): Promise<number> {
@@ -245,10 +252,11 @@ test('creates project, edits it from project menu and persists changes', async (
   const menu = await openProjectContextMenu(page, baseName);
   await menu.getByRole('button', { name: 'Edit' }).click();
 
-  await expect(page.getByLabel('Project name')).toBeVisible();
-  await page.getByLabel('Project name').fill(updatedName);
-  await page.getByLabel('Description').fill(updatedDescription);
-  await page.getByRole('button', { name: 'Save project' }).click();
+  const composer = page.locator('app-project-composer');
+  await expect(composer.getByLabel('Project name')).toBeVisible();
+  await composer.getByLabel('Project name').fill(updatedName);
+  await composer.getByRole('textbox', { name: 'Description' }).fill(updatedDescription);
+  await composer.getByRole('button', { name: 'Save project' }).click();
   await expect(page.locator('app-project-composer')).toHaveCount(0);
 
   await expect(page.locator('header.project-header h1')).toHaveText(updatedName);

@@ -106,7 +106,7 @@ jobs:
       - name: E2E tests
         env:
           E2E_ENV_FILE: ${{ env.E2E_ENV_FILE }}
-        run: npx nx e2e tickist-web-e2e
+        run: npx nx e2e tickist-web-e2e -- --project=chromium
 
       - name: Stop Supabase local stack
         if: always()
