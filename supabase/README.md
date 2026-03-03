@@ -75,6 +75,7 @@ Required env vars:
 ```
 SUPABASE_URL=https://<your-project>.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=...
+ROUTINE_RUNNER_SECRET=<strong-random-secret>
 ```
 
 Manual invocation (local):
@@ -88,5 +89,6 @@ curl -X POST http://localhost:54321/functions/v1/project-update \
   -H 'Content-Type: application/json' \
   -d '{"projectId":"<uuid>","event":"shared","title":"New shared project","description":"Someone shared a project with you","recipients":["<auth-user-id>"]}'
 
-curl -X POST http://localhost:54321/functions/v1/routine-runner
+curl -X POST http://localhost:54321/functions/v1/routine-runner \
+  -H 'x-internal-cron-secret: <ROUTINE_RUNNER_SECRET>'
 ```

@@ -7,7 +7,7 @@
     "build": "nx build",
     "build:worker": "nx build tickist-web --configuration production",
     "test": "nx test",
-    "deploy:worker": "wrangler deploy --config wrangler.toml",
+    "deploy:worker": "npx --yes wrangler@4 deploy --config wrangler.toml",
     "db:reset": "npm run db:reset:local",
     "db:push:local": "dotenv -e .local_env -- sh -c 'npx supabase db push --db-url \"$SUPABASE_DB_URL\"'",
     "db:pull:local": "dotenv -e .local_env -- sh -c 'npx supabase db pull --db-url \"$SUPABASE_DB_URL\"'",
@@ -32,7 +32,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/build-angular": "21.1.5",
     "@angular/common": "21.1.6",
     "@angular/compiler": "21.1.6",
     "@angular/core": "21.1.6",
@@ -51,6 +50,7 @@
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^2.2.0",
     "@analogjs/vitest-angular": "^2.2.0",
+    "@angular-devkit/build-angular": "21.1.5",
     "@angular-devkit/core": "21.1.5",
     "@angular-devkit/schematics": "21.1.5",
     "@angular/build": "21.1.5",
