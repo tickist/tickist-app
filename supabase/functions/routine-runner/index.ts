@@ -10,29 +10,27 @@ interface RoutineReminderRow {
   timezone: string;
 }
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-user-jwt",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const INTERNAL_SECRET_HEADER = "x-internal-cron-secret";
+const MAX_REMINDERS_PER_RUN = 500;
 
 const jsonResponse = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), {
     status,
     headers: {
-      ...corsHeaders,
       "Content-Type": "application/json",
     },
   });
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
   if (req.method !== "POST") {
     return jsonResponse(405, { error: "Method not allowed" });
+  }
+
+  const requestId = crypto.randomUUID();
+  const configuredSecret = Deno.env.get("ROUTINE_RUNNER_SECRET")?.trim() ?? "";
+  const providedSecret = req.headers.get(INTERNAL_SECRET_HEADER)?.trim() ?? "";
+  if (!configuredSecret || !providedSecret || providedSecret !== configuredSecret) {
+    return jsonResponse(403, { error: "Forbidden", request_id: requestId });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -41,10 +39,12 @@ serve(async (req) => {
 
   const { data, error } = await supabase
     .from("routine_reminders")
-    .select("id, owner_id, project_id, task_id, cron, timezone");
+    .select("id, owner_id, project_id, task_id, cron, timezone")
+    .limit(MAX_REMINDERS_PER_RUN);
 
   if (error || !data) {
-    return jsonResponse(500, { error });
+    console.error("[routine-runner] Failed to fetch reminders", { requestId, error });
+    return jsonResponse(500, { error: "Internal server error", request_id: requestId });
   }
 
   const notifications = data.map((reminder: RoutineReminderRow) => ({
@@ -59,7 +59,11 @@ serve(async (req) => {
       .from("notifications")
       .insert(notifications);
     if (insertError) {
-      return jsonResponse(500, { error: insertError });
+      console.error("[routine-runner] Failed to insert notifications", {
+        requestId,
+        error: insertError,
+      });
+      return jsonResponse(500, { error: "Internal server error", request_id: requestId });
     }
   }
 
