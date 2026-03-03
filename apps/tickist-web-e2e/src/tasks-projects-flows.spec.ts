@@ -5,6 +5,10 @@ function uniqueSuffix(testInfo: TestInfo): string {
   return `${testInfo.project.name}-${Date.now()}-${randomPart}`;
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 async function ensureAuthenticated(page: Page): Promise<void> {
   const email = process.env['E2E_AUTH_EMAIL'] ?? 'e2e-shared-user@tickist.dev';
   const password = process.env['E2E_AUTH_PASSWORD'] ?? 'Test1234!';
@@ -96,9 +100,10 @@ async function setProjectFilter(
 ): Promise<void> {
   const filterButton = page.locator('button[title="Filter"]').first();
   await filterButton.click();
+  const exactLabel = new RegExp(`^\\s*${escapeRegExp(label)}\\s*$`);
   const option = page
     .locator('button.filter-option')
-    .filter({ hasText: label })
+    .filter({ hasText: exactLabel })
     .first();
   await expect(option).toBeVisible();
   await option.click();
