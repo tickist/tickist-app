@@ -1,31 +1,8 @@
 {
-    "name": "tickist-web-e2e",
-    "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "apps/tickist-web-e2e/src",
-    "projectType": "application",
-    "targets": {
-        "e2e": {
-            "executor": "@nx/cypress:cypress",
-            "options": {
-                "cypressConfig": "apps/tickist-web-e2e/cypress.config.ts",
-                "devServerTarget": "tickist-web:serve",
-                "testingType": "e2e"
-            },
-            "configurations": {
-                "production": {
-                    "devServerTarget": "tickist-web:serve:production"
-                },
-                "e2e": {
-                    "devServerTarget": "tickist-web:serve:e2e"
-                },
-                "ci": {
-                    "devServerTarget": "tickist-web:serve:ci"
-                }
-            }
-        },
-        "lint": {
-            "executor": "@nx/eslint:lint",
-            "outputs": ["{options.outputFile}"]
-        }
-    }
+  "name": "tickist-web-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/tickist-web-e2e/src",
+  "implicitDependencies": ["tickist-web"],
+  "tags": []
 }

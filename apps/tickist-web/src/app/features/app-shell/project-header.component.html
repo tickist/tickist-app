@@ -1,0 +1,91 @@
+<header class="project-header">
+  <div class="project-header__text">
+    <div class="project-header__title-row">
+      <span class="project-header__icon" [style.color]="project.color">
+        <app-project-icon [icon]="project.icon" [size]="22"></app-project-icon>
+      </span>
+      <h1>{{ project.name }}</h1>
+    </div>
+    @if (project.description) {
+      <p class="project-desc">{{ project.description }}</p>
+    }
+  </div>
+
+  <div class="project-header__actions">
+    <button type="button" class="btn btn-ghost btn-sm btn-circle" title="Edit project" (click)="openEdit.emit()">
+      ✏️
+    </button>
+
+    <div class="dropdown dropdown-end" [class.dropdown-open]="sortOpen()">
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-circle"
+        title="Sort"
+        (click)="sortOpen.set(!sortOpen())"
+        tabindex="0"
+        >
+        ⇅
+      </button>
+      <ul class="dropdown-content menu w-56 rounded-2xl border border-white/10 bg-base-200 text-base-content shadow-xl shadow-black/40">
+        <li class="menu-title px-3 pt-3 pb-1 text-xs uppercase tracking-[0.3em] text-base-content/70">
+          Sort by
+        </li>
+        @for (option of sortOptions; track option) {
+          <li>
+            <label class="flex items-center gap-2 px-3 py-2 text-sm">
+              <input
+                type="radio"
+                name="sort"
+                class="radio radio-xs"
+                [value]="option.value"
+                [checked]="sort === option.value"
+                (change)="selectSort(option.value)"
+                />
+              <span>{{ option.label }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="dropdown dropdown-end" [class.dropdown-open]="filterOpen()">
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-circle"
+        title="Filter"
+        (click)="filterOpen.set(!filterOpen())"
+        tabindex="0"
+        >
+        🔍
+      </button>
+      <ul class="dropdown-content menu w-56 rounded-2xl border border-white/10 bg-base-200 text-base-content shadow-xl shadow-black/40">
+        <li class="menu-title px-3 pt-3 pb-1 text-xs uppercase tracking-[0.3em] text-base-content/70">
+          Filter by
+        </li>
+        @for (option of filterOptions; track option) {
+          <li>
+            <button
+              type="button"
+              class="filter-option"
+              [class.active]="filter === option.value"
+              (click)="selectFilter(option.value)"
+              [attr.aria-pressed]="filter === option.value"
+              >
+              <span class="filter-dot" [class.active]="filter === option.value"></span>
+              <span>{{ option.label }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <label class="simple-toggle" title="Simple view">
+      <input
+        type="checkbox"
+        [checked]="viewMode === 'simple'"
+        (change)="toggleSimple.emit($any($event.target).checked)"
+        />
+      <span class="toggle-pill"></span>
+    </label>
+  </div>
+</header>

@@ -1,9 +1,0 @@
-<h1 mat-dialog-title><span>Estimate time</span></h1>
-<div mat-dialog-content>
-    <h3>{{ getEstimateTimeNameLt(rangeValues[0]) }} : {{ getEstimateTimeNameGt(rangeValues[1]) }}</h3>
-    <p-slider [(ngModel)]="rangeValues" [style]="{'width':'200px'}" [range]="true" [min]="1"
-              [max]="filtersGt.length"></p-slider>
-
-
-    <button mat-button (click)="changeEstimateTime()">Set filter</button>
-</div>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="tickist">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="/" />
+    <title>Tickist</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script>
+      (function applyInitialTheme() {
+        var key = 'tickist.theme';
+        var darkTheme = 'tickist';
+        var lightTheme = 'tickist-light';
+        try {
+          var stored = localStorage.getItem(key);
+          var fromStorage = stored === darkTheme || stored === lightTheme ? stored : null;
+          var prefersDark =
+            typeof window.matchMedia === 'function' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = fromStorage || (prefersDark ? darkTheme : lightTheme);
+          var scheme = theme === darkTheme ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = scheme;
+        } catch (_) {
+          document.documentElement.setAttribute('data-theme', darkTheme);
+          document.documentElement.style.colorScheme = 'dark';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <script>
+      (function syncBodyTheme() {
+        var theme = document.documentElement.getAttribute('data-theme') || 'tickist';
+        var scheme = theme === 'tickist' ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', theme);
+        document.body.style.colorScheme = scheme;
+      })();
+    </script>
+    <app-root></app-root>
+    <script src="/env.js"></script>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

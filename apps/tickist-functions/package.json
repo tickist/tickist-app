@@ -1,9 +1,0 @@
-{
-    "name": "tickist-functions",
-    "version": "0.0.2",
-    "license": "GPL-3.0-or-later",
-    "main": "main.js",
-    "engines": {
-        "node": "16"
-    }
-}

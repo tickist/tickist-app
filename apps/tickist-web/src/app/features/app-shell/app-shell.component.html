@@ -1,0 +1,84 @@
+<section class="space-y-6">
+  <div class="grid gap-6">
+    <div class="space-y-6">
+      @if (activeProject(); as project) {
+        <div class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20">
+          @if (activeProject(); as headerProject) {
+            <app-project-header
+              [project]="headerProject"
+              [viewMode]="headerProject.taskView === 'simple' ? 'simple' : 'extended'"
+              [sort]="sortOption()"
+              [filter]="filterOption()"
+              (toggleSimple)="setProjectTaskView(headerProject, $event ? 'simple' : 'extended')"
+              (openEdit)="openProjectEdit(headerProject)"
+              (changeSort)="setSort($event)"
+              (changeFilter)="setFilter($event)"
+            ></app-project-header>
+          }
+          <div class="tasks-list">
+            @for (task of filteredTasks(); track trackTask($index, task)) {
+              <app-task-card
+                [task]="task"
+                [project]="project"
+                [viewMode]="project.taskView === 'simple' ? 'simple' : 'extended'"
+              ></app-task-card>
+            }
+            @if (!filteredTasks().length) {
+              <p class="text-sm text-base-content/60">
+                No tasks yet. Add one below.
+              </p>
+            }
+          </div>
+          <form class="new-task-form mt-6" [formGroup]="projectTaskForm" (ngSubmit)="addTaskToProject()">
+            <div class="new-task-form__card">
+              <div class="new-task-form__controls">
+                <input
+                  id="project-task-name"
+                  class="new-task-form__input"
+                  placeholder="What needs doing?"
+                  formControlName="name"
+                  />
+                <button class="new-task-form__button" type="submit">Add task</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      } @else {
+        @if (dueDateLabel(); as label) {
+          <div class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20">
+            <div class="mb-4 flex items-center justify-between">
+              <div>
+                <p class="text-xs uppercase tracking-wide text-base-content/50">Due date</p>
+                <p class="text-lg font-semibold">{{ label }}</p>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="clearDueDateFilter()">
+                Clear filter
+              </button>
+            </div>
+            <div class="tasks-list">
+              @for (task of filteredTasks(); track trackTask($index, task)) {
+                <app-task-card
+                  [task]="task"
+                  [project]="projectForTask(task)"
+                  [viewMode]="taskViewMode()"
+                ></app-task-card>
+              }
+              @if (!filteredTasks().length) {
+                <p class="text-sm text-base-content/60">
+                  No tasks for this date yet.
+                </p>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="rounded-2xl border border-dashed border-white/20 bg-base-200/40 p-6 text-center text-base-content/70">
+            <p class="text-lg font-semibold">Select a project from the sidebar</p>
+            <p class="text-sm text-base-content/60">The task list will appear here once you choose a GTD list.</p>
+          </div>
+        }
+      }
+
+    </div>
+
+  </div>
+</section>

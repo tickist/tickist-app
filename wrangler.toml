@@ -1,0 +1,6 @@
+name = "tickist-app"
+main = "apps/tickist-web/worker.ts"
+compatibility_date = "2026-02-01"
+
+[assets]
+directory = "dist/tickist-web"

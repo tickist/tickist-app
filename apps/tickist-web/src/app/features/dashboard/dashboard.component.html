@@ -1,0 +1,136 @@
+<section class="flex flex-col gap-6">
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Today</h2>
+      <span class="badge badge-primary badge-outline">{{ todayTasks().length }}</span>
+    </header>
+    @if (sortedTodayTasks().length) {
+      <div class="space-y-3">
+        @for (task of sortedTodayTasks(); track trackTask($index, task)) {
+          <app-task-card
+            [task]="task"
+            [project]="projectOf(task.projectId)"
+            viewMode="extended"
+            />
+        }
+      </div>
+    } @else {
+      <p class="text-sm text-base-content/60">No tasks scheduled for today.</p>
+    }
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Overdue</h2>
+      <span class="badge badge-error badge-outline">{{ overdueTasks().length }}</span>
+    </header>
+    @if (sortedOverdueTasks().length) {
+      <div class="space-y-3">
+        @for (task of sortedOverdueTasks(); track trackTask($index, task)) {
+          <app-task-card
+            [task]="task"
+            [project]="projectOf(task.projectId)"
+            viewMode="extended"
+            />
+        }
+      </div>
+    } @else {
+      <p class="text-sm text-base-content/60">You're all caught up.</p>
+    }
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Pinned</h2>
+      <span class="badge badge-outline">{{ pinnedTasks().length }}</span>
+    </header>
+    @if (pinnedTasks().length) {
+      <div class="space-y-3">
+        @for (task of pinnedTasks(); track trackTask($index, task)) {
+          <app-task-card
+            [task]="task"
+            [project]="projectOf(task.projectId)"
+            viewMode="extended"
+            />
+        }
+      </div>
+    } @else {
+      <p class="text-sm text-base-content/60">No pinned tasks yet.</p>
+    }
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold">Next actions</h2>
+        <p class="text-xs text-base-content/60">Tasks marked as next action</p>
+      </div>
+      <span class="badge badge-info badge-outline">{{ nextActionTasks().length }}</span>
+    </header>
+    @if (nextActionTasks().length) {
+      <div class="space-y-3">
+        @for (task of nextActionTasks(); track trackTask($index, task)) {
+          <app-task-card
+            [task]="task"
+            [project]="projectOf(task.projectId)"
+            viewMode="extended"
+            />
+        }
+      </div>
+    } @else {
+      <p class="text-sm text-base-content/60">No next actions yet.</p>
+    }
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold">Need info</h2>
+        <p class="text-xs text-base-content/60">Tasks waiting on information</p>
+      </div>
+      <span class="badge badge-warning badge-outline">{{ needInfoTasks().length }}</span>
+    </header>
+    @if (needInfoTasks().length) {
+      <div class="space-y-3">
+        @for (task of needInfoTasks(); track trackTask($index, task)) {
+          <app-task-card
+            [task]="task"
+            [project]="projectOf(task.projectId)"
+            viewMode="extended"
+            />
+        }
+      </div>
+    } @else {
+      <p class="text-sm text-base-content/60">Nothing is blocked right now.</p>
+    }
+  </article>
+
+  <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
+    <header class="mb-3 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold">Projects missing next action</h2>
+        <p class="text-xs text-base-content/60">Active projects without a next step</p>
+      </div>
+      <span class="badge badge-outline">{{ projectsMissingNextAction().length }}</span>
+    </header>
+    @if (projectsMissingNextAction().length) {
+      <ul class="space-y-3">
+        @for (project of projectsMissingNextAction() | slice:0:5; track project) {
+          <li>
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="font-medium">{{ project.name }}</p>
+                <p class="text-xs text-base-content/60">{{ project.description || 'No description' }}</p>
+              </div>
+              <a class="btn btn-ghost btn-xs" [routerLink]="['/app/tasks', project.id]">
+                Open ({{ projectTaskCount(project.id) }})
+              </a>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="text-sm text-base-content/60">Every project has a next action 🎯</p>
+    }
+  </article>
+</section>

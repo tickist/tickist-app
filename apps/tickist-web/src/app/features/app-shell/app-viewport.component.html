@@ -1,0 +1,188 @@
+<section class="min-h-screen bg-base-100 text-base-content">
+  <nav class="app-navbar sticky top-0 z-30 flex w-full flex-wrap items-center gap-3 gap-y-2 border-b border-white/10 bg-base-200 px-4 py-3 shadow-lg shadow-black/20 lg:px-8 md:flex-nowrap relative">
+    <div class="flex items-center gap-4 shrink-0">
+      <button type="button" class="btn btn-sm btn-ghost lg:hidden" (click)="toggleSidebar()">☰</button>
+      <a routerLink="/app" class="flex items-center gap-2">
+        <img
+          src="/images/logo.png"
+          srcset="/images/logo.png 1x, /images/logo_230.png 2x"
+          alt="Tickist"
+          class="h-8 w-auto"
+          />
+      </a>
+    </div>
+    <div class="order-3 flex w-full items-center md:order-none md:flex-1 md:w-auto">
+      <div class="relative w-full md:max-w-md md:mx-auto">
+        <input
+          #taskSearchInput
+          type="search"
+          class="input input-bordered input-sm w-full bg-base-100/60 pl-4 pr-10"
+          placeholder="Search tasks (name or description)…"
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+          />
+        @if (searchTerm()) {
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2"
+            aria-label="Clear search"
+            (click)="clearSearch(taskSearchInput)"
+            >
+            <svg viewBox="0 0 24 24" class="h-4 w-4 stroke-current" fill="none" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+            </svg>
+          </button>
+        }
+        @if (!searchTerm()) {
+          <span
+            class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 fill-current">
+              <path
+                d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.71.71l.27.28v.79L20 21.5 21.5 20l-5.5-6zM10 15a5 5 0 1 1 5-5 5 5 0 0 1-5 5Z"
+                />
+            </svg>
+          </span>
+        }
+      </div>
+    </div>
+    <div class="ml-auto flex items-center gap-3 shrink-0">
+      <button
+        type="button"
+        class="theme-toggle-btn"
+        data-testid="theme-toggle"
+        [attr.aria-label]="themeButtonLabel()"
+        [attr.aria-pressed]="!isDarkTheme()"
+        [attr.title]="themeButtonLabel()"
+        (click)="toggleTheme()"
+        >
+        <span class="theme-toggle-btn__icon" aria-hidden="true">
+          {{ isDarkTheme() ? '☀️' : '🌙' }}
+        </span>
+      </button>
+      <button type="button" class="btn btn-circle btn-ghost border border-white/10" (click)="toggleNotifications()">
+        <div class="indicator">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 fill-current">
+            <path
+              d="M12 2a5 5 0 0 0-5 5v2.382a3 3 0 0 1-.879 2.121L5 12.624V14h14v-1.376l-1.121-1.121A3 3 0 0 1 17 9.382V7a5 5 0 0 0-5-5Zm-3 17h6a3 3 0 0 1-6 0Z"
+              />
+          </svg>
+          @if (unreadNotifications(); as unread) {
+            <span class="badge badge-primary badge-xs" [class.hidden]="!unread">
+              {{ unread }}
+            </span>
+          }
+        </div>
+      </button>
+      <button type="button" class="btn btn-circle border border-white/10 bg-base-100/70 p-0 shadow-inner" (click)="toggleProfileMenu()">
+        @if (avatarUrl(); as avatar) {
+          <img [src]="avatar" alt="Avatar" class="h-10 w-10 rounded-full object-cover" />
+        } @else {
+          <span class="text-lg font-semibold text-primary">{{ avatarInitial() }}</span>
+        }
+      </button>
+    </div>
+
+    @if (profileMenuOpen()) {
+      <div
+        class="app-menu absolute right-3 top-full z-40 mt-2 w-48 rounded-2xl border border-white/10 bg-base-200/95 p-1 shadow-xl shadow-black/40"
+        >
+        <button class="btn btn-ghost btn-sm w-full justify-start text-left" type="button" routerLink="/app/team" (click)="closeProfileMenu()">
+          Team
+        </button>
+        <button class="btn btn-ghost btn-sm w-full justify-start text-left" type="button" routerLink="/app/settings" (click)="closeProfileMenu()">
+          Settings
+        </button>
+        <button class="btn btn-ghost btn-sm w-full justify-start text-left text-error" type="button" (click)="signOut(); closeProfileMenu()">
+          Logout
+        </button>
+      </div>
+    }
+
+    @if (notificationsOpen()) {
+      <div
+        class="app-menu absolute right-20 top-full z-40 mt-2 w-80 rounded-2xl border border-white/10 bg-base-200/95 p-3 shadow-xl shadow-black/50"
+        >
+        <div class="mb-2 flex items-center justify-between">
+          <p class="text-sm font-semibold uppercase tracking-[0.3em] text-base-content/60">Notifications</p>
+          <button class="btn btn-ghost btn-xs text-base-content/60" type="button" (click)="toggleNotifications()">
+            Close
+          </button>
+        </div>
+        @if (notificationsLoading()) {
+          <div class="flex items-center gap-2 text-sm text-base-content/60">
+            <span class="loading loading-spinner text-primary"></span>
+            Syncing alerts…
+          </div>
+        } @else {
+          @if (!notifications().length) {
+            <p class="text-sm text-base-content/60">
+              Nothing new right now.
+            </p>
+          }
+          @if (notifications().length) {
+            <ul class="max-h-80 space-y-2 overflow-y-auto pr-1">
+              @for (alert of notifications(); track alert) {
+                <li class="rounded-xl border border-white/10 bg-base-100/60 p-3 text-sm">
+                  <div class="flex items-center justify-between gap-2">
+                    <div>
+                      <p class="font-semibold">{{ alert.title }}</p>
+                      <p class="text-xs text-base-content/60">{{ alert.createdAt | date: 'medium' }}</p>
+                    </div>
+                    @if (!alert.isRead) {
+                      <button
+                        class="btn btn-ghost btn-xs text-primary"
+                        type="button"
+                        (click)="markNotificationAsRead(alert.id)"
+                        >
+                        Mark read
+                      </button>
+                    }
+                  </div>
+                  @if (alert.description) {
+                    <p class="mt-2 text-base-content/80">
+                      {{ alert.description }}
+                    </p>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        }
+      </div>
+    }
+  </nav>
+  <div class="relative flex min-h-[calc(100vh-72px)]">
+    <aside class="relative z-30 hidden w-96 border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block">
+      <app-sidebar></app-sidebar>
+    </aside>
+
+    @if (sidebarOpen()) {
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-96 bg-base-200 px-5 py-6 shadow-2xl shadow-black/40 transition lg:hidden"
+        >
+        <div class="flex justify-end">
+          <button type="button" class="btn btn-ghost btn-xs" (click)="closeSidebar()">Close ✕</button>
+        </div>
+        <app-sidebar></app-sidebar>
+      </aside>
+    }
+    @if (sidebarOpen()) {
+      <div
+        class="fixed inset-0 z-30 bg-black/50 lg:hidden"
+        tabindex="0"
+        (click)="closeSidebar()"
+        (keydown.enter)="closeSidebar()"
+        (keydown.space)="closeSidebar(); $event.preventDefault()"
+      ></div>
+    }
+
+    <main class="flex-1 px-4 py-8 lg:px-8">
+      <div class="w-full max-w-none">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+  <app-task-fab></app-task-fab>
+  <app-toast-container></app-toast-container>
+</section>

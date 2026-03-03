@@ -1,112 +1,97 @@
 # Tickist
-Landing page: [Tickist.com](https://tickist.com)
+[![CI](https://github.com/tickist/tickist-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tickist/tickist-app/actions/workflows/ci.yml)
 
-The official website of the application: [Tickist.app](https://tickist.app)
+<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
-## How to run
+✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
 
-### Install the application
+[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-standalone-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
 
-    -> # git clone git@github.com:tickist/tickist-app.git
+## Finish your CI setup
 
-    -> # cd tickist-app
-
-    -> # npm install -g @angular/cli firebase-tools cross-env
-
-    -> # npm install
-
-    -> # npm run start
-
-If you want to create your firebase project, please use [official Firebase console website](https://console.firebase.google.com/)
-and copy firebase config object into the environment/environment.dev.ts file.
-
-If you want to read more about the technologies used in this project, please see this online documentation:
-* [Angular](https://angular.io/)
-* [Firebase](https://firebase.google.com/)
-
-### Firebase CLI
-
-Log into Firebase using your Google account by running the following command:
-
-    -> #  firebase login
-
-Test if the CLI is properly installed and if it can access your account. You can do it by checking the list of your Firebase projects. Run the following command:
-
-    -> # firebase projects:list
+[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/wo22B0Jnpq)
 
 
-### E2E Testing
+## Run tasks
 
-Tickist application is using cypress as a testing tool and
-[cypress firebase](https://github.com/prescottprue/cypress-firebase) as a glue between cypress and firebase backend.
-If you want to run e2e test, then you should run this command:
+To run the dev server for your app, use:
 
-    ` -> # npm run e2e`
+```sh
+npx nx serve tickist
+```
 
+To create a production bundle:
 
-or
+```sh
+npx nx build tickist
+```
 
-    ` -> # npm run e2e:watch`
+To see all available targets to run for a project, run:
 
-You should create more additional steps:
-1. Go to project settings on firebase console and generate a new private key. See how to do it in the Google Docs.
+```sh
+npx nx show project tickist
+```
 
-2. Add serviceAccount.json to your .gitignore (THIS IS VERY IMPORTANT TO KEEP YOUR INFORMATION SECURE!)
+These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
 
-3. Save the downloaded file as serviceAccount.json in the root of your project (make sure that it is .gitignored) - needed for firebase-admin to have read/write access to your DB from within your tests
+[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-4. Create a new user in firebase console and save UID in the package.json file
+### Supabase configuration
 
+Create a local environment file based on `.env.example`:
 
+```bash
+cp .env.example .env.local
+```
 
-You can find more info how to configure cypress-firebase in the [official cypress-firebase github repo](https://github.com/prescottprue/cypress-firebase#setup)
+Fill in `NG_APP_SUPABASE_URL` and `NG_APP_SUPABASE_PUBLISHABLE_KEY`. The Angular app reads these via `environment.util.ts`. Without those values the Supabase client falls back to mock data so you can keep building the UI.
 
-### Bug reporting
+Schema migrations live in `supabase/migrations/`. Apply them with the Supabase CLI or `psql` before testing real data flows.
 
-If you have any problems with application or you find a bug, please report it:
-* in github issues
-* send us an e-mail to tickist@tickist.com
+`NG_APP_SUPABASE_FUNCTIONS_URL` is optional. If missing, the app derives it from `NG_APP_SUPABASE_URL` as `<supabase-url>/functions/v1`. Set it explicitly only when you want to override that default (for example local edge runtime/proxy).
 
-## What is Tickist?
+## Add new projects
 
-Tickist is not only a place, where you may gather your daily tasks. It was also designed as a tool for the continuous improvement of effectiveness and efficiency of time management.
+While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
 
-The functionalities offered by Tickist ― such as nested lists, tags, flexible due dates (on that date and by a date) and estimated time ― should help us all to manage our time more effectively.
+Use the plugin's generator to create new projects.
 
-A to-do list doesn’t have to cause negative associations. We want to enjoy the ticking and our well-deserved free time.
+To generate a new application, use:
 
-## Features
+```sh
+npx nx g @nx/angular:app demo
+```
 
-#### Tags/Label
+To generate a new library, use:
 
-#### Repeat options
+```sh
+npx nx g @nx/angular:lib mylib
+```
 
-#### Steps
+You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
 
-#### Sharing tasks or projects
-
-
-#### Notifications
-
-#### Pinning
-
-#### Real time database
-
-#### Tasks and projects in tree view
-
-#### Progressive web application
-
-## Social media
-
-[Facebook](https://www.facebook.com/Tickist)
-
-[Twitter](https://twitter.com/tickist)
-
-[Instagram](https://www.instagram.com/tickistapp/)
+[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
 
-# Licence
+[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-Every code patch accepted in Tickist is licensed under GPL v3.0. You must be careful to not include any code that can not be licensed under this license.
+## Install Nx Console
 
-Please read carefully [our license](https://github.com/tickist/frontend/blob/master/LICENSE) and ask us if you have any questions.
+Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+
+[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+## Useful links
+
+Learn more:
+
+- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-standalone-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
+- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+And join the Nx community:
+- [Discord](https://go.nx.dev/community)
+- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
+- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
+- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)

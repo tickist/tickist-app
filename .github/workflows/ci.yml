@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      # Cache node_modules
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Lint
+        run: npx nx lint tickist-web
+
+      - name: Unit tests
+        run: npx nx test tickist-web
+
+      # - name: E2E tests
+      #   run: npx nx e2e tickist-web
+
+  e2e:
+    if: github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'develop')
+    runs-on: ubuntu-latest
+    env:
+      E2E_ENV_FILE: .local_env.e2e
+      E2E_DB_RESET_ATTEMPTS: '5'
+      E2E_SKIP_DB_RESET_SETUP: 'true'
+      E2E_SKIP_DB_RESET_TEARDOWN: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase local stack
+        run: supabase start
+
+      - name: Export local Supabase credentials
+        run: |
+          supabase status -o env > "$E2E_ENV_FILE"
+
+          get_env_value() {
+            local key="$1"
+            grep -E "^${key}=" "$E2E_ENV_FILE" | tail -n1 | cut -d= -f2- || true
+          }
+
+          ng_supabase_url="$(get_env_value NG_APP_SUPABASE_URL)"
+          if [ -z "$ng_supabase_url" ]; then ng_supabase_url="$(get_env_value API_URL)"; fi
+          if [ -z "$ng_supabase_url" ]; then ng_supabase_url="$(get_env_value SUPABASE_URL)"; fi
+
+          ng_supabase_key="$(get_env_value NG_APP_SUPABASE_PUBLISHABLE_KEY)"
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value NG_APP_SUPABASE_ANON_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value PUBLISHABLE_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value ANON_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value SUPABASE_PUBLISHABLE_KEY)"; fi
+          if [ -z "$ng_supabase_key" ]; then ng_supabase_key="$(get_env_value SUPABASE_ANON_KEY)"; fi
+
+          e2e_db_url="$(get_env_value SUPABASE_E2E_DB_URL)"
+          if [ -z "$e2e_db_url" ]; then e2e_db_url="$(get_env_value DB_URL)"; fi
+          if [ -z "$e2e_db_url" ]; then e2e_db_url="$(get_env_value SUPABASE_DB_URL)"; fi
+
+          {
+            echo "NG_APP_SUPABASE_URL=$ng_supabase_url"
+            echo "NG_APP_SUPABASE_PUBLISHABLE_KEY=$ng_supabase_key"
+            echo "NG_APP_SUPABASE_ANON_KEY=$ng_supabase_key"
+            echo "SUPABASE_E2E_DB_URL=$e2e_db_url"
+          } >> "$E2E_ENV_FILE"
+
+          if [ -z "$ng_supabase_url" ] || [ -z "$ng_supabase_key" ] || [ -z "$e2e_db_url" ]; then
+            echo "Error: Missing required Supabase env vars in $E2E_ENV_FILE" >&2
+            echo "Available keys:" >&2
+            cut -d= -f1 "$E2E_ENV_FILE" | sort -u >&2
+            exit 1
+          fi
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: E2E tests
+        env:
+          E2E_ENV_FILE: ${{ env.E2E_ENV_FILE }}
+        run: npx nx e2e tickist-web-e2e -- --project=chromium
+
+      - name: Stop Supabase local stack
+        if: always()
+        run: supabase stop --no-backup

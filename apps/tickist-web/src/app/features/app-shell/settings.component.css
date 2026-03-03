@@ -1,0 +1,186 @@
+.settings {
+  @apply grid gap-6 md:grid-cols-[260px_1fr];
+}
+
+.settings__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 16px;
+  border: 1px solid rgb(var(--bc) / 0.14);
+  background: rgb(var(--b1) / 0.66);
+  box-shadow: inset 0 0 0 1px rgb(var(--bc) / 0.04);
+}
+
+.settings__tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgb(var(--bc) / 0.78);
+  background: transparent;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.settings__tab:hover {
+  background: rgb(var(--bc) / 0.1);
+  color: rgb(var(--bc));
+}
+
+.settings__tab.active {
+  background: rgba(255, 234, 0, 0.18);
+  color: #ffea00;
+}
+
+.settings__panel {
+  border-radius: 16px;
+  border: 1px solid rgb(var(--bc) / 0.14);
+  background: rgb(var(--b1) / 0.72);
+  padding: 1.5rem;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.2);
+}
+
+.panel__header h2 {
+  @apply text-xl font-semibold;
+  color: rgb(var(--bc));
+}
+
+.eyebrow {
+  @apply text-xs uppercase tracking-[0.4em];
+  color: rgb(var(--bc) / 0.62);
+}
+
+.panel__form {
+  @apply mt-4 space-y-4;
+}
+
+.avatar-card {
+  @apply mt-4 flex flex-col gap-4 rounded-xl p-4;
+  border: 1px solid rgb(var(--bc) / 0.14);
+  background: rgb(var(--b2) / 0.48);
+}
+
+.avatar-card__preview {
+  @apply flex h-20 w-20 items-center justify-center rounded-full;
+  border: 1px solid rgb(var(--bc) / 0.24);
+  background: rgb(var(--b1) / 0.92);
+}
+
+.avatar-card__image {
+  @apply h-full w-full rounded-full object-cover;
+}
+
+.avatar-card__initial {
+  @apply text-2xl font-semibold text-primary;
+}
+
+.avatar-card__content {
+  @apply min-w-0;
+}
+
+.avatar-card__actions {
+  @apply mt-3 flex flex-wrap items-center gap-2;
+}
+
+@media (min-width: 640px) {
+  .avatar-card {
+    @apply flex-row items-center;
+  }
+}
+
+.field {
+  @apply flex flex-col gap-2;
+}
+
+.field__label {
+  @apply text-sm font-semibold;
+  color: rgb(var(--bc) / 0.74);
+}
+
+.field__error {
+  @apply text-xs text-error;
+}
+
+.field__hint {
+  @apply text-xs;
+  color: rgb(var(--bc) / 0.58);
+}
+
+.field-inline {
+  @apply flex items-center gap-3 text-sm;
+  color: rgb(var(--bc) / 0.86);
+}
+
+.panel__actions {
+  @apply mt-2 flex justify-end;
+}
+
+.settings .input {
+  background: rgb(var(--b3) / 0.72);
+  border: 1px solid rgb(var(--bc) / 0.18);
+  color: rgb(var(--bc));
+}
+
+.settings .input:focus {
+  outline: none;
+  border-color: rgba(255, 234, 0, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 234, 0, 0.12);
+}
+
+.danger-card {
+  @apply mt-6 flex items-center justify-between gap-3 rounded-xl p-4;
+  border: 1px solid rgb(var(--er) / 0.4);
+  background: rgb(var(--er) / 0.1);
+  color: rgb(var(--bc));
+}
+
+.placeholder {
+  @apply flex items-center justify-center text-sm;
+  color: rgb(var(--bc) / 0.62);
+}
+
+.backup-grid {
+  @apply mt-4 grid gap-4 lg:grid-cols-2;
+}
+
+.backup-card {
+  @apply rounded-xl p-4 space-y-3;
+  border: 1px solid rgb(var(--bc) / 0.14);
+  background: rgb(var(--b2) / 0.44);
+}
+
+.backup-card h3 {
+  @apply text-base font-semibold;
+  color: rgb(var(--bc));
+}
+
+.project-filter-list {
+  @apply max-h-48 overflow-y-auto space-y-2 rounded-lg p-3;
+  border: 1px solid rgb(var(--bc) / 0.12);
+  background: rgb(var(--b1) / 0.64);
+}
+
+.backup-actions {
+  @apply justify-end gap-2;
+}
+
+.import-report {
+  @apply rounded-lg p-3 space-y-2;
+  border: 1px solid rgb(var(--su) / 0.3);
+  background: rgb(var(--su) / 0.1);
+  color: rgb(var(--bc));
+}
+
+.import-report--error {
+  border-color: rgb(var(--er) / 0.35);
+  background: rgb(var(--er) / 0.1);
+}
+
+.import-report__list {
+  @apply list-disc pl-4 text-xs space-y-1;
+}

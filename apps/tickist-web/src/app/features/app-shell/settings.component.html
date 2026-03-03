@@ -1,0 +1,288 @@
+<section class="settings">
+  <aside class="settings__nav">
+    <button
+      type="button"
+      class="settings__tab"
+      [class.active]="activeTab() === 'account'"
+      (click)="select('account')"
+      >
+      Account
+    </button>
+    <button
+      type="button"
+      class="settings__tab"
+      [class.active]="activeTab() === 'password'"
+      (click)="select('password')"
+      >
+      Password
+    </button>
+    <button
+      type="button"
+      class="settings__tab"
+      [class.active]="activeTab() === 'notifications'"
+      (click)="select('notifications')"
+      >
+      Notifications
+    </button>
+    <button
+      type="button"
+      class="settings__tab"
+      [class.active]="activeTab() === 'backup'"
+      (click)="select('backup')"
+      >
+      Backup &amp; Restore
+    </button>
+  </aside>
+
+  @if (activeTab() === 'account') {
+    <section class="settings__panel">
+      <header class="panel__header">
+        <div>
+          <p class="eyebrow">Profile</p>
+          <h2>{{ user()?.user_metadata?.full_name || user()?.email }}</h2>
+        </div>
+      </header>
+      <section class="avatar-card" aria-label="Avatar settings">
+        <div class="avatar-card__preview">
+          @if (avatarPreviewUrl(); as avatar) {
+            <img [src]="avatar" alt="Profile avatar" class="avatar-card__image" />
+          } @else {
+            <span class="avatar-card__initial">{{ avatarInitial() }}</span>
+          }
+        </div>
+        <div class="avatar-card__content">
+          <p class="field__label">Avatar</p>
+          <p class="field__hint">PNG, JPG or WEBP, maximum size 2 MB.</p>
+          <div class="avatar-card__actions">
+            <label class="btn btn-outline btn-sm" [class.btn-disabled]="avatarUploading() || avatarRemoving()">
+              @if (!avatarUploading()) {
+                <span>Upload avatar</span>
+              }
+              @if (avatarUploading()) {
+                <span class="loading loading-spinner loading-xs"></span>
+              }
+              <input
+                type="file"
+                class="sr-only"
+                accept="image/png,image/jpeg,image/webp"
+                [disabled]="avatarUploading() || avatarRemoving()"
+                (change)="onAvatarSelected($event)"
+              />
+            </label>
+            <button
+              type="button"
+              class="btn btn-ghost btn-sm text-error"
+              [disabled]="avatarUploading() || avatarRemoving()"
+              (click)="removeAvatar()"
+            >
+              @if (!avatarRemoving()) {
+                <span>Remove</span>
+              }
+              @if (avatarRemoving()) {
+                <span class="loading loading-spinner loading-xs"></span>
+              }
+            </button>
+          </div>
+        </div>
+      </section>
+      <form class="panel__form" [formGroup]="accountForm">
+        <label class="field">
+          <span class="field__label">Display name</span>
+          <input
+            class="input input-bordered"
+            placeholder="Your name"
+            formControlName="displayName"
+            />
+          @if (accountForm.controls.displayName.touched && accountForm.controls.displayName.invalid) {
+            <small class="field__error">
+              Name must be at least 2 characters.
+            </small>
+          }
+        </label>
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input class="input input-bordered" formControlName="email" />
+          <small class="field__hint text-warning">You cannot change your email in this build.</small>
+        </label>
+        <div class="panel__actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="updating()"
+            (click)="saveAccount()"
+            >
+            Save changes
+          </button>
+        </div>
+      </form>
+      <div class="danger-card">
+        <div>
+          <p class="text-sm font-semibold text-error">Delete account</p>
+          <p class="text-xs text-base-content/70">
+            Deleting your account is permanent. All data will be wiped immediately.
+          </p>
+        </div>
+        <button type="button" class="btn btn-error btn-sm" (click)="deleteAccount()">Delete</button>
+      </div>
+    </section>
+  }
+
+  @if (activeTab() === 'password') {
+    <section class="settings__panel placeholder">
+      <p>Coming soon: password reset and recovery options.</p>
+    </section>
+  }
+
+  @if (activeTab() === 'notifications') {
+    <section class="settings__panel placeholder">
+      <p>Coming soon: notification preferences.</p>
+    </section>
+  }
+
+  @if (activeTab() === 'backup') {
+    <section class="settings__panel">
+      <header class="panel__header">
+        <div>
+          <p class="eyebrow">Backup</p>
+          <h2>Export &amp; Import</h2>
+        </div>
+      </header>
+
+      <div class="backup-grid">
+        <section class="backup-card" aria-label="Export backup">
+          <h3>Export JSON</h3>
+          <p class="field__hint">
+            Download your projects, tags, tasks, steps and task-tag relations in Tickist JSON v1 format.
+          </p>
+
+          <label class="field-inline" for="export-only-active">
+            <input
+              id="export-only-active"
+              type="checkbox"
+              class="checkbox checkbox-sm"
+              [checked]="exportOnlyActive()"
+              (change)="onExportOnlyActiveChanged($event)"
+            />
+            <span>Only active projects and tasks</span>
+          </label>
+
+          <label class="field-inline" for="export-selected-projects">
+            <input
+              id="export-selected-projects"
+              type="checkbox"
+              class="checkbox checkbox-sm"
+              [checked]="exportSelectedProjectsOnly()"
+              (change)="onExportSelectedProjectsChanged($event)"
+            />
+            <span>Only selected projects</span>
+          </label>
+
+          @if (exportSelectedProjectsOnly()) {
+            <div class="project-filter-list">
+              @if (availableProjects().length) {
+                @for (project of availableProjects(); track project.id) {
+                  <label class="field-inline" [for]="'project-filter-' + project.id">
+                    <input
+                      [id]="'project-filter-' + project.id"
+                      type="checkbox"
+                      class="checkbox checkbox-sm"
+                      [checked]="selectedProjectIds().includes(project.id)"
+                      (change)="onProjectSelectionChanged(project.id, $event)"
+                    />
+                    <span>{{ project.name }}</span>
+                  </label>
+                }
+              } @else {
+                <p class="field__hint">No projects available.</p>
+              }
+            </div>
+          }
+
+          <div class="panel__actions">
+            <button type="button" class="btn btn-primary" [disabled]="exportBusy()" (click)="exportBackup()">
+              @if (!exportBusy()) {
+                <span>Export backup</span>
+              }
+              @if (exportBusy()) {
+                <span class="loading loading-spinner loading-xs"></span>
+              }
+            </button>
+          </div>
+        </section>
+
+        <section class="backup-card" aria-label="Import backup">
+          <h3>Import JSON</h3>
+          <p class="field__hint">
+            Validate and import backup file into this account. Existing records are upserted by stable ID.
+          </p>
+
+          <input
+            type="file"
+            class="file-input file-input-bordered w-full"
+            accept="application/json,.json"
+            (change)="onImportFileSelected($event)"
+          />
+
+          @if (importValidation(); as report) {
+            <div class="import-report" [class.import-report--error]="!report.ok">
+              <p class="text-sm font-semibold">
+                @if (report.ok) {
+                  File is valid.
+                } @else {
+                  File contains validation errors.
+                }
+              </p>
+              <p class="text-xs">
+                {{ report.summary.projects }} projects,
+                {{ report.summary.tags }} tags,
+                {{ report.summary.tasks }} tasks,
+                {{ report.summary.taskSteps }} steps,
+                {{ report.summary.taskTags }} task-tag links.
+              </p>
+
+              @if (report.errors.length) {
+                <ul class="import-report__list text-error">
+                  @for (error of report.errors; track error) {
+                    <li>{{ error }}</li>
+                  }
+                </ul>
+              }
+
+              @if (report.warnings.length) {
+                <ul class="import-report__list text-warning">
+                  @for (warning of report.warnings; track warning) {
+                    <li>{{ warning }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+
+          <div class="panel__actions backup-actions">
+            <button
+              type="button"
+              class="btn btn-outline"
+              [disabled]="importBusy() || !importFile()"
+              (click)="runImport(true)"
+            >
+              Dry run
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="importBusy() || !importFile()"
+              (click)="runImport(false)"
+            >
+              @if (!importBusy()) {
+                <span>Import backup</span>
+              }
+              @if (importBusy()) {
+                <span class="loading loading-spinner loading-xs"></span>
+              }
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+  }
+</section>

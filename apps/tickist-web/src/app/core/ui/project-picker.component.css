@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+.project-picker {
+  position: relative;
+}
+
+.project-picker__trigger {
+  display: flex;
+  min-height: 2.75rem;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  border-radius: 12px;
+  border: 1px solid rgb(var(--bc) / 0.12);
+  background: rgb(var(--b1) / 0.72);
+  color: rgb(var(--bc));
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+}
+
+.project-picker__trigger:focus-visible {
+  outline: none;
+  border-color: rgb(var(--bc) / 0.4);
+  box-shadow: 0 0 0 2px rgb(var(--b2)), 0 0 0 3px rgb(var(--bc) / 0.2);
+}
+
+.project-picker__trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.project-picker__value {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.project-picker__icon {
+  color: rgb(var(--bc) / 0.86);
+}
+
+.project-picker__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-picker__chevron {
+  color: rgb(var(--bc) / 0.7);
+  transition: transform 0.16s ease;
+}
+
+.project-picker__chevron--open {
+  transform: rotate(180deg);
+}
+
+.project-picker__menu {
+  position: absolute;
+  z-index: 35;
+  margin-top: 0.35rem;
+  max-height: 16rem;
+  width: 100%;
+  overflow-y: auto;
+  border-radius: 14px;
+  border: 1px solid rgb(var(--bc) / 0.14);
+  background: rgb(var(--b1) / 0.97);
+  padding: 0.35rem;
+  box-shadow: 0 16px 36px rgb(0 0 0 / 0.32);
+}
+
+.project-picker__option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 10px;
+  padding: 0.5rem 0.55rem;
+  text-align: left;
+  color: rgb(var(--bc) / 0.86);
+  transition: background-color 0.12s ease;
+}
+
+.project-picker__option:hover,
+.project-picker__option--active {
+  background: rgb(var(--bc) / 0.1);
+}
+
+.project-picker__option:focus-visible {
+  outline: none;
+  background: rgb(var(--bc) / 0.12);
+}
+
+.project-picker__option--selected {
+  background: rgb(var(--bc) / 0.16);
+}
+
+.project-picker__option-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-picker__dot {
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 999px;
+}
