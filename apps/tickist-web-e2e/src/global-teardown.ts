@@ -1,6 +1,10 @@
 import { resetDatabase } from './e2e-db';
 
 export default async function globalTeardown(): Promise<void> {
+  if (process.env['E2E_SKIP_DB_RESET_TEARDOWN'] === 'true') {
+    return;
+  }
+
   try {
     await resetDatabase('teardown');
   } catch (error) {

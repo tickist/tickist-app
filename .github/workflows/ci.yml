@@ -42,6 +42,8 @@ jobs:
     env:
       E2E_ENV_FILE: .local_env.e2e
       E2E_DB_RESET_ATTEMPTS: '5'
+      E2E_SKIP_DB_RESET_SETUP: 'true'
+      E2E_SKIP_DB_RESET_TEARDOWN: 'true'
     steps:
       - uses: actions/checkout@v4
         with:

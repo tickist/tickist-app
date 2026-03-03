@@ -116,11 +116,12 @@ async function resetDatabaseWithRetry(
   phase: ResetPhase
 ): Promise<void> {
   const attempts = resolveResetAttempts();
+  const resetArgs = resolveResetArgs(dbUrl);
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
-      await runCommand('npx', ['supabase', 'db', 'reset', '--db-url', dbUrl]);
+      await runCommand('npx', ['supabase', 'db', 'reset', ...resetArgs]);
       return;
     } catch (error) {
       lastError = toError(error);
@@ -167,6 +168,25 @@ function toError(error: unknown): Error {
 
 function areSameDatabaseUrl(left: string, right: string): boolean {
   return normalizeDatabaseUrl(left) === normalizeDatabaseUrl(right);
+}
+
+function resolveResetArgs(dbUrl: string): string[] {
+  // For local Supabase stack, use the native local reset path.
+  // The --db-url path is more prone to transient upstream 502 errors in CI.
+  if (isLocalDatabaseUrl(dbUrl)) {
+    return [];
+  }
+  return ['--db-url', dbUrl];
+}
+
+function isLocalDatabaseUrl(raw: string): boolean {
+  try {
+    const parsed = new URL(raw);
+    const hostname = parsed.hostname.toLowerCase();
+    return hostname === '127.0.0.1' || hostname === 'localhost' || hostname === '::1';
+  } catch {
+    return false;
+  }
 }
 
 function normalizeDatabaseUrl(raw: string): string {
