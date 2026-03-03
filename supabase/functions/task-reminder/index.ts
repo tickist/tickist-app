@@ -7,6 +7,9 @@ interface ReminderPayload {
   message?: string;
 }
 
+const MAX_MESSAGE_LENGTH = 1000;
+const DEDUPE_WINDOW_SECONDS = 60;
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -32,6 +35,7 @@ serve(async (req) => {
     return jsonResponse(405, { error: "Method not allowed" });
   }
 
+  const requestId = crypto.randomUUID();
   let payload: ReminderPayload;
   try {
     payload = (await req.json()) as ReminderPayload;
@@ -39,8 +43,17 @@ serve(async (req) => {
     return jsonResponse(400, { error: "Invalid JSON payload" });
   }
 
-  if (!payload?.taskId || !payload?.event) {
-    return jsonResponse(400, { error: "Missing taskId or event" });
+  const taskId = payload.taskId?.trim() ?? "";
+  const event = payload.event;
+  const messageInput = payload.message?.trim();
+  if (!taskId || !event) {
+    return jsonResponse(400, { error: "Missing taskId or event", request_id: requestId });
+  }
+  if (!["created", "completed", "snoozed"].includes(event)) {
+    return jsonResponse(400, { error: "Invalid event", request_id: requestId });
+  }
+  if (messageInput && messageInput.length > MAX_MESSAGE_LENGTH) {
+    return jsonResponse(400, { error: "Message too long", request_id: requestId });
   }
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -48,26 +61,24 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceRole);
   const userJwt = req.headers.get("x-user-jwt");
   if (!userJwt) {
-    return jsonResponse(401, { error: "Missing x-user-jwt header" });
+    return jsonResponse(401, { error: "Missing x-user-jwt header", request_id: requestId });
   }
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser(userJwt);
   if (userError || !user) {
-    return jsonResponse(401, { error: "Invalid user session token" });
+    return jsonResponse(401, { error: "Invalid user session token", request_id: requestId });
   }
 
   const { data: task, error } = await supabase
     .from("tasks")
-    .select(
-      "id, name, owner_id, project_id, finish_date, task_type"
-    )
-    .eq("id", payload.taskId)
+    .select("id, name, owner_id, project_id, finish_date, task_type")
+    .eq("id", taskId)
     .single();
 
   if (error || !task) {
-    return jsonResponse(404, { error: "Task not found", details: error });
+    return jsonResponse(404, { error: "Task not found", request_id: requestId });
   }
 
   let isActorAllowed = task.owner_id === user.id;
@@ -81,25 +92,52 @@ serve(async (req) => {
     isActorAllowed = Boolean(membership);
   }
   if (!isActorAllowed) {
-    return jsonResponse(403, { error: "Forbidden" });
+    return jsonResponse(403, { error: "Forbidden", request_id: requestId });
   }
 
   const message =
-    payload.message ??
-    (payload.event === "completed"
+    messageInput ??
+    (event === "completed"
       ? `Task "${task.name}" was completed`
       : `Update on task "${task.name}".`);
+  const title = `Task ${event}`;
+  const duplicateSince = new Date(
+    Date.now() - DEDUPE_WINDOW_SECONDS * 1000
+  ).toISOString();
+  const { data: duplicateRows, error: duplicateError } = await supabase
+    .from("notifications")
+    .select("id")
+    .eq("recipient_id", task.owner_id)
+    .eq("type", "task-event")
+    .eq("title", title)
+    .eq("description", message)
+    .gte("created_at", duplicateSince)
+    .limit(1);
+  if (duplicateError) {
+    console.error("[task-reminder] Failed dedupe lookup", {
+      requestId,
+      error: duplicateError,
+    });
+    return jsonResponse(500, { error: "Internal server error", request_id: requestId });
+  }
+  if (duplicateRows && duplicateRows.length > 0) {
+    return jsonResponse(200, { ok: true, deduplicated: true });
+  }
 
   const { error: insertError } = await supabase.from("notifications").insert({
     recipient_id: task.owner_id,
-    title: `Task ${payload.event}`,
+    title,
     description: message,
     type: "task-event",
   });
 
   if (insertError) {
-    return jsonResponse(500, { error: "Failed to log notification" });
+    console.error("[task-reminder] Failed to insert notification", {
+      requestId,
+      error: insertError,
+    });
+    return jsonResponse(500, { error: "Internal server error", request_id: requestId });
   }
 
-  return jsonResponse(200, { ok: true });
+  return jsonResponse(200, { ok: true, deduplicated: false });
 });

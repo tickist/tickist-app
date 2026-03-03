@@ -262,6 +262,23 @@ export class ProjectDataService {
     }
 
     if (shareWithIds) {
+      const previousShareWithIds = previous?.shareWithIds ?? [];
+      const removed = previousShareWithIds.filter(
+        (id) => !shareWithIds.includes(id)
+      );
+      const added = shareWithIds.filter(
+        (id) => !previousShareWithIds.includes(id)
+      );
+
+      if (removed.length) {
+        await this.notifyProjectShareChange({
+          projectId: input.id,
+          event: 'removed',
+          recipients: removed,
+          projectName: rest.name ?? previous?.name ?? 'Project',
+        });
+      }
+
       await this.supabase
         .from('project_members')
         .delete()
@@ -276,6 +293,15 @@ export class ProjectDataService {
             }))
           );
       }
+
+      if (added.length) {
+        await this.notifyProjectShareChange({
+          projectId: input.id,
+          event: 'shared',
+          recipients: added,
+          projectName: rest.name ?? previous?.name ?? 'Project',
+        });
+      }
     }
 
     const updated = await this.fetchProjectById(input.id);
@@ -285,9 +311,6 @@ export class ProjectDataService {
           project.id === updated.id ? updated : project
         )
       );
-      if (previous) {
-        this.broadcastShareChanges(previous, updated);
-      }
     }
     return updated;
   }
@@ -431,7 +454,12 @@ export class ProjectDataService {
     }
   }
 
-  private async broadcastShareChanges(previous: Project, current: Project) {
+  private async notifyProjectShareChange(input: {
+    projectId: string;
+    event: 'shared' | 'removed';
+    recipients: string[];
+    projectName: string;
+  }) {
     const functionsUrl = this.supabaseConfig?.functionsUrl;
     if (!functionsUrl || !this.supabase) {
       return;
@@ -440,54 +468,32 @@ export class ProjectDataService {
     if (!headers) {
       return;
     }
-    const added = current.shareWithIds.filter(
-      (id) => !previous.shareWithIds.includes(id)
-    );
-    const removed = previous.shareWithIds.filter(
-      (id) => !current.shareWithIds.includes(id)
-    );
-
-    const requests: Promise<Response>[] = [];
-    if (added.length) {
-      requests.push(
-        fetch(`${functionsUrl}/project-update`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            projectId: current.id,
-            event: 'shared',
-            title: 'New shared project',
-            description: `Project "${current.name}" has been shared with you.`,
-            recipients: added,
-          }),
-        })
-      );
-    }
-    if (removed.length) {
-      requests.push(
-        fetch(`${functionsUrl}/project-update`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            projectId: current.id,
-            event: 'removed',
-            title: 'Shared project update',
-            description: `You are no longer part of project "${current.name}".`,
-            recipients: removed,
-          }),
-        })
-      );
+    if (!input.recipients.length) {
+      return;
     }
 
-    if (requests.length) {
-      for await (const response of requests) {
-        if (!response.ok) {
-          console.warn(
-            '[Projects] Project update function returned error',
-            await response.text()
-          );
-        }
-      }
+    const response = await fetch(`${functionsUrl}/project-update`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        projectId: input.projectId,
+        event: input.event,
+        title:
+          input.event === 'shared'
+            ? 'New shared project'
+            : 'Shared project update',
+        description:
+          input.event === 'shared'
+            ? `Project "${input.projectName}" has been shared with you.`
+            : `You are no longer part of project "${input.projectName}".`,
+        recipients: input.recipients,
+      }),
+    });
+    if (!response.ok) {
+      console.warn(
+        '[Projects] Project update function returned error',
+        await response.text()
+      );
     }
   }
 
