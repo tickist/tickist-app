@@ -95,11 +95,6 @@ async function setProjectFilter(
   label: 'all tasks' | 'done' | 'not done'
 ): Promise<void> {
   const filterButton = page.locator('button[title="Filter"]').first();
-  const filterDropdown = page
-    .locator('div.dropdown.dropdown-end')
-    .filter({ has: filterButton })
-    .first();
-
   await filterButton.click();
   const option = page
     .locator('button.filter-option')
@@ -107,18 +102,16 @@ async function setProjectFilter(
     .first();
   await expect(option).toBeVisible();
   await option.click();
-  // Close filter menu in a deterministic way to avoid it intercepting task clicks.
-  await page.keyboard.press('Escape');
-  const isOpen = async (): Promise<boolean> => {
-    const classes = await filterDropdown.getAttribute('class');
-    return classes?.includes('dropdown-open') ?? false;
-  };
-  if (await isOpen()) {
-    await filterButton.click();
-  }
-  await expect
-    .poll(isOpen)
-    .toBe(false);
+  await expect(option).toHaveAttribute('aria-pressed', 'true');
+
+  // DaisyUI dropdown can stay open via :focus-within; blur and move focus outside.
+  await page.evaluate(() => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) {
+      active.blur();
+    }
+  });
+  await page.locator('header.project-header h1').first().click();
 }
 
 async function inboxCount(page: Page): Promise<number> {
