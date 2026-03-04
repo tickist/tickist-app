@@ -65,18 +65,25 @@ jobs:
 
       - name: Sync Cloudflare Worker Secrets
         run: |
-          for key in NG_APP_SUPABASE_URL NG_APP_SUPABASE_PUBLISHABLE_KEY NG_APP_SUPABASE_FUNCTIONS_URL; do
+          for key in NG_APP_SUPABASE_URL NG_APP_SUPABASE_PUBLISHABLE_KEY; do
             if [ -z "${!key}" ]; then
               echo "::error::Missing required GitHub secret: ${key}"
               exit 1
             fi
           done
 
+          if [ -z "$NG_APP_SUPABASE_FUNCTIONS_URL" ]; then
+            functions_url="${NG_APP_SUPABASE_URL%/}/functions/v1"
+            echo "::notice::NG_APP_SUPABASE_FUNCTIONS_URL not provided; deriving from NG_APP_SUPABASE_URL."
+          else
+            functions_url="$NG_APP_SUPABASE_FUNCTIONS_URL"
+          fi
+
           secrets_file="$(mktemp)"
           jq -n \
             --arg supabaseUrl "$NG_APP_SUPABASE_URL" \
             --arg publishableKey "$NG_APP_SUPABASE_PUBLISHABLE_KEY" \
-            --arg functionsUrl "$NG_APP_SUPABASE_FUNCTIONS_URL" \
+            --arg functionsUrl "$functions_url" \
             '{
               NG_APP_SUPABASE_URL: $supabaseUrl,
               NG_APP_SUPABASE_PUBLISHABLE_KEY: $publishableKey,
