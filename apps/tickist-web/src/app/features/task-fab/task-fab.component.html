@@ -2,65 +2,61 @@
   class="fab-wrapper"
   (mouseenter)="hovered.set(true)"
   (mouseleave)="hovered.set(false)"
-  >
+>
   @if (hovered()) {
-    <button
-      type="button"
-      class="fab-mini"
-      (click)="showProjectModal()"
-      >
-      +
-    </button>
+  <button type="button" class="fab-mini" (click)="showProjectModal()">+</button>
   }
-  <button type="button" class="fab-main" (click)="showTaskModal()">
-    +
-  </button>
+  <button type="button" class="fab-main" (click)="showTaskModal()">+</button>
 </div>
 
 @if (taskModalOpen()) {
+<div
+  class="fab-overlay"
+  tabindex="0"
+  (click)="closeTaskModal()"
+  (keydown.enter)="closeTaskModal()"
+  (keydown.space)="closeTaskModal(); $event.preventDefault()"
+>
   <div
-    class="fab-overlay"
+    class="fab-modal fab-modal--sheet"
     tabindex="0"
-    (click)="closeTaskModal()"
-    (keydown.enter)="closeTaskModal()"
-    (keydown.space)="closeTaskModal(); $event.preventDefault()"
-    >
-    <div
-      class="fab-modal"
-      tabindex="0"
-      (click)="$event.stopPropagation()"
-      (keydown.enter)="$event.stopPropagation()"
-      (keydown.space)="$event.stopPropagation(); $event.preventDefault()"
-      >
-      <app-task-composer
-        [preset]="taskPreset()"
-        (dismiss)="closeTaskModal()"
-        (created)="closeTaskModal()"
-      ></app-task-composer>
-    </div>
+    role="dialog"
+    aria-modal="true"
+    aria-label="Task panel"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation(); $event.preventDefault()"
+  >
+    <app-task-composer
+      [preset]="taskPreset()"
+      (dismiss)="closeTaskModal()"
+      (created)="closeTaskModal()"
+    ></app-task-composer>
   </div>
-}
-
-@if (projectModalOpen()) {
+</div>
+} @if (projectModalOpen()) {
+<div
+  class="fab-overlay"
+  tabindex="0"
+  (click)="closeProjectModal()"
+  (keydown.enter)="closeProjectModal()"
+  (keydown.space)="closeProjectModal(); $event.preventDefault()"
+>
   <div
-    class="fab-overlay"
+    class="fab-modal fab-modal--sheet"
     tabindex="0"
-    (click)="closeProjectModal()"
-    (keydown.enter)="closeProjectModal()"
-    (keydown.space)="closeProjectModal(); $event.preventDefault()"
-    >
-    <div
-      class="fab-modal"
-      tabindex="0"
-      (click)="$event.stopPropagation()"
-      (keydown.enter)="$event.stopPropagation()"
-      (keydown.space)="$event.stopPropagation(); $event.preventDefault()"
-      >
-      <app-project-composer
-        [preset]="projectPreset()"
-        (dismiss)="closeProjectModal()"
-        (created)="closeProjectModal()"
-      ></app-project-composer>
-    </div>
+    role="dialog"
+    aria-modal="true"
+    aria-label="Project panel"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation(); $event.preventDefault()"
+  >
+    <app-project-composer
+      [preset]="projectPreset()"
+      (dismiss)="closeProjectModal()"
+      (created)="closeProjectModal()"
+    ></app-project-composer>
   </div>
+</div>
 }

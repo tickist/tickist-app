@@ -1,4 +1,4 @@
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgFor, NgIf, NgOptimizedImage } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterLink, RouterOutlet } from '@angular/router';
@@ -53,6 +53,7 @@ describe('AppViewportComponent theme toggle', () => {
             searchTerm: signal('').asReadonly(),
             updateSearchTerm: vi.fn(),
             clearSearch: vi.fn(),
+            rememberLastNonSettingsAppUrl: vi.fn(),
           },
         },
       ],
@@ -64,6 +65,7 @@ describe('AppViewportComponent theme toggle', () => {
             RouterLink,
             NgIf,
             NgFor,
+            NgOptimizedImage,
             DatePipe,
             MockSidebarComponent,
             MockTaskFabComponent,

@@ -1,78 +1,3 @@
-.composer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-height: 90vh;
-  color: rgb(var(--bc));
-}
-
-.composer__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgb(var(--bc) / 0.12);
-}
-
-.composer__eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.4em;
-  font-size: 0.65rem;
-  color: rgb(var(--bc) / 0.54);
-}
-
-.composer__title {
-  margin-top: 0.35rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.composer__close {
-  border: none;
-  background: transparent;
-  font-size: 1.5rem;
-  color: rgb(var(--bc) / 0.74);
-  cursor: pointer;
-}
-
-.composer__body {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  overflow: auto;
-  min-height: 0;
-}
-
-.composer__tabs {
-  padding: 1.5rem;
-  border-right: 1px solid rgb(var(--bc) / 0.12);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.composer__tab {
-  text-align: left;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 0.9rem;
-  background: transparent;
-  color: rgb(var(--bc) / 0.74);
-  cursor: pointer;
-}
-
-.composer__tab.active {
-  background: rgb(var(--bc) / 0.14);
-  color: rgb(var(--bc));
-}
-
-.composer__panel {
-  padding: 2rem;
-  overflow-y: auto;
-  min-height: 0;
-  padding-bottom: 3rem;
-}
-
 .panel {
   display: flex;
   flex-direction: column;
@@ -83,7 +8,7 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .field__label {
@@ -104,17 +29,18 @@
 }
 
 .input {
-  background: rgb(var(--b1) / 0.72);
-  border: 1px solid rgb(var(--bc) / 0.12);
-  border-radius: 12px;
-  padding: 0.65rem 0.9rem;
-  color: rgb(var(--bc));
   width: 100%;
+  border: 1px solid rgb(var(--bc) / 0.12);
+  border-radius: 14px;
+  padding: 0.75rem 0.95rem;
+  background: rgb(var(--b1) / 0.66);
+  color: rgb(var(--bc));
 }
 
 .priority-group,
 .type-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -123,7 +49,7 @@
   border: 1px solid rgb(var(--bc) / 0.12);
   background: transparent;
   color: rgb(var(--bc) / 0.82);
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 0.95rem;
   border-radius: 999px;
   cursor: pointer;
 }
@@ -136,6 +62,7 @@
 
 .complete-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   font-size: 0.9rem;
 }
@@ -156,21 +83,15 @@
 
 .repeat-custom-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
-}
-
-@media (max-width: 640px) {
-  .repeat-custom-controls {
-    grid-template-columns: 1fr;
-  }
 }
 
 .tags-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 0.25rem;
 }
 
 .tag-chip {
@@ -196,7 +117,7 @@
 
 .step-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
   gap: 0.5rem;
   align-items: center;
 }
@@ -212,63 +133,31 @@
   gap: 0.25rem;
 }
 
-.step-actions button {
-  border: none;
-  background: rgb(var(--bc) / 0.12);
+.step-actions button,
+.btn-secondary {
+  border: 1px solid rgb(var(--bc) / 0.18);
+  background: rgb(var(--b1) / 0.4);
   color: rgb(var(--bc));
-  border-radius: 8px;
-  padding: 0.3rem 0.5rem;
+  border-radius: 12px;
   cursor: pointer;
+}
+
+.step-actions button {
+  padding: 0.3rem 0.55rem;
 }
 
 .btn-secondary {
-  border: 1px solid rgb(var(--bc) / 0.26);
-  border-radius: 12px;
-  background: transparent;
-  color: rgb(var(--bc));
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-.composer__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid rgb(var(--bc) / 0.12);
-  padding: 1rem 2rem;
-  position: sticky;
-  bottom: 0;
-  background: rgb(var(--b2) / 0.95);
-}
-
-.btn-ghost {
-  border: none;
-  background: transparent;
-  color: rgb(var(--bc) / 0.74);
-  cursor: pointer;
-}
-
-.btn-primary {
-  border: none;
-  border-radius: 12px;
-  padding: 0.55rem 1.2rem;
-  background: linear-gradient(120deg, #ffaa3b, #ff7b1a);
-  color: #172039;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-primary.secondary {
-  background: rgb(var(--bc) / 0.14);
-  color: rgb(var(--bc));
-}
-
-.composer__cta {
-  display: flex;
-  gap: 0.75rem;
+  padding: 0.55rem 1rem;
 }
 
 .extra-grid {
   display: grid;
   gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .repeat-custom-controls,
+  .step-row {
+    grid-template-columns: 1fr;
+  }
 }

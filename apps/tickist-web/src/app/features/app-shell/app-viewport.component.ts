@@ -1,5 +1,17 @@
-import { Component, computed, effect, inject, signal, OnDestroy } from '@angular/core';
-import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  OnDestroy,
+} from '@angular/core';
+import {
+  RouterOutlet,
+  RouterLink,
+  Router,
+  NavigationEnd,
+} from '@angular/router';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
@@ -21,8 +33,8 @@ import { ThemeService } from '../../core/ui/theme.service';
     NgOptimizedImage,
     AppSidebarComponent,
     TaskFabComponent,
-    ToastContainerComponent
-],
+    ToastContainerComponent,
+  ],
   templateUrl: './app-viewport.component.html',
   styleUrl: './app-viewport.component.css',
 })
@@ -48,7 +60,8 @@ export class AppViewportComponent implements OnDestroy {
   readonly notifications = this.notificationsService.list;
   readonly notificationsLoading = this.notificationsService.loadingState;
   readonly unreadNotifications = computed(
-    () => this.notifications().filter((notification) => !notification.isRead).length
+    () =>
+      this.notifications().filter((notification) => !notification.isRead).length
   );
   readonly notificationsOpen = signal(false);
   readonly profileMenuOpen = signal(false);
@@ -79,7 +92,11 @@ export class AppViewportComponent implements OnDestroy {
     });
 
     this.routerSub = this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
       .subscribe((event) => {
         if (
           event.urlAfterRedirects.startsWith('/app') &&
@@ -166,7 +183,9 @@ function getUserMetadata(value: unknown): Record<string, unknown> {
 }
 
 function asOptionalString(value: unknown): string | null {
-  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+  return typeof value === 'string' && value.trim().length > 0
+    ? value.trim()
+    : null;
 }
 
 function appendCacheVersion(url: string, version: string | null): string {
