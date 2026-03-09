@@ -7,7 +7,13 @@
 }
 
 .stats-hero {
-  @apply flex flex-col gap-4 rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-base-300/70 via-base-200/70 to-base-200/40 p-6 shadow-xl shadow-black/10;
+  @apply flex flex-col gap-4 rounded-[1.75rem] border border-white/10 p-6 shadow-xl shadow-black/10;
+  background-image: linear-gradient(
+    to bottom right,
+    rgb(var(--b3) / 70%),
+    rgb(var(--b2) / 70%),
+    rgb(var(--b2) / 40%)
+  );
 }
 
 @screen md {
@@ -17,7 +23,8 @@
 }
 
 .stats-eyebrow {
-  @apply text-xs font-semibold uppercase tracking-[0.28em] text-primary/80;
+  @apply text-xs font-semibold uppercase tracking-[0.28em];
+  color: rgb(var(--p) / 80%);
 }
 
 .stats-title {
@@ -25,7 +32,8 @@
 }
 
 .stats-subtitle {
-  @apply mt-3 max-w-2xl text-sm leading-6 text-base-content/70;
+  @apply mt-3 max-w-2xl text-sm leading-6;
+  color: rgb(var(--bc) / 70%);
 }
 
 .stats-grid {
@@ -34,7 +42,8 @@
 }
 
 .stats-panel {
-  @apply rounded-[1.5rem] border border-white/10 bg-base-200/60 p-5 shadow-lg shadow-black/5 backdrop-blur-sm;
+  @apply rounded-[1.5rem] border border-white/10 p-5 shadow-lg shadow-black/5 backdrop-blur-sm;
+  background-color: rgb(var(--b2) / 60%);
 }
 
 .stats-card {
@@ -50,7 +59,8 @@
 }
 
 .stats-card__hint {
-  @apply mt-1 text-xs leading-5 text-base-content/60;
+  @apply mt-1 text-xs leading-5;
+  color: rgb(var(--bc) / 60%);
 }
 
 .stats-card__value {
@@ -74,11 +84,14 @@
 }
 
 .group-panel__subtitle {
-  @apply mt-1 text-xs uppercase tracking-[0.22em] text-base-content/55;
+  @apply mt-1 text-xs uppercase tracking-[0.22em];
+  color: rgb(var(--bc) / 55%);
 }
 
 .group-panel__empty {
-  @apply rounded-2xl border border-dashed border-white/10 bg-base-100/20 px-4 py-5 text-sm text-base-content/60;
+  @apply rounded-2xl border border-dashed border-white/10 px-4 py-5 text-sm;
+  background-color: rgb(var(--b1) / 20%);
+  color: rgb(var(--bc) / 60%);
 }
 
 .project-list {
@@ -86,7 +99,8 @@
 }
 
 .project-row {
-  @apply flex flex-col gap-4 rounded-2xl border border-white/10 bg-base-100/25 p-4;
+  @apply flex flex-col gap-4 rounded-2xl border border-white/10 p-4;
+  background-color: rgb(var(--b1) / 25%);
 }
 
 @screen lg {
@@ -112,5 +126,6 @@
 }
 
 .project-row__meta {
-  @apply mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-base-content/65;
+  @apply mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm;
+  color: rgb(var(--bc) / 65%);
 }

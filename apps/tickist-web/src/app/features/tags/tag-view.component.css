@@ -38,7 +38,8 @@
 }
 
 .controls__sort {
-  @apply flex min-w-[13rem] flex-col gap-1 text-xs uppercase tracking-[0.24em] text-base-content/60;
+  @apply flex min-w-[13rem] flex-col gap-1 text-xs uppercase tracking-[0.24em];
+  color: rgb(var(--bc) / 60%);
 }
 
 .controls__sort .select {
