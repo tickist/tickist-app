@@ -1,5 +1,15 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { startWith } from 'rxjs';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
@@ -12,15 +22,30 @@ import {
 import { ProjectDataService } from '../../data/project-data.service';
 import { TaskDataService } from '../../data/task-data.service';
 import { TagDataService } from '../../data/tag-data.service';
+import { AppViewStateService } from './app-view-state.service';
+import { NotificationPreferencesService } from '../../data/notification-preferences.service';
 
 type SettingsTab = 'account' | 'password' | 'notifications' | 'backup';
+type WeekdayOption = { value: number; label: string };
+
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+const DEFAULT_NOTIFICATION_TIME = '20:00';
+const WEEKDAY_OPTIONS: WeekdayOption[] = [
+  { value: 0, label: 'Sunday' },
+  { value: 1, label: 'Monday' },
+  { value: 2, label: 'Tuesday' },
+  { value: 3, label: 'Wednesday' },
+  { value: 4, label: 'Thursday' },
+  { value: 5, label: 'Friday' },
+  { value: 6, label: 'Saturday' },
+];
 
 @Component({
   selector: 'app-settings',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
   private readonly session = inject(SupabaseSessionService);
@@ -30,27 +55,76 @@ export class SettingsComponent {
   private readonly projects = inject(ProjectDataService);
   private readonly tasks = inject(TaskDataService);
   private readonly tags = inject(TagDataService);
+  private readonly notificationPreferences = inject(
+    NotificationPreferencesService
+  );
   private readonly fb = inject(FormBuilder);
   private readonly toasts = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly viewState = inject(AppViewStateService);
 
   readonly user = computed(() => this.session.user());
   readonly activeTab = signal<SettingsTab>('account');
   readonly updating = signal(false);
+  readonly passwordUpdating = signal(false);
+  readonly passwordError = signal<string | null>(null);
   readonly avatarUploading = signal(false);
   readonly avatarRemoving = signal(false);
+  readonly notificationsSaving = signal(false);
   readonly exportOnlyActive = signal(false);
   readonly exportSelectedProjectsOnly = signal(false);
   readonly selectedProjectIds = signal<string[]>([]);
   readonly exportBusy = signal(false);
   readonly importBusy = signal(false);
   readonly importFile = signal<File | null>(null);
-  readonly importValidation = signal<ImportValidationReport | ImportResult | null>(
-    null
-  );
+  readonly importValidation = signal<
+    ImportValidationReport | ImportResult | null
+  >(null);
   readonly accountForm = this.fb.nonNullable.group({
     displayName: ['', [Validators.required, Validators.minLength(2)]],
     email: [{ value: '', disabled: true }],
   });
+  readonly passwordForm = this.fb.nonNullable.group({
+    currentPassword: ['', [Validators.required, Validators.minLength(6)]],
+    newPassword: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
+  });
+  readonly notificationsForm = this.fb.nonNullable.group({
+    weeklyEmailEnabled: false,
+    weeklyEmailDayOfWeek: 0,
+    weeklyEmailTime: [
+      DEFAULT_NOTIFICATION_TIME,
+      [Validators.required, Validators.pattern(TIME_PATTERN)],
+    ],
+    dailyEmailEnabled: false,
+    dailyEmailTime: [
+      DEFAULT_NOTIFICATION_TIME,
+      [Validators.required, Validators.pattern(TIME_PATTERN)],
+    ],
+    timezone: [resolveBrowserTimezone(), [Validators.required]],
+  });
+  private readonly passwordFormValue = toSignal(
+    this.passwordForm.valueChanges.pipe(
+      startWith(this.passwordForm.getRawValue())
+    ),
+    { initialValue: this.passwordForm.getRawValue() }
+  );
+  private readonly passwordFormStatus = toSignal(
+    this.passwordForm.statusChanges.pipe(startWith(this.passwordForm.status)),
+    { initialValue: this.passwordForm.status }
+  );
+  private readonly notificationsFormStatus = toSignal(
+    this.notificationsForm.statusChanges.pipe(
+      startWith(this.notificationsForm.status)
+    ),
+    { initialValue: this.notificationsForm.status }
+  );
+  private readonly notificationTimezoneValue = toSignal(
+    this.notificationsForm.controls.timezone.valueChanges.pipe(
+      startWith(this.notificationsForm.controls.timezone.value)
+    ),
+    { initialValue: this.notificationsForm.controls.timezone.value }
+  );
   readonly avatarPreviewUrl = computed(() => {
     const metadata = this.userMetadata();
     const avatarUrl = asOptionalString(metadata['avatar_url']);
@@ -78,6 +152,45 @@ export class SettingsComponent {
       .filter((project) => project.ownerId === userId)
       .sort((a, b) => a.name.localeCompare(b.name));
   });
+  readonly closeTarget = computed(
+    () => this.viewState.lastNonSettingsAppUrl() ?? '/app'
+  );
+  readonly notificationPreferencesList =
+    this.notificationPreferences.preferences;
+  readonly notificationsLoading = this.notificationPreferences.loadingState;
+  readonly weekdayOptions = WEEKDAY_OPTIONS;
+  readonly notificationTimezone = computed(
+    () => this.notificationTimezoneValue() ?? 'UTC'
+  );
+  readonly passwordsMismatch = computed(() => {
+    const { newPassword, confirmPassword } = this.passwordFormValue();
+    return Boolean(
+      newPassword && confirmPassword && newPassword !== confirmPassword
+    );
+  });
+  readonly passwordMatchesCurrent = computed(() => {
+    const { currentPassword, newPassword } = this.passwordFormValue();
+    return Boolean(
+      currentPassword && newPassword && currentPassword === newPassword
+    );
+  });
+  readonly passwordSubmitDisabled = computed(() => {
+    this.passwordFormStatus();
+    return (
+      this.passwordForm.invalid ||
+      this.passwordUpdating() ||
+      this.passwordsMismatch() ||
+      this.passwordMatchesCurrent()
+    );
+  });
+  readonly notificationsSubmitDisabled = computed(() => {
+    this.notificationsFormStatus();
+    return (
+      this.notificationsForm.invalid ||
+      this.notificationsSaving() ||
+      this.notificationsLoading()
+    );
+  });
 
   constructor() {
     effect(() => {
@@ -85,7 +198,8 @@ export class SettingsComponent {
       const metadata = this.userMetadata();
       this.accountForm.patchValue(
         {
-          displayName: asOptionalString(metadata['full_name']) ?? user?.email ?? '',
+          displayName:
+            asOptionalString(metadata['full_name']) ?? user?.email ?? '',
           email: user?.email ?? '',
         },
         { emitEvent: false }
@@ -93,15 +207,49 @@ export class SettingsComponent {
     });
 
     effect(() => {
-      const allowedIds = new Set(this.availableProjects().map((project) => project.id));
+      const allowedIds = new Set(
+        this.availableProjects().map((project) => project.id)
+      );
       this.selectedProjectIds.update((current) =>
         current.filter((projectId) => allowedIds.has(projectId))
+      );
+    });
+
+    effect(() => {
+      const userId = this.user()?.id ?? null;
+      void this.notificationPreferences.refresh(userId);
+    });
+
+    effect(() => {
+      const weekly = findNotificationPreference(
+        this.notificationPreferencesList(),
+        'weekly_summary'
+      );
+      const daily = findNotificationPreference(
+        this.notificationPreferencesList(),
+        'daily_summary'
+      );
+      this.notificationsForm.patchValue(
+        {
+          weeklyEmailEnabled: weekly.enabled,
+          weeklyEmailDayOfWeek: weekly.dayOfWeek ?? 0,
+          weeklyEmailTime: weekly.timeOfDay,
+          dailyEmailEnabled: daily.enabled,
+          dailyEmailTime: daily.timeOfDay,
+          timezone:
+            weekly.timezone || daily.timezone || resolveBrowserTimezone(),
+        },
+        { emitEvent: false }
       );
     });
   }
 
   select(tab: SettingsTab): void {
     this.activeTab.set(tab);
+  }
+
+  async closePanel(): Promise<void> {
+    await this.router.navigateByUrl(this.closeTarget());
   }
 
   async saveAccount(): Promise<void> {
@@ -129,6 +277,100 @@ export class SettingsComponent {
 
   async deleteAccount(): Promise<void> {
     this.toasts.error('Account removal is not enabled in this build.');
+  }
+
+  async changePassword(): Promise<void> {
+    this.passwordError.set(null);
+
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.passwordMatchesCurrent()) {
+      this.passwordError.set(
+        'New password must be different from the current password.'
+      );
+      return;
+    }
+
+    if (this.passwordsMismatch()) {
+      this.passwordError.set('Passwords must match.');
+      return;
+    }
+
+    this.passwordUpdating.set(true);
+    try {
+      const { currentPassword, newPassword } = this.passwordForm.getRawValue();
+      await this.auth.changePasswordWithCurrentPassword({
+        currentPassword,
+        newPassword,
+      });
+      this.passwordForm.reset();
+      await this.auth.signOut();
+      await this.router.navigate(['/auth'], {
+        queryParams: { passwordChanged: 1 },
+      });
+    } catch (error) {
+      console.error('[Settings] failed to change password', error);
+      this.passwordError.set(
+        error instanceof Error ? error.message : 'Could not change password.'
+      );
+    } finally {
+      this.passwordUpdating.set(false);
+    }
+  }
+
+  async saveNotifications(): Promise<void> {
+    const user = this.user();
+    if (!user) {
+      this.toasts.error('You must be signed in.');
+      return;
+    }
+
+    if (this.notificationsForm.invalid) {
+      this.notificationsForm.markAllAsTouched();
+      return;
+    }
+
+    const timezone = resolveBrowserTimezone();
+    this.notificationsForm.controls.timezone.setValue(timezone, {
+      emitEvent: false,
+    });
+
+    const raw = this.notificationsForm.getRawValue();
+    this.notificationsSaving.set(true);
+    try {
+      await this.notificationPreferences.save(user.id, [
+        {
+          key: 'weekly_summary',
+          channel: 'email',
+          enabled: raw.weeklyEmailEnabled,
+          scheduleType: 'weekly',
+          dayOfWeek: raw.weeklyEmailDayOfWeek,
+          timeOfDay: raw.weeklyEmailTime,
+          timezone,
+        },
+        {
+          key: 'daily_summary',
+          channel: 'email',
+          enabled: raw.dailyEmailEnabled,
+          scheduleType: 'daily',
+          dayOfWeek: null,
+          timeOfDay: raw.dailyEmailTime,
+          timezone,
+        },
+      ]);
+      this.toasts.success('Notification preferences updated.');
+    } catch (error) {
+      console.error(
+        '[Settings] failed to update notification preferences',
+        error
+      );
+      this.toasts.error('Could not update notification preferences.');
+    } finally {
+      this.notificationsSaving.set(false);
+    }
   }
 
   async exportBackup(): Promise<void> {
@@ -203,7 +445,9 @@ export class SettingsComponent {
     }
 
     try {
-      const validation = await this.exportImportService.validateImportFile(file);
+      const validation = await this.exportImportService.validateImportFile(
+        file
+      );
       this.importValidation.set(validation);
       if (validation.ok) {
         this.toasts.success('Import file validated.');
@@ -337,7 +581,9 @@ function buildBackupFilename(): string {
 
 function formatImportCounts(result: ImportResult): string {
   return [
-    `${result.counts.projects.created + result.counts.projects.updated} projects`,
+    `${
+      result.counts.projects.created + result.counts.projects.updated
+    } projects`,
     `${result.counts.tags.created + result.counts.tags.updated} tags`,
     `${result.counts.tasks.created + result.counts.tasks.updated} tasks`,
   ].join(', ');
@@ -352,9 +598,51 @@ function appendCacheVersion(url: string, version: string | null): string {
 }
 
 function asOptionalString(value: unknown): string | null {
-  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+  return typeof value === 'string' && value.trim().length > 0
+    ? value.trim()
+    : null;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function findNotificationPreference(
+  items: ReturnType<NotificationPreferencesService['preferences']>,
+  key: 'weekly_summary' | 'daily_summary'
+) {
+  const match = items.find((item) => item.key === key);
+  if (match) {
+    return match;
+  }
+
+  if (key === 'weekly_summary') {
+    return {
+      key,
+      channel: 'email' as const,
+      enabled: false,
+      scheduleType: 'weekly' as const,
+      dayOfWeek: 0,
+      timeOfDay: DEFAULT_NOTIFICATION_TIME,
+      timezone: resolveBrowserTimezone(),
+    };
+  }
+
+  return {
+    key,
+    channel: 'email' as const,
+    enabled: false,
+    scheduleType: 'daily' as const,
+    dayOfWeek: null,
+    timeOfDay: DEFAULT_NOTIFICATION_TIME,
+    timezone: resolveBrowserTimezone(),
+  };
+}
+
+function resolveBrowserTimezone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  } catch {
+    return 'UTC';
+  }
 }

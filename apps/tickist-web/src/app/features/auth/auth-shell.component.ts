@@ -1,12 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupabaseAuthService } from './supabase-auth.service';
 import { NgClass } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
 
 @Component({
@@ -20,6 +16,7 @@ export class AuthShellComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(SupabaseAuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly themeService = inject(ThemeService);
 
   readonly form = this.fb.nonNullable.group({
@@ -35,6 +32,24 @@ export class AuthShellComponent {
   readonly themeButtonLabel = computed(() =>
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
+
+  constructor() {
+    if (this.route.snapshot.queryParamMap.get('passwordChanged') !== '1') {
+      return;
+    }
+
+    this.message.set({
+      type: 'success',
+      text: 'Password changed. Sign in with your new password.',
+    });
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { passwordChanged: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
 
   get isDisabled(): boolean {
     return this.form.invalid || this.isSubmitting();
