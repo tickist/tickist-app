@@ -60,6 +60,8 @@ Reports are written to `reports/firebase-migration/<timestamp>/`.
 - `functions/task-reminder/index.ts`: logs a notification whenever a task event occurs. This is the Supabase replacement for the Firebase function that wrote into `notifications`.
 - `functions/project-update/index.ts`: notifies collaborators when they are added/removed from a shared project.
 - `functions/routine-runner/index.ts`: cron-friendly endpoint that processes `routine_reminders` entries and writes notifications (placeholder for real automation).
+- `functions/enqueue-notification/index.ts`: authenticated enqueue endpoint that writes to `public.email_outbox`.
+- `functions/send-emails/index.ts`: service-role protected batch worker that sends queued emails through AWS SES API.
 
 Run locally (requires Supabase CLI):
 
@@ -68,6 +70,8 @@ cd supabase
 supabase functions serve task-reminder --env-file .env
 supabase functions serve project-update --env-file .env
 supabase functions serve routine-runner --env-file .env
+supabase functions serve enqueue-notification --env-file .env
+supabase functions serve send-emails --env-file .env
 ```
 
 Required env vars:
@@ -76,6 +80,13 @@ Required env vars:
 SUPABASE_URL=https://<your-project>.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=...
 ROUTINE_RUNNER_SECRET=<strong-random-secret>
+EMAIL_FROM=no-reply@tickist.com
+AWS_REGION=eu-central-1
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+EMAIL_RATE_LIMIT_PER_MINUTE=1
+EMAIL_RATE_LIMIT_PER_HOUR=60
+EMAIL_RATE_LIMIT_PER_DAY=500
 ```
 
 Manual invocation (local):
@@ -91,4 +102,17 @@ curl -X POST http://localhost:54321/functions/v1/project-update \
 
 curl -X POST http://localhost:54321/functions/v1/routine-runner \
   -H 'x-internal-cron-secret: <ROUTINE_RUNNER_SECRET>'
+
+curl -X POST http://localhost:54321/functions/v1/enqueue-notification \
+  -H 'Authorization: Bearer <USER_ACCESS_TOKEN>' \
+  -H 'apikey: <SUPABASE_ANON_OR_PUBLISHABLE_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{"subject":"Test","text":"Hello from outbox","type":"notification"}'
+
+curl -X POST http://localhost:54321/functions/v1/send-emails \
+  -H 'Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{"limit":25,"dry_run":true}'
 ```
+
+Szczegółowa instrukcja SES/SMTP/DNS/scheduler: `docs/EMAIL.md`.
