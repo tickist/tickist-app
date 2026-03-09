@@ -4,7 +4,14 @@
   <!-- Header / Navigation -->
   <header class="w-full max-w-7xl px-6 py-6 flex items-center justify-between z-20 relative">
     <div class="flex items-center">
-      <img src="/images/logo.png" alt="Tickist Logo" class="h-8 md:h-10 w-auto object-contain tickist-brand-logo" />
+      <img
+        [ngSrc]="brandLogoSrc()"
+        alt="Tickist Logo"
+        width="230"
+        height="90"
+        priority
+        class="h-8 md:h-10 w-auto object-contain"
+      />
     </div>
 
     <div class="flex items-center gap-6">

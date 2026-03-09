@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { NotificationDataService } from '../../data/notification-data.service';
@@ -18,6 +18,7 @@ import { ThemeService } from '../../core/ui/theme.service';
     RouterOutlet,
     RouterLink,
     DatePipe,
+    NgOptimizedImage,
     AppSidebarComponent,
     TaskFabComponent,
     ToastContainerComponent
@@ -54,11 +55,19 @@ export class AppViewportComponent implements OnDestroy {
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
   readonly isDarkTheme = this.themeService.isDark;
+  readonly brandLogoSrc = computed(() =>
+    this.isDarkTheme() ? '/images/logo_230.png' : '/images/logo-light_230.png'
+  );
   readonly themeButtonLabel = computed(() =>
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
 
   constructor() {
+    const initialUrl = this.router.url;
+    if (initialUrl.startsWith('/app') && initialUrl !== '/app/settings') {
+      this.viewState.rememberLastNonSettingsAppUrl(initialUrl);
+    }
+
     effect(() => {
       const user = this.user();
       if (user) {
@@ -71,7 +80,13 @@ export class AppViewportComponent implements OnDestroy {
 
     this.routerSub = this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe(() => {
+      .subscribe((event) => {
+        if (
+          event.urlAfterRedirects.startsWith('/app') &&
+          event.urlAfterRedirects !== '/app/settings'
+        ) {
+          this.viewState.rememberLastNonSettingsAppUrl(event.urlAfterRedirects);
+        }
         this.profileMenuOpen.set(false);
         this.notificationsOpen.set(false);
         this.sidebarOpen.set(false);
