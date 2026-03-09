@@ -62,3 +62,5 @@ supabase/.temp/
 
 backup_from_firebase/*
 reports/firebase-migration/*
+
+.nx/polygraph

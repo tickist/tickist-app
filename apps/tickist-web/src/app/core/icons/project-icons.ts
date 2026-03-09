@@ -357,9 +357,13 @@ const ICONS_BY_KEY: Record<ProjectIconKey, LucideIconData> = {
   podcast: Podcast,
 };
 
-const ICON_KEYS = new Set<ProjectIconKey>(Object.keys(ICONS_BY_KEY) as ProjectIconKey[]);
+const ICON_KEYS = new Set<ProjectIconKey>(
+  Object.keys(ICONS_BY_KEY) as ProjectIconKey[]
+);
 
-export function resolveProjectIconKey(raw: string | null | undefined): ProjectIconKey {
+export function resolveProjectIconKey(
+  raw: string | null | undefined
+): ProjectIconKey {
   const normalized = raw?.trim().toLowerCase() ?? '';
   if (ICON_KEYS.has(normalized as ProjectIconKey)) {
     return normalized as ProjectIconKey;
@@ -367,7 +371,9 @@ export function resolveProjectIconKey(raw: string | null | undefined): ProjectIc
   return DEFAULT_PROJECT_ICON;
 }
 
-export function resolveProjectIconData(raw: string | null | undefined): LucideIconData {
+export function resolveProjectIconData(
+  raw: string | null | undefined
+): LucideIconData {
   const key = resolveProjectIconKey(raw);
   return ICONS_BY_KEY[key];
 }

@@ -1,0 +1,116 @@
+:host {
+  display: block;
+}
+
+.stats-shell {
+  @apply flex flex-col gap-6;
+}
+
+.stats-hero {
+  @apply flex flex-col gap-4 rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-base-300/70 via-base-200/70 to-base-200/40 p-6 shadow-xl shadow-black/10;
+}
+
+@screen md {
+  .stats-hero {
+    @apply flex-row items-end justify-between;
+  }
+}
+
+.stats-eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.28em] text-primary/80;
+}
+
+.stats-title {
+  @apply mt-2 text-3xl font-semibold text-base-content;
+}
+
+.stats-subtitle {
+  @apply mt-3 max-w-2xl text-sm leading-6 text-base-content/70;
+}
+
+.stats-grid {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.stats-panel {
+  @apply rounded-[1.5rem] border border-white/10 bg-base-200/60 p-5 shadow-lg shadow-black/5 backdrop-blur-sm;
+}
+
+.stats-card {
+  @apply flex min-h-40 flex-col justify-between;
+}
+
+.stats-card__header {
+  @apply flex items-start justify-between gap-3;
+}
+
+.stats-card__label {
+  @apply text-sm font-semibold text-base-content;
+}
+
+.stats-card__hint {
+  @apply mt-1 text-xs leading-5 text-base-content/60;
+}
+
+.stats-card__value {
+  @apply mt-6 text-4xl font-semibold tracking-tight text-base-content;
+}
+
+.stats-state {
+  @apply flex min-h-52 flex-col items-center justify-center gap-3 text-center;
+}
+
+.stats-groups {
+  @apply grid gap-4;
+}
+
+.group-panel__header {
+  @apply mb-4 flex items-start justify-between gap-3;
+}
+
+.group-panel__title {
+  @apply text-xl font-semibold text-base-content;
+}
+
+.group-panel__subtitle {
+  @apply mt-1 text-xs uppercase tracking-[0.22em] text-base-content/55;
+}
+
+.group-panel__empty {
+  @apply rounded-2xl border border-dashed border-white/10 bg-base-100/20 px-4 py-5 text-sm text-base-content/60;
+}
+
+.project-list {
+  @apply space-y-3;
+}
+
+.project-row {
+  @apply flex flex-col gap-4 rounded-2xl border border-white/10 bg-base-100/25 p-4;
+}
+
+@screen lg {
+  .project-row {
+    @apply flex-row items-center justify-between;
+  }
+}
+
+.project-row__main {
+  @apply flex min-w-0 items-start gap-3;
+}
+
+.project-row__icon {
+  @apply mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 text-base-content;
+}
+
+.project-row__copy {
+  @apply min-w-0 flex-1;
+}
+
+.project-row__title {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.project-row__meta {
+  @apply mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-base-content/65;
+}

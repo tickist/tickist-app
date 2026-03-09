@@ -1,6 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
-import { projectIconLabel, resolveProjectIconData } from '../icons/project-icons';
+import {
+  projectIconLabel,
+  resolveProjectIconData,
+} from '../icons/project-icons';
 
 @Component({
   selector: 'app-project-icon',

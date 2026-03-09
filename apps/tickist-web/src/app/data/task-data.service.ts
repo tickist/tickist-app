@@ -76,7 +76,12 @@ export interface TaskUpdateInput {
   onHold?: boolean;
   taskType?: string;
   tags?: string[];
-  steps?: { id?: string; content: string; position?: number; isDone?: boolean }[];
+  steps?: {
+    id?: string;
+    content: string;
+    position?: number;
+    isDone?: boolean;
+  }[];
   pinned?: boolean;
   suspendUntil?: string | null;
   spentMinutes?: number | null;
@@ -107,7 +112,9 @@ type TaskRow = {
   creation_date: string | null;
   modification_date: string | null;
   task_tags?: { tag_id: string }[] | null;
-  task_steps?: { id: string; content: string; is_done: boolean; position: number }[] | null;
+  task_steps?:
+    | { id: string; content: string; is_done: boolean; position: number }[]
+    | null;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -251,16 +258,14 @@ export class TaskDataService {
     if (steps) {
       await this.supabase.from('task_steps').delete().eq('task_id', input.id);
       if (steps.length) {
-        await this.supabase
-          .from('task_steps')
-          .insert(
-            steps.map((step, index) => ({
-              task_id: input.id,
-              content: step.content,
-              position: step.position ?? index,
-              is_done: recurringCompletion ? false : (step.isDone ?? false),
-            }))
-          );
+        await this.supabase.from('task_steps').insert(
+          steps.map((step, index) => ({
+            task_id: input.id,
+            content: step.content,
+            position: step.position ?? index,
+            is_done: recurringCompletion ? false : step.isDone ?? false,
+          }))
+        );
       }
     } else if (recurringCompletion) {
       const { error: deleteError } = await this.supabase
@@ -309,7 +314,10 @@ export class TaskDataService {
       return false;
     }
 
-    const { error } = await this.supabase.from('tasks').delete().eq('id', taskId);
+    const { error } = await this.supabase
+      .from('tasks')
+      .delete()
+      .eq('id', taskId);
     if (error) {
       console.error('[Tasks] Failed to delete task', error);
       return false;
@@ -370,7 +378,10 @@ export class TaskDataService {
     }
   }
 
-  private async getFunctionAuthHeaders(): Promise<Record<string, string> | null> {
+  private async getFunctionAuthHeaders(): Promise<Record<
+    string,
+    string
+  > | null> {
     if (!this.supabase) {
       return null;
     }
@@ -384,7 +395,9 @@ export class TaskDataService {
       return null;
     }
     const publishableKey = (
-      this.supabaseConfig?.publishableKey ?? this.supabaseConfig?.anonKey ?? ''
+      this.supabaseConfig?.publishableKey ??
+      this.supabaseConfig?.anonKey ??
+      ''
     ).trim();
     if (!publishableKey) {
       console.warn(
@@ -500,7 +513,9 @@ function toTaskInsertPayload(input: TaskCreateInput) {
   };
 }
 
-function toTaskUpdatePayload(input: Omit<TaskUpdateInput, 'id' | 'tags' | 'steps'>) {
+function toTaskUpdatePayload(
+  input: Omit<TaskUpdateInput, 'id' | 'tags' | 'steps'>
+) {
   const payload: Record<string, unknown> = {};
   if (input.name !== undefined) payload.name = input.name;
   if (input.projectId !== undefined) payload.project_id = input.projectId;

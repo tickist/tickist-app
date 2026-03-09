@@ -1,4 +1,10 @@
-import { expect, type Locator, type Page, test, type TestInfo } from '@playwright/test';
+import {
+  expect,
+  type Locator,
+  type Page,
+  test,
+  type TestInfo,
+} from '@playwright/test';
 
 function uniqueSuffix(testInfo: TestInfo): string {
   const randomPart = Math.random().toString(36).slice(2, 8);
@@ -61,7 +67,9 @@ async function createProject(
 ): Promise<void> {
   const composer = await openCreateProjectModal(page);
   await composer.getByLabel('Project name').fill(name);
-  await composer.getByRole('textbox', { name: 'Description' }).fill(description);
+  await composer
+    .getByRole('textbox', { name: 'Description' })
+    .fill(description);
   await composer.getByRole('button', { name: 'Save project' }).click();
   await expect(page.locator('app-project-composer')).toHaveCount(0);
 }
@@ -75,7 +83,10 @@ async function selectInbox(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/app\/tasks\/[^/?#]+/);
 }
 
-async function selectProjectByName(page: Page, projectName: string): Promise<void> {
+async function selectProjectByName(
+  page: Page,
+  projectName: string
+): Promise<void> {
   const projectButton = page
     .locator('button.sidebar-subitem')
     .filter({
@@ -86,7 +97,9 @@ async function selectProjectByName(page: Page, projectName: string): Promise<voi
   await expect(projectButton).toBeVisible();
   await projectButton.click();
   await expect(page).toHaveURL(/\/app\/tasks\/[^/?#]+/);
-  await expect(page.locator('header.project-header h1')).toHaveText(projectName);
+  await expect(page.locator('header.project-header h1')).toHaveText(
+    projectName
+  );
 }
 
 async function openTaskComposer(page: Page): Promise<void> {
@@ -133,7 +146,10 @@ async function inboxCount(page: Page): Promise<number> {
 }
 
 function taskCardByName(page: Page, taskName: string) {
-  return page.locator('article.task-card').filter({ hasText: taskName }).first();
+  return page
+    .locator('article.task-card')
+    .filter({ hasText: taskName })
+    .first();
 }
 
 async function openTaskMenu(taskCard: ReturnType<typeof taskCardByName>) {
@@ -143,10 +159,7 @@ async function openTaskMenu(taskCard: ReturnType<typeof taskCardByName>) {
   return menu;
 }
 
-async function openProjectContextMenu(
-  page: Page,
-  projectName: string
-) {
+async function openProjectContextMenu(page: Page, projectName: string) {
   const row = page
     .locator('li.sidebar-project')
     .filter({
@@ -165,7 +178,9 @@ async function openProjectContextMenu(
   return menu;
 }
 
-test('adds task to inbox and keeps it after reload', async ({ page }, testInfo) => {
+test('adds task to inbox and keeps it after reload', async ({
+  page,
+}, testInfo) => {
   const taskName = `Inbox task ${uniqueSuffix(testInfo)}`;
 
   await ensureAuthenticated(page);
@@ -185,7 +200,9 @@ test('adds task to inbox and keeps it after reload', async ({ page }, testInfo) 
   await expect(taskCardByName(page, taskName)).toBeVisible();
 });
 
-test('creates project and adds a task into that project', async ({ page }, testInfo) => {
+test('creates project and adds a task into that project', async ({
+  page,
+}, testInfo) => {
   const projectName = `Project ${uniqueSuffix(testInfo)}`;
   const projectDescription = `Description ${uniqueSuffix(testInfo)}`;
   const taskName = `Project task ${uniqueSuffix(testInfo)}`;
@@ -203,7 +220,9 @@ test('creates project and adds a task into that project', async ({ page }, testI
   await expect(taskCardByName(page, taskName)).toBeVisible();
 });
 
-test('creates task, edits it via task menu and marks done', async ({ page }, testInfo) => {
+test('creates task, edits it via task menu and marks done', async ({
+  page,
+}, testInfo) => {
   const projectName = `Project ${uniqueSuffix(testInfo)}`;
   const taskName = `Editable task ${uniqueSuffix(testInfo)}`;
   const description = `Updated description ${uniqueSuffix(testInfo)}`;
@@ -233,7 +252,9 @@ test('creates task, edits it via task menu and marks done', async ({ page }, tes
   await descriptionPanel.locator('textarea').fill(description);
   await descriptionPanel.getByRole('button', { name: 'Save' }).click();
 
-  await expect(card.locator('.task-card__task-type')).toContainText('Next action');
+  await expect(card.locator('.task-card__task-type')).toContainText(
+    'Next action'
+  );
   await expect(card.locator('.task-card__date')).toBeVisible();
   await expect(card.locator('.description-content')).toContainText(description);
 
@@ -267,11 +288,15 @@ test('creates project, edits it from project menu and persists changes', async (
   const composer = page.locator('app-project-composer');
   await expect(composer.getByLabel('Project name')).toBeVisible();
   await composer.getByLabel('Project name').fill(updatedName);
-  await composer.getByRole('textbox', { name: 'Description' }).fill(updatedDescription);
+  await composer
+    .getByRole('textbox', { name: 'Description' })
+    .fill(updatedDescription);
   await composer.getByRole('button', { name: 'Save project' }).click();
   await expect(page.locator('app-project-composer')).toHaveCount(0);
 
-  await expect(page.locator('header.project-header h1')).toHaveText(updatedName);
+  await expect(page.locator('header.project-header h1')).toHaveText(
+    updatedName
+  );
   await expect(page.locator('.project-desc')).toContainText(updatedDescription);
   await expect(
     page

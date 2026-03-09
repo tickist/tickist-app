@@ -47,7 +47,8 @@ export class ProjectPickerComponent {
 
   @Output() readonly selectedProjectIdChange = new EventEmitter<string>();
 
-  @ViewChild('triggerButton') private triggerButton?: ElementRef<HTMLButtonElement>;
+  @ViewChild('triggerButton')
+  private triggerButton?: ElementRef<HTMLButtonElement>;
   @ViewChildren('optionButton')
   private optionButtons?: QueryList<ElementRef<HTMLButtonElement>>;
 
@@ -205,6 +206,8 @@ export class ProjectPickerComponent {
     }
     const safeIndex = Math.max(0, Math.min(index, this.options().length - 1));
     this.activeIndex.set(safeIndex);
-    queueMicrotask(() => this.optionButtons?.get(safeIndex)?.nativeElement.focus());
+    queueMicrotask(() =>
+      this.optionButtons?.get(safeIndex)?.nativeElement.focus()
+    );
   }
 }

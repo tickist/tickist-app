@@ -50,7 +50,9 @@ export class TreeViewComponent {
     });
   });
   readonly projectList = computed(() =>
-    this.projects.list().filter((project) => project.ownerId === this.user()?.id)
+    this.projects
+      .list()
+      .filter((project) => project.ownerId === this.user()?.id)
   );
 
   readonly groups = computed<TreeGroup[]>(() => {

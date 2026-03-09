@@ -26,25 +26,36 @@ describe('ExportImportService helpers', () => {
 
   it('reports duplicate stable IDs as errors', () => {
     const payload = createPayload();
-    payload.tasks.push({ ...payload.tasks[0], name: 'Duplicated', stableId: 'task-1' });
+    payload.tasks.push({
+      ...payload.tasks[0],
+      name: 'Duplicated',
+      stableId: 'task-1',
+    });
 
     const validation = validateTickistExportDocument(payload);
 
     expect(validation.ok).toBe(false);
-    expect(validation.errors.some((error) => error.includes('Duplicate task stableId'))).toBe(
-      true
-    );
+    expect(
+      validation.errors.some((error) =>
+        error.includes('Duplicate task stableId')
+      )
+    ).toBe(true);
   });
 
   it('reports dangling references as warnings', () => {
     const payload = createPayload();
-    payload.taskTags.push({ tagStableId: 'missing-tag', taskStableId: 'task-1' });
+    payload.taskTags.push({
+      tagStableId: 'missing-tag',
+      taskStableId: 'task-1',
+    });
 
     const validation = validateTickistExportDocument(payload);
 
     expect(validation.ok).toBe(true);
     expect(
-      validation.warnings.some((warning) => warning.includes('references missing tag'))
+      validation.warnings.some((warning) =>
+        warning.includes('references missing tag')
+      )
     ).toBe(true);
   });
 });

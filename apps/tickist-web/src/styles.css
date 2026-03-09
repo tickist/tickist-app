@@ -83,7 +83,6 @@ body {
 }
 
 @layer components {
-
   .auth-input,
   .input {
     color: rgb(var(--bc));

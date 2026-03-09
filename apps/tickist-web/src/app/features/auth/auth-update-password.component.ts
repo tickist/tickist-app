@@ -1,9 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseAuthService } from './supabase-auth.service';
@@ -31,14 +27,18 @@ export class AuthUpdatePasswordComponent {
   readonly message = signal<{ type: 'success' | 'error'; text: string } | null>(
     null
   );
-  readonly recoveryIssue = signal<string | null>(this.readRecoveryIssueFromHash());
+  readonly recoveryIssue = signal<string | null>(
+    this.readRecoveryIssueFromHash()
+  );
   readonly isDarkTheme = this.themeService.isDark;
   readonly themeButtonLabel = computed(() =>
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
 
   get isDisabled(): boolean {
-    return this.form.invalid || this.isSubmitting() || Boolean(this.recoveryIssue());
+    return (
+      this.form.invalid || this.isSubmitting() || Boolean(this.recoveryIssue())
+    );
   }
 
   get passwordsMismatch(): boolean {

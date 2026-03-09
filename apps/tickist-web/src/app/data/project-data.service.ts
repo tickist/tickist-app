@@ -130,9 +130,7 @@ export class ProjectDataService {
       return;
     }
 
-    this.projects.set(
-      data.map((row) => this.mapProjectRow(row as ProjectRow))
-    );
+    this.projects.set(data.map((row) => this.mapProjectRow(row as ProjectRow)));
   }
 
   async createProject(input: ProjectCreateInput): Promise<Project | null> {
@@ -140,7 +138,9 @@ export class ProjectDataService {
       throw new Error('ownerId is required to create a project');
     }
     if (!this.supabase) {
-      console.warn('[Projects] Supabase client missing; cannot create project.');
+      console.warn(
+        '[Projects] Supabase client missing; cannot create project.'
+      );
       return null;
     }
 
@@ -161,7 +161,8 @@ export class ProjectDataService {
         default_priority: rest.defaultPriority ?? 'B',
         default_finish_date: rest.defaultFinishDate ?? null,
         default_type_finish_date: rest.defaultTypeFinishDate ?? 0,
-        dialog_time_when_task_finished: rest.dialogTimeWhenTaskFinished ?? false,
+        dialog_time_when_task_finished:
+          rest.dialogTimeWhenTaskFinished ?? false,
       })
       .select('id')
       .single();
@@ -225,7 +226,9 @@ export class ProjectDataService {
     const previous = this.projects().find((project) => project.id === input.id);
 
     if (!this.supabase) {
-      console.warn('[Projects] Supabase client missing; cannot update project.');
+      console.warn(
+        '[Projects] Supabase client missing; cannot update project.'
+      );
       return null;
     }
 
@@ -247,8 +250,7 @@ export class ProjectDataService {
     if (rest.defaultTypeFinishDate !== undefined)
       payload.default_type_finish_date = rest.defaultTypeFinishDate;
     if (rest.dialogTimeWhenTaskFinished !== undefined)
-      payload.dialog_time_when_task_finished =
-        rest.dialogTimeWhenTaskFinished;
+      payload.dialog_time_when_task_finished = rest.dialogTimeWhenTaskFinished;
 
     if (Object.keys(payload).length) {
       const { error } = await this.supabase
@@ -284,14 +286,12 @@ export class ProjectDataService {
         .delete()
         .eq('project_id', input.id);
       if (shareWithIds.length) {
-        await this.supabase
-          .from('project_members')
-          .insert(
-            shareWithIds.map((userId) => ({
-              project_id: input.id,
-              user_id: userId,
-            }))
-          );
+        await this.supabase.from('project_members').insert(
+          shareWithIds.map((userId) => ({
+            project_id: input.id,
+            user_id: userId,
+          }))
+        );
       }
 
       if (added.length) {
@@ -317,7 +317,9 @@ export class ProjectDataService {
 
   async deleteProject(projectId: string): Promise<boolean> {
     if (!this.supabase) {
-      console.warn('[Projects] Supabase client missing; cannot delete project.');
+      console.warn(
+        '[Projects] Supabase client missing; cannot delete project.'
+      );
       return false;
     }
 
@@ -327,17 +329,23 @@ export class ProjectDataService {
     let isInbox = cachedProject?.isInbox ?? false;
 
     if (!cachedProject) {
-      const { data: projectData, error: projectFetchError } = await this.supabase
-        .from('projects')
-        .select('owner_id, is_inbox')
-        .eq('id', projectId)
-        .maybeSingle();
+      const { data: projectData, error: projectFetchError } =
+        await this.supabase
+          .from('projects')
+          .select('owner_id, is_inbox')
+          .eq('id', projectId)
+          .maybeSingle();
       if (projectFetchError) {
-        console.error('[Projects] Failed to inspect project before delete', projectFetchError);
+        console.error(
+          '[Projects] Failed to inspect project before delete',
+          projectFetchError
+        );
         return false;
       }
       if (!projectData) {
-        console.warn('[Projects] Project not found before delete', { projectId });
+        console.warn('[Projects] Project not found before delete', {
+          projectId,
+        });
         return false;
       }
       const row = projectData as { owner_id: string; is_inbox: boolean };
@@ -346,16 +354,24 @@ export class ProjectDataService {
     }
 
     if (isInbox) {
-      console.warn('[Projects] Inbox project cannot be deleted.', { projectId, ownerId });
+      console.warn('[Projects] Inbox project cannot be deleted.', {
+        projectId,
+        ownerId,
+      });
       return false;
     }
 
-    const { error } = await this.supabase.from('projects').delete().eq('id', projectId);
+    const { error } = await this.supabase
+      .from('projects')
+      .delete()
+      .eq('id', projectId);
     if (error) {
       console.error('[Projects] Failed to delete project', error);
       return false;
     }
-    this.projects.set(this.projects().filter((project) => project.id !== projectId));
+    this.projects.set(
+      this.projects().filter((project) => project.id !== projectId)
+    );
     if (ownerId && isInbox) {
       this.ensuredInboxOwners.delete(ownerId);
     }
@@ -397,7 +413,8 @@ export class ProjectDataService {
       defaultPriority: row.default_priority ?? undefined,
       defaultFinishDate: row.default_finish_date ?? undefined,
       defaultTypeFinishDate: row.default_type_finish_date ?? undefined,
-      dialogTimeWhenTaskFinished: row.dialog_time_when_task_finished ?? undefined,
+      dialogTimeWhenTaskFinished:
+        row.dialog_time_when_task_finished ?? undefined,
       shareWithIds: row.project_members?.map((m) => m.user_id) ?? [],
     };
   }
@@ -497,7 +514,10 @@ export class ProjectDataService {
     }
   }
 
-  private async getFunctionAuthHeaders(): Promise<Record<string, string> | null> {
+  private async getFunctionAuthHeaders(): Promise<Record<
+    string,
+    string
+  > | null> {
     if (!this.supabase) {
       return null;
     }
@@ -511,7 +531,9 @@ export class ProjectDataService {
       return null;
     }
     const publishableKey = (
-      this.supabaseConfig?.publishableKey ?? this.supabaseConfig?.anonKey ?? ''
+      this.supabaseConfig?.publishableKey ??
+      this.supabaseConfig?.anonKey ??
+      ''
     ).trim();
     if (!publishableKey) {
       console.warn(

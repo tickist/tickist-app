@@ -5,7 +5,11 @@
 }
 
 .tag-view__header {
-  @apply flex flex-wrap items-center justify-between gap-3;
+  @apply flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between;
+}
+
+.tag-view__intro {
+  @apply max-w-xl;
 }
 
 .tag-view__header h1 {
@@ -17,12 +21,37 @@
 }
 
 .controls {
+  @apply flex w-full flex-wrap items-center justify-start gap-3 xl:w-auto xl:justify-end;
+}
+
+.controls__group {
   @apply flex flex-wrap items-center gap-2;
 }
 
+.controls__action {
+  @apply shrink-0;
+}
+
+.controls__checkbox {
+  @apply inline-flex min-h-10 shrink-0 items-center gap-3 rounded-xl border border-white/10 px-3 text-sm;
+  background-color: rgb(var(--b1) / 45%);
+}
+
+.controls__sort {
+  @apply flex min-w-[13rem] flex-col gap-1 text-xs uppercase tracking-[0.24em] text-base-content/60;
+}
+
+.controls__sort .select {
+  @apply w-full normal-case tracking-normal;
+}
+
 .match-toggle {
-  @apply inline-flex items-center gap-1 rounded-lg border border-white/10 p-1;
+  @apply inline-flex min-h-10 items-center gap-1 rounded-xl border border-white/10 p-1;
   background-color: rgb(var(--b1) / 55%);
+}
+
+.match-toggle__button {
+  min-width: 3.5rem;
 }
 
 .tag-cloud {
@@ -57,7 +86,7 @@
 
 .controls .btn,
 .controls .select {
-  @apply border border-white/10;
+  @apply min-h-10 border border-white/10;
   background-color: rgb(var(--b1) / 45%);
   color: rgb(var(--bc) / 96%);
 }

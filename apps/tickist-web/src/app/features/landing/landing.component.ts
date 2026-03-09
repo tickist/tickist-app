@@ -2,7 +2,21 @@ import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
-import { LucideAngularModule, ArrowRight, CheckCircle2, FolderTree, LayoutDashboard, Github, Shield, Layers, Settings, Tag, ListTodo, Sun, Moon } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  ArrowRight,
+  CheckCircle2,
+  FolderTree,
+  LayoutDashboard,
+  Github,
+  Shield,
+  Layers,
+  Settings,
+  Tag,
+  ListTodo,
+  Sun,
+  Moon,
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-landing',
@@ -22,7 +36,18 @@ export class LandingComponent {
   );
 
   readonly icons = {
-    ArrowRight, CheckCircle2, FolderTree, LayoutDashboard, Github, Shield, Layers, Settings, Tag, ListTodo, Sun, Moon
+    ArrowRight,
+    CheckCircle2,
+    FolderTree,
+    LayoutDashboard,
+    Github,
+    Shield,
+    Layers,
+    Settings,
+    Tag,
+    ListTodo,
+    Sun,
+    Moon,
   };
 
   toggleTheme(): void {

@@ -283,7 +283,9 @@ export class TaskCardComponent implements OnChanges {
   }
 
   async shiftDue(days: number): Promise<void> {
-    const base = this.task.finishDate ? new Date(this.task.finishDate) : new Date();
+    const base = this.task.finishDate
+      ? new Date(this.task.finishDate)
+      : new Date();
     base.setDate(base.getDate() + days);
     await this.mutateTask(
       { id: this.task.id, finishDate: base.toISOString() },
@@ -414,7 +416,7 @@ export class TaskCardComponent implements OnChanges {
     }
     this.repeatDraftMode.set(null);
     const interval = this.getRepeatInterval(mode);
-    const fromRepeating = interval > 0 ? (this.task.fromRepeating ?? 0) : null;
+    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
     await this.mutateTask(
       { id: this.task.id, repeatInterval: interval, fromRepeating },
       'Repeat cadence updated.',
@@ -425,16 +427,20 @@ export class TaskCardComponent implements OnChanges {
   isRepeatOptionActive(mode: RepeatMode): boolean {
     if (mode === 'custom') {
       return (
-        this.currentRepeatMode() === 'custom' || this.repeatDraftMode() === 'custom'
+        this.currentRepeatMode() === 'custom' ||
+        this.repeatDraftMode() === 'custom'
       );
     }
-    return this.currentRepeatMode() === mode && this.repeatDraftMode() !== 'custom';
+    return (
+      this.currentRepeatMode() === mode && this.repeatDraftMode() !== 'custom'
+    );
   }
 
   isCustomRepeatEditorVisible(): boolean {
     return (
       this.repeatOpen() &&
-      (this.currentRepeatMode() === 'custom' || this.repeatDraftMode() === 'custom')
+      (this.currentRepeatMode() === 'custom' ||
+        this.repeatDraftMode() === 'custom')
     );
   }
 
@@ -461,7 +467,7 @@ export class TaskCardComponent implements OnChanges {
       this.customRepeatEvery(),
       this.customRepeatUnit()
     );
-    const fromRepeating = interval > 0 ? (this.task.fromRepeating ?? 0) : null;
+    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
     await this.mutateTask(
       { id: this.task.id, repeatInterval: interval, fromRepeating },
       'Repeat cadence updated.',
@@ -621,9 +627,7 @@ export class TaskCardComponent implements OnChanges {
       case 'yearly':
         return 365;
       case 'custom':
-        return (
-          Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit)
-        );
+        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
       default:
         return this.task.repeatInterval ?? 0;
     }
@@ -641,9 +645,11 @@ export class TaskCardComponent implements OnChanges {
     return !!this.task.finishDate;
   }
 
-  private deriveRepeatMode(
-    interval: number | null | undefined
-  ): { mode: RepeatMode; every: number; unit: RepeatUnit } {
+  private deriveRepeatMode(interval: number | null | undefined): {
+    mode: RepeatMode;
+    every: number;
+    unit: RepeatUnit;
+  } {
     if (!interval || interval <= 0) {
       return { mode: 'never', every: 1, unit: 'day' };
     }

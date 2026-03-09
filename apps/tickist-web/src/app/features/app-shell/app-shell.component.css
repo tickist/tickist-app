@@ -36,13 +36,18 @@
 }
 
 .new-task-form__input::placeholder {
-  color: rgb(var(--bc) / 0.5);
+  color: rgb(var(--bc) / 0.34);
+  font-style: italic;
 }
 
 .new-task-form__input:focus {
   outline: none;
   border-color: rgb(var(--bc) / 0.3);
   box-shadow: 0 0 0 3px rgb(var(--bc) / 0.12);
+}
+
+.new-task-form__input:focus::placeholder {
+  color: rgb(var(--bc) / 0.24);
 }
 
 .new-task-form__button {

@@ -216,7 +216,8 @@
   color: rgb(var(--bc) / 0.86);
   border: 1px solid rgb(var(--bc) / 0.16);
   background: rgb(var(--b1) / 0.25);
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .description-edit-btn:hover {
@@ -259,7 +260,8 @@
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .description-btn--ghost {

@@ -43,6 +43,13 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'stats',
+        loadComponent: () =>
+          import('./features/statistics/statistics.component').then(
+            (m) => m.StatisticsComponent
+          ),
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('./features/app-shell/settings.component').then(

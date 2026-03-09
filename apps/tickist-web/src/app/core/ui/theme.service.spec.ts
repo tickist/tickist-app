@@ -23,7 +23,9 @@ describe('ThemeService', () => {
 
     expect(service.theme()).toBe('tickist-light');
     expect(service.isDark()).toBe(false);
-    expect(document.documentElement.getAttribute('data-theme')).toBe('tickist-light');
+    expect(document.documentElement.getAttribute('data-theme')).toBe(
+      'tickist-light'
+    );
     expect(document.documentElement.style.colorScheme).toBe('light');
   });
 
@@ -45,7 +47,9 @@ describe('ThemeService', () => {
     service.toggleTheme();
 
     expect(service.theme()).toBe('tickist-light');
-    expect(document.documentElement.getAttribute('data-theme')).toBe('tickist-light');
+    expect(document.documentElement.getAttribute('data-theme')).toBe(
+      'tickist-light'
+    );
     expect(document.body.getAttribute('data-theme')).toBe('tickist-light');
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('tickist-light');
     expect(document.documentElement.style.colorScheme).toBe('light');

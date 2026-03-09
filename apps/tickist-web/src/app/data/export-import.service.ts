@@ -270,9 +270,13 @@ export class ExportImportService {
 
     const taskRows = (taskData ?? []) as ExportTaskRow[];
     const taskIds = taskRows.map((task) => task.id);
-    const taskStableById = new Map(taskRows.map((task) => [task.id, task.stable_id]));
+    const taskStableById = new Map(
+      taskRows.map((task) => [task.id, task.stable_id])
+    );
 
-    const { taskStepRows, taskTagRows } = await this.fetchTaskRelations(taskIds);
+    const { taskStepRows, taskTagRows } = await this.fetchTaskRelations(
+      taskIds
+    );
     const usedTagIds = [...new Set(taskTagRows.map((link) => link.tag_id))];
 
     let tagRows: ExportTagRow[] = [];
@@ -297,7 +301,9 @@ export class ExportImportService {
       tagRows = (usedTagData ?? []) as ExportTagRow[];
     }
 
-    const tagStableById = new Map(tagRows.map((tag) => [tag.id, tag.stable_id]));
+    const tagStableById = new Map(
+      tagRows.map((tag) => [tag.id, tag.stable_id])
+    );
 
     const payload: TickistExportDocument = {
       format: EXPORT_FORMAT,
@@ -318,7 +324,7 @@ export class ExportImportService {
         isInbox: project.is_inbox,
         projectType: project.project_type ?? 'active',
         ancestorStableId: project.ancestor_id
-          ? (projectStableById.get(project.ancestor_id) ?? null)
+          ? projectStableById.get(project.ancestor_id) ?? null
           : null,
         taskView: project.task_view ?? 'extended',
         defaultPriority: project.default_priority,
@@ -338,7 +344,7 @@ export class ExportImportService {
       tasks: taskRows.map((task) => ({
         stableId: task.stable_id,
         projectStableId: task.project_id
-          ? (projectStableById.get(task.project_id) ?? null)
+          ? projectStableById.get(task.project_id) ?? null
           : null,
         name: task.name,
         description: task.description ?? '',
@@ -399,7 +405,9 @@ export class ExportImportService {
       return {
         ok: false,
         errors: [
-          `File is too large. Maximum supported size is ${MAX_IMPORT_FILE_BYTES / (1024 * 1024)} MB.`,
+          `File is too large. Maximum supported size is ${
+            MAX_IMPORT_FILE_BYTES / (1024 * 1024)
+          } MB.`,
         ],
         warnings: [],
         summary: emptySummary(),
@@ -550,7 +558,9 @@ export class ExportImportService {
 
     if (existingError) {
       result.ok = false;
-      result.errors.push(`Could not inspect existing projects: ${existingError.message}`);
+      result.errors.push(
+        `Could not inspect existing projects: ${existingError.message}`
+      );
       return new Map<string, string>();
     }
 
@@ -573,11 +583,14 @@ export class ExportImportService {
 
     if (existingInboxError) {
       result.ok = false;
-      result.errors.push(`Could not inspect existing inbox project: ${existingInboxError.message}`);
+      result.errors.push(
+        `Could not inspect existing inbox project: ${existingInboxError.message}`
+      );
       return new Map<string, string>();
     }
 
-    const existingInbox = (existingInboxData as ExistingEntityRow | null) ?? null;
+    const existingInbox =
+      (existingInboxData as ExistingEntityRow | null) ?? null;
 
     const projectIdsByStableId = new Map<string, string>();
     const ancestorPatchCandidates: Array<{
@@ -601,7 +614,11 @@ export class ExportImportService {
 
       const shouldSkip =
         !!existing &&
-        shouldSkipImport(existing.updatedAt, project.updatedAt, options.skipOlder);
+        shouldSkipImport(
+          existing.updatedAt,
+          project.updatedAt,
+          options.skipOlder
+        );
 
       if (shouldSkip) {
         result.counts.projects.skipped += 1;
@@ -622,13 +639,17 @@ export class ExportImportService {
           projectIdsByStableId.set(project.stableId, existing.id);
         } else {
           result.counts.projects.created += 1;
-          projectIdsByStableId.set(project.stableId, `dry-run:${project.stableId}`);
+          projectIdsByStableId.set(
+            project.stableId,
+            `dry-run:${project.stableId}`
+          );
         }
         continue;
       }
 
       const shouldSetInboxFlag =
-        project.isInbox && (!existingInbox || existing?.id === existingInbox.id);
+        project.isInbox &&
+        (!existingInbox || existing?.id === existingInbox.id);
       const inboxStableIdTakenByOtherProject =
         project.isInbox &&
         !!existingInbox &&
@@ -688,7 +709,9 @@ export class ExportImportService {
         if (createError || !created) {
           result.ok = false;
           result.errors.push(
-            `Could not create project ${project.name}: ${createError?.message ?? 'unknown error'}`
+            `Could not create project ${project.name}: ${
+              createError?.message ?? 'unknown error'
+            }`
           );
           continue;
         }
@@ -747,7 +770,9 @@ export class ExportImportService {
 
     if (existingError) {
       result.ok = false;
-      result.errors.push(`Could not inspect existing tags: ${existingError.message}`);
+      result.errors.push(
+        `Could not inspect existing tags: ${existingError.message}`
+      );
       return new Map<string, string>();
     }
 
@@ -766,7 +791,8 @@ export class ExportImportService {
     for (const tag of payload.tags) {
       const existing = existingByStableId.get(tag.stableId);
       const shouldSkip =
-        !!existing && shouldSkipImport(existing.updatedAt, tag.updatedAt, options.skipOlder);
+        !!existing &&
+        shouldSkipImport(existing.updatedAt, tag.updatedAt, options.skipOlder);
 
       if (shouldSkip) {
         result.counts.tags.skipped += 1;
@@ -796,7 +822,9 @@ export class ExportImportService {
 
         if (updateError) {
           result.ok = false;
-          result.errors.push(`Could not update tag ${tag.name}: ${updateError.message}`);
+          result.errors.push(
+            `Could not update tag ${tag.name}: ${updateError.message}`
+          );
           continue;
         }
 
@@ -818,7 +846,9 @@ export class ExportImportService {
         if (createError || !created) {
           result.ok = false;
           result.errors.push(
-            `Could not create tag ${tag.name}: ${createError?.message ?? 'unknown error'}`
+            `Could not create tag ${tag.name}: ${
+              createError?.message ?? 'unknown error'
+            }`
           );
           continue;
         }
@@ -842,9 +872,14 @@ export class ExportImportService {
 
         if (fallbackError) {
           result.ok = false;
-          result.errors.push(`Could not refresh tag mapping: ${fallbackError.message}`);
+          result.errors.push(
+            `Could not refresh tag mapping: ${fallbackError.message}`
+          );
         } else {
-          for (const row of (fallbackTags ?? []) as Array<{ id: string; stable_id: string }>) {
+          for (const row of (fallbackTags ?? []) as Array<{
+            id: string;
+            stable_id: string;
+          }>) {
             tagIdsByStableId.set(row.stable_id, row.id);
           }
         }
@@ -881,7 +916,9 @@ export class ExportImportService {
 
     if (existingError) {
       result.ok = false;
-      result.errors.push(`Could not inspect existing tasks: ${existingError.message}`);
+      result.errors.push(
+        `Could not inspect existing tasks: ${existingError.message}`
+      );
       return { taskIdsByStableId, syncedTasks };
     }
 
@@ -898,7 +935,8 @@ export class ExportImportService {
     for (const task of payload.tasks) {
       const existing = existingByStableId.get(task.stableId);
       const shouldSkip =
-        !!existing && shouldSkipImport(existing.updatedAt, task.updatedAt, options.skipOlder);
+        !!existing &&
+        shouldSkipImport(existing.updatedAt, task.updatedAt, options.skipOlder);
 
       if (shouldSkip) {
         result.counts.tasks.skipped += 1;
@@ -965,7 +1003,9 @@ export class ExportImportService {
 
         if (updateError) {
           result.ok = false;
-          result.errors.push(`Could not update task ${task.name}: ${updateError.message}`);
+          result.errors.push(
+            `Could not update task ${task.name}: ${updateError.message}`
+          );
           continue;
         }
 
@@ -985,7 +1025,9 @@ export class ExportImportService {
         if (createError || !created) {
           result.ok = false;
           result.errors.push(
-            `Could not create task ${task.name}: ${createError?.message ?? 'unknown error'}`
+            `Could not create task ${task.name}: ${
+              createError?.message ?? 'unknown error'
+            }`
           );
           continue;
         }
@@ -1011,9 +1053,14 @@ export class ExportImportService {
 
         if (fallbackError) {
           result.ok = false;
-          result.errors.push(`Could not refresh task mapping: ${fallbackError.message}`);
+          result.errors.push(
+            `Could not refresh task mapping: ${fallbackError.message}`
+          );
         } else {
-          for (const row of (fallbackTasks ?? []) as Array<{ id: string; stable_id: string }>) {
+          for (const row of (fallbackTasks ?? []) as Array<{
+            id: string;
+            stable_id: string;
+          }>) {
             taskIdsByStableId.set(row.stable_id, row.id);
           }
         }
@@ -1190,7 +1237,9 @@ export function validateTickistExportDocument(
   }
   if (payload.formatVersion !== EXPORT_FORMAT_VERSION) {
     errors.push(
-      `Unsupported format version: ${String(payload.formatVersion)}. Expected ${EXPORT_FORMAT_VERSION}.`
+      `Unsupported format version: ${String(
+        payload.formatVersion
+      )}. Expected ${EXPORT_FORMAT_VERSION}.`
     );
   }
   if (!Array.isArray(payload.projects)) {
@@ -1218,12 +1267,30 @@ export function validateTickistExportDocument(
   };
 
   if (!errors.length) {
-    collectStableIdErrors('project', payload.projects.map((project) => project.stableId), errors);
-    collectStableIdErrors('tag', payload.tags.map((tag) => tag.stableId), errors);
-    collectStableIdErrors('task', payload.tasks.map((task) => task.stableId), errors);
-    collectStableIdErrors('task step', payload.taskSteps.map((step) => step.stableId), errors);
+    collectStableIdErrors(
+      'project',
+      payload.projects.map((project) => project.stableId),
+      errors
+    );
+    collectStableIdErrors(
+      'tag',
+      payload.tags.map((tag) => tag.stableId),
+      errors
+    );
+    collectStableIdErrors(
+      'task',
+      payload.tasks.map((task) => task.stableId),
+      errors
+    );
+    collectStableIdErrors(
+      'task step',
+      payload.taskSteps.map((step) => step.stableId),
+      errors
+    );
 
-    const projectSet = new Set(payload.projects.map((project) => project.stableId));
+    const projectSet = new Set(
+      payload.projects.map((project) => project.stableId)
+    );
     const tagSet = new Set(payload.tags.map((tag) => tag.stableId));
     const taskSet = new Set(payload.tasks.map((task) => task.stableId));
 
@@ -1250,7 +1317,9 @@ export function validateTickistExportDocument(
         );
       }
       if (!tagSet.has(link.tagStableId)) {
-        warnings.push(`Task-tag relation references missing tag ${link.tagStableId}.`);
+        warnings.push(
+          `Task-tag relation references missing tag ${link.tagStableId}.`
+        );
       }
     }
   }
@@ -1292,7 +1361,9 @@ function emptySummary(): ImportValidationSummary {
   };
 }
 
-function normalizeExportOptions(options: TickistExportOptions): Required<TickistExportOptions> {
+function normalizeExportOptions(
+  options: TickistExportOptions
+): Required<TickistExportOptions> {
   return {
     onlyActive: options.onlyActive ?? false,
     projectIds: deduplicate(
@@ -1303,7 +1374,10 @@ function normalizeExportOptions(options: TickistExportOptions): Required<Tickist
   };
 }
 
-function groupBy<T>(items: T[], keyResolver: (item: T) => string): Map<string, T[]> {
+function groupBy<T>(
+  items: T[],
+  keyResolver: (item: T) => string
+): Map<string, T[]> {
   const map = new Map<string, T[]>();
   for (const item of items) {
     const key = keyResolver(item);

@@ -85,9 +85,7 @@ export class TaskComposerComponent {
   readonly tagSearch = signal('');
   readonly filteredTags = computed(() => {
     const query = this.tagSearch().trim().toLowerCase();
-    return this.tags().filter((tag) =>
-      tag.name.toLowerCase().includes(query)
-    );
+    return this.tags().filter((tag) => tag.name.toLowerCase().includes(query));
   });
 
   @Output() dismiss = new EventEmitter<void>();
@@ -310,7 +308,9 @@ export class TaskComposerComponent {
           };
         })
         .filter(
-          (step): step is { content: string; isDone: boolean; position: number } =>
+          (
+            step
+          ): step is { content: string; isDone: boolean; position: number } =>
             !!step
         );
       const editing = this.editingTask();
@@ -423,9 +423,7 @@ export class TaskComposerComponent {
       case 'yearly':
         return 365;
       case 'custom':
-        return (
-          Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit)
-        );
+        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
       default:
         return 0;
     }
@@ -445,9 +443,11 @@ export class TaskComposerComponent {
     return 0;
   }
 
-  private repeatModeFromInterval(
-    interval: number | null | undefined
-  ): { mode: RepeatMode; every: number; unit: RepeatUnit } {
+  private repeatModeFromInterval(interval: number | null | undefined): {
+    mode: RepeatMode;
+    every: number;
+    unit: RepeatUnit;
+  } {
     if (!interval || interval <= 0) {
       return { mode: 'never', every: 1, unit: 'day' };
     }
@@ -501,7 +501,9 @@ export class TaskComposerComponent {
     return fromRepeating === 1 ? 'due_date' : 'completion_date';
   }
 
-  private completeModeFromType(typeFinishDate: number | null | undefined): 'by' | 'on' {
+  private completeModeFromType(
+    typeFinishDate: number | null | undefined
+  ): 'by' | 'on' {
     return typeFinishDate === 0 ? 'on' : 'by';
   }
 

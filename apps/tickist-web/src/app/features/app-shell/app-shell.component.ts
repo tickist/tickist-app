@@ -1,12 +1,12 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 
-import { Task, TaskDataService, TaskCreateInput } from '../../data/task-data.service';
 import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  Task,
+  TaskDataService,
+  TaskCreateInput,
+} from '../../data/task-data.service';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -143,9 +143,7 @@ export class AppShellComponent {
       done: tasks.filter((task) => task.isDone).length,
       overdue: tasks.filter(
         (task) =>
-          !task.isDone &&
-          !!task.finishDate &&
-          new Date(task.finishDate) < now
+          !task.isDone && !!task.finishDate && new Date(task.finishDate) < now
       ).length,
       pinned: tasks.filter((task) => task.pinned).length,
     };

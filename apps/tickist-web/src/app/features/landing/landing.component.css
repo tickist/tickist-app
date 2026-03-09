@@ -36,5 +36,9 @@
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  background-image: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background-image: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
 }

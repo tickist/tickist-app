@@ -65,7 +65,10 @@ const shouldServeHtmlFallback = (request: Request): boolean => {
   return accept.includes('text/html');
 };
 
-const fallbackToIndex = async (request: Request, env: Env): Promise<Response> => {
+const fallbackToIndex = async (
+  request: Request,
+  env: Env
+): Promise<Response> => {
   const url = new URL(request.url);
   url.pathname = '/index.html';
   const fallbackRequest = new Request(url.toString(), {

@@ -10,10 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import {
-  Project,
-  ProjectDataService,
-} from '../../data/project-data.service';
+import { Project, ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ProjectComposerPreset } from './composer-modal.service';
 import {
@@ -50,7 +47,9 @@ export class ProjectComposerComponent {
   );
   readonly availableAncestorOptions = computed(() => {
     const editingProjectId = this.editingProject()?.id ?? null;
-    return this.projectOptions().filter((project) => project.id !== editingProjectId);
+    return this.projectOptions().filter(
+      (project) => project.id !== editingProjectId
+    );
   });
   readonly colors = [
     '#1D4ED8',
@@ -88,7 +87,10 @@ export class ProjectComposerComponent {
   };
 
   readonly form = this.fb.nonNullable.group({
-    name: [this.defaultFormState.name, [Validators.required, Validators.minLength(3)]],
+    name: [
+      this.defaultFormState.name,
+      [Validators.required, Validators.minLength(3)],
+    ],
     description: [this.defaultFormState.description],
     projectType: [this.defaultFormState.projectType],
     ancestorId: [this.defaultFormState.ancestorId],
@@ -246,8 +248,10 @@ export class ProjectComposerComponent {
 
     this.editingProject.set(null);
     this.resetForm({
-      projectType: preset.defaults?.projectType ?? this.defaultFormState.projectType,
-      ancestorId: preset.defaults?.ancestorId ?? this.defaultFormState.ancestorId,
+      projectType:
+        preset.defaults?.projectType ?? this.defaultFormState.projectType,
+      ancestorId:
+        preset.defaults?.ancestorId ?? this.defaultFormState.ancestorId,
       color: preset.defaults?.color ?? this.defaultFormState.color,
       icon: resolveProjectIconKey(
         preset.defaults?.icon ?? this.defaultFormState.icon
@@ -255,9 +259,7 @@ export class ProjectComposerComponent {
     });
   }
 
-  private resetForm(
-    overrides?: Partial<typeof this.defaultFormState>
-  ): void {
+  private resetForm(overrides?: Partial<typeof this.defaultFormState>): void {
     this.form.reset({
       ...this.defaultFormState,
       ...overrides,

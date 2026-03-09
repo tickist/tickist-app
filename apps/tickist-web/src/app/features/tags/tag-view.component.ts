@@ -24,7 +24,7 @@ export class TagViewComponent {
   readonly selectedTags = signal<Set<string>>(new Set());
   readonly includeCompleted = signal(false);
   readonly showUntagged = signal(false);
-   // OR = zadanie pasuje do przynajmniej jednego zaznaczonego taga; AND = do wszystkich.
+  // OR = zadanie pasuje do przynajmniej jednego zaznaczonego taga; AND = do wszystkich.
   readonly matchMode = signal<'or' | 'and'>('or');
   readonly sortOption = signal<
     | 'priority-desc'
