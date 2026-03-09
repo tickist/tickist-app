@@ -60,6 +60,7 @@ Reports are written to `reports/firebase-migration/<timestamp>/`.
 - `functions/task-reminder/index.ts`: logs a notification whenever a task event occurs. This is the Supabase replacement for the Firebase function that wrote into `notifications`.
 - `functions/project-update/index.ts`: notifies collaborators when they are added/removed from a shared project.
 - `functions/routine-runner/index.ts`: cron-friendly endpoint that processes `routine_reminders` entries and writes notifications (placeholder for real automation).
+- `functions/notification-digest-runner/index.ts`: cron-friendly endpoint that enqueues daily and weekly email summaries based on `notification_preferences`.
 - `functions/enqueue-notification/index.ts`: authenticated enqueue endpoint that writes to `public.email_outbox`.
 - `functions/send-emails/index.ts`: service-role protected batch worker that sends queued emails through AWS SES API.
 
@@ -70,6 +71,7 @@ cd supabase
 supabase functions serve task-reminder --env-file .env
 supabase functions serve project-update --env-file .env
 supabase functions serve routine-runner --env-file .env
+supabase functions serve notification-digest-runner --env-file .env
 supabase functions serve enqueue-notification --env-file .env
 supabase functions serve send-emails --env-file .env
 ```
@@ -101,6 +103,9 @@ curl -X POST http://localhost:54321/functions/v1/project-update \
   -d '{"projectId":"<uuid>","event":"shared","title":"New shared project","description":"Someone shared a project with you","recipients":["<auth-user-id>"]}'
 
 curl -X POST http://localhost:54321/functions/v1/routine-runner \
+  -H 'x-internal-cron-secret: <ROUTINE_RUNNER_SECRET>'
+
+curl -X POST http://localhost:54321/functions/v1/notification-digest-runner \
   -H 'x-internal-cron-secret: <ROUTINE_RUNNER_SECRET>'
 
 curl -X POST http://localhost:54321/functions/v1/enqueue-notification \

@@ -380,6 +380,10 @@ verify_jwt = true
 # Internal scheduler endpoint protected via x-internal-cron-secret.
 verify_jwt = false
 
+[functions.notification-digest-runner]
+# Internal scheduler endpoint protected via x-internal-cron-secret.
+verify_jwt = false
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
