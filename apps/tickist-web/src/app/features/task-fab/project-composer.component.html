@@ -194,8 +194,12 @@
             class="color-dot"
             [style.background-color]="swatch"
             [class.active]="form.controls.color.value === swatch"
+            [attr.aria-label]="'Select color ' + swatch"
+            [title]="'Select color ' + swatch"
             (click)="chooseColor(swatch)"
-          ></button>
+          >
+            <span class="sr-only">Select color {{ swatch }}</span>
+          </button>
           }
         </div>
         <span class="field__label">Icon</span>
