@@ -115,6 +115,59 @@ describe('TaskComposerComponent repeat custom cadence', () => {
   });
 });
 
+describe('TaskComposerComponent shared sheet layout', () => {
+  let fixture: ComponentFixture<TaskComposerComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TaskComposerComponent],
+      providers: [
+        {
+          provide: TaskDataService,
+          useValue: {
+            createTask: vi.fn(async () => createTask()),
+            updateTask: vi.fn(async () => createTask()),
+          },
+        },
+        {
+          provide: ProjectDataService,
+          useValue: {
+            list: () => [],
+          },
+        },
+        {
+          provide: TagDataService,
+          useValue: {
+            list: () => [],
+            createTag: vi.fn(async () => null),
+          },
+        },
+        {
+          provide: SupabaseSessionService,
+          useValue: {
+            user: () => ({ id: 'owner-1' }),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TaskComposerComponent);
+    fixture.detectChanges();
+  });
+
+  it('renders the shared sheet shell with a single footer and scroll panel', () => {
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="task-composer-sheet"]')
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('.sheet-shell__panel-scroll')
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelectorAll('.sheet-shell__footer')
+    ).toHaveLength(1);
+  });
+});
+
 function createTask(overrides: Partial<Task> = {}): Task {
   return {
     id: 'task-1',

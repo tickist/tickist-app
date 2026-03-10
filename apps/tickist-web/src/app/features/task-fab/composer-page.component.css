@@ -1,0 +1,38 @@
+.sheet-page {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.composer-page__panel {
+  width: 100%;
+  min-height: calc(100vh - 8rem);
+}
+
+.composer-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(var(--bc) / 0.12);
+  border-radius: 1.5rem;
+  background: rgb(var(--b2) / 0.94);
+}
+
+.composer-page__message {
+  margin: 0;
+  color: rgb(var(--bc));
+}
+
+@media (max-width: 960px) {
+  .composer-page__panel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .composer-page__panel {
+    min-height: calc(100vh - 6.5rem);
+  }
+}

@@ -1,66 +1,30 @@
 <section class="sheet-page settings-page">
-  <div class="sheet-page__panel">
-    <div class="sheet-shell" data-testid="settings-sheet">
-      <header class="sheet-shell__header">
-        <div class="sheet-shell__heading">
-          <span class="sheet-shell__eyebrow">Settings</span>
-          <h1 class="sheet-shell__title">Workspace preferences</h1>
-        </div>
-        <button
-          type="button"
-          class="sheet-shell__close"
-          aria-label="Close settings panel"
-          (click)="closePanel()"
-        >
-          ×
-        </button>
-      </header>
+  <div class="settings-page__panel">
+    <app-sheet-scaffold
+      eyebrow="Settings"
+      title="Workspace preferences"
+      testId="settings-sheet"
+      closeAriaLabel="Close settings panel"
+      [tabs]="tabs"
+      [activeTab]="activeTab()"
+      (tabChange)="select($event)"
+      (close)="closePanel()"
+    >
+      <div sheet-body>
+        @if (activeTab() === 'account') {
+        <section class="sheet-form settings-panel">
+          <section class="sheet-section settings-hero">
+            <div class="sheet-section__header">
+              <p class="sheet-section__eyebrow">Profile</p>
+              <h2 class="sheet-section__title">
+                {{ user()?.user_metadata?.full_name || user()?.email }}
+              </h2>
+              <p class="sheet-section__description">
+                Personalize your workspace identity and keep your account info
+                easy to scan.
+              </p>
+            </div>
 
-      <div class="sheet-shell__body">
-        <aside class="sheet-shell__tabs settings__nav">
-          <button
-            type="button"
-            class="sheet-shell__tab settings__tab"
-            [class.active]="activeTab() === 'account'"
-            (click)="select('account')"
-          >
-            Account
-          </button>
-          <button
-            type="button"
-            class="sheet-shell__tab settings__tab"
-            [class.active]="activeTab() === 'password'"
-            (click)="select('password')"
-          >
-            Password
-          </button>
-          <button
-            type="button"
-            class="sheet-shell__tab settings__tab"
-            [class.active]="activeTab() === 'notifications'"
-            (click)="select('notifications')"
-          >
-            Notifications
-          </button>
-          <button
-            type="button"
-            class="sheet-shell__tab settings__tab"
-            [class.active]="activeTab() === 'backup'"
-            (click)="select('backup')"
-          >
-            Backup &amp; Restore
-          </button>
-        </aside>
-
-        <section class="sheet-shell__panel">
-          @if (activeTab() === 'account') {
-          <section class="settings__panel">
-            <header class="panel__header">
-              <div>
-                <p class="eyebrow">Profile</p>
-                <h2>{{ user()?.user_metadata?.full_name || user()?.email }}</h2>
-              </div>
-            </header>
             <section class="avatar-card" aria-label="Avatar settings">
               <div class="avatar-card__preview">
                 @if (avatarPreviewUrl(); as avatar) {
@@ -74,12 +38,16 @@
                 }
               </div>
               <div class="avatar-card__content">
-                <p class="field__label">Avatar</p>
-                <p class="field__hint">PNG, JPG or WEBP, maximum size 2 MB.</p>
+                <p class="sheet-field__label">Avatar</p>
+                <p class="sheet-field__hint">
+                  PNG, JPG or WEBP, maximum size 2 MB.
+                </p>
                 <div class="avatar-card__actions">
                   <label
-                    class="btn btn-outline btn-sm"
-                    [class.btn-disabled]="avatarUploading() || avatarRemoving()"
+                    class="sheet-shell__button sheet-shell__button--secondary avatar-card__upload"
+                    [class.avatar-card__upload--disabled]="
+                      avatarUploading() || avatarRemoving()
+                    "
                   >
                     @if (!avatarUploading()) {
                     <span>Upload avatar</span>
@@ -96,7 +64,7 @@
                   </label>
                   <button
                     type="button"
-                    class="btn btn-ghost btn-sm text-error"
+                    class="sheet-shell__button sheet-shell__button--ghost"
                     [disabled]="avatarUploading() || avatarRemoving()"
                     (click)="removeAvatar()"
                   >
@@ -109,97 +77,102 @@
                 </div>
               </div>
             </section>
-            <form class="panel__form" [formGroup]="accountForm">
-              <label class="field">
-                <span class="field__label">Display name</span>
+          </section>
+
+          <form
+            class="sheet-form"
+            [formGroup]="accountForm"
+            (ngSubmit)="saveAccount()"
+          >
+            <section class="sheet-section sheet-section--soft">
+              <div class="sheet-section__header">
+                <p class="sheet-section__eyebrow">Workspace identity</p>
+                <h3 class="sheet-section__title">Account details</h3>
+              </div>
+
+              <label class="sheet-field">
+                <span class="sheet-field__label">Display name</span>
                 <input
-                  class="input input-bordered"
+                  class="sheet-input"
                   placeholder="Your name"
                   formControlName="displayName"
                 />
                 @if (accountForm.controls.displayName.touched &&
                 accountForm.controls.displayName.invalid) {
-                <small class="field__error">
+                <small class="sheet-field__error">
                   Name must be at least 2 characters.
                 </small>
                 }
               </label>
-              <label class="field">
-                <span class="field__label">Email</span>
-                <input class="input input-bordered" formControlName="email" />
-                <small class="field__hint text-warning"
+
+              <label class="sheet-field">
+                <span class="sheet-field__label">Email</span>
+                <input class="sheet-input" formControlName="email" />
+                <small class="sheet-field__hint"
                   >You cannot change your email in this build.</small
                 >
               </label>
-              <div class="panel__actions">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  [disabled]="updating()"
-                  (click)="saveAccount()"
-                >
-                  Save changes
-                </button>
-              </div>
-            </form>
-            <div class="danger-card">
-              <div>
-                <p class="text-sm font-semibold text-error">Delete account</p>
-                <p class="text-xs text-base-content/70">
-                  Deleting your account is permanent. All data will be wiped
-                  immediately.
+
+              <button type="submit" class="sr-only">Save changes</button>
+            </section>
+          </form>
+
+          <section class="sheet-danger-card danger-card">
+            <div>
+              <p class="danger-card__title">Delete account</p>
+              <p class="sheet-field__hint">
+                Deleting your account is permanent. All data will be wiped
+                immediately.
+              </p>
+            </div>
+            <button
+              type="button"
+              class="sheet-shell__button sheet-shell__button--ghost danger-card__button"
+              (click)="deleteAccount()"
+            >
+              Delete
+            </button>
+          </section>
+        </section>
+        } @if (activeTab() === 'password') {
+        <section class="sheet-form settings-panel">
+          <form
+            class="sheet-form"
+            [formGroup]="passwordForm"
+            data-testid="settings-password-form"
+            (ngSubmit)="changePassword()"
+          >
+            <section class="sheet-section">
+              <div class="sheet-section__header">
+                <p class="sheet-section__eyebrow">Security</p>
+                <h2 class="sheet-section__title">Change password</h2>
+                <p class="sheet-section__description">
+                  Confirm your current password before setting a new one. You
+                  will be signed out after a successful change.
                 </p>
               </div>
-              <button
-                type="button"
-                class="btn btn-error btn-sm"
-                (click)="deleteAccount()"
-              >
-                Delete
-              </button>
-            </div>
-          </section>
-          } @if (activeTab() === 'password') {
-          <section class="settings__panel">
-            <header class="panel__header">
-              <div>
-                <p class="eyebrow">Security</p>
-                <h2>Change password</h2>
-              </div>
-            </header>
 
-            <form
-              class="panel__form"
-              [formGroup]="passwordForm"
-              data-testid="settings-password-form"
-              (ngSubmit)="changePassword()"
-            >
-              <p class="field__hint">
-                Confirm your current password before setting a new one. You will
-                be signed out after a successful change.
-              </p>
-
-              <label class="field">
-                <span class="field__label">Current password</span>
+              <label class="sheet-field">
+                <span class="sheet-field__label">Current password</span>
                 <input
-                  class="input input-bordered"
+                  class="sheet-input"
                   formControlName="currentPassword"
                   type="password"
                   autocomplete="current-password"
                   data-testid="settings-current-password"
                 />
-                @if ( passwordForm.controls.currentPassword.touched &&
-                passwordForm.controls.currentPassword.invalid ) {
-                <small class="field__error">
+                @if (passwordForm.controls.currentPassword.touched &&
+                passwordForm.controls.currentPassword.invalid) {
+                <small class="sheet-field__error">
                   Current password must be at least 6 characters.
                 </small>
                 }
               </label>
 
-              <label class="field">
-                <span class="field__label">New password</span>
+              <label class="sheet-field">
+                <span class="sheet-field__label">New password</span>
                 <input
-                  class="input input-bordered"
+                  class="sheet-input"
                   formControlName="newPassword"
                   type="password"
                   autocomplete="new-password"
@@ -207,27 +180,27 @@
                 />
                 @if (passwordForm.controls.newPassword.touched &&
                 passwordForm.controls.newPassword.invalid) {
-                <small class="field__error">
+                <small class="sheet-field__error">
                   New password must be at least 6 characters.
                 </small>
                 } @if (passwordMatchesCurrent()) {
-                <small class="field__error">
+                <small class="sheet-field__error">
                   New password must be different from the current password.
                 </small>
                 }
               </label>
 
-              <label class="field">
-                <span class="field__label">Confirm new password</span>
+              <label class="sheet-field">
+                <span class="sheet-field__label">Confirm new password</span>
                 <input
-                  class="input input-bordered"
+                  class="sheet-input"
                   formControlName="confirmPassword"
                   type="password"
                   autocomplete="new-password"
                   data-testid="settings-confirm-password"
                 />
                 @if (passwordsMismatch()) {
-                <small class="field__error"> Passwords must match. </small>
+                <small class="sheet-field__error">Passwords must match.</small>
                 }
               </label>
 
@@ -240,43 +213,27 @@
               </p>
               }
 
-              <div class="panel__actions">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  [disabled]="passwordSubmitDisabled()"
-                  data-testid="settings-password-submit"
-                >
-                  @if (!passwordUpdating()) {
-                  <span>Update password</span>
-                  } @if (passwordUpdating()) {
-                  <span class="loading loading-spinner loading-xs"></span>
-                  } @if (passwordUpdating()) {
-                  <span>Updating...</span>
-                  }
-                </button>
+              <button type="submit" class="sr-only">Update password</button>
+            </section>
+          </form>
+        </section>
+        } @if (activeTab() === 'notifications') {
+        <section class="sheet-form settings-panel">
+          <form
+            class="sheet-form"
+            [formGroup]="notificationsForm"
+            data-testid="settings-notifications-form"
+            (ngSubmit)="saveNotifications()"
+          >
+            <section class="sheet-section">
+              <div class="sheet-section__header">
+                <p class="sheet-section__eyebrow">Notifications</p>
+                <h2 class="sheet-section__title">Email digests</h2>
+                <p class="sheet-section__description">
+                  Start with email only. The model is prepared for more channels
+                  later.
+                </p>
               </div>
-            </form>
-          </section>
-          } @if (activeTab() === 'notifications') {
-          <section class="settings__panel">
-            <header class="panel__header">
-              <div>
-                <p class="eyebrow">Notifications</p>
-                <h2>Email digests</h2>
-              </div>
-            </header>
-
-            <form
-              class="panel__form"
-              [formGroup]="notificationsForm"
-              data-testid="settings-notifications-form"
-              (ngSubmit)="saveNotifications()"
-            >
-              <p class="field__hint">
-                Start with email only. The model is prepared for more channels
-                later.
-              </p>
 
               <section
                 class="notification-card"
@@ -285,7 +242,7 @@
                 <div class="notification-card__header">
                   <div>
                     <h3>Weekly summary</h3>
-                    <p class="field__hint">
+                    <p class="sheet-field__hint">
                       Sends a recap of completed tasks plus what is planned for
                       next week.
                     </p>
@@ -301,12 +258,12 @@
                   </label>
                 </div>
 
-                <div class="notification-grid">
-                  <label class="field" for="weekly-email-day">
-                    <span class="field__label">Day</span>
+                <div class="sheet-grid-two">
+                  <label class="sheet-field" for="weekly-email-day">
+                    <span class="sheet-field__label">Day</span>
                     <select
                       id="weekly-email-day"
-                      class="select select-bordered"
+                      class="sheet-select"
                       formControlName="weeklyEmailDayOfWeek"
                     >
                       @for (option of weekdayOptions; track option.value) {
@@ -317,18 +274,18 @@
                     </select>
                   </label>
 
-                  <label class="field" for="weekly-email-time">
-                    <span class="field__label">Time</span>
+                  <label class="sheet-field" for="weekly-email-time">
+                    <span class="sheet-field__label">Time</span>
                     <input
                       id="weekly-email-time"
-                      class="input input-bordered"
+                      class="sheet-input"
                       type="time"
                       formControlName="weeklyEmailTime"
                     />
                   </label>
                 </div>
 
-                <p class="field__hint">
+                <p class="sheet-field__hint">
                   Default: Sunday at 20:00 in your current timezone.
                 </p>
               </section>
@@ -340,7 +297,7 @@
                 <div class="notification-card__header">
                   <div>
                     <h3>Daily summary</h3>
-                    <p class="field__hint">
+                    <p class="sheet-field__hint">
                       Sends a daily email with what you finished today and what
                       is next tomorrow.
                     </p>
@@ -357,11 +314,11 @@
                 </div>
 
                 <div class="notification-grid notification-grid--single">
-                  <label class="field" for="daily-email-time">
-                    <span class="field__label">Time</span>
+                  <label class="sheet-field" for="daily-email-time">
+                    <span class="sheet-field__label">Time</span>
                     <input
                       id="daily-email-time"
-                      class="input input-bordered"
+                      class="sheet-input"
                       type="time"
                       formControlName="dailyEmailTime"
                     />
@@ -370,42 +327,34 @@
               </section>
 
               <div class="notification-footer">
-                <p class="field__hint">
+                <p class="sheet-field__hint">
                   Times are saved in timezone:
                   <strong>{{ notificationTimezone() }}</strong>
                 </p>
+              </div>
 
-                <div class="panel__actions">
-                  <button
-                    type="submit"
-                    class="btn btn-primary"
-                    [disabled]="notificationsSubmitDisabled()"
-                  >
-                    @if (!notificationsSaving()) {
-                    <span>Save notification settings</span>
-                    } @if (notificationsSaving()) {
-                    <span class="loading loading-spinner loading-xs"></span>
-                    } @if (notificationsSaving()) {
-                    <span>Saving...</span>
-                    }
-                  </button>
-                </div>
-              </div>
-            </form>
-          </section>
-          } @if (activeTab() === 'backup') {
-          <section class="settings__panel">
-            <header class="panel__header">
-              <div>
-                <p class="eyebrow">Backup</p>
-                <h2>Export &amp; Import</h2>
-              </div>
-            </header>
+              <button type="submit" class="sr-only">
+                Save notification settings
+              </button>
+            </section>
+          </form>
+        </section>
+        } @if (activeTab() === 'backup') {
+        <section class="sheet-form settings-panel">
+          <section class="sheet-section">
+            <div class="sheet-section__header">
+              <p class="sheet-section__eyebrow">Backup</p>
+              <h2 class="sheet-section__title">Export &amp; Import</h2>
+              <p class="sheet-section__description">
+                Download the current workspace or validate and import a backup
+                file into this account.
+              </p>
+            </div>
 
             <div class="backup-grid">
               <section class="backup-card" aria-label="Export backup">
                 <h3>Export JSON</h3>
-                <p class="field__hint">
+                <p class="sheet-field__hint">
                   Download your projects, tags, tasks, steps and task-tag
                   relations in Tickist JSON v1 format.
                 </p>
@@ -450,30 +399,28 @@
                     <span>{{ project.name }}</span>
                   </label>
                   } } @else {
-                  <p class="field__hint">No projects available.</p>
+                  <p class="sheet-field__hint">No projects available.</p>
                   }
                 </div>
                 }
 
-                <div class="panel__actions">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    [disabled]="exportBusy()"
-                    (click)="exportBackup()"
-                  >
-                    @if (!exportBusy()) {
-                    <span>Export backup</span>
-                    } @if (exportBusy()) {
-                    <span class="loading loading-spinner loading-xs"></span>
-                    }
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  class="sheet-shell__button sheet-shell__button--primary"
+                  [disabled]="exportBusy()"
+                  (click)="exportBackup()"
+                >
+                  @if (!exportBusy()) {
+                  <span>Export backup</span>
+                  } @if (exportBusy()) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  }
+                </button>
               </section>
 
               <section class="backup-card" aria-label="Import backup">
                 <h3>Import JSON</h3>
-                <p class="field__hint">
+                <p class="sheet-field__hint">
                   Validate and import backup file into this account. Existing
                   records are upserted by stable ID.
                 </p>
@@ -518,10 +465,10 @@
                 </div>
                 }
 
-                <div class="panel__actions backup-actions">
+                <div class="backup-actions">
                   <button
                     type="button"
-                    class="btn btn-outline"
+                    class="sheet-shell__button sheet-shell__button--ghost"
                     [disabled]="importBusy() || !importFile()"
                     (click)="runImport(true)"
                   >
@@ -529,7 +476,7 @@
                   </button>
                   <button
                     type="button"
-                    class="btn btn-primary"
+                    class="sheet-shell__button sheet-shell__button--primary"
                     [disabled]="importBusy() || !importFile()"
                     (click)="runImport(false)"
                   >
@@ -543,11 +490,11 @@
               </section>
             </div>
           </section>
-          }
         </section>
+        }
       </div>
 
-      <footer class="sheet-shell__footer">
+      <div sheet-footer class="sheet-footer-actions">
         <button
           type="button"
           class="sheet-shell__button sheet-shell__button--ghost"
@@ -555,7 +502,23 @@
         >
           Close settings
         </button>
-      </footer>
-    </div>
+
+        @if (footerPrimaryLabel(); as label) {
+        <div class="sheet-footer-actions__group">
+          <button
+            type="button"
+            class="sheet-shell__button sheet-shell__button--primary"
+            [disabled]="footerPrimaryDisabled()"
+            [attr.data-testid]="
+              activeTab() === 'password' ? 'settings-password-submit' : null
+            "
+            (click)="submitActiveTab()"
+          >
+            {{ label }}
+          </button>
+        </div>
+        }
+      </div>
+    </app-sheet-scaffold>
   </div>
 </section>

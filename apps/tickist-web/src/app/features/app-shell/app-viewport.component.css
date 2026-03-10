@@ -16,3 +16,24 @@
   background-color: rgb(var(--b2) / 0.96);
   border-color: rgb(var(--bc) / 0.14);
 }
+
+.app-layout {
+  display: block;
+}
+
+.app-layout__main {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+@media (min-width: 1024px) {
+  .app-layout {
+    display: grid;
+    grid-template-columns: minmax(20rem, 1fr) minmax(0, 2fr);
+  }
+
+  .app-layout__sidebar {
+    width: auto;
+    min-width: 20rem;
+  }
+}

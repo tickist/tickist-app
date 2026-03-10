@@ -213,9 +213,9 @@
     </div>
     }
   </nav>
-  <div class="relative flex min-h-[calc(100vh-72px)]">
+  <div class="app-layout relative min-h-[calc(100vh-72px)]">
     <aside
-      class="relative z-30 hidden w-96 border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block"
+      class="app-layout__sidebar relative z-30 hidden border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block"
     >
       <app-sidebar></app-sidebar>
     </aside>
@@ -245,12 +245,14 @@
     ></div>
     }
 
-    <main class="flex-1 px-4 py-8 lg:px-8">
-      <div class="w-full max-w-none">
+    <main class="app-layout__main flex-1 px-4 py-8 lg:px-8">
+      <div class="w-full max-w-none min-w-0">
         <router-outlet></router-outlet>
       </div>
     </main>
   </div>
+  @if (showTaskFab()) {
   <app-task-fab></app-task-fab>
+  }
   <app-toast-container></app-toast-container>
 </section>

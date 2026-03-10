@@ -37,6 +37,7 @@ describe('SettingsComponent sheet layout', () => {
         {
           provide: AppViewStateService,
           useValue: {
+            lastNonSheetAppUrl: lastAppUrl.asReadonly(),
             lastNonSettingsAppUrl: lastAppUrl.asReadonly(),
           },
         },
@@ -147,6 +148,12 @@ describe('SettingsComponent sheet layout', () => {
     expect(
       fixture.nativeElement.querySelector('.sheet-shell__tabs')
     ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('.sheet-shell__panel-scroll')
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelectorAll('.sheet-shell__footer')
+    ).toHaveLength(1);
   });
 
   it('closes back to the last app route', async () => {
@@ -212,6 +219,9 @@ describe('SettingsComponent password form', () => {
         {
           provide: AppViewStateService,
           useValue: {
+            lastNonSheetAppUrl: signal<string | null>(
+              '/app/tasks'
+            ).asReadonly(),
             lastNonSettingsAppUrl: signal<string | null>(
               '/app/tasks'
             ).asReadonly(),

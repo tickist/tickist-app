@@ -285,8 +285,8 @@ export class AppShellComponent {
     return task.id;
   }
 
-  openProjectEdit(project: Project): void {
-    this.composer.openProjectModal({
+  async openProjectEdit(project: Project): Promise<void> {
+    await this.composer.openProjectModal({
       mode: 'edit',
       project,
     });

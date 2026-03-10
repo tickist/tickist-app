@@ -1,116 +1,59 @@
-import { Component, input, output } from '@angular/core';
-import {
-  TaskComposerPreset,
-  ProjectComposerPreset,
-} from './composer-modal.service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { Task } from '../../data/task-data.service';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { ComposerModalService } from './composer-modal.service';
 import { TaskFabComponent } from './task-fab.component';
 
-@Component({ selector: 'app-task-composer', template: '' })
-class MockTaskComposerComponent {
-  readonly preset = input<TaskComposerPreset | null>(null);
-  readonly dismiss = output<void>();
-  readonly created = output<void>();
-}
-
-@Component({ selector: 'app-project-composer', template: '' })
-class MockProjectComposerComponent {
-  readonly preset = input<ProjectComposerPreset | null>(null);
-  readonly dismiss = output<void>();
-  readonly created = output<void>();
-}
-
-describe('TaskFabComponent sheet layout', () => {
+describe('TaskFabComponent routing actions', () => {
   let fixture: ComponentFixture<TaskFabComponent>;
   let component: TaskFabComponent;
-  let composer: ComposerModalService;
+  let openTaskModal: ReturnType<typeof vi.fn>;
+  let openProjectModal: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
+    openTaskModal = vi.fn(async () => undefined);
+    openProjectModal = vi.fn(async () => undefined);
+
     await TestBed.configureTestingModule({
       imports: [TaskFabComponent],
-      providers: [ComposerModalService],
-    })
-      .overrideComponent(TaskFabComponent, {
-        set: {
-          imports: [MockTaskComposerComponent, MockProjectComposerComponent],
+      providers: [
+        {
+          provide: ComposerModalService,
+          useValue: {
+            openTaskModal,
+            openProjectModal,
+          },
         },
-      })
-      .compileComponents();
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TaskFabComponent);
     component = fixture.componentInstance;
-    composer = TestBed.inject(ComposerModalService);
     fixture.detectChanges();
   });
 
-  it('opens task composer in the shared right sheet from FAB', () => {
+  it('navigates to task create route from FAB', async () => {
     const addTaskButton = fixture.nativeElement.querySelector(
       '.fab-main'
     ) as HTMLButtonElement | null;
 
     addTaskButton?.click();
-    fixture.detectChanges();
+    await fixture.whenStable();
 
-    const panel = fixture.nativeElement.querySelector(
-      '.fab-modal--sheet[aria-label="Task panel"]'
-    );
-    expect(panel).not.toBeNull();
+    expect(openTaskModal).toHaveBeenCalledWith();
   });
 
-  it('renders edited task in the same sheet container', () => {
-    composer.openTaskModal({
-      mode: 'edit',
-      task: createTask(),
-    });
+  it('navigates to project create route from mini FAB', async () => {
+    component.hovered.set(true);
     fixture.detectChanges();
 
-    const panel = fixture.nativeElement.querySelector(
-      '.fab-modal--sheet[aria-label="Task panel"]'
-    );
-    expect(panel).not.toBeNull();
-  });
+    const addProjectButton = fixture.nativeElement.querySelector(
+      '.fab-mini'
+    ) as HTMLButtonElement | null;
 
-  it('opens project composer in the shared right sheet', () => {
-    component.showProjectModal();
-    fixture.detectChanges();
+    addProjectButton?.click();
+    await fixture.whenStable();
 
-    const panel = fixture.nativeElement.querySelector(
-      '.fab-modal--sheet[aria-label="Project panel"]'
-    );
-    expect(panel).not.toBeNull();
+    expect(openProjectModal).toHaveBeenCalledWith({ mode: 'create' });
   });
 });
-
-function createTask(overrides: Partial<Task> = {}): Task {
-  return {
-    id: 'task-1',
-    ownerId: 'owner-1',
-    projectId: 'project-1',
-    name: 'Plan panel test',
-    description: '',
-    finishDate: null,
-    finishTime: null,
-    typeFinishDate: 1,
-    suspendUntil: null,
-    pinned: false,
-    isActive: true,
-    isDone: false,
-    onHold: false,
-    priority: 'B',
-    repeatInterval: 0,
-    repeatDelta: null,
-    fromRepeating: null,
-    estimateMinutes: 15,
-    spentMinutes: 0,
-    taskType: 'normal',
-    whenComplete: null,
-    tags: [],
-    steps: [],
-    createdAt: null,
-    updatedAt: null,
-    ...overrides,
-  };
-}

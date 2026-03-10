@@ -1,92 +1,46 @@
-<div class="sheet-shell">
-  <header class="sheet-shell__header">
-    <div class="sheet-shell__heading">
-      <span class="sheet-shell__eyebrow">
-        {{ editingTask() ? 'Edit task' : 'Create task' }}
-      </span>
-      <h2 class="sheet-shell__title">
-        {{ editingTask()?.name || 'New task' }}
-      </h2>
-    </div>
-    <button
-      type="button"
-      class="sheet-shell__close"
-      (click)="dismiss.emit()"
-      aria-label="Close task panel"
-    >
-      ×
-    </button>
-  </header>
+<app-sheet-scaffold
+  [eyebrow]="sheetEyebrow()"
+  [title]="sheetTitle()"
+  [tabs]="tabs"
+  [activeTab]="activeTab()"
+  testId="task-composer-sheet"
+  closeAriaLabel="Close task panel"
+  (tabChange)="selectTab($event)"
+  (close)="dismiss.emit()"
+>
+  <div sheet-body>
+    @switch (activeTab()) { @case ('general') {
+    <form [formGroup]="taskForm" class="sheet-form">
+      <section class="sheet-section">
+        <div class="sheet-section__header">
+          <p class="sheet-section__eyebrow">Core details</p>
+          <h3 class="sheet-section__title">Task basics</h3>
+          <p class="sheet-section__description">
+            Name the task, assign context and define how it should be tracked.
+          </p>
+        </div>
 
-  <div class="sheet-shell__body">
-    <aside class="sheet-shell__tabs">
-      <button
-        type="button"
-        class="sheet-shell__tab"
-        [class.active]="activeTab() === 'general'"
-        (click)="selectTab('general')"
-      >
-        ✏️ General
-      </button>
-      <button
-        type="button"
-        class="sheet-shell__tab"
-        [class.active]="activeTab() === 'repeat'"
-        (click)="selectTab('repeat')"
-      >
-        🔁 Repeat
-      </button>
-      <button
-        type="button"
-        class="sheet-shell__tab"
-        [class.active]="activeTab() === 'tags'"
-        (click)="selectTab('tags')"
-      >
-        🏷️ Tags
-      </button>
-      <button
-        type="button"
-        class="sheet-shell__tab"
-        [class.active]="activeTab() === 'steps'"
-        (click)="selectTab('steps')"
-      >
-        ☑️ Steps
-      </button>
-      <button
-        type="button"
-        class="sheet-shell__tab"
-        [class.active]="activeTab() === 'extra'"
-        (click)="selectTab('extra')"
-      >
-        ✨ Extra
-      </button>
-    </aside>
-
-    <section class="sheet-shell__panel">
-      @switch (activeTab()) { @case ('general') {
-      <form [formGroup]="taskForm" class="panel">
-        <label class="field">
-          <span class="field__label">Task name</span>
+        <label class="sheet-field">
+          <span class="sheet-field__label">Task name</span>
           <input
-            class="input"
+            class="sheet-input"
             formControlName="name"
             placeholder="e.g. Podsumować wyjazd"
           />
           @if (taskForm.controls.name.touched && taskForm.controls.name.invalid)
           {
-          <small class="field__error"> A task name is required. </small>
+          <small class="sheet-field__error">A task name is required.</small>
           }
         </label>
-        <div class="field">
-          <span class="field__label">Priority</span>
-          <div class="priority-group">
+
+        <div class="sheet-field">
+          <span class="sheet-field__label">Priority</span>
+          <div class="sheet-pill-group">
             @for (level of ['A','B','C']; track level) {
             <button
               type="button"
+              class="sheet-pill"
               [class.active]="taskForm.controls.priority.value === level"
-              [class.prio-a]="level === 'A'"
-              [class.prio-b]="level === 'B'"
-              [class.prio-c]="level === 'C'"
               (click)="taskForm.controls.priority.setValue(level)"
             >
               {{ level }}
@@ -94,8 +48,9 @@
             }
           </div>
         </div>
-        <div class="field">
-          <span class="field__label">Project</span>
+
+        <div class="sheet-field">
+          <span class="sheet-field__label">Project</span>
           <app-project-picker
             ariaLabel="Select project for task"
             [projects]="projects()"
@@ -108,11 +63,13 @@
             "
           ></app-project-picker>
         </div>
-        <div class="field">
-          <span class="field__label">Task type</span>
-          <div class="type-group">
+
+        <div class="sheet-field">
+          <span class="sheet-field__label">Task type</span>
+          <div class="sheet-pill-group">
             <button
               type="button"
+              class="sheet-pill"
               [class.active]="taskForm.controls.taskType.value === 'normal'"
               (click)="taskForm.controls.taskType.setValue('normal')"
             >
@@ -120,6 +77,7 @@
             </button>
             <button
               type="button"
+              class="sheet-pill"
               [class.active]="
                 taskForm.controls.taskType.value === 'next_action'
               "
@@ -129,6 +87,7 @@
             </button>
             <button
               type="button"
+              class="sheet-pill"
               [class.active]="taskForm.controls.taskType.value === 'need_info'"
               (click)="taskForm.controls.taskType.setValue('need_info')"
             >
@@ -136,111 +95,160 @@
             </button>
           </div>
         </div>
-        <div class="field">
-          <span class="field__label">Complete</span>
-          <div class="complete-group">
-            <label>
+      </section>
+
+      <section class="sheet-section sheet-section--soft">
+        <div class="sheet-section__header">
+          <p class="sheet-section__eyebrow">Scheduling</p>
+          <h3 class="sheet-section__title">Complete by or on</h3>
+        </div>
+
+        <div class="sheet-field">
+          <span class="sheet-field__label">Complete</span>
+          <div class="sheet-choice-row">
+            <label class="sheet-choice">
               <input type="radio" value="by" formControlName="completeMode" />
-              by
+              <span>by</span>
             </label>
-            <label>
+            <label class="sheet-choice">
               <input type="radio" value="on" formControlName="completeMode" />
-              on
+              <span>on</span>
             </label>
           </div>
-          <div class="complete-inputs">
-            <input type="date" class="input" formControlName="finishDate" />
-            <input type="time" class="input" formControlName="finishTime" />
+          <div class="sheet-grid-two">
+            <input
+              type="date"
+              class="sheet-input"
+              formControlName="finishDate"
+            />
+            <input
+              type="time"
+              class="sheet-input"
+              formControlName="finishTime"
+            />
           </div>
         </div>
-        <label class="field">
-          <span class="field__label">Description</span>
+
+        <label class="sheet-field">
+          <span class="sheet-field__label">Description</span>
           <textarea
-            class="input"
+            class="sheet-textarea"
             rows="4"
             formControlName="description"
             placeholder="Add helpful context"
           ></textarea>
         </label>
-      </form>
-      } @case ('repeat') {
-      <form [formGroup]="taskForm" class="panel">
-        <p class="field__label">Repetition</p>
-        <div class="repeat-options">
-          @for (option of
-          ['never','daily','daily_work','weekly','monthly','yearly','custom'];
-          track option) {
-          <label>
-            <input type="radio" [value]="option" formControlName="repeatMode" />
-            {{ option === 'daily_work' ? 'daily (workweek)' : option }}
-          </label>
-          }
+      </section>
+    </form>
+    } @case ('repeat') {
+    <form [formGroup]="taskForm" class="sheet-form">
+      <section class="sheet-section">
+        <div class="sheet-section__header">
+          <p class="sheet-section__eyebrow">Cadence</p>
+          <h3 class="sheet-section__title">Repeat rules</h3>
+          <p class="sheet-section__description">
+            Choose whether the task should return and what date should anchor
+            the next occurrence.
+          </p>
         </div>
+
+        <div class="sheet-field">
+          <span class="sheet-field__label">Repetition</span>
+          <div class="repeat-options">
+            @for (option of
+            ['never','daily','daily_work','weekly','monthly','yearly','custom'];
+            track option) {
+            <label class="sheet-choice">
+              <input
+                type="radio"
+                [value]="option"
+                formControlName="repeatMode"
+              />
+              <span>{{
+                option === 'daily_work' ? 'Daily (workweek)' : option
+              }}</span>
+            </label>
+            }
+          </div>
+        </div>
+
         @if (taskForm.controls.repeatMode.value !== 'never') {
-        <div class="field">
-          <span class="field__label">From</span>
-          <div class="complete-group">
-            <label>
+        <div class="sheet-field">
+          <span class="sheet-field__label">From</span>
+          <div class="sheet-choice-row">
+            <label class="sheet-choice">
               <input
                 type="radio"
                 value="completion_date"
                 formControlName="repeatFrom"
               />
-              completion date
+              <span>completion date</span>
             </label>
-            <label>
+            <label class="sheet-choice">
               <input
                 type="radio"
                 value="due_date"
                 formControlName="repeatFrom"
               />
-              due date
+              <span>due date</span>
             </label>
           </div>
           @if (taskForm.controls.repeatFrom.value === 'due_date' &&
           !taskForm.controls.finishDate.value) {
-          <p class="field__hint">
+          <p class="sheet-field__hint">
             No due date set. Repeat will use completion date by default.
           </p>
           }
         </div>
         } @if (taskForm.controls.repeatMode.value === 'custom') {
-        <div class="field">
-          <span class="field__label">Every</span>
-          <div class="repeat-custom-controls">
+        <div class="sheet-field">
+          <span class="sheet-field__label">Every</span>
+          <div class="sheet-grid-two">
             <input
               type="number"
               min="1"
-              class="input"
+              class="sheet-input"
               formControlName="repeatEvery"
             />
-            <select class="input" formControlName="repeatUnit">
+            <select class="sheet-select" formControlName="repeatUnit">
               <option value="day">days</option>
               <option value="week">weeks</option>
               <option value="month">months</option>
               <option value="year">years</option>
             </select>
           </div>
-          <p class="field__hint">Choose how often this task repeats.</p>
+          <p class="sheet-field__hint">Choose how often this task repeats.</p>
         </div>
         }
-      </form>
-      } @case ('tags') {
-      <section class="panel">
-        <div class="field">
-          <span class="field__label">Search tags</span>
+      </section>
+    </form>
+    } @case ('tags') {
+    <section class="sheet-form">
+      <section class="sheet-section">
+        <div class="sheet-section__header">
+          <p class="sheet-section__eyebrow">Classification</p>
+          <h3 class="sheet-section__title">Tag the task</h3>
+          <p class="sheet-section__description">
+            Attach existing tags or quickly create a new one without leaving the
+            composer.
+          </p>
+        </div>
+
+        <label class="sheet-field">
+          <span class="sheet-field__label">Search tags</span>
           <input
-            class="input"
+            class="sheet-input"
             placeholder="Type to filter or create"
             [value]="tagSearch()"
             (input)="tagSearch.set($any($event.target).value)"
           />
-        </div>
+        </label>
+
         <div class="tags-grid">
           @for (tag of filteredTags(); track tag) {
           <button
             type="button"
-            class="tag-chip"
+            class="sheet-pill"
             [class.active]="taskForm.controls.tags.value.includes(tag.id)"
             (click)="toggleTag(tag.id)"
           >
@@ -248,24 +256,35 @@
           </button>
           }
         </div>
-        <div class="field inline">
+
+        <div class="sheet-inline-action">
           <input
-            class="input"
+            class="sheet-input"
             placeholder="Create new tag"
             [value]="tagSearch()"
             (input)="tagSearch.set($any($event.target).value)"
           />
           <button
             type="button"
-            class="btn-secondary"
+            class="sheet-shell__button sheet-shell__button--secondary"
             (click)="createTag(tagSearch())"
           >
             Add tag
           </button>
         </div>
       </section>
-      } @case ('steps') {
-      <section class="panel">
+    </section>
+    } @case ('steps') {
+    <section class="sheet-form">
+      <section class="sheet-section">
+        <div class="sheet-section__header">
+          <p class="sheet-section__eyebrow">Execution</p>
+          <h3 class="sheet-section__title">Break it into steps</h3>
+          <p class="sheet-section__description">
+            Keep multi-step tasks clear and reorder them inline.
+          </p>
+        </div>
+
         @if (steps.length) {
         <div class="steps">
           @for (step of steps.controls; track step; let i = $index) {
@@ -275,13 +294,14 @@
               <input type="checkbox" formControlName="isDone" />
             </label>
             <input
-              class="input"
+              class="sheet-input"
               formControlName="content"
               placeholder="Write the next action"
             />
             <div class="step-actions">
               <button
                 type="button"
+                class="sheet-shell__button sheet-shell__button--ghost"
                 (click)="moveStep(i, 'up')"
                 [disabled]="i === 0"
               >
@@ -289,66 +309,91 @@
               </button>
               <button
                 type="button"
+                class="sheet-shell__button sheet-shell__button--ghost"
                 (click)="moveStep(i, 'down')"
                 [disabled]="i === steps.length - 1"
               >
                 ↓
               </button>
-              <button type="button" (click)="removeStep(i)">✕</button>
+              <button
+                type="button"
+                class="sheet-shell__button sheet-shell__button--ghost"
+                (click)="removeStep(i)"
+              >
+                ✕
+              </button>
             </div>
           </div>
           }
         </div>
         } @else {
-        <p class="text-sm text-base-content/60">No steps yet.</p>
+        <div class="sheet-muted-card">
+          <p class="sheet-field__hint">No steps yet.</p>
+        </div>
         }
-        <button type="button" class="btn-secondary mt-3" (click)="addStep()">
+
+        <button
+          type="button"
+          class="sheet-shell__button sheet-shell__button--secondary"
+          (click)="addStep()"
+        >
           Add step
         </button>
       </section>
-      } @case ('extra') {
-      <form [formGroup]="taskForm" class="panel extra-grid">
-        <label class="field">
-          <span class="field__label">Status</span>
-          <div class="complete-group">
-            <label>
+    </section>
+    } @case ('extra') {
+    <form [formGroup]="taskForm" class="sheet-form">
+      <section class="sheet-section">
+        <div class="sheet-section__header">
+          <p class="sheet-section__eyebrow">Advanced</p>
+          <h3 class="sheet-section__title">Status and effort</h3>
+        </div>
+
+        <div class="sheet-field">
+          <span class="sheet-field__label">Status</span>
+          <div class="sheet-choice-row">
+            <label class="sheet-choice">
               <input type="radio" [value]="true" formControlName="isActive" />
-              Active
+              <span>Active</span>
             </label>
-            <label>
+            <label class="sheet-choice">
               <input type="radio" [value]="false" formControlName="isActive" />
-              Suspended
+              <span>Suspended</span>
             </label>
           </div>
-        </label>
-        <label class="field inline">
+        </div>
+
+        <label class="sheet-field sheet-field--inline">
           <input type="checkbox" formControlName="pinned" />
-          <span class="field__label">Pinned</span>
+          <span class="sheet-field__label">Pinned</span>
         </label>
-        <label class="field">
-          <span class="field__label">Estimate (min)</span>
-          <input
-            type="number"
-            min="0"
-            class="input"
-            formControlName="estimateMinutes"
-          />
-        </label>
-        <label class="field">
-          <span class="field__label">Real time (min)</span>
-          <input
-            type="number"
-            min="0"
-            class="input"
-            formControlName="spentMinutes"
-          />
-        </label>
-      </form>
-      } }
-    </section>
+
+        <div class="sheet-grid-two">
+          <label class="sheet-field">
+            <span class="sheet-field__label">Estimate (min)</span>
+            <input
+              type="number"
+              min="0"
+              class="sheet-input"
+              formControlName="estimateMinutes"
+            />
+          </label>
+          <label class="sheet-field">
+            <span class="sheet-field__label">Real time (min)</span>
+            <input
+              type="number"
+              min="0"
+              class="sheet-input"
+              formControlName="spentMinutes"
+            />
+          </label>
+        </div>
+      </section>
+    </form>
+    } }
   </div>
 
-  <footer class="sheet-shell__footer">
+  <div sheet-footer class="sheet-footer-actions">
     <button
       type="button"
       class="sheet-shell__button sheet-shell__button--ghost"
@@ -356,7 +401,8 @@
     >
       Cancel
     </button>
-    <div class="sheet-shell__cta">
+
+    <div class="sheet-footer-actions__group">
       @if (!editingTask()) {
       <button
         type="button"
@@ -376,5 +422,5 @@
         {{ editingTask() ? 'Update task' : 'Save' }}
       </button>
     </div>
-  </footer>
-</div>
+  </div>
+</app-sheet-scaffold>

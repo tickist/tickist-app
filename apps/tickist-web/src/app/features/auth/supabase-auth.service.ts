@@ -39,6 +39,8 @@ export class SupabaseAuthService {
     const response = await client.auth.signInWithPassword(payload);
     if (response.error) {
       this.session.clearSession();
+    } else {
+      this.session.clearPasswordRecoveryPending();
     }
     return response;
   }

@@ -21,6 +21,11 @@
 
 .task-card__title {
   @apply flex flex-1 flex-wrap items-center gap-2 font-medium;
+  min-width: 0;
+}
+
+.task-card__title .linkified {
+  min-width: 0;
 }
 
 .task-card__task-type {

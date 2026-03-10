@@ -53,6 +53,7 @@ describe('AppViewportComponent theme toggle', () => {
             searchTerm: signal('').asReadonly(),
             updateSearchTerm: vi.fn(),
             clearSearch: vi.fn(),
+            rememberLastNonSheetAppUrl: vi.fn(),
             rememberLastNonSettingsAppUrl: vi.fn(),
           },
         },

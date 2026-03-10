@@ -8,13 +8,17 @@ import { SupabaseSessionService } from './supabase-session.service';
 describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
   let service: SupabaseAuthService;
   let signInWithPasswordMock: ReturnType<typeof vi.fn>;
+  let resetPasswordForEmailMock: ReturnType<typeof vi.fn>;
   let updateUserMock: ReturnType<typeof vi.fn>;
   let clearSessionMock: ReturnType<typeof vi.fn>;
+  let clearPasswordRecoveryPendingMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     signInWithPasswordMock = vi.fn();
+    resetPasswordForEmailMock = vi.fn();
     updateUserMock = vi.fn();
     clearSessionMock = vi.fn();
+    clearPasswordRecoveryPendingMock = vi.fn();
 
     TestBed.configureTestingModule({
       providers: [
@@ -23,6 +27,7 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
           provide: SUPABASE_CLIENT,
           useValue: {
             auth: {
+              resetPasswordForEmail: resetPasswordForEmailMock,
               signInWithPassword: signInWithPasswordMock,
               updateUser: updateUserMock,
             },
@@ -33,6 +38,7 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
           useValue: {
             user: () => createUser(),
             clearSession: clearSessionMock,
+            clearPasswordRecoveryPending: clearPasswordRecoveryPendingMock,
             refreshUser: vi.fn(async () => undefined),
             signOut: vi.fn(async () => undefined),
           },
@@ -41,6 +47,19 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
     });
 
     service = TestBed.inject(SupabaseAuthService);
+  });
+
+  it('sends password reset emails to the update-password screen', async () => {
+    resetPasswordForEmailMock.mockResolvedValue({ error: null });
+
+    await service.sendPasswordReset('user@tickist.dev');
+
+    expect(resetPasswordForEmailMock).toHaveBeenCalledWith(
+      'user@tickist.dev',
+      {
+        redirectTo: `${window.location.origin}/auth/update-password`,
+      }
+    );
   });
 
   it('verifies current password before updating to a new one', async () => {

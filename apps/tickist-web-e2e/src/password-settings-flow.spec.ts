@@ -79,6 +79,7 @@ async function expectInvalidCurrentPassword(
   nextPassword: string
 ): Promise<void> {
   await page.goto('/app/settings');
+  await expectSettingsSheetLayout(page);
   await page.getByRole('button', { name: 'Password' }).click();
   await page.getByTestId('settings-current-password').fill('WrongPassword123!');
   await page.getByTestId('settings-new-password').fill(nextPassword);
@@ -97,6 +98,7 @@ async function changePassword(
   nextPassword: string
 ): Promise<void> {
   await page.goto('/app/settings');
+  await expectSettingsSheetLayout(page);
   await page.getByRole('button', { name: 'Password' }).click();
   await page.getByTestId('settings-current-password').fill(currentPassword);
   await page.getByTestId('settings-new-password').fill(nextPassword);
@@ -109,4 +111,18 @@ async function expectSignedOutAfterPasswordChange(page: Page): Promise<void> {
   await expect(
     page.getByText('Password changed. Sign in with your new password.')
   ).toBeVisible();
+}
+
+async function expectSettingsSheetLayout(page: Page): Promise<void> {
+  const settings = page.locator('app-settings');
+  const sheet = settings.locator('.sheet-shell');
+
+  await expect(sheet).toBeVisible();
+  await expect(settings.locator('.sheet-shell__panel-scroll')).toBeVisible();
+  await expect(settings.locator('.sheet-shell__footer')).toHaveCount(1);
+
+  const backgroundColor = await sheet.evaluate(
+    (node) => window.getComputedStyle(node).backgroundColor
+  );
+  expect(backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
 }

@@ -67,6 +67,7 @@ export class AppViewportComponent implements OnDestroy {
   readonly profileMenuOpen = signal(false);
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
+  readonly currentUrl = signal(this.router.url);
   readonly isDarkTheme = this.themeService.isDark;
   readonly brandLogoSrc = computed(() =>
     this.isDarkTheme() ? '/images/logo_230.png' : '/images/logo-light_230.png'
@@ -74,11 +75,12 @@ export class AppViewportComponent implements OnDestroy {
   readonly themeButtonLabel = computed(() =>
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
+  readonly showTaskFab = computed(() => !isSheetRoute(this.currentUrl()));
 
   constructor() {
     const initialUrl = this.router.url;
-    if (initialUrl.startsWith('/app') && initialUrl !== '/app/settings') {
-      this.viewState.rememberLastNonSettingsAppUrl(initialUrl);
+    if (isRememberedAppUrl(initialUrl)) {
+      this.viewState.rememberLastNonSheetAppUrl(initialUrl);
     }
 
     effect(() => {
@@ -98,11 +100,9 @@ export class AppViewportComponent implements OnDestroy {
         )
       )
       .subscribe((event) => {
-        if (
-          event.urlAfterRedirects.startsWith('/app') &&
-          event.urlAfterRedirects !== '/app/settings'
-        ) {
-          this.viewState.rememberLastNonSettingsAppUrl(event.urlAfterRedirects);
+        this.currentUrl.set(event.urlAfterRedirects);
+        if (isRememberedAppUrl(event.urlAfterRedirects)) {
+          this.viewState.rememberLastNonSheetAppUrl(event.urlAfterRedirects);
         }
         this.profileMenuOpen.set(false);
         this.notificationsOpen.set(false);
@@ -194,4 +194,34 @@ function appendCacheVersion(url: string, version: string | null): string {
   }
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}v=${encodeURIComponent(version)}`;
+}
+
+function isRememberedAppUrl(url: string): boolean {
+  if (!url.startsWith('/app')) {
+    return false;
+  }
+
+  if (url === '/app/settings') {
+    return false;
+  }
+
+  if (url === '/app/task/new' || /^\/app\/task\/[^/]+\/edit$/.test(url)) {
+    return false;
+  }
+
+  if (url === '/app/project/new' || /^\/app\/project\/[^/]+\/edit$/.test(url)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isSheetRoute(url: string): boolean {
+  return (
+    url === '/app/settings' ||
+    url === '/app/task/new' ||
+    /^\/app\/task\/[^/]+\/edit$/.test(url) ||
+    url === '/app/project/new' ||
+    /^\/app\/project\/[^/]+\/edit$/.test(url)
+  );
 }

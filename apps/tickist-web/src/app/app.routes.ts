@@ -57,6 +57,34 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'task/new',
+        loadComponent: () =>
+          import('./features/task-fab/task-composer-page.component').then(
+            (m) => m.TaskComposerPageComponent
+          ),
+      },
+      {
+        path: 'task/:taskId/edit',
+        loadComponent: () =>
+          import('./features/task-fab/task-composer-page.component').then(
+            (m) => m.TaskComposerPageComponent
+          ),
+      },
+      {
+        path: 'project/new',
+        loadComponent: () =>
+          import('./features/task-fab/project-composer-page.component').then(
+            (m) => m.ProjectComposerPageComponent
+          ),
+      },
+      {
+        path: 'project/:projectId/edit',
+        loadComponent: () =>
+          import('./features/task-fab/project-composer-page.component').then(
+            (m) => m.ProjectComposerPageComponent
+          ),
+      },
+      {
         path: 'tags',
         loadComponent: () =>
           import('./features/tags/tag-view.component').then(

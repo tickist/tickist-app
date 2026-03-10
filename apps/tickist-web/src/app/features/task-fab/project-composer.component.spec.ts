@@ -41,6 +41,9 @@ describe('ProjectComposerComponent sheet header', () => {
     expect(
       fixture.nativeElement.querySelector('.sheet-shell__footer')
     ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('.sheet-shell__panel-scroll')
+    ).not.toBeNull();
   });
 
   it('shows edit title and project name in edit mode', () => {

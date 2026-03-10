@@ -348,9 +348,12 @@ export class AppSidebarComponent {
     return 'active';
   }
 
-  openCreateProject(projectType: string, ancestorId?: string | null): void {
+  async openCreateProject(
+    projectType: string,
+    ancestorId?: string | null
+  ): Promise<void> {
     this.closeMenu();
-    this.composer.openProjectModal({
+    await this.composer.openProjectModal({
       mode: 'create',
       defaults: {
         projectType,
@@ -359,9 +362,9 @@ export class AppSidebarComponent {
     });
   }
 
-  editProject(project: Project): void {
+  async editProject(project: Project): Promise<void> {
     this.closeMenu();
-    this.composer.openProjectModal({
+    await this.composer.openProjectModal({
       mode: 'edit',
       project,
     });

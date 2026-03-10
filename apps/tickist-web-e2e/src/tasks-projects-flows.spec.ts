@@ -57,6 +57,7 @@ async function openCreateProjectModal(page: Page): Promise<Locator> {
   const composer = page.locator('app-project-composer');
   await expect(composer).toBeVisible();
   await expect(composer.getByLabel('Project name')).toBeVisible();
+  await expectSharedSheetLayout(page, composer);
   return composer;
 }
 
@@ -104,7 +105,32 @@ async function selectProjectByName(
 
 async function openTaskComposer(page: Page): Promise<void> {
   await page.locator('button.fab-main').click();
+  const composer = page.locator('app-task-composer');
   await expect(page.getByLabel('Task name')).toBeVisible();
+  await expectSharedSheetLayout(page, composer);
+}
+
+async function expectSharedSheetLayout(
+  page: Page,
+  host: Locator
+): Promise<void> {
+  const sheet = host.locator('.sheet-shell');
+  await expect(sheet).toBeVisible();
+  await expect(host.locator('.sheet-shell__panel-scroll')).toBeVisible();
+  await expect(host.locator('.sheet-shell__footer')).toHaveCount(1);
+
+  const viewport = page.viewportSize();
+  const box = await sheet.boundingBox();
+  if (!viewport || !box) {
+    throw new Error('Shared sheet layout could not be measured.');
+  }
+
+  expect(box.x + box.width / 2).toBeGreaterThan(viewport.width / 2);
+
+  const backgroundColor = await sheet.evaluate(
+    (node) => window.getComputedStyle(node).backgroundColor
+  );
+  expect(backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
 }
 
 async function setProjectFilter(
@@ -314,4 +340,25 @@ test('creates project, edits it from project menu and persists changes', async (
   await page.reload();
   await selectProjectByName(page, updatedName);
   await expect(page.locator('.project-desc')).toContainText(updatedDescription);
+});
+
+test('keeps shared sheet tabs scrollable on mobile viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ensureAuthenticated(page);
+  await page.goto('/app/settings');
+
+  const settings = page.locator('app-settings');
+  const tabs = settings.locator('.sheet-shell__tabs');
+
+  await expectSharedSheetLayout(page, settings);
+  await expect(tabs).toBeVisible();
+
+  const metrics = await tabs.evaluate((node) => ({
+    clientWidth: node.clientWidth,
+    scrollWidth: node.scrollWidth,
+  }));
+
+  expect(metrics.scrollWidth).toBeGreaterThanOrEqual(metrics.clientWidth);
 });

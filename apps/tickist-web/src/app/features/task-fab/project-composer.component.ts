@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -20,15 +21,24 @@ import {
 } from '../../core/icons/project-icons';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import {
+  SheetScaffoldComponent,
+  SheetScaffoldTab,
+} from '../../core/ui/sheet-scaffold.component';
 
 type ProjectTab = 'general' | 'extra' | 'sharing' | 'branding';
 
 @Component({
   selector: 'app-project-composer',
-  standalone: true,
-  imports: [ReactiveFormsModule, ProjectPickerComponent, ProjectIconComponent],
+  imports: [
+    ReactiveFormsModule,
+    ProjectPickerComponent,
+    ProjectIconComponent,
+    SheetScaffoldComponent,
+  ],
   templateUrl: './project-composer.component.html',
   styleUrl: './project-composer.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectComposerComponent {
   private readonly fb = inject(FormBuilder);
@@ -39,6 +49,18 @@ export class ProjectComposerComponent {
   readonly user = computed(() => this.session.user());
   readonly submitting = signal(false);
   readonly activeTab = signal<ProjectTab>('general');
+  readonly tabs: readonly SheetScaffoldTab<ProjectTab>[] = [
+    { key: 'general', label: 'General', icon: '✏️' },
+    { key: 'extra', label: 'Extra', icon: '⚙️' },
+    { key: 'sharing', label: 'Sharing', icon: '🤝' },
+    { key: 'branding', label: 'Branding', icon: '🎨' },
+  ];
+  readonly sheetEyebrow = computed(() =>
+    this.editingProject() ? 'Edit project' : 'Create project'
+  );
+  readonly sheetTitle = computed(
+    () => this.editingProject()?.name || 'New project'
+  );
   readonly inviteInput = signal('');
   readonly invites = signal<string[]>([]);
   readonly editingProject = signal<Project | null>(null);

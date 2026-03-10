@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -27,6 +28,10 @@ import { TagDataService } from '../../data/tag-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
+import {
+  SheetScaffoldComponent,
+  SheetScaffoldTab,
+} from '../../core/ui/sheet-scaffold.component';
 
 type TabKey = 'general' | 'repeat' | 'tags' | 'steps' | 'extra';
 type RepeatMode =
@@ -62,10 +67,14 @@ type TaskFormDefaults = {
 
 @Component({
   selector: 'app-task-composer',
-  standalone: true,
-  imports: [ReactiveFormsModule, ProjectPickerComponent],
+  imports: [
+    ReactiveFormsModule,
+    ProjectPickerComponent,
+    SheetScaffoldComponent,
+  ],
   templateUrl: './task-composer.component.html',
   styleUrl: './task-composer.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskComposerComponent {
   private readonly fb = inject(FormBuilder);
@@ -83,6 +92,17 @@ export class TaskComposerComponent {
   readonly activeTab = signal<TabKey>('general');
   readonly submitting = signal(false);
   readonly tagSearch = signal('');
+  readonly tabs: readonly SheetScaffoldTab<TabKey>[] = [
+    { key: 'general', label: 'General', icon: '✏️' },
+    { key: 'repeat', label: 'Repeat', icon: '🔁' },
+    { key: 'tags', label: 'Tags', icon: '🏷️' },
+    { key: 'steps', label: 'Steps', icon: '☑️' },
+    { key: 'extra', label: 'Extra', icon: '✨' },
+  ];
+  readonly sheetEyebrow = computed(() =>
+    this.editingTask() ? 'Edit task' : 'Create task'
+  );
+  readonly sheetTitle = computed(() => this.editingTask()?.name || 'New task');
   readonly filteredTags = computed(() => {
     const query = this.tagSearch().trim().toLowerCase();
     return this.tags().filter((tag) => tag.name.toLowerCase().includes(query));

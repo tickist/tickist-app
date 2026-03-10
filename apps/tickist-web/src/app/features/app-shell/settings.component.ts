@@ -24,6 +24,10 @@ import { TaskDataService } from '../../data/task-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import { NotificationPreferencesService } from '../../data/notification-preferences.service';
+import {
+  SheetScaffoldComponent,
+  SheetScaffoldTab,
+} from '../../core/ui/sheet-scaffold.component';
 
 type SettingsTab = 'account' | 'password' | 'notifications' | 'backup';
 type WeekdayOption = { value: number; label: string };
@@ -42,7 +46,7 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
 
 @Component({
   selector: 'app-settings',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, SheetScaffoldComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +69,12 @@ export class SettingsComponent {
 
   readonly user = computed(() => this.session.user());
   readonly activeTab = signal<SettingsTab>('account');
+  readonly tabs: readonly SheetScaffoldTab<SettingsTab>[] = [
+    { key: 'account', label: 'Account', icon: '👤' },
+    { key: 'password', label: 'Password', icon: '🔒' },
+    { key: 'notifications', label: 'Notifications', icon: '🔔' },
+    { key: 'backup', label: 'Backup & Restore', icon: '🗂️' },
+  ];
   readonly updating = signal(false);
   readonly passwordUpdating = signal(false);
   readonly passwordError = signal<string | null>(null);
@@ -153,8 +163,34 @@ export class SettingsComponent {
       .sort((a, b) => a.name.localeCompare(b.name));
   });
   readonly closeTarget = computed(
-    () => this.viewState.lastNonSettingsAppUrl() ?? '/app'
+    () => this.viewState.lastNonSheetAppUrl() ?? '/app'
   );
+  readonly footerPrimaryLabel = computed(() => {
+    switch (this.activeTab()) {
+      case 'account':
+        return 'Save changes';
+      case 'password':
+        return this.passwordUpdating() ? 'Updating...' : 'Update password';
+      case 'notifications':
+        return this.notificationsSaving()
+          ? 'Saving...'
+          : 'Save notification settings';
+      default:
+        return null;
+    }
+  });
+  readonly footerPrimaryDisabled = computed(() => {
+    switch (this.activeTab()) {
+      case 'account':
+        return this.updating();
+      case 'password':
+        return this.passwordSubmitDisabled();
+      case 'notifications':
+        return this.notificationsSubmitDisabled();
+      default:
+        return true;
+    }
+  });
   readonly notificationPreferencesList =
     this.notificationPreferences.preferences;
   readonly notificationsLoading = this.notificationPreferences.loadingState;
@@ -250,6 +286,22 @@ export class SettingsComponent {
 
   async closePanel(): Promise<void> {
     await this.router.navigateByUrl(this.closeTarget());
+  }
+
+  async submitActiveTab(): Promise<void> {
+    switch (this.activeTab()) {
+      case 'account':
+        await this.saveAccount();
+        return;
+      case 'password':
+        await this.changePassword();
+        return;
+      case 'notifications':
+        await this.saveNotifications();
+        return;
+      default:
+        return;
+    }
   }
 
   async saveAccount(): Promise<void> {

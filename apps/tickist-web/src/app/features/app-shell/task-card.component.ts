@@ -236,8 +236,8 @@ export class TaskCardComponent implements OnChanges {
     );
   }
 
-  editTask(): void {
-    this.composer.openTaskModal({ mode: 'edit', task: this.task });
+  async editTask(): Promise<void> {
+    await this.composer.openTaskModal({ mode: 'edit', task: this.task });
   }
 
   async deleteTask(): Promise<void> {

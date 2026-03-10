@@ -38,6 +38,9 @@ describe('SettingsComponent password form', () => {
         {
           provide: AppViewStateService,
           useValue: {
+            lastNonSheetAppUrl: signal<string | null>(
+              '/app/tasks'
+            ).asReadonly(),
             lastNonSettingsAppUrl: signal<string | null>(
               '/app/tasks'
             ).asReadonly(),
