@@ -1,15 +1,8 @@
 <section class="sheet-page settings-page">
   <div class="settings-page__panel">
-    <app-sheet-scaffold
-      eyebrow="Settings"
-      title="Workspace preferences"
-      testId="settings-sheet"
-      closeAriaLabel="Close settings panel"
-      [tabs]="tabs"
-      [activeTab]="activeTab()"
-      (tabChange)="select($event)"
-      (close)="closePanel()"
-    >
+    <app-sheet-scaffold eyebrow="Settings" title="Workspace preferences" testId="settings-sheet"
+      closeAriaLabel="Close settings panel" [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="select($event)"
+      (close)="closePanel()">
       <div sheet-body>
         @if (activeTab() === 'account') {
         <section class="sheet-form settings-panel">
@@ -28,11 +21,7 @@
             <section class="avatar-card" aria-label="Avatar settings">
               <div class="avatar-card__preview">
                 @if (avatarPreviewUrl(); as avatar) {
-                <img
-                  [src]="avatar"
-                  alt="Profile avatar"
-                  class="avatar-card__image"
-                />
+                <img [src]="avatar" alt="Profile avatar" class="avatar-card__image" />
                 } @else {
                 <span class="avatar-card__initial">{{ avatarInitial() }}</span>
                 }
@@ -43,31 +32,20 @@
                   PNG, JPG or WEBP, maximum size 2 MB.
                 </p>
                 <div class="avatar-card__actions">
-                  <label
-                    class="sheet-shell__button sheet-shell__button--secondary avatar-card__upload"
+                  <label class="sheet-shell__button sheet-shell__button--secondary avatar-card__upload"
                     [class.avatar-card__upload--disabled]="
                       avatarUploading() || avatarRemoving()
-                    "
-                  >
+                    ">
                     @if (!avatarUploading()) {
                     <span>Upload avatar</span>
                     } @if (avatarUploading()) {
                     <span class="loading loading-spinner loading-xs"></span>
                     }
-                    <input
-                      type="file"
-                      class="sr-only"
-                      accept="image/png,image/jpeg,image/webp"
-                      [disabled]="avatarUploading() || avatarRemoving()"
-                      (change)="onAvatarSelected($event)"
-                    />
+                    <input type="file" class="sr-only" accept="image/png,image/jpeg,image/webp"
+                      [disabled]="avatarUploading() || avatarRemoving()" (change)="onAvatarSelected($event)" />
                   </label>
-                  <button
-                    type="button"
-                    class="sheet-shell__button sheet-shell__button--ghost"
-                    [disabled]="avatarUploading() || avatarRemoving()"
-                    (click)="removeAvatar()"
-                  >
+                  <button type="button" class="sheet-shell__button sheet-shell__button--ghost"
+                    [disabled]="avatarUploading() || avatarRemoving()" (click)="removeAvatar()">
                     @if (!avatarRemoving()) {
                     <span>Remove</span>
                     } @if (avatarRemoving()) {
@@ -79,11 +57,7 @@
             </section>
           </section>
 
-          <form
-            class="sheet-form"
-            [formGroup]="accountForm"
-            (ngSubmit)="saveAccount()"
-          >
+          <form class="sheet-form" [formGroup]="accountForm" (ngSubmit)="saveAccount()">
             <section class="sheet-section sheet-section--soft">
               <div class="sheet-section__header">
                 <p class="sheet-section__eyebrow">Workspace identity</p>
@@ -92,11 +66,7 @@
 
               <label class="sheet-field">
                 <span class="sheet-field__label">Display name</span>
-                <input
-                  class="sheet-input"
-                  placeholder="Your name"
-                  formControlName="displayName"
-                />
+                <input class="sheet-input" placeholder="Your name" formControlName="displayName" />
                 @if (accountForm.controls.displayName.touched &&
                 accountForm.controls.displayName.invalid) {
                 <small class="sheet-field__error">
@@ -108,9 +78,7 @@
               <label class="sheet-field">
                 <span class="sheet-field__label">Email</span>
                 <input class="sheet-input" formControlName="email" />
-                <small class="sheet-field__hint"
-                  >You cannot change your email in this build.</small
-                >
+                <small class="sheet-field__hint">You cannot change your email in this build.</small>
               </label>
 
               <button type="submit" class="sr-only">Save changes</button>
@@ -125,23 +93,16 @@
                 immediately.
               </p>
             </div>
-            <button
-              type="button"
-              class="sheet-shell__button sheet-shell__button--ghost danger-card__button"
-              (click)="deleteAccount()"
-            >
+            <button type="button" class="sheet-shell__button sheet-shell__button--ghost danger-card__button"
+              (click)="deleteAccount()">
               Delete
             </button>
           </section>
         </section>
         } @if (activeTab() === 'password') {
         <section class="sheet-form settings-panel">
-          <form
-            class="sheet-form"
-            [formGroup]="passwordForm"
-            data-testid="settings-password-form"
-            (ngSubmit)="changePassword()"
-          >
+          <form class="sheet-form" [formGroup]="passwordForm" data-testid="settings-password-form"
+            (ngSubmit)="changePassword()">
             <section class="sheet-section">
               <div class="sheet-section__header">
                 <p class="sheet-section__eyebrow">Security</p>
@@ -154,13 +115,8 @@
 
               <label class="sheet-field">
                 <span class="sheet-field__label">Current password</span>
-                <input
-                  class="sheet-input"
-                  formControlName="currentPassword"
-                  type="password"
-                  autocomplete="current-password"
-                  data-testid="settings-current-password"
-                />
+                <input class="sheet-input" formControlName="currentPassword" type="password"
+                  autocomplete="current-password" data-testid="settings-current-password" />
                 @if (passwordForm.controls.currentPassword.touched &&
                 passwordForm.controls.currentPassword.invalid) {
                 <small class="sheet-field__error">
@@ -171,13 +127,8 @@
 
               <label class="sheet-field">
                 <span class="sheet-field__label">New password</span>
-                <input
-                  class="sheet-input"
-                  formControlName="newPassword"
-                  type="password"
-                  autocomplete="new-password"
-                  data-testid="settings-new-password"
-                />
+                <input class="sheet-input" formControlName="newPassword" type="password" autocomplete="new-password"
+                  data-testid="settings-new-password" />
                 @if (passwordForm.controls.newPassword.touched &&
                 passwordForm.controls.newPassword.invalid) {
                 <small class="sheet-field__error">
@@ -192,23 +143,15 @@
 
               <label class="sheet-field">
                 <span class="sheet-field__label">Confirm new password</span>
-                <input
-                  class="sheet-input"
-                  formControlName="confirmPassword"
-                  type="password"
-                  autocomplete="new-password"
-                  data-testid="settings-confirm-password"
-                />
+                <input class="sheet-input" formControlName="confirmPassword" type="password" autocomplete="new-password"
+                  data-testid="settings-confirm-password" />
                 @if (passwordsMismatch()) {
                 <small class="sheet-field__error">Passwords must match.</small>
                 }
               </label>
 
               @if (passwordError(); as errorMessage) {
-              <p
-                class="password-feedback password-feedback--error"
-                data-testid="settings-password-error"
-              >
+              <p class="password-feedback password-feedback--error" data-testid="settings-password-error">
                 {{ errorMessage }}
               </p>
               }
@@ -219,12 +162,8 @@
         </section>
         } @if (activeTab() === 'notifications') {
         <section class="sheet-form settings-panel">
-          <form
-            class="sheet-form"
-            [formGroup]="notificationsForm"
-            data-testid="settings-notifications-form"
-            (ngSubmit)="saveNotifications()"
-          >
+          <form class="sheet-form" [formGroup]="notificationsForm" data-testid="settings-notifications-form"
+            (ngSubmit)="saveNotifications()">
             <section class="sheet-section">
               <div class="sheet-section__header">
                 <p class="sheet-section__eyebrow">Notifications</p>
@@ -235,10 +174,7 @@
                 </p>
               </div>
 
-              <section
-                class="notification-card"
-                aria-label="Weekly summary settings"
-              >
+              <section class="notification-card" aria-label="Weekly summary settings">
                 <div class="notification-card__header">
                   <div>
                     <h3>Weekly summary</h3>
@@ -249,23 +185,15 @@
                   </div>
                   <label class="toggle-row" for="weekly-email-enabled">
                     <span>Email</span>
-                    <input
-                      id="weekly-email-enabled"
-                      type="checkbox"
-                      class="toggle toggle-warning"
-                      formControlName="weeklyEmailEnabled"
-                    />
+                    <input id="weekly-email-enabled" type="checkbox" class="toggle toggle-warning"
+                      formControlName="weeklyEmailEnabled" />
                   </label>
                 </div>
 
                 <div class="sheet-grid-two">
                   <label class="sheet-field" for="weekly-email-day">
                     <span class="sheet-field__label">Day</span>
-                    <select
-                      id="weekly-email-day"
-                      class="sheet-select"
-                      formControlName="weeklyEmailDayOfWeek"
-                    >
+                    <select id="weekly-email-day" class="sheet-select" formControlName="weeklyEmailDayOfWeek">
                       @for (option of weekdayOptions; track option.value) {
                       <option [ngValue]="option.value">
                         {{ option.label }}
@@ -276,12 +204,7 @@
 
                   <label class="sheet-field" for="weekly-email-time">
                     <span class="sheet-field__label">Time</span>
-                    <input
-                      id="weekly-email-time"
-                      class="sheet-input"
-                      type="time"
-                      formControlName="weeklyEmailTime"
-                    />
+                    <input id="weekly-email-time" class="sheet-input" type="time" formControlName="weeklyEmailTime" />
                   </label>
                 </div>
 
@@ -290,10 +213,7 @@
                 </p>
               </section>
 
-              <section
-                class="notification-card"
-                aria-label="Daily summary settings"
-              >
+              <section class="notification-card" aria-label="Daily summary settings">
                 <div class="notification-card__header">
                   <div>
                     <h3>Daily summary</h3>
@@ -304,24 +224,15 @@
                   </div>
                   <label class="toggle-row" for="daily-email-enabled">
                     <span>Email</span>
-                    <input
-                      id="daily-email-enabled"
-                      type="checkbox"
-                      class="toggle toggle-warning"
-                      formControlName="dailyEmailEnabled"
-                    />
+                    <input id="daily-email-enabled" type="checkbox" class="toggle toggle-warning"
+                      formControlName="dailyEmailEnabled" />
                   </label>
                 </div>
 
                 <div class="notification-grid notification-grid--single">
                   <label class="sheet-field" for="daily-email-time">
                     <span class="sheet-field__label">Time</span>
-                    <input
-                      id="daily-email-time"
-                      class="sheet-input"
-                      type="time"
-                      formControlName="dailyEmailTime"
-                    />
+                    <input id="daily-email-time" class="sheet-input" type="time" formControlName="dailyEmailTime" />
                   </label>
                 </div>
               </section>
@@ -360,24 +271,14 @@
                 </p>
 
                 <label class="field-inline" for="export-only-active">
-                  <input
-                    id="export-only-active"
-                    type="checkbox"
-                    class="checkbox checkbox-sm"
-                    [checked]="exportOnlyActive()"
-                    (change)="onExportOnlyActiveChanged($event)"
-                  />
+                  <input id="export-only-active" type="checkbox" class="checkbox checkbox-sm"
+                    [checked]="exportOnlyActive()" (change)="onExportOnlyActiveChanged($event)" />
                   <span>Only active projects and tasks</span>
                 </label>
 
                 <label class="field-inline" for="export-selected-projects">
-                  <input
-                    id="export-selected-projects"
-                    type="checkbox"
-                    class="checkbox checkbox-sm"
-                    [checked]="exportSelectedProjectsOnly()"
-                    (change)="onExportSelectedProjectsChanged($event)"
-                  />
+                  <input id="export-selected-projects" type="checkbox" class="checkbox checkbox-sm"
+                    [checked]="exportSelectedProjectsOnly()" (change)="onExportSelectedProjectsChanged($event)" />
                   <span>Only selected projects</span>
                 </label>
 
@@ -385,17 +286,10 @@
                 <div class="project-filter-list">
                   @if (availableProjects().length) { @for (project of
                   availableProjects(); track project.id) {
-                  <label
-                    class="field-inline"
-                    [for]="'project-filter-' + project.id"
-                  >
-                    <input
-                      [id]="'project-filter-' + project.id"
-                      type="checkbox"
-                      class="checkbox checkbox-sm"
+                  <label class="field-inline" [for]="'project-filter-' + project.id">
+                    <input [id]="'project-filter-' + project.id" type="checkbox" class="checkbox checkbox-sm"
                       [checked]="selectedProjectIds().includes(project.id)"
-                      (change)="onProjectSelectionChanged(project.id, $event)"
-                    />
+                      (change)="onProjectSelectionChanged(project.id, $event)" />
                     <span>{{ project.name }}</span>
                   </label>
                   } } @else {
@@ -404,12 +298,8 @@
                 </div>
                 }
 
-                <button
-                  type="button"
-                  class="sheet-shell__button sheet-shell__button--primary"
-                  [disabled]="exportBusy()"
-                  (click)="exportBackup()"
-                >
+                <button type="button" class="sheet-shell__button sheet-shell__button--primary" [disabled]="exportBusy()"
+                  (click)="exportBackup()">
                   @if (!exportBusy()) {
                   <span>Export backup</span>
                   } @if (exportBusy()) {
@@ -425,18 +315,11 @@
                   records are upserted by stable ID.
                 </p>
 
-                <input
-                  type="file"
-                  class="file-input file-input-bordered w-full"
-                  accept="application/json,.json"
-                  (change)="onImportFileSelected($event)"
-                />
+                <input type="file" class="file-input file-input-bordered w-full" accept="application/json,.json"
+                  (change)="onImportFileSelected($event)" />
 
                 @if (importValidation(); as report) {
-                <div
-                  class="import-report"
-                  [class.import-report--error]="!report.ok"
-                >
+                <div class="import-report" [class.import-report--error]="!report.ok">
                   <p class="text-sm font-semibold">
                     @if (report.ok) { File is valid. } @else { File contains
                     validation errors. }
@@ -466,20 +349,12 @@
                 }
 
                 <div class="backup-actions">
-                  <button
-                    type="button"
-                    class="sheet-shell__button sheet-shell__button--ghost"
-                    [disabled]="importBusy() || !importFile()"
-                    (click)="runImport(true)"
-                  >
+                  <button type="button" class="sheet-shell__button sheet-shell__button--ghost"
+                    [disabled]="importBusy() || !importFile()" (click)="runImport(true)">
                     Dry run
                   </button>
-                  <button
-                    type="button"
-                    class="sheet-shell__button sheet-shell__button--primary"
-                    [disabled]="importBusy() || !importFile()"
-                    (click)="runImport(false)"
-                  >
+                  <button type="button" class="sheet-shell__button sheet-shell__button--primary"
+                    [disabled]="importBusy() || !importFile()" (click)="runImport(false)">
                     @if (!importBusy()) {
                     <span>Import backup</span>
                     } @if (importBusy()) {
@@ -491,29 +366,119 @@
             </div>
           </section>
         </section>
+        } @if (activeTab() === 'api-tokens') {
+        <section class="sheet-form settings-panel">
+          <section class="sheet-section">
+            <div class="sheet-section__header">
+              <p class="sheet-section__eyebrow">Integrations</p>
+              <h2 class="sheet-section__title">API Tokens</h2>
+              <p class="sheet-section__description">
+                Generate personal access tokens for connecting AI assistants
+                (ChatGPT, Codex) to your Tickist workspace via MCP.
+              </p>
+            </div>
+
+            <!-- Create token form -->
+            <section class="token-create-card" aria-label="Create new token">
+              <h3>New token</h3>
+              <label class="sheet-field">
+                <span class="sheet-field__label">Token name</span>
+                <input class="sheet-input" placeholder="e.g. Codex token" [value]="newTokenName()"
+                  (input)="onTokenNameChange($event)" />
+              </label>
+              <button type="button" class="sheet-shell__button sheet-shell__button--primary"
+                [disabled]="tokenCreating()" (click)="createApiToken()">
+                @if (!tokenCreating()) {
+                <span>Generate token</span>
+                } @if (tokenCreating()) {
+                <span class="loading loading-spinner loading-xs"></span>
+                }
+              </button>
+            </section>
+
+            <!-- Revealed token (shown once) -->
+            @if (revealedToken(); as rawToken) {
+            <section class="token-reveal-card" aria-label="New token value">
+              <div class="token-reveal-card__header">
+                <p class="token-reveal-card__warning">
+                  ⚠️ Copy this token now — it will not be shown again.
+                </p>
+              </div>
+              <div class="token-reveal-card__value">
+                <code class="token-reveal-card__code">{{ rawToken }}</code>
+                <button type="button" class="sheet-shell__button sheet-shell__button--secondary token-reveal-card__copy"
+                  (click)="copyToken()">
+                  @if (tokenCopied()) {
+                  <span>✅ Copied</span>
+                  } @else {
+                  <span>📋 Copy</span>
+                  }
+                </button>
+              </div>
+            </section>
+            }
+
+            <!-- Token list -->
+            @if (apiTokensLoading()) {
+            <div class="token-loading">
+              <span class="loading loading-spinner loading-md"></span>
+            </div>
+            } @else {
+            @if (apiTokens().length === 0) {
+            <p class="sheet-field__hint token-empty">
+              No API tokens yet. Create one above to connect AI assistants.
+            </p>
+            } @else {
+            <section class="token-list" aria-label="Existing tokens">
+              @for (token of apiTokens(); track token.id) {
+              <div class="token-card">
+                <div class="token-card__info">
+                  <p class="token-card__name">{{ token.name }}</p>
+                  <p class="token-card__meta">
+                    <span class="token-card__prefix">{{ token.tokenPrefix }}•••</span>
+                    <span class="token-card__sep">·</span>
+                    <span>Created
+                      {{
+                      token.createdAt | date : 'mediumDate'
+                      }}</span>
+                    @if (token.lastUsedAt) {
+                    <span class="token-card__sep">·</span>
+                    <span>Last used
+                      {{
+                      token.lastUsedAt | date : 'mediumDate'
+                      }}</span>
+                    }
+                  </p>
+                </div>
+                <button type="button" class="sheet-shell__button sheet-shell__button--ghost token-card__revoke"
+                  [disabled]="tokenDeleting() === token.id" (click)="deleteApiToken(token.id)">
+                  @if (tokenDeleting() === token.id) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  } @else {
+                  <span>Revoke</span>
+                  }
+                </button>
+              </div>
+              }
+            </section>
+            }
+            }
+          </section>
+        </section>
         }
       </div>
 
       <div sheet-footer class="sheet-footer-actions">
-        <button
-          type="button"
-          class="sheet-shell__button sheet-shell__button--ghost"
-          (click)="closePanel()"
-        >
+        <button type="button" class="sheet-shell__button sheet-shell__button--ghost" (click)="closePanel()">
           Close settings
         </button>
 
         @if (footerPrimaryLabel(); as label) {
         <div class="sheet-footer-actions__group">
-          <button
-            type="button"
-            class="sheet-shell__button sheet-shell__button--primary"
-            [disabled]="footerPrimaryDisabled()"
-            [attr.data-testid]="
+          <button type="button" class="sheet-shell__button sheet-shell__button--primary"
+            [disabled]="footerPrimaryDisabled()" [attr.data-testid]="
               activeTab() === 'password' ? 'settings-password-submit' : null
-            "
-            (click)="submitActiveTab()"
-          >
+            " (click)="submitActiveTab()">
             {{ label }}
           </button>
         </div>

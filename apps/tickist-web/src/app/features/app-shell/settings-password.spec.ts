@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AvatarService } from '../../data/avatar.service';
 import { ExportImportService } from '../../data/export-import.service';
 import { NotificationPreferencesService } from '../../data/notification-preferences.service';
+import { ApiTokenService } from '../../data/api-token.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { TaskDataService } from '../../data/task-data.service';
@@ -139,6 +140,16 @@ describe('SettingsComponent password form', () => {
           },
         },
         buildNotificationPreferencesProvider(),
+        {
+          provide: ApiTokenService,
+          useValue: {
+            list: signal([]).asReadonly(),
+            isLoading: signal(false).asReadonly(),
+            refresh: vi.fn(async () => undefined),
+            createToken: vi.fn(async () => null),
+            deleteToken: vi.fn(async () => false),
+          },
+        },
       ],
     }).compileComponents();
 

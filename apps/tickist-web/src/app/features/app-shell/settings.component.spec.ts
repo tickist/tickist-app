@@ -13,7 +13,7 @@ import { TagDataService } from '../../data/tag-data.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { Router } from '@angular/router';
 import { NotificationPreferencesService } from '../../data/notification-preferences.service';
-
+import { ApiTokenService } from '../../data/api-token.service';
 vi.setConfig({ testTimeout: 60000 });
 
 describe('SettingsComponent sheet layout', () => {
@@ -134,6 +134,7 @@ describe('SettingsComponent sheet layout', () => {
           },
         },
         buildNotificationPreferencesProvider(),
+        buildApiTokenProvider(),
       ],
     }).compileComponents();
 
@@ -320,6 +321,7 @@ describe('SettingsComponent password form', () => {
           },
         },
         buildNotificationPreferencesProvider(),
+        buildApiTokenProvider(),
       ],
     }).compileComponents();
 
@@ -446,6 +448,29 @@ function buildNotificationPreferencesProvider() {
       loadingState: signal(false).asReadonly(),
       refresh: vi.fn(async () => undefined),
       save: vi.fn(async () => undefined),
+    },
+  };
+}
+function buildApiTokenProvider() {
+  return {
+    provide: ApiTokenService,
+    useValue: {
+      list: signal([]).asReadonly(),
+      isLoading: signal(false).asReadonly(),
+      refresh: vi.fn(async () => undefined),
+      createToken: vi.fn(async () => ({
+        rawToken: 'tk_test_token_abc123',
+        token: {
+          id: 'token-1',
+          name: 'Test Token',
+          tokenPrefix: 'tk_test_',
+          scopes: ['tasks:read', 'tasks:write'],
+          lastUsedAt: null,
+          expiresAt: null,
+          createdAt: '2026-03-10T20:00:00Z',
+        },
+      })),
+      deleteToken: vi.fn(async () => true),
     },
   };
 }

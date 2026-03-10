@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { startWith } from 'rxjs';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -24,12 +25,13 @@ import { TaskDataService } from '../../data/task-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import { NotificationPreferencesService } from '../../data/notification-preferences.service';
+import { ApiTokenService } from '../../data/api-token.service';
 import {
   SheetScaffoldComponent,
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
 
-type SettingsTab = 'account' | 'password' | 'notifications' | 'backup';
+type SettingsTab = 'account' | 'password' | 'notifications' | 'backup' | 'api-tokens';
 type WeekdayOption = { value: number; label: string };
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -46,7 +48,7 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
 
 @Component({
   selector: 'app-settings',
-  imports: [ReactiveFormsModule, SheetScaffoldComponent],
+  imports: [ReactiveFormsModule, SheetScaffoldComponent, DatePipe],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,6 +64,7 @@ export class SettingsComponent {
   private readonly notificationPreferences = inject(
     NotificationPreferencesService
   );
+  private readonly apiTokenService = inject(ApiTokenService);
   private readonly fb = inject(FormBuilder);
   private readonly toasts = inject(ToastService);
   private readonly router = inject(Router);
@@ -74,6 +77,7 @@ export class SettingsComponent {
     { key: 'password', label: 'Password', icon: '🔒' },
     { key: 'notifications', label: 'Notifications', icon: '🔔' },
     { key: 'backup', label: 'Backup & Restore', icon: '🗂️' },
+    { key: 'api-tokens', label: 'API Tokens', icon: '🔑' },
   ];
   readonly updating = signal(false);
   readonly passwordUpdating = signal(false);
@@ -90,6 +94,15 @@ export class SettingsComponent {
   readonly importValidation = signal<
     ImportValidationReport | ImportResult | null
   >(null);
+
+  // API Tokens tab
+  readonly apiTokens = this.apiTokenService.list;
+  readonly apiTokensLoading = this.apiTokenService.isLoading;
+  readonly tokenCreating = signal(false);
+  readonly tokenDeleting = signal<string | null>(null);
+  readonly newTokenName = signal('MCP Token');
+  readonly revealedToken = signal<string | null>(null);
+  readonly tokenCopied = signal(false);
   readonly accountForm = this.fb.nonNullable.group({
     displayName: ['', [Validators.required, Validators.minLength(2)]],
     email: [{ value: '', disabled: true }],
@@ -257,6 +270,12 @@ export class SettingsComponent {
     });
 
     effect(() => {
+      if (this.user()) {
+        void this.apiTokenService.refresh();
+      }
+    });
+
+    effect(() => {
       const weekly = findNotificationPreference(
         this.notificationPreferencesList(),
         'weekly_summary'
@@ -280,8 +299,8 @@ export class SettingsComponent {
     });
   }
 
-  select(tab: SettingsTab): void {
-    this.activeTab.set(tab);
+  select(tab: string): void {
+    this.activeTab.set(tab as SettingsTab);
   }
 
   async closePanel(): Promise<void> {
@@ -551,6 +570,75 @@ export class SettingsComponent {
     }
   }
 
+  async createApiToken(): Promise<void> {
+    const user = this.user();
+    if (!user) {
+      this.toasts.error('You must be signed in.');
+      return;
+    }
+
+    const name = this.newTokenName().trim();
+    if (!name) {
+      this.toasts.error('Token name is required.');
+      return;
+    }
+
+    this.tokenCreating.set(true);
+    this.revealedToken.set(null);
+    this.tokenCopied.set(false);
+
+    try {
+      const result = await this.apiTokenService.createToken(user.id, name);
+      if (result) {
+        this.revealedToken.set(result.rawToken);
+        this.newTokenName.set('MCP Token');
+        this.toasts.success('API token created. Copy it now — it won\'t be shown again.');
+      } else {
+        this.toasts.error('Could not create API token.');
+      }
+    } catch (error) {
+      console.error('[Settings] failed to create API token', error);
+      this.toasts.error('Could not create API token.');
+    } finally {
+      this.tokenCreating.set(false);
+    }
+  }
+
+  async deleteApiToken(tokenId: string): Promise<void> {
+    this.tokenDeleting.set(tokenId);
+    try {
+      const deleted = await this.apiTokenService.deleteToken(tokenId);
+      if (deleted) {
+        this.toasts.success('Token revoked.');
+      } else {
+        this.toasts.error('Could not delete token.');
+      }
+    } catch (error) {
+      console.error('[Settings] failed to delete API token', error);
+      this.toasts.error('Could not delete token.');
+    } finally {
+      this.tokenDeleting.set(null);
+    }
+  }
+
+  async copyToken(): Promise<void> {
+    const token = this.revealedToken();
+    if (!token) return;
+    try {
+      await navigator.clipboard.writeText(token);
+      this.tokenCopied.set(true);
+      this.toasts.success('Token copied to clipboard.');
+      setTimeout(() => this.tokenCopied.set(false), 3000);
+    } catch {
+      this.toasts.error('Could not copy to clipboard.');
+    }
+  }
+
+  onTokenNameChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    this.newTokenName.set(target?.value ?? '');
+  }
+
   async onAvatarSelected(event: Event): Promise<void> {
     const target = event.target as HTMLInputElement | null;
     const file = target?.files?.item(0) ?? null;
@@ -633,8 +721,7 @@ function buildBackupFilename(): string {
 
 function formatImportCounts(result: ImportResult): string {
   return [
-    `${
-      result.counts.projects.created + result.counts.projects.updated
+    `${result.counts.projects.created + result.counts.projects.updated
     } projects`,
     `${result.counts.tags.created + result.counts.tags.updated} tags`,
     `${result.counts.tasks.created + result.counts.tasks.updated} tasks`,
