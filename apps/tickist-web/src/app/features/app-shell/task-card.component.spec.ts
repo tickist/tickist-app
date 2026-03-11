@@ -11,6 +11,14 @@ describe('TaskCardComponent toolbar status icons', () => {
   let fixture: ComponentFixture<TaskCardComponent>;
   let component: TaskCardComponent;
   let updateTaskMock: ReturnType<typeof vi.fn>;
+  let createTagMock: ReturnType<typeof vi.fn>;
+  const availableTags = [
+    {
+      id: 'tag-existing',
+      ownerId: 'owner-1',
+      name: 'FreeWeek',
+    },
+  ];
 
   beforeEach(async () => {
     updateTaskMock = vi.fn(async (payload: Partial<Task>) =>
@@ -18,6 +26,11 @@ describe('TaskCardComponent toolbar status icons', () => {
         ...payload,
       })
     );
+    createTagMock = vi.fn(async ({ ownerId, name }: { ownerId: string; name: string }) => ({
+      id: 'tag-created',
+      ownerId,
+      name,
+    }));
 
     await TestBed.configureTestingModule({
       imports: [TaskCardComponent],
@@ -32,7 +45,8 @@ describe('TaskCardComponent toolbar status icons', () => {
         {
           provide: TagDataService,
           useValue: {
-            list: () => [],
+            list: () => availableTags,
+            createTag: createTagMock,
           },
         },
         {
@@ -51,6 +65,7 @@ describe('TaskCardComponent toolbar status icons', () => {
           provide: ToastService,
           useValue: {
             success: () => undefined,
+            info: () => undefined,
             error: () => undefined,
           },
         },
@@ -173,6 +188,83 @@ describe('TaskCardComponent toolbar status icons', () => {
       expect.objectContaining({
         id: 'task-1',
         repeatInterval: 90,
+      })
+    );
+  });
+
+  it('creates and adds a new tag from the tags panel', async () => {
+    component.task = createTask({ tags: [] });
+    fixture.detectChanges();
+
+    getToolbarButton('tags').click();
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector(
+      '.tag-add__input'
+    ) as HTMLInputElement | null;
+    if (!input) {
+      throw new Error('Missing tag search input');
+    }
+
+    input.value = 'Urgent';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      '.tag-add__button'
+    ) as HTMLButtonElement | null;
+    if (!button) {
+      throw new Error('Missing tag action button');
+    }
+
+    button.click();
+    await fixture.whenStable();
+
+    expect(createTagMock).toHaveBeenCalledWith({
+      ownerId: 'owner-1',
+      name: 'Urgent',
+    });
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'task-1',
+        tags: ['tag-created'],
+      })
+    );
+  });
+
+  it('adds an existing matching tag instead of creating a duplicate', async () => {
+    component.task = createTask({ tags: [] });
+    fixture.detectChanges();
+
+    getToolbarButton('tags').click();
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector(
+      '.tag-add__input'
+    ) as HTMLInputElement | null;
+    if (!input) {
+      throw new Error('Missing tag search input');
+    }
+
+    input.value = 'freeweek';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      '.tag-add__button'
+    ) as HTMLButtonElement | null;
+    if (!button) {
+      throw new Error('Missing tag action button');
+    }
+
+    button.click();
+    await fixture.whenStable();
+
+    expect(createTagMock).not.toHaveBeenCalled();
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'task-1',
+        tags: ['tag-existing'],
       })
     );
   });

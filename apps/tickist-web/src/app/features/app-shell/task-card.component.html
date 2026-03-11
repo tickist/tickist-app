@@ -2,6 +2,7 @@
   class="task-card"
   [class.simple]="viewMode === 'simple'"
   [class.completed]="task.isDone"
+  [class.task-card--overlay]="projectPickerOpen()"
 >
   <div class="task-card__row">
     <label class="task-card__check">
@@ -254,18 +255,45 @@
     </div>
     } @else {
     <p class="panel-hint">No tags yet.</p>
-    } @if (availableTagsToAdd().length) {
+    }
     <div class="tag-add">
-      <select (change)="addTagFromSelect($any($event.target))">
-        <option value="">Add tag…</option>
-        @for (option of availableTagsToAdd(); track option) {
+      @if (filteredAvailableTags().length) {
+      <select
+        class="tag-add__select"
+        aria-label="Add existing tag"
+        (change)="addTagFromSelect($any($event.target))"
+      >
+        <option value="">Add existing tag…</option>
+        @for (option of filteredAvailableTags(); track option.id) {
         <option [value]="option.id">
           {{ option.name }}
         </option>
         }
       </select>
+      } @else {
+      <p class="panel-hint">No matching tags on the list.</p>
+      }
+
+      <div class="tag-add__create">
+        <input
+          type="text"
+          class="tag-add__input"
+          placeholder="Create or find tag"
+          aria-label="Create or find tag"
+          [value]="tagSearch()"
+          (input)="tagSearch.set($any($event.target).value)"
+          (keydown.enter)="handleTagSearchEnter($event)"
+        />
+        <button
+          type="button"
+          class="tag-add__button"
+          [disabled]="!canSubmitTagSearch()"
+          (click)="addOrCreateTag()"
+        >
+          {{ tagSearchActionLabel() }}
+        </button>
+      </div>
     </div>
-    }
   </section>
   } @if (repeatOpen()) {
   <section class="task-card__panel">

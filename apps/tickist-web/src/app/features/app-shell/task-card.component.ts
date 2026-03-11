@@ -67,6 +67,7 @@ export class TaskCardComponent implements OnChanges {
   readonly descriptionEditing = signal(false);
   readonly menuOpen = signal(false);
   readonly descriptionDraft = signal('');
+  readonly tagSearch = signal('');
   readonly newStepDraft = signal('');
   readonly customRepeatEvery = signal(1);
   readonly customRepeatUnit = signal<RepeatUnit>('day');
@@ -356,14 +357,17 @@ export class TaskCardComponent implements OnChanges {
     return this.tagLookup().get(tagId)?.name ?? 'Tag';
   }
 
-  addTag(tagId: string): void {
-    if (!tagId) {
-      return;
+  async addTag(
+    tagId: string,
+    successMessage = 'Tag added.'
+  ): Promise<boolean> {
+    if (!tagId || this.task.tags.includes(tagId)) {
+      return false;
     }
     const next = Array.from(new Set([...this.task.tags, tagId]));
-    void this.mutateTask(
+    return this.mutateTask(
       { id: this.task.id, tags: next },
-      'Tag added.',
+      successMessage,
       'Failed to add tag.'
     );
   }
@@ -374,9 +378,52 @@ export class TaskCardComponent implements OnChanges {
     }
     const value = target.value;
     if (value) {
-      this.addTag(value);
+      void this.addTag(value);
     }
     target.value = '';
+  }
+
+  async addOrCreateTag(): Promise<void> {
+    const trimmed = this.tagSearch().trim();
+    if (!trimmed) {
+      return;
+    }
+
+    const existing = this.findTagByName(trimmed);
+    if (existing) {
+      if (this.task.tags.includes(existing.id)) {
+        this.toasts.info('This tag is already attached to the task.');
+        return;
+      }
+      const added = await this.addTag(existing.id);
+      if (added) {
+        this.tagSearch.set('');
+      }
+      return;
+    }
+
+    const ownerId = this.task.ownerId?.trim();
+    if (!ownerId) {
+      this.toasts.error('Unable to create tag without an owner.');
+      return;
+    }
+
+    try {
+      const created = await this.tagsService.createTag({
+        ownerId,
+        name: trimmed,
+      });
+      if (!created) {
+        throw new Error('Tag creation returned null');
+      }
+      const added = await this.addTag(created.id, 'Tag created and added.');
+      if (added) {
+        this.tagSearch.set('');
+      }
+    } catch (error) {
+      console.error('[TaskCard] Tag creation failed', error);
+      this.toasts.error('Failed to create tag.');
+    }
   }
 
   removeTag(tagId: string): void {
@@ -391,6 +438,42 @@ export class TaskCardComponent implements OnChanges {
   availableTagsToAdd(): Tag[] {
     const taken = new Set(this.task.tags);
     return this.tagsService.list().filter((tag) => !taken.has(tag.id));
+  }
+
+  filteredAvailableTags(): Tag[] {
+    const query = this.tagSearch().trim().toLowerCase();
+    return this.availableTagsToAdd().filter((tag) =>
+      query ? tag.name.toLowerCase().includes(query) : true
+    );
+  }
+
+  canSubmitTagSearch(): boolean {
+    const trimmed = this.tagSearch().trim();
+    if (!trimmed) {
+      return false;
+    }
+    const existing = this.findTagByName(trimmed);
+    return !existing || !this.task.tags.includes(existing.id);
+  }
+
+  tagSearchActionLabel(): string {
+    const trimmed = this.tagSearch().trim();
+    if (!trimmed) {
+      return 'Create tag';
+    }
+    const existing = this.findTagByName(trimmed);
+    if (!existing) {
+      return 'Create tag';
+    }
+    return this.task.tags.includes(existing.id) ? 'Already added' : 'Add existing';
+  }
+
+  handleTagSearchEnter(event: Event): void {
+    event.preventDefault();
+    if (!this.canSubmitTagSearch()) {
+      return;
+    }
+    void this.addOrCreateTag();
   }
 
   toggleTags(): void {
@@ -733,10 +816,21 @@ export class TaskCardComponent implements OnChanges {
     return (this.task.taskType ?? '').trim().toLowerCase();
   }
 
+  private findTagByName(name: string): Tag | undefined {
+    const normalizedName = name.trim().toLowerCase();
+    if (!normalizedName) {
+      return undefined;
+    }
+    return this.tagsService
+      .list()
+      .find((tag) => tag.name.trim().toLowerCase() === normalizedName);
+  }
+
   private closeAllPanels(): void {
     this.projectPickerOpen.set(false);
     this.descriptionOpen.set(false);
     this.tagsOpen.set(false);
+    this.tagSearch.set('');
     this.repeatOpen.set(false);
     this.repeatDraftMode.set(null);
     this.stepsOpen.set(false);

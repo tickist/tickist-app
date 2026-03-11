@@ -1,4 +1,11 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import {
+  computed,
+  effect,
+  inject,
+  Injectable,
+  signal,
+  untracked,
+} from '@angular/core';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 
@@ -55,7 +62,11 @@ export class StatisticsDataService {
   );
   private readonly loadingState = signal(false);
   private readonly errorState = signal<string | null>(null);
+  private readonly activeState = signal(false);
+  private readonly dirtyState = signal(true);
   private refreshSequence = 0;
+  private pendingRefreshAfterLoad = false;
+  private lastWindowDays = STATISTICS_WINDOW_DAYS;
 
   readonly overview = computed(() => this.overviewState());
   readonly loading = computed(() => this.loadingState());
@@ -68,13 +79,49 @@ export class StatisticsDataService {
         this.reset();
         return;
       }
-      void this.refresh();
+
+      if (this.activeState()) {
+        untracked(() => {
+          void this.refreshIfNeeded();
+        });
+      }
     });
+  }
+
+  activate(windowDays = STATISTICS_WINDOW_DAYS): void {
+    this.activeState.set(true);
+    this.lastWindowDays = windowDays;
+  }
+
+  deactivate(): void {
+    this.activeState.set(false);
+  }
+
+  markDirty(windowDays = this.lastWindowDays): void {
+    this.lastWindowDays = windowDays;
+    this.dirtyState.set(true);
+
+    if (!this.activeState()) {
+      return;
+    }
+
+    if (!this.session.user()) {
+      return;
+    }
+
+    if (this.loadingState()) {
+      this.pendingRefreshAfterLoad = true;
+      return;
+    }
+
+    void this.refresh(windowDays);
   }
 
   async refresh(windowDays = STATISTICS_WINDOW_DAYS): Promise<void> {
     const sequence = ++this.refreshSequence;
     const fallback = createEmptyStatsOverview(windowDays);
+    this.lastWindowDays = windowDays;
+    this.pendingRefreshAfterLoad = false;
 
     if (!this.supabase) {
       this.overviewState.set(fallback);
@@ -82,6 +129,7 @@ export class StatisticsDataService {
         'Statistics are unavailable because Supabase is not configured.'
       );
       this.loadingState.set(false);
+      this.dirtyState.set(true);
       console.warn('[Statistics] Supabase client missing; skipping fetch.');
       return;
     }
@@ -101,19 +149,54 @@ export class StatisticsDataService {
       this.overviewState.set(fallback);
       this.errorState.set('Unable to load statistics right now.');
       this.loadingState.set(false);
+      this.dirtyState.set(true);
       console.error('[Statistics] Failed to fetch overview', error);
+      await this.flushPendingRefresh(windowDays);
       return;
     }
 
     this.overviewState.set(normalizeStatsOverview(data, windowDays));
+    this.dirtyState.set(false);
+    this.errorState.set(null);
     this.loadingState.set(false);
+    await this.flushPendingRefresh(windowDays);
   }
 
   private reset(): void {
     this.refreshSequence += 1;
+    this.pendingRefreshAfterLoad = false;
     this.overviewState.set(createEmptyStatsOverview());
     this.loadingState.set(false);
     this.errorState.set(null);
+    this.dirtyState.set(true);
+  }
+
+  private async refreshIfNeeded(windowDays = this.lastWindowDays): Promise<void> {
+    if (this.loadingState()) {
+      this.pendingRefreshAfterLoad = true;
+      return;
+    }
+
+    if (!this.dirtyState() && !this.errorState()) {
+      return;
+    }
+
+    await this.refresh(windowDays);
+  }
+
+  private async flushPendingRefresh(windowDays: number): Promise<void> {
+    if (!this.pendingRefreshAfterLoad) {
+      return;
+    }
+
+    this.pendingRefreshAfterLoad = false;
+
+    if (!this.activeState() || !this.session.user()) {
+      this.dirtyState.set(true);
+      return;
+    }
+
+    await this.refresh(windowDays);
   }
 }
 

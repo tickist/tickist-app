@@ -3,6 +3,8 @@ import {
   Component,
   computed,
   inject,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -15,7 +17,6 @@ import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 interface SummaryCard {
   key: string;
   label: string;
-  hint: string;
   value: number;
   badgeClass: string;
 }
@@ -27,7 +28,7 @@ interface SummaryCard {
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.css',
 })
-export class StatisticsComponent {
+export class StatisticsComponent implements OnInit, OnDestroy {
   private readonly statistics = inject(StatisticsDataService);
 
   readonly overview = this.statistics.overview;
@@ -39,36 +40,43 @@ export class StatisticsComponent {
       {
         key: 'completed',
         label: 'Completed',
-        hint: `Done in the last ${overview.windowDays} days`,
         value: overview.summary.completedCount,
         badgeClass: 'badge badge-success badge-outline',
       },
       {
         key: 'completed-late',
         label: 'Completed late',
-        hint: 'Finished after the due date',
         value: overview.summary.completedLateCount,
         badgeClass: 'badge badge-warning badge-outline',
       },
       {
         key: 'overdue-open',
         label: 'Open overdue',
-        hint: 'Still open and past due',
         value: overview.summary.openOverdueCount,
         badgeClass: 'badge badge-error badge-outline',
       },
       {
         key: 'inactive-projects',
         label: 'Inactive projects',
-        hint: `No activity in ${overview.windowDays} days`,
         value: overview.summary.inactiveProjectsCount,
         badgeClass: 'badge badge-outline',
       },
     ];
   });
   readonly groups = computed(() => this.overview().groups);
+  readonly title = computed(
+    () => `Last ${this.overview().windowDays} days`
+  );
 
-  refresh(): void {
+  ngOnInit(): void {
+    this.statistics.activate();
+  }
+
+  ngOnDestroy(): void {
+    this.statistics.deactivate();
+  }
+
+  retry(): void {
     void this.statistics.refresh();
   }
 

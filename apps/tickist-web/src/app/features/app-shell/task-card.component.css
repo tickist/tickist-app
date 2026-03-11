@@ -2,6 +2,11 @@
   @apply rounded-2xl border border-white/10 bg-base-200 bg-opacity-60 p-4 text-base-content transition;
 }
 
+.task-card--overlay {
+  position: relative;
+  z-index: 2200;
+}
+
 .task-card.completed {
   @apply opacity-70;
 }
@@ -362,6 +367,56 @@
   @apply text-base-content opacity-70;
 }
 
+.tag-add {
+  @apply space-y-2;
+}
+
+.tag-add__select,
+.tag-add__input {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid rgb(var(--bc) / 0.16);
+  background: rgb(var(--b1) / 0.24);
+  color: rgb(var(--bc) / 0.96);
+  padding: 0.7rem 0.85rem;
+}
+
+.tag-add__select:focus-visible,
+.tag-add__input:focus-visible {
+  outline: none;
+  border-color: rgb(var(--bc) / 0.45);
+  box-shadow: 0 0 0 1px rgb(var(--bc) / 0.2);
+}
+
+.tag-add__input::placeholder {
+  color: rgb(var(--bc) / 0.45);
+}
+
+.tag-add__create {
+  @apply grid gap-2;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.tag-add__button {
+  @apply rounded-xl px-3 py-2 text-sm font-semibold transition;
+  color: rgb(var(--bc) / 0.92);
+  border: 1px solid rgb(var(--bc) / 0.18);
+  background: rgb(var(--b1) / 0.32);
+}
+
+.tag-add__button:hover,
+.tag-add__button:focus-visible {
+  color: rgb(var(--bc));
+  border-color: rgb(var(--bc) / 0.36);
+  background: rgb(var(--b1) / 0.6);
+  outline: none;
+}
+
+.tag-add__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .repeat-grid {
   @apply grid grid-cols-2 gap-2;
 }
@@ -476,6 +531,10 @@
 }
 
 @media (max-width: 640px) {
+  .tag-add__create {
+    grid-template-columns: 1fr;
+  }
+
   .repeat-custom__controls {
     grid-template-columns: 1fr;
   }

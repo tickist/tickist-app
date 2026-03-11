@@ -1,6 +1,14 @@
-import { Injectable, computed, inject, signal, effect } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  computed,
+  inject,
+  signal,
+  effect,
+} from '@angular/core';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
+import { StatisticsDataService } from './statistics-data.service';
 
 export interface Project {
   id: string;
@@ -82,6 +90,7 @@ export class ProjectDataService {
   private readonly supabase = inject(SUPABASE_CLIENT, { optional: true });
   private readonly supabaseConfig = inject(SUPABASE_CONFIG, { optional: true });
   private readonly session = inject(SupabaseSessionService);
+  private readonly injector = inject(Injector);
   private readonly projects = signal<Project[]>([]);
   private readonly loading = signal(false);
   private readonly ensuredInboxOwners = new Set<string>();
@@ -188,6 +197,7 @@ export class ProjectDataService {
       console.info('[Projects] invite placeholders', shareInvites);
     }
 
+    this.markStatisticsDirty();
     const created = await this.fetchProjectById(data.id);
     if (created) {
       this.projects.set([...this.projects(), created]);
@@ -304,6 +314,7 @@ export class ProjectDataService {
       }
     }
 
+    this.markStatisticsDirty();
     const updated = await this.fetchProjectById(input.id);
     if (updated) {
       this.projects.set(
@@ -372,6 +383,7 @@ export class ProjectDataService {
     this.projects.set(
       this.projects().filter((project) => project.id !== projectId)
     );
+    this.markStatisticsDirty();
     if (ownerId && isInbox) {
       this.ensuredInboxOwners.delete(ownerId);
     }
@@ -550,5 +562,9 @@ export class ProjectDataService {
       'x-user-jwt': accessToken,
     };
     return headers;
+  }
+
+  private markStatisticsDirty(): void {
+    this.injector.get(StatisticsDataService, null)?.markDirty();
   }
 }

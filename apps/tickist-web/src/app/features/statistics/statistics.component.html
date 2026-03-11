@@ -1,16 +1,6 @@
 <section class="stats-shell">
   <header class="stats-hero">
-    <div>
-      <p class="stats-eyebrow">Statistics</p>
-      <h1 class="stats-title">Project activity overview</h1>
-      <p class="stats-subtitle">
-        Spot neglected projects and recent delivery results without scanning the
-        whole task list.
-      </p>
-    </div>
-    <button type="button" class="btn btn-outline btn-sm" (click)="refresh()">
-      Refresh
-    </button>
+    <h1 class="stats-title">{{ title() }}</h1>
   </header>
 
   @if (loading()) {
@@ -19,14 +9,14 @@
       class="loading loading-spinner loading-md text-primary"
       aria-hidden="true"
     ></span>
-    <p>Loading statistics…</p>
+    <p>Loading…</p>
   </article>
   } @else if (error(); as errorMessage) {
   <article class="stats-panel stats-state" data-testid="statistics-error">
     <p class="font-semibold">Statistics unavailable</p>
     <p class="text-sm text-base-content/70">{{ errorMessage }}</p>
-    <button type="button" class="btn btn-primary btn-sm" (click)="refresh()">
-      Try again
+    <button type="button" class="btn btn-primary btn-sm" (click)="retry()">
+      Retry
     </button>
   </article>
   } @else {
@@ -37,10 +27,7 @@
       [attr.data-testid]="'statistics-card-' + card.key"
     >
       <div class="stats-card__header">
-        <div>
-          <p class="stats-card__label">{{ card.label }}</p>
-          <p class="stats-card__hint">{{ card.hint }}</p>
-        </div>
+        <p class="stats-card__label">{{ card.label }}</p>
         <span [class]="card.badgeClass">{{ card.value }}</span>
       </div>
       <p class="stats-card__value">{{ card.value }}</p>
@@ -55,10 +42,7 @@
       [attr.data-testid]="'statistics-group-' + group.key"
     >
       <header class="group-panel__header">
-        <div>
-          <h2 class="group-panel__title">{{ group.label }}</h2>
-          <p class="group-panel__subtitle">Projects with no recent activity</p>
-        </div>
+        <h2 class="group-panel__title">{{ group.label }}</h2>
         <span class="badge badge-outline">{{
           group.inactiveProjects.length
         }}</span>

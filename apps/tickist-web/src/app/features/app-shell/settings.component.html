@@ -2,20 +2,15 @@
   <div class="settings-page__panel">
     <app-sheet-scaffold eyebrow="Settings" title="Workspace preferences" testId="settings-sheet"
       closeAriaLabel="Close settings panel" [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="select($event)"
-      (close)="closePanel()">
+      (panelClose)="closePanel()">
       <div sheet-body>
         @if (activeTab() === 'account') {
         <section class="sheet-form settings-panel">
           <section class="sheet-section settings-hero">
             <div class="sheet-section__header">
-              <p class="sheet-section__eyebrow">Profile</p>
               <h2 class="sheet-section__title">
                 {{ user()?.user_metadata?.full_name || user()?.email }}
               </h2>
-              <p class="sheet-section__description">
-                Personalize your workspace identity and keep your account info
-                easy to scan.
-              </p>
             </div>
 
             <section class="avatar-card" aria-label="Avatar settings">
@@ -59,11 +54,6 @@
 
           <form class="sheet-form" [formGroup]="accountForm" (ngSubmit)="saveAccount()">
             <section class="sheet-section sheet-section--soft">
-              <div class="sheet-section__header">
-                <p class="sheet-section__eyebrow">Workspace identity</p>
-                <h3 class="sheet-section__title">Account details</h3>
-              </div>
-
               <label class="sheet-field">
                 <span class="sheet-field__label">Display name</span>
                 <input class="sheet-input" placeholder="Your name" formControlName="displayName" />
@@ -104,15 +94,6 @@
           <form class="sheet-form" [formGroup]="passwordForm" data-testid="settings-password-form"
             (ngSubmit)="changePassword()">
             <section class="sheet-section">
-              <div class="sheet-section__header">
-                <p class="sheet-section__eyebrow">Security</p>
-                <h2 class="sheet-section__title">Change password</h2>
-                <p class="sheet-section__description">
-                  Confirm your current password before setting a new one. You
-                  will be signed out after a successful change.
-                </p>
-              </div>
-
               <label class="sheet-field">
                 <span class="sheet-field__label">Current password</span>
                 <input class="sheet-input" formControlName="currentPassword" type="password"
@@ -165,15 +146,6 @@
           <form class="sheet-form" [formGroup]="notificationsForm" data-testid="settings-notifications-form"
             (ngSubmit)="saveNotifications()">
             <section class="sheet-section">
-              <div class="sheet-section__header">
-                <p class="sheet-section__eyebrow">Notifications</p>
-                <h2 class="sheet-section__title">Email digests</h2>
-                <p class="sheet-section__description">
-                  Start with email only. The model is prepared for more channels
-                  later.
-                </p>
-              </div>
-
               <section class="notification-card" aria-label="Weekly summary settings">
                 <div class="notification-card__header">
                   <div>
@@ -253,15 +225,6 @@
         } @if (activeTab() === 'backup') {
         <section class="sheet-form settings-panel">
           <section class="sheet-section">
-            <div class="sheet-section__header">
-              <p class="sheet-section__eyebrow">Backup</p>
-              <h2 class="sheet-section__title">Export &amp; Import</h2>
-              <p class="sheet-section__description">
-                Download the current workspace or validate and import a backup
-                file into this account.
-              </p>
-            </div>
-
             <div class="backup-grid">
               <section class="backup-card" aria-label="Export backup">
                 <h3>Export JSON</h3>
@@ -369,15 +332,6 @@
         } @if (activeTab() === 'api-tokens') {
         <section class="sheet-form settings-panel">
           <section class="sheet-section">
-            <div class="sheet-section__header">
-              <p class="sheet-section__eyebrow">Integrations</p>
-              <h2 class="sheet-section__title">API Tokens</h2>
-              <p class="sheet-section__description">
-                Generate personal access tokens for connecting AI assistants
-                (ChatGPT, Codex) to your Tickist workspace via MCP.
-              </p>
-            </div>
-
             <!-- Create token form -->
             <section class="token-create-card" aria-label="Create new token">
               <h3>New token</h3>

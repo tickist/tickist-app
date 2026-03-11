@@ -14,7 +14,7 @@ import { SheetScaffoldComponent } from './sheet-scaffold.component';
       [tabs]="tabs"
       [activeTab]="activeTab"
       (tabChange)="onTabChange($event)"
-      (close)="onClose()"
+      (panelClose)="onClose()"
     >
       <div sheet-body>
         <p>Projected body</p>

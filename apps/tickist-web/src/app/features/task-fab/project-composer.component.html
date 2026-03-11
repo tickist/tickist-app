@@ -6,21 +6,12 @@
   testId="project-composer-sheet"
   closeAriaLabel="Close project panel"
   (tabChange)="selectTab($event)"
-  (close)="dismiss.emit()"
+  (panelClose)="dismiss.emit()"
 >
   <div sheet-body>
     @if (activeTab() === 'general') {
     <form class="sheet-form" [formGroup]="form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Identity</p>
-          <h3 class="sheet-section__title">Project overview</h3>
-          <p class="sheet-section__description">
-            Keep the project name, type and parent relationship in one clear
-            block.
-          </p>
-        </div>
-
         <label class="sheet-field">
           <span class="sheet-field__label">Project name</span>
           <input
@@ -78,11 +69,6 @@
     } @if (activeTab() === 'extra') {
     <form class="sheet-form" [formGroup]="form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Defaults</p>
-          <h3 class="sheet-section__title">Task behavior</h3>
-        </div>
-
         <div class="sheet-field">
           <span class="sheet-field__label">Default priority</span>
           <div class="sheet-pill-group">
@@ -143,15 +129,6 @@
     } @if (activeTab() === 'sharing') {
     <section class="sheet-form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Collaboration</p>
-          <h3 class="sheet-section__title">Sharing</h3>
-          <p class="sheet-section__description">
-            Invitations are queued now and can be activated once shared projects
-            are enabled.
-          </p>
-        </div>
-
         <label class="sheet-field">
           <span class="sheet-field__label">Invite teammates</span>
           <div class="sheet-inline-action">
@@ -192,15 +169,6 @@
     } @if (activeTab() === 'branding') {
     <form class="sheet-form" [formGroup]="form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Identity system</p>
-          <h3 class="sheet-section__title">Branding</h3>
-          <p class="sheet-section__description">
-            Choose an accent color and icon that make the project easier to spot
-            in the sidebar.
-          </p>
-        </div>
-
         <div class="sheet-field">
           <span class="sheet-field__label">Accent color</span>
           <div class="color-row">

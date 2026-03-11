@@ -3,14 +3,19 @@ import { signal } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { User } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
-import { StatisticsDataService } from './statistics-data.service';
+import {
+  createEmptyStatsOverview,
+  StatisticsDataService,
+} from './statistics-data.service';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 
 describe('StatisticsDataService', () => {
   const rpcMock = vi.fn();
+  const userState = signal(null as User | null);
 
   beforeEach(() => {
     rpcMock.mockReset();
+    userState.set(null);
   });
 
   it('calls the statistics RPC with the default window and normalizes groups', async () => {
@@ -58,7 +63,7 @@ describe('StatisticsDataService', () => {
         {
           provide: SupabaseSessionService,
           useValue: {
-            user: signal(null as User | null).asReadonly(),
+            user: userState.asReadonly(),
           },
         },
       ],
@@ -98,7 +103,7 @@ describe('StatisticsDataService', () => {
         {
           provide: SupabaseSessionService,
           useValue: {
-            user: signal(null as User | null).asReadonly(),
+            user: userState.asReadonly(),
           },
         },
       ],
@@ -112,5 +117,84 @@ describe('StatisticsDataService', () => {
     expect(
       service.overview().groups.every((group) => !group.inactiveProjects.length)
     ).toBe(true);
+  });
+
+  it('refreshes when activated after being marked dirty', async () => {
+    const user = { id: 'user-1' } as User;
+    rpcMock.mockResolvedValue({
+      data: createEmptyStatsOverview(),
+      error: null,
+    });
+
+    TestBed.configureTestingModule({
+      providers: [
+        StatisticsDataService,
+        {
+          provide: SUPABASE_CLIENT,
+          useValue: {
+            rpc: rpcMock,
+          },
+        },
+        {
+          provide: SupabaseSessionService,
+          useValue: {
+            user: userState.asReadonly(),
+          },
+        },
+      ],
+    });
+
+    const service = TestBed.inject(StatisticsDataService);
+    service.activate();
+    userState.set(user);
+    TestBed.flushEffects();
+    await Promise.resolve();
+
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+
+    service.deactivate();
+    service.markDirty();
+    service.activate();
+    TestBed.flushEffects();
+    await Promise.resolve();
+
+    expect(rpcMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not refetch in a loop after an RPC error while active', async () => {
+    const user = { id: 'user-1' } as User;
+    rpcMock.mockResolvedValue({
+      data: null,
+      error: { message: 'missing function' },
+    });
+
+    TestBed.configureTestingModule({
+      providers: [
+        StatisticsDataService,
+        {
+          provide: SUPABASE_CLIENT,
+          useValue: {
+            rpc: rpcMock,
+          },
+        },
+        {
+          provide: SupabaseSessionService,
+          useValue: {
+            user: userState.asReadonly(),
+          },
+        },
+      ],
+    });
+
+    const service = TestBed.inject(StatisticsDataService);
+    service.activate();
+    userState.set(user);
+    TestBed.flushEffects();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+    expect(service.loading()).toBe(false);
+    expect(service.error()).toContain('Unable to load statistics');
   });
 });

@@ -1,5 +1,6 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
+import { StatisticsDataService } from './statistics-data.service';
 
 export interface Task {
   id: string;
@@ -121,6 +122,7 @@ type TaskRow = {
 export class TaskDataService {
   private readonly supabase = inject(SUPABASE_CLIENT, { optional: true });
   private readonly supabaseConfig = inject(SUPABASE_CONFIG, { optional: true });
+  private readonly injector = inject(Injector);
   private readonly tasks = signal<Task[]>([]);
   private readonly loading = signal(false);
 
@@ -209,6 +211,7 @@ export class TaskDataService {
         .throwOnError();
     }
 
+    this.markStatisticsDirty();
     const created = await this.fetchTaskById(data.id);
     if (created) {
       this.setTasks((current) => [...current, created]);
@@ -294,6 +297,7 @@ export class TaskDataService {
       }
     }
 
+    this.markStatisticsDirty();
     const updated = await this.fetchTaskById(input.id);
     if (updated) {
       this.setTasks((current) =>
@@ -323,6 +327,7 @@ export class TaskDataService {
       return false;
     }
     this.setTasks((current) => current.filter((task) => task.id !== taskId));
+    this.markStatisticsDirty();
     return true;
   }
 
@@ -347,6 +352,10 @@ export class TaskDataService {
 
   private setTasks(updater: (tasks: Task[]) => Task[]) {
     this.tasks.set(updater(this.tasks()));
+  }
+
+  private markStatisticsDirty(): void {
+    this.injector.get(StatisticsDataService, null)?.markDirty();
   }
 
   private async callTaskReminderFunction(

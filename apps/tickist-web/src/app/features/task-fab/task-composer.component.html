@@ -6,20 +6,12 @@
   testId="task-composer-sheet"
   closeAriaLabel="Close task panel"
   (tabChange)="selectTab($event)"
-  (close)="dismiss.emit()"
+  (panelClose)="dismiss.emit()"
 >
   <div sheet-body>
     @switch (activeTab()) { @case ('general') {
     <form [formGroup]="taskForm" class="sheet-form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Core details</p>
-          <h3 class="sheet-section__title">Task basics</h3>
-          <p class="sheet-section__description">
-            Name the task, assign context and define how it should be tracked.
-          </p>
-        </div>
-
         <label class="sheet-field">
           <span class="sheet-field__label">Task name</span>
           <input
@@ -98,11 +90,6 @@
       </section>
 
       <section class="sheet-section sheet-section--soft">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Scheduling</p>
-          <h3 class="sheet-section__title">Complete by or on</h3>
-        </div>
-
         <div class="sheet-field">
           <span class="sheet-field__label">Complete</span>
           <div class="sheet-choice-row">
@@ -143,15 +130,6 @@
     } @case ('repeat') {
     <form [formGroup]="taskForm" class="sheet-form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Cadence</p>
-          <h3 class="sheet-section__title">Repeat rules</h3>
-          <p class="sheet-section__description">
-            Choose whether the task should return and what date should anchor
-            the next occurrence.
-          </p>
-        </div>
-
         <div class="sheet-field">
           <span class="sheet-field__label">Repetition</span>
           <div class="repeat-options">
@@ -225,15 +203,6 @@
     } @case ('tags') {
     <section class="sheet-form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Classification</p>
-          <h3 class="sheet-section__title">Tag the task</h3>
-          <p class="sheet-section__description">
-            Attach existing tags or quickly create a new one without leaving the
-            composer.
-          </p>
-        </div>
-
         <label class="sheet-field">
           <span class="sheet-field__label">Search tags</span>
           <input
@@ -277,14 +246,6 @@
     } @case ('steps') {
     <section class="sheet-form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Execution</p>
-          <h3 class="sheet-section__title">Break it into steps</h3>
-          <p class="sheet-section__description">
-            Keep multi-step tasks clear and reorder them inline.
-          </p>
-        </div>
-
         @if (steps.length) {
         <div class="steps">
           @for (step of steps.controls; track step; let i = $index) {
@@ -344,11 +305,6 @@
     } @case ('extra') {
     <form [formGroup]="taskForm" class="sheet-form">
       <section class="sheet-section">
-        <div class="sheet-section__header">
-          <p class="sheet-section__eyebrow">Advanced</p>
-          <h3 class="sheet-section__title">Status and effort</h3>
-        </div>
-
         <div class="sheet-field">
           <span class="sheet-field__label">Status</span>
           <div class="sheet-choice-row">

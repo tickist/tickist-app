@@ -19,6 +19,10 @@ import {
   ProjectIconKey,
   resolveProjectIconKey,
 } from '../../core/icons/project-icons';
+import {
+  buildHierarchy,
+  collectDescendantIds,
+} from '../../core/projects/project-tree';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 import {
@@ -65,13 +69,24 @@ export class ProjectComposerComponent {
   readonly invites = signal<string[]>([]);
   readonly editingProject = signal<Project | null>(null);
   readonly projectOptions = computed(() =>
-    this.projects.list().sort((a, b) => a.name.localeCompare(b.name))
+    [...this.projects.list()].sort((a, b) => a.name.localeCompare(b.name))
   );
   readonly availableAncestorOptions = computed(() => {
     const editingProjectId = this.editingProject()?.id ?? null;
-    return this.projectOptions().filter(
-      (project) => project.id !== editingProjectId
-    );
+    const projectTree = buildHierarchy(this.projectOptions());
+    const descendantIds = editingProjectId
+      ? collectDescendantIds(projectTree, editingProjectId)
+      : new Set<string>();
+
+    return this.projectOptions().filter((project) => {
+      if (project.isInbox) {
+        return false;
+      }
+      if (!editingProjectId) {
+        return true;
+      }
+      return project.id !== editingProjectId && !descendantIds.has(project.id);
+    });
   });
   readonly colors = [
     '#1D4ED8',

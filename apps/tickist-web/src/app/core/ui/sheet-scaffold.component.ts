@@ -30,13 +30,13 @@ export class SheetScaffoldComponent {
   readonly hasTabs = computed(() => this.tabs().length > 0);
 
   readonly tabChange = output<string>();
-  readonly close = output<void>();
+  readonly panelClose = output<void>();
 
   selectTab(tabKey: string): void {
     this.tabChange.emit(tabKey);
   }
 
   requestClose(): void {
-    this.close.emit();
+    this.panelClose.emit();
   }
 }

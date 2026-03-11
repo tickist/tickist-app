@@ -1,6 +1,6 @@
-<section class="min-h-screen bg-base-100 text-base-content">
+<section class="app-shell bg-base-100 text-base-content">
   <nav
-    class="app-navbar sticky top-0 z-30 flex w-full flex-wrap items-center gap-3 gap-y-2 border-b border-white/10 bg-base-200 px-4 py-3 shadow-lg shadow-black/20 lg:px-8 md:flex-nowrap relative"
+    class="app-navbar sticky top-0 z-40 flex w-full flex-wrap items-center gap-3 gap-y-2 border-b border-white/10 px-4 py-3 shadow-lg shadow-black/20 lg:px-8 md:flex-nowrap relative"
   >
     <div class="flex items-center gap-4 shrink-0">
       <button
@@ -213,9 +213,9 @@
     </div>
     }
   </nav>
-  <div class="app-layout relative min-h-[calc(100vh-72px)]">
+  <div class="app-layout relative">
     <aside
-      class="app-layout__sidebar relative z-30 hidden border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block"
+      class="app-layout__sidebar relative z-0 hidden border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block"
     >
       <app-sidebar></app-sidebar>
     </aside>
@@ -246,7 +246,7 @@
     }
 
     <main class="app-layout__main flex-1 px-4 py-8 lg:px-8">
-      <div class="w-full max-w-none min-w-0">
+      <div class="app-layout__main-inner w-full max-w-none min-w-0">
         <router-outlet></router-outlet>
       </div>
     </main>

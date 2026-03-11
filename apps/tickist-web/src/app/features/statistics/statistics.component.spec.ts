@@ -15,12 +15,16 @@ describe('StatisticsComponent', () => {
   const loadingState = signal(false);
   const errorState = signal<string | null>(null);
   const refreshMock = vi.fn(async () => undefined);
+  const activateMock = vi.fn();
+  const deactivateMock = vi.fn();
 
   beforeEach(async () => {
     overviewState.set(createEmptyStatsOverview());
     loadingState.set(false);
     errorState.set(null);
     refreshMock.mockClear();
+    activateMock.mockClear();
+    deactivateMock.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [StatisticsComponent],
@@ -32,6 +36,8 @@ describe('StatisticsComponent', () => {
             overview: overviewState.asReadonly(),
             loading: loadingState.asReadonly(),
             error: errorState.asReadonly(),
+            activate: activateMock,
+            deactivate: deactivateMock,
             refresh: refreshMock,
           },
         },
@@ -49,7 +55,15 @@ describe('StatisticsComponent', () => {
       '[data-testid="statistics-loading"]'
     ) as HTMLElement | null;
 
-    expect(loading?.textContent).toContain('Loading statistics');
+    expect(loading?.textContent).toContain('Loading');
+  });
+
+  it('activates on init and deactivates on destroy', () => {
+    fixture.detectChanges();
+    fixture.destroy();
+
+    expect(activateMock).toHaveBeenCalledTimes(1);
+    expect(deactivateMock).toHaveBeenCalledTimes(1);
   });
 
   it('renders KPI cards and inactive project links from the overview', () => {
