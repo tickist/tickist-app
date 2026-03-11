@@ -12,6 +12,7 @@
   color: rgb(var(--bc));
   border: 1px solid rgb(var(--bc) / 0.14);
   border-radius: 28px;
+  background-color: rgb(var(--b2));
   background: radial-gradient(
       circle at top,
       rgb(255 170 59 / 0.14),

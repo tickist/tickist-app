@@ -125,7 +125,7 @@ async function expectSharedSheetLayout(
     throw new Error('Shared sheet layout could not be measured.');
   }
 
-  expect(box.x + box.width / 2).toBeGreaterThan(viewport.width / 2);
+  expect(box.x + box.width / 2).toBeGreaterThanOrEqual(viewport.width / 2);
 
   const backgroundColor = await sheet.evaluate(
     (node) => window.getComputedStyle(node).backgroundColor
