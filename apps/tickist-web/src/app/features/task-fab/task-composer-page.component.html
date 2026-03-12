@@ -1,0 +1,22 @@
+<section class="sheet-page">
+  <div class="composer-page__panel">
+    @if (preset(); as composerPreset) {
+    <app-task-composer
+      [preset]="composerPreset"
+      (dismiss)="close()"
+      (created)="close()"
+    ></app-task-composer>
+    } @else {
+    <div class="composer-page__empty">
+      <p class="composer-page__message">Task not found.</p>
+      <button
+        type="button"
+        class="sheet-shell__button sheet-shell__button--ghost"
+        (click)="close()"
+      >
+        Back
+      </button>
+    </div>
+    }
+  </div>
+</section>

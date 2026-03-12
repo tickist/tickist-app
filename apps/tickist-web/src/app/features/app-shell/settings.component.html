@@ -1,288 +1,443 @@
-<section class="settings">
-  <aside class="settings__nav">
-    <button
-      type="button"
-      class="settings__tab"
-      [class.active]="activeTab() === 'account'"
-      (click)="select('account')"
-      >
-      Account
-    </button>
-    <button
-      type="button"
-      class="settings__tab"
-      [class.active]="activeTab() === 'password'"
-      (click)="select('password')"
-      >
-      Password
-    </button>
-    <button
-      type="button"
-      class="settings__tab"
-      [class.active]="activeTab() === 'notifications'"
-      (click)="select('notifications')"
-      >
-      Notifications
-    </button>
-    <button
-      type="button"
-      class="settings__tab"
-      [class.active]="activeTab() === 'backup'"
-      (click)="select('backup')"
-      >
-      Backup &amp; Restore
-    </button>
-  </aside>
+<section class="sheet-page settings-page">
+  <div class="settings-page__panel">
+    <app-sheet-scaffold eyebrow="Settings" title="Workspace preferences" testId="settings-sheet"
+      closeAriaLabel="Close settings panel" [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="select($event)"
+      (panelClose)="closePanel()">
+      <div sheet-body>
+        @if (activeTab() === 'account') {
+        <section class="sheet-form settings-panel">
+          <section class="sheet-section settings-hero">
+            <div class="sheet-section__header">
+              <h2 class="sheet-section__title">
+                {{ user()?.user_metadata?.full_name || user()?.email }}
+              </h2>
+            </div>
 
-  @if (activeTab() === 'account') {
-    <section class="settings__panel">
-      <header class="panel__header">
-        <div>
-          <p class="eyebrow">Profile</p>
-          <h2>{{ user()?.user_metadata?.full_name || user()?.email }}</h2>
-        </div>
-      </header>
-      <section class="avatar-card" aria-label="Avatar settings">
-        <div class="avatar-card__preview">
-          @if (avatarPreviewUrl(); as avatar) {
-            <img [src]="avatar" alt="Profile avatar" class="avatar-card__image" />
-          } @else {
-            <span class="avatar-card__initial">{{ avatarInitial() }}</span>
-          }
-        </div>
-        <div class="avatar-card__content">
-          <p class="field__label">Avatar</p>
-          <p class="field__hint">PNG, JPG or WEBP, maximum size 2 MB.</p>
-          <div class="avatar-card__actions">
-            <label class="btn btn-outline btn-sm" [class.btn-disabled]="avatarUploading() || avatarRemoving()">
-              @if (!avatarUploading()) {
-                <span>Upload avatar</span>
-              }
-              @if (avatarUploading()) {
-                <span class="loading loading-spinner loading-xs"></span>
-              }
-              <input
-                type="file"
-                class="sr-only"
-                accept="image/png,image/jpeg,image/webp"
-                [disabled]="avatarUploading() || avatarRemoving()"
-                (change)="onAvatarSelected($event)"
-              />
-            </label>
-            <button
-              type="button"
-              class="btn btn-ghost btn-sm text-error"
-              [disabled]="avatarUploading() || avatarRemoving()"
-              (click)="removeAvatar()"
-            >
-              @if (!avatarRemoving()) {
-                <span>Remove</span>
-              }
-              @if (avatarRemoving()) {
-                <span class="loading loading-spinner loading-xs"></span>
-              }
+            <section class="avatar-card" aria-label="Avatar settings">
+              <div class="avatar-card__preview">
+                @if (avatarPreviewUrl(); as avatar) {
+                <img [src]="avatar" alt="Profile avatar" class="avatar-card__image" />
+                } @else {
+                <span class="avatar-card__initial">{{ avatarInitial() }}</span>
+                }
+              </div>
+              <div class="avatar-card__content">
+                <p class="sheet-field__label">Avatar</p>
+                <p class="sheet-field__hint">
+                  PNG, JPG or WEBP, maximum size 2 MB.
+                </p>
+                <div class="avatar-card__actions">
+                  <label class="sheet-shell__button sheet-shell__button--secondary avatar-card__upload"
+                    [class.avatar-card__upload--disabled]="
+                      avatarUploading() || avatarRemoving()
+                    ">
+                    @if (!avatarUploading()) {
+                    <span>Upload avatar</span>
+                    } @if (avatarUploading()) {
+                    <span class="loading loading-spinner loading-xs"></span>
+                    }
+                    <input type="file" class="sr-only" accept="image/png,image/jpeg,image/webp"
+                      [disabled]="avatarUploading() || avatarRemoving()" (change)="onAvatarSelected($event)" />
+                  </label>
+                  <button type="button" class="sheet-shell__button sheet-shell__button--ghost"
+                    [disabled]="avatarUploading() || avatarRemoving()" (click)="removeAvatar()">
+                    @if (!avatarRemoving()) {
+                    <span>Remove</span>
+                    } @if (avatarRemoving()) {
+                    <span class="loading loading-spinner loading-xs"></span>
+                    }
+                  </button>
+                </div>
+              </div>
+            </section>
+          </section>
+
+          <form class="sheet-form" [formGroup]="accountForm" (ngSubmit)="saveAccount()">
+            <section class="sheet-section sheet-section--soft">
+              <label class="sheet-field">
+                <span class="sheet-field__label">Display name</span>
+                <input class="sheet-input" placeholder="Your name" formControlName="displayName" />
+                @if (accountForm.controls.displayName.touched &&
+                accountForm.controls.displayName.invalid) {
+                <small class="sheet-field__error">
+                  Name must be at least 2 characters.
+                </small>
+                }
+              </label>
+
+              <label class="sheet-field">
+                <span class="sheet-field__label">Email</span>
+                <input class="sheet-input" formControlName="email" />
+                <small class="sheet-field__hint">You cannot change your email in this build.</small>
+              </label>
+
+              <button type="submit" class="sr-only">Save changes</button>
+            </section>
+          </form>
+
+          <section class="sheet-danger-card danger-card">
+            <div>
+              <p class="danger-card__title">Delete account</p>
+              <p class="sheet-field__hint">
+                Deleting your account is permanent. All data will be wiped
+                immediately.
+              </p>
+            </div>
+            <button type="button" class="sheet-shell__button sheet-shell__button--ghost danger-card__button"
+              (click)="deleteAccount()">
+              Delete
             </button>
-          </div>
-        </div>
-      </section>
-      <form class="panel__form" [formGroup]="accountForm">
-        <label class="field">
-          <span class="field__label">Display name</span>
-          <input
-            class="input input-bordered"
-            placeholder="Your name"
-            formControlName="displayName"
-            />
-          @if (accountForm.controls.displayName.touched && accountForm.controls.displayName.invalid) {
-            <small class="field__error">
-              Name must be at least 2 characters.
-            </small>
-          }
-        </label>
-        <label class="field">
-          <span class="field__label">Email</span>
-          <input class="input input-bordered" formControlName="email" />
-          <small class="field__hint text-warning">You cannot change your email in this build.</small>
-        </label>
-        <div class="panel__actions">
-          <button
-            type="button"
-            class="btn btn-primary"
-            [disabled]="updating()"
-            (click)="saveAccount()"
-            >
-            Save changes
-          </button>
-        </div>
-      </form>
-      <div class="danger-card">
-        <div>
-          <p class="text-sm font-semibold text-error">Delete account</p>
-          <p class="text-xs text-base-content/70">
-            Deleting your account is permanent. All data will be wiped immediately.
-          </p>
-        </div>
-        <button type="button" class="btn btn-error btn-sm" (click)="deleteAccount()">Delete</button>
-      </div>
-    </section>
-  }
+          </section>
+        </section>
+        } @if (activeTab() === 'password') {
+        <section class="sheet-form settings-panel">
+          <form class="sheet-form" [formGroup]="passwordForm" data-testid="settings-password-form"
+            (ngSubmit)="changePassword()">
+            <section class="sheet-section">
+              <label class="sheet-field">
+                <span class="sheet-field__label">Current password</span>
+                <input class="sheet-input" formControlName="currentPassword" type="password"
+                  autocomplete="current-password" data-testid="settings-current-password" />
+                @if (passwordForm.controls.currentPassword.touched &&
+                passwordForm.controls.currentPassword.invalid) {
+                <small class="sheet-field__error">
+                  Current password must be at least 6 characters.
+                </small>
+                }
+              </label>
 
-  @if (activeTab() === 'password') {
-    <section class="settings__panel placeholder">
-      <p>Coming soon: password reset and recovery options.</p>
-    </section>
-  }
+              <label class="sheet-field">
+                <span class="sheet-field__label">New password</span>
+                <input class="sheet-input" formControlName="newPassword" type="password" autocomplete="new-password"
+                  data-testid="settings-new-password" />
+                @if (passwordForm.controls.newPassword.touched &&
+                passwordForm.controls.newPassword.invalid) {
+                <small class="sheet-field__error">
+                  New password must be at least 6 characters.
+                </small>
+                } @if (passwordMatchesCurrent()) {
+                <small class="sheet-field__error">
+                  New password must be different from the current password.
+                </small>
+                }
+              </label>
 
-  @if (activeTab() === 'notifications') {
-    <section class="settings__panel placeholder">
-      <p>Coming soon: notification preferences.</p>
-    </section>
-  }
+              <label class="sheet-field">
+                <span class="sheet-field__label">Confirm new password</span>
+                <input class="sheet-input" formControlName="confirmPassword" type="password" autocomplete="new-password"
+                  data-testid="settings-confirm-password" />
+                @if (passwordsMismatch()) {
+                <small class="sheet-field__error">Passwords must match.</small>
+                }
+              </label>
 
-  @if (activeTab() === 'backup') {
-    <section class="settings__panel">
-      <header class="panel__header">
-        <div>
-          <p class="eyebrow">Backup</p>
-          <h2>Export &amp; Import</h2>
-        </div>
-      </header>
+              @if (passwordError(); as errorMessage) {
+              <p class="password-feedback password-feedback--error" data-testid="settings-password-error">
+                {{ errorMessage }}
+              </p>
+              }
 
-      <div class="backup-grid">
-        <section class="backup-card" aria-label="Export backup">
-          <h3>Export JSON</h3>
-          <p class="field__hint">
-            Download your projects, tags, tasks, steps and task-tag relations in Tickist JSON v1 format.
-          </p>
+              <button type="submit" class="sr-only">Update password</button>
+            </section>
+          </form>
+        </section>
+        } @if (activeTab() === 'notifications') {
+        <section class="sheet-form settings-panel">
+          <form class="sheet-form" [formGroup]="notificationsForm" data-testid="settings-notifications-form"
+            (ngSubmit)="saveNotifications()">
+            <section class="sheet-section">
+              <section class="notification-card" aria-label="Weekly summary settings">
+                <div class="notification-card__header">
+                  <div>
+                    <h3>Weekly summary</h3>
+                    <p class="sheet-field__hint">
+                      Sends a recap of completed tasks plus what is planned for
+                      next week.
+                    </p>
+                  </div>
+                  <label class="toggle-row" for="weekly-email-enabled">
+                    <span>Email</span>
+                    <input id="weekly-email-enabled" type="checkbox" class="toggle toggle-warning"
+                      formControlName="weeklyEmailEnabled" />
+                  </label>
+                </div>
 
-          <label class="field-inline" for="export-only-active">
-            <input
-              id="export-only-active"
-              type="checkbox"
-              class="checkbox checkbox-sm"
-              [checked]="exportOnlyActive()"
-              (change)="onExportOnlyActiveChanged($event)"
-            />
-            <span>Only active projects and tasks</span>
-          </label>
+                <div class="sheet-grid-two">
+                  <label class="sheet-field" for="weekly-email-day">
+                    <span class="sheet-field__label">Day</span>
+                    <select id="weekly-email-day" class="sheet-select" formControlName="weeklyEmailDayOfWeek">
+                      @for (option of weekdayOptions; track option.value) {
+                      <option [ngValue]="option.value">
+                        {{ option.label }}
+                      </option>
+                      }
+                    </select>
+                  </label>
 
-          <label class="field-inline" for="export-selected-projects">
-            <input
-              id="export-selected-projects"
-              type="checkbox"
-              class="checkbox checkbox-sm"
-              [checked]="exportSelectedProjectsOnly()"
-              (change)="onExportSelectedProjectsChanged($event)"
-            />
-            <span>Only selected projects</span>
-          </label>
+                  <label class="sheet-field" for="weekly-email-time">
+                    <span class="sheet-field__label">Time</span>
+                    <input id="weekly-email-time" class="sheet-input" type="time" formControlName="weeklyEmailTime" />
+                  </label>
+                </div>
 
-          @if (exportSelectedProjectsOnly()) {
-            <div class="project-filter-list">
-              @if (availableProjects().length) {
-                @for (project of availableProjects(); track project.id) {
+                <p class="sheet-field__hint">
+                  Default: Sunday at 20:00 in your current timezone.
+                </p>
+              </section>
+
+              <section class="notification-card" aria-label="Daily summary settings">
+                <div class="notification-card__header">
+                  <div>
+                    <h3>Daily summary</h3>
+                    <p class="sheet-field__hint">
+                      Sends a daily email with what you finished today and what
+                      is next tomorrow.
+                    </p>
+                  </div>
+                  <label class="toggle-row" for="daily-email-enabled">
+                    <span>Email</span>
+                    <input id="daily-email-enabled" type="checkbox" class="toggle toggle-warning"
+                      formControlName="dailyEmailEnabled" />
+                  </label>
+                </div>
+
+                <div class="notification-grid notification-grid--single">
+                  <label class="sheet-field" for="daily-email-time">
+                    <span class="sheet-field__label">Time</span>
+                    <input id="daily-email-time" class="sheet-input" type="time" formControlName="dailyEmailTime" />
+                  </label>
+                </div>
+              </section>
+
+              <div class="notification-footer">
+                <p class="sheet-field__hint">
+                  Times are saved in timezone:
+                  <strong>{{ notificationTimezone() }}</strong>
+                </p>
+              </div>
+
+              <button type="submit" class="sr-only">
+                Save notification settings
+              </button>
+            </section>
+          </form>
+        </section>
+        } @if (activeTab() === 'backup') {
+        <section class="sheet-form settings-panel">
+          <section class="sheet-section">
+            <div class="backup-grid">
+              <section class="backup-card" aria-label="Export backup">
+                <h3>Export JSON</h3>
+                <p class="sheet-field__hint">
+                  Download your projects, tags, tasks, steps and task-tag
+                  relations in Tickist JSON v1 format.
+                </p>
+
+                <label class="field-inline" for="export-only-active">
+                  <input id="export-only-active" type="checkbox" class="checkbox checkbox-sm"
+                    [checked]="exportOnlyActive()" (change)="onExportOnlyActiveChanged($event)" />
+                  <span>Only active projects and tasks</span>
+                </label>
+
+                <label class="field-inline" for="export-selected-projects">
+                  <input id="export-selected-projects" type="checkbox" class="checkbox checkbox-sm"
+                    [checked]="exportSelectedProjectsOnly()" (change)="onExportSelectedProjectsChanged($event)" />
+                  <span>Only selected projects</span>
+                </label>
+
+                @if (exportSelectedProjectsOnly()) {
+                <div class="project-filter-list">
+                  @if (availableProjects().length) { @for (project of
+                  availableProjects(); track project.id) {
                   <label class="field-inline" [for]="'project-filter-' + project.id">
-                    <input
-                      [id]="'project-filter-' + project.id"
-                      type="checkbox"
-                      class="checkbox checkbox-sm"
+                    <input [id]="'project-filter-' + project.id" type="checkbox" class="checkbox checkbox-sm"
                       [checked]="selectedProjectIds().includes(project.id)"
-                      (change)="onProjectSelectionChanged(project.id, $event)"
-                    />
+                      (change)="onProjectSelectionChanged(project.id, $event)" />
                     <span>{{ project.name }}</span>
                   </label>
+                  } } @else {
+                  <p class="sheet-field__hint">No projects available.</p>
+                  }
+                </div>
                 }
-              } @else {
-                <p class="field__hint">No projects available.</p>
-              }
-            </div>
-          }
 
-          <div class="panel__actions">
-            <button type="button" class="btn btn-primary" [disabled]="exportBusy()" (click)="exportBackup()">
-              @if (!exportBusy()) {
-                <span>Export backup</span>
-              }
-              @if (exportBusy()) {
-                <span class="loading loading-spinner loading-xs"></span>
-              }
-            </button>
-          </div>
-        </section>
+                <button type="button" class="sheet-shell__button sheet-shell__button--primary" [disabled]="exportBusy()"
+                  (click)="exportBackup()">
+                  @if (!exportBusy()) {
+                  <span>Export backup</span>
+                  } @if (exportBusy()) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  }
+                </button>
+              </section>
 
-        <section class="backup-card" aria-label="Import backup">
-          <h3>Import JSON</h3>
-          <p class="field__hint">
-            Validate and import backup file into this account. Existing records are upserted by stable ID.
-          </p>
+              <section class="backup-card" aria-label="Import backup">
+                <h3>Import JSON</h3>
+                <p class="sheet-field__hint">
+                  Validate and import backup file into this account. Existing
+                  records are upserted by stable ID.
+                </p>
 
-          <input
-            type="file"
-            class="file-input file-input-bordered w-full"
-            accept="application/json,.json"
-            (change)="onImportFileSelected($event)"
-          />
+                <input type="file" class="file-input file-input-bordered w-full" accept="application/json,.json"
+                  (change)="onImportFileSelected($event)" />
 
-          @if (importValidation(); as report) {
-            <div class="import-report" [class.import-report--error]="!report.ok">
-              <p class="text-sm font-semibold">
-                @if (report.ok) {
-                  File is valid.
-                } @else {
-                  File contains validation errors.
-                }
-              </p>
-              <p class="text-xs">
-                {{ report.summary.projects }} projects,
-                {{ report.summary.tags }} tags,
-                {{ report.summary.tasks }} tasks,
-                {{ report.summary.taskSteps }} steps,
-                {{ report.summary.taskTags }} task-tag links.
-              </p>
+                @if (importValidation(); as report) {
+                <div class="import-report" [class.import-report--error]="!report.ok">
+                  <p class="text-sm font-semibold">
+                    @if (report.ok) { File is valid. } @else { File contains
+                    validation errors. }
+                  </p>
+                  <p class="text-xs">
+                    {{ report.summary.projects }} projects,
+                    {{ report.summary.tags }} tags,
+                    {{ report.summary.tasks }} tasks,
+                    {{ report.summary.taskSteps }} steps,
+                    {{ report.summary.taskTags }} task-tag links.
+                  </p>
 
-              @if (report.errors.length) {
-                <ul class="import-report__list text-error">
-                  @for (error of report.errors; track error) {
+                  @if (report.errors.length) {
+                  <ul class="import-report__list text-error">
+                    @for (error of report.errors; track error) {
                     <li>{{ error }}</li>
-                  }
-                </ul>
-              }
-
-              @if (report.warnings.length) {
-                <ul class="import-report__list text-warning">
-                  @for (warning of report.warnings; track warning) {
+                    }
+                  </ul>
+                  } @if (report.warnings.length) {
+                  <ul class="import-report__list text-warning">
+                    @for (warning of report.warnings; track warning) {
                     <li>{{ warning }}</li>
+                    }
+                  </ul>
                   }
-                </ul>
-              }
-            </div>
-          }
+                </div>
+                }
 
-          <div class="panel__actions backup-actions">
-            <button
-              type="button"
-              class="btn btn-outline"
-              [disabled]="importBusy() || !importFile()"
-              (click)="runImport(true)"
-            >
-              Dry run
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="importBusy() || !importFile()"
-              (click)="runImport(false)"
-            >
-              @if (!importBusy()) {
-                <span>Import backup</span>
-              }
-              @if (importBusy()) {
-                <span class="loading loading-spinner loading-xs"></span>
-              }
-            </button>
-          </div>
+                <div class="backup-actions">
+                  <button type="button" class="sheet-shell__button sheet-shell__button--ghost"
+                    [disabled]="importBusy() || !importFile()" (click)="runImport(true)">
+                    Dry run
+                  </button>
+                  <button type="button" class="sheet-shell__button sheet-shell__button--primary"
+                    [disabled]="importBusy() || !importFile()" (click)="runImport(false)">
+                    @if (!importBusy()) {
+                    <span>Import backup</span>
+                    } @if (importBusy()) {
+                    <span class="loading loading-spinner loading-xs"></span>
+                    }
+                  </button>
+                </div>
+              </section>
+            </div>
+          </section>
         </section>
+        } @if (activeTab() === 'api-tokens') {
+        <section class="sheet-form settings-panel">
+          <section class="sheet-section">
+            <!-- Create token form -->
+            <section class="token-create-card" aria-label="Create new token">
+              <h3>New token</h3>
+              <label class="sheet-field">
+                <span class="sheet-field__label">Token name</span>
+                <input class="sheet-input" placeholder="e.g. Codex token" [value]="newTokenName()"
+                  (input)="onTokenNameChange($event)" />
+              </label>
+              <button type="button" class="sheet-shell__button sheet-shell__button--primary"
+                [disabled]="tokenCreating()" (click)="createApiToken()">
+                @if (!tokenCreating()) {
+                <span>Generate token</span>
+                } @if (tokenCreating()) {
+                <span class="loading loading-spinner loading-xs"></span>
+                }
+              </button>
+            </section>
+
+            <!-- Revealed token (shown once) -->
+            @if (revealedToken(); as rawToken) {
+            <section class="token-reveal-card" aria-label="New token value">
+              <div class="token-reveal-card__header">
+                <p class="token-reveal-card__warning">
+                  ⚠️ Copy this token now — it will not be shown again.
+                </p>
+              </div>
+              <div class="token-reveal-card__value">
+                <code class="token-reveal-card__code">{{ rawToken }}</code>
+                <button type="button" class="sheet-shell__button sheet-shell__button--secondary token-reveal-card__copy"
+                  (click)="copyToken()">
+                  @if (tokenCopied()) {
+                  <span>✅ Copied</span>
+                  } @else {
+                  <span>📋 Copy</span>
+                  }
+                </button>
+              </div>
+            </section>
+            }
+
+            <!-- Token list -->
+            @if (apiTokensLoading()) {
+            <div class="token-loading">
+              <span class="loading loading-spinner loading-md"></span>
+            </div>
+            } @else {
+            @if (apiTokens().length === 0) {
+            <p class="sheet-field__hint token-empty">
+              No API tokens yet. Create one above to connect AI assistants.
+            </p>
+            } @else {
+            <section class="token-list" aria-label="Existing tokens">
+              @for (token of apiTokens(); track token.id) {
+              <div class="token-card">
+                <div class="token-card__info">
+                  <p class="token-card__name">{{ token.name }}</p>
+                  <p class="token-card__meta">
+                    <span class="token-card__prefix">{{ token.tokenPrefix }}•••</span>
+                    <span class="token-card__sep">·</span>
+                    <span>Created
+                      {{
+                      token.createdAt | date : 'mediumDate'
+                      }}</span>
+                    @if (token.lastUsedAt) {
+                    <span class="token-card__sep">·</span>
+                    <span>Last used
+                      {{
+                      token.lastUsedAt | date : 'mediumDate'
+                      }}</span>
+                    }
+                  </p>
+                </div>
+                <button type="button" class="sheet-shell__button sheet-shell__button--ghost token-card__revoke"
+                  [disabled]="tokenDeleting() === token.id" (click)="deleteApiToken(token.id)">
+                  @if (tokenDeleting() === token.id) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  } @else {
+                  <span>Revoke</span>
+                  }
+                </button>
+              </div>
+              }
+            </section>
+            }
+            }
+          </section>
+        </section>
+        }
       </div>
-    </section>
-  }
+
+      <div sheet-footer class="sheet-footer-actions">
+        <button type="button" class="sheet-shell__button sheet-shell__button--ghost" (click)="closePanel()">
+          Close settings
+        </button>
+
+        @if (footerPrimaryLabel(); as label) {
+        <div class="sheet-footer-actions__group">
+          <button type="button" class="sheet-shell__button sheet-shell__button--primary"
+            [disabled]="footerPrimaryDisabled()" [attr.data-testid]="
+              activeTab() === 'password' ? 'settings-password-submit' : null
+            " (click)="submitActiveTab()">
+            {{ label }}
+          </button>
+        </div>
+        }
+      </div>
+    </app-sheet-scaffold>
+  </div>
 </section>

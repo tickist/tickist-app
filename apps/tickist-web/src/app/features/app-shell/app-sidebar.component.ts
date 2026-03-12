@@ -1,4 +1,11 @@
-import { Component, HostListener, ElementRef, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  ElementRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { Project, ProjectDataService } from '../../data/project-data.service';
@@ -74,7 +81,9 @@ export class AppSidebarComponent {
     if (!projectId) {
       return null;
     }
-    return this.projectList().find((project) => project.id === projectId) ?? null;
+    return (
+      this.projectList().find((project) => project.id === projectId) ?? null
+    );
   });
 
   readonly inboxProjects = computed(() =>
@@ -149,7 +158,11 @@ export class AppSidebarComponent {
     const today = new Date();
     const startMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
     const months = Array.from({ length: 12 }, (_value, index) => {
-      return new Date(startMonth.getFullYear(), startMonth.getMonth() + index, 1);
+      return new Date(
+        startMonth.getFullYear(),
+        startMonth.getMonth() + index,
+        1
+      );
     });
     const countByMonth = new Map<string, number>();
     for (const task of this.taskList()) {
@@ -222,7 +235,9 @@ export class AppSidebarComponent {
     }
     this.viewState.setDayFilter(day.dateKey);
     this.viewState.selectProject(null);
-    void this.router.navigate(['/app/tasks'], { queryParams: { due: day.dateKey } });
+    void this.router.navigate(['/app/tasks'], {
+      queryParams: { due: day.dateKey },
+    });
   }
 
   selectFutureMonth(month: FutureItem): void {
@@ -234,7 +249,9 @@ export class AppSidebarComponent {
     }
     this.viewState.setMonthFilter(month.monthKey);
     this.viewState.selectProject(null);
-    void this.router.navigate(['/app/tasks'], { queryParams: { month: month.monthKey } });
+    void this.router.navigate(['/app/tasks'], {
+      queryParams: { month: month.monthKey },
+    });
   }
 
   selectSpecificDate(event: Event): void {
@@ -301,7 +318,10 @@ export class AppSidebarComponent {
     const width = 224; // 14rem ~ w-56
     const height = 240;
     const gutter = 8;
-    const left = Math.min(rect.right + gutter, window.innerWidth - width - gutter);
+    const left = Math.min(
+      rect.right + gutter,
+      window.innerWidth - width - gutter
+    );
     let top = rect.bottom + gutter;
     if (top + height > window.innerHeight) {
       top = Math.max(rect.top - height - gutter, gutter);
@@ -328,9 +348,12 @@ export class AppSidebarComponent {
     return 'active';
   }
 
-  openCreateProject(projectType: string, ancestorId?: string | null): void {
+  async openCreateProject(
+    projectType: string,
+    ancestorId?: string | null
+  ): Promise<void> {
     this.closeMenu();
-    this.composer.openProjectModal({
+    await this.composer.openProjectModal({
       mode: 'create',
       defaults: {
         projectType,
@@ -339,15 +362,18 @@ export class AppSidebarComponent {
     });
   }
 
-  editProject(project: Project): void {
+  async editProject(project: Project): Promise<void> {
     this.closeMenu();
-    this.composer.openProjectModal({
+    await this.composer.openProjectModal({
       mode: 'edit',
       project,
     });
   }
 
-  async convertProjectType(project: Project, projectType: string): Promise<void> {
+  async convertProjectType(
+    project: Project,
+    projectType: string
+  ): Promise<void> {
     this.closeMenu();
     await this.projectsService.updateProject({
       id: project.id,

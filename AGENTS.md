@@ -33,19 +33,28 @@ Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits ar
 
 ## Configuration & Supabase
 
-Copy `.env.example` to `.env` (remote) and `.local_env` (local). For E2E, use a separate `.local_env.e2e` or `.env.e2e` file. Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_DB_URL`, `SUPABASE_E2E_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY` (for Day-0 migration importer), `ROUTINE_RUNNER_SECRET` (internal header secret for `routine-runner`). E2E DB URL must point to a dedicated test database/branch and must not reuse local dev or remote shared DB URLs. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
+Copy `.env.example` to `.env` (remote) and `.local_env` (local). For E2E, use a separate `.local_env.e2e` or `.env.e2e` file. Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_DB_URL`, `SUPABASE_E2E_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY` (for Day-0 migration importer), `ROUTINE_RUNNER_SECRET` (internal header secret for `routine-runner`). E2E DB URL must point to a dedicated test database/branch and must not reuse local dev or remote shared DB URLs. All database changes must be backward compatible because the application is already running in production; avoid single-step breaking schema changes and prefer additive, phased migrations. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 
-# General Guidelines for working with Nx
+## General Guidelines for working with Nx
 
+- For navigating/exploring the workspace, invoke the `nx-workspace` skill first - it has patterns for querying projects, targets, and dependencies
 - When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- Prefix nx commands with the workspace's package manager (e.g., `pnpm nx build`, `npm exec nx test`) - avoids using globally installed CLI
 - You have access to the Nx MCP server and its tools, use them to help the user
-- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
-- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
-- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
-- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
 - For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
+- NEVER guess CLI flags - always check nx_docs or `--help` first when unsure
+
+## Scaffolding & Generators
+
+- For scaffolding tasks (creating apps, libs, project structure, setup), ALWAYS invoke the `nx-generate` skill FIRST before exploring or calling MCP tools
+
+## When to use nx_docs
+
+- USE for: advanced config options, unfamiliar flags, migration guides, plugin configuration, edge cases
+- DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already know
+- The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->

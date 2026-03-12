@@ -1,5 +1,7 @@
 import {
   ApplicationConfig,
+  ENVIRONMENT_INITIALIZER,
+  inject,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -11,6 +13,7 @@ import {
 } from '@angular/platform-browser';
 import { provideSupabase } from './config/supabase.provider';
 import { environment } from '../environments/environment';
+import { PasswordRecoveryFlowService } from './features/auth/password-recovery-flow.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,5 +27,12 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     provideSupabase(environment.supabase),
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useValue: () => {
+        inject(PasswordRecoveryFlowService);
+      },
+    },
   ],
 };

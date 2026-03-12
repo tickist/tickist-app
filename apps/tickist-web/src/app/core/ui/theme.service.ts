@@ -1,5 +1,11 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import {
+  Injectable,
+  PLATFORM_ID,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 
 export type ThemeName = 'tickist' | 'tickist-light';
 
@@ -28,7 +34,8 @@ export class ThemeService {
   }
 
   private resolveInitialTheme(): ThemeName {
-    const currentTheme = this.document.documentElement.getAttribute('data-theme');
+    const currentTheme =
+      this.document.documentElement.getAttribute('data-theme');
     if (isThemeName(currentTheme)) {
       return currentTheme;
     }

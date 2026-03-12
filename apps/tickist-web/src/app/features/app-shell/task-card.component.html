@@ -1,4 +1,9 @@
-<article class="task-card" [class.simple]="viewMode === 'simple'" [class.completed]="task.isDone">
+<article
+  class="task-card"
+  [class.simple]="viewMode === 'simple'"
+  [class.completed]="task.isDone"
+  [class.task-card--overlay]="projectPickerOpen()"
+>
   <div class="task-card__row">
     <label class="task-card__check">
       <input
@@ -7,359 +12,457 @@
         (click)="$event.preventDefault(); toggleDone(!task.isDone)"
         [style.borderColor]="priorityColor(task.priority)"
         [style.boxShadow]="'0 0 0 1px ' + priorityColor(task.priority)"
-        />
+      />
     </label>
     <div class="task-card__title">
       @if (taskTypeLabel(); as taskTypeBadgeLabel) {
-        <span
-          class="task-card__task-type"
-          [class.task-card__task-type--next-action]="isNextActionTask()"
-          [class.task-card__task-type--need-info]="isNeedInfoTask()"
-          >
-          {{ taskTypeBadgeLabel }}
-        </span>
+      <span
+        class="task-card__task-type"
+        [class.task-card__task-type--next-action]="isNextActionTask()"
+        [class.task-card__task-type--need-info]="isNeedInfoTask()"
+      >
+        {{ taskTypeBadgeLabel }}
+      </span>
       }
       <p class="linkified" [innerHTML]="task.name | linkify"></p>
       @if (taskTimeLabel(); as summary) {
-        <span class="task-card__time">({{ summary }})</span>
+      <span class="task-card__time">({{ summary }})</span>
       }
     </div>
     <div class="task-card__actions">
-      <button type="button" class="icon-btn" [class.active]="task.pinned" title="Pin task" (click)="togglePin()">
+      <button
+        type="button"
+        class="icon-btn"
+        [class.active]="task.pinned"
+        title="Pin task"
+        (click)="togglePin()"
+      >
         📌
       </button>
-      <button type="button" class="icon-btn" title="Edit task" (click)="editTask()">✏️</button>
+      <button
+        type="button"
+        class="icon-btn"
+        title="Edit task"
+        (click)="editTask()"
+      >
+        ✏️
+      </button>
       <div class="task-card__menu">
-        <button type="button" class="icon-btn" title="More actions" (click)="menuOpen.set(!menuOpen())">⋮</button>
+        <button
+          type="button"
+          class="icon-btn"
+          title="More actions"
+          (click)="menuOpen.set(!menuOpen())"
+        >
+          ⋮
+        </button>
         @if (menuOpen()) {
-          <div class="task-menu">
-            <div class="menu__section">
-              <p>Priority</p>
-              @for (level of ['A','B','C']; track level) {
-                <button
-                  type="button"
-                  [class.active]="task.priority?.toUpperCase() === level"
-                  (click)="setPriority(level)"
-                  >
-                  {{ level }}
-                </button>
-              }
-            </div>
-            <div class="menu__section">
-              <p>Task type</p>
-              <button
-                type="button"
-                [class.active]="task.taskType?.toLowerCase() === 'normal'"
-                (click)="setTaskType('normal')"
-                >
-                ▢ Normal
-              </button>
-              <button
-                type="button"
-                [class.active]="task.taskType?.toLowerCase() === 'next_action'"
-                (click)="setTaskType('next_action')"
-                >
-                ⚡ Next action
-              </button>
-              <button
-                type="button"
-                [class.active]="task.taskType?.toLowerCase() === 'need_info'"
-                (click)="setTaskType('need_info')"
-                >
-                🛈 Need info
-              </button>
-            </div>
-            <div class="menu__section">
-              <p>Schedule</p>
-              <button type="button" (click)="setDueToday()">Do it today</button>
-              <button type="button" (click)="shiftDue(1)">+1 day</button>
-              <button type="button" (click)="shiftDue(7)">+1 week</button>
-              <button type="button" (click)="clearDue()">Clear date</button>
-            </div>
-            <button type="button" class="menu__danger" (click)="deleteTask()">Delete</button>
+        <div class="task-menu">
+          <div class="menu__section">
+            <p>Priority</p>
+            @for (level of ['A','B','C']; track level) {
+            <button
+              type="button"
+              [class.active]="task.priority?.toUpperCase() === level"
+              (click)="setPriority(level)"
+            >
+              {{ level }}
+            </button>
+            }
           </div>
+          <div class="menu__section">
+            <p>Task type</p>
+            <button
+              type="button"
+              [class.active]="task.taskType?.toLowerCase() === 'normal'"
+              (click)="setTaskType('normal')"
+            >
+              ▢ Normal
+            </button>
+            <button
+              type="button"
+              [class.active]="task.taskType?.toLowerCase() === 'next_action'"
+              (click)="setTaskType('next_action')"
+            >
+              ⚡ Next action
+            </button>
+            <button
+              type="button"
+              [class.active]="task.taskType?.toLowerCase() === 'need_info'"
+              (click)="setTaskType('need_info')"
+            >
+              🛈 Need info
+            </button>
+          </div>
+          <div class="menu__section">
+            <p>Schedule</p>
+            <button type="button" (click)="setDueToday()">Do it today</button>
+            <button type="button" (click)="shiftDue(1)">+1 day</button>
+            <button type="button" (click)="shiftDue(7)">+1 week</button>
+            <button type="button" (click)="clearDue()">Clear date</button>
+          </div>
+          <button type="button" class="menu__danger" (click)="deleteTask()">
+            Delete
+          </button>
+        </div>
         }
       </div>
     </div>
   </div>
 
   @if (finishDateLabel(); as finishDateLabel) {
-    <div class="task-card__date">
-      <span class="task-card__date-icon">{{ finishDateModeIcon() }}</span>
-      <span>{{ finishDateLabel }}</span>
+  <div class="task-card__date">
+    <span class="task-card__date-icon">{{ finishDateModeIcon() }}</span>
+    <span>{{ finishDateLabel }}</span>
+  </div>
+  } @if (viewMode === 'extended' && progressPercent(); as percent) {
+  <div class="task-card__progress">
+    <div class="progress">
+      <div class="progress__fill" [style.width.%]="percent"></div>
     </div>
-  }
-
-  @if (viewMode === 'extended' && progressPercent(); as percent) {
-    <div class="task-card__progress">
-      <div class="progress">
-        <div class="progress__fill" [style.width.%]="percent"></div>
-      </div>
+  </div>
+  } @if (viewMode === 'extended') {
+  <div class="task-card__toolbar">
+    <button
+      type="button"
+      class="toolbar-btn toolbar-btn--persistent active"
+      title="Change project"
+      (click)="toggleProjectPicker()"
+    >
+      <span class="toolbar-btn__icon" aria-hidden="true">📁</span>
+    </button>
+    <button
+      type="button"
+      class="toolbar-btn"
+      data-testid="task-toolbar-description"
+      [class.configured]="hasDescription()"
+      [class.active]="descriptionOpen()"
+      [attr.title]="descriptionStatusLabel()"
+      [attr.aria-label]="descriptionStatusLabel()"
+      (click)="toggleDescription()"
+    >
+      <span class="toolbar-btn__icon" aria-hidden="true">💬</span>
+    </button>
+    <button
+      type="button"
+      class="toolbar-btn"
+      data-testid="task-toolbar-tags"
+      [class.configured]="hasTags()"
+      [class.active]="tagsOpen()"
+      [attr.title]="tagsStatusLabel()"
+      [attr.aria-label]="tagsStatusLabel()"
+      (click)="toggleTags()"
+    >
+      <span class="toolbar-btn__icon" aria-hidden="true">🏷️</span>
+    </button>
+    <button
+      type="button"
+      class="toolbar-btn"
+      data-testid="task-toolbar-repeat"
+      [class.configured]="hasRepeat()"
+      [class.active]="repeatOpen()"
+      [attr.title]="repeatStatusLabel()"
+      [attr.aria-label]="repeatStatusLabel()"
+      (click)="toggleRepeat()"
+    >
+      <span class="toolbar-btn__icon" aria-hidden="true">🔁</span>
+    </button>
+    <button
+      type="button"
+      class="toolbar-btn"
+      data-testid="task-toolbar-steps"
+      [class.configured]="hasSteps()"
+      [class.active]="stepsOpen()"
+      [attr.title]="stepsStatusLabel()"
+      [attr.aria-label]="stepsStatusLabel()"
+      (click)="toggleSteps()"
+    >
+      <span class="toolbar-btn__icon" aria-hidden="true">☑️</span>
+    </button>
+  </div>
+  } @if (projectPickerOpen()) {
+  <section class="task-card__panel">
+    <div class="panel-field">
+      <span class="panel-label">Project</span>
+      <app-project-picker
+        ariaLabel="Select project for task"
+        [projects]="projects()"
+        [selectedProjectId]="task.projectId || ''"
+        emptyOptionLabel="Inbox"
+        emptyOptionIcon="inbox"
+        (selectedProjectIdChange)="changeProject($event)"
+      ></app-project-picker>
     </div>
-  }
-
-  @if (viewMode === 'extended') {
-    <div class="task-card__toolbar">
+  </section>
+  } @if (descriptionOpen()) {
+  <section class="task-card__panel task-card__panel--description">
+    <div class="description-header">
+      <p class="panel-label">Description</p>
+      @if (!descriptionEditing()) {
       <button
         type="button"
-        class="toolbar-btn toolbar-btn--persistent active"
-        title="Change project"
-        (click)="toggleProjectPicker()"
-        >
-        📁
+        class="description-edit-btn"
+        (click)="beginDescriptionEdit()"
+      >
+        {{ hasDescription() ? 'Edit' : 'Add' }}
+      </button>
+      }
+    </div>
+    @if (!descriptionEditing() && hasDescription()) {
+    <div
+      class="description-content task-description linkified"
+      [innerHTML]="task.description | linkify"
+    ></div>
+    } @else { @if (descriptionEditing()) {
+    <label class="panel-field">
+      <textarea
+        rows="4"
+        placeholder="Add context, links, or notes..."
+        [value]="descriptionDraft()"
+        (input)="descriptionDraft.set($any($event.target).value)"
+      ></textarea>
+    </label>
+    <div class="panel-actions description-actions">
+      <button
+        class="description-btn description-btn--ghost"
+        type="button"
+        (click)="cancelDescriptionEdit()"
+      >
+        Cancel
       </button>
       <button
+        class="description-btn description-btn--primary"
         type="button"
-        class="toolbar-btn"
-        data-testid="task-toolbar-description"
-        [class.configured]="hasDescription()"
-        [class.active]="descriptionOpen()"
-        [attr.title]="descriptionStatusLabel()"
-        [attr.aria-label]="descriptionStatusLabel()"
-        (click)="toggleDescription()"
-        >
-        💬
-      </button>
-      <button
-        type="button"
-        class="toolbar-btn"
-        data-testid="task-toolbar-tags"
-        [class.configured]="hasTags()"
-        [class.active]="tagsOpen()"
-        [attr.title]="tagsStatusLabel()"
-        [attr.aria-label]="tagsStatusLabel()"
-        (click)="toggleTags()"
-        >
-        🏷️
-      </button>
-      <button
-        type="button"
-        class="toolbar-btn"
-        data-testid="task-toolbar-repeat"
-        [class.configured]="hasRepeat()"
-        [class.active]="repeatOpen()"
-        [attr.title]="repeatStatusLabel()"
-        [attr.aria-label]="repeatStatusLabel()"
-        (click)="toggleRepeat()"
-        >
-        🔁
-      </button>
-      <button
-        type="button"
-        class="toolbar-btn"
-        data-testid="task-toolbar-steps"
-        [class.configured]="hasSteps()"
-        [class.active]="stepsOpen()"
-        [attr.title]="stepsStatusLabel()"
-        [attr.aria-label]="stepsStatusLabel()"
-        (click)="toggleSteps()"
-        >
-        ☑️
+        (click)="saveDescription()"
+      >
+        Save
       </button>
     </div>
-  }
-
-  @if (projectPickerOpen()) {
-    <section class="task-card__panel">
-      <div class="panel-field">
-        <span class="panel-label">Project</span>
-        <app-project-picker
-          ariaLabel="Select project for task"
-          [projects]="projects()"
-          [selectedProjectId]="task.projectId || ''"
-          emptyOptionLabel="Inbox"
-          emptyOptionIcon="inbox"
-          (selectedProjectIdChange)="changeProject($event)"
-        ></app-project-picker>
-      </div>
-    </section>
-  }
-
-  @if (descriptionOpen()) {
-    <section class="task-card__panel task-card__panel--description">
-      <div class="description-header">
-        <p class="panel-label">Description</p>
-        @if (!descriptionEditing()) {
-          <button
-            type="button"
-            class="description-edit-btn"
-            (click)="beginDescriptionEdit()"
-            >
-            {{ hasDescription() ? 'Edit' : 'Add' }}
-          </button>
-        }
-      </div>
-      @if (!descriptionEditing() && hasDescription()) {
+    } @else {
+    <p class="description-empty">No description yet.</p>
+    } }
+  </section>
+  } @if (tagsOpen()) {
+  <section class="task-card__panel">
+    @if (task.tags.length) {
+    <div class="tag-chips">
+      @for (tagId of task.tags; track tagId) {
+      <span class="chip">
+        {{ tagName(tagId) }}
+        <button type="button" (click)="removeTag(tagId)">×</button>
+      </span>
+      }
+    </div>
+    } @else {
+    <p class="panel-hint">No tags yet.</p>
+    }
+    <div class="tag-add">
+      @if (filteredAvailableTags().length) {
+      <div class="tag-add__picker">
+        <button
+          #tagMenuTrigger
+          type="button"
+          class="tag-add__trigger"
+          aria-label="Add existing tag"
+          aria-haspopup="listbox"
+          [attr.aria-expanded]="tagMenuOpen()"
+          [attr.aria-controls]="tagMenuId"
+          (click)="toggleTagMenu()"
+          (keydown)="onTagMenuTriggerKeydown($event)"
+        >
+          <span>Add existing tag…</span>
+          <span class="tag-add__chevron" [class.tag-add__chevron--open]="tagMenuOpen()">
+            ▾
+          </span>
+        </button>
+        @if (tagMenuOpen()) {
         <div
-          class="description-content task-description linkified"
-          [innerHTML]="task.description | linkify"
-        ></div>
-      } @else {
-        @if (descriptionEditing()) {
-          <label class="panel-field">
-            <textarea
-              rows="4"
-              placeholder="Add context, links, or notes..."
-              [value]="descriptionDraft()"
-              (input)="descriptionDraft.set($any($event.target).value)"
-            ></textarea>
-          </label>
-          <div class="panel-actions description-actions">
-            <button class="description-btn description-btn--ghost" type="button" (click)="cancelDescriptionEdit()">
-              Cancel
-            </button>
-            <button class="description-btn description-btn--primary" type="button" (click)="saveDescription()">
-              Save
-            </button>
-          </div>
-        } @else {
-          <p class="description-empty">No description yet.</p>
-        }
-      }
-    </section>
-  }
-
-  @if (tagsOpen()) {
-    <section class="task-card__panel">
-      @if (task.tags.length) {
-        <div class="tag-chips">
-          @for (tagId of task.tags; track tagId) {
-            <span class="chip">
-              {{ tagName(tagId) }}
-              <button type="button" (click)="removeTag(tagId)">×</button>
-            </span>
+          class="tag-add__menu"
+          [id]="tagMenuId"
+          role="listbox"
+          aria-label="Add existing tag"
+        >
+          @for (option of filteredAvailableTags(); track option.id; let index = $index) {
+          <button
+            #tagMenuOption
+            type="button"
+            role="option"
+            class="tag-add__option"
+            [id]="tagMenuOptionId(index)"
+            aria-selected="false"
+            (click)="selectTagFromMenu(option.id)"
+            (keydown)="onTagMenuOptionKeydown($event, index)"
+          >
+          {{ option.name }}
+          </button>
           }
         </div>
+        }
+      </div>
       } @else {
-        <p class="panel-hint">No tags yet.</p>
+      <p class="panel-hint">No matching tags on the list.</p>
       }
-      @if (availableTagsToAdd().length) {
-        <div class="tag-add">
-          <select (change)="addTagFromSelect($any($event.target))">
-            <option value="">Add tag…</option>
-            @for (option of availableTagsToAdd(); track option) {
-              <option [value]="option.id">
-                {{ option.name }}
-              </option>
-            }
-          </select>
-        </div>
-      }
-    </section>
-  }
 
-  @if (repeatOpen()) {
-    <section class="task-card__panel">
-      <p class="panel-label">Repeat</p>
-      <div class="repeat-grid">
-        @for (option of repeatOptions; track option) {
+      <div class="tag-add__create">
+        <input
+          type="text"
+          class="tag-add__input"
+          placeholder="Create or find tag"
+          aria-label="Create or find tag"
+          [value]="tagSearch()"
+          (input)="updateTagSearch($any($event.target).value)"
+          (keydown.enter)="handleTagSearchEnter($event)"
+        />
+        <button
+          type="button"
+          class="tag-add__button"
+          [disabled]="!canSubmitTagSearch()"
+          (click)="addOrCreateTag()"
+        >
+          {{ tagSearchActionLabel() }}
+        </button>
+      </div>
+    </div>
+  </section>
+  } @if (repeatOpen()) {
+  <section class="task-card__panel">
+    <p class="panel-label">Repeat</p>
+    <div class="repeat-grid">
+      @for (option of repeatOptions; track option) {
+      <button
+        type="button"
+        [class.active]="isRepeatOptionActive(option.mode)"
+        (click)="setRepeatInterval(option.mode)"
+      >
+        {{ option.label }}
+      </button>
+      }
+    </div>
+    @if (isCustomRepeatEditorVisible()) {
+    <div class="repeat-custom">
+      <p class="panel-label panel-label--inline">Every</p>
+      <div class="repeat-custom__controls">
+        <input
+          type="number"
+          min="1"
+          class="repeat-custom__input"
+          [value]="customRepeatEvery()"
+          (input)="setCustomRepeatEvery($any($event.target).value)"
+        />
+        <select
+          class="repeat-custom__select"
+          [value]="customRepeatUnit()"
+          (change)="setCustomRepeatUnit($any($event.target).value)"
+        >
+          <option value="day">days</option>
+          <option value="week">weeks</option>
+          <option value="month">months</option>
+          <option value="year">years</option>
+        </select>
+        <button
+          type="button"
+          class="repeat-custom__apply"
+          (click)="applyCustomRepeat()"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+    } @if (currentRepeatMode() !== 'never') {
+    <div class="repeat-from">
+      <p class="panel-label panel-label--inline">
+        From
+        <span
+          class="repeat-from__info"
+          role="note"
+          tabindex="0"
+          [attr.title]="repeatFromHelpText"
+          [attr.aria-label]="repeatFromHelpText"
+        >
+          i
+        </span>
+      </p>
+      <div class="repeat-from__options">
+        <button
+          type="button"
+          [class.active]="currentRepeatFromMode() === 'completion_date'"
+          (click)="setRepeatFrom('completion_date')"
+        >
+          completion date
+        </button>
+        <button
+          type="button"
+          [class.active]="currentRepeatFromMode() === 'due_date'"
+          (click)="setRepeatFrom('due_date')"
+        >
+          due date
+        </button>
+      </div>
+      @if (!canRepeatFromDueDate()) {
+      <p class="panel-hint">
+        No due date set. Repeat uses completion date by default.
+      </p>
+      }
+    </div>
+    }
+  </section>
+  } @if (stepsOpen()) {
+  <section class="task-card__panel">
+    @if (task.steps.length) {
+    <div class="step-list">
+      @for (step of task.steps; track step; let i = $index) {
+      <div class="step-item">
+        <label class="step-check">
+          <input
+            type="checkbox"
+            [checked]="step.isDone"
+            (change)="toggleStep(step, $any($event.target).checked)"
+          />
+        </label>
+        <span
+          class="step-title linkified"
+          [class.line-through]="step.isDone"
+          [innerHTML]="step.content | linkify"
+        ></span>
+        <div class="step-controls">
           <button
             type="button"
-            [class.active]="isRepeatOptionActive(option.mode)"
-            (click)="setRepeatInterval(option.mode)"
-            >
-            {{ option.label }}
+            (click)="moveStep(step, 'up')"
+            [disabled]="i === 0"
+          >
+            ↑
           </button>
-        }
+          <button
+            type="button"
+            (click)="moveStep(step, 'down')"
+            [disabled]="i === task.steps.length - 1"
+          >
+            ↓
+          </button>
+          <button
+            type="button"
+            class="step-remove"
+            aria-label="Remove step"
+            (click)="removeStep(step)"
+          >
+            ✕
+          </button>
+        </div>
       </div>
-      @if (isCustomRepeatEditorVisible()) {
-        <div class="repeat-custom">
-          <p class="panel-label panel-label--inline">Every</p>
-          <div class="repeat-custom__controls">
-            <input
-              type="number"
-              min="1"
-              class="repeat-custom__input"
-              [value]="customRepeatEvery()"
-              (input)="setCustomRepeatEvery($any($event.target).value)"
-              />
-            <select
-              class="repeat-custom__select"
-              [value]="customRepeatUnit()"
-              (change)="setCustomRepeatUnit($any($event.target).value)"
-              >
-              <option value="day">days</option>
-              <option value="week">weeks</option>
-              <option value="month">months</option>
-              <option value="year">years</option>
-            </select>
-            <button type="button" class="repeat-custom__apply" (click)="applyCustomRepeat()">
-              Apply
-            </button>
-          </div>
-        </div>
       }
-      @if (currentRepeatMode() !== 'never') {
-        <div class="repeat-from">
-          <p class="panel-label panel-label--inline">
-            From
-            <span
-              class="repeat-from__info"
-              role="note"
-              tabindex="0"
-              [attr.title]="repeatFromHelpText"
-              [attr.aria-label]="repeatFromHelpText"
-              >
-              i
-            </span>
-          </p>
-          <div class="repeat-from__options">
-            <button
-              type="button"
-              [class.active]="currentRepeatFromMode() === 'completion_date'"
-              (click)="setRepeatFrom('completion_date')"
-              >
-              completion date
-            </button>
-            <button
-              type="button"
-              [class.active]="currentRepeatFromMode() === 'due_date'"
-              (click)="setRepeatFrom('due_date')"
-              >
-              due date
-            </button>
-          </div>
-          @if (!canRepeatFromDueDate()) {
-            <p class="panel-hint">
-              No due date set. Repeat uses completion date by default.
-            </p>
-          }
-        </div>
-      }
-    </section>
-  }
-
-  @if (stepsOpen()) {
-    <section class="task-card__panel">
-      @if (task.steps.length) {
-        <div class="step-list">
-          @for (step of task.steps; track step; let i = $index) {
-            <div class="step-item">
-              <label class="step-check">
-                <input type="checkbox" [checked]="step.isDone" (change)="toggleStep(step, $any($event.target).checked)" />
-              </label>
-              <span
-                class="step-title linkified"
-                [class.line-through]="step.isDone"
-                [innerHTML]="step.content | linkify"
-              ></span>
-              <div class="step-controls">
-                <button type="button" (click)="moveStep(step, 'up')" [disabled]="i === 0">↑</button>
-                <button type="button" (click)="moveStep(step, 'down')" [disabled]="i === task.steps.length - 1">↓</button>
-                <button type="button" class="step-remove" aria-label="Remove step" (click)="removeStep(step)">
-                  ✕
-                </button>
-              </div>
-            </div>
-          }
-        </div>
-      } @else {
-        <p class="panel-hint">No steps yet.</p>
-      }
-      <div class="step-add">
-        <input type="text" placeholder="Add step" [value]="newStepDraft()" (input)="newStepDraft.set($any($event.target).value)" />
-        <button type="button" (click)="addStep()">Add</button>
-      </div>
-    </section>
+    </div>
+    } @else {
+    <p class="panel-hint">No steps yet.</p>
+    }
+    <div class="step-add">
+      <input
+        type="text"
+        placeholder="Add step"
+        [value]="newStepDraft()"
+        (input)="newStepDraft.set($any($event.target).value)"
+      />
+      <button type="button" (click)="addStep()">Add</button>
+    </div>
+  </section>
   }
 </article>

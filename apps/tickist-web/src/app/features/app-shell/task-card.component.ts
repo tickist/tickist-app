@@ -1,8 +1,12 @@
 import {
   Component,
+  ElementRef,
   Input,
   OnChanges,
+  QueryList,
   SimpleChanges,
+  ViewChild,
+  ViewChildren,
   computed,
   inject,
   signal,
@@ -33,23 +37,36 @@ type RepeatMode =
 type RepeatUnit = 'day' | 'week' | 'month' | 'year';
 type RepeatFromMode = 'completion_date' | 'due_date';
 
+let nextTaskCardId = 0;
+
 @Component({
   selector: 'app-task-card',
   standalone: true,
   imports: [LinkifyPipe, ProjectPickerComponent],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
+  host: {
+    '(document:mousedown)': 'handleDocumentMouseDown($event)',
+    '(document:keydown.escape)': 'handleEscapeKey()',
+  },
 })
 export class TaskCardComponent implements OnChanges {
   @Input({ required: true }) task!: Task;
   @Input() project: Project | null = null;
   @Input() viewMode: TaskViewMode = 'extended';
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly instanceId = nextTaskCardId++;
   private readonly tasks = inject(TaskDataService);
   private readonly tagsService = inject(TagDataService);
   private readonly projectsService = inject(ProjectDataService);
   private readonly composer = inject(ComposerModalService);
   private readonly toasts = inject(ToastService);
+
+  @ViewChild('tagMenuTrigger')
+  private tagMenuTrigger?: ElementRef<HTMLButtonElement>;
+  @ViewChildren('tagMenuOption')
+  private tagMenuOptions?: QueryList<ElementRef<HTMLButtonElement>>;
 
   readonly tagLookup = computed(() => {
     const map = new Map<string, Tag>();
@@ -66,7 +83,9 @@ export class TaskCardComponent implements OnChanges {
   readonly projectPickerOpen = signal(false);
   readonly descriptionEditing = signal(false);
   readonly menuOpen = signal(false);
+  readonly tagMenuOpen = signal(false);
   readonly descriptionDraft = signal('');
+  readonly tagSearch = signal('');
   readonly newStepDraft = signal('');
   readonly customRepeatEvery = signal(1);
   readonly customRepeatUnit = signal<RepeatUnit>('day');
@@ -82,6 +101,7 @@ export class TaskCardComponent implements OnChanges {
   ];
   readonly repeatFromHelpText =
     'If due date is empty, Tickist uses completion date as the repeat anchor.';
+  readonly tagMenuId = `task-card-tag-menu-${this.instanceId}`;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['task']) {
@@ -236,8 +256,8 @@ export class TaskCardComponent implements OnChanges {
     );
   }
 
-  editTask(): void {
-    this.composer.openTaskModal({ mode: 'edit', task: this.task });
+  async editTask(): Promise<void> {
+    await this.composer.openTaskModal({ mode: 'edit', task: this.task });
   }
 
   async deleteTask(): Promise<void> {
@@ -283,7 +303,9 @@ export class TaskCardComponent implements OnChanges {
   }
 
   async shiftDue(days: number): Promise<void> {
-    const base = this.task.finishDate ? new Date(this.task.finishDate) : new Date();
+    const base = this.task.finishDate
+      ? new Date(this.task.finishDate)
+      : new Date();
     base.setDate(base.getDate() + days);
     await this.mutateTask(
       { id: this.task.id, finishDate: base.toISOString() },
@@ -354,27 +376,70 @@ export class TaskCardComponent implements OnChanges {
     return this.tagLookup().get(tagId)?.name ?? 'Tag';
   }
 
-  addTag(tagId: string): void {
-    if (!tagId) {
-      return;
+  async addTag(
+    tagId: string,
+    successMessage = 'Tag added.'
+  ): Promise<boolean> {
+    if (!tagId || this.task.tags.includes(tagId)) {
+      return false;
     }
     const next = Array.from(new Set([...this.task.tags, tagId]));
-    void this.mutateTask(
+    return this.mutateTask(
       { id: this.task.id, tags: next },
-      'Tag added.',
+      successMessage,
       'Failed to add tag.'
     );
   }
 
-  addTagFromSelect(target: HTMLSelectElement | null): void {
-    if (!target) {
+  selectTagFromMenu(tagId: string): void {
+    if (!tagId) {
       return;
     }
-    const value = target.value;
-    if (value) {
-      this.addTag(value);
+    void this.addTag(tagId);
+    this.closeTagMenu();
+  }
+
+  async addOrCreateTag(): Promise<void> {
+    const trimmed = this.tagSearch().trim();
+    if (!trimmed) {
+      return;
     }
-    target.value = '';
+
+    const existing = this.findTagByName(trimmed);
+    if (existing) {
+      if (this.task.tags.includes(existing.id)) {
+        this.toasts.info('This tag is already attached to the task.');
+        return;
+      }
+      const added = await this.addTag(existing.id);
+      if (added) {
+        this.tagSearch.set('');
+      }
+      return;
+    }
+
+    const ownerId = this.task.ownerId?.trim();
+    if (!ownerId) {
+      this.toasts.error('Unable to create tag without an owner.');
+      return;
+    }
+
+    try {
+      const created = await this.tagsService.createTag({
+        ownerId,
+        name: trimmed,
+      });
+      if (!created) {
+        throw new Error('Tag creation returned null');
+      }
+      const added = await this.addTag(created.id, 'Tag created and added.');
+      if (added) {
+        this.tagSearch.set('');
+      }
+    } catch (error) {
+      console.error('[TaskCard] Tag creation failed', error);
+      this.toasts.error('Failed to create tag.');
+    }
   }
 
   removeTag(tagId: string): void {
@@ -391,10 +456,129 @@ export class TaskCardComponent implements OnChanges {
     return this.tagsService.list().filter((tag) => !taken.has(tag.id));
   }
 
+  filteredAvailableTags(): Tag[] {
+    const query = this.tagSearch().trim().toLowerCase();
+    return this.availableTagsToAdd().filter((tag) =>
+      query ? tag.name.toLowerCase().includes(query) : true
+    );
+  }
+
+  canSubmitTagSearch(): boolean {
+    const trimmed = this.tagSearch().trim();
+    if (!trimmed) {
+      return false;
+    }
+    const existing = this.findTagByName(trimmed);
+    return !existing || !this.task.tags.includes(existing.id);
+  }
+
+  tagSearchActionLabel(): string {
+    const trimmed = this.tagSearch().trim();
+    if (!trimmed) {
+      return 'Create tag';
+    }
+    const existing = this.findTagByName(trimmed);
+    if (!existing) {
+      return 'Create tag';
+    }
+    return this.task.tags.includes(existing.id) ? 'Already added' : 'Add existing';
+  }
+
+  handleTagSearchEnter(event: Event): void {
+    event.preventDefault();
+    if (!this.canSubmitTagSearch()) {
+      return;
+    }
+    void this.addOrCreateTag();
+  }
+
+  updateTagSearch(value: string): void {
+    this.tagSearch.set(value);
+    if (this.tagMenuOpen() && !this.filteredAvailableTags().length) {
+      this.closeTagMenu();
+    }
+  }
+
+  toggleTagMenu(): void {
+    if (this.tagMenuOpen()) {
+      this.closeTagMenu(true);
+      return;
+    }
+    this.openTagMenu();
+  }
+
+  onTagMenuTriggerKeydown(event: KeyboardEvent): void {
+    if (
+      event.key === 'ArrowDown' ||
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+      event.preventDefault();
+      this.openTagMenu();
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeTagMenu(true);
+    }
+  }
+
+  onTagMenuOptionKeydown(event: KeyboardEvent, index: number): void {
+    const total = this.filteredAvailableTags().length;
+    if (!total) {
+      return;
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.focusTagOption((index + 1) % total);
+      return;
+    }
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.focusTagOption((index - 1 + total) % total);
+      return;
+    }
+    if (event.key === 'Home') {
+      event.preventDefault();
+      this.focusTagOption(0);
+      return;
+    }
+    if (event.key === 'End') {
+      event.preventDefault();
+      this.focusTagOption(total - 1);
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeTagMenu(true);
+    }
+  }
+
+  tagMenuOptionId(index: number): string {
+    return `${this.tagMenuId}-option-${index}`;
+  }
+
   toggleTags(): void {
     const next = !this.tagsOpen();
     this.closeAllPanels();
     this.tagsOpen.set(next);
+  }
+
+  handleDocumentMouseDown(event: MouseEvent): void {
+    if (!this.tagMenuOpen()) {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof Node)) {
+      return;
+    }
+    if (!this.host.nativeElement.contains(target)) {
+      this.closeTagMenu();
+    }
+  }
+
+  handleEscapeKey(): void {
+    this.closeTagMenu(true);
   }
 
   toggleRepeat(): void {
@@ -414,7 +598,7 @@ export class TaskCardComponent implements OnChanges {
     }
     this.repeatDraftMode.set(null);
     const interval = this.getRepeatInterval(mode);
-    const fromRepeating = interval > 0 ? (this.task.fromRepeating ?? 0) : null;
+    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
     await this.mutateTask(
       { id: this.task.id, repeatInterval: interval, fromRepeating },
       'Repeat cadence updated.',
@@ -425,16 +609,20 @@ export class TaskCardComponent implements OnChanges {
   isRepeatOptionActive(mode: RepeatMode): boolean {
     if (mode === 'custom') {
       return (
-        this.currentRepeatMode() === 'custom' || this.repeatDraftMode() === 'custom'
+        this.currentRepeatMode() === 'custom' ||
+        this.repeatDraftMode() === 'custom'
       );
     }
-    return this.currentRepeatMode() === mode && this.repeatDraftMode() !== 'custom';
+    return (
+      this.currentRepeatMode() === mode && this.repeatDraftMode() !== 'custom'
+    );
   }
 
   isCustomRepeatEditorVisible(): boolean {
     return (
       this.repeatOpen() &&
-      (this.currentRepeatMode() === 'custom' || this.repeatDraftMode() === 'custom')
+      (this.currentRepeatMode() === 'custom' ||
+        this.repeatDraftMode() === 'custom')
     );
   }
 
@@ -461,7 +649,7 @@ export class TaskCardComponent implements OnChanges {
       this.customRepeatEvery(),
       this.customRepeatUnit()
     );
-    const fromRepeating = interval > 0 ? (this.task.fromRepeating ?? 0) : null;
+    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
     await this.mutateTask(
       { id: this.task.id, repeatInterval: interval, fromRepeating },
       'Repeat cadence updated.',
@@ -621,9 +809,7 @@ export class TaskCardComponent implements OnChanges {
       case 'yearly':
         return 365;
       case 'custom':
-        return (
-          Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit)
-        );
+        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
       default:
         return this.task.repeatInterval ?? 0;
     }
@@ -641,9 +827,11 @@ export class TaskCardComponent implements OnChanges {
     return !!this.task.finishDate;
   }
 
-  private deriveRepeatMode(
-    interval: number | null | undefined
-  ): { mode: RepeatMode; every: number; unit: RepeatUnit } {
+  private deriveRepeatMode(interval: number | null | undefined): {
+    mode: RepeatMode;
+    every: number;
+    unit: RepeatUnit;
+  } {
     if (!interval || interval <= 0) {
       return { mode: 'never', every: 1, unit: 'day' };
     }
@@ -727,12 +915,47 @@ export class TaskCardComponent implements OnChanges {
     return (this.task.taskType ?? '').trim().toLowerCase();
   }
 
+  private findTagByName(name: string): Tag | undefined {
+    const normalizedName = name.trim().toLowerCase();
+    if (!normalizedName) {
+      return undefined;
+    }
+    return this.tagsService
+      .list()
+      .find((tag) => tag.name.trim().toLowerCase() === normalizedName);
+  }
+
   private closeAllPanels(): void {
     this.projectPickerOpen.set(false);
     this.descriptionOpen.set(false);
     this.tagsOpen.set(false);
+    this.tagMenuOpen.set(false);
+    this.tagSearch.set('');
     this.repeatOpen.set(false);
     this.repeatDraftMode.set(null);
     this.stepsOpen.set(false);
+  }
+
+  private openTagMenu(): void {
+    if (!this.filteredAvailableTags().length) {
+      return;
+    }
+    this.tagMenuOpen.set(true);
+    queueMicrotask(() => this.focusTagOption(0));
+  }
+
+  private closeTagMenu(restoreFocus = false): void {
+    if (!this.tagMenuOpen()) {
+      return;
+    }
+    this.tagMenuOpen.set(false);
+    if (restoreFocus) {
+      queueMicrotask(() => this.tagMenuTrigger?.nativeElement.focus());
+    }
+  }
+
+  private focusTagOption(index: number): void {
+    const options = this.tagMenuOptions?.toArray() ?? [];
+    options[index]?.nativeElement.focus();
   }
 }

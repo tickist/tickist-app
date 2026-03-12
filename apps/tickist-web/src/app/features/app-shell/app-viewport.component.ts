@@ -1,6 +1,18 @@
-import { Component, computed, effect, inject, signal, OnDestroy } from '@angular/core';
-import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  OnDestroy,
+} from '@angular/core';
+import {
+  RouterOutlet,
+  RouterLink,
+  Router,
+  NavigationEnd,
+} from '@angular/router';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { NotificationDataService } from '../../data/notification-data.service';
@@ -18,10 +30,11 @@ import { ThemeService } from '../../core/ui/theme.service';
     RouterOutlet,
     RouterLink,
     DatePipe,
+    NgOptimizedImage,
     AppSidebarComponent,
     TaskFabComponent,
-    ToastContainerComponent
-],
+    ToastContainerComponent,
+  ],
   templateUrl: './app-viewport.component.html',
   styleUrl: './app-viewport.component.css',
 })
@@ -47,18 +60,29 @@ export class AppViewportComponent implements OnDestroy {
   readonly notifications = this.notificationsService.list;
   readonly notificationsLoading = this.notificationsService.loadingState;
   readonly unreadNotifications = computed(
-    () => this.notifications().filter((notification) => !notification.isRead).length
+    () =>
+      this.notifications().filter((notification) => !notification.isRead).length
   );
   readonly notificationsOpen = signal(false);
   readonly profileMenuOpen = signal(false);
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
+  readonly currentUrl = signal(this.router.url);
   readonly isDarkTheme = this.themeService.isDark;
+  readonly brandLogoSrc = computed(() =>
+    this.isDarkTheme() ? '/images/logo_230.png' : '/images/logo-light_230.png'
+  );
   readonly themeButtonLabel = computed(() =>
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
+  readonly showTaskFab = computed(() => !isSheetRoute(this.currentUrl()));
 
   constructor() {
+    const initialUrl = this.router.url;
+    if (isRememberedAppUrl(initialUrl)) {
+      this.viewState.rememberLastNonSheetAppUrl(initialUrl);
+    }
+
     effect(() => {
       const user = this.user();
       if (user) {
@@ -70,8 +94,16 @@ export class AppViewportComponent implements OnDestroy {
     });
 
     this.routerSub = this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe(() => {
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
+      .subscribe((event) => {
+        this.currentUrl.set(event.urlAfterRedirects);
+        if (isRememberedAppUrl(event.urlAfterRedirects)) {
+          this.viewState.rememberLastNonSheetAppUrl(event.urlAfterRedirects);
+        }
         this.profileMenuOpen.set(false);
         this.notificationsOpen.set(false);
         this.sidebarOpen.set(false);
@@ -151,7 +183,9 @@ function getUserMetadata(value: unknown): Record<string, unknown> {
 }
 
 function asOptionalString(value: unknown): string | null {
-  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+  return typeof value === 'string' && value.trim().length > 0
+    ? value.trim()
+    : null;
 }
 
 function appendCacheVersion(url: string, version: string | null): string {
@@ -160,4 +194,45 @@ function appendCacheVersion(url: string, version: string | null): string {
   }
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}v=${encodeURIComponent(version)}`;
+}
+
+export function isRememberedAppUrl(url: string): boolean {
+  const path = normalizeAppUrlPath(url);
+
+  if (!path.startsWith('/app')) {
+    return false;
+  }
+
+  if (path === '/app/settings') {
+    return false;
+  }
+
+  if (path === '/app/task/new' || /^\/app\/task\/[^/]+\/edit$/.test(path)) {
+    return false;
+  }
+
+  if (
+    path === '/app/project/new' ||
+    /^\/app\/project\/[^/]+\/edit$/.test(path)
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+export function isSheetRoute(url: string): boolean {
+  const path = normalizeAppUrlPath(url);
+
+  return (
+    path === '/app/settings' ||
+    path === '/app/task/new' ||
+    /^\/app\/task\/[^/]+\/edit$/.test(path) ||
+    path === '/app/project/new' ||
+    /^\/app\/project\/[^/]+\/edit$/.test(path)
+  );
+}
+
+function normalizeAppUrlPath(url: string): string {
+  return url.split(/[?#]/, 1)[0] ?? url;
 }

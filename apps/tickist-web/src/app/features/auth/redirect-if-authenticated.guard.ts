@@ -8,7 +8,7 @@ export const redirectIfAuthenticatedGuard: CanActivateFn = async () => {
 
   await session.waitUntilReady();
 
-  if (session.user()) {
+  if (session.user() && !session.passwordRecoveryPending()) {
     return router.createUrlTree(['/app']);
   }
 

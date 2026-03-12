@@ -6,27 +6,34 @@
   [attr.aria-pressed]="!isDarkTheme()"
   [attr.title]="themeButtonLabel()"
   (click)="toggleTheme()"
-  >
+>
   <span class="theme-toggle-btn__icon" aria-hidden="true">
     {{ isDarkTheme() ? '☀️' : '🌙' }}
   </span>
 </button>
 <section
   class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl border border-white/10 bg-base-200/60 p-8 shadow-2xl shadow-black/30 backdrop-blur"
-  >
+>
   <header class="space-y-2 text-center">
-    <p class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60">
+    <p
+      class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60"
+    >
       Sign in
     </p>
     <h1 class="text-2xl font-semibold text-base-content">
       Continue with your email
     </h1>
     <p class="text-sm text-base-content/70">
-      Enter your Supabase credentials. You’ll be redirected to the workspace on success.
+      Enter your Supabase credentials. You’ll be redirected to the workspace on
+      success.
     </p>
   </header>
 
-  <form class="flex flex-col gap-6" [formGroup]="form" (ngSubmit)="handleSubmit()">
+  <form
+    class="flex flex-col gap-6"
+    [formGroup]="form"
+    (ngSubmit)="handleSubmit()"
+  >
     <label class="form-control w-full">
       <span class="label">
         <span class="label-text text-base-content/70">Email</span>
@@ -37,11 +44,11 @@
         class="input input-bordered w-full auth-input"
         placeholder="team@tickist.app"
         autocomplete="email"
-        />
+      />
       @if (form.controls.email.touched && form.controls.email.invalid) {
-        <span class="label-text-alt text-error">
-          Provide a valid email address
-        </span>
+      <span class="label-text-alt text-error">
+        Provide a valid email address
+      </span>
       }
     </label>
 
@@ -55,31 +62,37 @@
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"
         autocomplete="current-password"
-        />
+      />
       @if (form.controls.password.touched && form.controls.password.invalid) {
-        <span class="label-text-alt text-error">
-          Min. 6 characters
-        </span>
+      <span class="label-text-alt text-error"> Min. 6 characters </span>
       }
     </label>
 
-    <button class="btn btn-primary auth-signin-submit" type="submit" [disabled]="isDisabled">
+    <button
+      class="btn btn-primary auth-signin-submit"
+      type="submit"
+      [disabled]="isDisabled"
+    >
       @if (!isSubmitting()) {
-        <span>Sign in</span>
-      }
-      @if (isSubmitting()) {
-        <span class="loading loading-spinner"></span>
-      }
-      @if (isSubmitting()) {
-        <span>Signing in…</span>
+      <span>Sign in</span>
+      } @if (isSubmitting()) {
+      <span class="loading loading-spinner"></span>
+      } @if (isSubmitting()) {
+      <span>Signing in…</span>
       }
     </button>
   </form>
 
   @if (message(); as feedback) {
-    <p class="text-sm text-base-content/70" [ngClass]="{ 'text-success': feedback.type === 'success', 'text-error': feedback.type === 'error' }">
-      {{ feedback.text }}
-    </p>
+  <p
+    class="text-sm text-base-content/70"
+    [ngClass]="{
+      'text-success': feedback.type === 'success',
+      'text-error': feedback.type === 'error'
+    }"
+  >
+    {{ feedback.text }}
+  </p>
   }
 
   <footer class="text-center text-xs text-base-content/60 space-y-1">

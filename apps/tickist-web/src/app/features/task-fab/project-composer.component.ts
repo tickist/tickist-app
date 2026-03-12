@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -10,10 +11,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import {
-  Project,
-  ProjectDataService,
-} from '../../data/project-data.service';
+import { Project, ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ProjectComposerPreset } from './composer-modal.service';
 import {
@@ -21,17 +19,30 @@ import {
   ProjectIconKey,
   resolveProjectIconKey,
 } from '../../core/icons/project-icons';
+import {
+  buildHierarchy,
+  collectDescendantIds,
+} from '../../core/projects/project-tree';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import {
+  SheetScaffoldComponent,
+  SheetScaffoldTab,
+} from '../../core/ui/sheet-scaffold.component';
 
 type ProjectTab = 'general' | 'extra' | 'sharing' | 'branding';
 
 @Component({
   selector: 'app-project-composer',
-  standalone: true,
-  imports: [ReactiveFormsModule, ProjectPickerComponent, ProjectIconComponent],
+  imports: [
+    ReactiveFormsModule,
+    ProjectPickerComponent,
+    ProjectIconComponent,
+    SheetScaffoldComponent,
+  ],
   templateUrl: './project-composer.component.html',
   styleUrl: './project-composer.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectComposerComponent {
   private readonly fb = inject(FormBuilder);
@@ -42,15 +53,40 @@ export class ProjectComposerComponent {
   readonly user = computed(() => this.session.user());
   readonly submitting = signal(false);
   readonly activeTab = signal<ProjectTab>('general');
+  readonly tabs: readonly SheetScaffoldTab<ProjectTab>[] = [
+    { key: 'general', label: 'General', icon: '✏️' },
+    { key: 'extra', label: 'Extra', icon: '⚙️' },
+    { key: 'sharing', label: 'Sharing', icon: '🤝' },
+    { key: 'branding', label: 'Branding', icon: '🎨' },
+  ];
+  readonly sheetEyebrow = computed(() =>
+    this.editingProject() ? 'Edit project' : 'Create project'
+  );
+  readonly sheetTitle = computed(
+    () => this.editingProject()?.name || 'New project'
+  );
   readonly inviteInput = signal('');
   readonly invites = signal<string[]>([]);
   readonly editingProject = signal<Project | null>(null);
   readonly projectOptions = computed(() =>
-    this.projects.list().sort((a, b) => a.name.localeCompare(b.name))
+    [...this.projects.list()].sort((a, b) => a.name.localeCompare(b.name))
   );
   readonly availableAncestorOptions = computed(() => {
     const editingProjectId = this.editingProject()?.id ?? null;
-    return this.projectOptions().filter((project) => project.id !== editingProjectId);
+    const projectTree = buildHierarchy(this.projectOptions());
+    const descendantIds = editingProjectId
+      ? collectDescendantIds(projectTree, editingProjectId)
+      : new Set<string>();
+
+    return this.projectOptions().filter((project) => {
+      if (project.isInbox) {
+        return false;
+      }
+      if (!editingProjectId) {
+        return true;
+      }
+      return project.id !== editingProjectId && !descendantIds.has(project.id);
+    });
   });
   readonly colors = [
     '#1D4ED8',
@@ -88,7 +124,10 @@ export class ProjectComposerComponent {
   };
 
   readonly form = this.fb.nonNullable.group({
-    name: [this.defaultFormState.name, [Validators.required, Validators.minLength(3)]],
+    name: [
+      this.defaultFormState.name,
+      [Validators.required, Validators.minLength(3)],
+    ],
     description: [this.defaultFormState.description],
     projectType: [this.defaultFormState.projectType],
     ancestorId: [this.defaultFormState.ancestorId],
@@ -246,8 +285,10 @@ export class ProjectComposerComponent {
 
     this.editingProject.set(null);
     this.resetForm({
-      projectType: preset.defaults?.projectType ?? this.defaultFormState.projectType,
-      ancestorId: preset.defaults?.ancestorId ?? this.defaultFormState.ancestorId,
+      projectType:
+        preset.defaults?.projectType ?? this.defaultFormState.projectType,
+      ancestorId:
+        preset.defaults?.ancestorId ?? this.defaultFormState.ancestorId,
       color: preset.defaults?.color ?? this.defaultFormState.color,
       icon: resolveProjectIconKey(
         preset.defaults?.icon ?? this.defaultFormState.icon
@@ -255,9 +296,7 @@ export class ProjectComposerComponent {
     });
   }
 
-  private resetForm(
-    overrides?: Partial<typeof this.defaultFormState>
-  ): void {
+  private resetForm(overrides?: Partial<typeof this.defaultFormState>): void {
     this.form.reset({
       ...this.defaultFormState,
       ...overrides,

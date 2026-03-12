@@ -50,6 +50,15 @@ Schema migrations live in `supabase/migrations/`. Apply them with the Supabase C
 
 `NG_APP_SUPABASE_FUNCTIONS_URL` is optional. If missing, the app derives it from `NG_APP_SUPABASE_URL` as `<supabase-url>/functions/v1`. Set it explicitly only when you want to override that default (for example local edge runtime/proxy).
 
+### Email delivery
+
+- Auth emails (reset password, magic link, confirm email) use **Supabase Auth SMTP** configured to AWS SES.
+- App notifications use `public.email_outbox` + edge functions:
+  - `enqueue-notification`
+  - `send-emails`
+- Full setup and security checklist: [`docs/EMAIL.md`](docs/EMAIL.md)
+- Deploy checklist: [`DEPLOY.md`](DEPLOY.md)
+
 ## Add new projects
 
 While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
