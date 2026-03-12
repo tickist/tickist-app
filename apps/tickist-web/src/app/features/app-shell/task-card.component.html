@@ -289,6 +289,7 @@
             role="option"
             class="tag-add__option"
             [id]="tagMenuOptionId(index)"
+            aria-selected="false"
             (click)="selectTagFromMenu(option.id)"
             (keydown)="onTagMenuOptionKeydown($event, index)"
           >
