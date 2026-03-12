@@ -196,32 +196,43 @@ function appendCacheVersion(url: string, version: string | null): string {
   return `${url}${separator}v=${encodeURIComponent(version)}`;
 }
 
-function isRememberedAppUrl(url: string): boolean {
-  if (!url.startsWith('/app')) {
+export function isRememberedAppUrl(url: string): boolean {
+  const path = normalizeAppUrlPath(url);
+
+  if (!path.startsWith('/app')) {
     return false;
   }
 
-  if (url === '/app/settings') {
+  if (path === '/app/settings') {
     return false;
   }
 
-  if (url === '/app/task/new' || /^\/app\/task\/[^/]+\/edit$/.test(url)) {
+  if (path === '/app/task/new' || /^\/app\/task\/[^/]+\/edit$/.test(path)) {
     return false;
   }
 
-  if (url === '/app/project/new' || /^\/app\/project\/[^/]+\/edit$/.test(url)) {
+  if (
+    path === '/app/project/new' ||
+    /^\/app\/project\/[^/]+\/edit$/.test(path)
+  ) {
     return false;
   }
 
   return true;
 }
 
-function isSheetRoute(url: string): boolean {
+export function isSheetRoute(url: string): boolean {
+  const path = normalizeAppUrlPath(url);
+
   return (
-    url === '/app/settings' ||
-    url === '/app/task/new' ||
-    /^\/app\/task\/[^/]+\/edit$/.test(url) ||
-    url === '/app/project/new' ||
-    /^\/app\/project\/[^/]+\/edit$/.test(url)
+    path === '/app/settings' ||
+    path === '/app/task/new' ||
+    /^\/app\/task\/[^/]+\/edit$/.test(path) ||
+    path === '/app/project/new' ||
+    /^\/app\/project\/[^/]+\/edit$/.test(path)
   );
+}
+
+function normalizeAppUrlPath(url: string): string {
+  return url.split(/[?#]/, 1)[0] ?? url;
 }

@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { DatePipe, NgFor, NgIf, NgOptimizedImage } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -7,7 +8,11 @@ import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { NotificationDataService } from '../../data/notification-data.service';
 import { AppViewStateService } from './app-view-state.service';
-import { AppViewportComponent } from './app-viewport.component';
+import {
+  AppViewportComponent,
+  isRememberedAppUrl,
+  isSheetRoute,
+} from './app-viewport.component';
 
 @Component({ selector: 'app-sidebar', standalone: true, template: '' })
 class MockSidebarComponent {}
@@ -95,5 +100,25 @@ describe('AppViewportComponent theme toggle', () => {
     const nextTheme = document.documentElement.getAttribute('data-theme');
     expect(nextTheme).toBeTruthy();
     expect(nextTheme).not.toBe(initialTheme);
+  });
+});
+
+describe('app viewport route helpers', () => {
+  it('treats sheet routes with query params as sheets', () => {
+    assert.equal(isSheetRoute('/app/project/new?projectType=active'), true);
+    assert.equal(isSheetRoute('/app/task/new?projectId=project-1'), true);
+    assert.equal(isSheetRoute('/app/project/project-1/edit?from=menu'), true);
+  });
+
+  it('does not remember sheet routes with query params as app return urls', () => {
+    assert.equal(
+      isRememberedAppUrl('/app/project/new?projectType=active'),
+      false
+    );
+    assert.equal(
+      isRememberedAppUrl('/app/task/new?projectId=project-1'),
+      false
+    );
+    assert.equal(isRememberedAppUrl('/app/tasks/project-1?filter=done'), true);
   });
 });
