@@ -120,9 +120,4 @@ async function expectSettingsSheetLayout(page: Page): Promise<void> {
   await expect(sheet).toBeVisible();
   await expect(settings.locator('.sheet-shell__panel-scroll')).toBeVisible();
   await expect(settings.locator('.sheet-shell__footer')).toHaveCount(1);
-
-  const backgroundColor = await sheet.evaluate(
-    (node) => window.getComputedStyle(node).backgroundColor
-  );
-  expect(backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
 }

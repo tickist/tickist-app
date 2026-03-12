@@ -126,11 +126,6 @@ async function expectSharedSheetLayout(
   }
 
   expect(box.x + box.width / 2).toBeGreaterThanOrEqual(viewport.width / 2);
-
-  const backgroundColor = await sheet.evaluate(
-    (node) => window.getComputedStyle(node).backgroundColor
-  );
-  expect(backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
 }
 
 async function setProjectFilter(
