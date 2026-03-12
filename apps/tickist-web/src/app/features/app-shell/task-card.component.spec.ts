@@ -232,6 +232,42 @@ describe('TaskCardComponent toolbar status icons', () => {
     );
   });
 
+  it('adds an existing tag from the custom dropdown menu', async () => {
+    component.task = createTask({ tags: [] });
+    fixture.detectChanges();
+
+    getToolbarButton('tags').click();
+    fixture.detectChanges();
+
+    const trigger = fixture.nativeElement.querySelector(
+      '.tag-add__trigger'
+    ) as HTMLButtonElement | null;
+    if (!trigger) {
+      throw new Error('Missing tag menu trigger');
+    }
+
+    trigger.click();
+    fixture.detectChanges();
+
+    const option = fixture.nativeElement.querySelector(
+      '.tag-add__option'
+    ) as HTMLButtonElement | null;
+    if (!option) {
+      throw new Error('Missing tag menu option');
+    }
+
+    option.click();
+    await fixture.whenStable();
+
+    expect(createTagMock).not.toHaveBeenCalled();
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'task-1',
+        tags: ['tag-existing'],
+      })
+    );
+  });
+
   it('adds an existing matching tag instead of creating a duplicate', async () => {
     component.task = createTask({ tags: [] });
     fixture.detectChanges();

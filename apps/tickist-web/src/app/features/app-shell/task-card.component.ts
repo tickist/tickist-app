@@ -1,8 +1,12 @@
 import {
   Component,
+  ElementRef,
   Input,
   OnChanges,
+  QueryList,
   SimpleChanges,
+  ViewChild,
+  ViewChildren,
   computed,
   inject,
   signal,
@@ -33,23 +37,36 @@ type RepeatMode =
 type RepeatUnit = 'day' | 'week' | 'month' | 'year';
 type RepeatFromMode = 'completion_date' | 'due_date';
 
+let nextTaskCardId = 0;
+
 @Component({
   selector: 'app-task-card',
   standalone: true,
   imports: [LinkifyPipe, ProjectPickerComponent],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
+  host: {
+    '(document:mousedown)': 'handleDocumentMouseDown($event)',
+    '(document:keydown.escape)': 'handleEscapeKey()',
+  },
 })
 export class TaskCardComponent implements OnChanges {
   @Input({ required: true }) task!: Task;
   @Input() project: Project | null = null;
   @Input() viewMode: TaskViewMode = 'extended';
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly instanceId = nextTaskCardId++;
   private readonly tasks = inject(TaskDataService);
   private readonly tagsService = inject(TagDataService);
   private readonly projectsService = inject(ProjectDataService);
   private readonly composer = inject(ComposerModalService);
   private readonly toasts = inject(ToastService);
+
+  @ViewChild('tagMenuTrigger')
+  private tagMenuTrigger?: ElementRef<HTMLButtonElement>;
+  @ViewChildren('tagMenuOption')
+  private tagMenuOptions?: QueryList<ElementRef<HTMLButtonElement>>;
 
   readonly tagLookup = computed(() => {
     const map = new Map<string, Tag>();
@@ -66,6 +83,7 @@ export class TaskCardComponent implements OnChanges {
   readonly projectPickerOpen = signal(false);
   readonly descriptionEditing = signal(false);
   readonly menuOpen = signal(false);
+  readonly tagMenuOpen = signal(false);
   readonly descriptionDraft = signal('');
   readonly tagSearch = signal('');
   readonly newStepDraft = signal('');
@@ -83,6 +101,7 @@ export class TaskCardComponent implements OnChanges {
   ];
   readonly repeatFromHelpText =
     'If due date is empty, Tickist uses completion date as the repeat anchor.';
+  readonly tagMenuId = `task-card-tag-menu-${this.instanceId}`;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['task']) {
@@ -372,15 +391,12 @@ export class TaskCardComponent implements OnChanges {
     );
   }
 
-  addTagFromSelect(target: HTMLSelectElement | null): void {
-    if (!target) {
+  selectTagFromMenu(tagId: string): void {
+    if (!tagId) {
       return;
     }
-    const value = target.value;
-    if (value) {
-      void this.addTag(value);
-    }
-    target.value = '';
+    void this.addTag(tagId);
+    this.closeTagMenu();
   }
 
   async addOrCreateTag(): Promise<void> {
@@ -476,10 +492,93 @@ export class TaskCardComponent implements OnChanges {
     void this.addOrCreateTag();
   }
 
+  updateTagSearch(value: string): void {
+    this.tagSearch.set(value);
+    if (this.tagMenuOpen() && !this.filteredAvailableTags().length) {
+      this.closeTagMenu();
+    }
+  }
+
+  toggleTagMenu(): void {
+    if (this.tagMenuOpen()) {
+      this.closeTagMenu(true);
+      return;
+    }
+    this.openTagMenu();
+  }
+
+  onTagMenuTriggerKeydown(event: KeyboardEvent): void {
+    if (
+      event.key === 'ArrowDown' ||
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+      event.preventDefault();
+      this.openTagMenu();
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeTagMenu(true);
+    }
+  }
+
+  onTagMenuOptionKeydown(event: KeyboardEvent, index: number): void {
+    const total = this.filteredAvailableTags().length;
+    if (!total) {
+      return;
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.focusTagOption((index + 1) % total);
+      return;
+    }
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.focusTagOption((index - 1 + total) % total);
+      return;
+    }
+    if (event.key === 'Home') {
+      event.preventDefault();
+      this.focusTagOption(0);
+      return;
+    }
+    if (event.key === 'End') {
+      event.preventDefault();
+      this.focusTagOption(total - 1);
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeTagMenu(true);
+    }
+  }
+
+  tagMenuOptionId(index: number): string {
+    return `${this.tagMenuId}-option-${index}`;
+  }
+
   toggleTags(): void {
     const next = !this.tagsOpen();
     this.closeAllPanels();
     this.tagsOpen.set(next);
+  }
+
+  handleDocumentMouseDown(event: MouseEvent): void {
+    if (!this.tagMenuOpen()) {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof Node)) {
+      return;
+    }
+    if (!this.host.nativeElement.contains(target)) {
+      this.closeTagMenu();
+    }
+  }
+
+  handleEscapeKey(): void {
+    this.closeTagMenu(true);
   }
 
   toggleRepeat(): void {
@@ -830,9 +929,33 @@ export class TaskCardComponent implements OnChanges {
     this.projectPickerOpen.set(false);
     this.descriptionOpen.set(false);
     this.tagsOpen.set(false);
+    this.tagMenuOpen.set(false);
     this.tagSearch.set('');
     this.repeatOpen.set(false);
     this.repeatDraftMode.set(null);
     this.stepsOpen.set(false);
+  }
+
+  private openTagMenu(): void {
+    if (!this.filteredAvailableTags().length) {
+      return;
+    }
+    this.tagMenuOpen.set(true);
+    queueMicrotask(() => this.focusTagOption(0));
+  }
+
+  private closeTagMenu(restoreFocus = false): void {
+    if (!this.tagMenuOpen()) {
+      return;
+    }
+    this.tagMenuOpen.set(false);
+    if (restoreFocus) {
+      queueMicrotask(() => this.tagMenuTrigger?.nativeElement.focus());
+    }
+  }
+
+  private focusTagOption(index: number): void {
+    const options = this.tagMenuOptions?.toArray() ?? [];
+    options[index]?.nativeElement.focus();
   }
 }

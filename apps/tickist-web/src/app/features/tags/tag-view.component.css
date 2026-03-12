@@ -123,11 +123,6 @@
   background: #fff06a;
 }
 
-.controls .select option {
-  color: rgb(var(--bc));
-  background-color: rgb(var(--b2));
-}
-
 .controls input[type='checkbox'] {
   @apply checkbox checkbox-xs;
   border-color: rgb(var(--bc) / 35%);

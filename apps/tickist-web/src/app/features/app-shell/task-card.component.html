@@ -129,7 +129,7 @@
       title="Change project"
       (click)="toggleProjectPicker()"
     >
-      📁
+      <span class="toolbar-btn__icon" aria-hidden="true">📁</span>
     </button>
     <button
       type="button"
@@ -141,7 +141,7 @@
       [attr.aria-label]="descriptionStatusLabel()"
       (click)="toggleDescription()"
     >
-      💬
+      <span class="toolbar-btn__icon" aria-hidden="true">💬</span>
     </button>
     <button
       type="button"
@@ -153,7 +153,7 @@
       [attr.aria-label]="tagsStatusLabel()"
       (click)="toggleTags()"
     >
-      🏷️
+      <span class="toolbar-btn__icon" aria-hidden="true">🏷️</span>
     </button>
     <button
       type="button"
@@ -165,7 +165,7 @@
       [attr.aria-label]="repeatStatusLabel()"
       (click)="toggleRepeat()"
     >
-      🔁
+      <span class="toolbar-btn__icon" aria-hidden="true">🔁</span>
     </button>
     <button
       type="button"
@@ -177,7 +177,7 @@
       [attr.aria-label]="stepsStatusLabel()"
       (click)="toggleSteps()"
     >
-      ☑️
+      <span class="toolbar-btn__icon" aria-hidden="true">☑️</span>
     </button>
   </div>
   } @if (projectPickerOpen()) {
@@ -258,18 +258,46 @@
     }
     <div class="tag-add">
       @if (filteredAvailableTags().length) {
-      <select
-        class="tag-add__select"
-        aria-label="Add existing tag"
-        (change)="addTagFromSelect($any($event.target))"
-      >
-        <option value="">Add existing tag…</option>
-        @for (option of filteredAvailableTags(); track option.id) {
-        <option [value]="option.id">
+      <div class="tag-add__picker">
+        <button
+          #tagMenuTrigger
+          type="button"
+          class="tag-add__trigger"
+          aria-label="Add existing tag"
+          aria-haspopup="listbox"
+          [attr.aria-expanded]="tagMenuOpen()"
+          [attr.aria-controls]="tagMenuId"
+          (click)="toggleTagMenu()"
+          (keydown)="onTagMenuTriggerKeydown($event)"
+        >
+          <span>Add existing tag…</span>
+          <span class="tag-add__chevron" [class.tag-add__chevron--open]="tagMenuOpen()">
+            ▾
+          </span>
+        </button>
+        @if (tagMenuOpen()) {
+        <div
+          class="tag-add__menu"
+          [id]="tagMenuId"
+          role="listbox"
+          aria-label="Add existing tag"
+        >
+          @for (option of filteredAvailableTags(); track option.id; let index = $index) {
+          <button
+            #tagMenuOption
+            type="button"
+            role="option"
+            class="tag-add__option"
+            [id]="tagMenuOptionId(index)"
+            (click)="selectTagFromMenu(option.id)"
+            (keydown)="onTagMenuOptionKeydown($event, index)"
+          >
           {{ option.name }}
-        </option>
+          </button>
+          }
+        </div>
         }
-      </select>
+      </div>
       } @else {
       <p class="panel-hint">No matching tags on the list.</p>
       }
@@ -281,7 +309,7 @@
           placeholder="Create or find tag"
           aria-label="Create or find tag"
           [value]="tagSearch()"
-          (input)="tagSearch.set($any($event.target).value)"
+          (input)="updateTagSearch($any($event.target).value)"
           (keydown.enter)="handleTagSearchEnter($event)"
         />
         <button
