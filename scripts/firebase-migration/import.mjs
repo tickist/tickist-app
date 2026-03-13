@@ -234,7 +234,7 @@ Options:
 
 Environment:
   NG_APP_SUPABASE_URL        Target Supabase URL.
-  SUPABASE_SERVICE_ROLE_KEY  Service role key used by admin import.
+  SUPABASE_SECRET_KEY        Secret key used by admin import.
 `);
 }
 
@@ -1024,10 +1024,12 @@ function isLocalAuthAdminJwtError(error) {
 async function ensureAuthUsersViaSignup({ users, url, sharedPassword }) {
   const publishableKey =
     process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY?.trim() ||
-    process.env.NG_APP_SUPABASE_ANON_KEY?.trim();
+    process.env.SUPABASE_PUBLISHABLE_KEY?.trim() ||
+    process.env.NG_APP_SUPABASE_ANON_KEY?.trim() ||
+    process.env.SUPABASE_ANON_KEY?.trim();
   if (!publishableKey) {
     throw new Error(
-      'Local fallback requires NG_APP_SUPABASE_PUBLISHABLE_KEY (or legacy NG_APP_SUPABASE_ANON_KEY) in environment.'
+      'Local fallback requires NG_APP_SUPABASE_PUBLISHABLE_KEY, SUPABASE_PUBLISHABLE_KEY, or legacy NG_APP_SUPABASE_ANON_KEY / SUPABASE_ANON_KEY in environment.'
     );
   }
 
@@ -1252,9 +1254,11 @@ function resolveSupabaseConnection(target) {
     );
   }
 
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  const serviceRoleKey =
+    process.env.SUPABASE_SECRET_KEY?.trim() ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
   if (!serviceRoleKey) {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY.');
+    throw new Error('Missing SUPABASE_SECRET_KEY.');
   }
 
   return { url, serviceRoleKey };

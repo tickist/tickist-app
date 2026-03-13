@@ -9,9 +9,12 @@ require_var() {
   fi
 }
 
+SUPABASE_PUBLISHABLE_KEY="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-}}"
+INTERNAL_FUNCTION_SECRET="${INTERNAL_FUNCTION_SECRET:-${ROUTINE_RUNNER_SECRET:-}}"
+
 require_var "SUPABASE_URL"
-require_var "SUPABASE_ANON_KEY"
-require_var "SUPABASE_SERVICE_ROLE_KEY"
+require_var "SUPABASE_PUBLISHABLE_KEY"
+require_var "INTERNAL_FUNCTION_SECRET"
 require_var "TEST_USER_EMAIL"
 require_var "TEST_USER_PASSWORD"
 
@@ -22,7 +25,7 @@ fi
 
 echo "[1/3] Sign in test user to get JWT"
 AUTH_RESPONSE="$(curl -sS -X POST "${SUPABASE_URL}/auth/v1/token?grant_type=password" \
-  -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
   -H "Content-Type: application/json" \
   -d "{
     \"email\": \"${TEST_USER_EMAIL}\",
@@ -39,7 +42,7 @@ fi
 echo "[2/3] Enqueue notification"
 ENQUEUE_RESPONSE="$(curl -sS -X POST "${SUPABASE_URL}/functions/v1/enqueue-notification" \
   -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-  -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
   -H "Content-Type: application/json" \
   -d "{
     \"subject\": \"Tickist smoke test\",
@@ -48,10 +51,10 @@ ENQUEUE_RESPONSE="$(curl -sS -X POST "${SUPABASE_URL}/functions/v1/enqueue-notif
   }")"
 echo "${ENQUEUE_RESPONSE}" | jq .
 
-echo "[3/3] Trigger send-emails in dry-run mode (service-role protected)"
+echo "[3/3] Trigger send-emails in dry-run mode (internal-secret protected)"
 SEND_RESPONSE="$(curl -sS -X POST "${SUPABASE_URL}/functions/v1/send-emails" \
-  -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
-  -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+  -H "x-internal-function-secret: ${INTERNAL_FUNCTION_SECRET}" \
+  -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "limit": 10,

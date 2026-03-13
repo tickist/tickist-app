@@ -1,14 +1,15 @@
 // Project tool handlers for MCP
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { requireEnv, requireSupabaseSecretKey } from "../../_shared/common.ts";
 import { McpToolResult, jsonResult, errorResult } from "../mcp-protocol.ts";
 
 type Args = Record<string, unknown>;
 
 const getClient = () =>
     createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        requireEnv("SUPABASE_URL"),
+        requireSupabaseSecretKey(),
     );
 
 export const listProjects = async (

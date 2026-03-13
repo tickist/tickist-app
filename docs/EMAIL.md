@@ -49,7 +49,7 @@ Zasady bezpieczeństwa:
   - wymaga potwierdzonego emaila (`email_confirmed_at`),
   - wymusza, aby `dedupe_key` zawierał `userId`.
 - `send-emails`:
-  - działa tylko z `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`.
+  - działa tylko z `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`.
 - Tabela outbox ma RLS wyłącznie dla `service_role`.
 
 Idempotencja i retry:
@@ -87,7 +87,7 @@ Nie wpisuj rekordów ręcznie „na pamięć”. Bierz dokładne wartości z SES
 1. Deploy funkcji `send-emails`.
 2. Utwórz harmonogram co 1 minutę.
 3. Ustaw nagłówek:
-- `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`
+- `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`
 4. Body:
 ```json
 { "limit": 25, "dry_run": false }
@@ -113,7 +113,7 @@ select cron.schedule(
     url := 'https://<PROJECT_REF>.supabase.co/functions/v1/send-emails',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
-      'Authorization', 'Bearer ' || '<SUPABASE_SERVICE_ROLE_KEY>'
+      'x-internal-function-secret', '<INTERNAL_FUNCTION_SECRET>'
     ),
     body := '{"limit":25,"dry_run":false}'::jsonb
   );
@@ -127,11 +127,17 @@ Uwaga: bezpieczniej trzymać sekrety w Supabase Vault i składać nagłówki z V
 
 Wymagane:
 
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_SECRET_KEY`
+- `INTERNAL_FUNCTION_SECRET`
 - `EMAIL_FROM` (`no-reply@tickist.com`)
 - `AWS_REGION`
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
+
+Fallback tymczasowy podczas rolloutu:
+
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `ROUTINE_RUNNER_SECRET`
 
 Opcjonalne:
 
@@ -144,7 +150,8 @@ Opcjonalne:
 ## 6) Bezpieczeństwo
 
 - Nigdy nie commituj sekretów.
-- `service_role` wyłącznie po stronie backend/cron.
+- `SUPABASE_SECRET_KEY` wyłącznie po stronie backend/cron.
+- `INTERNAL_FUNCTION_SECRET` wyłącznie do wywołań wewnętrznych funkcji.
 - Użytkownik końcowy nie ma bezpośredniego dostępu do `email_outbox`.
 - Nie loguj treści emaili ani pełnych payloadów.
 - Loguj tylko metryki, identyfikatory i kody błędów.

@@ -20,7 +20,12 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
       SUPABASE_REMOTE_DB_URL: ${{ secrets.SUPABASE_REMOTE_DB_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      INTERNAL_FUNCTION_SECRET: ${{ secrets.INTERNAL_FUNCTION_SECRET }}
+      ROUTINE_RUNNER_SECRET: ${{ secrets.ROUTINE_RUNNER_SECRET }}
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -63,15 +68,29 @@ jobs:
 
       - name: Sync Supabase Edge Function secrets
         run: |
-          required_keys=(
-            SUPABASE_SERVICE_ROLE_KEY
-            EMAIL_FROM
-            AWS_REGION
-            AWS_ACCESS_KEY_ID
-            AWS_SECRET_ACCESS_KEY
-          )
+          supabase_secret_key="${SUPABASE_SECRET_KEY:-${SUPABASE_SERVICE_ROLE_KEY:-}}"
+          supabase_publishable_key="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-${NG_APP_SUPABASE_PUBLISHABLE_KEY:-}}}"
+          internal_function_secret="${INTERNAL_FUNCTION_SECRET:-${ROUTINE_RUNNER_SECRET:-}}"
 
-          for key in "${required_keys[@]}"; do
+          if [ -z "$supabase_secret_key" ]; then
+            echo "::error::Missing required GitHub secret: SUPABASE_SECRET_KEY"
+            echo "::notice::Temporary fallback is SUPABASE_SERVICE_ROLE_KEY."
+            exit 1
+          fi
+
+          if [ -z "$supabase_publishable_key" ]; then
+            echo "::error::Missing required GitHub secret: SUPABASE_PUBLISHABLE_KEY"
+            echo "::notice::Temporary fallback is SUPABASE_ANON_KEY or existing NG_APP_SUPABASE_PUBLISHABLE_KEY."
+            exit 1
+          fi
+
+          if [ -z "$internal_function_secret" ]; then
+            echo "::error::Missing required GitHub secret: INTERNAL_FUNCTION_SECRET"
+            echo "::notice::Temporary fallback is ROUTINE_RUNNER_SECRET."
+            exit 1
+          fi
+
+          for key in EMAIL_FROM AWS_REGION AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY; do
             if [ -z "${!key}" ]; then
               echo "::error::Missing required GitHub secret: ${key}"
               exit 1
@@ -83,7 +102,12 @@ jobs:
           rate_limit_day="${EMAIL_RATE_LIMIT_PER_DAY:-500}"
 
           secret_args=(
-            "SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}"
+            "SUPABASE_SECRET_KEY=${supabase_secret_key}"
+            "SUPABASE_PUBLISHABLE_KEY=${supabase_publishable_key}"
+            "INTERNAL_FUNCTION_SECRET=${internal_function_secret}"
+            "SUPABASE_SERVICE_ROLE_KEY=${supabase_secret_key}"
+            "SUPABASE_ANON_KEY=${supabase_publishable_key}"
+            "ROUTINE_RUNNER_SECRET=${internal_function_secret}"
             "EMAIL_FROM=${EMAIL_FROM}"
             "AWS_REGION=${AWS_REGION}"
             "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
@@ -105,7 +129,7 @@ jobs:
 
       - name: Deploy Edge Functions
         run: |
-          for fn in task-reminder project-update routine-runner enqueue-notification send-emails; do
+          for fn in task-reminder project-update routine-runner notification-digest-runner enqueue-notification send-emails tickist-mcp; do
             supabase functions deploy "$fn" --project-ref "$SUPABASE_PROJECT_REF"
           done
 

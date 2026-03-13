@@ -377,11 +377,11 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.routine-runner]
-# Internal scheduler endpoint protected via x-internal-cron-secret.
+# Internal scheduler endpoint protected via x-internal-function-secret.
 verify_jwt = false
 
 [functions.notification-digest-runner]
-# Internal scheduler endpoint protected via x-internal-cron-secret.
+# Internal scheduler endpoint protected via x-internal-function-secret.
 verify_jwt = false
 
 [functions.tickist-mcp]

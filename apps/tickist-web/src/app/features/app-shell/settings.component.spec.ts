@@ -186,6 +186,13 @@ describe('SettingsComponent sheet layout', () => {
     fixture.componentInstance.select('notifications');
     fixture.detectChanges();
 
+    const weeklyToggle = fixture.nativeElement.querySelector(
+      '#weekly-email-enabled'
+    ) as HTMLInputElement | null;
+    const dailyToggle = fixture.nativeElement.querySelector(
+      '#daily-email-enabled'
+    ) as HTMLInputElement | null;
+
     expect(
       fixture.nativeElement.querySelector(
         '[data-testid="settings-notifications-form"]'
@@ -193,6 +200,30 @@ describe('SettingsComponent sheet layout', () => {
     ).not.toBeNull();
     expect(fixture.nativeElement.textContent).toContain('Weekly summary');
     expect(fixture.nativeElement.textContent).toContain('Daily summary');
+    expect(weeklyToggle?.checked).toBe(true);
+    expect(dailyToggle?.checked).toBe(false);
+  });
+
+  it('updates visible notification toggle states when a checkbox changes', () => {
+    fixture.componentInstance.select('notifications');
+    fixture.detectChanges();
+
+    const weeklyToggle = fixture.nativeElement.querySelector(
+      '#weekly-email-enabled'
+    ) as HTMLInputElement | null;
+    const dailyToggle = fixture.nativeElement.querySelector(
+      '#daily-email-enabled'
+    ) as HTMLInputElement | null;
+
+    expect(weeklyToggle).not.toBeNull();
+    expect(dailyToggle).not.toBeNull();
+
+    weeklyToggle?.click();
+    dailyToggle?.click();
+    fixture.detectChanges();
+
+    expect(weeklyToggle?.checked).toBe(false);
+    expect(dailyToggle?.checked).toBe(true);
   });
 });
 

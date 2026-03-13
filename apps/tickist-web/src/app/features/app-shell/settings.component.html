@@ -155,10 +155,14 @@
                       next week.
                     </p>
                   </div>
-                  <label class="toggle-row" for="weekly-email-enabled">
-                    <span>Email</span>
-                    <input id="weekly-email-enabled" type="checkbox" class="toggle toggle-warning"
-                      formControlName="weeklyEmailEnabled" />
+                  <label class="toggle-row" for="weekly-email-enabled"
+                    [class.toggle-row--enabled]="notificationsForm.controls.weeklyEmailEnabled.value">
+                    <span class="toggle-row__meta">Email</span>
+                    <span class="notification-switch">
+                      <input id="weekly-email-enabled" type="checkbox" class="notification-switch__input"
+                        formControlName="weeklyEmailEnabled" aria-label="Weekly summary email notifications" />
+                      <span class="notification-switch__track" aria-hidden="true" data-testid="weekly-email-track"></span>
+                    </span>
                   </label>
                 </div>
 
@@ -194,10 +198,14 @@
                       is next tomorrow.
                     </p>
                   </div>
-                  <label class="toggle-row" for="daily-email-enabled">
-                    <span>Email</span>
-                    <input id="daily-email-enabled" type="checkbox" class="toggle toggle-warning"
-                      formControlName="dailyEmailEnabled" />
+                  <label class="toggle-row" for="daily-email-enabled"
+                    [class.toggle-row--enabled]="notificationsForm.controls.dailyEmailEnabled.value">
+                    <span class="toggle-row__meta">Email</span>
+                    <span class="notification-switch">
+                      <input id="daily-email-enabled" type="checkbox" class="notification-switch__input"
+                        formControlName="dailyEmailEnabled" aria-label="Daily summary email notifications" />
+                      <span class="notification-switch__track" aria-hidden="true" data-testid="daily-email-track"></span>
+                    </span>
                   </label>
                 </div>
 
