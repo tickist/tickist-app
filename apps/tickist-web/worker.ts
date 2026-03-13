@@ -9,7 +9,6 @@ interface Env {
   /** @deprecated Prefer NG_APP_SUPABASE_PUBLISHABLE_KEY. */
   NG_APP_SUPABASE_ANON_KEY?: string;
   NG_APP_SUPABASE_FUNCTIONS_URL?: string;
-  SUPABASE_SERVICE_ROLE_KEY?: string;
 }
 
 const CONTENT_SECURITY_POLICY = [

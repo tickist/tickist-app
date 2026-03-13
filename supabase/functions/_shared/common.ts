@@ -28,6 +28,18 @@ export const requireEnv = (name: string): string => {
   return value;
 };
 
+export const requireFirstEnv = (...names: string[]): string => {
+  for (const name of names) {
+    const value = Deno.env.get(name)?.trim();
+    if (value) {
+      return value;
+    }
+  }
+  throw new Error(
+    `Missing required environment variable. Checked: ${names.join(", ")}`,
+  );
+};
+
 export const getBearerToken = (req: Request): string | null => {
   const authorization = req.headers.get("Authorization")?.trim() ?? "";
   if (!authorization) {
@@ -40,6 +52,25 @@ export const getBearerToken = (req: Request): string | null => {
   }
   return token;
 };
+
+export const getHeaderValue = (
+  req: Request,
+  headerName: string,
+): string | null => {
+  const value = req.headers.get(headerName)?.trim() ?? "";
+  return value || null;
+};
+
+export const getInternalFunctionSecret = (req: Request): string | null =>
+  getHeaderValue(req, "x-internal-function-secret") ??
+  getHeaderValue(req, "x-internal-cron-secret") ??
+  getBearerToken(req);
+
+export const requireSupabaseSecretKey = (): string =>
+  requireFirstEnv("SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY");
+
+export const requireInternalFunctionSecret = (): string =>
+  requireFirstEnv("INTERNAL_FUNCTION_SECRET", "ROUTINE_RUNNER_SECRET");
 
 export const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);

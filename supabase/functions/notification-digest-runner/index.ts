@@ -1,6 +1,12 @@
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { createClient, type User } from 'npm:@supabase/supabase-js@2';
-import { jsonResponse, requireEnv } from '../_shared/common.ts';
+import {
+  getInternalFunctionSecret,
+  jsonResponse,
+  requireEnv,
+  requireInternalFunctionSecret,
+  requireSupabaseSecretKey,
+} from '../_shared/common.ts';
 
 type NotificationKey = 'weekly_summary' | 'daily_summary';
 type ScheduleType = 'daily' | 'weekly';
@@ -54,7 +60,6 @@ type DateTimePartType =
   | 'hour'
   | 'minute';
 
-const INTERNAL_SECRET_HEADER = 'x-internal-cron-secret';
 const MAX_PREFERENCES_PER_RUN = 500;
 const WEEKDAY_INDEX: Record<string, number> = {
   Sun: 0,
@@ -72,8 +77,8 @@ serve(async (req) => {
   }
 
   const requestId = crypto.randomUUID();
-  const configuredSecret = Deno.env.get('ROUTINE_RUNNER_SECRET')?.trim() ?? '';
-  const providedSecret = req.headers.get(INTERNAL_SECRET_HEADER)?.trim() ?? '';
+  const configuredSecret = requireInternalFunctionSecret();
+  const providedSecret = getInternalFunctionSecret(req);
   if (
     !configuredSecret ||
     !providedSecret ||
@@ -83,8 +88,8 @@ serve(async (req) => {
   }
 
   const supabaseUrl = requireEnv('SUPABASE_URL');
-  const serviceRoleKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+  const supabaseSecretKey = requireSupabaseSecretKey();
+  const supabase = createClient(supabaseUrl, supabaseSecretKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,

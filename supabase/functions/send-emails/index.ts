@@ -1,10 +1,12 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {
-  getBearerToken,
+  getInternalFunctionSecret,
   isRecord,
   jsonResponse,
   requireEnv,
+  requireInternalFunctionSecret,
+  requireSupabaseSecretKey,
 } from "../_shared/common.ts";
 import { sendWithSes } from "../_shared/ses.ts";
 
@@ -62,9 +64,9 @@ serve(async (req) => {
 
   const requestId = crypto.randomUUID();
   try {
-    const providedToken = getBearerToken(req);
-    const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
-    if (!providedToken || providedToken !== serviceRoleKey) {
+    const providedSecret = getInternalFunctionSecret(req);
+    const internalFunctionSecret = requireInternalFunctionSecret();
+    if (!providedSecret || providedSecret !== internalFunctionSecret) {
       return jsonResponse(403, { error: "Forbidden", request_id: requestId });
     }
 
@@ -87,7 +89,8 @@ serve(async (req) => {
     const dryRun = payload.dry_run === true;
 
     const supabaseUrl = requireEnv("SUPABASE_URL");
-    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    const supabaseSecretKey = requireSupabaseSecretKey();
+    const supabase = createClient(supabaseUrl, supabaseSecretKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,

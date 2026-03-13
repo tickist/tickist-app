@@ -42,7 +42,7 @@ Use the one-time importer from `scripts/firebase-migration/import.mjs`.
 # No writes, generates reports only
 npm run migration:firebase:dry-run:local
 
-# Writes to remote Supabase using service role key
+# Writes to remote Supabase using secret key
 npm run migration:firebase:import:remote
 ```
 
@@ -50,7 +50,7 @@ Required env vars:
 
 ```
 NG_APP_SUPABASE_URL=https://<your-project>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=...
+SUPABASE_SECRET_KEY=...
 ```
 
 Reports are written to `reports/firebase-migration/<timestamp>/`.
@@ -62,7 +62,7 @@ Reports are written to `reports/firebase-migration/<timestamp>/`.
 - `functions/routine-runner/index.ts`: cron-friendly endpoint that processes `routine_reminders` entries and writes notifications (placeholder for real automation).
 - `functions/notification-digest-runner/index.ts`: cron-friendly endpoint that enqueues daily and weekly email summaries based on `notification_preferences`.
 - `functions/enqueue-notification/index.ts`: authenticated enqueue endpoint that writes to `public.email_outbox`.
-- `functions/send-emails/index.ts`: service-role protected batch worker that sends queued emails through AWS SES API.
+- `functions/send-emails/index.ts`: internal-secret protected batch worker that sends queued emails through AWS SES API.
 
 Run locally (requires Supabase CLI):
 
@@ -80,8 +80,9 @@ Required env vars:
 
 ```
 SUPABASE_URL=https://<your-project>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=...
-ROUTINE_RUNNER_SECRET=<strong-random-secret>
+SUPABASE_SECRET_KEY=sb_secret_xxx
+INTERNAL_FUNCTION_SECRET=<strong-random-secret>
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
 EMAIL_FROM=no-reply@tickist.com
 AWS_REGION=eu-central-1
 AWS_ACCESS_KEY_ID=...
@@ -89,6 +90,14 @@ AWS_SECRET_ACCESS_KEY=...
 EMAIL_RATE_LIMIT_PER_MINUTE=1
 EMAIL_RATE_LIMIT_PER_HOUR=60
 EMAIL_RATE_LIMIT_PER_DAY=500
+```
+
+Temporary deprecated fallbacks:
+
+```
+SUPABASE_SERVICE_ROLE_KEY=...
+ROUTINE_RUNNER_SECRET=<strong-random-secret>
+SUPABASE_ANON_KEY=sb_publishable_xxx
 ```
 
 Manual invocation (local):
@@ -103,19 +112,20 @@ curl -X POST http://localhost:54321/functions/v1/project-update \
   -d '{"projectId":"<uuid>","event":"shared","title":"New shared project","description":"Someone shared a project with you","recipients":["<auth-user-id>"]}'
 
 curl -X POST http://localhost:54321/functions/v1/routine-runner \
-  -H 'x-internal-cron-secret: <ROUTINE_RUNNER_SECRET>'
+  -H 'x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>'
 
 curl -X POST http://localhost:54321/functions/v1/notification-digest-runner \
-  -H 'x-internal-cron-secret: <ROUTINE_RUNNER_SECRET>'
+  -H 'x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>'
 
 curl -X POST http://localhost:54321/functions/v1/enqueue-notification \
   -H 'Authorization: Bearer <USER_ACCESS_TOKEN>' \
-  -H 'apikey: <SUPABASE_ANON_OR_PUBLISHABLE_KEY>' \
+  -H 'apikey: <SUPABASE_PUBLISHABLE_KEY>' \
   -H 'Content-Type: application/json' \
   -d '{"subject":"Test","text":"Hello from outbox","type":"notification"}'
 
 curl -X POST http://localhost:54321/functions/v1/send-emails \
-  -H 'Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>' \
+  -H 'x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>' \
+  -H 'apikey: <SUPABASE_PUBLISHABLE_KEY>' \
   -H 'Content-Type: application/json' \
   -d '{"limit":25,"dry_run":true}'
 ```

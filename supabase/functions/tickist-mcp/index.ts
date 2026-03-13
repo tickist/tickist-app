@@ -2,6 +2,7 @@
 // Implements MCP 2025-06-18 over Streamable HTTP (POST-based JSON-RPC 2.0)
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { requireEnv, requireSupabaseSecretKey } from "../_shared/common.ts";
 import {
     type JsonRpcRequest,
     type JsonRpcResponse,
@@ -159,8 +160,8 @@ serve(async (req) => {
     }
 
     // Authenticate
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = requireEnv("SUPABASE_URL");
+    const supabaseServiceKey = requireSupabaseSecretKey();
 
     let userId: string;
     try {

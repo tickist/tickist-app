@@ -7,6 +7,7 @@ import {
   isRecord,
   jsonResponse,
   requireEnv,
+  requireSupabaseSecretKey,
   toSha256Hex,
 } from "../_shared/common.ts";
 
@@ -54,8 +55,8 @@ serve(async (req) => {
   }
 
   const supabaseUrl = requireEnv("SUPABASE_URL");
-  const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+  const supabaseSecretKey = requireSupabaseSecretKey();
+  const supabase = createClient(supabaseUrl, supabaseSecretKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
