@@ -168,3 +168,22 @@ jobs:
 
           npx --yes wrangler@4 secret bulk "$secrets_file" --config wrangler.toml
           rm -f "$secrets_file"
+
+      - name: Verify Cloudflare runtime env
+        run: |
+          runtime_env="$(curl -fsS https://tickist.com/env.js)"
+
+          if echo "$runtime_env" | grep -q 'globalThis.__env = globalThis.__env || {}'; then
+            echo "::error::Cloudflare runtime env is still serving the static placeholder."
+            exit 1
+          fi
+
+          if ! echo "$runtime_env" | grep -q '"NG_APP_SUPABASE_URL":"https://'; then
+            echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_URL."
+            exit 1
+          fi
+
+          if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY":"[^"]+"'; then
+            echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_PUBLISHABLE_KEY."
+            exit 1
+          fi

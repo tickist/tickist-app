@@ -157,14 +157,6 @@ export class SettingsComponent {
     const version = asOptionalString(metadata['avatar_version']);
     return appendCacheVersion(avatarUrl, version);
   });
-  readonly avatarInitial = computed(() => {
-    const displayName = this.accountForm.controls.displayName.value.trim();
-    if (displayName.length > 0) {
-      return displayName.charAt(0).toUpperCase();
-    }
-    const email = this.user()?.email ?? '';
-    return email ? email.charAt(0).toUpperCase() : '?';
-  });
   readonly availableProjects = computed(() => {
     const userId = this.user()?.id;
     if (!userId) {

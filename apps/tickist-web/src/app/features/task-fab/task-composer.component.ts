@@ -227,8 +227,10 @@ export class TaskComposerComponent {
     return this.stepsArray;
   }
 
-  selectTab(tab: TabKey): void {
-    this.activeTab.set(tab);
+  selectTab(tab: string): void {
+    if (this.isTabKey(tab)) {
+      this.activeTab.set(tab);
+    }
   }
 
   toggleTag(tagId: string): void {
@@ -264,6 +266,10 @@ export class TaskComposerComponent {
     const targetValue = this.steps.at(target).value;
     this.steps.at(index).setValue(targetValue);
     this.steps.at(target).setValue(sourceValue);
+  }
+
+  private isTabKey(tab: string): tab is TabKey {
+    return this.tabs.some((candidate) => candidate.key === tab);
   }
 
   private clearSteps(): void {

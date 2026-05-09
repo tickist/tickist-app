@@ -151,8 +151,10 @@ export class ProjectComposerComponent {
     });
   }
 
-  selectTab(tab: ProjectTab): void {
-    this.activeTab.set(tab);
+  selectTab(tab: string): void {
+    if (this.isProjectTab(tab)) {
+      this.activeTab.set(tab);
+    }
   }
 
   removeInvite(email: string): void {
@@ -173,6 +175,10 @@ export class ProjectComposerComponent {
 
   chooseIcon(icon: ProjectIconKey): void {
     this.form.controls.icon.setValue(icon);
+  }
+
+  private isProjectTab(tab: string): tab is ProjectTab {
+    return this.tabs.some((candidate) => candidate.key === tab);
   }
 
   async submit(): Promise<void> {

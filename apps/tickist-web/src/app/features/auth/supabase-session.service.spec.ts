@@ -1,6 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AuthChangeEvent, Session, SupabaseClient, User } from '@supabase/supabase-js';
+import type {
+  AuthChangeEvent,
+  Session,
+  SupabaseClient,
+  User,
+} from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../../config/supabase.provider';
 import { SupabaseSessionService } from './supabase-session.service';
 
@@ -15,6 +20,7 @@ describe('SupabaseSessionService password recovery state', () => {
     authStateChangeHandler = null;
     signOutMock = vi.fn(async () => ({ error: null }));
     sessionStorage.clear();
+    window.history.replaceState({}, '', '/');
 
     await TestBed.configureTestingModule({
       providers: [
@@ -65,6 +71,55 @@ describe('SupabaseSessionService password recovery state', () => {
     );
   });
 
+  it('marks password recovery as pending from an update-password callback URL', async () => {
+    TestBed.resetTestingModule();
+    authStateChangeHandler = null;
+    window.history.replaceState(
+      {},
+      '',
+      '/auth/update-password?code=recovery-code'
+    );
+
+    await TestBed.configureTestingModule({
+      providers: [
+        SupabaseSessionService,
+        {
+          provide: SUPABASE_CLIENT,
+          useValue: {
+            auth: {
+              getSession: vi.fn(async () => ({
+                data: { session: null },
+              })),
+              onAuthStateChange: vi.fn(
+                (
+                  callback: (
+                    event: AuthChangeEvent,
+                    session: Session | null
+                  ) => void
+                ) => {
+                  authStateChangeHandler = callback;
+                  return {
+                    data: {
+                      subscription: {
+                        unsubscribe: vi.fn(),
+                      },
+                    },
+                  };
+                }
+              ),
+              signOut: signOutMock,
+            },
+          } as unknown as SupabaseClient,
+        },
+      ],
+    }).compileComponents();
+
+    service = TestBed.inject(SupabaseSessionService);
+    await service.waitUntilReady();
+
+    expect(service.passwordRecoveryPending()).toBe(true);
+  });
+
   it('clears the password recovery marker on sign out', async () => {
     service.markPasswordRecoveryPending();
 
@@ -72,7 +127,9 @@ describe('SupabaseSessionService password recovery state', () => {
 
     expect(signOutMock).toHaveBeenCalledOnce();
     expect(service.passwordRecoveryPending()).toBe(false);
-    expect(sessionStorage.getItem('tickist.password-recovery-pending')).toBeNull();
+    expect(
+      sessionStorage.getItem('tickist.password-recovery-pending')
+    ).toBeNull();
   });
 });
 
