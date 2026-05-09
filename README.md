@@ -1,107 +1,140 @@
 # Tickist
+
 [![CI](https://github.com/tickist/tickist-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tickist/tickist-app/actions/workflows/ci.yml)
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Tickist to aplikacja do zarządzania zadaniami i projektami, oparta o Angular + Supabase.
+Projekt jest rozwijany jako monorepo Nx, ale aktywnie utrzymywana jest jedna aplikacja: `tickist-web`.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+## Czym jest ten projekt
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-standalone-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+Tickist skupia się na codziennej organizacji pracy:
 
-## Finish your CI setup
+- zadania z terminami, priorytetami i opisami,
+- projekty (także hierarchiczne),
+- tagi i filtrowanie,
+- kroki/subtaski,
+- reguły powtarzania,
+- ustawienia konta i preferencje użytkownika,
+- notyfikacje email przez Supabase Edge Functions + AWS SES.
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/wo22B0Jnpq)
+## Stack techniczny
 
+- Angular 21 (standalone components, sygnały)
+- Nx 22
+- Vite + Vitest
+- TailwindCSS + DaisyUI
+- Supabase (Postgres, Auth, Storage, Edge Functions)
+- Playwright (E2E)
 
-## Run tasks
+## Struktura repo
 
-To run the dev server for your app, use:
+- `apps/tickist-web/` - główna aplikacja frontendowa
+- `apps/tickist-web/src/app/` - feature modules (`auth`, `app-shell`, `dashboard`, `tags`, `task-fab`) oraz `core` i `data`
+- `supabase/migrations/` - migracje bazy
+- `supabase/functions/` - edge functions
+- `docs/` - dokumentacja operacyjna (np. email/SES)
 
-```sh
-npx nx serve tickist
-```
+## Szybki start lokalny
 
-To create a production bundle:
-
-```sh
-npx nx build tickist
-```
-
-To see all available targets to run for a project, run:
-
-```sh
-npx nx show project tickist
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Supabase configuration
-
-Create a local environment file based on `.env.example`:
+1. Zainstaluj zależności:
 
 ```bash
-cp .env.example .env.local
+npm install
 ```
 
-Fill in `NG_APP_SUPABASE_URL` and `NG_APP_SUPABASE_PUBLISHABLE_KEY`. The Angular app reads these via `environment.util.ts`. Without those values the Supabase client falls back to mock data so you can keep building the UI.
+2. Przygotuj pliki środowiskowe:
 
-Schema migrations live in `supabase/migrations/`. Apply them with the Supabase CLI or `psql` before testing real data flows.
+```bash
+cp .env.example .env
+cp .env.example .local_env
+```
 
-`NG_APP_SUPABASE_FUNCTIONS_URL` is optional. If missing, the app derives it from `NG_APP_SUPABASE_URL` as `<supabase-url>/functions/v1`. Set it explicitly only when you want to override that default (for example local edge runtime/proxy).
+3. Uzupełnij wymagane zmienne (`.local_env`):
 
-### Email delivery
+- `NG_APP_SUPABASE_URL`
+- `NG_APP_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_DB_URL`
+- `SUPABASE_E2E_DB_URL`
+- `SUPABASE_REMOTE_DB_URL`
+- `SUPABASE_SECRET_KEY`
+- `INTERNAL_FUNCTION_SECRET`
 
-- Auth emails (reset password, magic link, confirm email) use **Supabase Auth SMTP** configured to AWS SES.
-- App notifications use `public.email_outbox` + edge functions:
+4. Uruchom aplikację:
+
+```bash
+npm run start
+```
+
+Aplikacja startuje na `http://localhost:4200`.
+
+## Najważniejsze komendy
+
+```bash
+# development
+npm run start
+
+# build
+npm run build
+
+# testy jednostkowe
+npm run test
+
+# e2e
+npm exec nx e2e tickist-web-e2e
+
+# lint
+npm exec nx lint tickist-web
+```
+
+## Workflow Supabase
+
+```bash
+# lokalna baza
+npm run db:push:local
+npm run db:pull:local
+npm run db:types:local
+npm run db:reset:local
+
+# zdalna baza
+npm run db:push:remote
+npm run db:pull:remote
+npm run db:types:remote
+npm run db:reset:remote
+```
+
+Uruchamianie lokalnego Supabase:
+
+```bash
+npm run supabase:start
+npm run supabase:status
+npm run supabase:stop
+```
+
+## Email i notyfikacje
+
+- Auth email (reset hasła, potwierdzenie konta) idzie przez SMTP skonfigurowane w Supabase.
+- Notyfikacje aplikacyjne korzystają z outboxa `public.email_outbox` i funkcji:
   - `notification-digest-runner`
   - `enqueue-notification`
   - `send-emails`
-- Full setup and security checklist: [`docs/EMAIL.md`](docs/EMAIL.md)
-- Deploy checklist: [`DEPLOY.md`](DEPLOY.md)
 
-## Add new projects
+Szczegóły:
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+- [docs/EMAIL.md](docs/EMAIL.md)
+- [DEPLOY.md](DEPLOY.md)
 
-Use the plugin's generator to create new projects.
+## Jakość i CI
 
-To generate a new application, use:
+Przed PR uruchom:
 
-```sh
-npx nx g @nx/angular:app demo
+```bash
+npm exec nx format:check
+npm exec nx lint tickist-web
+npm exec nx test tickist-web
+npm exec nx build tickist-web
 ```
 
-To generate a new library, use:
+## Dodatkowa dokumentacja
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-standalone-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [MIGRATION_PLAN.md](MIGRATION_PLAN.md) - plan migracji i decyzje architektoniczne
+- [AGENTS.md](AGENTS.md) - zasady pracy w repo
