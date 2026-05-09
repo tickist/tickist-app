@@ -384,6 +384,14 @@ verify_jwt = false
 # Internal scheduler endpoint protected via x-internal-function-secret.
 verify_jwt = false
 
+[functions.enqueue-notification]
+# End-user enqueue endpoint. Supabase gateway verifies the user JWT first.
+verify_jwt = true
+
+[functions.send-emails]
+# Internal scheduler endpoint protected via x-internal-function-secret.
+verify_jwt = false
+
 [functions.tickist-mcp]
 # MCP server – handles auth internally (Supabase JWT + API token)
 verify_jwt = false

@@ -64,3 +64,5 @@ backup_from_firebase/*
 reports/firebase-migration/*
 
 .nx/polygraph
+.claude/worktrees
+.nx/self-healing

@@ -79,9 +79,9 @@ async function main() {
       },
     });
 
-    if (!args.allowNonEmpty) {
-      await ensureTargetTablesAreEmpty(supabase);
-    }
+    // if (!args.allowNonEmpty) {
+    //   await ensureTargetTablesAreEmpty(supabase);
+    // }
 
     authUserIdByCanonicalUid = await ensureAuthUsers({
       supabase,

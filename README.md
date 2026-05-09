@@ -54,6 +54,7 @@ Schema migrations live in `supabase/migrations/`. Apply them with the Supabase C
 
 - Auth emails (reset password, magic link, confirm email) use **Supabase Auth SMTP** configured to AWS SES.
 - App notifications use `public.email_outbox` + edge functions:
+  - `notification-digest-runner`
   - `enqueue-notification`
   - `send-emails`
 - Full setup and security checklist: [`docs/EMAIL.md`](docs/EMAIL.md)
