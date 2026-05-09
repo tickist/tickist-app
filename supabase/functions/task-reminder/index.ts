@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { requireEnv, requireSupabaseSecretKey } from "../_shared/common.ts";
 
 interface ReminderPayload {
   taskId: string;
@@ -55,8 +56,8 @@ serve(async (req) => {
   if (messageInput && messageInput.length > MAX_MESSAGE_LENGTH) {
     return jsonResponse(400, { error: "Message too long", request_id: requestId });
   }
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseUrl = requireEnv("SUPABASE_URL");
+  const serviceRole = requireSupabaseSecretKey();
 
   const supabase = createClient(supabaseUrl, serviceRole);
   const userJwt = req.headers.get("x-user-jwt");

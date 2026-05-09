@@ -157,7 +157,7 @@ Options:
 
 Environment:
   NG_APP_SUPABASE_URL        Target Supabase URL.
-  SUPABASE_SERVICE_ROLE_KEY  Service role key used by auth admin API.
+  SUPABASE_SECRET_KEY        Secret key used by auth admin API.
 `);
 }
 
@@ -188,9 +188,11 @@ function resolveSupabaseConnection(target) {
     throw new Error(`Missing NG_APP_SUPABASE_URL for target "${normalizedTarget}".`);
   }
 
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  const serviceRoleKey =
+    process.env.SUPABASE_SECRET_KEY?.trim() ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
   if (!serviceRoleKey) {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY.');
+    throw new Error('Missing SUPABASE_SECRET_KEY.');
   }
 
   return { url, serviceRoleKey };

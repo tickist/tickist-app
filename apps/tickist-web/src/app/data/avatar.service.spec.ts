@@ -50,7 +50,8 @@ describe('AvatarService', () => {
     upload.mockResolvedValue({ error: null });
     getPublicUrl.mockReturnValue({
       data: {
-        publicUrl: 'https://project.supabase.co/storage/v1/object/public/avatars/user-123/avatar',
+        publicUrl:
+          'https://project.supabase.co/storage/v1/object/public/avatars/user-123/avatar',
       },
     });
 

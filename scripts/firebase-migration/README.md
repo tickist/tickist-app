@@ -16,6 +16,10 @@ One-time migration tool for hard cutover from Firebase dump JSON to Supabase.
 ## Required env vars
 
 - `NG_APP_SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
+
+Temporary fallback during rollout:
+
 - `SUPABASE_SERVICE_ROLE_KEY`
 
 For remote migration also keep `SUPABASE_REMOTE_DB_URL` for schema push/reset scripts.

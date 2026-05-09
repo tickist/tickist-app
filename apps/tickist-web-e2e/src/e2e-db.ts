@@ -61,7 +61,9 @@ export async function ensureE2EAuthUser(): Promise<void> {
 
   if (!publishableKey) {
     throw new Error(
-      `Missing Supabase publishable/anon key for e2e auth bootstrap. Checked keys: NG_APP_SUPABASE_PUBLISHABLE_KEY, NG_APP_SUPABASE_ANON_KEY, SUPABASE_PUBLISHABLE_KEY, SUPABASE_ANON_KEY, PUBLISHABLE_KEY, ANON_KEY${envFile ? ` (env file: ${envFile})` : ''}.`
+      `Missing Supabase publishable/anon key for e2e auth bootstrap. Checked keys: NG_APP_SUPABASE_PUBLISHABLE_KEY, NG_APP_SUPABASE_ANON_KEY, SUPABASE_PUBLISHABLE_KEY, SUPABASE_ANON_KEY, PUBLISHABLE_KEY, ANON_KEY${
+        envFile ? ` (env file: ${envFile})` : ''
+      }.`
     );
   }
 
@@ -89,12 +91,11 @@ export async function ensureE2EAuthUser(): Promise<void> {
     body: JSON.stringify({ email, password }),
   });
   const signUpText = await signUp.text();
-  if (
-    !signUp.ok &&
-    !signUpText.toLowerCase().includes('already registered')
-  ) {
+  if (!signUp.ok && !signUpText.toLowerCase().includes('already registered')) {
     throw new Error(
-      `[e2e-db] Failed to create e2e auth user (${signUp.status}): ${truncateForLog(signUpText)}`
+      `[e2e-db] Failed to create e2e auth user (${
+        signUp.status
+      }): ${truncateForLog(signUpText)}`
     );
   }
 
@@ -106,7 +107,9 @@ export async function ensureE2EAuthUser(): Promise<void> {
   );
   if (!postSignUpSignIn.ok) {
     throw new Error(
-      `[e2e-db] Failed to sign in e2e auth user after signup (${postSignUpSignIn.status}): ${truncateForLog(postSignUpSignIn.body)}`
+      `[e2e-db] Failed to sign in e2e auth user after signup (${
+        postSignUpSignIn.status
+      }): ${truncateForLog(postSignUpSignIn.body)}`
     );
   }
 }
@@ -183,7 +186,9 @@ function isLocalDatabaseUrl(raw: string): boolean {
   try {
     const parsed = new URL(raw);
     const hostname = parsed.hostname.toLowerCase();
-    return hostname === '127.0.0.1' || hostname === 'localhost' || hostname === '::1';
+    return (
+      hostname === '127.0.0.1' || hostname === 'localhost' || hostname === '::1'
+    );
   } catch {
     return false;
   }

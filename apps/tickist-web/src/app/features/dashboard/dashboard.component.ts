@@ -64,9 +64,7 @@ export class DashboardComponent {
         return false;
       }
       const finishDate = new Date(task.finishDate);
-      return (
-        finishDate.toDateString() === today.toDateString() && !task.isDone
-      );
+      return finishDate.toDateString() === today.toDateString() && !task.isDone;
     });
   });
   readonly overdueTasks = computed(() => {
@@ -105,7 +103,8 @@ export class DashboardComponent {
     const nextActionProjects = new Set(
       this.taskList()
         .filter(
-          (task) => task.taskType === 'next_action' && !task.isDone && task.projectId
+          (task) =>
+            task.taskType === 'next_action' && !task.isDone && task.projectId
         )
         .map((task) => task.projectId as string)
     );

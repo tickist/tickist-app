@@ -1,9 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupabaseAuthService } from './supabase-auth.service';
 import { NgClass } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';

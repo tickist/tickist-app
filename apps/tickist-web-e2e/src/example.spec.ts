@@ -23,8 +23,7 @@ test('signup flow leads to app dashboard', async ({ page }, testInfo) => {
   await page.goto('/');
   const root = page.locator('html');
   const initialTheme = (await root.getAttribute('data-theme')) ?? 'tickist';
-  const toggledTheme =
-    initialTheme === 'tickist' ? 'tickist-light' : 'tickist';
+  const toggledTheme = initialTheme === 'tickist' ? 'tickist-light' : 'tickist';
 
   await page.getByTestId('theme-toggle').first().click();
   await expect(root).toHaveAttribute('data-theme', toggledTheme);

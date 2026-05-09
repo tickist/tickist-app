@@ -13,6 +13,11 @@ export interface SignUpPayload {
   password: string;
 }
 
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -34,6 +39,8 @@ export class SupabaseAuthService {
     const response = await client.auth.signInWithPassword(payload);
     if (response.error) {
       this.session.clearSession();
+    } else {
+      this.session.clearPasswordRecoveryPending();
     }
     return response;
   }
@@ -60,6 +67,27 @@ export class SupabaseAuthService {
     if (error) {
       throw error;
     }
+  }
+
+  async changePasswordWithCurrentPassword(
+    payload: ChangePasswordPayload
+  ): Promise<void> {
+    const client = this.ensureClient();
+    const email = this.session.user()?.email?.trim();
+
+    if (!email) {
+      throw new Error('You must be signed in.');
+    }
+
+    const verification = await client.auth.signInWithPassword({
+      email,
+      password: payload.currentPassword,
+    });
+    if (verification.error) {
+      throw new Error('Current password is incorrect.');
+    }
+
+    await this.updatePassword(payload.newPassword);
   }
 
   async updateProfileMetadata(patch: Record<string, unknown>): Promise<void> {

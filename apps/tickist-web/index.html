@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="tickist">
   <head>
     <meta charset="utf-8" />
@@ -13,7 +13,8 @@
         var lightTheme = 'tickist-light';
         try {
           var stored = localStorage.getItem(key);
-          var fromStorage = stored === darkTheme || stored === lightTheme ? stored : null;
+          var fromStorage =
+            stored === darkTheme || stored === lightTheme ? stored : null;
           var prefersDark =
             typeof window.matchMedia === 'function' &&
             window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -31,7 +32,8 @@
   <body>
     <script>
       (function syncBodyTheme() {
-        var theme = document.documentElement.getAttribute('data-theme') || 'tickist';
+        var theme =
+          document.documentElement.getAttribute('data-theme') || 'tickist';
         var scheme = theme === 'tickist' ? 'dark' : 'light';
         document.body.setAttribute('data-theme', theme);
         document.body.style.colorScheme = scheme;

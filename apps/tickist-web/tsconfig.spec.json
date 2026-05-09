@@ -7,9 +7,5 @@
     "types": ["vitest/globals", "vitest/importMeta", "vite/client"]
   },
   "files": ["src/test-setup.ts", "vite.config.mts"],
-  "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "src/**/*.d.ts"
-  ]
+  "include": ["src/**/*.spec.ts", "src/**/*.test.ts", "src/**/*.d.ts"]
 }

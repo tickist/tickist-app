@@ -1,11 +1,11 @@
-<div class="project-picker">
+<div class="project-picker" [class.project-picker--open]="isOpen()">
   <button
     #triggerButton
     type="button"
     class="project-picker__trigger"
     [disabled]="disabled"
     [attr.aria-label]="ariaLabel"
-    aria-haspopup="listbox"
+    aria-haspopup="dialog"
     [attr.aria-expanded]="isOpen()"
     (click)="toggle()"
     (keydown)="onTriggerKeydown($event)"
@@ -13,42 +13,90 @@
     <span class="project-picker__value">
       <app-project-icon
         [icon]="selectedOption().icon"
+        [color]="selectedOption().color"
         [size]="16"
         className="project-picker__icon"
       ></app-project-icon>
       <span class="project-picker__text">{{ selectedOption().name }}</span>
     </span>
-    <span class="project-picker__chevron" [class.project-picker__chevron--open]="isOpen()">
+    <span
+      class="project-picker__chevron"
+      [class.project-picker__chevron--open]="isOpen()"
+    >
       ▾
     </span>
   </button>
 
   @if (isOpen()) {
-    <div class="project-picker__menu" role="listbox" [attr.aria-label]="ariaLabel">
-      @for (option of options(); track option.id; let index = $index) {
+  <div
+    class="project-picker__menu"
+    role="dialog"
+    [attr.aria-label]="ariaLabel"
+    [style.top.px]="menuLayout().top"
+    [style.left.px]="menuLayout().left"
+    [style.width.px]="menuLayout().width"
+  >
+    <label class="project-picker__search">
+      <span class="sr-only">{{ searchPlaceholder }}</span>
+      <input
+        #searchInput
+        type="text"
+        class="project-picker__search-input"
+        [value]="searchQuery()"
+        [placeholder]="searchPlaceholder"
+        (input)="onSearchInput(searchInput.value)"
+        (keydown)="onSearchKeydown($event)"
+      />
+    </label>
+
+    <div
+      class="project-picker__options"
+      role="listbox"
+      [attr.aria-label]="ariaLabel"
+      [style.max-height.px]="menuLayout().maxHeight"
+    >
+      @for (group of groupedOptions(); track group.key) {
+      <section class="project-picker__group" [attr.aria-label]="group.label">
+        @if (group.label) {
+        <p class="project-picker__group-label">{{ group.label }}</p>
+        }
+        @for (option of group.options; track option.id + ':' + option.index) {
         <button
           #optionButton
           type="button"
           role="option"
           class="project-picker__option"
-          [id]="optionId(index)"
-          [class.project-picker__option--active]="activeIndex() === index"
+          [id]="optionId(option.index)"
+          [class.project-picker__option--active]="activeIndex() === option.index"
           [class.project-picker__option--selected]="option.id === selectedProjectId"
           [attr.aria-selected]="option.id === selectedProjectId"
+          [style.padding-inline-start.rem]="optionIndent(option.level)"
           (click)="selectOption(option.id)"
-          (keydown)="onOptionKeydown($event, index)"
+          (keydown)="onOptionKeydown($event, option.index)"
         >
           <app-project-icon
             [icon]="option.icon"
+            [color]="option.color"
             [size]="16"
             className="project-picker__icon"
           ></app-project-icon>
-          <span class="project-picker__option-text">{{ option.name }}</span>
-          @if (option.color; as color) {
-            <span class="project-picker__dot" [style.background-color]="color"></span>
-          }
+          <span class="project-picker__option-copy">
+            <span class="project-picker__option-text">{{ option.name }}</span>
+            @if (option.parentLabel) {
+            <span class="project-picker__option-parent">
+              {{ option.parentLabel }}
+            </span>
+            }
+          </span>
         </button>
+        }
+      </section>
+      }
+
+      @if (!hasVisibleOptions()) {
+      <p class="project-picker__empty">No matching projects.</p>
       }
     </div>
+  </div>
   }
 </div>

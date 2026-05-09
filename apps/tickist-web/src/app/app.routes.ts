@@ -43,10 +43,45 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'stats',
+        loadComponent: () =>
+          import('./features/statistics/statistics.component').then(
+            (m) => m.StatisticsComponent
+          ),
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('./features/app-shell/settings.component').then(
             (m) => m.SettingsComponent
+          ),
+      },
+      {
+        path: 'task/new',
+        loadComponent: () =>
+          import('./features/task-fab/task-composer-page.component').then(
+            (m) => m.TaskComposerPageComponent
+          ),
+      },
+      {
+        path: 'task/:taskId/edit',
+        loadComponent: () =>
+          import('./features/task-fab/task-composer-page.component').then(
+            (m) => m.TaskComposerPageComponent
+          ),
+      },
+      {
+        path: 'project/new',
+        loadComponent: () =>
+          import('./features/task-fab/project-composer-page.component').then(
+            (m) => m.ProjectComposerPageComponent
+          ),
+      },
+      {
+        path: 'project/:projectId/edit',
+        loadComponent: () =>
+          import('./features/task-fab/project-composer-page.component').then(
+            (m) => m.ProjectComposerPageComponent
           ),
       },
       {

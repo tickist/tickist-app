@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -27,6 +28,10 @@ import { TagDataService } from '../../data/tag-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
+import {
+  SheetScaffoldComponent,
+  SheetScaffoldTab,
+} from '../../core/ui/sheet-scaffold.component';
 
 type TabKey = 'general' | 'repeat' | 'tags' | 'steps' | 'extra';
 type RepeatMode =
@@ -62,10 +67,14 @@ type TaskFormDefaults = {
 
 @Component({
   selector: 'app-task-composer',
-  standalone: true,
-  imports: [ReactiveFormsModule, ProjectPickerComponent],
+  imports: [
+    ReactiveFormsModule,
+    ProjectPickerComponent,
+    SheetScaffoldComponent,
+  ],
   templateUrl: './task-composer.component.html',
   styleUrl: './task-composer.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskComposerComponent {
   private readonly fb = inject(FormBuilder);
@@ -83,11 +92,20 @@ export class TaskComposerComponent {
   readonly activeTab = signal<TabKey>('general');
   readonly submitting = signal(false);
   readonly tagSearch = signal('');
+  readonly tabs: readonly SheetScaffoldTab<TabKey>[] = [
+    { key: 'general', label: 'General', icon: '✏️' },
+    { key: 'repeat', label: 'Repeat', icon: '🔁' },
+    { key: 'tags', label: 'Tags', icon: '🏷️' },
+    { key: 'steps', label: 'Steps', icon: '☑️' },
+    { key: 'extra', label: 'Extra', icon: '✨' },
+  ];
+  readonly sheetEyebrow = computed(() =>
+    this.editingTask() ? 'Edit task' : 'Create task'
+  );
+  readonly sheetTitle = computed(() => this.editingTask()?.name || 'New task');
   readonly filteredTags = computed(() => {
     const query = this.tagSearch().trim().toLowerCase();
-    return this.tags().filter((tag) =>
-      tag.name.toLowerCase().includes(query)
-    );
+    return this.tags().filter((tag) => tag.name.toLowerCase().includes(query));
   });
 
   @Output() dismiss = new EventEmitter<void>();
@@ -310,7 +328,9 @@ export class TaskComposerComponent {
           };
         })
         .filter(
-          (step): step is { content: string; isDone: boolean; position: number } =>
+          (
+            step
+          ): step is { content: string; isDone: boolean; position: number } =>
             !!step
         );
       const editing = this.editingTask();
@@ -423,9 +443,7 @@ export class TaskComposerComponent {
       case 'yearly':
         return 365;
       case 'custom':
-        return (
-          Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit)
-        );
+        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
       default:
         return 0;
     }
@@ -445,9 +463,11 @@ export class TaskComposerComponent {
     return 0;
   }
 
-  private repeatModeFromInterval(
-    interval: number | null | undefined
-  ): { mode: RepeatMode; every: number; unit: RepeatUnit } {
+  private repeatModeFromInterval(interval: number | null | undefined): {
+    mode: RepeatMode;
+    every: number;
+    unit: RepeatUnit;
+  } {
     if (!interval || interval <= 0) {
       return { mode: 'never', every: 1, unit: 'day' };
     }
@@ -501,7 +521,9 @@ export class TaskComposerComponent {
     return fromRepeating === 1 ? 'due_date' : 'completion_date';
   }
 
-  private completeModeFromType(typeFinishDate: number | null | undefined): 'by' | 'on' {
+  private completeModeFromType(
+    typeFinishDate: number | null | undefined
+  ): 'by' | 'on' {
     return typeFinishDate === 0 ? 'on' : 'by';
   }
 

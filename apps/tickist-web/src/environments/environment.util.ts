@@ -1,7 +1,6 @@
 const getFromGlobal = (key: string): string | undefined => {
-  const envSource = (globalThis as Record<string, unknown> | undefined)?.__env as
-    | Record<string, string | undefined>
-    | undefined;
+  const envSource = (globalThis as Record<string, unknown> | undefined)
+    ?.__env as Record<string, string | undefined> | undefined;
   return envSource?.[key];
 };
 
@@ -30,10 +29,7 @@ export const readSupabaseEnv = (key: string, fallback = ''): string => {
   );
 };
 
-export const readSupabaseEnvAny = (
-  keys: string[],
-  fallback = ''
-): string => {
+export const readSupabaseEnvAny = (keys: string[], fallback = ''): string => {
   for (const key of keys) {
     const value = readSupabaseEnv(key);
     if (value !== '') {

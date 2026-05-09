@@ -1,0 +1,49 @@
+<div class="sheet-shell" [attr.data-testid]="testId()">
+  <header class="sheet-shell__header">
+    <div class="sheet-shell__heading">
+      <span class="sheet-shell__eyebrow">{{ eyebrow() }}</span>
+      <h2 class="sheet-shell__title">{{ title() }}</h2>
+    </div>
+    <button
+      type="button"
+      class="sheet-shell__close"
+      [attr.aria-label]="closeAriaLabel()"
+      (click)="requestClose()"
+    >
+      ×
+    </button>
+  </header>
+
+  <div class="sheet-shell__body" [class.sheet-shell__body--single]="!hasTabs()">
+    @if (hasTabs()) {
+    <aside class="sheet-shell__tabs" aria-label="Panel sections">
+      @for (tab of tabs(); track tab.key) {
+      <button
+        type="button"
+        class="sheet-shell__tab"
+        [class.active]="activeTab() === tab.key"
+        [attr.aria-pressed]="activeTab() === tab.key"
+        (click)="selectTab(tab.key)"
+      >
+        @if (tab.icon) {
+        <span class="sheet-shell__tab-icon" aria-hidden="true">
+          {{ tab.icon }}
+        </span>
+        }
+        <span>{{ tab.label }}</span>
+      </button>
+      }
+    </aside>
+    }
+
+    <section class="sheet-shell__panel">
+      <div class="sheet-shell__panel-scroll">
+        <ng-content select="[sheet-body]"></ng-content>
+      </div>
+    </section>
+  </div>
+
+  <footer class="sheet-shell__footer">
+    <ng-content select="[sheet-footer]"></ng-content>
+  </footer>
+</div>

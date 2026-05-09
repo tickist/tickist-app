@@ -1,62 +1,92 @@
 <section class="tag-view">
   <header class="tag-view__header">
-    <div>
+    <div class="tag-view__intro">
       <p class="eyebrow">Tags</p>
       <h1>Browse tasks by tag</h1>
     </div>
     <div class="controls">
-      <button type="button" class="btn btn-ghost btn-sm" (click)="showAllTasks()">All tasks</button>
-      <button type="button" class="btn btn-ghost btn-sm" (click)="showTasksWithoutTags()">Tasks without tags</button>
-      <label class="inline-flex items-center gap-2 text-sm">
-        <input type="checkbox" [checked]="includeCompleted()" (change)="toggleCompleted()" />
-        <span>Include completed</span>
-      </label>
-      <button type="button" class="btn btn-ghost btn-sm" (click)="clearSelection()">Clear selection</button>
-      <div class="match-toggle">
+      <div class="controls__group">
         <button
           type="button"
-          class="btn btn-xs"
+          class="btn btn-ghost btn-sm"
+          (click)="showAllTasks()"
+        >
+          All tasks
+        </button>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm"
+          (click)="showTasksWithoutTags()"
+        >
+          Tasks without tags
+        </button>
+      </div>
+      <label class="controls__checkbox">
+        <input
+          type="checkbox"
+          [checked]="includeCompleted()"
+          (change)="toggleCompleted()"
+        />
+        <span>Include completed</span>
+      </label>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm controls__action"
+        (click)="clearSelection()"
+      >
+        Clear selection
+      </button>
+      <div class="match-toggle" aria-label="Tag match mode" role="group">
+        <button
+          type="button"
+          class="btn btn-sm match-toggle__button"
           [class.btn-primary]="matchMode() === 'or'"
           (click)="setMatchMode('or')"
-          >
+        >
           OR
         </button>
         <button
           type="button"
-          class="btn btn-xs"
+          class="btn btn-sm match-toggle__button"
           [class.btn-primary]="matchMode() === 'and'"
           (click)="setMatchMode('and')"
-          >
+        >
           AND
         </button>
       </div>
-      <select class="select select-xs select-bordered" [value]="sortOption()" (change)="setSort($any($event.target).value)">
-        <option value="priority-desc">Priority ↓</option>
-        <option value="priority-asc">Priority ↑</option>
-        <option value="due-asc">Due date ↑</option>
-        <option value="due-desc">Due date ↓</option>
-        <option value="created-asc">Created ↑</option>
-        <option value="created-desc">Created ↓</option>
-        <option value="alpha-asc">A-Z ↑</option>
-        <option value="alpha-desc">A-Z ↓</option>
-      </select>
+      <label class="controls__sort">
+        <span>Sort</span>
+        <select
+          class="select select-sm select-bordered"
+          [value]="sortOption()"
+          (change)="setSort($any($event.target).value)"
+        >
+          <option value="priority-desc">Priority ↓</option>
+          <option value="priority-asc">Priority ↑</option>
+          <option value="due-asc">Due date ↑</option>
+          <option value="due-desc">Due date ↓</option>
+          <option value="created-asc">Created ↑</option>
+          <option value="created-desc">Created ↓</option>
+          <option value="alpha-asc">A-Z ↑</option>
+          <option value="alpha-desc">A-Z ↓</option>
+        </select>
+      </label>
     </div>
   </header>
 
   <section class="tag-cloud">
     @for (tag of tags(); track tag) {
-      <button
-        type="button"
-        class="tag-pill"
-        [class.active]="selectedTags().has(tag.id)"
-        (click)="toggleTag(tag.id)"
-        >
-        <span>{{ tag.name }}</span>
-        <span class="count">{{ tagCount(tag.id) }}</span>
-      </button>
-    }
-    @if (!tags().length) {
-      <p class="text-sm text-base-content/60">No tags yet.</p>
+    <button
+      type="button"
+      class="tag-pill"
+      [class.active]="selectedTags().has(tag.id)"
+      (click)="toggleTag(tag.id)"
+    >
+      <span>{{ tag.name }}</span>
+      <span class="count">{{ tagCount(tag.id) }}</span>
+    </button>
+    } @if (!tags().length) {
+    <p class="text-sm text-base-content/60">No tags yet.</p>
     }
   </section>
 
@@ -64,32 +94,33 @@
     <p class="text-sm text-base-content/60 mb-2">
       Showing {{ visibleTasks().length }} of {{ filteredTasks().length }} tasks
       @if (selectedTags().size) {
-        <span>
-          · Filter: {{ matchMode() | uppercase }} across {{ selectedTags().size }} tag(s)
-        </span>
-      }
-      @if (showUntagged()) {
-        <span> · Only untagged</span>
-      }
-      @if (includeCompleted()) {
-        <span> · Completed included</span>
+      <span>
+        · Filter: {{ matchMode() | uppercase }} across
+        {{ selectedTags().size }} tag(s)
+      </span>
+      } @if (showUntagged()) {
+      <span> · Only untagged</span>
+      } @if (includeCompleted()) {
+      <span> · Completed included</span>
       }
     </p>
 
     <div class="space-y-3">
       @for (task of visibleTasks(); track trackTask($index, task)) {
-        <app-task-card
-          [task]="task"
-          [project]="null"
-          viewMode="extended"
-        ></app-task-card>
+      <app-task-card
+        [task]="task"
+        [project]="null"
+        viewMode="extended"
+      ></app-task-card>
       }
     </div>
 
     @if (visibleTasks().length < filteredTasks().length) {
-      <div class="mt-4 flex justify-center">
-        <button type="button" class="btn btn-outline btn-sm" (click)="loadMore()">Load more</button>
-      </div>
+    <div class="mt-4 flex justify-center">
+      <button type="button" class="btn btn-outline btn-sm" (click)="loadMore()">
+        Load more
+      </button>
+    </div>
     }
   </section>
 </section>

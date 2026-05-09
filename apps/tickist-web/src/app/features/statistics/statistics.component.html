@@ -1,0 +1,107 @@
+<section class="stats-shell">
+  <header class="stats-hero">
+    <h1 class="stats-title">{{ title() }}</h1>
+  </header>
+
+  @if (loading()) {
+  <article class="stats-panel stats-state" data-testid="statistics-loading">
+    <span
+      class="loading loading-spinner loading-md text-primary"
+      aria-hidden="true"
+    ></span>
+    <p>Loading…</p>
+  </article>
+  } @else if (error(); as errorMessage) {
+  <article class="stats-panel stats-state" data-testid="statistics-error">
+    <p class="font-semibold">Statistics unavailable</p>
+    <p class="text-sm text-base-content/70">{{ errorMessage }}</p>
+    <button type="button" class="btn btn-primary btn-sm" (click)="retry()">
+      Retry
+    </button>
+  </article>
+  } @else {
+  <section class="stats-grid">
+    @for (card of summaryCards(); track trackCard($index, card)) {
+    <article
+      class="stats-card stats-panel"
+      [attr.data-testid]="'statistics-card-' + card.key"
+    >
+      <div class="stats-card__header">
+        <p class="stats-card__label">{{ card.label }}</p>
+        <span [class]="card.badgeClass">{{ card.value }}</span>
+      </div>
+      <p class="stats-card__value">{{ card.value }}</p>
+    </article>
+    }
+  </section>
+
+  <section class="stats-groups">
+    @for (group of groups(); track trackGroup($index, group)) {
+    <article
+      class="stats-panel group-panel"
+      [attr.data-testid]="'statistics-group-' + group.key"
+    >
+      <header class="group-panel__header">
+        <h2 class="group-panel__title">{{ group.label }}</h2>
+        <span class="badge badge-outline">{{
+          group.inactiveProjects.length
+        }}</span>
+      </header>
+
+      @if (group.inactiveProjects.length) {
+      <ul class="project-list">
+        @for (project of group.inactiveProjects; track trackProject($index,
+        project)) {
+        <li class="project-row">
+          <div class="project-row__main">
+            <span
+              class="project-row__icon"
+              [style.background-color]="project.color + '22'"
+            >
+              <app-project-icon
+                [icon]="project.icon"
+                [size]="16"
+                [decorative]="false"
+              ></app-project-icon>
+            </span>
+            <div class="project-row__copy">
+              <div class="project-row__title">
+                <span class="font-semibold">{{ project.name }}</span>
+                <span class="badge badge-ghost badge-sm">{{
+                  staleLabel(project.staleDays)
+                }}</span>
+              </div>
+              <p class="project-row__meta">
+                <span>{{ project.openTasks }} open</span>
+                <span>{{ project.overdueOpenTasks }} overdue</span>
+                @if (project.lastActivityAt) {
+                <span
+                  >Last activity
+                  {{ project.lastActivityAt | date : 'mediumDate' }}</span
+                >
+                }
+              </p>
+            </div>
+          </div>
+          <a
+            class="btn btn-ghost btn-sm"
+            [routerLink]="['/app/tasks', project.projectId]"
+          >
+            Open project
+          </a>
+        </li>
+        }
+      </ul>
+      } @else {
+      <p
+        class="group-panel__empty"
+        [attr.data-testid]="'statistics-empty-' + group.key"
+      >
+        No inactive projects in this group.
+      </p>
+      }
+    </article>
+    }
+  </section>
+  }
+</section>

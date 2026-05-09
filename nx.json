@@ -25,12 +25,14 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore",
-        "{workspaceRoot}/eslint.config.mjs"
+        "{workspaceRoot}/eslint.config.mjs",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
     },
-    "@nx/vite:test": {
+    "@nx/vitest:test": {
       "cache": true,
       "inputs": ["default", "^production"]
     }
@@ -57,5 +59,6 @@
       "unitTestRunner": "vitest"
     }
   },
-  "defaultProject": "tickist-web"
+  "defaultProject": "tickist-web",
+  "analytics": true
 }

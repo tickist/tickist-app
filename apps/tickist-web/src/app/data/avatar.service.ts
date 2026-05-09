@@ -45,16 +45,20 @@ export class AvatarService {
     const userId = this.ensureUserId();
     const objectPath = this.buildAvatarObjectPath(userId);
 
-    const { error } = await client.storage.from(AVATAR_BUCKET).upload(objectPath, file, {
-      upsert: true,
-      contentType: file.type,
-      cacheControl: '3600',
-    });
+    const { error } = await client.storage
+      .from(AVATAR_BUCKET)
+      .upload(objectPath, file, {
+        upsert: true,
+        contentType: file.type,
+        cacheControl: '3600',
+      });
     if (error) {
       throw new Error(`Avatar upload failed: ${error.message}`);
     }
 
-    const { data } = client.storage.from(AVATAR_BUCKET).getPublicUrl(objectPath);
+    const { data } = client.storage
+      .from(AVATAR_BUCKET)
+      .getPublicUrl(objectPath);
     const publicUrl = data.publicUrl?.trim();
     if (!publicUrl) {
       throw new Error('Could not resolve avatar URL after upload.');
@@ -67,7 +71,9 @@ export class AvatarService {
     const client = this.ensureClient();
     const userId = this.ensureUserId();
     const fallbackPath = this.buildAvatarObjectPath(userId);
-    const paths = [...new Set([objectPath, fallbackPath].filter(isNonEmptyString))];
+    const paths = [
+      ...new Set([objectPath, fallbackPath].filter(isNonEmptyString)),
+    ];
 
     if (!paths.length) {
       return;

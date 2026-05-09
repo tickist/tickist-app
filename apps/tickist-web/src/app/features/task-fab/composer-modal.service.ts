@@ -1,6 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Params, Router } from '@angular/router';
 import { Project } from '../../data/project-data.service';
 import { Task } from '../../data/task-data.service';
+import { AppViewStateService } from '../app-shell/app-view-state.service';
 
 export type ProjectComposerMode = 'create' | 'edit';
 export type TaskComposerMode = 'create' | 'edit';
@@ -28,28 +30,87 @@ export interface TaskComposerPreset {
 
 @Injectable({ providedIn: 'root' })
 export class ComposerModalService {
-  readonly taskModalOpen = signal(false);
-  readonly projectModalOpen = signal(false);
-  readonly projectComposerPreset = signal<ProjectComposerPreset | null>(null);
-  readonly taskComposerPreset = signal<TaskComposerPreset | null>(null);
+  private readonly router = inject(Router);
+  private readonly viewState = inject(AppViewStateService);
 
-  openTaskModal(preset: TaskComposerPreset = { mode: 'create' }): void {
-    this.taskComposerPreset.set(preset);
-    this.taskModalOpen.set(true);
+  async openTaskModal(
+    preset: TaskComposerPreset = { mode: 'create' }
+  ): Promise<void> {
+    if (preset.mode === 'edit' && preset.task) {
+      await this.router.navigate(['/app/task', preset.task.id, 'edit']);
+      return;
+    }
+
+    await this.router.navigate(['/app/task/new'], {
+      queryParams: buildTaskQueryParams(preset.defaults),
+    });
   }
 
-  closeTaskModal(): void {
-    this.taskModalOpen.set(false);
-    this.taskComposerPreset.set(null);
+  async closeTaskModal(): Promise<void> {
+    await this.navigateBack();
   }
 
-  openProjectModal(preset: ProjectComposerPreset): void {
-    this.projectComposerPreset.set(preset);
-    this.projectModalOpen.set(true);
+  async openProjectModal(preset: ProjectComposerPreset): Promise<void> {
+    if (preset.mode === 'edit' && preset.project) {
+      await this.router.navigate(['/app/project', preset.project.id, 'edit']);
+      return;
+    }
+
+    await this.router.navigate(['/app/project/new'], {
+      queryParams: buildProjectQueryParams(preset.defaults),
+    });
   }
 
-  closeProjectModal(): void {
-    this.projectModalOpen.set(false);
-    this.projectComposerPreset.set(null);
+  async closeProjectModal(): Promise<void> {
+    await this.navigateBack();
   }
+
+  private async navigateBack(): Promise<void> {
+    await this.router.navigateByUrl(
+      this.viewState.lastNonSheetAppUrl() ?? '/app'
+    );
+  }
+}
+
+function buildTaskQueryParams(
+  defaults: TaskComposerPreset['defaults']
+): Params | undefined {
+  if (!defaults) {
+    return undefined;
+  }
+
+  const params: Params = {};
+  if (defaults.projectId) {
+    params['projectId'] = defaults.projectId;
+  }
+  if (defaults.priority) {
+    params['priority'] = defaults.priority;
+  }
+  if (defaults.tags?.length) {
+    params['tags'] = defaults.tags.join(',');
+  }
+  return Object.keys(params).length ? params : undefined;
+}
+
+function buildProjectQueryParams(
+  defaults: ProjectComposerPreset['defaults']
+): Params | undefined {
+  if (!defaults) {
+    return undefined;
+  }
+
+  const params: Params = {};
+  if (defaults.projectType) {
+    params['projectType'] = defaults.projectType;
+  }
+  if (defaults.ancestorId) {
+    params['ancestorId'] = defaults.ancestorId;
+  }
+  if (defaults.color) {
+    params['color'] = defaults.color;
+  }
+  if (defaults.icon) {
+    params['icon'] = defaults.icon;
+  }
+  return Object.keys(params).length ? params : undefined;
 }
