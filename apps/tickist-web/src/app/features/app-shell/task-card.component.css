@@ -1,5 +1,13 @@
 .task-card {
-  @apply rounded-2xl border border-white/10 bg-base-200 bg-opacity-60 p-4 text-base-content transition;
+  @apply rounded-2xl p-4 text-base-content transition;
+  background: linear-gradient(
+      180deg,
+      rgb(var(--bc) / 0.045),
+      rgb(var(--bc) / 0.018)
+    ),
+    rgb(var(--b2));
+  box-shadow: 0 14px 28px rgb(0 0 0 / 0.13),
+    inset 0 1px 0 rgb(var(--bc) / 0.055);
 }
 
 .task-card--overlay {
@@ -155,9 +163,26 @@
 }
 
 :host-context([data-theme='tickist']) .task-card {
-  background-color: rgb(var(--b2));
-  border-color: rgb(var(--bc) / 12%);
+  background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.035),
+      rgb(255 255 255 / 0.012)
+    ),
+    rgb(var(--b2));
   color: rgb(var(--bc));
+  box-shadow: 0 14px 28px rgb(0 0 0 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.035);
+}
+
+:host-context([data-theme='tickist-light']) .task-card {
+  background: linear-gradient(
+      180deg,
+      rgb(var(--b2) / 0.98),
+      rgb(var(--b3) / 0.92)
+    ),
+    rgb(var(--b2));
+  box-shadow: 0 10px 22px rgb(15 23 42 / 0.075),
+    inset 0 1px 0 rgb(255 255 255 / 0.88);
 }
 
 .task-card__toolbar {

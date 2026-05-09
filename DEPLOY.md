@@ -34,6 +34,7 @@ supabase secrets set \
 4. Deploy edge functions:
 
 ```bash
+supabase functions deploy notification-digest-runner
 supabase functions deploy enqueue-notification
 supabase functions deploy send-emails
 ```
@@ -44,10 +45,21 @@ supabase functions deploy send-emails
 - Host/port/user/pass z AWS SES SMTP credentials
 - Sender email: `no-reply@tickist.com`
 
-6. Skonfiguruj harmonogram `send-emails`:
+6. Skonfiguruj harmonogramy notyfikacji:
 
 - Dashboard Scheduled Functions, albo
 - `pg_cron + pg_net` (przykład w `docs/EMAIL.md`)
+
+Wymagane są dwa osobne harmonogramy:
+
+- `notification-digest-runner` co 5-15 minut:
+  - `POST https://<PROJECT_REF>.supabase.co/functions/v1/notification-digest-runner`
+  - header `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`
+  - bez body
+- `send-emails` co 1 minutę:
+  - `POST https://<PROJECT_REF>.supabase.co/functions/v1/send-emails`
+  - header `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`
+  - body: `{"limit":25,"dry_run":false}`
 
 ## Automatyzacja w GitHub Actions
 
@@ -55,7 +67,12 @@ Workflow produkcyjny (`.github/workflows/production.yml`) automatycznie:
 
 - pushuje migracje,
 - synchronizuje sekrety funkcji przez `supabase secrets set`,
-- deployuje funkcje edge (w tym `enqueue-notification` i `send-emails`).
+- deployuje funkcje edge (w tym `notification-digest-runner`,
+  `enqueue-notification` i `send-emails`).
+
+Workflow nie tworzy harmonogramów Scheduled Functions. Po pierwszym deployu
+upewnij się w Supabase Dashboard albo w `pg_cron`, że oba harmonogramy z kroku
+6 istnieją i używają aktualnego `INTERNAL_FUNCTION_SECRET`.
 
 Wymagane GitHub Secrets dla mailingu:
 
@@ -85,6 +102,20 @@ Uruchom:
 ```bash
 ./scripts/email-smoke-test.sh
 ```
+
+Smoke test sprawdza bezpośrednie kolejkowanie przez `enqueue-notification` i
+dry-run `send-emails`. Dodatkowo sprawdź digest runner ręcznie dla użytkownika,
+który ma włączony `Weekly summary` albo `Daily summary`:
+
+```bash
+curl -X POST "$SUPABASE_URL/functions/v1/notification-digest-runner" \
+  -H "x-internal-function-secret: $INTERNAL_FUNCTION_SECRET" \
+  -H "apikey: $SUPABASE_PUBLISHABLE_KEY"
+```
+
+Oczekuj odpowiedzi `200` z polami `processed`, `enqueued`, `skipped`. Po
+uruchomieniu sprawdź w DB, czy w `public.email_outbox` pojawił się rekord
+`queued`, a po `send-emails` przeszedł na `sent` albo ma konkretny `last_error`.
 
 Wymagane zmienne dla skryptu:
 

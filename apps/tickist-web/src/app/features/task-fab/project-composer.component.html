@@ -12,12 +12,14 @@
     @if (activeTab() === 'general') {
     <form class="sheet-form" [formGroup]="form">
       <section class="sheet-section">
-        <label class="sheet-field">
-          <span class="sheet-field__label">Project name</span>
+        <label class="sheet-field project-composer-field--placeholder">
+          <span class="sheet-field__label project-composer-sr-only"
+            >Project name</span
+          >
           <input
             class="sheet-input"
             formControlName="name"
-            placeholder="Nowy projekt"
+            placeholder="Project name, e.g. Nowy projekt"
           />
         </label>
 
@@ -40,10 +42,12 @@
           </label>
         </div>
 
-        <div class="sheet-field">
-          <span class="sheet-field__label">Ancestor project</span>
+        <div class="sheet-field project-composer-field--placeholder">
+          <span class="sheet-field__label project-composer-sr-only"
+            >Ancestor project</span
+          >
           <app-project-picker
-            ariaLabel="Select ancestor project"
+            ariaLabel="Ancestor project"
             [projects]="availableAncestorOptions()"
             [selectedProjectId]="form.controls.ancestorId.value"
             [disabled]="form.disabled || submitting()"
@@ -55,13 +59,15 @@
           ></app-project-picker>
         </div>
 
-        <label class="sheet-field">
-          <span class="sheet-field__label">Description</span>
+        <label class="sheet-field project-composer-field--placeholder">
+          <span class="sheet-field__label project-composer-sr-only"
+            >Description</span
+          >
           <textarea
             class="sheet-textarea"
             rows="5"
             formControlName="description"
-            placeholder="Describe this list"
+            placeholder="Description"
           ></textarea>
         </label>
       </section>
@@ -101,6 +107,7 @@
             type="date"
             class="sheet-input"
             formControlName="defaultDueDate"
+            aria-label="Default due date"
           />
         </div>
 
@@ -129,12 +136,14 @@
     } @if (activeTab() === 'sharing') {
     <section class="sheet-form">
       <section class="sheet-section">
-        <label class="sheet-field">
-          <span class="sheet-field__label">Invite teammates</span>
+        <label class="sheet-field project-composer-field--placeholder">
+          <span class="sheet-field__label project-composer-sr-only"
+            >Invite teammates</span
+          >
           <div class="sheet-inline-action">
             <input
               class="sheet-input"
-              placeholder="Email address"
+              placeholder="Invite teammate by email"
               [value]="inviteInput()"
               (input)="inviteInput.set($any($event.target).value)"
             />

@@ -3,18 +3,20 @@
 Ten dokument opisuje produkcyjne ustawienie wysyłki emaili w Tickist:
 
 - **Supabase Auth** (reset hasła, magic link, potwierdzenie email): przez **SMTP AWS SES** skonfigurowany w Supabase Dashboard.
-- **Notyfikacje aplikacyjne**: kolejka `public.email_outbox` + Edge Functions `enqueue-notification` i `send-emails` wysyłające przez **AWS SES API (SigV4)**.
+- **Notyfikacje aplikacyjne**: kolejka `public.email_outbox` + Edge Functions `notification-digest-runner`, `enqueue-notification` i `send-emails` wysyłające przez **AWS SES API (SigV4)**.
 
 `From` jest zawsze ustawiany przez secret `EMAIL_FROM`, np. `no-reply@tickist.com`.
 
 ## 1) Auth SMTP przez SES
 
 1. W AWS SES:
+
 - Zweryfikuj domenę nadawczą (SES Console -> Verified identities -> your domain).
 - Włącz DKIM dla domeny.
 - Utwórz SMTP credentials (IAM user wygenerowany przez SES: SMTP username + SMTP password).
 
 2. W Supabase Dashboard:
+
 - Wejdź w `Authentication -> SMTP Settings`.
 - Włącz custom SMTP i ustaw:
   - Host: endpoint SMTP SES dla regionu (np. `email-smtp.eu-central-1.amazonaws.com`)
@@ -27,18 +29,20 @@ Ten dokument opisuje produkcyjne ustawienie wysyłki emaili w Tickist:
 3. W `Authentication -> Rate Limits` ustaw limity Auth odpowiednie do ruchu.
 
 Uwagi:
+
 - Supabase Auth SMTP jest niezależne od workerów outbox.
 - Dla produkcji nie używaj domyślnego SMTP Supabase.
 
-## 2) Notyfikacje aplikacyjne (enqueue + batch sender)
+## 2) Notyfikacje aplikacyjne (digest/enqueue + batch sender)
 
 Architektura:
 
-1. Klient/user wywołuje `enqueue-notification`.
-2. Funkcja waliduje JWT użytkownika i email confirmation.
-3. Funkcja zapisuje rekord do `public.email_outbox` przez `public.enqueue_email(...)`.
-4. Harmonogram wywołuje `send-emails` (co 1 minutę).
-5. Worker pobiera batch, wysyła przez SES API, aktualizuje statusy i retry.
+1. Klient/user zapisuje preferencje w `public.notification_preferences`.
+2. Harmonogram wywołuje `notification-digest-runner` co 5-15 minut.
+3. Runner sprawdza preferencje daily/weekly, buduje digest i zapisuje rekord do `public.email_outbox` przez `public.enqueue_email(...)`.
+4. Opcjonalnie klient/user może wywołać `enqueue-notification`, żeby dodać pojedynczy email do outbox.
+5. Harmonogram wywołuje `send-emails` co 1 minutę.
+6. Worker pobiera batch, wysyła przez SES API, aktualizuje statusy i retry.
 
 Zasady bezpieczeństwa:
 
@@ -50,6 +54,9 @@ Zasady bezpieczeństwa:
   - wymusza, aby `dedupe_key` zawierał `userId`.
 - `send-emails`:
   - działa tylko z `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`.
+- `notification-digest-runner`:
+  - działa tylko z `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`,
+  - wymaga `verify_jwt = false` w `supabase/config.toml`, tak samo jak `send-emails`.
 - Tabela outbox ma RLS wyłącznie dla `service_role`.
 
 Idempotencja i retry:
@@ -64,6 +71,7 @@ Idempotencja i retry:
 Nie wpisuj rekordów ręcznie „na pamięć”. Bierz dokładne wartości z SES:
 
 1. **SES Domain verification + DKIM**
+
 - AWS SES -> Verified identities -> wybierz domenę.
 - Skopiuj rekordy wymagane przez SES:
   - TXT/CNAME do verification,
@@ -71,24 +79,35 @@ Nie wpisuj rekordów ręcznie „na pamięć”. Bierz dokładne wartości z SES
 - Wklej je w Cloudflare DNS dla tej samej domeny.
 
 2. **SPF**
+
 - Upewnij się, że domena ma poprawny rekord SPF i uwzględnia SES zgodnie z zaleceniem AWS.
 - Dodaj/zmodyfikuj rekord TXT SPF w Cloudflare.
 
 3. **DMARC**
+
 - Dodaj TXT `_dmarc.tickist.com` w Cloudflare.
 - Na start można użyć polityki monitorującej (`p=none`), potem zaostrzać (`quarantine/reject`).
 
 4. Zweryfikuj status w SES aż identity będzie `Verified`.
 
-## 4) Harmonogram `send-emails`
+## 4) Harmonogramy notyfikacji
 
 ### Wariant A: Scheduled Functions w Supabase Dashboard
 
-1. Deploy funkcji `send-emails`.
-2. Utwórz harmonogram co 1 minutę.
-3. Ustaw nagłówek:
+1. Deploy funkcji `notification-digest-runner` i `send-emails`.
+2. Utwórz harmonogram `notification-digest-runner` co 5-15 minut.
+3. Dla `notification-digest-runner` ustaw nagłówek:
+
 - `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`
-4. Body:
+
+4. Body dla `notification-digest-runner` zostaw puste.
+5. Utwórz harmonogram `send-emails` co 1 minutę.
+6. Dla `send-emails` ustaw nagłówek:
+
+- `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`
+
+7. Body dla `send-emails`:
+
 ```json
 { "limit": 25, "dry_run": false }
 ```
@@ -102,9 +121,24 @@ create extension if not exists pg_cron;
 create extension if not exists pg_net;
 ```
 
-Przykład schedulera co 1 minutę:
+Przykładowe schedulery:
 
 ```sql
+select cron.schedule(
+  'notification-digest-runner-every-10-minutes',
+  '*/10 * * * *',
+  $$
+  select net.http_post(
+    url := 'https://<PROJECT_REF>.supabase.co/functions/v1/notification-digest-runner',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'x-internal-function-secret', '<INTERNAL_FUNCTION_SECRET>'
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+
 select cron.schedule(
   'send-emails-every-minute',
   '* * * * *',
@@ -122,6 +156,16 @@ select cron.schedule(
 ```
 
 Uwaga: bezpieczniej trzymać sekrety w Supabase Vault i składać nagłówki z Vault.
+
+Po skonfigurowaniu harmonogramów sprawdź logi Edge Functions:
+
+- `notification-digest-runner` powinien zwracać `200` z polami `processed`, `enqueued`, `skipped`.
+- `send-emails` powinien zwracać `200` z polami `fetched`, `sent`, `failed`, `dead`.
+
+Jeśli `notification-digest-runner` działa, a emaile nie wychodzą, sprawdź
+`public.email_outbox`: rekordy pozostające w `queued` zwykle oznaczają brak
+działającego harmonogramu `send-emails`; rekordy `failed` albo `dead` powinny
+mieć szczegóły w `last_error`.
 
 ## 5) Konfiguracja sekretów Edge Functions
 

@@ -12,12 +12,14 @@
     @switch (activeTab()) { @case ('general') {
     <form [formGroup]="taskForm" class="sheet-form">
       <section class="sheet-section">
-        <label class="sheet-field">
-          <span class="sheet-field__label">Task name</span>
+        <label class="sheet-field task-composer-field--placeholder">
+          <span class="sheet-field__label task-composer-sr-only"
+            >Task name</span
+          >
           <input
             class="sheet-input"
             formControlName="name"
-            placeholder="e.g. Podsumować wyjazd"
+            placeholder="Task name, e.g. Podsumować wyjazd"
           />
           @if (taskForm.controls.name.touched && taskForm.controls.name.invalid)
           {
@@ -41,10 +43,10 @@
           </div>
         </div>
 
-        <div class="sheet-field">
-          <span class="sheet-field__label">Project</span>
+        <div class="sheet-field task-composer-field--placeholder">
+          <span class="sheet-field__label task-composer-sr-only">Project</span>
           <app-project-picker
-            ariaLabel="Select project for task"
+            ariaLabel="Project"
             [projects]="projects()"
             [selectedProjectId]="taskForm.controls.projectId.value"
             [disabled]="taskForm.disabled || submitting()"
@@ -107,22 +109,26 @@
               type="date"
               class="sheet-input"
               formControlName="finishDate"
+              aria-label="Complete date"
             />
             <input
               type="time"
               class="sheet-input"
               formControlName="finishTime"
+              aria-label="Complete time"
             />
           </div>
         </div>
 
-        <label class="sheet-field">
-          <span class="sheet-field__label">Description</span>
+        <label class="sheet-field task-composer-field--placeholder">
+          <span class="sheet-field__label task-composer-sr-only"
+            >Description</span
+          >
           <textarea
             class="sheet-textarea"
             rows="4"
             formControlName="description"
-            placeholder="Add helpful context"
+            placeholder="Description"
           ></textarea>
         </label>
       </section>
@@ -187,6 +193,8 @@
               min="1"
               class="sheet-input"
               formControlName="repeatEvery"
+              placeholder="Every"
+              aria-label="Repeat every"
             />
             <select class="sheet-select" formControlName="repeatUnit">
               <option value="day">days</option>
@@ -203,11 +211,13 @@
     } @case ('tags') {
     <section class="sheet-form">
       <section class="sheet-section">
-        <label class="sheet-field">
-          <span class="sheet-field__label">Search tags</span>
+        <label class="sheet-field task-composer-field--placeholder">
+          <span class="sheet-field__label task-composer-sr-only"
+            >Search tags</span
+          >
           <input
             class="sheet-input"
-            placeholder="Type to filter or create"
+            placeholder="Search tags"
             [value]="tagSearch()"
             (input)="tagSearch.set($any($event.target).value)"
           />
@@ -230,6 +240,7 @@
           <input
             class="sheet-input"
             placeholder="Create new tag"
+            aria-label="Create new tag"
             [value]="tagSearch()"
             (input)="tagSearch.set($any($event.target).value)"
           />
@@ -257,7 +268,8 @@
             <input
               class="sheet-input"
               formControlName="content"
-              placeholder="Write the next action"
+              placeholder="Step description"
+              aria-label="Step description"
             />
             <div class="step-actions">
               <button
@@ -325,22 +337,28 @@
         </label>
 
         <div class="sheet-grid-two">
-          <label class="sheet-field">
-            <span class="sheet-field__label">Estimate (min)</span>
+          <label class="sheet-field task-composer-field--placeholder">
+            <span class="sheet-field__label task-composer-sr-only"
+              >Estimate (min)</span
+            >
             <input
               type="number"
               min="0"
               class="sheet-input"
               formControlName="estimateMinutes"
+              placeholder="Estimate (min)"
             />
           </label>
-          <label class="sheet-field">
-            <span class="sheet-field__label">Real time (min)</span>
+          <label class="sheet-field task-composer-field--placeholder">
+            <span class="sheet-field__label task-composer-sr-only"
+              >Real time (min)</span
+            >
             <input
               type="number"
               min="0"
               class="sheet-input"
               formControlName="spentMinutes"
+              placeholder="Real time (min)"
             />
           </label>
         </div>
