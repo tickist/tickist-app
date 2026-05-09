@@ -149,7 +149,7 @@ jobs:
             functions_url="$NG_APP_SUPABASE_FUNCTIONS_URL"
           fi
 
-          env_payload="$(jq -n \
+          env_payload="$(jq -cn \
             --arg supabaseUrl "$NG_APP_SUPABASE_URL" \
             --arg publishableKey "$NG_APP_SUPABASE_PUBLISHABLE_KEY" \
             --arg functionsUrl "$functions_url" \
@@ -200,12 +200,12 @@ jobs:
             exit 1
           fi
 
-          if ! echo "$runtime_env" | grep -q '"NG_APP_SUPABASE_URL":"https://'; then
+          if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_URL"[[:space:]]*:[[:space:]]*"https://'; then
             echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_URL."
             exit 1
           fi
 
-          if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY":"[^"]+"'; then
+          if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
             echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_PUBLISHABLE_KEY."
             exit 1
           fi
