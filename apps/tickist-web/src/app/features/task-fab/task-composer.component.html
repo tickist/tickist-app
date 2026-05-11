@@ -337,28 +337,24 @@
         </label>
 
         <div class="sheet-grid-two">
-          <label class="sheet-field task-composer-field--placeholder">
-            <span class="sheet-field__label task-composer-sr-only"
-              >Estimate (min)</span
-            >
+          <label class="sheet-field">
+            <span class="sheet-field__label">Estimate (min)</span>
             <input
               type="number"
               min="0"
               class="sheet-input"
               formControlName="estimateMinutes"
-              placeholder="Estimate (min)"
+              placeholder="0"
             />
           </label>
-          <label class="sheet-field task-composer-field--placeholder">
-            <span class="sheet-field__label task-composer-sr-only"
-              >Real time (min)</span
-            >
+          <label class="sheet-field">
+            <span class="sheet-field__label">Time spent (min)</span>
             <input
               type="number"
               min="0"
               class="sheet-input"
               formControlName="spentMinutes"
-              placeholder="Real time (min)"
+              placeholder="0"
             />
           </label>
         </div>
@@ -368,14 +364,6 @@
   </div>
 
   <div sheet-footer class="sheet-footer-actions">
-    <button
-      type="button"
-      class="sheet-shell__button sheet-shell__button--ghost"
-      (click)="dismiss.emit()"
-    >
-      Cancel
-    </button>
-
     <div class="sheet-footer-actions__group">
       @if (!editingTask()) {
       <button
