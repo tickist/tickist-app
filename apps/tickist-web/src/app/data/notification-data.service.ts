@@ -94,4 +94,31 @@ export class NotificationDataService {
       )
     );
   }
+
+  async markAllAsRead(): Promise<void> {
+    if (!this.supabase) {
+      return;
+    }
+    const recipientId = this.activeRecipient();
+    const hasUnreadNotifications = this.items().some((item) => !item.isRead);
+    if (!recipientId || !hasUnreadNotifications) {
+      return;
+    }
+
+    const { error } = await this.supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('recipient_id', recipientId)
+      .eq('is_read', false);
+    if (error) {
+      console.warn('[Notifications] Unable to mark all as read', error);
+      return;
+    }
+
+    this.items.update((current) =>
+      current.map((item) =>
+        item.isRead ? item : { ...item, isRead: true }
+      )
+    );
+  }
 }

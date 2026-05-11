@@ -63,6 +63,9 @@ export class AppViewportComponent implements OnDestroy {
     () =>
       this.notifications().filter((notification) => !notification.isRead).length
   );
+  readonly hasUnreadNotifications = computed(
+    () => this.unreadNotifications() > 0
+  );
   readonly notificationsOpen = signal(false);
   readonly profileMenuOpen = signal(false);
   readonly searchTerm = this.viewState.searchTerm;
@@ -150,6 +153,10 @@ export class AppViewportComponent implements OnDestroy {
 
   async markNotificationAsRead(notificationId: string): Promise<void> {
     await this.notificationsService.markAsRead(notificationId);
+  }
+
+  async markAllNotificationsAsRead(): Promise<void> {
+    await this.notificationsService.markAllAsRead();
   }
 
   avatarInitial() {
