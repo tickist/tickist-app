@@ -157,19 +157,29 @@
     <div
       class="app-menu absolute right-20 top-full z-40 mt-2 w-80 rounded-2xl border border-white/10 bg-base-200/95 p-3 shadow-xl shadow-black/50"
     >
-      <div class="mb-2 flex items-center justify-between">
+      <div class="mb-2 flex items-center justify-between gap-2">
         <p
           class="text-sm font-semibold uppercase tracking-[0.3em] text-base-content/60"
         >
           Notifications
         </p>
-        <button
-          class="btn btn-ghost btn-xs text-base-content/60"
-          type="button"
-          (click)="toggleNotifications()"
-        >
-          Close
-        </button>
+        <div class="flex shrink-0 items-center gap-1">
+          <button
+            class="btn btn-ghost btn-xs text-primary"
+            type="button"
+            [disabled]="!hasUnreadNotifications()"
+            (click)="markAllNotificationsAsRead()"
+          >
+            Read all
+          </button>
+          <button
+            class="btn btn-ghost btn-xs text-base-content/60"
+            type="button"
+            (click)="toggleNotifications()"
+          >
+            Close
+          </button>
+        </div>
       </div>
       @if (notificationsLoading()) {
       <div class="flex items-center gap-2 text-sm text-base-content/60">

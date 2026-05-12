@@ -11,7 +11,7 @@ import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppViewStateService } from './app-view-state.service';
-import { TaskCardComponent } from './task-card.component';
+import { TaskListComponent } from './task-list.component';
 import { ProjectHeaderComponent } from './project-header.component';
 import { ToastService } from '../../core/ui/toast.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
@@ -19,7 +19,7 @@ import { ComposerModalService } from '../task-fab/composer-modal.service';
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [ReactiveFormsModule, TaskCardComponent, ProjectHeaderComponent],
+  imports: [ReactiveFormsModule, TaskListComponent, ProjectHeaderComponent],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.css',
 })
@@ -427,6 +427,9 @@ export class AppShellComponent {
     }
     return this.projectLookup().get(projectId) ?? null;
   }
+
+  readonly projectForTaskList = (task: Task): Project | null =>
+    this.projectForTask(task);
 
   clearDueDateFilter(): void {
     this.viewState.clearDateFilter();

@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict';
-import { DatePipe, NgFor, NgIf, NgOptimizedImage } from '@angular/common';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterLink, RouterOutlet } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
-import { NotificationDataService } from '../../data/notification-data.service';
+import {
+  NotificationDataService,
+  type NotificationItem,
+} from '../../data/notification-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import {
   AppViewportComponent,
@@ -24,8 +27,13 @@ class MockTaskFabComponent {}
 class MockToastContainerComponent {}
 
 describe('AppViewportComponent theme toggle', () => {
+  let notifications: ReturnType<typeof signal<NotificationItem[]>>;
+  let markAllAsRead: ReturnType<typeof vi.fn>;
+
   beforeEach(async () => {
     localStorage.clear();
+    notifications = signal<NotificationItem[]>([]);
+    markAllAsRead = vi.fn(async () => undefined);
 
     await TestBed.configureTestingModule({
       imports: [AppViewportComponent],
@@ -46,10 +54,11 @@ describe('AppViewportComponent theme toggle', () => {
         {
           provide: NotificationDataService,
           useValue: {
-            list: signal([]).asReadonly(),
+            list: notifications.asReadonly(),
             loadingState: signal(false).asReadonly(),
             refresh: vi.fn(async () => undefined),
             markAsRead: vi.fn(async () => undefined),
+            markAllAsRead,
           },
         },
         {
@@ -69,8 +78,6 @@ describe('AppViewportComponent theme toggle', () => {
           imports: [
             RouterOutlet,
             RouterLink,
-            NgIf,
-            NgFor,
             NgOptimizedImage,
             DatePipe,
             MockSidebarComponent,
@@ -100,6 +107,46 @@ describe('AppViewportComponent theme toggle', () => {
     const nextTheme = document.documentElement.getAttribute('data-theme');
     expect(nextTheme).toBeTruthy();
     expect(nextTheme).not.toBe(initialTheme);
+  });
+
+  it('marks all unread notifications as read from the notifications menu', async () => {
+    notifications.set([
+      {
+        id: 'notification-1',
+        recipientId: 'user-1',
+        title: 'First notification',
+        type: 'system',
+        createdAt: '2026-05-11T08:00:00.000Z',
+        isRead: false,
+      },
+      {
+        id: 'notification-2',
+        recipientId: 'user-1',
+        title: 'Second notification',
+        type: 'system',
+        createdAt: '2026-05-11T09:00:00.000Z',
+        isRead: true,
+      },
+    ]);
+
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.notificationsOpen.set(true);
+    fixture.detectChanges();
+
+    const button = Array.from(
+      fixture.nativeElement.querySelectorAll('button')
+    ).find((candidate): candidate is HTMLButtonElement =>
+      candidate.textContent?.includes('Read all') ?? false
+    );
+
+    expect(button).toBeTruthy();
+    expect(button?.disabled).toBe(false);
+
+    button?.click();
+    await fixture.whenStable();
+
+    expect(markAllAsRead).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -63,6 +63,86 @@ jobs:
         with:
           version: latest
 
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install --yes postgresql-client
+
+      - name: Sync scheduler Vault secrets
+        run: |
+          internal_function_secret="${INTERNAL_FUNCTION_SECRET:-${ROUTINE_RUNNER_SECRET:-}}"
+
+          if [ -z "$internal_function_secret" ]; then
+            echo "::error::Missing required GitHub secret: INTERNAL_FUNCTION_SECRET"
+            echo "::notice::Temporary fallback is ROUTINE_RUNNER_SECRET."
+            exit 1
+          fi
+
+          if [ -z "$NG_APP_SUPABASE_FUNCTIONS_URL" ]; then
+            if [ -z "$NG_APP_SUPABASE_URL" ]; then
+              echo "::error::Missing required GitHub secret: NG_APP_SUPABASE_URL"
+              exit 1
+            fi
+            functions_url="${NG_APP_SUPABASE_URL%/}/functions/v1"
+            echo "::notice::NG_APP_SUPABASE_FUNCTIONS_URL not provided; deriving from NG_APP_SUPABASE_URL."
+          else
+            functions_url="$NG_APP_SUPABASE_FUNCTIONS_URL"
+          fi
+          functions_url="${functions_url%/}"
+
+          psql "$SUPABASE_REMOTE_DB_URL" \
+            -v ON_ERROR_STOP=1 \
+            -v functions_base_url="$functions_url" \
+            -v internal_function_secret="$internal_function_secret" <<'SQL'
+          create extension if not exists supabase_vault with schema vault;
+
+          create temporary table tickist_scheduler_vault_secret_sync (
+            name text primary key,
+            value text not null,
+            description text not null
+          ) on commit drop;
+
+          insert into tickist_scheduler_vault_secret_sync (name, value, description)
+          values
+            (
+              'tickist_functions_base_url',
+              :'functions_base_url',
+              'Base URL for Tickist scheduled Supabase Edge Function calls.'
+            ),
+            (
+              'tickist_internal_function_secret',
+              :'internal_function_secret',
+              'Internal header secret used by Tickist scheduled Supabase Edge Function calls.'
+            );
+
+          do $$
+          declare
+            item record;
+            existing_id uuid;
+          begin
+            for item in
+              select name, value, description
+              from tickist_scheduler_vault_secret_sync
+            loop
+              select id
+                into existing_id
+              from vault.decrypted_secrets
+              where name = item.name
+              limit 1;
+
+              if existing_id is null then
+                perform vault.create_secret(item.value, item.name, item.description);
+              else
+                perform vault.update_secret(
+                  existing_id,
+                  item.value,
+                  item.name,
+                  item.description
+                );
+              end if;
+            end loop;
+          end;
+          $$;
+SQL
+
       - name: Push production DB migrations
         run: supabase db push --db-url "$SUPABASE_REMOTE_DB_URL"
 

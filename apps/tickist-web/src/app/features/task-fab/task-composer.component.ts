@@ -205,8 +205,8 @@ export class TaskComposerComponent {
         projectId: task.projectId ?? '',
         taskType: task.taskType?.toLowerCase() ?? 'normal',
         completeMode: this.completeModeFromType(task.typeFinishDate),
-        finishDate: task.finishDate ?? '',
-        finishTime: task.finishTime ?? '',
+        finishDate: normalizeDateInputValue(task.finishDate),
+        finishTime: normalizeTimeInputValue(task.finishTime),
         description: task.description ?? '',
         repeatMode: mode,
         repeatEvery: every,
@@ -536,4 +536,32 @@ export class TaskComposerComponent {
   private typeFinishDateFromMode(mode: string | null | undefined): number {
     return mode === 'on' ? 0 : 1;
   }
+}
+
+function normalizeDateInputValue(value: string | null | undefined): string {
+  if (!value) {
+    return '';
+  }
+  const trimmed = value.trim();
+  const dateOnlyMatch = /^(\d{4}-\d{2}-\d{2})/.exec(trimmed);
+  if (dateOnlyMatch) {
+    return dateOnlyMatch[1];
+  }
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) {
+    return '';
+  }
+  const year = parsed.getFullYear();
+  const month = `${parsed.getMonth() + 1}`.padStart(2, '0');
+  const day = `${parsed.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function normalizeTimeInputValue(value: string | null | undefined): string {
+  if (!value) {
+    return '';
+  }
+  const trimmed = value.trim();
+  const timeMatch = /^(\d{2}:\d{2})/.exec(trimmed);
+  return timeMatch ? timeMatch[1] : '';
 }

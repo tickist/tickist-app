@@ -10,9 +10,11 @@ describe('TaskComposerComponent repeat custom cadence', () => {
   let fixture: ComponentFixture<TaskComposerComponent>;
   let component: TaskComposerComponent;
   let createTaskMock: ReturnType<typeof vi.fn>;
+  let updateTaskMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     createTaskMock = vi.fn(async () => createTask());
+    updateTaskMock = vi.fn(async () => createTask());
 
     await TestBed.configureTestingModule({
       imports: [TaskComposerComponent],
@@ -21,7 +23,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
           provide: TaskDataService,
           useValue: {
             createTask: createTaskMock,
-            updateTask: vi.fn(async () => createTask()),
+            updateTask: updateTaskMock,
           },
         },
         {
@@ -112,6 +114,104 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     expect(component.taskForm.controls.repeatMode.value).toBe('custom');
     expect(component.taskForm.controls.repeatEvery.value).toBe(2);
     expect(component.taskForm.controls.repeatUnit.value).toBe('week');
+  });
+
+  it('normalizes stored completion date and time values in edit mode', () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({
+        finishDate: '2026-05-11T00:00:00+00:00',
+        finishTime: '14:30:00',
+        typeFinishDate: 0,
+      }),
+    };
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.completeMode.value).toBe('on');
+    expect(component.taskForm.controls.finishDate.value).toBe('2026-05-11');
+    expect(component.taskForm.controls.finishTime.value).toBe('14:30');
+  });
+
+  it('loads stored completion by dates into date inputs in edit mode', () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({
+        finishDate: '2026-06-03',
+        finishTime: '09:05',
+        typeFinishDate: 1,
+      }),
+    };
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.completeMode.value).toBe('by');
+    expect(component.taskForm.controls.finishDate.value).toBe('2026-06-03');
+    expect(component.taskForm.controls.finishTime.value).toBe('09:05');
+  });
+
+  it('keeps completion controls empty for invalid stored date and time values', () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({
+        finishDate: 'not-a-date',
+        finishTime: 'evening',
+      }),
+    };
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.finishDate.value).toBe('');
+    expect(component.taskForm.controls.finishTime.value).toBe('');
+  });
+
+  it('saves edited completion fields in the update payload', async () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask(),
+    };
+    fixture.detectChanges();
+
+    component.taskForm.patchValue({
+      name: 'Task with completion',
+      completeMode: 'on',
+      finishDate: '2026-05-11',
+      finishTime: '14:30',
+    });
+
+    await component.submit();
+
+    expect(updateTaskMock).toHaveBeenCalledTimes(1);
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'task-1',
+        finishDate: '2026-05-11',
+        finishTime: '14:30',
+        typeFinishDate: 0,
+      })
+    );
+  });
+
+  it('clears completion date and time in the update payload', async () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({
+        finishDate: '2026-05-11T00:00:00+00:00',
+        finishTime: '14:30:00',
+      }),
+    };
+    fixture.detectChanges();
+
+    component.taskForm.patchValue({
+      finishDate: '',
+      finishTime: '',
+    });
+
+    await component.submit();
+
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        finishDate: null,
+        finishTime: null,
+      })
+    );
   });
 });
 

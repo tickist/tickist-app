@@ -172,11 +172,11 @@ describe('SettingsComponent sheet layout', () => {
     lastAppUrl.set(null);
     fixture.detectChanges();
 
-    const footerButton = fixture.nativeElement.querySelector(
-      '.sheet-shell__footer .sheet-shell__button'
+    const closeButton = fixture.nativeElement.querySelector(
+      '.sheet-shell__close'
     ) as HTMLButtonElement | null;
 
-    footerButton?.click();
+    closeButton?.click();
     await fixture.whenStable();
 
     expect(navigateByUrl).toHaveBeenCalledWith('/app');

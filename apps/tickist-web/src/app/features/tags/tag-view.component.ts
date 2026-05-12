@@ -2,13 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { TagDataService } from '../../data/tag-data.service';
 import { TaskDataService, Task } from '../../data/task-data.service';
-import { TaskCardComponent } from '../app-shell/task-card.component';
+import { TaskListComponent } from '../app-shell/task-list.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 
 @Component({
   selector: 'app-tag-view',
   standalone: true,
-  imports: [UpperCasePipe, TaskCardComponent],
+  imports: [UpperCasePipe, TaskListComponent],
   templateUrl: './tag-view.component.html',
   styleUrl: './tag-view.component.css',
 })

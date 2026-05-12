@@ -1,6 +1,6 @@
 <section class="sheet-page settings-page">
   <div class="settings-page__panel">
-    <app-sheet-scaffold eyebrow="Settings" title="Workspace preferences" testId="settings-sheet"
+    <app-sheet-scaffold eyebrow="Settings" title="" testId="settings-sheet"
       closeAriaLabel="Close settings panel" [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="select($event)"
       (panelClose)="closePanel()">
       <div sheet-body>
@@ -62,12 +62,6 @@
                   Name must be at least 2 characters.
                 </small>
                 }
-                </label>
-
-                <label class="sheet-field account-field--placeholder">
-                  <span class="sheet-field__label sr-only">Email</span>
-                  <input class="sheet-input" formControlName="email" placeholder="Email" aria-describedby="email-readonly-hint" />
-                  <small id="email-readonly-hint" class="sr-only">You cannot change your email in this build.</small>
                 </label>
               </div>
 
@@ -430,12 +424,8 @@
         }
       </div>
 
+      @if (footerPrimaryLabel(); as label) {
       <div sheet-footer class="sheet-footer-actions">
-        <button type="button" class="sheet-shell__button sheet-shell__button--ghost" (click)="closePanel()">
-          Close settings
-        </button>
-
-        @if (footerPrimaryLabel(); as label) {
         <div class="sheet-footer-actions__group">
           <button type="button" class="sheet-shell__button sheet-shell__button--primary"
             [disabled]="footerPrimaryDisabled()" [attr.data-testid]="
@@ -444,8 +434,8 @@
             {{ label }}
           </button>
         </div>
-        }
       </div>
+      }
     </app-sheet-scaffold>
   </div>
 </section>

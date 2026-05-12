@@ -105,15 +105,7 @@
       }
     </p>
 
-    <div class="space-y-3">
-      @for (task of visibleTasks(); track trackTask($index, task)) {
-      <app-task-card
-        [task]="task"
-        [project]="null"
-        viewMode="extended"
-      ></app-task-card>
-      }
-    </div>
+    <app-task-list [tasks]="visibleTasks()" [project]="null"></app-task-list>
 
     @if (visibleTasks().length < filteredTasks().length) {
     <div class="mt-4 flex justify-center">

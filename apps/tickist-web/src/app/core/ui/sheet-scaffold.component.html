@@ -2,7 +2,9 @@
   <header class="sheet-shell__header">
     <div class="sheet-shell__heading">
       <span class="sheet-shell__eyebrow">{{ eyebrow() }}</span>
+      @if (title()) {
       <h2 class="sheet-shell__title">{{ title() }}</h2>
+      }
     </div>
     <button
       type="button"

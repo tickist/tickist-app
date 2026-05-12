@@ -105,7 +105,6 @@ export class SettingsComponent {
   readonly tokenCopied = signal(false);
   readonly accountForm = this.fb.nonNullable.group({
     displayName: ['', [Validators.required, Validators.minLength(2)]],
-    email: [{ value: '', disabled: true }],
   });
   readonly passwordForm = this.fb.nonNullable.group({
     currentPassword: ['', [Validators.required, Validators.minLength(6)]],
@@ -235,13 +234,10 @@ export class SettingsComponent {
 
   constructor() {
     effect(() => {
-      const user = this.user();
       const metadata = this.userMetadata();
       this.accountForm.patchValue(
         {
-          displayName:
-            asOptionalString(metadata['full_name']) ?? user?.email ?? '',
-          email: user?.email ?? '',
+          displayName: asOptionalString(metadata['full_name']) ?? '',
         },
         { emitEvent: false }
       );
