@@ -146,6 +146,13 @@
         Settings
       </button>
       <button
+        class="btn btn-ghost btn-sm w-full justify-start rounded-xl px-4 text-left"
+        type="button"
+        (click)="openAboutModal()"
+      >
+        About
+      </button>
+      <button
         class="btn btn-ghost btn-sm w-full justify-start rounded-xl px-4 text-left text-error"
         type="button"
         (click)="signOut(); closeProfileMenu()"
@@ -223,6 +230,73 @@
     </div>
     }
   </nav>
+
+  @if (aboutModalOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+    tabindex="-1"
+    (keydown.escape)="closeAboutModal()"
+  >
+    <button
+      type="button"
+      class="absolute inset-0 bg-black/60"
+      aria-label="Close about dialog"
+      (click)="closeAboutModal()"
+    ></button>
+    <section
+      class="relative w-full max-w-md rounded-2xl border border-white/10 bg-base-200 p-6 shadow-2xl shadow-black/50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="about-dialog-title"
+      tabindex="-1"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.3em] text-base-content/50"
+          >
+            Tickist
+          </p>
+          <h2 id="about-dialog-title" class="mt-1 text-xl font-semibold">
+            About
+          </h2>
+        </div>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm btn-circle"
+          aria-label="Close about dialog"
+          (click)="closeAboutModal()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <dl class="mt-6 space-y-4">
+        <div>
+          <dt
+            class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
+          >
+            Build commit
+          </dt>
+          <dd class="mt-2 font-mono text-sm text-base-content">
+            {{ buildCommitShort }}
+          </dd>
+        </div>
+        <div>
+          <dt
+            class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
+          >
+            Full commit
+          </dt>
+          <dd class="mt-2 break-all font-mono text-xs text-base-content/70">
+            {{ buildCommit }}
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+  }
+
   <div class="app-layout relative">
     <aside
       class="app-layout__sidebar relative z-0 hidden border-r border-white/5 bg-base-200/60 px-5 py-6 lg:block"

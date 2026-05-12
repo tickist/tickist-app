@@ -141,7 +141,7 @@ jobs:
             end loop;
           end;
           $$;
-SQL
+          SQL
 
       - name: Push production DB migrations
         run: supabase db push --db-url "$SUPABASE_REMOTE_DB_URL"

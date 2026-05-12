@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Task, TaskDataService } from '../../data/task-data.service';
+import { TaskReminderDataService } from '../../data/task-reminder-data.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -11,10 +12,12 @@ describe('TaskComposerComponent repeat custom cadence', () => {
   let component: TaskComposerComponent;
   let createTaskMock: ReturnType<typeof vi.fn>;
   let updateTaskMock: ReturnType<typeof vi.fn>;
+  let saveRemindersMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     createTaskMock = vi.fn(async () => createTask());
     updateTaskMock = vi.fn(async () => createTask());
+    saveRemindersMock = vi.fn(async () => undefined);
 
     await TestBed.configureTestingModule({
       imports: [TaskComposerComponent],
@@ -58,6 +61,13 @@ describe('TaskComposerComponent repeat custom cadence', () => {
           provide: SupabaseSessionService,
           useValue: {
             user: () => ({ id: 'owner-1' }),
+          },
+        },
+        {
+          provide: TaskReminderDataService,
+          useValue: {
+            listForTask: vi.fn(async () => []),
+            saveForTask: saveRemindersMock,
           },
         },
       ],
@@ -189,6 +199,32 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     );
   });
 
+  it('saves multiple reminder dates with the edited task', async () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask(),
+    };
+    fixture.detectChanges();
+
+    component.taskForm.patchValue({ name: 'Task with reminders' });
+    component.addReminder('2026-05-12', '09:30');
+    component.addReminder('2026-05-13', '17:45');
+
+    await component.submit();
+
+    expect(updateTaskMock).toHaveBeenCalledTimes(1);
+    expect(saveRemindersMock).toHaveBeenCalledWith('task-1', 'owner-1', [
+      expect.objectContaining({
+        date: '2026-05-12',
+        time: '09:30',
+      }),
+      expect.objectContaining({
+        date: '2026-05-13',
+        time: '17:45',
+      }),
+    ]);
+  });
+
   it('clears completion date and time in the update payload', async () => {
     component.preset = {
       mode: 'edit',
@@ -246,6 +282,13 @@ describe('TaskComposerComponent shared sheet layout', () => {
           provide: SupabaseSessionService,
           useValue: {
             user: () => ({ id: 'owner-1' }),
+          },
+        },
+        {
+          provide: TaskReminderDataService,
+          useValue: {
+            listForTask: vi.fn(async () => []),
+            saveForTask: vi.fn(async () => undefined),
           },
         },
       ],

@@ -15,6 +15,7 @@ const fallbackFunctionsUrl = deriveSupabaseFunctionsUrl(
 
 export const environment = {
   production: false,
+  buildCommit: readSupabaseEnv('NG_APP_BUILD_COMMIT', 'unknown'),
   supabase: {
     url: supabaseUrl,
     publishableKey: readSupabaseEnvAny(

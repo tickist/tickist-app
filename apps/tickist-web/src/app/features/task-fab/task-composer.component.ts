@@ -23,6 +23,10 @@ import {
   TaskDataService,
   TaskUpdateInput,
 } from '../../data/task-data.service';
+import {
+  TaskReminderDataService,
+  TaskReminderDraft,
+} from '../../data/task-reminder-data.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -33,7 +37,7 @@ import {
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
 
-type TabKey = 'general' | 'repeat' | 'tags' | 'steps' | 'extra';
+type TabKey = 'general' | 'repeat' | 'reminders' | 'tags' | 'steps' | 'extra';
 type RepeatMode =
   | 'never'
   | 'daily'
@@ -81,6 +85,7 @@ export class TaskComposerComponent {
   private readonly taskService = inject(TaskDataService);
   private readonly projectService = inject(ProjectDataService);
   private readonly tagService = inject(TagDataService);
+  private readonly reminderService = inject(TaskReminderDataService);
   private readonly session = inject(SupabaseSessionService);
 
   readonly projects = computed(() => this.projectService.list());
@@ -95,6 +100,7 @@ export class TaskComposerComponent {
   readonly tabs: readonly SheetScaffoldTab<TabKey>[] = [
     { key: 'general', label: 'General', icon: '✏️' },
     { key: 'repeat', label: 'Repeat', icon: '🔁' },
+    { key: 'reminders', label: 'Reminders', icon: '⏰' },
     { key: 'tags', label: 'Tags', icon: '🏷️' },
     { key: 'steps', label: 'Steps', icon: '☑️' },
     { key: 'extra', label: 'Extra', icon: '✨' },
@@ -156,6 +162,8 @@ export class TaskComposerComponent {
   });
 
   readonly stepsArray = this.fb.array<FormGroup>([]);
+  readonly remindersArray = this.fb.array<FormGroup>([]);
+  private reminderLoadTaskId: string | null = null;
 
   constructor() {
     effect(() => {
@@ -185,6 +193,8 @@ export class TaskComposerComponent {
     this.activeTab.set('general');
     if (!preset || preset.mode === 'create') {
       this.editingTask.set(null);
+      this.reminderLoadTaskId = null;
+      this.clearReminders();
       this.resetForm({
         projectId: preset?.defaults?.projectId ?? this.inboxProjectId(),
         tags: preset?.defaults?.tags ?? [],
@@ -220,11 +230,16 @@ export class TaskComposerComponent {
       });
       this.clearSteps();
       task.steps.forEach((step) => this.addStep(step.content, step.isDone));
+      void this.loadRemindersForTask(task.id);
     }
   }
 
   get steps(): FormArray<FormGroup> {
     return this.stepsArray;
+  }
+
+  get reminders(): FormArray<FormGroup> {
+    return this.remindersArray;
   }
 
   selectTab(tab: string): void {
@@ -253,6 +268,26 @@ export class TaskComposerComponent {
     );
   }
 
+  addReminder(
+    date = '',
+    time = '',
+    id = '',
+    timezone = resolveBrowserTimezone()
+  ): void {
+    this.reminders.push(
+      this.fb.nonNullable.group({
+        id: [id],
+        date: [date],
+        time: [time],
+        timezone: [timezone],
+      })
+    );
+  }
+
+  removeReminder(index: number): void {
+    this.reminders.removeAt(index);
+  }
+
   removeStep(index: number): void {
     this.steps.removeAt(index);
   }
@@ -276,6 +311,30 @@ export class TaskComposerComponent {
     while (this.steps.length) {
       this.steps.removeAt(0);
     }
+  }
+
+  private clearReminders(): void {
+    while (this.reminders.length) {
+      this.reminders.removeAt(0);
+    }
+  }
+
+  private async loadRemindersForTask(taskId: string): Promise<void> {
+    this.reminderLoadTaskId = taskId;
+    const reminders = await this.reminderService.listForTask(taskId);
+    if (this.reminderLoadTaskId !== taskId) {
+      return;
+    }
+    this.clearReminders();
+    reminders.forEach((reminder) => {
+      const inputValue = toReminderInputValue(reminder.remindAt);
+      this.addReminder(
+        inputValue.date,
+        inputValue.time,
+        reminder.id,
+        reminder.timezone
+      );
+    });
   }
 
   async createTag(name: string): Promise<void> {
@@ -363,6 +422,11 @@ export class TaskComposerComponent {
         };
         const updated = await this.taskService.updateTask(updatePayload);
         if (updated) {
+          await this.reminderService.saveForTask(
+            updated.id,
+            updated.ownerId,
+            this.reminderDrafts()
+          );
           this.created.emit();
         }
         return;
@@ -390,11 +454,17 @@ export class TaskComposerComponent {
 
       const created = await this.taskService.createTask(payload);
       if (created) {
+        await this.reminderService.saveForTask(
+          created.id,
+          created.ownerId,
+          this.reminderDrafts()
+        );
         if (addAnother) {
           this.resetForm({
             projectId: value.projectId,
             tags: value.tags,
           });
+          this.clearReminders();
         } else {
           this.created.emit();
         }
@@ -430,6 +500,23 @@ export class TaskComposerComponent {
       spentMinutes: next.spentMinutes,
     });
     this.clearSteps();
+  }
+
+  private reminderDrafts(): TaskReminderDraft[] {
+    return this.reminders.controls.map((control) => {
+      const raw = control.getRawValue() as {
+        id?: string;
+        date?: string;
+        time?: string;
+        timezone?: string;
+      };
+      return {
+        id: raw.id ?? null,
+        date: raw.date ?? '',
+        time: raw.time ?? '',
+        timezone: raw.timezone ?? resolveBrowserTimezone(),
+      };
+    });
   }
 
   private getRepeatInterval(
@@ -564,4 +651,28 @@ function normalizeTimeInputValue(value: string | null | undefined): string {
   const trimmed = value.trim();
   const timeMatch = /^(\d{2}:\d{2})/.exec(trimmed);
   return timeMatch ? timeMatch[1] : '';
+}
+
+function resolveBrowserTimezone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  } catch {
+    return 'UTC';
+  }
+}
+
+function toReminderInputValue(value: string): { date: string; time: string } {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return { date: '', time: '' };
+  }
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  const hours = `${date.getHours()}`.padStart(2, '0');
+  const minutes = `${date.getMinutes()}`.padStart(2, '0');
+  return {
+    date: `${year}-${month}-${day}`,
+    time: `${hours}:${minutes}`,
+  };
 }
