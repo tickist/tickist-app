@@ -174,14 +174,101 @@ function normalizeDraft(draft: TaskReminderDraft): NormalizedReminderDraft | nul
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time)) {
     return null;
   }
-  const localDate = new Date(`${date}T${time}:00`);
-  if (Number.isNaN(localDate.getTime())) {
+  const timezone = normalizeTimezone(draft.timezone ?? resolveBrowserTimezone());
+  const remindAt = zonedDateTimeToIso(date, time, timezone);
+  if (!remindAt) {
     return null;
   }
   return {
     id: draft.id?.trim() || null,
-    remindAt: localDate.toISOString(),
-    timezone: normalizeTimezone(draft.timezone ?? resolveBrowserTimezone()),
+    remindAt,
+    timezone,
+  };
+}
+
+function zonedDateTimeToIso(
+  date: string,
+  time: string,
+  timezone: string
+): string | null {
+  const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  const timeParts = /^(\d{2}):(\d{2})$/.exec(time);
+  if (!dateParts || !timeParts) {
+    return null;
+  }
+
+  const year = Number(dateParts[1]);
+  const month = Number(dateParts[2]);
+  const day = Number(dateParts[3]);
+  const hours = Number(timeParts[1]);
+  const minutes = Number(timeParts[2]);
+  if (
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31 ||
+    hours > 23 ||
+    minutes > 59
+  ) {
+    return null;
+  }
+
+  let utcMillis = Date.UTC(year, month - 1, day, hours, minutes);
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const zonedParts = getZonedDateParts(new Date(utcMillis), timezone);
+    const delta =
+      Date.UTC(
+        year,
+        month - 1,
+        day,
+        hours,
+        minutes
+      ) -
+      Date.UTC(
+        zonedParts.year,
+        zonedParts.month - 1,
+        zonedParts.day,
+        zonedParts.hours,
+        zonedParts.minutes
+      );
+    if (delta === 0) {
+      return new Date(utcMillis).toISOString();
+    }
+    utcMillis += delta;
+  }
+
+  return new Date(utcMillis).toISOString();
+}
+
+function getZonedDateParts(
+  value: Date,
+  timezone: string
+): {
+  year: number;
+  month: number;
+  day: number;
+  hours: number;
+  minutes: number;
+} {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(value);
+
+  const partValue = (type: string): number =>
+    Number(parts.find((part) => part.type === type)?.value ?? '0');
+
+  return {
+    year: partValue('year'),
+    month: partValue('month'),
+    day: partValue('day'),
+    hours: partValue('hour'),
+    minutes: partValue('minute'),
   };
 }
 
