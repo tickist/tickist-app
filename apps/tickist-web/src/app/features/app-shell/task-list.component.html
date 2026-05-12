@@ -1,0 +1,13 @@
+@if (tasks().length) {
+<div class="task-list">
+  @for (task of tasks(); track trackTask($index, task)) {
+  <app-task-card
+    [task]="task"
+    [project]="projectFor(task)"
+    [viewMode]="viewMode()"
+  ></app-task-card>
+  }
+</div>
+} @else {
+<p class="text-sm text-base-content/60">{{ emptyText() }}</p>
+}

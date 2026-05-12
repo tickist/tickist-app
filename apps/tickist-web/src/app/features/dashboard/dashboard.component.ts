@@ -4,7 +4,7 @@ import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Project, ProjectDataService } from '../../data/project-data.service';
-import { TaskCardComponent } from '../app-shell/task-card.component';
+import { TaskListComponent } from '../app-shell/task-list.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { AppViewStateService } from '../app-shell/app-view-state.service';
   standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
-  imports: [SlicePipe, RouterLink, TaskCardComponent],
+  imports: [SlicePipe, RouterLink, TaskListComponent],
 })
 export class DashboardComponent {
   private readonly tasks = inject(TaskDataService);
@@ -128,6 +128,8 @@ export class DashboardComponent {
       return dateB.localeCompare(dateA);
     })
   );
+  readonly projectForTaskList = (task: Task): Project | null =>
+    this.projectOf(task.projectId);
 
   projectTaskCount(projectId: string): number {
     return this.projectTaskCounts().get(projectId) ?? 0;

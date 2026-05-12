@@ -21,19 +21,12 @@
           (changeFilter)="setFilter($event)"
         ></app-project-header>
         }
-        <div class="tasks-list">
-          @for (task of filteredTasks(); track trackTask($index, task)) {
-          <app-task-card
-            [task]="task"
-            [project]="project"
-            [viewMode]="project.taskView === 'simple' ? 'simple' : 'extended'"
-          ></app-task-card>
-          } @if (!filteredTasks().length) {
-          <p class="text-sm text-base-content/60">
-            No tasks yet. Add one below.
-          </p>
-          }
-        </div>
+        <app-task-list
+          [tasks]="filteredTasks()"
+          [project]="project"
+          [viewMode]="project.taskView === 'simple' ? 'simple' : 'extended'"
+          emptyText="No tasks yet. Add one below."
+        ></app-task-list>
         <form
           class="new-task-form mt-6"
           [formGroup]="projectTaskForm"
@@ -73,19 +66,12 @@
             Clear filter
           </button>
         </div>
-        <div class="tasks-list">
-          @for (task of filteredTasks(); track trackTask($index, task)) {
-          <app-task-card
-            [task]="task"
-            [project]="projectForTask(task)"
-            [viewMode]="taskViewMode()"
-          ></app-task-card>
-          } @if (!filteredTasks().length) {
-          <p class="text-sm text-base-content/60">
-            No tasks for this date yet.
-          </p>
-          }
-        </div>
+        <app-task-list
+          [tasks]="filteredTasks()"
+          [projectResolver]="projectForTaskList"
+          [viewMode]="taskViewMode()"
+          emptyText="No tasks for this date yet."
+        ></app-task-list>
       </div>
       } @else {
       <div
