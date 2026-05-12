@@ -92,7 +92,42 @@ Nie wpisuj rekordów ręcznie „na pamięć”. Bierz dokładne wartości z SES
 
 ## 4) Harmonogramy notyfikacji
 
-### Wariant A: Scheduled Functions w Supabase Dashboard
+### Wariant A: migracja `pg_cron` + `pg_net` (produkcyjny)
+
+Repo zarządza schedulerami w kodzie:
+
+- `.github/workflows/production.yml` zapisuje do Supabase Vault:
+  - `tickist_functions_base_url`
+  - `tickist_internal_function_secret`
+- `supabase/migrations/0012_schedule_notification_workers.sql` tworzy cron joby:
+  - `notification-digest-runner-every-10-minutes`
+  - `send-emails-every-minute`
+
+Nie ustawiaj tych harmonogramów ręcznie w Dashboardzie, bo kolejne wdrożenie
+powinno odtworzyć stan z migracji.
+
+Po wdrożeniu sprawdź:
+
+```sql
+select jobid, jobname, schedule, active
+from cron.job
+where jobname in (
+  'notification-digest-runner-every-10-minutes',
+  'send-emails-every-minute'
+)
+order by jobname;
+```
+
+Ostatnie uruchomienia:
+
+```sql
+select jobid, status, return_message, start_time, end_time
+from cron.job_run_details
+order by start_time desc
+limit 50;
+```
+
+### Wariant B: Scheduled Functions w Supabase Dashboard (manualny fallback)
 
 1. Deploy funkcji `notification-digest-runner` i `send-emails`.
 2. Utwórz harmonogram `notification-digest-runner` co 5-15 minut.
@@ -112,7 +147,7 @@ Nie wpisuj rekordów ręcznie „na pamięć”. Bierz dokładne wartości z SES
 { "limit": 25, "dry_run": false }
 ```
 
-### Wariant B: `pg_cron` + `pg_net`
+### Wariant C: ręczne `pg_cron` + `pg_net`
 
 Wymagane rozszerzenia:
 
