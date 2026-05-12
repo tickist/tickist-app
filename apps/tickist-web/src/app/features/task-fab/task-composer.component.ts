@@ -164,6 +164,7 @@ export class TaskComposerComponent {
   readonly stepsArray = this.fb.array<FormGroup>([]);
   readonly remindersArray = this.fb.array<FormGroup>([]);
   private reminderLoadTaskId: string | null = null;
+  private reminderEditVersion = 0;
 
   constructor() {
     effect(() => {
@@ -194,6 +195,7 @@ export class TaskComposerComponent {
     if (!preset || preset.mode === 'create') {
       this.editingTask.set(null);
       this.reminderLoadTaskId = null;
+      this.reminderEditVersion += 1;
       this.clearReminders();
       this.resetForm({
         projectId: preset?.defaults?.projectId ?? this.inboxProjectId(),
@@ -230,6 +232,7 @@ export class TaskComposerComponent {
       });
       this.clearSteps();
       task.steps.forEach((step) => this.addStep(step.content, step.isDone));
+      this.reminderEditVersion += 1;
       void this.loadRemindersForTask(task.id);
     }
   }
@@ -274,6 +277,16 @@ export class TaskComposerComponent {
     id = '',
     timezone = resolveBrowserTimezone()
   ): void {
+    this.reminderEditVersion += 1;
+    this.addReminderControl(date, time, id, timezone);
+  }
+
+  private addReminderControl(
+    date = '',
+    time = '',
+    id = '',
+    timezone = resolveBrowserTimezone()
+  ): void {
     this.reminders.push(
       this.fb.nonNullable.group({
         id: [id],
@@ -285,6 +298,7 @@ export class TaskComposerComponent {
   }
 
   removeReminder(index: number): void {
+    this.reminderEditVersion += 1;
     this.reminders.removeAt(index);
   }
 
@@ -321,14 +335,18 @@ export class TaskComposerComponent {
 
   private async loadRemindersForTask(taskId: string): Promise<void> {
     this.reminderLoadTaskId = taskId;
+    const editVersion = this.reminderEditVersion;
     const reminders = await this.reminderService.listForTask(taskId);
-    if (this.reminderLoadTaskId !== taskId) {
+    if (
+      this.reminderLoadTaskId !== taskId ||
+      this.reminderEditVersion !== editVersion
+    ) {
       return;
     }
     this.clearReminders();
     reminders.forEach((reminder) => {
       const inputValue = toReminderInputValue(reminder.remindAt);
-      this.addReminder(
+      this.addReminderControl(
         inputValue.date,
         inputValue.time,
         reminder.id,
