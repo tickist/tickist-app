@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { StatisticsDataService } from './statistics-data.service';
 import { TaskDataService } from './task-data.service';
+import { TaskReminderDataService } from './task-reminder-data.service';
 
 type TaskRow = {
   id: string;
@@ -103,6 +104,12 @@ async function setupRecurringTaskService(row: TaskRow): Promise<{
         provide: StatisticsDataService,
         useValue: {
           markDirty: vi.fn(),
+        },
+      },
+      {
+        provide: TaskReminderDataService,
+        useValue: {
+          cancelPendingForTask: vi.fn(async () => undefined),
         },
       },
     ],

@@ -1,6 +1,7 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { StatisticsDataService } from './statistics-data.service';
+import { TaskReminderDataService } from './task-reminder-data.service';
 
 export interface Task {
   id: string;
@@ -123,6 +124,7 @@ export class TaskDataService {
   private readonly supabase = inject(SUPABASE_CLIENT, { optional: true });
   private readonly supabaseConfig = inject(SUPABASE_CONFIG, { optional: true });
   private readonly injector = inject(Injector);
+  private readonly taskReminders = inject(TaskReminderDataService);
   private readonly tasks = signal<Task[]>([]);
   private readonly loading = signal(false);
 
@@ -306,6 +308,7 @@ export class TaskDataService {
 
       // Fire workflow if status changed to done
       if (previous && !previous.isDone && (input.isDone ?? updated.isDone)) {
+        await this.taskReminders.cancelPendingForTask(updated.id);
         await this.callTaskReminderFunction(updated.id, 'completed');
       }
     }
@@ -317,6 +320,8 @@ export class TaskDataService {
       console.warn('[Tasks] Supabase client missing; cannot delete task.');
       return false;
     }
+
+    await this.taskReminders.cancelPendingForTask(taskId);
 
     const { error } = await this.supabase
       .from('tasks')

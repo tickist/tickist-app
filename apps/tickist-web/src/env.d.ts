@@ -4,6 +4,7 @@ interface ImportMetaEnv {
   /** @deprecated Prefer NG_APP_SUPABASE_PUBLISHABLE_KEY. */
   readonly NG_APP_SUPABASE_ANON_KEY?: string;
   readonly NG_APP_SUPABASE_FUNCTIONS_URL?: string;
+  readonly NG_APP_BUILD_COMMIT?: string;
 }
 
 interface ImportMeta {

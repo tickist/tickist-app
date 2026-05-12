@@ -208,6 +208,63 @@
         }
       </section>
     </form>
+    } @case ('reminders') {
+    <section class="sheet-form">
+      <section class="sheet-section">
+        @if (reminders.length) {
+        <div class="reminders">
+          @for (reminder of reminders.controls; track reminder; let i = $index) {
+          <div class="reminder-row" [formGroup]="reminder">
+            <span class="reminder-row__icon" aria-hidden="true">⏰</span>
+            <input type="hidden" formControlName="id" />
+            <input type="hidden" formControlName="timezone" />
+            <label class="sheet-field task-composer-field--placeholder">
+              <span class="sheet-field__label task-composer-sr-only"
+                >Reminder date</span
+              >
+              <input
+                type="date"
+                class="sheet-input"
+                formControlName="date"
+                aria-label="Reminder date"
+              />
+            </label>
+            <label class="sheet-field task-composer-field--placeholder">
+              <span class="sheet-field__label task-composer-sr-only"
+                >Reminder time</span
+              >
+              <input
+                type="time"
+                class="sheet-input"
+                formControlName="time"
+                aria-label="Reminder time"
+              />
+            </label>
+            <button
+              type="button"
+              class="sheet-shell__button sheet-shell__button--ghost"
+              (click)="removeReminder(i)"
+            >
+              ✕
+            </button>
+          </div>
+          }
+        </div>
+        } @else {
+        <div class="sheet-muted-card">
+          <p class="sheet-field__hint">No reminders yet.</p>
+        </div>
+        }
+
+        <button
+          type="button"
+          class="sheet-shell__button sheet-shell__button--secondary"
+          (click)="addReminder()"
+        >
+          Add reminder
+        </button>
+      </section>
+    </section>
     } @case ('tags') {
     <section class="sheet-form">
       <section class="sheet-section">

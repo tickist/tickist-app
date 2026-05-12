@@ -22,6 +22,7 @@ import { TaskFabComponent } from '../task-fab/task-fab.component';
 import { filter, Subscription } from 'rxjs';
 import { ToastContainerComponent } from '../../core/ui/toast-container.component';
 import { ThemeService } from '../../core/ui/theme.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-viewport',
@@ -68,6 +69,7 @@ export class AppViewportComponent implements OnDestroy {
   );
   readonly notificationsOpen = signal(false);
   readonly profileMenuOpen = signal(false);
+  readonly aboutModalOpen = signal(false);
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
   readonly currentUrl = signal(this.router.url);
@@ -79,6 +81,8 @@ export class AppViewportComponent implements OnDestroy {
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
   readonly showTaskFab = computed(() => !isSheetRoute(this.currentUrl()));
+  readonly buildCommit = environment.buildCommit;
+  readonly buildCommitShort = shortCommit(environment.buildCommit);
 
   constructor() {
     const initialUrl = this.router.url;
@@ -93,6 +97,7 @@ export class AppViewportComponent implements OnDestroy {
       } else {
         this.notificationsOpen.set(false);
         this.profileMenuOpen.set(false);
+        this.aboutModalOpen.set(false);
       }
     });
 
@@ -108,6 +113,7 @@ export class AppViewportComponent implements OnDestroy {
           this.viewState.rememberLastNonSheetAppUrl(event.urlAfterRedirects);
         }
         this.profileMenuOpen.set(false);
+        this.aboutModalOpen.set(false);
         this.notificationsOpen.set(false);
         this.sidebarOpen.set(false);
       });
@@ -149,6 +155,16 @@ export class AppViewportComponent implements OnDestroy {
 
   closeProfileMenu(): void {
     this.profileMenuOpen.set(false);
+  }
+
+  openAboutModal(): void {
+    this.profileMenuOpen.set(false);
+    this.notificationsOpen.set(false);
+    this.aboutModalOpen.set(true);
+  }
+
+  closeAboutModal(): void {
+    this.aboutModalOpen.set(false);
   }
 
   async markNotificationAsRead(notificationId: string): Promise<void> {
@@ -201,6 +217,14 @@ function appendCacheVersion(url: string, version: string | null): string {
   }
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}v=${encodeURIComponent(version)}`;
+}
+
+function shortCommit(commit: string): string {
+  const normalized = commit.trim();
+  if (!normalized || normalized === 'unknown') {
+    return 'unknown';
+  }
+  return normalized.slice(0, 12);
 }
 
 export function isRememberedAppUrl(url: string): boolean {

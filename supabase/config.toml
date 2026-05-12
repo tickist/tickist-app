@@ -373,6 +373,10 @@ deno_version = 2
 [functions.task-reminder]
 verify_jwt = true
 
+[functions.task-reminder-runner]
+# Internal scheduler endpoint protected via x-internal-function-secret.
+verify_jwt = false
+
 [functions.project-update]
 verify_jwt = true
 
