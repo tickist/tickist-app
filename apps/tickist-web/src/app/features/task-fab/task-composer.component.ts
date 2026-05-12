@@ -59,6 +59,7 @@ type TaskFormDefaults = {
   repeatUnit: RepeatUnit;
   repeatFrom: RepeatFromMode;
   tags: string[];
+  assigneeId: string;
   isActive: boolean;
   pinned: boolean;
   estimateMinutes: number;
@@ -107,6 +108,36 @@ export class TaskComposerComponent {
     const query = this.tagSearch().trim().toLowerCase();
     return this.tags().filter((tag) => tag.name.toLowerCase().includes(query));
   });
+  selectedProject() {
+    const projectId = this.taskForm.controls.projectId.value;
+    if (!projectId) {
+      return null;
+    }
+    return this.projects().find((project) => project.id === projectId) ?? null;
+  }
+
+  assigneeOptions() {
+    const project = this.selectedProject();
+    if (!project || !this.isSharedProject(project)) {
+      return [];
+    }
+    const options = new Map<string, string>();
+    const ownerLabel =
+      project.ownerId === this.user()?.id
+        ? this.user()?.email ?? 'You'
+        : 'Project owner';
+    options.set(project.ownerId, ownerLabel);
+    for (const member of project.members) {
+      if (member.status !== 'accepted') {
+        continue;
+      }
+      options.set(
+        member.userId,
+        member.invitedEmail ?? member.userId.slice(0, 8)
+      );
+    }
+    return Array.from(options, ([userId, label]) => ({ userId, label }));
+  }
 
   @Output() dismiss = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
@@ -126,6 +157,7 @@ export class TaskComposerComponent {
     repeatUnit: 'day',
     repeatFrom: 'completion_date',
     tags: [],
+    assigneeId: '',
     isActive: true,
     pinned: false,
     estimateMinutes: 15,
@@ -149,6 +181,7 @@ export class TaskComposerComponent {
     repeatUnit: ['day'],
     repeatFrom: ['completion_date'],
     tags: this.fb.nonNullable.control<string[]>([]),
+    assigneeId: [''],
     isActive: [true],
     pinned: [false],
     estimateMinutes: [15],
@@ -213,6 +246,7 @@ export class TaskComposerComponent {
         repeatUnit: unit,
         repeatFrom: this.repeatFromModeFromValue(task.fromRepeating),
         tags: [...task.tags],
+        assigneeId: task.assigneeIds?.[0] ?? '',
         isActive: task.isActive,
         pinned: task.pinned,
         estimateMinutes: task.estimateMinutes ?? 15,
@@ -357,6 +391,7 @@ export class TaskComposerComponent {
           estimateMinutes: value.estimateMinutes ?? null,
           spentMinutes: value.spentMinutes ?? null,
           tags: value.tags,
+          assigneeIds: value.assigneeId ? [value.assigneeId] : [],
           isActive: value.isActive,
           pinned: value.pinned,
           steps: stepsPayload,
@@ -383,6 +418,7 @@ export class TaskComposerComponent {
         estimateMinutes: value.estimateMinutes ?? null,
         spentMinutes: value.spentMinutes ?? null,
         tags: value.tags,
+        assigneeIds: value.assigneeId ? [value.assigneeId] : [],
         isActive: value.isActive,
         pinned: value.pinned,
         steps: stepsPayload,
@@ -424,6 +460,7 @@ export class TaskComposerComponent {
       repeatUnit: next.repeatUnit,
       repeatFrom: next.repeatFrom,
       tags: next.tags,
+      assigneeId: next.assigneeId,
       isActive: next.isActive,
       pinned: next.pinned,
       estimateMinutes: next.estimateMinutes,
@@ -535,6 +572,10 @@ export class TaskComposerComponent {
 
   private typeFinishDateFromMode(mode: string | null | undefined): number {
     return mode === 'on' ? 0 : 1;
+  }
+
+  private isSharedProject(project: { ownerId: string; members: unknown[] }) {
+    return project.members.length > 0 || project.ownerId !== this.user()?.id;
   }
 }
 

@@ -28,6 +28,9 @@
       @if (taskTimeLabel(); as summary) {
       <span class="task-card__time">({{ summary }})</span>
       }
+      @if (isSharedTask()) {
+      <span class="task-card__shared" title="Shared list">Shared</span>
+      }
     </div>
     <div class="task-card__actions">
       <button

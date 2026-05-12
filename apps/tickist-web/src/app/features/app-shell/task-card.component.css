@@ -66,6 +66,11 @@
   @apply rounded-full bg-base-100 bg-opacity-40 px-2 py-0.5 text-xs text-base-content;
 }
 
+.task-card__shared {
+  @apply rounded-full border border-white/10 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide;
+  color: rgb(var(--bc) / 0.7);
+}
+
 .task-card__actions {
   @apply flex items-center gap-2;
 }

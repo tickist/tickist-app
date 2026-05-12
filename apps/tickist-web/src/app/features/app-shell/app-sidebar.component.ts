@@ -123,7 +123,7 @@ export class AppSidebarComponent {
     });
     const countByDate = new Map<string, number>();
     for (const task of this.taskList()) {
-      if (task.ownerId !== userId || task.isDone || !task.finishDate) {
+      if (task.isDone || !task.finishDate) {
         continue;
       }
       const finishDate = new Date(task.finishDate);
@@ -166,7 +166,7 @@ export class AppSidebarComponent {
     });
     const countByMonth = new Map<string, number>();
     for (const task of this.taskList()) {
-      if (task.ownerId !== userId || task.isDone || !task.finishDate) {
+      if (task.isDone || !task.finishDate) {
         continue;
       }
       const finishDate = new Date(task.finishDate);
@@ -203,9 +203,6 @@ export class AppSidebarComponent {
       return counts;
     }
     for (const task of this.taskList()) {
-      if (task.ownerId !== userId) {
-        continue;
-      }
       if (task.isDone) {
         continue;
       }
@@ -295,6 +292,10 @@ export class AppSidebarComponent {
       return 0;
     }
     return this.projectTaskCounts().get(projectId) ?? 0;
+  }
+
+  isSharedProject(project: Project): boolean {
+    return project.members.length > 0 || project.ownerId !== this.user()?.id;
   }
 
   onProjectEnter(projectId: string): void {

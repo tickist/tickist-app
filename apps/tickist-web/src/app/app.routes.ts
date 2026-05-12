@@ -50,6 +50,11 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'team',
+        loadComponent: () =>
+          import('./features/team/team.component').then((m) => m.TeamComponent),
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('./features/app-shell/settings.component').then(

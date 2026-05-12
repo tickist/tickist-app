@@ -88,6 +88,18 @@
   white-space: nowrap;
 }
 
+.project-picker__shared,
+.project-picker__option-shared {
+  border: 1px solid color-mix(in srgb, var(--project-picker-text) 18%, transparent);
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--project-picker-text) 70%, transparent);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.18rem 0.35rem;
+  text-transform: uppercase;
+}
+
 .project-picker__chevron {
   color: color-mix(in srgb, var(--project-picker-text) 70%, transparent);
   transition: transform 0.16s ease;
@@ -184,8 +196,7 @@
 }
 
 .project-picker__option-text {
-  display: block;
-  flex: 1;
+  display: inline-block;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

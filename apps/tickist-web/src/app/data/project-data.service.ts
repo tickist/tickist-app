@@ -10,6 +10,25 @@ import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 import { StatisticsDataService } from './statistics-data.service';
 
+export type ProjectMemberStatus = 'pending' | 'accepted' | 'declined';
+
+export interface ProjectMember {
+  projectId: string;
+  userId: string;
+  status: ProjectMemberStatus;
+  role: string;
+  invitedEmail: string | null;
+  invitedProjectName: string | null;
+  invitedBy: string | null;
+  invitedAt: string | null;
+  acceptedAt: string | null;
+  declinedAt: string | null;
+  projectName?: string | null;
+  projectOwnerId?: string | null;
+  projectColor?: string | null;
+  projectIcon?: string | null;
+}
+
 export interface Project {
   id: string;
   ownerId: string;
@@ -23,6 +42,7 @@ export interface Project {
   ancestorId: string | null;
   taskView: string;
   shareWithIds: string[];
+  members: ProjectMember[];
   defaultPriority?: string;
   defaultFinishDate?: number | null;
   defaultTypeFinishDate?: number | null;
@@ -66,6 +86,47 @@ export interface ProjectUpdateInput {
   dialogTimeWhenTaskFinished?: boolean;
 }
 
+export type ProjectInviteResult =
+  | {
+      ok: true;
+      code: 'invited' | 'already_pending' | 'already_member';
+      member: { userId: string; email: string; status: ProjectMemberStatus };
+    }
+  | {
+      ok: false;
+      code: 'user_not_found';
+      message: string;
+    };
+
+type ProjectMemberRow = {
+  project_id: string;
+  user_id: string;
+  status: ProjectMemberStatus | null;
+  role: string | null;
+  invited_email: string | null;
+  invited_project_name: string | null;
+  invited_by: string | null;
+  invited_at: string | null;
+  accepted_at: string | null;
+  declined_at: string | null;
+  projects?:
+    | {
+        id: string;
+        name: string;
+        owner_id: string;
+        color: string | null;
+        icon: string | null;
+      }
+    | {
+        id: string;
+        name: string;
+        owner_id: string;
+        color: string | null;
+        icon: string | null;
+      }[]
+    | null;
+};
+
 type ProjectRow = {
   id: string;
   owner_id: string;
@@ -82,7 +143,7 @@ type ProjectRow = {
   default_finish_date: number | null;
   default_type_finish_date: number | null;
   dialog_time_when_task_finished: boolean | null;
-  project_members?: { user_id: string }[] | null;
+  project_members?: ProjectMemberRow[] | null;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -92,12 +153,17 @@ export class ProjectDataService {
   private readonly session = inject(SupabaseSessionService);
   private readonly injector = inject(Injector);
   private readonly projects = signal<Project[]>([]);
+  private readonly memberships = signal<ProjectMember[]>([]);
   private readonly loading = signal(false);
   private readonly ensuredInboxOwners = new Set<string>();
   private readonly ensureInboxInFlight = new Set<string>();
   private recoveringInvalidOwner = false;
 
   readonly projectsSignal = computed(() => this.projects());
+  readonly membershipsSignal = computed(() => this.memberships());
+  readonly pendingInvitesSignal = computed(() =>
+    this.memberships().filter((member) => member.status === 'pending')
+  );
   readonly loadingSignal = computed(() => this.loading());
 
   constructor() {
@@ -108,6 +174,8 @@ export class ProjectDataService {
     effect(() => {
       const user = this.session.user();
       if (!user) {
+        this.projects.set([]);
+        this.memberships.set([]);
         return;
       }
       void this.ensureInboxProject(user.id);
@@ -118,9 +186,18 @@ export class ProjectDataService {
     return this.projectsSignal();
   }
 
+  membershipsList() {
+    return this.membershipsSignal();
+  }
+
+  pendingInvites() {
+    return this.pendingInvitesSignal();
+  }
+
   async refresh(): Promise<void> {
     if (!this.supabase) {
       this.projects.set([]);
+      this.memberships.set([]);
       this.loading.set(false);
       console.warn('[Projects] Supabase client missing; skipping fetch.');
       return;
@@ -130,16 +207,133 @@ export class ProjectDataService {
     const { data, error } = await this.supabase
       .from('projects')
       .select(
-        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(user_id)'
+        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at)'
       );
 
-    this.loading.set(false);
     if (error || !data) {
       console.warn('[Projects] Unable to fetch from Supabase yet.', error);
+      this.loading.set(false);
       return;
     }
 
     this.projects.set(data.map((row) => this.mapProjectRow(row as ProjectRow)));
+    await this.refreshMemberships();
+    this.loading.set(false);
+  }
+
+  async refreshMemberships(): Promise<void> {
+    if (!this.supabase) {
+      this.memberships.set([]);
+      return;
+    }
+    const { data, error } = await this.supabase
+      .from('project_members')
+      .select(
+        'project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at, projects(id, name, owner_id, color, icon)'
+      )
+      .order('invited_at', { ascending: false });
+    if (error || !data) {
+      console.warn('[Projects] Unable to fetch memberships.', error);
+      return;
+    }
+    this.memberships.set(
+      (data as unknown as ProjectMemberRow[]).map((row) =>
+        this.mapMemberRow(row)
+      )
+    );
+  }
+
+  async inviteByEmail(
+    projectId: string,
+    email: string
+  ): Promise<ProjectInviteResult | null> {
+    const functionsUrl = this.supabaseConfig?.functionsUrl;
+    if (!functionsUrl || !this.supabase) {
+      return null;
+    }
+    const headers = await this.getFunctionAuthHeaders();
+    if (!headers) {
+      return null;
+    }
+    const response = await fetch(`${functionsUrl}/project-invite`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ projectId, email }),
+    });
+    const body = (await response.json().catch(() => null)) as unknown;
+    if (!response.ok) {
+      const errorBody = asErrorBody(body);
+      throw new Error(errorBody.message ?? errorBody.error ?? 'Invite failed.');
+    }
+    await this.refresh();
+    return body as ProjectInviteResult;
+  }
+
+  async respondToInvite(
+    projectId: string,
+    status: 'accepted' | 'declined'
+  ): Promise<boolean> {
+    const userId = this.session.user()?.id;
+    if (!this.supabase || !userId) {
+      return false;
+    }
+    const patch =
+      status === 'accepted'
+        ? {
+            status,
+            accepted_at: new Date().toISOString(),
+            declined_at: null,
+          }
+        : {
+            status,
+            declined_at: new Date().toISOString(),
+          };
+    const { error } = await this.supabase
+      .from('project_members')
+      .update(patch)
+      .eq('project_id', projectId)
+      .eq('user_id', userId);
+    if (error) {
+      console.error('[Projects] Failed to respond to invite', error);
+      return false;
+    }
+    await this.refresh();
+    return true;
+  }
+
+  async leaveSharedProject(projectId: string): Promise<boolean> {
+    const userId = this.session.user()?.id;
+    if (!this.supabase || !userId) {
+      return false;
+    }
+    const { error } = await this.supabase
+      .from('project_members')
+      .delete()
+      .eq('project_id', projectId)
+      .eq('user_id', userId);
+    if (error) {
+      console.error('[Projects] Failed to leave shared project', error);
+      return false;
+    }
+    await this.refresh();
+    return true;
+  }
+
+  async removeMember(projectId: string, userId: string): Promise<boolean> {
+    if (!this.supabase) {
+      return false;
+    }
+    const { error } = await this.supabase
+      .from('project_members')
+      .delete()
+      .eq('project_id', projectId)
+      .eq('user_id', userId);
+    if (error) {
+      console.error('[Projects] Failed to remove project member', error);
+      return false;
+    }
+    await this.refresh();
+    return true;
   }
 
   async createProject(input: ProjectCreateInput): Promise<Project | null> {
@@ -189,12 +383,14 @@ export class ProjectDataService {
           shareWithIds.map((userId) => ({
             project_id: data.id,
             user_id: userId,
+            status: 'accepted',
+            accepted_at: new Date().toISOString(),
           }))
         )
         .throwOnError();
     }
-    if (shareInvites.length) {
-      console.info('[Projects] invite placeholders', shareInvites);
+    for (const email of shareInvites) {
+      await this.inviteByEmail(data.id, email);
     }
 
     this.markStatisticsDirty();
@@ -202,34 +398,8 @@ export class ProjectDataService {
     if (created) {
       this.projects.set([...this.projects(), created]);
     }
+    await this.refreshMemberships();
     return created;
-  }
-
-  private async handleOwnerConstraintError(
-    error: { code?: string; message?: string } | null,
-    ownerId: string
-  ): Promise<void> {
-    if (this.recoveringInvalidOwner) {
-      return;
-    }
-    const isInvalidOwner =
-      error?.code === '23503' && (error?.message ?? '').includes('owner_id');
-    if (!isInvalidOwner) {
-      return;
-    }
-
-    this.recoveringInvalidOwner = true;
-    try {
-      console.warn(
-        '[Projects] Session owner does not exist in database anymore. Signing out to recover.',
-        { ownerId }
-      );
-      this.projects.set([]);
-      this.ensuredInboxOwners.delete(ownerId);
-      await this.session.signOut();
-    } finally {
-      this.recoveringInvalidOwner = false;
-    }
   }
 
   async updateProject(input: ProjectUpdateInput): Promise<Project | null> {
@@ -300,6 +470,8 @@ export class ProjectDataService {
           shareWithIds.map((userId) => ({
             project_id: input.id,
             user_id: userId,
+            status: 'accepted',
+            accepted_at: new Date().toISOString(),
           }))
         );
       }
@@ -323,6 +495,7 @@ export class ProjectDataService {
         )
       );
     }
+    await this.refreshMemberships();
     return updated;
   }
 
@@ -387,7 +560,36 @@ export class ProjectDataService {
     if (ownerId && isInbox) {
       this.ensuredInboxOwners.delete(ownerId);
     }
+    await this.refreshMemberships();
     return true;
+  }
+
+  private async handleOwnerConstraintError(
+    error: { code?: string; message?: string } | null,
+    ownerId: string
+  ): Promise<void> {
+    if (this.recoveringInvalidOwner) {
+      return;
+    }
+    const isInvalidOwner =
+      error?.code === '23503' && (error?.message ?? '').includes('owner_id');
+    if (!isInvalidOwner) {
+      return;
+    }
+
+    this.recoveringInvalidOwner = true;
+    try {
+      console.warn(
+        '[Projects] Session owner does not exist in database anymore. Signing out to recover.',
+        { ownerId }
+      );
+      this.projects.set([]);
+      this.memberships.set([]);
+      this.ensuredInboxOwners.delete(ownerId);
+      await this.session.signOut();
+    } finally {
+      this.recoveringInvalidOwner = false;
+    }
   }
 
   private async fetchProjectById(id: string): Promise<Project | null> {
@@ -397,7 +599,7 @@ export class ProjectDataService {
     const { data, error } = await this.supabase
       .from('projects')
       .select(
-        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(user_id)'
+        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at)'
       )
       .eq('id', id)
       .single();
@@ -410,6 +612,16 @@ export class ProjectDataService {
   }
 
   private mapProjectRow(row: ProjectRow): Project {
+    const members =
+      row.project_members?.map((member) =>
+        this.mapMemberRow(member, {
+          id: row.id,
+          name: row.name,
+          owner_id: row.owner_id,
+          color: row.color,
+          icon: row.icon,
+        })
+      ) ?? [];
     return {
       id: row.id,
       ownerId: row.owner_id,
@@ -427,7 +639,33 @@ export class ProjectDataService {
       defaultTypeFinishDate: row.default_type_finish_date ?? undefined,
       dialogTimeWhenTaskFinished:
         row.dialog_time_when_task_finished ?? undefined,
-      shareWithIds: row.project_members?.map((m) => m.user_id) ?? [],
+      members,
+      shareWithIds: members
+        .filter((member) => member.status === 'accepted')
+        .map((member) => member.userId),
+    };
+  }
+
+  private mapMemberRow(
+    row: ProjectMemberRow,
+    project?: ProjectMemberRow['projects']
+  ): ProjectMember {
+    const resolvedProject = normalizeProjectRelation(project ?? row.projects);
+    return {
+      projectId: row.project_id,
+      userId: row.user_id,
+      status: row.status ?? 'accepted',
+      role: row.role ?? 'editor',
+      invitedEmail: row.invited_email,
+      invitedProjectName: row.invited_project_name,
+      invitedBy: row.invited_by,
+      invitedAt: row.invited_at,
+      acceptedAt: row.accepted_at,
+      declinedAt: row.declined_at,
+      projectName: resolvedProject?.name ?? row.invited_project_name,
+      projectOwnerId: resolvedProject?.owner_id ?? null,
+      projectColor: resolvedProject?.color ?? null,
+      projectIcon: resolvedProject?.icon ?? null,
     };
   }
 
@@ -553,18 +791,36 @@ export class ProjectDataService {
       );
       return null;
     }
-    const headers: Record<string, string> = {
+    return {
       'Content-Type': 'application/json',
-      // Authorization must carry a user session JWT for verify_jwt=true functions.
       Authorization: `Bearer ${accessToken}`,
       apikey: publishableKey,
-      // Function body verifies end-user identity from session JWT.
       'x-user-jwt': accessToken,
     };
-    return headers;
   }
 
   private markStatisticsDirty(): void {
     this.injector.get(StatisticsDataService, null)?.markDirty();
   }
+}
+
+function normalizeProjectRelation(
+  value: ProjectMemberRow['projects']
+): Exclude<ProjectMemberRow['projects'], unknown[] | null | undefined> | null {
+  if (Array.isArray(value)) {
+    return value[0] ?? null;
+  }
+  return value ?? null;
+}
+
+function asErrorBody(value: unknown): { error?: string; message?: string } {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return {};
+  }
+  const record = value as Record<string, unknown>;
+  return {
+    error: typeof record['error'] === 'string' ? record['error'] : undefined,
+    message:
+      typeof record['message'] === 'string' ? record['message'] : undefined,
+  };
 }
