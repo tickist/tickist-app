@@ -66,6 +66,81 @@ jobs:
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install --yes postgresql-client
 
+      - name: Prepare Supabase psql connection
+        run: |
+          node <<'NODE'
+          const { appendFileSync } = require('node:fs');
+
+          const value = process.env.SUPABASE_REMOTE_DB_URL || '';
+          if (!value.trim()) {
+            console.log('::error::Missing required GitHub secret: SUPABASE_REMOTE_DB_URL');
+            process.exit(1);
+          }
+
+          let parsed;
+          try {
+            parsed = new URL(value);
+          } catch {
+            console.log('::error::SUPABASE_REMOTE_DB_URL must be a PostgreSQL connection URI.');
+            console.log('::notice::Expected format: postgresql://USER:PASSWORD@HOST:PORT/postgres?sslmode=require');
+            process.exit(1);
+          }
+
+          const validProtocol = parsed.protocol === 'postgresql:' || parsed.protocol === 'postgres:';
+          const errors = [];
+          if (!validProtocol) {
+            errors.push('protocol must be postgresql:// or postgres://');
+          }
+          if (!parsed.username) {
+            errors.push('username is missing');
+          }
+          if (!parsed.hostname || parsed.hostname.startsWith('@')) {
+            errors.push('host is missing or starts with @');
+          }
+          if (!parsed.pathname || parsed.pathname === '/') {
+            errors.push('database name is missing');
+          }
+
+          if (errors.length) {
+            console.log(`::error::Invalid SUPABASE_REMOTE_DB_URL: ${errors.join(', ')}.`);
+            console.log('::notice::If the database password contains special characters like @, :, /, ?, #, %, encode them in the URL before saving the GitHub secret.');
+            console.log('::notice::Expected Supabase format: postgresql://postgres.<project-ref>:<url-encoded-password>@aws-...pooler.supabase.com:6543/postgres?sslmode=require');
+            process.exit(1);
+          }
+
+          if (!parsed.searchParams.has('sslmode')) {
+            console.log('::notice::SUPABASE_REMOTE_DB_URL has no sslmode query parameter; psql will use sslmode=require.');
+          }
+
+          const decodeUrlPart = (label, rawValue) => {
+            try {
+              return decodeURIComponent(rawValue);
+            } catch {
+              console.log(`::error::SUPABASE_REMOTE_DB_URL has invalid percent-encoding in ${label}.`);
+              console.log('::notice::Encode special characters in the database URL before saving the GitHub secret.');
+              process.exit(1);
+            }
+          };
+          const keywordValue = (key, rawValue) => {
+            const escaped = rawValue.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            return `${key}='${escaped}'`;
+          };
+          const database = decodeUrlPart('database name', parsed.pathname.replace(/^\//, ''));
+          const port = parsed.port || '5432';
+          const sslmode = parsed.searchParams.get('sslmode') || 'require';
+          const connection = [
+            keywordValue('host', parsed.hostname),
+            keywordValue('port', port),
+            keywordValue('dbname', database),
+            keywordValue('user', decodeUrlPart('username', parsed.username)),
+            keywordValue('password', decodeUrlPart('password', parsed.password)),
+            keywordValue('sslmode', sslmode),
+          ].join(' ');
+
+          appendFileSync(process.env.GITHUB_ENV, `SUPABASE_PSQL_DB_URL=${connection}\n`);
+          console.log(`SUPABASE_REMOTE_DB_URL parsed for host ${parsed.hostname}.`);
+          NODE
+
       - name: Sync scheduler Vault secrets
         run: |
           internal_function_secret="${INTERNAL_FUNCTION_SECRET:-${ROUTINE_RUNNER_SECRET:-}}"
@@ -88,7 +163,7 @@ jobs:
           fi
           functions_url="${functions_url%/}"
 
-          psql "$SUPABASE_REMOTE_DB_URL" \
+          psql "$SUPABASE_PSQL_DB_URL" \
             -v ON_ERROR_STOP=1 \
             -v functions_base_url="$functions_url" \
             -v internal_function_secret="$internal_function_secret" <<'SQL'
