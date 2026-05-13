@@ -66,3 +66,4 @@ reports/firebase-migration/*
 .nx/polygraph
 .claude/worktrees
 .nx/self-healing
+.claude/settings.local.json

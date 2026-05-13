@@ -183,10 +183,17 @@ function futureDateInput(daysFromToday: number): string {
 }
 
 async function openTaskMenu(taskCard: ReturnType<typeof taskCardByName>) {
-  await taskCard.locator('button[title="More actions"]').click();
+  await expect(taskCard).toBeVisible();
+  await taskCard.getByRole('button', { name: 'More actions' }).click();
   const menu = taskCard.locator('.task-menu');
   await expect(menu).toBeVisible();
   return menu;
+}
+
+async function expectTaskMenuClosed(
+  taskCard: ReturnType<typeof taskCardByName>
+): Promise<void> {
+  await expect(taskCard.locator('.task-menu')).toHaveCount(0);
 }
 
 async function openProjectContextMenu(page: Page, projectName: string) {
@@ -269,12 +276,15 @@ test('creates task, edits it via task menu and marks done', async ({
 
   let menu = await openTaskMenu(card);
   await menu.getByRole('button', { name: 'A', exact: true }).click();
+  await expectTaskMenuClosed(card);
 
   menu = await openTaskMenu(card);
   await menu.getByRole('button', { name: /Next action/ }).click();
+  await expectTaskMenuClosed(card);
 
   menu = await openTaskMenu(card);
   await menu.getByRole('button', { name: 'Do it today' }).click();
+  await expectTaskMenuClosed(card);
 
   await card.getByTestId('task-toolbar-description').click();
   const descriptionPanel = card.locator('.task-card__panel--description');

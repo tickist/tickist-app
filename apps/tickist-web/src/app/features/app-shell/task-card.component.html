@@ -35,6 +35,7 @@
         class="icon-btn"
         [class.active]="task.pinned"
         title="Pin task"
+        aria-label="Pin task"
         (click)="togglePin()"
       >
         📌
@@ -43,6 +44,7 @@
         type="button"
         class="icon-btn"
         title="Edit task"
+        aria-label="Edit task"
         (click)="editTask()"
       >
         ✏️
@@ -52,6 +54,7 @@
           type="button"
           class="icon-btn"
           title="More actions"
+          aria-label="More actions"
           (click)="menuOpen.set(!menuOpen())"
         >
           ⋮
