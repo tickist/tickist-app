@@ -35,6 +35,11 @@ const sha256Hex = async (value: string): Promise<string> => {
   return hex(digest);
 };
 
+const toSesTagValue = (value: string): string =>
+  value
+    .replace(/[^A-Za-z0-9_.@-]/g, "-")
+    .slice(0, 256);
+
 const hmacSha256Raw = async (
   key: Uint8Array,
   value: string,
@@ -115,8 +120,8 @@ export const sendWithSes = async (input: SesSendInput): Promise<SesSendResult> =
       },
     },
     EmailTags: [
-      { Name: "dedupe_key", Value: input.dedupeKey.slice(0, 256) },
-      { Name: "type", Value: input.type.slice(0, 256) },
+      { Name: "dedupe_key", Value: toSesTagValue(input.dedupeKey) },
+      { Name: "type", Value: toSesTagValue(input.type) },
     ],
   };
 
