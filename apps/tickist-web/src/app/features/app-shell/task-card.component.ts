@@ -214,6 +214,10 @@ export class TaskCardComponent implements OnChanges {
     return (this.task.repeatInterval ?? 0) > 0;
   }
 
+  hasReminders(): boolean {
+    return this.task.reminderCount > 0;
+  }
+
   hasSteps(): boolean {
     return this.task.steps.length > 0;
   }
@@ -228,6 +232,12 @@ export class TaskCardComponent implements OnChanges {
 
   repeatStatusLabel(): string {
     return this.hasRepeat() ? 'Repeat: enabled' : 'Repeat: disabled';
+  }
+
+  remindersStatusLabel(): string {
+    return this.hasReminders()
+      ? `Reminders: ${this.task.reminderCount}`
+      : 'Reminders: none';
   }
 
   stepsStatusLabel(): string {

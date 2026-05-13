@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 import angular from '@analogjs/vite-plugin-angular';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
+import { VitePWA } from 'vite-plugin-pwa';
 
 const resolveBuildCommit = (loaded: Record<string, string>): string => {
   const explicitCommit =
@@ -71,6 +72,85 @@ export default defineConfig(({ mode }) => {
       }),
       nxViteTsPaths(),
       nxCopyAssetsPlugin(['../../*.md']),
+      VitePWA({
+        disable: isTestMode,
+        registerType: 'autoUpdate',
+        injectRegister: 'script-defer',
+        includeAssets: ['favicon.png'],
+        manifest: {
+          id: '/',
+          name: 'Tickist',
+          short_name: 'Tickist',
+          description: 'A focused task and project manager.',
+          lang: 'en',
+          start_url: '/',
+          scope: '/',
+          display: 'standalone',
+          background_color: '#0f172a',
+          theme_color: '#0f172a',
+          categories: ['productivity', 'utilities'],
+          icons: [
+            {
+              src: '/icons/icon-72x72.png',
+              sizes: '72x72',
+              type: 'image/png',
+            },
+            {
+              src: '/icons/icon-96x96.png',
+              sizes: '96x96',
+              type: 'image/png',
+            },
+            {
+              src: '/icons/icon-128x128.png',
+              sizes: '128x128',
+              type: 'image/png',
+            },
+            {
+              src: '/icons/icon-144x144.png',
+              sizes: '144x144',
+              type: 'image/png',
+            },
+            {
+              src: '/icons/icon-152x152.png',
+              sizes: '152x152',
+              type: 'image/png',
+            },
+            {
+              src: '/icons/icon-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any maskable',
+            },
+            {
+              src: '/icons/icon-384x384.png',
+              sizes: '384x384',
+              type: 'image/png',
+            },
+            {
+              src: '/icons/icon-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable',
+            },
+          ],
+        },
+        workbox: {
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
+          globPatterns: [
+            '**/*.{css,html,ico,js,json,png,svg,webp,woff,woff2}',
+          ],
+          globIgnores: [
+            '**/env.js',
+            'favicon.png',
+            'icons/*.png',
+            'manifest.webmanifest',
+          ],
+          navigateFallback: '/index.html',
+          navigateFallbackDenylist: [/^\/env\.js$/, /^\/mcp(?:\/|$)/],
+        },
+      }),
     ],
     build: {
       outDir: '../../dist/tickist-web',

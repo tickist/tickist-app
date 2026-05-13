@@ -445,6 +445,7 @@ export class TaskComposerComponent {
             updated.ownerId,
             this.reminderDrafts()
           );
+          await this.taskService.refresh();
           this.created.emit();
         }
         return;
@@ -477,6 +478,7 @@ export class TaskComposerComponent {
           created.ownerId,
           this.reminderDrafts()
         );
+        await this.taskService.refresh();
         if (addAnother) {
           this.resetForm({
             projectId: value.projectId,

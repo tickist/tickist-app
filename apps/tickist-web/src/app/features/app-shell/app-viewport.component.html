@@ -180,11 +180,13 @@
             Read all
           </button>
           <button
-            class="btn btn-ghost btn-xs text-base-content/60"
+            class="btn btn-ghost btn-xs btn-circle notification-close-btn text-base-content/60"
             type="button"
+            aria-label="Close notifications"
+            title="Close notifications"
             (click)="toggleNotifications()"
           >
-            Close
+            <span aria-hidden="true">×</span>
           </button>
         </div>
       </div>

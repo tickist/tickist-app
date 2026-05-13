@@ -27,6 +27,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
           useValue: {
             createTask: createTaskMock,
             updateTask: updateTaskMock,
+            refresh: vi.fn(async () => undefined),
           },
         },
         {
@@ -263,6 +264,7 @@ describe('TaskComposerComponent shared sheet layout', () => {
           useValue: {
             createTask: vi.fn(async () => createTask()),
             updateTask: vi.fn(async () => createTask()),
+            refresh: vi.fn(async () => undefined),
           },
         },
         {
@@ -334,6 +336,7 @@ function createTask(overrides: Partial<Task> = {}): Task {
     spentMinutes: 0,
     taskType: 'NORMAL',
     whenComplete: null,
+    reminderCount: 0,
     tags: [],
     steps: [],
     createdAt: null,

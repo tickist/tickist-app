@@ -106,7 +106,7 @@ export class TaskReminderDataService {
     }
 
     const rows = normalizedDrafts.map((draft) => ({
-      id: draft.id || undefined,
+      id: draft.id,
       task_id: taskId,
       owner_id: ownerId,
       channel: 'email' as const,
@@ -122,11 +122,39 @@ export class TaskReminderDataService {
       return;
     }
 
-    const { error } = await this.supabase
-      .from('task_reminders')
-      .upsert(rows, { onConflict: 'id' });
-    if (error) {
-      throw error;
+    const existingRows = rows.filter(
+      (row): row is typeof row & { id: string } => row.id !== null
+    );
+    const newRows = rows
+      .filter((row) => row.id === null)
+      .map((row) => ({
+        task_id: row.task_id,
+        owner_id: row.owner_id,
+        channel: row.channel,
+        remind_at: row.remind_at,
+        timezone: row.timezone,
+        status: row.status,
+        cancelled_at: row.cancelled_at,
+        sent_at: row.sent_at,
+        last_error: row.last_error,
+      }));
+
+    if (existingRows.length) {
+      const { error } = await this.supabase
+        .from('task_reminders')
+        .upsert(existingRows, { onConflict: 'id' });
+      if (error) {
+        throw error;
+      }
+    }
+
+    if (newRows.length) {
+      const { error } = await this.supabase
+        .from('task_reminders')
+        .insert(newRows);
+      if (error) {
+        throw error;
+      }
     }
   }
 

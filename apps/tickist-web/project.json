@@ -49,6 +49,7 @@
       "executor": "@nx/vitest:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
+        "maxWorkers": 1,
         "reportsDirectory": "coverage/tickist-web"
       }
     },
@@ -58,7 +59,7 @@
       "options": {
         "buildTarget": "tickist-web:build",
         "port": 4200,
-        "staticFilePath": "dist/tickist-web/browser",
+        "staticFilePath": "dist/tickist-web",
         "spa": true
       }
     }
