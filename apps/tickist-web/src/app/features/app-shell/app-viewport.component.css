@@ -36,6 +36,15 @@
   );
 }
 
+.notification-close-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
 .app-layout {
   display: block;
 }

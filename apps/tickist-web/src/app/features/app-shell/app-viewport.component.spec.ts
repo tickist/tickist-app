@@ -148,6 +148,21 @@ describe('AppViewportComponent theme toggle', () => {
 
     expect(markAllAsRead).toHaveBeenCalledTimes(1);
   });
+
+  it('uses a compact icon-only close button in the notifications menu', () => {
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.notificationsOpen.set(true);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      'button[aria-label="Close notifications"]'
+    ) as HTMLButtonElement | null;
+
+    expect(button).toBeTruthy();
+    expect(button?.textContent?.trim()).toBe('×');
+    expect(button?.textContent).not.toContain('Close');
+  });
 });
 
 describe('app viewport route helpers', () => {
