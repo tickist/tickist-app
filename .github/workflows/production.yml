@@ -173,7 +173,7 @@ jobs:
             name text primary key,
             value text not null,
             description text not null
-          ) on commit drop;
+          );
 
           insert into tickist_scheduler_vault_secret_sync (name, value, description)
           values
