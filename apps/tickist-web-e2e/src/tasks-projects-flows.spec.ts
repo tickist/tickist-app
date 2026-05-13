@@ -173,6 +173,15 @@ function taskCardByName(page: Page, taskName: string) {
     .first();
 }
 
+function futureDateInput(daysFromToday: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromToday);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 async function openTaskMenu(taskCard: ReturnType<typeof taskCardByName>) {
   await taskCard.locator('button[title="More actions"]').click();
   const menu = taskCard.locator('.task-menu');
@@ -289,6 +298,56 @@ test('creates task, edits it via task menu and marks done', async ({
   await selectProjectByName(page, projectName);
   await setProjectFilter(page, 'done');
   await expect(taskCardByName(page, taskName)).toBeVisible();
+});
+
+test('adds task reminder and shows reminder status icon on the task card', async ({
+  page,
+}, testInfo) => {
+  const projectName = `Reminder project ${uniqueSuffix(testInfo)}`;
+  const taskName = `Reminder task ${uniqueSuffix(testInfo)}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, `Project for ${taskName}`);
+  await selectProjectByName(page, projectName);
+
+  await page.getByPlaceholder('What needs doing?').fill(taskName);
+  await page.getByRole('button', { name: 'Add task' }).click();
+
+  const card = taskCardByName(page, taskName);
+  await expect(card).toBeVisible();
+  await expect(card.getByTestId('task-toolbar-reminders')).toHaveAttribute(
+    'aria-label',
+    'Reminders: none'
+  );
+
+  await card.getByRole('button', { name: 'Edit task' }).click();
+  const composer = page.locator('app-task-composer');
+  await expect(composer).toBeVisible();
+  await composer.getByRole('button', { name: 'Reminders' }).click();
+  await composer.getByRole('button', { name: 'Add reminder' }).click();
+  await composer.getByLabel('Reminder date').fill(futureDateInput(1));
+  await composer.getByLabel('Reminder time').fill('09:30');
+  await composer.getByRole('button', { name: 'Update task' }).click();
+  await expect(page.locator('app-task-composer')).toHaveCount(0);
+
+  await expect(card.getByTestId('task-toolbar-reminders')).toHaveClass(
+    /configured/
+  );
+  await expect(card.getByTestId('task-toolbar-reminders')).toHaveAttribute(
+    'aria-label',
+    'Reminders: 1'
+  );
+
+  await page.reload();
+  await selectProjectByName(page, projectName);
+  const reloadedCard = taskCardByName(page, taskName);
+  await expect(reloadedCard.getByTestId('task-toolbar-reminders')).toHaveClass(
+    /configured/
+  );
+  await expect(reloadedCard.getByTestId('task-toolbar-reminders')).toHaveAttribute(
+    'aria-label',
+    'Reminders: 1'
+  );
 });
 
 test('creates project, edits it from project menu and persists changes', async ({

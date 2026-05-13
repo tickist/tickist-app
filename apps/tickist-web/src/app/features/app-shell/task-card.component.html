@@ -169,6 +169,16 @@
     </button>
     <button
       type="button"
+      class="toolbar-btn toolbar-btn--status"
+      data-testid="task-toolbar-reminders"
+      [class.configured]="hasReminders()"
+      [attr.title]="remindersStatusLabel()"
+      [attr.aria-label]="remindersStatusLabel()"
+    >
+      <span class="toolbar-btn__icon" aria-hidden="true">⏰</span>
+    </button>
+    <button
+      type="button"
       class="toolbar-btn"
       data-testid="task-toolbar-steps"
       [class.configured]="hasSteps()"

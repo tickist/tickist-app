@@ -77,11 +77,12 @@ describe('TaskCardComponent toolbar status icons', () => {
     component.viewMode = 'extended';
   });
 
-  it('adds configured class when description, tags, repeat and steps are set', () => {
+  it('adds configured class when description, tags, repeat, reminders and steps are set', () => {
     component.task = createTask({
       description: 'Task with metadata',
       tags: ['tag-1'],
       repeatInterval: 7,
+      reminderCount: 2,
       steps: [createStep()],
     });
     fixture.detectChanges();
@@ -89,11 +90,14 @@ describe('TaskCardComponent toolbar status icons', () => {
     const description = getToolbarButton('description');
     const tags = getToolbarButton('tags');
     const repeat = getToolbarButton('repeat');
+    const reminders = getToolbarButton('reminders');
     const steps = getToolbarButton('steps');
 
     expect(description.classList.contains('configured')).toBe(true);
     expect(tags.classList.contains('configured')).toBe(true);
     expect(repeat.classList.contains('configured')).toBe(true);
+    expect(reminders.classList.contains('configured')).toBe(true);
+    expect(reminders.getAttribute('aria-label')).toBe('Reminders: 2');
     expect(steps.classList.contains('configured')).toBe(true);
   });
 
@@ -102,6 +106,7 @@ describe('TaskCardComponent toolbar status icons', () => {
       description: '   ',
       tags: [],
       repeatInterval: 0,
+      reminderCount: 0,
       steps: [],
     });
     fixture.detectChanges();
@@ -109,11 +114,14 @@ describe('TaskCardComponent toolbar status icons', () => {
     const description = getToolbarButton('description');
     const tags = getToolbarButton('tags');
     const repeat = getToolbarButton('repeat');
+    const reminders = getToolbarButton('reminders');
     const steps = getToolbarButton('steps');
 
     expect(description.classList.contains('configured')).toBe(false);
     expect(tags.classList.contains('configured')).toBe(false);
     expect(repeat.classList.contains('configured')).toBe(false);
+    expect(reminders.classList.contains('configured')).toBe(false);
+    expect(reminders.getAttribute('aria-label')).toBe('Reminders: none');
     expect(steps.classList.contains('configured')).toBe(false);
   });
 
@@ -122,6 +130,7 @@ describe('TaskCardComponent toolbar status icons', () => {
       description: '',
       tags: [],
       repeatInterval: 0,
+      reminderCount: 0,
       steps: [],
     });
     fixture.detectChanges();
@@ -306,7 +315,7 @@ describe('TaskCardComponent toolbar status icons', () => {
   });
 
   function getToolbarButton(
-    key: 'description' | 'tags' | 'repeat' | 'steps'
+    key: 'description' | 'tags' | 'repeat' | 'reminders' | 'steps'
   ): HTMLButtonElement {
     const button = fixture.nativeElement.querySelector(
       `[data-testid="task-toolbar-${key}"]`
@@ -354,6 +363,7 @@ function createTask(overrides: Partial<Task> = {}): Task {
     spentMinutes: null,
     taskType: 'normal',
     whenComplete: null,
+    reminderCount: 0,
     tags: [],
     steps: [],
     createdAt: null,

@@ -41,7 +41,7 @@ describe('TaskReminderDataService', () => {
     ]);
   });
 
-  it('cancels removed reminders and upserts kept reminder drafts', async () => {
+  it('cancels removed reminders, upserts existing drafts, and inserts new drafts without ids', async () => {
     const supabase = createSupabaseMock([
       createReminderRow({ id: 'keep-reminder' }),
       createReminderRow({ id: 'remove-reminder' }),
@@ -78,8 +78,9 @@ describe('TaskReminderDataService', () => {
         timezone: 'Europe/Warsaw',
         status: 'scheduled',
       }),
+    ]);
+    expect(supabase.insertRows).toEqual([
       expect.objectContaining({
-        id: undefined,
         task_id: 'task-1',
         owner_id: 'owner-1',
         remind_at: '2026-05-13T15:45:00.000Z',
@@ -87,15 +88,18 @@ describe('TaskReminderDataService', () => {
         status: 'scheduled',
       }),
     ]);
+    expect(supabase.insertRows[0]).not.toHaveProperty('id');
   });
 });
 
 function createSupabaseMock(rows: ReturnType<typeof createReminderRow>[]) {
   const cancelledIds: string[] = [];
   const upsertRows: Record<string, unknown>[] = [];
+  const insertRows: Record<string, unknown>[] = [];
   return {
     cancelledIds,
     upsertRows,
+    insertRows,
     from: vi.fn((table: string) => {
       if (table !== 'task_reminders') {
         throw new Error(`Unexpected table: ${table}`);
@@ -128,6 +132,10 @@ function createSupabaseMock(rows: ReturnType<typeof createReminderRow>[]) {
             return { error: null };
           }
         ),
+        insert: vi.fn(async (payload: Record<string, unknown>[]) => {
+          insertRows.push(...payload);
+          return { error: null };
+        }),
       };
     }),
   };

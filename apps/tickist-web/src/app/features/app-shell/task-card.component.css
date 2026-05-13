@@ -249,6 +249,10 @@
   box-shadow: 0 0 0 1px rgb(var(--bc) / 0.2);
 }
 
+.toolbar-btn--status {
+  cursor: default;
+}
+
 .toolbar-btn--persistent.active {
   color: rgb(var(--bc) / 0.88);
   border-color: rgb(var(--bc) / 0.28);
