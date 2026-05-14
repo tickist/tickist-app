@@ -3,7 +3,7 @@
 Ten dokument opisuje produkcyjne ustawienie wysyłki emaili w Tickist:
 
 - **Supabase Auth** (reset hasła, magic link, potwierdzenie email): przez **SMTP AWS SES** skonfigurowany w Supabase Dashboard.
-- **Notyfikacje aplikacyjne**: kolejka `public.email_outbox` + Edge Functions `notification-digest-runner`, `enqueue-notification` i `send-emails` wysyłające przez **AWS SES API (SigV4)**.
+- **Notyfikacje aplikacyjne**: kolejka `public.email_outbox` + Edge Functions `notification-digest-runner`, `task-reminder-runner`, `enqueue-notification` i `send-emails` wysyłające przez **AWS SES API (SigV4)**.
 
 `From` jest zawsze ustawiany przez secret `EMAIL_FROM`, np. `no-reply@tickist.com`.
 
@@ -40,9 +40,10 @@ Architektura:
 1. Klient/user zapisuje preferencje w `public.notification_preferences`.
 2. Harmonogram wywołuje `notification-digest-runner` co 5-15 minut.
 3. Runner sprawdza preferencje daily/weekly, buduje digest i zapisuje rekord do `public.email_outbox` przez `public.enqueue_email(...)`.
-4. Opcjonalnie klient/user może wywołać `enqueue-notification`, żeby dodać pojedynczy email do outbox.
-5. Harmonogram wywołuje `send-emails` co 1 minutę.
-6. Worker pobiera batch, wysyła przez SES API, aktualizuje statusy i retry.
+4. Harmonogram wywołuje `task-reminder-runner` co 1 minutę i enqueue'uje przypomnienia z `public.task_reminders`.
+5. Opcjonalnie klient/user może wywołać `enqueue-notification`, żeby dodać pojedynczy email do outbox.
+6. Harmonogram wywołuje `send-emails` co 1 minutę.
+7. Worker pobiera batch, wysyła przez SES API, aktualizuje statusy i retry.
 
 Zasady bezpieczeństwa:
 
@@ -57,6 +58,9 @@ Zasady bezpieczeństwa:
 - `notification-digest-runner`:
   - działa tylko z `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`,
   - wymaga `verify_jwt = false` w `supabase/config.toml`, tak samo jak `send-emails`.
+- `task-reminder-runner`:
+  - działa tylko z `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`,
+  - wymaga `verify_jwt = false` w `supabase/config.toml`.
 - Tabela outbox ma RLS wyłącznie dla `service_role`.
 
 Idempotencja i retry:
@@ -101,6 +105,7 @@ Repo zarządza schedulerami w kodzie:
   - `tickist_internal_function_secret`
 - `supabase/migrations/0012_schedule_notification_workers.sql` tworzy cron joby:
   - `notification-digest-runner-every-10-minutes`
+  - `task-reminder-runner-every-minute`
   - `send-emails-every-minute`
 
 Nie ustawiaj tych harmonogramów ręcznie w Dashboardzie, bo kolejne wdrożenie
@@ -113,6 +118,7 @@ select jobid, jobname, schedule, active
 from cron.job
 where jobname in (
   'notification-digest-runner-every-10-minutes',
+  'task-reminder-runner-every-minute',
   'send-emails-every-minute'
 )
 order by jobname;
@@ -195,6 +201,7 @@ Uwaga: bezpieczniej trzymać sekrety w Supabase Vault i składać nagłówki z V
 Po skonfigurowaniu harmonogramów sprawdź logi Edge Functions:
 
 - `notification-digest-runner` powinien zwracać `200` z polami `processed`, `enqueued`, `skipped`.
+- `task-reminder-runner` powinien zwracać `200` z polami `processed`, `enqueued`, `cancelled`, `retried`, `skipped`.
 - `send-emails` powinien zwracać `200` z polami `fetched`, `sent`, `failed`, `dead`.
 
 Jeśli `notification-digest-runner` działa, a emaile nie wychodzą, sprawdź
