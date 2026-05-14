@@ -345,7 +345,7 @@ test('adds task reminder and shows reminder status icon on the task card', async
   );
   await expect(card.getByTestId('task-toolbar-reminders')).toHaveAttribute(
     'aria-label',
-    'Reminders: 1'
+    /Reminders: 1\. Next:/
   );
 
   await page.reload();
@@ -354,10 +354,9 @@ test('adds task reminder and shows reminder status icon on the task card', async
   await expect(reloadedCard.getByTestId('task-toolbar-reminders')).toHaveClass(
     /configured/
   );
-  await expect(reloadedCard.getByTestId('task-toolbar-reminders')).toHaveAttribute(
-    'aria-label',
-    'Reminders: 1'
-  );
+  await expect(
+    reloadedCard.getByTestId('task-toolbar-reminders')
+  ).toHaveAttribute('aria-label', /Reminders: 1\. Next:/);
 });
 
 test('creates project, edits it from project menu and persists changes', async ({

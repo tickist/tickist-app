@@ -33,6 +33,9 @@ type TaskRow = {
   task_steps?:
     | { id: string; content: string; is_done: boolean; position: number }[]
     | null;
+  task_reminders?:
+    | { id: string; remind_at: string; timezone: string; status: string }[]
+    | null;
 };
 
 describe('TaskDataService recurring completion', () => {
@@ -226,6 +229,7 @@ function createTaskRow(overrides: Partial<TaskRow> = {}): TaskRow {
     modification_date: null,
     task_tags: [],
     task_steps: [],
+    task_reminders: [],
     ...overrides,
   };
 }
