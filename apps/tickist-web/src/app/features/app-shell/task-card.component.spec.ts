@@ -83,6 +83,14 @@ describe('TaskCardComponent toolbar status icons', () => {
       tags: ['tag-1'],
       repeatInterval: 7,
       reminderCount: 2,
+      reminders: [
+        {
+          id: 'reminder-1',
+          remindAt: '2026-05-15T07:30:00.000Z',
+          timezone: 'Europe/Warsaw',
+          status: 'scheduled',
+        },
+      ],
       steps: [createStep()],
     });
     fixture.detectChanges();
@@ -97,7 +105,7 @@ describe('TaskCardComponent toolbar status icons', () => {
     expect(tags.classList.contains('configured')).toBe(true);
     expect(repeat.classList.contains('configured')).toBe(true);
     expect(reminders.classList.contains('configured')).toBe(true);
-    expect(reminders.getAttribute('aria-label')).toBe('Reminders: 2');
+    expect(reminders.getAttribute('aria-label')).toContain('Reminders: 2. Next:');
     expect(steps.classList.contains('configured')).toBe(true);
   });
 
@@ -364,6 +372,7 @@ function createTask(overrides: Partial<Task> = {}): Task {
     taskType: 'normal',
     whenComplete: null,
     reminderCount: 0,
+    reminders: [],
     tags: [],
     steps: [],
     createdAt: null,

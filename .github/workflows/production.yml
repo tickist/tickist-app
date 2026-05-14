@@ -284,7 +284,7 @@ jobs:
 
       - name: Deploy Edge Functions
         run: |
-          for fn in task-reminder project-update routine-runner notification-digest-runner enqueue-notification send-emails tickist-mcp; do
+          for fn in task-reminder task-reminder-runner project-update routine-runner notification-digest-runner enqueue-notification send-emails tickist-mcp; do
             supabase functions deploy "$fn" --project-ref "$SUPABASE_PROJECT_REF"
           done
 

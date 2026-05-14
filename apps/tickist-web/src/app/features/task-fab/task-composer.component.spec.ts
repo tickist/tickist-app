@@ -337,6 +337,7 @@ function createTask(overrides: Partial<Task> = {}): Task {
     taskType: 'NORMAL',
     whenComplete: null,
     reminderCount: 0,
+    reminders: [],
     tags: [],
     steps: [],
     createdAt: null,

@@ -235,9 +235,19 @@ export class TaskCardComponent implements OnChanges {
   }
 
   remindersStatusLabel(): string {
-    return this.hasReminders()
-      ? `Reminders: ${this.task.reminderCount}`
-      : 'Reminders: none';
+    if (!this.hasReminders()) {
+      return 'Reminders: none';
+    }
+
+    const nextReminder = this.task.reminders[0];
+    if (!nextReminder) {
+      return `Reminders: ${this.task.reminderCount}`;
+    }
+
+    return `Reminders: ${this.task.reminderCount}. Next: ${this.formatReminderDate(
+      nextReminder.remindAt,
+      nextReminder.timezone
+    )}`;
   }
 
   stepsStatusLabel(): string {
@@ -798,6 +808,27 @@ export class TaskCardComponent implements OnChanges {
       return hours % 1 === 0 ? `${hours}h` : `${hours.toFixed(1)}h`;
     }
     return `${minutes}m`;
+  }
+
+  private formatReminderDate(value: string, timezone: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    const normalizedTimezone = timezone.trim() || undefined;
+    try {
+      return new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone: normalizedTimezone,
+      }).format(date);
+    } catch {
+      return new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      }).format(date);
+    }
   }
 
   private getRepeatInterval(

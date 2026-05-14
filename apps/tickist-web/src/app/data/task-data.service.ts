@@ -26,10 +26,18 @@ export interface Task {
   taskType: string;
   whenComplete?: string | null;
   reminderCount: number;
+  reminders: TaskReminderSummary[];
   tags: string[];
   steps: TaskStep[];
   createdAt?: string | null;
   updatedAt?: string | null;
+}
+
+export interface TaskReminderSummary {
+  id: string;
+  remindAt: string;
+  timezone: string;
+  status: string;
 }
 
 export interface TaskStep {
@@ -118,7 +126,9 @@ type TaskRow = {
   task_steps?:
     | { id: string; content: string; is_done: boolean; position: number }[]
     | null;
-  task_reminders?: { id: string; status: string }[] | null;
+  task_reminders?:
+    | { id: string; remind_at: string; timezone: string; status: string }[]
+    | null;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -154,7 +164,7 @@ export class TaskDataService {
     const query = this.supabase
       .from('tasks')
       .select(
-        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_steps(id, content, is_done, position), task_reminders(id, status)'
+        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
       );
     const { data, error } = await query;
     if (error || !data) {
@@ -345,7 +355,7 @@ export class TaskDataService {
     const { data, error } = await this.supabase
       .from('tasks')
       .select(
-        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_steps(id, content, is_done, position), task_reminders(id, status)'
+        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
       )
       .eq('id', id)
       .single();
@@ -469,6 +479,19 @@ function startOfLocalDay(date: Date): Date {
 }
 
 function mapTaskRowToTask(row: TaskRow): Task {
+  const activeReminders =
+    row.task_reminders
+      ?.filter((reminder) =>
+        ['scheduled', 'processing', 'failed'].includes(reminder.status)
+      )
+      .map((reminder) => ({
+        id: reminder.id,
+        remindAt: reminder.remind_at,
+        timezone: reminder.timezone,
+        status: reminder.status,
+      }))
+      .sort((a, b) => a.remindAt.localeCompare(b.remindAt)) ?? [];
+
   return {
     id: row.id,
     ownerId: row.owner_id,
@@ -491,10 +514,8 @@ function mapTaskRowToTask(row: TaskRow): Task {
     spentMinutes: row.spent_minutes,
     taskType: row.task_type ?? 'normal',
     whenComplete: row.when_complete,
-    reminderCount:
-      row.task_reminders?.filter((reminder) =>
-        ['scheduled', 'processing', 'failed'].includes(reminder.status)
-      ).length ?? 0,
+    reminderCount: activeReminders.length,
+    reminders: activeReminders,
     tags: row.task_tags?.map((tag) => tag.tag_id) ?? [],
     steps:
       row.task_steps
