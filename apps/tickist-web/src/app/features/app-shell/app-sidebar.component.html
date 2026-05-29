@@ -199,6 +199,9 @@
             [style.color]="node.project.color"
           ></app-project-icon>
           <span class="project-name">{{ node.project.name }}</span>
+          @if (isSharedProject(node.project)) {
+          <span class="project-shared-badge" title="Shared list">Shared</span>
+          }
         </span>
         <span class="project-count">{{
           projectTaskCount(node.project.id)

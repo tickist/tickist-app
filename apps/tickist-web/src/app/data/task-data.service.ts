@@ -28,6 +28,7 @@ export interface Task {
   reminderCount: number;
   reminders: TaskReminderSummary[];
   tags: string[];
+  assigneeIds: string[];
   steps: TaskStep[];
   createdAt?: string | null;
   updatedAt?: string | null;
@@ -62,6 +63,7 @@ export interface TaskCreateInput {
   estimateMinutes?: number | null;
   taskType?: string;
   tags?: string[];
+  assigneeIds?: string[];
   steps?: { content: string; position?: number; isDone?: boolean }[];
   isActive?: boolean;
   onHold?: boolean;
@@ -87,6 +89,7 @@ export interface TaskUpdateInput {
   onHold?: boolean;
   taskType?: string;
   tags?: string[];
+  assigneeIds?: string[];
   steps?: {
     id?: string;
     content: string;
@@ -123,6 +126,7 @@ type TaskRow = {
   creation_date: string | null;
   modification_date: string | null;
   task_tags?: { tag_id: string }[] | null;
+  task_assignees?: { user_id: string }[] | null;
   task_steps?:
     | { id: string; content: string; is_done: boolean; position: number }[]
     | null;
@@ -164,7 +168,7 @@ export class TaskDataService {
     const query = this.supabase
       .from('tasks')
       .select(
-        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
+        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_assignees(user_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
       );
     const { data, error } = await query;
     if (error || !data) {
@@ -211,6 +215,18 @@ export class TaskDataService {
         .throwOnError();
     }
 
+    if (input.assigneeIds?.length) {
+      await this.supabase
+        .from('task_assignees')
+        .insert(
+          Array.from(new Set(input.assigneeIds)).map((userId) => ({
+            task_id: data.id,
+            user_id: userId,
+          }))
+        )
+        .throwOnError();
+    }
+
     if (input.steps?.length) {
       await this.supabase
         .from('task_steps')
@@ -241,7 +257,7 @@ export class TaskDataService {
       return null;
     }
 
-    const { tags, steps, ...patchInput } = input;
+    const { tags, assigneeIds, steps, ...patchInput } = input;
     const recurringCompletion =
       !!previous &&
       !previous.isDone &&
@@ -269,6 +285,21 @@ export class TaskDataService {
         await this.supabase
           .from('task_tags')
           .insert(tags.map((tagId) => ({ task_id: input.id, tag_id: tagId })));
+      }
+    }
+
+    if (assigneeIds) {
+      await this.supabase
+        .from('task_assignees')
+        .delete()
+        .eq('task_id', input.id);
+      if (assigneeIds.length) {
+        await this.supabase.from('task_assignees').insert(
+          Array.from(new Set(assigneeIds)).map((userId) => ({
+            task_id: input.id,
+            user_id: userId,
+          }))
+        );
       }
     }
 
@@ -355,7 +386,7 @@ export class TaskDataService {
     const { data, error } = await this.supabase
       .from('tasks')
       .select(
-        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
+        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_assignees(user_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
       )
       .eq('id', id)
       .single();
@@ -445,8 +476,8 @@ export class TaskDataService {
 
 function buildRecurringCompletionPatch(
   previous: Task,
-  input: Omit<TaskUpdateInput, 'id' | 'tags' | 'steps'>
-): Omit<TaskUpdateInput, 'id' | 'tags' | 'steps'> {
+  input: Omit<TaskUpdateInput, 'id' | 'tags' | 'assigneeIds' | 'steps'>
+): Omit<TaskUpdateInput, 'id' | 'tags' | 'assigneeIds' | 'steps'> {
   const intervalDays = Math.max(1, Math.round(previous.repeatInterval));
   const today = startOfLocalDay(new Date());
   const anchorMode = input.fromRepeating ?? previous.fromRepeating ?? 0;
@@ -517,6 +548,7 @@ function mapTaskRowToTask(row: TaskRow): Task {
     reminderCount: activeReminders.length,
     reminders: activeReminders,
     tags: row.task_tags?.map((tag) => tag.tag_id) ?? [],
+    assigneeIds: row.task_assignees?.map((assignee) => assignee.user_id) ?? [],
     steps:
       row.task_steps
         ?.map((step) => ({
@@ -555,7 +587,7 @@ function toTaskInsertPayload(input: TaskCreateInput) {
 }
 
 function toTaskUpdatePayload(
-  input: Omit<TaskUpdateInput, 'id' | 'tags' | 'steps'>
+  input: Omit<TaskUpdateInput, 'id' | 'tags' | 'assigneeIds' | 'steps'>
 ) {
   const payload: Record<string, unknown> = {};
   if (input.name !== undefined) payload.name = input.name;

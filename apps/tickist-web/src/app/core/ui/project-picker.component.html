@@ -18,6 +18,9 @@
         className="project-picker__icon"
       ></app-project-icon>
       <span class="project-picker__text">{{ selectedOption().name }}</span>
+      @if (selectedOption().isShared) {
+      <span class="project-picker__shared" title="Shared list">Shared</span>
+      }
     </span>
     <span
       class="project-picker__chevron"
@@ -82,6 +85,9 @@
           ></app-project-icon>
           <span class="project-picker__option-copy">
             <span class="project-picker__option-text">{{ option.name }}</span>
+            @if (option.isShared) {
+            <span class="project-picker__option-shared">Shared</span>
+            }
             @if (option.parentLabel) {
             <span class="project-picker__option-parent">
               {{ option.parentLabel }}

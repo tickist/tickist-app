@@ -26,6 +26,8 @@ export interface ProjectPickerItem {
   projectType?: string | null;
   icon?: string | null;
   color?: string | null;
+  members?: unknown[];
+  ownerId?: string | null;
 }
 
 type PickerGroupKey = 'inbox' | 'active' | 'someday' | 'routine';
@@ -40,6 +42,7 @@ type PickerOption = {
   level: number;
   index: number;
   parentLabel: string | null;
+  isShared: boolean;
 };
 
 type MenuLayout = {
@@ -135,6 +138,7 @@ export class ProjectPickerComponent {
           level: 0,
           index,
           parentLabel: null,
+          isShared: false,
         });
         index += 1;
       }
@@ -171,6 +175,7 @@ export class ProjectPickerComponent {
         level: 0,
         index: 0,
         parentLabel: null,
+        isShared: false,
       }
     );
   }
@@ -422,7 +427,8 @@ export class ProjectPickerComponent {
         color: null,
         level: 0,
         index: 0,
-        parentLabel: null,
+          parentLabel: null,
+          isShared: false,
       });
     }
     const projectOptions = this.buildProjectOptions('');
@@ -495,6 +501,7 @@ export class ProjectPickerComponent {
                 .filter((parentName): parentName is string => !!parentName)
                 .join(' / ')
             : null,
+          isShared: this.isSharedProject(project.item.id),
         });
       });
     });
@@ -515,6 +522,11 @@ export class ProjectPickerComponent {
       return 'someday';
     }
     return 'active';
+  }
+
+  private isSharedProject(projectId: string): boolean {
+    const project = this.projects.find((item) => item.id === projectId);
+    return (project?.members?.length ?? 0) > 0;
   }
 
   private groupLabel(

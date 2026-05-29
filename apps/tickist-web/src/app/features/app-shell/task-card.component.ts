@@ -254,6 +254,10 @@ export class TaskCardComponent implements OnChanges {
     return this.hasSteps() ? `Steps: ${this.task.steps.length}` : 'Steps: none';
   }
 
+  isSharedTask(): boolean {
+    return !!this.project && this.project.members.length > 0;
+  }
+
   async toggleDone(isDone: boolean): Promise<void> {
     const isRecurringCompletion = isDone && (this.task.repeatInterval ?? 0) > 0;
     await this.mutateTask(
