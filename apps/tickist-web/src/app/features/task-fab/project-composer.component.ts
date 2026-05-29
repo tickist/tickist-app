@@ -52,6 +52,11 @@ export class ProjectComposerComponent {
 
   readonly user = computed(() => this.session.user());
   readonly submitting = signal(false);
+  readonly inviteSubmitting = signal(false);
+  readonly inviteFeedback = signal<{
+    type: 'success' | 'info' | 'error';
+    message: string;
+  } | null>(null);
   readonly activeTab = signal<ProjectTab>('general');
   readonly tabs: readonly SheetScaffoldTab<ProjectTab>[] = [
     { key: 'general', label: 'General', icon: '✏️' },
@@ -161,8 +166,104 @@ export class ProjectComposerComponent {
     this.invites.set(this.invites().filter((value) => value !== email));
   }
 
-  addInvite(): void {
+  async addInvite(): Promise<void> {
     const input = this.inviteInput().trim();
+    if (!input) {
+      return;
+    }
+    const editing = this.editingProject();
+    if (!editing) {
+      if (!this.invites().includes(input)) {
+        this.invites.set([...this.invites(), input]);
+      }
+      this.inviteInput.set('');
+      this.inviteFeedback.set({
+        type: 'info',
+        message: 'Invite will be sent after the project is saved.',
+      });
+      return;
+    }
+    this.inviteSubmitting.set(true);
+    this.inviteFeedback.set(null);
+    try {
+      const result = await this.projects.inviteByEmail(editing.id, input);
+      if (!result) {
+        this.inviteFeedback.set({
+          type: 'error',
+          message: 'Invite could not be sent right now.',
+        });
+        return;
+      }
+      if (result.ok === false) {
+        this.inviteFeedback.set({
+          type: 'error',
+          message: result.message,
+        });
+        return;
+      }
+      this.inviteFeedback.set({
+        type: result.code === 'already_member' ? 'info' : 'success',
+        message:
+          result.code === 'already_member'
+            ? 'This person already has access.'
+            : 'Invite sent.',
+      });
+      this.editingProject.set(
+        this.projects.list().find((project) => project.id === editing.id) ??
+          editing
+      );
+      this.inviteInput.set('');
+    } catch (error) {
+      this.inviteFeedback.set({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Invite failed.',
+      });
+    } finally {
+      this.inviteSubmitting.set(false);
+    }
+  }
+
+  async removeMember(userId: string): Promise<void> {
+    const editing = this.editingProject();
+    if (!editing) {
+      return;
+    }
+    this.inviteSubmitting.set(true);
+    try {
+      await this.projects.removeMember(editing.id, userId);
+      const refreshed =
+        this.projects.list().find((project) => project.id === editing.id) ??
+        editing;
+      this.editingProject.set(refreshed);
+      this.inviteFeedback.set({
+        type: 'success',
+        message: 'Sharing access updated.',
+      });
+    } finally {
+      this.inviteSubmitting.set(false);
+    }
+  }
+
+  memberLabel(userId: string): string {
+    const project = this.editingProject();
+    const member = project?.members.find((item) => item.userId === userId);
+    return member?.invitedEmail ?? userId.slice(0, 8);
+  }
+
+  memberStatusLabel(status: string): string {
+    switch (status) {
+      case 'accepted':
+        return 'Accepted';
+      case 'pending':
+        return 'Pending';
+      case 'declined':
+        return 'Declined';
+      default:
+        return status;
+    }
+  }
+
+  addQueuedInvite(input: string): void {
     if (input && !this.invites().includes(input)) {
       this.invites.set([...this.invites(), input]);
     }

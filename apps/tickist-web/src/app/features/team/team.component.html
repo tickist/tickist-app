@@ -1,0 +1,60 @@
+<section class="team-page">
+  <header class="team-header">
+    <p class="team-eyebrow">Team</p>
+    <h1>Shared lists</h1>
+  </header>
+
+  @if (pendingInvites().length) {
+  <section class="team-section" aria-label="Pending invitations">
+    <h2>Invitations</h2>
+    <div class="team-grid">
+      @for (invite of pendingInvites(); track invite.projectId) {
+      <article class="team-card">
+        <div>
+          <p class="team-card__label">Pending invite</p>
+          <h3>{{ invite.projectName ?? invite.invitedProjectName ?? 'Shared list' }}</h3>
+        </div>
+        <div class="team-actions">
+          <button type="button" class="team-button team-button--primary" (click)="acceptInvite(invite)">
+            Accept
+          </button>
+          <button type="button" class="team-button" (click)="declineInvite(invite)">
+            Decline
+          </button>
+        </div>
+      </article>
+      }
+    </div>
+  </section>
+  }
+
+  <section class="team-section" aria-label="Shared projects">
+    <h2>People and lists</h2>
+    @if (sharedProjects().length) {
+    <div class="team-grid">
+      @for (project of sharedProjects(); track project.projectId + project.teammateLabel) {
+      <article class="team-card">
+        <div>
+          <p class="team-card__label">{{ project.teammateLabel }}</p>
+          <h3>{{ project.projectName }}</h3>
+        </div>
+        <div class="team-actions">
+          <a class="team-button" [routerLink]="['/app/tasks', project.projectId]">
+            Open
+          </a>
+          @if (project.canLeave) {
+          <button type="button" class="team-button team-button--danger" (click)="leave(project)">
+            Leave
+          </button>
+          }
+        </div>
+      </article>
+      }
+    </div>
+    } @else {
+    <div class="team-empty">
+      No shared lists yet.
+    </div>
+    }
+  </section>
+</section>

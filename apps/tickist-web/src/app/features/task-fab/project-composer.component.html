@@ -150,12 +150,44 @@
             <button
               type="button"
               class="sheet-shell__button sheet-shell__button--secondary"
+              [disabled]="inviteSubmitting()"
               (click)="addInvite()"
             >
-              Invite
+              {{ inviteSubmitting() ? 'Inviting…' : 'Invite' }}
             </button>
           </div>
         </label>
+
+        @if (inviteFeedback(); as feedback) {
+        <p
+          class="sheet-field__hint"
+          [class.text-success]="feedback.type === 'success'"
+          [class.text-error]="feedback.type === 'error'"
+        >
+          {{ feedback.message }}
+        </p>
+        }
+
+        @if (editingProject()?.members?.length) {
+        <div class="sheet-muted-card">
+          <p class="sheet-field__label">People with access</p>
+          <div class="sheet-chip-list">
+            @for (member of editingProject()?.members ?? []; track member.userId) {
+            <span class="sheet-chip">
+              {{ memberLabel(member.userId) }} · {{ memberStatusLabel(member.status) }}
+              <button
+                type="button"
+                [disabled]="inviteSubmitting()"
+                (click)="removeMember(member.userId)"
+                [attr.aria-label]="'Remove ' + memberLabel(member.userId)"
+              >
+                ×
+              </button>
+            </span>
+            }
+          </div>
+        </div>
+        }
 
         @if (invites().length) {
         <div class="sheet-chip-list">

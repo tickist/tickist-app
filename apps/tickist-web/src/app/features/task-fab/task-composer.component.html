@@ -393,6 +393,18 @@
           <span class="sheet-field__label">Pinned</span>
         </label>
 
+        @if (assigneeOptions().length) {
+        <label class="sheet-field">
+          <span class="sheet-field__label">Assigned</span>
+          <select class="sheet-select" formControlName="assigneeId">
+            <option value="">Unassigned</option>
+            @for (assignee of assigneeOptions(); track assignee.userId) {
+            <option [value]="assignee.userId">{{ assignee.label }}</option>
+            }
+          </select>
+        </label>
+        }
+
         <div class="sheet-grid-two">
           <label class="sheet-field">
             <span class="sheet-field__label">Estimate (min)</span>

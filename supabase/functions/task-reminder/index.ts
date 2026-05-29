@@ -8,6 +8,10 @@ interface ReminderPayload {
   message?: string;
 }
 
+interface ProjectMemberRow {
+  user_id: string;
+}
+
 const MAX_MESSAGE_LENGTH = 1000;
 const DEDUPE_WINDOW_SECONDS = 60;
 
@@ -89,6 +93,7 @@ serve(async (req) => {
       .select("user_id")
       .eq("project_id", task.project_id)
       .eq("user_id", user.id)
+      .eq("status", "accepted")
       .maybeSingle();
     isActorAllowed = Boolean(membership);
   }
@@ -105,10 +110,20 @@ serve(async (req) => {
   const duplicateSince = new Date(
     Date.now() - DEDUPE_WINDOW_SECONDS * 1000
   ).toISOString();
+  const recipientIds = await resolveRecipientIds(
+    supabase,
+    task.owner_id,
+    task.project_id,
+    user.id,
+  );
+  if (!recipientIds.length) {
+    return jsonResponse(200, { ok: true, skipped: true });
+  }
+
   const { data: duplicateRows, error: duplicateError } = await supabase
     .from("notifications")
     .select("id")
-    .eq("recipient_id", task.owner_id)
+    .in("recipient_id", recipientIds)
     .eq("type", "task-event")
     .eq("title", title)
     .eq("description", message)
@@ -125,12 +140,14 @@ serve(async (req) => {
     return jsonResponse(200, { ok: true, deduplicated: true });
   }
 
-  const { error: insertError } = await supabase.from("notifications").insert({
-    recipient_id: task.owner_id,
-    title,
-    description: message,
-    type: "task-event",
-  });
+  const { error: insertError } = await supabase.from("notifications").insert(
+    recipientIds.map((recipientId) => ({
+      recipient_id: recipientId,
+      title,
+      description: message,
+      type: "task-event",
+    })),
+  );
 
   if (insertError) {
     console.error("[task-reminder] Failed to insert notification", {
@@ -140,5 +157,35 @@ serve(async (req) => {
     return jsonResponse(500, { error: "Internal server error", request_id: requestId });
   }
 
-  return jsonResponse(200, { ok: true, deduplicated: false });
+  return jsonResponse(200, { ok: true, deduplicated: false, inserted: recipientIds.length });
 });
+
+async function resolveRecipientIds(
+  supabase: ReturnType<typeof createClient>,
+  ownerId: string,
+  projectId: string | null,
+  actorId: string,
+): Promise<string[]> {
+  const recipients = new Set<string>();
+  recipients.add(ownerId);
+
+  if (projectId) {
+    const { data, error } = await supabase
+      .from("project_members")
+      .select("user_id")
+      .eq("project_id", projectId)
+      .eq("status", "accepted");
+    if (error) {
+      console.error("[task-reminder] Failed to fetch project members", {
+        projectId,
+        error,
+      });
+    }
+    for (const row of (data as ProjectMemberRow[] | null) ?? []) {
+      recipients.add(row.user_id);
+    }
+  }
+
+  recipients.delete(actorId);
+  return Array.from(recipients);
+}

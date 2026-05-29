@@ -1,0 +1,97 @@
+:host {
+  display: block;
+}
+
+.team-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: min(960px, 100%);
+}
+
+.team-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.team-eyebrow,
+.team-card__label {
+  color: color-mix(in srgb, currentColor 60%, transparent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.team-header h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.team-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.team-section h2 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.team-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.team-card,
+.team-empty {
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  padding: 16px;
+}
+
+.team-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.team-card h3 {
+  margin-top: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.team-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.team-button {
+  align-items: center;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 8px;
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+.team-button--primary {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #111827;
+}
+
+.team-button--danger {
+  color: #f87171;
+}
