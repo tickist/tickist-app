@@ -60,6 +60,32 @@ describe('ProjectPickerComponent', () => {
         ?.textContent?.trim()
     ).toBe('Alpha project');
   });
+
+  it('shows shared badge only when at least two accepted members are attached', () => {
+    component.projects = [
+      createProject({
+        id: 'single-member',
+        name: 'Single member',
+        members: [{ status: 'accepted' }],
+      }),
+      createProject({
+        id: 'two-members',
+        name: 'Two members',
+        members: [{ status: 'accepted' }, { status: 'accepted' }],
+      }),
+    ];
+    component.selectedProjectId = 'single-member';
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector('.project-picker__shared')
+    ).toBeNull();
+
+    openPicker(fixture);
+    const options = getOptionButtons(fixture);
+    expect(options[0]?.textContent).not.toContain('Shared');
+    expect(options[1]?.textContent).toContain('Shared');
+  });
 });
 
 function openPicker(fixture: ComponentFixture<ProjectPickerComponent>): void {
@@ -109,4 +135,18 @@ function createProjects(): ProjectPickerItem[] {
       color: '#0EA5E9',
     },
   ];
+}
+
+function createProject(
+  overrides: Partial<ProjectPickerItem> = {}
+): ProjectPickerItem {
+  return {
+    id: 'project-1',
+    name: 'Project',
+    ancestorId: null,
+    icon: 'folder',
+    color: '#0EA5E9',
+    members: [],
+    ...overrides,
+  };
 }

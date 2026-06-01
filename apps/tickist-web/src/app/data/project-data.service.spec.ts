@@ -1,8 +1,12 @@
+import assert from 'node:assert/strict';
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
-import { ProjectDataService } from './project-data.service';
+import {
+  ProjectDataService,
+  isProjectSharedByMultipleMembers,
+} from './project-data.service';
 import { StatisticsDataService } from './statistics-data.service';
 
 type ProjectRow = {
@@ -142,6 +146,35 @@ describe('ProjectDataService schema compatibility', () => {
   });
 });
 
+describe('isProjectSharedByMultipleMembers', () => {
+  it('requires at least two accepted members', () => {
+    assert.equal(
+      isProjectSharedByMultipleMembers({
+        members: [createProjectMember('member-1')],
+      }),
+      false
+    );
+    assert.equal(
+      isProjectSharedByMultipleMembers({
+        members: [
+          createProjectMember('member-1'),
+          createProjectMember('member-2', 'pending'),
+        ],
+      }),
+      false
+    );
+    assert.equal(
+      isProjectSharedByMultipleMembers({
+        members: [
+          createProjectMember('member-1'),
+          createProjectMember('member-2'),
+        ],
+      }),
+      true
+    );
+  });
+});
+
 function createSupabaseMock(): {
   from: ReturnType<typeof vi.fn>;
   projectSelects: string[];
@@ -271,6 +304,24 @@ function legacyMemberRow(): LegacyProjectMemberRow {
     user_id: 'member-1',
     role: 'viewer',
     invited_at: '2026-01-01T00:00:00.000Z',
+  };
+}
+
+function createProjectMember(
+  userId: string,
+  status: 'pending' | 'accepted' | 'declined' = 'accepted'
+) {
+  return {
+    projectId: 'project-1',
+    userId,
+    status,
+    role: 'editor',
+    invitedEmail: null,
+    invitedProjectName: null,
+    invitedBy: null,
+    invitedAt: null,
+    acceptedAt: null,
+    declinedAt: null,
   };
 }
 

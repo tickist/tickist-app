@@ -55,7 +55,7 @@ export interface Project {
 }
 
 export function isProjectSharedByMultipleMembers(
-  project: Pick<Project, 'members'>
+  project: { members: ReadonlyArray<{ status?: string | null }> }
 ): boolean {
   return project.members.filter((member) => member.status === 'accepted')
     .length >= 2;
