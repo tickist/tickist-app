@@ -10,6 +10,15 @@ import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 import { StatisticsDataService } from './statistics-data.service';
 
+const PROJECT_SELECT =
+  'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at)';
+const LEGACY_PROJECT_SELECT =
+  'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, role, invited_at)';
+const MEMBERSHIP_SELECT =
+  'project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at, projects(id, name, owner_id, color, icon)';
+const LEGACY_MEMBERSHIP_SELECT =
+  'project_id, user_id, role, invited_at, projects(id, name, owner_id, color, icon)';
+
 export type ProjectMemberStatus = 'pending' | 'accepted' | 'declined';
 
 export interface ProjectMember {
@@ -101,14 +110,14 @@ export type ProjectInviteResult =
 type ProjectMemberRow = {
   project_id: string;
   user_id: string;
-  status: ProjectMemberStatus | null;
-  role: string | null;
-  invited_email: string | null;
-  invited_project_name: string | null;
-  invited_by: string | null;
-  invited_at: string | null;
-  accepted_at: string | null;
-  declined_at: string | null;
+  status?: ProjectMemberStatus | null;
+  role?: string | null;
+  invited_email?: string | null;
+  invited_project_name?: string | null;
+  invited_by?: string | null;
+  invited_at?: string | null;
+  accepted_at?: string | null;
+  declined_at?: string | null;
   projects?:
     | {
         id: string;
@@ -204,11 +213,19 @@ export class ProjectDataService {
     }
 
     this.loading.set(true);
-    const { data, error } = await this.supabase
+    const initialResult = await this.supabase
       .from('projects')
-      .select(
-        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at)'
-      );
+      .select(PROJECT_SELECT);
+    let data: unknown = initialResult.data;
+    let error = initialResult.error;
+
+    if (isMissingProjectMemberStatusError(error)) {
+      const fallbackResult = await this.supabase
+        .from('projects')
+        .select(LEGACY_PROJECT_SELECT);
+      data = fallbackResult.data;
+      error = fallbackResult.error;
+    }
 
     if (error || !data) {
       console.warn('[Projects] Unable to fetch from Supabase yet.', error);
@@ -216,7 +233,9 @@ export class ProjectDataService {
       return;
     }
 
-    this.projects.set(data.map((row) => this.mapProjectRow(row as ProjectRow)));
+    this.projects.set(
+      (data as ProjectRow[]).map((row) => this.mapProjectRow(row))
+    );
     await this.refreshMemberships();
     this.loading.set(false);
   }
@@ -226,12 +245,21 @@ export class ProjectDataService {
       this.memberships.set([]);
       return;
     }
-    const { data, error } = await this.supabase
+    const initialResult = await this.supabase
       .from('project_members')
-      .select(
-        'project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at, projects(id, name, owner_id, color, icon)'
-      )
+      .select(MEMBERSHIP_SELECT)
       .order('invited_at', { ascending: false });
+    let data: unknown = initialResult.data;
+    let error = initialResult.error;
+
+    if (isMissingProjectMemberStatusError(error)) {
+      const fallbackResult = await this.supabase
+        .from('project_members')
+        .select(LEGACY_MEMBERSHIP_SELECT)
+        .order('invited_at', { ascending: false });
+      data = fallbackResult.data;
+      error = fallbackResult.error;
+    }
     if (error || !data) {
       console.warn('[Projects] Unable to fetch memberships.', error);
       return;
@@ -372,6 +400,14 @@ export class ProjectDataService {
 
     if (error || !data) {
       await this.handleOwnerConstraintError(error, input.ownerId);
+      if (rest.isInbox && isDuplicateInboxError(error)) {
+        const existingInbox = await this.fetchInboxProjectByOwner(input.ownerId);
+        if (existingInbox) {
+          this.upsertCachedProject(existingInbox);
+          await this.refreshMemberships();
+          return existingInbox;
+        }
+      }
       console.error('[Projects] Failed to create project', error);
       return null;
     }
@@ -396,7 +432,7 @@ export class ProjectDataService {
     this.markStatisticsDirty();
     const created = await this.fetchProjectById(data.id);
     if (created) {
-      this.projects.set([...this.projects(), created]);
+      this.upsertCachedProject(created);
     }
     await this.refreshMemberships();
     return created;
@@ -499,6 +535,17 @@ export class ProjectDataService {
     return updated;
   }
 
+  private upsertCachedProject(project: Project): void {
+    const projects = this.projects();
+    if (projects.some((item) => item.id === project.id)) {
+      this.projects.set(
+        projects.map((item) => (item.id === project.id ? project : item))
+      );
+      return;
+    }
+    this.projects.set([...projects, project]);
+  }
+
   async deleteProject(projectId: string): Promise<boolean> {
     if (!this.supabase) {
       console.warn(
@@ -598,14 +645,61 @@ export class ProjectDataService {
     }
     const { data, error } = await this.supabase
       .from('projects')
-      .select(
-        'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at)'
-      )
+      .select(PROJECT_SELECT)
       .eq('id', id)
       .single();
 
+    if (isMissingProjectMemberStatusError(error)) {
+      const fallback = await this.supabase
+        .from('projects')
+        .select(LEGACY_PROJECT_SELECT)
+        .eq('id', id)
+        .single();
+      if (fallback.error || !fallback.data) {
+        console.error('[Projects] Failed to fetch project', fallback.error);
+        return null;
+      }
+      return this.mapProjectRow(fallback.data as ProjectRow);
+    }
+
     if (error || !data) {
       console.error('[Projects] Failed to fetch project', error);
+      return null;
+    }
+    return this.mapProjectRow(data as ProjectRow);
+  }
+
+  private async fetchInboxProjectByOwner(ownerId: string): Promise<Project | null> {
+    if (!this.supabase) {
+      return (
+        this.projects().find(
+          (project) => project.ownerId === ownerId && project.isInbox
+        ) ?? null
+      );
+    }
+
+    const initialResult = await this.supabase
+      .from('projects')
+      .select(PROJECT_SELECT)
+      .eq('owner_id', ownerId)
+      .eq('is_inbox', true)
+      .maybeSingle();
+    let data: unknown = initialResult.data;
+    let error = initialResult.error;
+
+    if (isMissingProjectMemberStatusError(error)) {
+      const fallbackResult = await this.supabase
+        .from('projects')
+        .select(LEGACY_PROJECT_SELECT)
+        .eq('owner_id', ownerId)
+        .eq('is_inbox', true)
+        .maybeSingle();
+      data = fallbackResult.data;
+      error = fallbackResult.error;
+    }
+
+    if (error || !data) {
+      console.error('[Projects] Failed to fetch existing inbox project', error);
       return null;
     }
     return this.mapProjectRow(data as ProjectRow);
@@ -656,12 +750,12 @@ export class ProjectDataService {
       userId: row.user_id,
       status: row.status ?? 'accepted',
       role: row.role ?? 'editor',
-      invitedEmail: row.invited_email,
-      invitedProjectName: row.invited_project_name,
-      invitedBy: row.invited_by,
-      invitedAt: row.invited_at,
-      acceptedAt: row.accepted_at,
-      declinedAt: row.declined_at,
+      invitedEmail: row.invited_email ?? null,
+      invitedProjectName: row.invited_project_name ?? null,
+      invitedBy: row.invited_by ?? null,
+      invitedAt: row.invited_at ?? null,
+      acceptedAt: row.accepted_at ?? null,
+      declinedAt: row.declined_at ?? null,
       projectName: resolvedProject?.name ?? row.invited_project_name,
       projectOwnerId: resolvedProject?.owner_id ?? null,
       projectColor: resolvedProject?.color ?? null,
@@ -823,4 +917,23 @@ function asErrorBody(value: unknown): { error?: string; message?: string } {
     message:
       typeof record['message'] === 'string' ? record['message'] : undefined,
   };
+}
+
+function isMissingProjectMemberStatusError(
+  error: { code?: string; message?: string } | null
+): boolean {
+  if (error?.code !== '42703') {
+    return false;
+  }
+  const message = error.message ?? '';
+  return message.includes('project_members') && message.includes('status');
+}
+
+function isDuplicateInboxError(
+  error: { code?: string; message?: string } | null
+): boolean {
+  return (
+    error?.code === '23505' &&
+    (error.message ?? '').includes('projects_owner_single_inbox_idx')
+  );
 }
