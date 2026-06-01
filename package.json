@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "prestart": "npm run supabase:ensure",
     "start": "dotenv -e .local_env -- nx serve tickist-web --host 0.0.0.0",
     "build": "nx build",
     "build:worker": "nx build tickist-web --configuration production",
@@ -19,6 +20,7 @@
     "db:types:remote": "dotenv -e .env -- sh -c 'SUPABASE_DB_URL=\"$SUPABASE_REMOTE_DB_URL\" node tools/scripts/generate-supabase-types.mjs'",
     "db:reset:remote": "dotenv -e .env -- sh -c 'npx supabase db reset --db-url \"$SUPABASE_REMOTE_DB_URL\"'",
     "supabase:init": "npx supabase init",
+    "supabase:ensure": "node tools/scripts/ensure-local-supabase.mjs",
     "supabase:start": "npx supabase start",
     "supabase:stop": "npx supabase stop",
     "supabase:status": "npx supabase status",
