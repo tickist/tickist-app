@@ -36,7 +36,7 @@ describe('ProjectDataService schema compatibility', () => {
     TestBed.resetTestingModule();
   });
 
-  it('falls back to legacy project member selects when status is not deployed yet', async () => {
+  it('uses legacy project member selects without probing missing rollout columns', async () => {
     const supabase = createSupabaseMock();
 
     TestBed.configureTestingModule({
@@ -85,10 +85,10 @@ describe('ProjectDataService schema compatibility', () => {
         status: 'accepted',
       }),
     ]);
-    expect(supabase.projectSelects[0]).toContain('status');
-    expect(supabase.projectSelects[1]).not.toContain('status');
-    expect(supabase.membershipSelects[0]).toContain('status');
-    expect(supabase.membershipSelects[1]).not.toContain('status');
+    expect(supabase.projectSelects).toHaveLength(1);
+    expect(supabase.projectSelects[0]).not.toContain('status');
+    expect(supabase.membershipSelects).toHaveLength(1);
+    expect(supabase.membershipSelects[0]).not.toContain('status');
   });
 
   it('returns the existing inbox when create races the unique inbox constraint', async () => {
@@ -158,11 +158,7 @@ function createSupabaseMock(): {
         return {
           select: vi.fn((columns: string) => {
             projectSelects.push(columns);
-            return Promise.resolve(
-              columns.includes('status')
-                ? { data: null, error: missingStatusError() }
-                : { data: [legacyProjectRow()], error: null }
-            );
+            return Promise.resolve({ data: [legacyProjectRow()], error: null });
           }),
         };
       }
@@ -172,9 +168,7 @@ function createSupabaseMock(): {
             membershipSelects.push(columns);
             return {
               order: vi.fn(async () =>
-                columns.includes('status')
-                  ? { data: null, error: missingStatusError() }
-                  : { data: [legacyMemberRow()], error: null }
+                ({ data: [legacyMemberRow()], error: null })
               ),
             };
           }),
@@ -238,13 +232,6 @@ function createInboxConflictSupabaseMock(): { from: ReturnType<typeof vi.fn> } {
       }
       throw new Error(`Unexpected table: ${table}`);
     }),
-  };
-}
-
-function missingStatusError(): { code: string; message: string } {
-  return {
-    code: '42703',
-    message: 'column project_members_1.status does not exist',
   };
 }
 
