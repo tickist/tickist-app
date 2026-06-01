@@ -29,7 +29,7 @@ Cover services/guards/components with Vitest; stub Supabase via the official cli
 
 ## Commit & Pull Request Guidelines
 
-Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits are imperative and scoped (`feat(tasks): color-code priority`) and should note schema or ENV impacts. PRs must mention updated sections of `MIGRATION_PLAN.md`, list touched Nx targets, and include screenshots/terminal output for UI or CLI changes. Run `nx format` + `nx lint` + `nx test` + `nx build` (or `nx affected …`) before review.
+Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits are imperative and scoped (`feat(tasks): color-code priority`) and should note schema or ENV impacts. Only create commits and push to GitHub when the user explicitly asks for it. PRs must mention updated sections of `MIGRATION_PLAN.md`, list touched Nx targets, and include screenshots/terminal output for UI or CLI changes. Run `nx format` + `nx lint` + `nx test` + `nx build` (or `nx affected …`) before review.
 
 ## Configuration & Supabase
 
