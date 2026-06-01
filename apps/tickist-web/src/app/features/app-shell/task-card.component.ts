@@ -21,7 +21,6 @@ import {
 import {
   Project,
   ProjectDataService,
-  isProjectSharedByMultipleMembers,
 } from '../../data/project-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
@@ -259,7 +258,7 @@ export class TaskCardComponent implements OnChanges {
   }
 
   isSharedTask(): boolean {
-    return !!this.project && isProjectSharedByMultipleMembers(this.project);
+    return new Set(this.task.assigneeIds).size >= 2;
   }
 
   async toggleDone(isDone: boolean): Promise<void> {

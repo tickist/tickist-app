@@ -322,25 +322,18 @@ describe('TaskCardComponent toolbar status icons', () => {
     );
   });
 
-  it('shows shared badge only when at least two accepted members are attached', () => {
+  it('shows shared badge only when at least two assignees are attached', () => {
     fixture.destroy();
 
     const singleMemberFixture = renderTaskCard(
-      createProject({
-        members: [createProjectMember('member-1')],
-      })
+      createTask({ assigneeIds: ['member-1'] })
     );
 
     expect(getSharedBadge(singleMemberFixture)).toBeNull();
     singleMemberFixture.destroy();
 
     const multipleMemberFixture = renderTaskCard(
-      createProject({
-        members: [
-          createProjectMember('member-1'),
-          createProjectMember('member-2'),
-        ],
-      })
+      createTask({ assigneeIds: ['member-1', 'member-2'] })
     );
 
     expect(getSharedBadge(multipleMemberFixture)?.textContent?.trim()).toBe(
@@ -374,10 +367,10 @@ describe('TaskCardComponent toolbar status icons', () => {
     return button;
   }
 
-  function renderTaskCard(project: Project): ComponentFixture<TaskCardComponent> {
+  function renderTaskCard(task: Task): ComponentFixture<TaskCardComponent> {
     const renderedFixture = TestBed.createComponent(TaskCardComponent);
-    renderedFixture.componentInstance.task = createTask();
-    renderedFixture.componentInstance.project = project;
+    renderedFixture.componentInstance.task = task;
+    renderedFixture.componentInstance.project = createProject();
     renderedFixture.componentInstance.viewMode = 'extended';
     renderedFixture.detectChanges();
     return renderedFixture;
@@ -449,20 +442,5 @@ function createProject(overrides: Partial<Project> = {}): Project {
     shareWithIds: [],
     members: [],
     ...overrides,
-  };
-}
-
-function createProjectMember(userId: string): Project['members'][number] {
-  return {
-    projectId: 'project-1',
-    userId,
-    status: 'accepted',
-    role: 'editor',
-    invitedEmail: null,
-    invitedProjectName: null,
-    invitedBy: null,
-    invitedAt: null,
-    acceptedAt: null,
-    declinedAt: null,
   };
 }
