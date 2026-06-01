@@ -10,12 +10,8 @@ import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 import { StatisticsDataService } from './statistics-data.service';
 
-const PROJECT_SELECT =
-  'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at)';
 const LEGACY_PROJECT_SELECT =
   'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, role, invited_at)';
-const MEMBERSHIP_SELECT =
-  'project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at, projects(id, name, owner_id, color, icon)';
 const LEGACY_MEMBERSHIP_SELECT =
   'project_id, user_id, role, invited_at, projects(id, name, owner_id, color, icon)';
 
@@ -56,6 +52,13 @@ export interface Project {
   defaultFinishDate?: number | null;
   defaultTypeFinishDate?: number | null;
   dialogTimeWhenTaskFinished?: boolean;
+}
+
+export function isProjectSharedByMultipleMembers(
+  project: { members: ReadonlyArray<{ status?: string | null }> }
+): boolean {
+  return project.members.filter((member) => member.status === 'accepted')
+    .length >= 2;
 }
 
 export interface ProjectCreateInput {
@@ -213,19 +216,9 @@ export class ProjectDataService {
     }
 
     this.loading.set(true);
-    const initialResult = await this.supabase
+    const { data, error } = await this.supabase
       .from('projects')
-      .select(PROJECT_SELECT);
-    let data: unknown = initialResult.data;
-    let error = initialResult.error;
-
-    if (isMissingProjectMemberStatusError(error)) {
-      const fallbackResult = await this.supabase
-        .from('projects')
-        .select(LEGACY_PROJECT_SELECT);
-      data = fallbackResult.data;
-      error = fallbackResult.error;
-    }
+      .select(LEGACY_PROJECT_SELECT);
 
     if (error || !data) {
       console.warn('[Projects] Unable to fetch from Supabase yet.', error);
@@ -245,21 +238,10 @@ export class ProjectDataService {
       this.memberships.set([]);
       return;
     }
-    const initialResult = await this.supabase
+    const { data, error } = await this.supabase
       .from('project_members')
-      .select(MEMBERSHIP_SELECT)
+      .select(LEGACY_MEMBERSHIP_SELECT)
       .order('invited_at', { ascending: false });
-    let data: unknown = initialResult.data;
-    let error = initialResult.error;
-
-    if (isMissingProjectMemberStatusError(error)) {
-      const fallbackResult = await this.supabase
-        .from('project_members')
-        .select(LEGACY_MEMBERSHIP_SELECT)
-        .order('invited_at', { ascending: false });
-      data = fallbackResult.data;
-      error = fallbackResult.error;
-    }
     if (error || !data) {
       console.warn('[Projects] Unable to fetch memberships.', error);
       return;
@@ -645,22 +627,9 @@ export class ProjectDataService {
     }
     const { data, error } = await this.supabase
       .from('projects')
-      .select(PROJECT_SELECT)
+      .select(LEGACY_PROJECT_SELECT)
       .eq('id', id)
       .single();
-
-    if (isMissingProjectMemberStatusError(error)) {
-      const fallback = await this.supabase
-        .from('projects')
-        .select(LEGACY_PROJECT_SELECT)
-        .eq('id', id)
-        .single();
-      if (fallback.error || !fallback.data) {
-        console.error('[Projects] Failed to fetch project', fallback.error);
-        return null;
-      }
-      return this.mapProjectRow(fallback.data as ProjectRow);
-    }
 
     if (error || !data) {
       console.error('[Projects] Failed to fetch project', error);
@@ -680,23 +649,12 @@ export class ProjectDataService {
 
     const initialResult = await this.supabase
       .from('projects')
-      .select(PROJECT_SELECT)
+      .select(LEGACY_PROJECT_SELECT)
       .eq('owner_id', ownerId)
       .eq('is_inbox', true)
       .maybeSingle();
-    let data: unknown = initialResult.data;
-    let error = initialResult.error;
-
-    if (isMissingProjectMemberStatusError(error)) {
-      const fallbackResult = await this.supabase
-        .from('projects')
-        .select(LEGACY_PROJECT_SELECT)
-        .eq('owner_id', ownerId)
-        .eq('is_inbox', true)
-        .maybeSingle();
-      data = fallbackResult.data;
-      error = fallbackResult.error;
-    }
+    const data: unknown = initialResult.data;
+    const error = initialResult.error;
 
     if (error || !data) {
       console.error('[Projects] Failed to fetch existing inbox project', error);
@@ -917,16 +875,6 @@ function asErrorBody(value: unknown): { error?: string; message?: string } {
     message:
       typeof record['message'] === 'string' ? record['message'] : undefined,
   };
-}
-
-function isMissingProjectMemberStatusError(
-  error: { code?: string; message?: string } | null
-): boolean {
-  if (error?.code !== '42703') {
-    return false;
-  }
-  const message = error.message ?? '';
-  return message.includes('project_members') && message.includes('status');
 }
 
 function isDuplicateInboxError(

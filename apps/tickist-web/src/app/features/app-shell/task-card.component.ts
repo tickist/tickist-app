@@ -18,7 +18,10 @@ import {
   TaskStep,
   TaskUpdateInput,
 } from '../../data/task-data.service';
-import { Project, ProjectDataService } from '../../data/project-data.service';
+import {
+  Project,
+  ProjectDataService,
+} from '../../data/project-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
@@ -255,7 +258,7 @@ export class TaskCardComponent implements OnChanges {
   }
 
   isSharedTask(): boolean {
-    return !!this.project && this.project.members.length > 0;
+    return new Set(this.task.assigneeIds).size >= 2;
   }
 
   async toggleDone(isDone: boolean): Promise<void> {

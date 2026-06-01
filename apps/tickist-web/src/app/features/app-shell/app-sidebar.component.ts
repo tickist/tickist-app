@@ -8,7 +8,11 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
-import { Project, ProjectDataService } from '../../data/project-data.service';
+import {
+  Project,
+  ProjectDataService,
+  isProjectSharedByMultipleMembers,
+} from '../../data/project-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import { TaskDataService } from '../../data/task-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -295,7 +299,7 @@ export class AppSidebarComponent {
   }
 
   isSharedProject(project: Project): boolean {
-    return project.members.length > 0 || project.ownerId !== this.user()?.id;
+    return isProjectSharedByMultipleMembers(project);
   }
 
   onProjectEnter(projectId: string): void {

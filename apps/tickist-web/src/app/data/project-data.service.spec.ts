@@ -1,8 +1,12 @@
+import assert from 'node:assert/strict';
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
-import { ProjectDataService } from './project-data.service';
+import {
+  ProjectDataService,
+  isProjectSharedByMultipleMembers,
+} from './project-data.service';
 import { StatisticsDataService } from './statistics-data.service';
 
 type ProjectRow = {
@@ -36,7 +40,7 @@ describe('ProjectDataService schema compatibility', () => {
     TestBed.resetTestingModule();
   });
 
-  it('falls back to legacy project member selects when status is not deployed yet', async () => {
+  it('uses legacy project member selects without probing missing rollout columns', async () => {
     const supabase = createSupabaseMock();
 
     TestBed.configureTestingModule({
@@ -85,10 +89,10 @@ describe('ProjectDataService schema compatibility', () => {
         status: 'accepted',
       }),
     ]);
-    expect(supabase.projectSelects[0]).toContain('status');
-    expect(supabase.projectSelects[1]).not.toContain('status');
-    expect(supabase.membershipSelects[0]).toContain('status');
-    expect(supabase.membershipSelects[1]).not.toContain('status');
+    expect(supabase.projectSelects).toHaveLength(1);
+    expect(supabase.projectSelects[0]).not.toContain('status');
+    expect(supabase.membershipSelects).toHaveLength(1);
+    expect(supabase.membershipSelects[0]).not.toContain('status');
   });
 
   it('returns the existing inbox when create races the unique inbox constraint', async () => {
@@ -142,6 +146,35 @@ describe('ProjectDataService schema compatibility', () => {
   });
 });
 
+describe('isProjectSharedByMultipleMembers', () => {
+  it('requires at least two accepted members', () => {
+    assert.equal(
+      isProjectSharedByMultipleMembers({
+        members: [createProjectMember('member-1')],
+      }),
+      false
+    );
+    assert.equal(
+      isProjectSharedByMultipleMembers({
+        members: [
+          createProjectMember('member-1'),
+          createProjectMember('member-2', 'pending'),
+        ],
+      }),
+      false
+    );
+    assert.equal(
+      isProjectSharedByMultipleMembers({
+        members: [
+          createProjectMember('member-1'),
+          createProjectMember('member-2'),
+        ],
+      }),
+      true
+    );
+  });
+});
+
 function createSupabaseMock(): {
   from: ReturnType<typeof vi.fn>;
   projectSelects: string[];
@@ -158,11 +191,7 @@ function createSupabaseMock(): {
         return {
           select: vi.fn((columns: string) => {
             projectSelects.push(columns);
-            return Promise.resolve(
-              columns.includes('status')
-                ? { data: null, error: missingStatusError() }
-                : { data: [legacyProjectRow()], error: null }
-            );
+            return Promise.resolve({ data: [legacyProjectRow()], error: null });
           }),
         };
       }
@@ -172,9 +201,7 @@ function createSupabaseMock(): {
             membershipSelects.push(columns);
             return {
               order: vi.fn(async () =>
-                columns.includes('status')
-                  ? { data: null, error: missingStatusError() }
-                  : { data: [legacyMemberRow()], error: null }
+                ({ data: [legacyMemberRow()], error: null })
               ),
             };
           }),
@@ -241,13 +268,6 @@ function createInboxConflictSupabaseMock(): { from: ReturnType<typeof vi.fn> } {
   };
 }
 
-function missingStatusError(): { code: string; message: string } {
-  return {
-    code: '42703',
-    message: 'column project_members_1.status does not exist',
-  };
-}
-
 function duplicateInboxError(): { code: string; message: string } {
   return {
     code: '23505',
@@ -284,6 +304,24 @@ function legacyMemberRow(): LegacyProjectMemberRow {
     user_id: 'member-1',
     role: 'viewer',
     invited_at: '2026-01-01T00:00:00.000Z',
+  };
+}
+
+function createProjectMember(
+  userId: string,
+  status: 'pending' | 'accepted' | 'declined' = 'accepted'
+) {
+  return {
+    projectId: 'project-1',
+    userId,
+    status,
+    role: 'editor',
+    invitedEmail: null,
+    invitedProjectName: null,
+    invitedBy: null,
+    invitedAt: null,
+    acceptedAt: null,
+    declinedAt: null,
   };
 }
 

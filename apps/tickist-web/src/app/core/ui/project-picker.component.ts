@@ -17,6 +17,7 @@ import {
   flattenHierarchy,
 } from '../projects/project-tree';
 import { ProjectIconComponent } from './project-icon.component';
+import { isProjectSharedByMultipleMembers } from '../../data/project-data.service';
 
 export interface ProjectPickerItem {
   id: string;
@@ -26,7 +27,7 @@ export interface ProjectPickerItem {
   projectType?: string | null;
   icon?: string | null;
   color?: string | null;
-  members?: unknown[];
+  members?: { status?: string | null }[];
   ownerId?: string | null;
 }
 
@@ -526,7 +527,7 @@ export class ProjectPickerComponent {
 
   private isSharedProject(projectId: string): boolean {
     const project = this.projects.find((item) => item.id === projectId);
-    return (project?.members?.length ?? 0) > 0;
+    return isProjectSharedByMultipleMembers({ members: project?.members ?? [] });
   }
 
   private groupLabel(

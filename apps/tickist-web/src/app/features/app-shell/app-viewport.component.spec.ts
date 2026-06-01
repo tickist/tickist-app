@@ -163,6 +163,21 @@ describe('AppViewportComponent theme toggle', () => {
     expect(button?.textContent?.trim()).toBe('×');
     expect(button?.textContent).not.toContain('Close');
   });
+
+  it('uses an icon-only close button in the mobile sidebar', () => {
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.sidebarOpen.set(true);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      'button[aria-label="Close sidebar"]'
+    ) as HTMLButtonElement | null;
+
+    expect(button).toBeTruthy();
+    expect(button?.textContent?.trim()).toBe('✕');
+    expect(button?.textContent).not.toContain('Close');
+  });
 });
 
 describe('app viewport route helpers', () => {
