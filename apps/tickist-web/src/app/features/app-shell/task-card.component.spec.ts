@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Task, TaskDataService, TaskStep } from '../../data/task-data.service';
-import { ProjectDataService } from '../../data/project-data.service';
+import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
@@ -322,6 +322,33 @@ describe('TaskCardComponent toolbar status icons', () => {
     );
   });
 
+  it('shows shared badge only when at least two accepted members are attached', () => {
+    fixture.destroy();
+
+    const singleMemberFixture = renderTaskCard(
+      createProject({
+        members: [createProjectMember('member-1')],
+      })
+    );
+
+    expect(getSharedBadge(singleMemberFixture)).toBeNull();
+    singleMemberFixture.destroy();
+
+    const multipleMemberFixture = renderTaskCard(
+      createProject({
+        members: [
+          createProjectMember('member-1'),
+          createProjectMember('member-2'),
+        ],
+      })
+    );
+
+    expect(getSharedBadge(multipleMemberFixture)?.textContent?.trim()).toBe(
+      'Shared'
+    );
+    multipleMemberFixture.destroy();
+  });
+
   function getToolbarButton(
     key: 'description' | 'tags' | 'repeat' | 'reminders' | 'steps'
   ): HTMLButtonElement {
@@ -345,6 +372,21 @@ describe('TaskCardComponent toolbar status icons', () => {
       throw new Error(`Missing repeat button: ${label}`);
     }
     return button;
+  }
+
+  function renderTaskCard(project: Project): ComponentFixture<TaskCardComponent> {
+    const renderedFixture = TestBed.createComponent(TaskCardComponent);
+    renderedFixture.componentInstance.task = createTask();
+    renderedFixture.componentInstance.project = project;
+    renderedFixture.componentInstance.viewMode = 'extended';
+    renderedFixture.detectChanges();
+    return renderedFixture;
+  }
+
+  function getSharedBadge(
+    renderedFixture: ComponentFixture<TaskCardComponent>
+  ): HTMLElement | null {
+    return renderedFixture.nativeElement.querySelector('.task-card__shared');
   }
 });
 
@@ -388,5 +430,39 @@ function createStep(): TaskStep {
     content: 'First step',
     isDone: false,
     position: 0,
+  };
+}
+
+function createProject(overrides: Partial<Project> = {}): Project {
+  return {
+    id: 'project-1',
+    ownerId: 'owner-1',
+    name: 'Project',
+    description: '',
+    color: '#394264',
+    icon: 'folder',
+    isActive: true,
+    isInbox: false,
+    projectType: 'active',
+    ancestorId: null,
+    taskView: 'extended',
+    shareWithIds: [],
+    members: [],
+    ...overrides,
+  };
+}
+
+function createProjectMember(userId: string): Project['members'][number] {
+  return {
+    projectId: 'project-1',
+    userId,
+    status: 'accepted',
+    role: 'editor',
+    invitedEmail: null,
+    invitedProjectName: null,
+    invitedBy: null,
+    invitedAt: null,
+    acceptedAt: null,
+    declinedAt: null,
   };
 }

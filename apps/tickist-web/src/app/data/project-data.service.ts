@@ -54,6 +54,13 @@ export interface Project {
   dialogTimeWhenTaskFinished?: boolean;
 }
 
+export function isProjectSharedByMultipleMembers(
+  project: Pick<Project, 'members'>
+): boolean {
+  return project.members.filter((member) => member.status === 'accepted')
+    .length >= 2;
+}
+
 export interface ProjectCreateInput {
   ownerId: string;
   name: string;
