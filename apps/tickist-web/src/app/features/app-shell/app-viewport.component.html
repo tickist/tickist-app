@@ -313,10 +313,12 @@
       <div class="flex justify-end">
         <button
           type="button"
-          class="btn btn-ghost btn-xs"
+          class="btn btn-ghost btn-xs btn-circle"
+          aria-label="Close sidebar"
+          title="Close sidebar"
           (click)="closeSidebar()"
         >
-          Close ✕
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
       <app-sidebar></app-sidebar>
