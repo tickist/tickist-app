@@ -13,7 +13,7 @@
 .toast-item {
   pointer-events: auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: start;
   gap: 0.55rem 0.75rem;
   width: min(24rem, calc(100vw - 2.25rem));
@@ -30,6 +30,23 @@
   font-size: 0.98rem;
   font-weight: 500;
   line-height: 1.35;
+}
+
+.toast-item__action {
+  align-self: center;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.16);
+  color: inherit;
+  padding: 0.4rem 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.toast-item__action:hover,
+.toast-item__action:focus-visible {
+  background: rgba(255, 255, 255, 0.28);
+  outline: none;
 }
 
 .toast-item__close {

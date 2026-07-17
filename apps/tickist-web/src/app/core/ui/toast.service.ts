@@ -6,6 +6,8 @@ export interface ToastMessage {
   id: string;
   message: string;
   type: ToastType;
+  actionLabel?: string;
+  action?: () => void | Promise<void>;
   timeoutId?: ReturnType<typeof setTimeout>;
 }
 
@@ -27,6 +29,14 @@ export class ToastService {
     this.show(message, 'info', duration);
   }
 
+  infoWithAction(
+    message: string,
+    actionLabel: string,
+    action: () => void | Promise<void>
+  ): void {
+    this.show(message, 'info', 0, actionLabel, action);
+  }
+
   error(message: string, duration = this.durations.error): void {
     this.show(message, 'error', duration);
   }
@@ -41,15 +51,23 @@ export class ToastService {
     });
   }
 
-  private show(message: string, type: ToastType, duration: number): void {
+  private show(
+    message: string,
+    type: ToastType,
+    duration: number,
+    actionLabel?: string,
+    action?: () => void | Promise<void>
+  ): void {
     const id =
       typeof crypto?.randomUUID === 'function'
         ? crypto.randomUUID()
         : `toast-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const timeoutId = setTimeout(() => this.dismiss(id), duration);
+    const timeoutId = duration
+      ? setTimeout(() => this.dismiss(id), duration)
+      : undefined;
     this.messagesSignal.update((current) => [
       ...current,
-      { id, message, type, timeoutId },
+      { id, message, type, actionLabel, action, timeoutId },
     ]);
   }
 }

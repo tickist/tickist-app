@@ -41,8 +41,9 @@ export class ComposerModalService {
       return;
     }
 
+    const defaults = withActiveProjectDefault(preset.defaults, this.router.url);
     await this.router.navigate(['/app/task/new'], {
-      queryParams: buildTaskQueryParams(preset.defaults),
+      queryParams: buildTaskQueryParams(defaults),
     });
   }
 
@@ -70,6 +71,25 @@ export class ComposerModalService {
       this.viewState.lastNonSheetAppUrl() ?? '/app'
     );
   }
+}
+
+function withActiveProjectDefault(
+  defaults: TaskComposerPreset['defaults'],
+  currentUrl: string
+): TaskComposerPreset['defaults'] {
+  if (defaults && Object.prototype.hasOwnProperty.call(defaults, 'projectId')) {
+    return defaults;
+  }
+
+  const match = currentUrl.match(/^\/app\/tasks\/([^/?#]+)(?:[/?#]|$)/);
+  if (!match?.[1]) {
+    return defaults;
+  }
+
+  return {
+    ...defaults,
+    projectId: decodeURIComponent(match[1]),
+  };
 }
 
 function buildTaskQueryParams(

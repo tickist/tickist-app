@@ -35,6 +35,11 @@ Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits ar
 
 Copy `.env.example` to `.env` (remote) and `.local_env` (local). For E2E, use a separate `.local_env.e2e` or `.env.e2e` file. Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_DB_URL`, `SUPABASE_E2E_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SECRET_KEY` (for backend scripts and edge functions), `INTERNAL_FUNCTION_SECRET` (internal header secret for cron/worker-triggered functions). Temporary rollout fallback keys: `SUPABASE_SERVICE_ROLE_KEY`, `ROUTINE_RUNNER_SECRET`, `SUPABASE_ANON_KEY`. E2E DB URL must point to a dedicated test database/branch and must not reuse local dev or remote shared DB URLs. All database changes must be backward compatible because the application is already running in production; avoid single-step breaking schema changes and prefer additive, phased migrations. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
 
+## Skills
+
+- Domyślnie stosuj zasady `caveman lite` w technicznych update'ach i odpowiedziach: bez filleru/hedgingu, ale z pełnymi zdaniami i całą treścią techniczną.
+- Pełny skill `caveman` ładuj tylko na wyraźną prośbę lub gdy przewidywany output przekracza około 2 tys. tokenów (instrukcja kosztuje ~949 tokenów inputu; zmierzona oszczędność outputu 35–50%). Jawnie aktywowany tryb trwa do wyłączenia; `full`/`ultra` tylko na prośbę. Kod, commity, PR-y, dokumentacja użytkowa, ostrzeżenia bezpieczeństwa i działania nieodwracalne pozostają w normalnym stylu.
+
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 

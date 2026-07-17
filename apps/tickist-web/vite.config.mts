@@ -74,8 +74,8 @@ export default defineConfig(({ mode }) => {
       nxCopyAssetsPlugin(['../../*.md']),
       VitePWA({
         disable: isTestMode,
-        registerType: 'autoUpdate',
-        injectRegister: 'script-defer',
+        registerType: 'prompt',
+        injectRegister: false,
         includeAssets: ['favicon.png'],
         manifest: {
           id: '/',
@@ -137,10 +137,8 @@ export default defineConfig(({ mode }) => {
         workbox: {
           cleanupOutdatedCaches: true,
           clientsClaim: true,
-          skipWaiting: true,
-          globPatterns: [
-            '**/*.{css,html,ico,js,json,png,svg,webp,woff,woff2}',
-          ],
+          skipWaiting: false,
+          globPatterns: ['**/*.{css,html,ico,js,json,png,svg,webp,woff,woff2}'],
           globIgnores: [
             '**/env.js',
             'favicon.png',
