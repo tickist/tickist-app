@@ -6,6 +6,9 @@
       <button
         type="button"
         class="btn btn-sm btn-ghost lg:hidden"
+        aria-label="Open sidebar"
+        aria-controls="mobile-project-sidebar"
+        [attr.aria-expanded]="sidebarOpen()"
         (click)="toggleSidebar()"
       >
         ☰
@@ -308,7 +311,8 @@
 
     @if (sidebarOpen()) {
     <aside
-      class="fixed inset-y-0 left-0 z-40 w-96 bg-base-200 px-5 py-6 shadow-2xl shadow-black/40 transition lg:hidden"
+      id="mobile-project-sidebar"
+      class="app-layout__mobile-sidebar fixed inset-y-0 left-0 z-40 w-[min(24rem,calc(100vw-2rem))] bg-base-200 px-5 py-6 shadow-2xl shadow-black/40 transition lg:hidden"
     >
       <div class="flex justify-end">
         <button

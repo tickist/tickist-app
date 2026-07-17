@@ -53,6 +53,14 @@
   min-width: 0;
 }
 
+.app-layout__mobile-sidebar {
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 .app-layout__main {
   min-width: 0;
   overflow-x: hidden;

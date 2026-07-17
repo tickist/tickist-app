@@ -20,6 +20,45 @@
           (changeSort)="setSort($event)"
           (changeFilter)="setFilter($event)"
         ></app-project-header>
+        } @if (filteredTasks().length > 10) {
+        <form
+          class="new-task-form new-task-form--top mb-6"
+          data-testid="project-task-form-top"
+          [formGroup]="projectTaskForm"
+          (ngSubmit)="addTaskToProject()"
+        >
+          <div class="new-task-form__card">
+            <div class="new-task-form__controls">
+              <input
+                id="project-task-name-top"
+                class="new-task-form__input"
+                placeholder="What needs doing?"
+                aria-label="Task name"
+                aria-describedby="project-task-name-top-error"
+                [attr.aria-invalid]="
+                  projectTaskForm.controls.name.touched &&
+                  projectTaskForm.controls.name.invalid
+                "
+                formControlName="name"
+              />
+              <button class="new-task-form__button" type="submit">
+                Add task
+              </button>
+            </div>
+            @if (projectTaskForm.controls.name.touched &&
+            projectTaskForm.controls.name.invalid) {
+            <p
+              id="project-task-name-top-error"
+              class="new-task-form__error"
+              role="alert"
+            >
+              @if (projectTaskForm.controls.name.hasError('required')) { Please
+              add a task name. } @else { Task name must have at least 3
+              characters. }
+            </p>
+            }
+          </div>
+        </form>
         }
         <app-task-list
           [tasks]="filteredTasks()"
@@ -29,6 +68,7 @@
         ></app-task-list>
         <form
           class="new-task-form mt-6"
+          data-testid="project-task-form-bottom"
           [formGroup]="projectTaskForm"
           (ngSubmit)="addTaskToProject()"
         >
@@ -38,12 +78,30 @@
                 id="project-task-name"
                 class="new-task-form__input"
                 placeholder="What needs doing?"
+                aria-label="Task name"
+                aria-describedby="project-task-name-error"
+                [attr.aria-invalid]="
+                  projectTaskForm.controls.name.touched &&
+                  projectTaskForm.controls.name.invalid
+                "
                 formControlName="name"
               />
               <button class="new-task-form__button" type="submit">
                 Add task
               </button>
             </div>
+            @if (projectTaskForm.controls.name.touched &&
+            projectTaskForm.controls.name.invalid) {
+            <p
+              id="project-task-name-error"
+              class="new-task-form__error"
+              role="alert"
+            >
+              @if (projectTaskForm.controls.name.hasError('required')) { Please
+              add a task name. } @else { Task name must have at least 3
+              characters. }
+            </p>
+            }
           </div>
         </form>
       </div>

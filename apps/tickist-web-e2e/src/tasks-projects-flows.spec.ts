@@ -153,6 +153,24 @@ async function setProjectFilter(
   await page.locator('header.project-header h1').first().click();
 }
 
+async function setProjectSort(
+  page: Page,
+  label: 'priority ↓' | 'priority ↑' | 'A-Z ↑' | 'A-Z ↓'
+): Promise<void> {
+  await page.locator('button[title="Sort"]').first().click();
+  const option = page
+    .locator('button.sort-option')
+    .filter({ hasText: new RegExp(`^\\s*${escapeRegExp(label)}\\s*$`) })
+    .first();
+  await expect(option).toBeVisible();
+  await option.click();
+  await expect(option).toHaveAttribute('aria-pressed', 'true');
+}
+
+async function visibleTaskNames(page: Page): Promise<string[]> {
+  return page.locator('article.task-card .task-card__title p').allInnerTexts();
+}
+
 async function inboxCount(page: Page): Promise<number> {
   const text = await page
     .locator('aside')
@@ -255,6 +273,64 @@ test('creates project and adds a task into that project', async ({
   await page.reload();
   await selectProjectByName(page, projectName);
   await expect(taskCardByName(page, taskName)).toBeVisible();
+});
+
+test('sorts project tasks alphabetically in both directions', async ({
+  page,
+}, testInfo) => {
+  const projectName = `Sorting project ${uniqueSuffix(testInfo)}`;
+  const firstTask = `Alpha ${uniqueSuffix(testInfo)}`;
+  const secondTask = `Zulu ${uniqueSuffix(testInfo)}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, 'Project for sorting regression');
+  await selectProjectByName(page, projectName);
+
+  for (const taskName of [secondTask, firstTask]) {
+    await page.getByPlaceholder('What needs doing?').fill(taskName);
+    await page.getByRole('button', { name: 'Add task' }).click();
+    await expect(taskCardByName(page, taskName)).toBeVisible();
+  }
+
+  await setProjectSort(page, 'A-Z ↑');
+  await expect
+    .poll(() => visibleTaskNames(page))
+    .toEqual([firstTask, secondTask]);
+
+  await setProjectSort(page, 'A-Z ↓');
+  await expect
+    .poll(() => visibleTaskNames(page))
+    .toEqual([secondTask, firstTask]);
+});
+
+test('validates quick task entry and repeats it above a long task list', async ({
+  page,
+}, testInfo) => {
+  const projectName = `Long project ${uniqueSuffix(testInfo)}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, 'Project for quick entry regression');
+  await selectProjectByName(page, projectName);
+
+  const bottomForm = page.getByTestId('project-task-form-bottom');
+  await bottomForm.getByRole('button', { name: 'Add task' }).click();
+  await expect(bottomForm.getByRole('alert')).toHaveText(
+    'Please add a task name.'
+  );
+  await expect(bottomForm.getByLabel('Task name')).toHaveAttribute(
+    'aria-invalid',
+    'true'
+  );
+
+  for (let index = 1; index <= 11; index += 1) {
+    const taskName = `Long list task ${index} ${uniqueSuffix(testInfo)}`;
+    await bottomForm.getByLabel('Task name').fill(taskName);
+    await bottomForm.getByRole('button', { name: 'Add task' }).click();
+    await expect(taskCardByName(page, taskName)).toBeVisible();
+  }
+
+  await expect(page.getByTestId('project-task-form-top')).toBeVisible();
+  await expect(page.getByTestId('project-task-form-bottom')).toBeVisible();
 });
 
 test('creates task, edits it via task menu and marks done', async ({
@@ -424,4 +500,27 @@ test('keeps shared sheet tabs scrollable on mobile viewport', async ({
   }));
 
   expect(metrics.scrollWidth).toBeGreaterThanOrEqual(metrics.clientWidth);
+});
+
+test('keeps the project sidebar vertically scrollable on mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 320 });
+  await ensureAuthenticated(page);
+  await page.getByRole('button', { name: 'Open sidebar' }).click();
+
+  const sidebar = page.locator('#mobile-project-sidebar');
+  await expect(sidebar).toBeVisible();
+  await expect(sidebar).toHaveCSS('overflow-y', 'auto');
+
+  const metrics = await sidebar.evaluate((node) => ({
+    clientHeight: node.clientHeight,
+    scrollHeight: node.scrollHeight,
+  }));
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
+
+  await sidebar.evaluate((node) => node.scrollTo({ top: node.scrollHeight }));
+  await expect
+    .poll(() => sidebar.evaluate((node) => node.scrollTop))
+    .toBeGreaterThan(0);
 });
