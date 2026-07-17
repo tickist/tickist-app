@@ -6,16 +6,20 @@ import {
   LucideAngularModule,
   ArrowRight,
   CheckCircle2,
+  CalendarDays,
   FolderTree,
-  LayoutDashboard,
   Github,
+  Inbox,
+  LayoutDashboard,
+  Repeat2,
+  Search,
   Shield,
-  Layers,
-  Settings,
   Tag,
   ListTodo,
   Sun,
   Moon,
+  Users,
+  Zap,
 } from 'lucide-angular';
 
 @Component({
@@ -38,16 +42,20 @@ export class LandingComponent {
   readonly icons = {
     ArrowRight,
     CheckCircle2,
+    CalendarDays,
     FolderTree,
-    LayoutDashboard,
     Github,
+    Inbox,
+    LayoutDashboard,
+    Repeat2,
+    Search,
     Shield,
-    Layers,
-    Settings,
     Tag,
     ListTodo,
     Sun,
     Moon,
+    Users,
+    Zap,
   };
 
   toggleTheme(): void {
