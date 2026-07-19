@@ -31,7 +31,7 @@ test('signup flow leads to app dashboard', async ({ page }, testInfo) => {
   await page.reload();
   await expect(root).toHaveAttribute('data-theme', toggledTheme);
 
-  await page.getByRole('link', { name: 'Create account' }).first().click();
+  await page.getByRole('link', { name: 'Get started' }).click();
   await page.waitForURL('**/auth/signup');
   await expect(root).toHaveAttribute('data-theme', toggledTheme);
 

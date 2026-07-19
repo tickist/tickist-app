@@ -76,11 +76,13 @@ async function createProject(
 }
 
 async function selectInbox(page: Page): Promise<void> {
-  await page
-    .locator('aside')
-    .getByRole('button', { name: /Inbox \(\d+\)/ })
-    .first()
-    .click();
+  const inboxButton = page
+    .locator('aside button.sidebar-link')
+    .filter({ hasText: /^\s*Inbox(?:\s+\(\d+\))?\s*$/ })
+    .first();
+
+  await expect(inboxButton).toBeVisible();
+  await inboxButton.click();
   await expect(page).toHaveURL(/\/app\/tasks\/[^/?#]+/);
 }
 
@@ -88,10 +90,13 @@ async function selectProjectByName(
   page: Page,
   projectName: string
 ): Promise<void> {
+  await ensureActiveProjectsExpanded(page);
   const projectButton = page
     .locator('button.sidebar-subitem')
     .filter({
-      has: page.locator('.project-name', { hasText: projectName }),
+      hasText: new RegExp(
+        `^\\s*${escapeRegExp(projectName)}\\s*\\(\\d+\\)\\s*$`
+      ),
     })
     .first();
 
@@ -173,8 +178,8 @@ async function visibleTaskNames(page: Page): Promise<string[]> {
 
 async function inboxCount(page: Page): Promise<number> {
   const text = await page
-    .locator('aside')
-    .getByRole('button', { name: /Inbox \(\d+\)/ })
+    .locator('aside button.sidebar-link')
+    .filter({ hasText: /^\s*Inbox(?:\s+\(\d+\))?\s*$/ })
     .first()
     .innerText();
   const match = text.match(/\((\d+)\)/);
