@@ -78,7 +78,7 @@ async function createProject(
 async function selectInbox(page: Page): Promise<void> {
   const inboxButton = page
     .locator('aside button.sidebar-link')
-    .filter({ hasText: /^\s*Inbox(?:\s+\(\d+\))?\s*$/ })
+    .filter({ hasText: /^\s*Inbox(?:\s|\(|$)/ })
     .first();
 
   await expect(inboxButton).toBeVisible();
@@ -94,9 +94,7 @@ async function selectProjectByName(
   const projectButton = page
     .locator('button.sidebar-subitem')
     .filter({
-      hasText: new RegExp(
-        `^\\s*${escapeRegExp(projectName)}\\s*\\(\\d+\\)\\s*$`
-      ),
+      hasText: new RegExp(`^\\s*${escapeRegExp(projectName)}(?:\\s|$)`),
     })
     .first();
 
@@ -179,7 +177,7 @@ async function visibleTaskNames(page: Page): Promise<string[]> {
 async function inboxCount(page: Page): Promise<number> {
   const text = await page
     .locator('aside button.sidebar-link')
-    .filter({ hasText: /^\s*Inbox(?:\s+\(\d+\))?\s*$/ })
+    .filter({ hasText: /^\s*Inbox(?:\s|\(|$)/ })
     .first()
     .innerText();
   const match = text.match(/\((\d+)\)/);
