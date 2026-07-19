@@ -20,7 +20,6 @@ import { AppViewStateService } from './app-view-state.service';
 import { AppSidebarComponent } from './app-sidebar.component';
 import { TaskFabComponent } from '../task-fab/task-fab.component';
 import { filter, Subscription } from 'rxjs';
-import { ToastContainerComponent } from '../../core/ui/toast-container.component';
 import { ThemeService } from '../../core/ui/theme.service';
 import { environment } from '../../../environments/environment';
 
@@ -34,7 +33,6 @@ import { environment } from '../../../environments/environment';
     NgOptimizedImage,
     AppSidebarComponent,
     TaskFabComponent,
-    ToastContainerComponent,
   ],
   templateUrl: './app-viewport.component.html',
   styleUrl: './app-viewport.component.css',

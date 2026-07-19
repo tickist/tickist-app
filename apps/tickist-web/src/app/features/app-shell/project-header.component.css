@@ -28,6 +28,7 @@
   @apply flex flex-wrap items-center gap-2 md:justify-end;
 }
 
+.sort-option,
 .filter-option {
   display: flex;
   align-items: center;
@@ -41,16 +42,19 @@
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+.sort-option:hover,
 .filter-option:hover {
   background: rgb(var(--bc) / 0.1);
   color: rgb(var(--bc));
 }
 
+.sort-option.active,
 .filter-option.active {
   background: rgba(255, 234, 0, 0.16);
   color: #ffea00;
 }
 
+.sort-dot,
 .filter-dot {
   width: 0.5rem;
   height: 0.5rem;
@@ -58,6 +62,7 @@
   border: 1px solid rgb(var(--bc) / 0.5);
 }
 
+.sort-dot.active,
 .filter-dot.active {
   border-color: #ffea00;
   background: #ffea00;
@@ -84,7 +89,7 @@
     box-shadow 0.2s ease;
 }
 
-.simple-toggle input:checked+.toggle-pill {
+.simple-toggle input:checked + .toggle-pill {
   background: #ffea00;
   border-color: rgba(255, 234, 0, 0.8);
   box-shadow: inset 0 0 0 1px rgb(var(--b3) / 0.5);
@@ -104,12 +109,12 @@
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-.simple-toggle input:checked+.toggle-pill::after {
+.simple-toggle input:checked + .toggle-pill::after {
   transform: translateX(1.5rem);
   background: rgb(var(--b2));
 }
 
-.simple-toggle input:focus-visible+.toggle-pill {
+.simple-toggle input:focus-visible + .toggle-pill {
   outline: 2px solid rgba(255, 234, 0, 0.6);
   outline-offset: 2px;
 }

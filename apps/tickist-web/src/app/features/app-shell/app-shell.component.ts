@@ -295,12 +295,24 @@ export class AppShellComponent {
   private sortTasks(tasks: ReturnType<typeof this.taskList>) {
     const option = this.sortOption();
     const byString = (a: string, b: string) => a.localeCompare(b);
+    const priorityRank = (priority: string): number => {
+      switch (priority.trim().toUpperCase()) {
+        case 'A':
+          return 3;
+        case 'B':
+          return 2;
+        case 'C':
+          return 1;
+        default:
+          return 0;
+      }
+    };
     return [...tasks].sort((a, b) => {
       switch (option) {
         case 'priority-asc':
-          return byString(a.priority ?? '', b.priority ?? '');
+          return priorityRank(a.priority) - priorityRank(b.priority);
         case 'priority-desc':
-          return byString(b.priority ?? '', a.priority ?? '');
+          return priorityRank(b.priority) - priorityRank(a.priority);
         case 'due-asc':
           return (
             (a.finishDate ? new Date(a.finishDate).getTime() : Infinity) -

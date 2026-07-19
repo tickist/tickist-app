@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 
-import { ToastService } from './toast.service';
+import { ToastMessage, ToastService } from './toast.service';
 
 @Component({
   selector: 'app-toast-container',
@@ -18,6 +18,15 @@ import { ToastService } from './toast.service';
         aria-live="polite"
       >
         <p class="toast-item__message">{{ toast.message }}</p>
+        @if (toast.action && toast.actionLabel) {
+        <button
+          type="button"
+          class="toast-item__action"
+          (click)="runAction(toast)"
+        >
+          {{ toast.actionLabel }}
+        </button>
+        }
         <button
           type="button"
           class="toast-item__close"
@@ -38,5 +47,10 @@ export class ToastContainerComponent {
 
   dismiss(id: string): void {
     this.toastsService.dismiss(id);
+  }
+
+  runAction(toast: ToastMessage): void {
+    void toast.action?.();
+    this.dismiss(toast.id);
   }
 }
