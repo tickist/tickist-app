@@ -40,7 +40,7 @@ describe('ProjectDataService schema compatibility', () => {
     TestBed.resetTestingModule();
   });
 
-  it('uses legacy project member selects without probing missing rollout columns', async () => {
+  it('loads projects without an embedded membership query', async () => {
     const supabase = createSupabaseMock();
 
     TestBed.configureTestingModule({
@@ -91,6 +91,7 @@ describe('ProjectDataService schema compatibility', () => {
     ]);
     expect(supabase.projectSelects).toHaveLength(1);
     expect(supabase.projectSelects[0]).not.toContain('status');
+    expect(supabase.projectSelects[0]).not.toContain('project_members');
     expect(supabase.membershipSelects).toHaveLength(1);
     expect(supabase.membershipSelects[0]).not.toContain('status');
   });
@@ -293,7 +294,7 @@ function legacyProjectRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
     default_finish_date: null,
     default_type_finish_date: null,
     dialog_time_when_task_finished: null,
-    project_members: [legacyMemberRow()],
+    project_members: [],
     ...overrides,
   };
 }
