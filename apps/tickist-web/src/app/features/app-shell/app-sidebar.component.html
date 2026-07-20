@@ -22,7 +22,12 @@
   </button>
   }
 
-  <button type="button" class="sidebar-link" (click)="toggle('active')">
+  <button
+    type="button"
+    class="sidebar-link"
+    [attr.aria-expanded]="navState().active"
+    (click)="toggle('active')"
+  >
     <span class="emoji">📁</span>
     <span class="flex-1"
       >Active projects ({{ activeProjectsList().length }})</span

@@ -6,6 +6,8 @@ import { workspaceRoot } from '@nx/devkit';
 type ResetPhase = 'setup' | 'teardown';
 const DEFAULT_RESET_ATTEMPTS = 3;
 const RETRY_BASE_DELAY_MS = 5000;
+const LOCAL_SCHEMA_READY_TIMEOUT_MS = 60000;
+const LOCAL_SCHEMA_READY_RETRY_MS = 1000;
 
 export async function resetDatabase(phase: ResetPhase): Promise<void> {
   const envFile = resolveEnvFile();
@@ -22,9 +24,13 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
   const localDbUrl =
     process.env['SUPABASE_DB_URL'] ??
     (envFile ? readEnvValue(envFile, 'SUPABASE_DB_URL') : null);
-  if (localDbUrl && areSameDatabaseUrl(dbUrl, localDbUrl)) {
+  if (
+    localDbUrl &&
+    areSameDatabaseUrl(dbUrl, localDbUrl) &&
+    !allowsExplicitLocalDatabaseReset(dbUrl)
+  ) {
     throw new Error(
-      'Refusing to reset database: SUPABASE_E2E_DB_URL points to SUPABASE_DB_URL. Use a dedicated test database/branch for e2e.'
+      'Refusing to reset database: SUPABASE_E2E_DB_URL points to SUPABASE_DB_URL. Use a dedicated test database/branch for e2e, or set E2E_ALLOW_LOCAL_DB_RESET=true for a local-only reset.'
     );
   }
 
@@ -38,6 +44,10 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
   }
 
   await resetDatabaseWithRetry(dbUrl, phase);
+
+  if (isLocalDatabaseUrl(dbUrl)) {
+    await waitForLocalSchema(envFile, phase);
+  }
 }
 
 export async function ensureE2EAuthUser(): Promise<void> {
@@ -192,6 +202,68 @@ function isLocalDatabaseUrl(raw: string): boolean {
   } catch {
     return false;
   }
+}
+
+async function waitForLocalSchema(
+  envFile: string | null,
+  phase: ResetPhase
+): Promise<void> {
+  const supabaseUrl = readFirstAvailableEnvValue(
+    ['NG_APP_SUPABASE_URL', 'SUPABASE_URL', 'API_URL'],
+    envFile
+  );
+  const apiKey = readFirstAvailableEnvValue(
+    [
+      'NG_APP_SUPABASE_ANON_KEY',
+      'NG_APP_SUPABASE_PUBLISHABLE_KEY',
+      'SUPABASE_ANON_KEY',
+      'SUPABASE_PUBLISHABLE_KEY',
+      'ANON_KEY',
+      'PUBLISHABLE_KEY',
+    ],
+    envFile
+  );
+
+  if (!supabaseUrl || !apiKey) {
+    throw new Error(
+      `[e2e-db] Cannot verify local schema readiness during ${phase}: missing Supabase URL or API key.`
+    );
+  }
+
+  const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/task_reminders?select=id&limit=1`;
+  const deadline = Date.now() + LOCAL_SCHEMA_READY_TIMEOUT_MS;
+  let lastStatus = 'request did not complete';
+
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(endpoint, {
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      lastStatus = `HTTP ${response.status}`;
+
+      if (response.status !== 404 && response.status < 500) {
+        return;
+      }
+    } catch (error) {
+      lastStatus = toError(error).message;
+    }
+
+    await wait(LOCAL_SCHEMA_READY_RETRY_MS);
+  }
+
+  throw new Error(
+    `[e2e-db] Local schema did not become ready during ${phase} within ${LOCAL_SCHEMA_READY_TIMEOUT_MS}ms (${lastStatus}).`
+  );
+}
+
+function allowsExplicitLocalDatabaseReset(dbUrl: string): boolean {
+  return (
+    process.env['E2E_ALLOW_LOCAL_DB_RESET'] === 'true' &&
+    isLocalDatabaseUrl(dbUrl)
+  );
 }
 
 function normalizeDatabaseUrl(raw: string): string {
