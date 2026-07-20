@@ -25,6 +25,15 @@
       </span>
       }
       <p class="linkified" [innerHTML]="task.name | linkify"></p>
+      @if (task.isDone && completionDateLabel(); as completionDate) {
+      <span
+        class="task-card__completed-date"
+        [attr.title]="'Completed on ' + completionDate"
+        data-testid="task-completed-date"
+      >
+        Completed {{ completionDate }}
+      </span>
+      }
       @if (taskTimeLabel(); as summary) {
       <span class="task-card__time">({{ summary }})</span>
       }

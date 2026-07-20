@@ -10,6 +10,8 @@ type SortOption =
   | 'due-desc'
   | 'created-asc'
   | 'created-desc'
+  | 'modified-asc'
+  | 'modified-desc'
   | 'alpha-asc'
   | 'alpha-desc';
 
@@ -43,6 +45,8 @@ export class ProjectHeaderComponent {
     { label: 'due date ↓', value: 'due-desc' },
     { label: 'creation date ↑', value: 'created-asc' },
     { label: 'creation date ↓', value: 'created-desc' },
+    { label: 'modification date ↑', value: 'modified-asc' },
+    { label: 'modification date ↓', value: 'modified-desc' },
     { label: 'A-Z ↑', value: 'alpha-asc' },
     { label: 'A-Z ↓', value: 'alpha-desc' },
   ];

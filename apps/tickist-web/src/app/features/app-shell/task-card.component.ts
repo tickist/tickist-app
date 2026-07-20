@@ -156,10 +156,18 @@ export class TaskCardComponent implements OnChanges {
   }
 
   finishDateLabel(): string | null {
-    if (!this.task.finishDate) {
+    return this.formatDateLabel(this.task.finishDate);
+  }
+
+  completionDateLabel(): string | null {
+    return this.formatDateLabel(this.task.whenComplete);
+  }
+
+  private formatDateLabel(value: string | null | undefined): string | null {
+    if (!value) {
       return null;
     }
-    const date = new Date(this.task.finishDate);
+    const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       return null;
     }
