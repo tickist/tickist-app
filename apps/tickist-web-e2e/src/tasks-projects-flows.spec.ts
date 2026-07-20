@@ -160,7 +160,13 @@ async function setProjectFilter(
 
 async function setProjectSort(
   page: Page,
-  label: 'priority ↓' | 'priority ↑' | 'A-Z ↑' | 'A-Z ↓'
+  label:
+    | 'priority ↓'
+    | 'priority ↑'
+    | 'A-Z ↑'
+    | 'A-Z ↓'
+    | 'modification date ↑'
+    | 'modification date ↓'
 ): Promise<void> {
   const option = page
     .locator('button.sort-option')
@@ -286,7 +292,7 @@ test('creates project and adds a task into that project', async ({
   await expect(taskCardByName(page, taskName)).toBeVisible();
 });
 
-test('sorts project tasks alphabetically in both directions', async ({
+test('shows completion date and sorts project tasks', async ({
   page,
 }, testInfo) => {
   const projectName = `Sorting project ${uniqueSuffix(testInfo)}`;
@@ -312,6 +318,24 @@ test('sorts project tasks alphabetically in both directions', async ({
   await expect
     .poll(() => visibleTaskNames(page))
     .toEqual([secondTask, firstTask]);
+
+  const firstCard = taskCardByName(page, firstTask);
+  await firstCard.locator('.task-card__check input[type="checkbox"]').click();
+  await setProjectFilter(page, 'all tasks');
+  await expect(firstCard).toBeVisible();
+  await expect(firstCard.locator('[data-testid="task-completed-date"]')).toHaveText(
+    /Completed \d{2}-\d{2}-\d{4}/
+  );
+
+  await setProjectFilter(page, 'done');
+  await expect(firstCard).toBeVisible();
+  await expect(firstCard.locator('[data-testid="task-completed-date"]')).toBeVisible();
+
+  await setProjectFilter(page, 'all tasks');
+  await setProjectSort(page, 'modification date ↓');
+  await expect
+    .poll(() => visibleTaskNames(page))
+    .toEqual([firstTask, secondTask]);
 });
 
 test('validates quick task entry and repeats it above a long task list', async ({

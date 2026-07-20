@@ -166,6 +166,8 @@ export class AppShellComponent {
     | 'due-desc'
     | 'created-asc'
     | 'created-desc'
+    | 'modified-asc'
+    | 'modified-desc'
     | 'alpha-asc'
     | 'alpha-desc'
   >('priority-desc');
@@ -271,6 +273,8 @@ export class AppShellComponent {
       | 'due-desc'
       | 'created-asc'
       | 'created-desc'
+      | 'modified-asc'
+      | 'modified-desc'
       | 'alpha-asc'
       | 'alpha-desc'
   ) {
@@ -332,6 +336,16 @@ export class AppShellComponent {
           return (
             (b.createdAt ? new Date(b.createdAt).getTime() : 0) -
             (a.createdAt ? new Date(a.createdAt).getTime() : 0)
+          );
+        case 'modified-asc':
+          return (
+            (a.updatedAt ? new Date(a.updatedAt).getTime() : 0) -
+            (b.updatedAt ? new Date(b.updatedAt).getTime() : 0)
+          );
+        case 'modified-desc':
+          return (
+            (b.updatedAt ? new Date(b.updatedAt).getTime() : 0) -
+            (a.updatedAt ? new Date(a.updatedAt).getTime() : 0)
           );
         case 'alpha-asc':
           return byString(a.name.toLowerCase(), b.name.toLowerCase());

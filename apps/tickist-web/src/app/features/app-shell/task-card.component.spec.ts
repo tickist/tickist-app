@@ -133,6 +133,20 @@ describe('TaskCardComponent toolbar status icons', () => {
     expect(steps.classList.contains('configured')).toBe(false);
   });
 
+  it('shows the completion date next to a completed task name', () => {
+    component.task = createTask({
+      isDone: true,
+      whenComplete: '2026-07-20T12:30:00.000Z',
+    });
+    fixture.detectChanges();
+
+    const badge = fixture.nativeElement.querySelector(
+      '[data-testid="task-completed-date"]'
+    ) as HTMLElement | null;
+
+    expect(badge?.textContent).toContain('Completed 20-07-2026');
+  });
+
   it('sets active class on click even when icon is not configured', () => {
     component.task = createTask({
       description: '',
