@@ -10,8 +10,8 @@ import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 import { StatisticsDataService } from './statistics-data.service';
 
-const LEGACY_PROJECT_SELECT =
-  'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, project_members(project_id, user_id, role, invited_at)';
+const PROJECT_SELECT =
+  'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished';
 const LEGACY_MEMBERSHIP_SELECT =
   'project_id, user_id, role, invited_at, projects(id, name, owner_id, color, icon)';
 
@@ -218,7 +218,7 @@ export class ProjectDataService {
     this.loading.set(true);
     const { data, error } = await this.supabase
       .from('projects')
-      .select(LEGACY_PROJECT_SELECT);
+      .select(PROJECT_SELECT);
 
     if (error || !data) {
       console.warn('[Projects] Unable to fetch from Supabase yet.', error);
@@ -246,11 +246,11 @@ export class ProjectDataService {
       console.warn('[Projects] Unable to fetch memberships.', error);
       return;
     }
-    this.memberships.set(
-      (data as unknown as ProjectMemberRow[]).map((row) =>
-        this.mapMemberRow(row)
-      )
+    const memberships = (data as unknown as ProjectMemberRow[]).map((row) =>
+      this.mapMemberRow(row)
     );
+    this.memberships.set(memberships);
+    this.attachMembershipsToProjects(memberships);
   }
 
   async inviteByEmail(
@@ -528,6 +528,30 @@ export class ProjectDataService {
     this.projects.set([...projects, project]);
   }
 
+  private attachMembershipsToProjects(
+    memberships: readonly ProjectMember[]
+  ): void {
+    const membershipsByProject = new Map<string, ProjectMember[]>();
+    for (const membership of memberships) {
+      const projectMembers = membershipsByProject.get(membership.projectId) ?? [];
+      projectMembers.push(membership);
+      membershipsByProject.set(membership.projectId, projectMembers);
+    }
+
+    this.projects.update((projects) =>
+      projects.map((project) => {
+        const members = membershipsByProject.get(project.id) ?? [];
+        return {
+          ...project,
+          members,
+          shareWithIds: members
+            .filter((member) => member.status === 'accepted')
+            .map((member) => member.userId),
+        };
+      })
+    );
+  }
+
   async deleteProject(projectId: string): Promise<boolean> {
     if (!this.supabase) {
       console.warn(
@@ -627,7 +651,7 @@ export class ProjectDataService {
     }
     const { data, error } = await this.supabase
       .from('projects')
-      .select(LEGACY_PROJECT_SELECT)
+      .select(PROJECT_SELECT)
       .eq('id', id)
       .single();
 
@@ -649,7 +673,7 @@ export class ProjectDataService {
 
     const initialResult = await this.supabase
       .from('projects')
-      .select(LEGACY_PROJECT_SELECT)
+      .select(PROJECT_SELECT)
       .eq('owner_id', ownerId)
       .eq('is_inbox', true)
       .maybeSingle();

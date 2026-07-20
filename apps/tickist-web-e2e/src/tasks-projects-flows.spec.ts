@@ -37,16 +37,18 @@ async function ensureAuthenticated(page: Page): Promise<void> {
 }
 
 async function ensureActiveProjectsExpanded(page: Page): Promise<void> {
-  const createButtons = page.locator('button.sidebar-create');
-  if ((await createButtons.count()) > 0) {
-    return;
-  }
-
-  await page
+  const activeProjectsButton = page
     .locator('button.sidebar-link')
     .filter({ hasText: /Active projects \(\d+\)/ })
-    .first()
-    .click();
+    .first();
+
+  await expect(activeProjectsButton).toHaveAttribute(
+    'aria-expanded',
+    /^(true|false)$/
+  );
+  if ((await activeProjectsButton.getAttribute('aria-expanded')) === 'false') {
+    await activeProjectsButton.click();
+  }
 
   await expect(page.locator('button.sidebar-create').first()).toBeVisible();
 }
@@ -78,7 +80,7 @@ async function createProject(
 async function selectInbox(page: Page): Promise<void> {
   const inboxButton = page
     .locator('aside button.sidebar-link')
-    .filter({ hasText: /^\s*Inbox(?:\s+\(\d+\))?\s*$/ })
+    .filter({ hasText: /^\s*Inbox(?:\s|\(|$)/ })
     .first();
 
   await expect(inboxButton).toBeVisible();
@@ -94,9 +96,7 @@ async function selectProjectByName(
   const projectButton = page
     .locator('button.sidebar-subitem')
     .filter({
-      hasText: new RegExp(
-        `^\\s*${escapeRegExp(projectName)}\\s*\\(\\d+\\)\\s*$`
-      ),
+      has: page.locator('.project-name').filter({ hasText: projectName }),
     })
     .first();
 
@@ -162,11 +162,17 @@ async function setProjectSort(
   page: Page,
   label: 'priority ↓' | 'priority ↑' | 'A-Z ↑' | 'A-Z ↓'
 ): Promise<void> {
-  await page.locator('button[title="Sort"]').first().click();
   const option = page
     .locator('button.sort-option')
     .filter({ hasText: new RegExp(`^\\s*${escapeRegExp(label)}\\s*$`) })
     .first();
+
+  // The dropdown remains open after a selection. Clicking its trigger again
+  // would be intercepted by the open menu, so only open it when needed.
+  if (!(await option.isVisible())) {
+    await page.locator('button[title="Sort"]').first().click();
+  }
+
   await expect(option).toBeVisible();
   await option.click();
   await expect(option).toHaveAttribute('aria-pressed', 'true');
@@ -179,7 +185,7 @@ async function visibleTaskNames(page: Page): Promise<string[]> {
 async function inboxCount(page: Page): Promise<number> {
   const text = await page
     .locator('aside button.sidebar-link')
-    .filter({ hasText: /^\s*Inbox(?:\s+\(\d+\))?\s*$/ })
+    .filter({ hasText: /^\s*Inbox(?:\s|\(|$)/ })
     .first()
     .innerText();
   const match = text.match(/\((\d+)\)/);
