@@ -1,0 +1,12 @@
+# Tickist public crawl policy
+# Keep private workspace, transactional auth, and technical endpoints out of search indexes.
+# Public landing and locale-specific blog indexes are crawlable.
+
+User-agent: *
+Allow: /
+Disallow: /app/
+Disallow: /auth/
+Disallow: /mcp
+Disallow: /env.js
+
+Sitemap: https://tickist.com/sitemap.xml

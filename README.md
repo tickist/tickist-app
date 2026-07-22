@@ -14,6 +14,7 @@ Tickist is a task and project workspace for keeping everyday work clear: collect
 - **Stay on top of work** — dashboard, task tree, project activity, reminders, and statistics.
 - **Notifications** — in-app notifications and email delivery through a transactional outbox, Supabase Edge Functions, and AWS SES.
 - **Portable data** — import/export support with stable identifiers for safe migration between installations.
+- **Public multilingual blog** — lightweight, repository-authored English and Polish blog indexes with independent editorial catalogues, taxonomy support, and crawl-ready metadata.
 
 ## Architecture
 
@@ -49,7 +50,13 @@ docs/                   Operational documentation
 tools/scripts/          Local Supabase and type-generation helpers
 ```
 
-The UI source lives in `apps/tickist-web/src/app/`. Its main areas are `auth`, `app-shell`, `dashboard`, `tags`, `task-fab`, `team`, `core`, and `data`.
+The UI source lives in `apps/tickist-web/src/app/`. Its main areas are `auth`, `app-shell`, `blog`, `dashboard`, `tags`, `task-fab`, `team`, `core`, and `data`.
+
+## Public blog
+
+The public blog is available at `/en/blog` and `/pl/blog`. Both language editions have independent repository-owned post, category, and tag registries; they are not automatic translations of one another. The first release intentionally has no posts, comments, CMS, or administration panel.
+
+Add future articles through a reviewed code change in `apps/tickist-web/src/app/features/blog/blog-content.ts`. Follow [the blog content guide](doc/blog.md) for the locale boundary, taxonomy, canonical metadata, social sharing, and sitemap requirements.
 
 ## Prerequisites
 
@@ -220,4 +227,6 @@ The full working agreement is in [AGENTS.md](AGENTS.md). See [MIGRATION_PLAN.md]
 - [Supabase schema and Edge Functions](supabase/README.md)
 - [Email delivery and schedulers](docs/EMAIL.md)
 - [Deployment guide](DEPLOY.md)
+- [LLM discovery file](apps/tickist-web/public/llm.txt) and [full LLM reference](apps/tickist-web/public/llm-full.txt)
+- [Repository knowledge base](doc/README.md)
 - [Repository guidelines](AGENTS.md)

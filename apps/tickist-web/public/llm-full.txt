@@ -1,0 +1,124 @@
+# Tickist: full LLM reference
+
+## 1. Purpose and audience
+
+Tickist is an open-source personal and collaborative work-management application. Its design goal is to turn scattered commitments into a calm, actionable workspace. A user captures incoming work in a single Inbox, assigns work to projects, sets a priority and schedule when useful, and uses dashboard views to decide what to do next.
+
+The product is not a public content site or a generic file store. It is an authenticated workspace. Users own their data and may share individual projects with collaborators.
+
+## 2. Core product model
+
+### Projects
+
+- Each user has one Inbox project for uncategorised tasks.
+- Projects can be active, nested under another project, or organised into special sidebar groups such as Someday/Maybe, routine reminders, weekdays, and future work.
+- Projects have a name, description, colour, icon, task-view preference, and defaults for task creation.
+- A project owner can invite collaborators. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
+
+### Tasks
+
+- A task belongs to a project or the Inbox.
+- Core fields include name, description, priority, due date/time, status, task type, pinned state, estimated/spent time, recurrence, tags, assignees, subtasks, and reminders.
+- Priorities are A, B, C, and normal. Task types include normal, next action, and need info.
+- Completion is a first-class activity: when `is_done` changes to true, the database records `when_complete`; reopening a task clears that value. Task cards show the completion date when completed tasks are included by the active filter.
+- Task views can filter all, open, or completed tasks. They can sort by priority, due date, creation date, modification date, or alphabetical name.
+- Recurring-task completion resets the next occurrence instead of treating the task as permanently finished.
+
+### Organization and focus
+
+- The dashboard groups today, overdue, pinned, next-action, and need-info tasks.
+- The task tree presents project-oriented task groups.
+- The tag view filters by one or more tags, supports OR/AND matching, can include completed work, and has the same primary sorting choices as project task lists.
+- Statistics report completion, late completion, overdue work, and inactive projects for a selected time window.
+
+### Account and portability
+
+- Account settings include profile/avatar handling, password changes, notification preferences, backup/restore, and API-token management.
+- Export/import uses stable IDs and timestamps to support resilient migration and conflict handling.
+
+## 3. User-visible routes
+
+| Route | Access | Purpose |
+| --- | --- | --- |
+| `/` | Public | Product landing page and entry point. Authenticated users are redirected to `/app`. |
+| `/en/blog` | Public | English blog index. Its editorial catalogue is independent. |
+| `/pl/blog` | Public | Polish blog index. Its editorial catalogue is independent. |
+| `/auth` | Public | Sign in. |
+| `/auth/signup` | Public | Account registration. |
+| `/auth/reset` | Public | Password-reset request. |
+| `/auth/update-password` | Recovery flow | Password update after recovery. |
+| `/app` | Authenticated | Dashboard. |
+| `/app/tasks` and `/app/tasks/:projectId` | Authenticated | Inbox and project task lists. |
+| `/app/tree` | Authenticated | Project/task tree. |
+| `/app/tags` | Authenticated | Tag-based task view. |
+| `/app/stats` | Authenticated | Statistics. |
+| `/app/team` | Authenticated | Shared-project invites and membership. |
+| `/app/settings` | Authenticated | Account, notification, backup, and API-token settings. |
+
+Routes under `/app/**` are private and must not be listed in the public sitemap. Authentication pages are transactional routes, not content intended for search indexing.
+
+### Public blog
+
+- The public blog is implemented in `apps/tickist-web/src/app/features/blog/` and is available without authentication.
+- `blog-content.ts` is the repository-owned content registry. `en` and `pl` each own separate post, category, and tag arrays. There is no translation key, shared article database, or automatic localization between editions.
+- The first release has empty post registries. There is no CMS, administration panel, database-backed publishing flow, or comments.
+- A future post must be added in the matching locale registry with its slug, ISO dates, excerpt, category, tags, reading time, SEO title/description, and repository content source. Update the article rendering path, sitemap, tests, `doc/blog.md`, and both LLM files in the same change.
+- The blog index is lazy loaded and responsive. The Worker supplies route-specific title, description, canonical, index directive, Open Graph, Twitter-card, and JSON-LD `CollectionPage` metadata in the initial HTML. Angular mirrors this after client-side navigation.
+- Social sharing belongs on public article pages once articles exist. Use only the article's canonical HTTPS URL. Do not add comments without a separate moderation and privacy design.
+
+## 4. Data and security model
+
+- Supabase Auth identifies the user.
+- Postgres stores projects, tasks, tags, memberships, reminders, notifications, preferences, API tokens, and email-outbox data.
+- Row Level Security is the authorization boundary. A user may access their own resources and project data they are allowed to access through membership.
+- The browser receives only a Supabase publishable key. `SUPABASE_SECRET_KEY`, internal worker secrets, AWS credentials, and database credentials remain server-side.
+- Database migrations are ordered files in `supabase/migrations/`. Schema changes must be backward-compatible and additive whenever production clients may still run older code.
+
+## 5. Notifications and automation
+
+Tickist uses an outbox pattern for application email. The browser or a scheduled worker queues an email; a protected worker sends it through AWS SES and records its status.
+
+Important Edge Functions:
+
+- `task-reminder` and `task-reminder-runner`: create and process task reminders.
+- `routine-runner`: processes routine-reminder work.
+- `project-update` and `project-invite`: support shared-project changes and invitations.
+- `notification-digest-runner`: queues daily and weekly digests from notification preferences.
+- `enqueue-notification`: authenticated endpoint for adding an application email to the outbox.
+- `send-emails`: internal-secret-protected batch sender using AWS SES.
+- `tickist-mcp`: server-side integration surface for MCP clients.
+
+Schedulers and secrets are production infrastructure. Never expose an internal secret or an email-outbox payload to an unauthenticated client.
+
+## 6. Technical architecture
+
+```text
+Browser (Angular 21)
+  ├─ Supabase Auth / PostgREST / Realtime / Storage
+  │    └─ Postgres with RLS and migrations
+  └─ Edge Functions
+       └─ AWS SES for application email
+
+Cloudflare Worker
+  ├─ serves the single-page application
+  ├─ provides runtime browser configuration at /env.js
+  └─ exposes the dedicated /mcp endpoint
+```
+
+The codebase is an Nx workspace. `apps/tickist-web` is the active Angular app; `apps/tickist-web-e2e` contains Playwright journeys. Unit tests use Vitest. Production builds are served through the Cloudflare Worker defined in `apps/tickist-web/worker.ts`.
+
+## 7. Local development and test safety
+
+- `npm run start` ensures the local Supabase project is running, then serves Tickist on port 4200.
+- Local Supabase defaults to API port 54321, Postgres 54322, Studio 54323, and Inbucket 54324.
+- E2E uses `SUPABASE_E2E_DB_URL` and resets that database in setup and teardown.
+- E2E refuses to reset a database matching `SUPABASE_REMOTE_DB_URL`. It also refuses the regular local development database unless the developer explicitly sets `E2E_ALLOW_LOCAL_DB_RESET=true`; that exception is limited to localhost.
+- The standard CI browser command is `npx nx e2e tickist-web-e2e -- --project=chromium`.
+
+## 8. Public metadata and documentation policy
+
+- `robots.txt` and `sitemap.xml` live in `apps/tickist-web/public/` and are deployed as root assets.
+- The sitemap contains only public, indexable pages: the landing page plus the English and Polish blog indexes. Add article URLs only after their public route and canonical metadata are implemented.
+- `llm.txt` is the concise LLM discovery file; this file is its complete reference.
+- Repository knowledge for coding agents lives in the root `doc/` directory. Read `doc/README.md` before changing a documented area.
+- When a feature changes, update the relevant `doc/` page, `llm.txt`, and `llm-full.txt`. When a public route changes, update `sitemap.xml` and `robots.txt` in the same change.

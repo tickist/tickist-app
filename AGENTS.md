@@ -1,44 +1,117 @@
-# Repository Guidelines
+# Tickist agent guide
 
-## Project Structure & Module Organization
+## Scope and source of truth
 
-Work inside `apps/tickist-web/`. Angular sources live in `apps/tickist-web/src/app` (features: auth, app-shell, dashboard, tags, task-fab, etc.; shared helpers under `core`; data access in `data` with Supabase services/guards/toasts). Supabase migrations and edge functions live in root `supabase/` (`migrations/`, `functions/` restored from backup). Legacy directories have been removed; only the current app is maintained.
+Tickist is an Angular 21 + Supabase task-management application in an Nx workspace. Work in `apps/tickist-web/` unless the task is explicitly about E2E, database migrations, Edge Functions, or repository documentation.
 
-## Build, Test, and Development Commands
+| Area                   | Location                                  |
+| ---------------------- | ----------------------------------------- |
+| Angular application    | `apps/tickist-web/src/app/`               |
+| Playwright E2E         | `apps/tickist-web-e2e/`                   |
+| Database migrations    | `supabase/migrations/`                    |
+| Edge Functions         | `supabase/functions/`                     |
+| Public static metadata | `apps/tickist-web/public/`                |
+| Public blog            | `apps/tickist-web/src/app/features/blog/` |
+| LLM knowledge base     | `doc/` and `/llm.txt`, `/llm-full.txt`    |
 
-- `npm run start` (or `npx nx serve tickist-web`) – dev server on 4200; auto-loads `.local_env` so NG*APP*\* and DB URLs are set.
-- `npm run build` / `npx nx build tickist-web` – Vite build to `dist/tickist-web`.
-- `npm run test` / `npx nx test tickist-web` – Vitest via `@analogjs/vitest-angular`.
-- `npx nx e2e tickist-web-e2e` – Playwright UI flows (auth, dashboard, tasks). Use `.local_env.e2e` or `.env.e2e` with dedicated `SUPABASE_E2E_DB_URL`.
-- Supabase: `db:push:*`, `db:pull:*`, `db:types:*`, `db:reset:*`, plus `supabase:start|stop|status`; always target `.local_env` (local) or `.env` (remote) to avoid WSL collisions.
+Read the relevant page in `doc/` before changing an established product area. Source code, migrations, and tests remain the final authority when documentation is stale.
 
-## Coding Style & Naming Conventions
+## Product and route boundaries
 
-Angular 20 standalone only—no NgModules. Prefer signals first; bridge to RxJS when streams are required. Use 2-space indent, PascalCase for components/services, camelCase for variables, snake_case for DB columns. Styling is Tailwind + DaisyUI; favor utility classes and `@apply` for reuse. Keep the Tickist dark palette; add light themes via `tailwind.config.ts` when approved. Forms and modals should stay keyboard-accessible and responsive down to mobile.
+- `/` is the public landing page.
+- `/:locale/blog` is a public, indexable blog index. Supported locales are explicit; currently `en` and `pl`.
+- `/auth/**` is transactional authentication and recovery UI.
+- `/app/**` is an authenticated, user-private workspace.
+- `/mcp` and `/env.js` are technical endpoints.
 
-### Lint Guardrails (must follow)
+Never treat private routes, user data, API endpoints, or password-recovery URLs as public crawlable content.
 
-- In Angular templates use built-in control flow only: `@if`, `@for`, `@switch`. Do not introduce `*ngIf`, `*ngFor`, or `*ngSwitch`.
-- Do not add `(click)` handlers to non-interactive elements unless they are keyboard-accessible too (`tabindex="0"` + Enter/Space handlers). Prefer semantic interactive elements (`button`) when possible.
-- Avoid `any` and non-null assertions (`!`) in TypeScript. Use explicit interfaces/types and guard values before use.
-- Remove unused imports/symbols immediately; keep `nx lint tickist-web` clean before finishing work.
+### Public blog content
 
-## Testing Guidelines
+- Blog content is repository-owned in `features/blog/blog-content.ts`; there is no CMS, admin panel, database persistence, or comments in the first version.
+- Each language has a separate editorial registry. Never auto-translate, share a translation key, or infer article equivalents between locale registries.
+- Before publishing a post, ensure its category, tags, canonical metadata, social-sharing URL, and sitemap policy are valid for that exact locale. Add `hreflang` only for intentionally linked language variants.
+- Read `doc/blog.md` before changing the blog schema, routes, metadata, or publication workflow.
 
-Cover services/guards/components with Vitest; stub Supabase via the official client helpers, not ad-hoc mocks. Avoid fake UI data—seed through `supabase/seed.sql` or fixtures. Playwright should exercise critical journeys (sign-up/sign-in/reset, project/task CRUD, tag filters, dashboard). Add regression tests when changing routing, auth, or data contracts.
+## Required documentation workflow
 
-## Commit & Pull Request Guidelines
+Documentation is part of every product change.
 
-Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`. Commits are imperative and scoped (`feat(tasks): color-code priority`) and should note schema or ENV impacts. Only create commits and push to GitHub when the user explicitly asks for it. PRs must mention updated sections of `MIGRATION_PLAN.md`, list touched Nx targets, and include screenshots/terminal output for UI or CLI changes. Run `nx format` + `nx lint` + `nx test` + `nx build` (or `nx affected …`) before review.
+When adding, changing, or removing user-facing functionality:
 
-## Configuration & Supabase
+1. update the relevant English document under `doc/`;
+2. update `apps/tickist-web/public/llm.txt` with the concise capability summary;
+3. update `apps/tickist-web/public/llm-full.txt` with the complete behaviour, data, route, or operational impact;
+4. update `README.md` when onboarding, commands, architecture, configuration, or public product positioning changes;
+5. add or update regression tests for the changed behaviour.
 
-Copy `.env.example` to `.env` (remote) and `.local_env` (local). For E2E, use a separate `.local_env.e2e` or `.env.e2e` file. Required keys: `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_DB_URL`, `SUPABASE_E2E_DB_URL`, `SUPABASE_REMOTE_DB_URL`, `SUPABASE_SECRET_KEY` (for backend scripts and edge functions), `INTERNAL_FUNCTION_SECRET` (internal header secret for cron/worker-triggered functions). Temporary rollout fallback keys: `SUPABASE_SERVICE_ROLE_KEY`, `ROUTINE_RUNNER_SECRET`, `SUPABASE_ANON_KEY`. E2E DB URL must point to a dedicated test database/branch and must not reuse local dev or remote shared DB URLs. All database changes must be backward compatible because the application is already running in production; avoid single-step breaking schema changes and prefer additive, phased migrations. Deploy edge functions with `npx supabase functions deploy <name>`. Never commit secrets. Update this guide when workflows or environments change.
+For a blog article or blog-schema change, also update `doc/blog.md` and describe the editorial/SEO contract in both LLM files.
 
-## Skills
+When adding, changing, or removing an indexable public route, also update:
 
-- Domyślnie stosuj zasady `caveman lite` w technicznych update'ach i odpowiedziach: bez filleru/hedgingu, ale z pełnymi zdaniami i całą treścią techniczną.
-- Pełny skill `caveman` ładuj tylko na wyraźną prośbę lub gdy przewidywany output przekracza około 2 tys. tokenów (instrukcja kosztuje ~949 tokenów inputu; zmierzona oszczędność outputu 35–50%). Jawnie aktywowany tryb trwa do wyłączenia; `full`/`ultra` tylko na prośbę. Kod, commity, PR-y, dokumentacja użytkowa, ostrzeżenia bezpieczeństwa i działania nieodwracalne pozostają w normalnym stylu.
+- `apps/tickist-web/public/sitemap.xml`;
+- `apps/tickist-web/public/robots.txt`;
+- `doc/public-content.md`.
+
+Do not list `/app/**`, `/auth/**`, `/mcp`, `/env.js`, user-generated paths, or secret-bearing paths in the sitemap. Keep all `doc/`, `llm.txt`, and `llm-full.txt` content in English and factual.
+
+## Local development and Nx
+
+- Use Node 20 and npm.
+- Start the app with `npm run start`; it verifies the local Tickist Supabase stack and serves port 4200.
+- Use Nx through the workspace package manager: `npm exec nx <target>` or `npx nx` where Playwright argument forwarding is required.
+- For workspace exploration, invoke `nx-workspace` first. For task execution, use `nx-run-tasks`. For scaffolding, invoke `nx-generate` before exploration.
+- Do not guess unfamiliar Nx flags. Check `--help` or the appropriate Nx documentation first.
+
+Useful commands:
+
+```bash
+npm exec nx lint tickist-web
+npm exec nx test tickist-web
+npm exec nx build tickist-web --configuration production
+npm exec nx lint tickist-web-e2e
+npx nx e2e tickist-web-e2e -- --project=chromium
+```
+
+## Supabase and security
+
+- `.local_env` is local; `.env` is remote; `.local_env.e2e` or `.env.e2e` is E2E. Do not commit any of them.
+- Use `SUPABASE_DB_URL` for local tooling and `SUPABASE_REMOTE_DB_URL` only for intentional remote operations.
+- E2E resets `SUPABASE_E2E_DB_URL`. It must not target the remote database. Reusing the normal local database requires the explicit, localhost-only `E2E_ALLOW_LOCAL_DB_RESET=true` opt-in.
+- Treat `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`, AWS credentials, and database passwords as server-side secrets. Never expose them in Angular, `/env.js`, logs, fixtures, or documentation examples with real values.
+- Add database changes as new numbered migrations. Keep them additive and backward-compatible; do not edit deployed migrations or create duplicate version prefixes.
+- RLS is the authorization boundary. Do not solve access problems by moving service-role credentials into client code.
+
+## Angular and code quality
+
+- Use Angular standalone components; do not introduce NgModules.
+- Prefer signals. Use RxJS only when a stream is the right abstraction.
+- Use 2-space indentation, PascalCase classes/components, camelCase TypeScript names, and snake_case database columns.
+- In templates use `@if`, `@for`, and `@switch`; do not introduce `*ngIf`, `*ngFor`, or `*ngSwitch`.
+- Prefer semantic interactive elements. A non-interactive element with a click handler must also be keyboard accessible, but a real `button` is usually correct.
+- Avoid `any`, non-null assertions, unused imports, and dead symbols. Keep `nx lint tickist-web` clean.
+- Preserve the Tickist dark visual language and responsive, keyboard-accessible sheets/forms.
+
+## Tests and verification
+
+- Use Vitest for services, guards, and components; use official Supabase client helpers rather than ad-hoc API mocks.
+- Use Playwright for critical user journeys: auth, projects, tasks, tags, dashboard, settings, reminders, and persistence.
+- Add a regression test whenever a route, auth rule, data contract, task/project interaction, or public metadata behaviour changes.
+- Before handoff, run validation proportional to the change. For app behaviour, normally run lint, focused unit tests, a production build, and relevant E2E. For documentation-only work, run formatting and `git diff --check`.
+
+## Git and delivery
+
+- Branch from `develop` using `rewrite/<feature>` or `supabase/<area>`.
+- Use imperative, scoped commits such as `feat(tasks): add completion badge`.
+- Only commit or push when the user explicitly asks.
+- Preserve unrelated work in a dirty tree. Never reset, discard, or rewrite user changes without explicit approval.
+- PR descriptions must mention migration-plan changes, touched Nx targets, and relevant CLI output or screenshots.
+
+## Communication and skills
+
+- Use caveman lite for technical updates: concise, complete sentences, no filler. Keep user documentation, commits, safety warnings, and irreversible actions in normal prose.
+- Announce a skill before using it. Read the entire `SKILL.md` before acting on a selected skill.
+- Explain the outcome first, then only the detail needed to verify it.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

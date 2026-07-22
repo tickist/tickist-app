@@ -5,6 +5,7 @@ import { redirectIfAuthenticatedGuard } from './features/auth/redirect-if-authen
 import { NotFoundComponent } from './features/not-found/not-found.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { AppViewportComponent } from './features/app-shell/app-viewport.component';
+import { blogLocaleGuard } from './features/blog/blog-locale.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -102,6 +103,14 @@ export const appRoutes: Route[] = [
     path: 'auth',
     loadChildren: () =>
       import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+  },
+  {
+    path: ':locale/blog',
+    canActivate: [blogLocaleGuard],
+    loadComponent: () =>
+      import('./features/blog/blog-index.component').then(
+        (m) => m.BlogIndexComponent
+      ),
   },
   {
     path: '**',

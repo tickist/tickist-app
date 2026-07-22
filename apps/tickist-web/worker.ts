@@ -36,6 +36,86 @@ const SECURITY_HEADERS: Record<string, string> = {
     'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
 };
 
+type BlogSeo = {
+  locale: 'en' | 'pl';
+  title: string;
+  description: string;
+  canonicalUrl: string;
+};
+
+const BLOG_SEO_BY_PATH: Readonly<Record<string, BlogSeo>> = {
+  '/en/blog': {
+    locale: 'en',
+    title: 'Tickist Blog | Practical task management',
+    description:
+      'Practical guides for calmer task management, focused projects, and sustainable productivity.',
+    canonicalUrl: 'https://tickist.com/en/blog',
+  },
+  '/pl/blog': {
+    locale: 'pl',
+    title: 'Blog Tickist | Spokojne zarządzanie zadaniami',
+    description:
+      'Praktyczne wskazówki o spokojniejszym zarządzaniu zadaniami, projektami i produktywności.',
+    canonicalUrl: 'https://tickist.com/pl/blog',
+  },
+};
+
+const withBlogMetadata = (response: Response, url: URL): Response => {
+  const normalizedPath = url.pathname.replace(/\/$/, '') || '/';
+  const blogSeo = BLOG_SEO_BY_PATH[normalizedPath];
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (!blogSeo || !contentType.includes('text/html')) {
+    return response;
+  }
+
+  return new HTMLRewriter()
+    .on('html', {
+      element: (element) => element.setAttribute('lang', blogSeo.locale),
+    })
+    .on('title', {
+      element: (element) => element.setInnerContent(blogSeo.title),
+    })
+    .on('meta[name="description"]', {
+      element: (element) =>
+        element.setAttribute('content', blogSeo.description),
+    })
+    .on('head', {
+      element: (element) => {
+        element.append(
+          `<link rel="canonical" href="${blogSeo.canonicalUrl}">` +
+            `<meta name="robots" content="index,follow,max-image-preview:large">` +
+            `<meta property="og:type" content="website">` +
+            `<meta property="og:site_name" content="Tickist">` +
+            `<meta property="og:title" content="${blogSeo.title}">` +
+            `<meta property="og:description" content="${blogSeo.description}">` +
+            `<meta property="og:url" content="${blogSeo.canonicalUrl}">` +
+            `<meta property="og:locale" content="${blogSeo.locale}">` +
+            `<meta name="twitter:card" content="summary">` +
+            `<meta name="twitter:title" content="${blogSeo.title}">` +
+            `<meta name="twitter:description" content="${blogSeo.description}">` +
+            `<script id="tickist-blog-structured-data" type="application/ld+json">${JSON.stringify(
+              {
+                '@context': 'https://schema.org',
+                '@type': 'CollectionPage',
+                name: blogSeo.title,
+                description: blogSeo.description,
+                url: blogSeo.canonicalUrl,
+                inLanguage: blogSeo.locale,
+                isPartOf: {
+                  '@type': 'WebSite',
+                  name: 'Tickist',
+                  url: 'https://tickist.com',
+                },
+              }
+            )}</script>`,
+          { html: true }
+        );
+      },
+    })
+    .transform(response);
+};
+
 const buildEnvPayload = (env: Env): Record<string, string> => ({
   NG_APP_SUPABASE_URL: env.NG_APP_SUPABASE_URL ?? '',
   NG_APP_SUPABASE_PUBLISHABLE_KEY:
@@ -210,9 +290,9 @@ export default {
     const assetResponse = await env.ASSETS.fetch(request);
     if (assetResponse.status === 404 && shouldServeHtmlFallback(request)) {
       const fallbackResponse = await fallbackToIndex(request, env);
-      return withSecurityHeaders(fallbackResponse);
+      return withSecurityHeaders(withBlogMetadata(fallbackResponse, url));
     }
 
-    return withSecurityHeaders(assetResponse);
+    return withSecurityHeaders(withBlogMetadata(assetResponse, url));
   },
 };

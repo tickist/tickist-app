@@ -1,0 +1,61 @@
+<main class="blog-shell">
+  <header class="blog-header">
+    <a
+      routerLink="/"
+      class="blog-brand"
+      [attr.aria-label]="content().navigation.homeLabel"
+    >
+      Tickist
+    </a>
+
+    <nav class="blog-language-nav" aria-label="Blog language">
+      @for (alternateLocale of otherLocales(); track alternateLocale) {
+      <a
+        [routerLink]="['/', alternateLocale, 'blog']"
+        [attr.lang]="alternateLocale"
+      >
+        {{ getBlogContent(alternateLocale).name }}
+      </a>
+      }
+    </nav>
+  </header>
+
+  <section class="blog-hero" aria-labelledby="blog-title">
+    <p class="blog-eyebrow">{{ content().name }} · Tickist</p>
+    <h1 id="blog-title">{{ content().title }}</h1>
+    <p>{{ content().description }}</p>
+  </section>
+
+  @if (content().posts.length > 0) {
+  <section class="blog-posts" aria-label="Blog posts">
+    @for (post of content().posts; track trackPost($index, post)) {
+    <article class="blog-post-card">
+      <p class="blog-post-card__meta">
+        {{ post.publishedAt | date : 'longDate' }} ·
+        {{ post.readingTimeMinutes }}
+        {{ content().emptyState.readingTimeLabel }}
+      </p>
+      <h2>
+        <a [routerLink]="['/', locale(), 'blog', post.slug]">
+          {{ post.title }}
+        </a>
+      </h2>
+      <p>{{ post.excerpt }}</p>
+    </article>
+    }
+  </section>
+  } @else {
+  <section class="blog-empty-state" aria-labelledby="blog-empty-title">
+    <p class="blog-empty-state__eyebrow">
+      {{ content().emptyState.eyebrow }}
+    </p>
+    <h2 id="blog-empty-title">{{ content().emptyState.title }}</h2>
+    <p>{{ content().emptyState.description }}</p>
+  </section>
+  }
+
+  <footer class="blog-footer">
+    <a routerLink="/">Tickist</a>
+    <a routerLink="/auth/signup">{{ content().navigation.signUpLabel }}</a>
+  </footer>
+</main>

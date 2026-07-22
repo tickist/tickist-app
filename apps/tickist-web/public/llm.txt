@@ -1,0 +1,38 @@
+# Tickist
+
+> Tickist is an open-source task and project workspace built with Angular and Supabase. It helps people collect work in an Inbox, organize it into projects, plan deadlines and reminders, and focus on the next useful action.
+
+## Product summary
+
+Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring work, reminders, collaboration, dashboards, statistics, notifications, backup/restore, and API tokens. It is a private workspace application: project, task, tag, team, settings, and API routes require an authenticated user.
+
+## Canonical knowledge
+
+- Full product and technical reference: [llm-full.txt](/llm-full.txt)
+- Feature reference for repository-aware tools: [product features](https://github.com/tickist/tickist-app/blob/develop/doc/product-features.md)
+- Architecture and data boundaries: [architecture](https://github.com/tickist/tickist-app/blob/develop/doc/architecture.md)
+- Server-side automation: [Edge Functions](https://github.com/tickist/tickist-app/blob/develop/doc/edge-functions.md)
+- Operations, local development, testing, and deployment: [operations](https://github.com/tickist/tickist-app/blob/develop/doc/operations.md)
+- Public web and crawler policy: [public content](https://github.com/tickist/tickist-app/blob/develop/doc/public-content.md)
+- Contributor instructions: [AGENTS.md](https://github.com/tickist/tickist-app/blob/develop/AGENTS.md)
+
+## Public web surface
+
+- Canonical public pages: `https://tickist.com/`, `https://tickist.com/en/blog`, and `https://tickist.com/pl/blog`.
+- The public blog is responsive, requires no sign-in, and has no posts, comments, CMS, or admin panel in its first release.
+- Blog content is code-reviewed repository content in `apps/tickist-web/src/app/features/blog/blog-content.ts`. English and Polish have independent post/category/tag registries; do not infer translations or link records automatically.
+- The Cloudflare Worker supplies canonical, robots, Open Graph, Twitter-card, and JSON-LD metadata for each blog language index before Angular runs.
+- Sitemap: `https://tickist.com/sitemap.xml`
+- Crawler policy: `https://tickist.com/robots.txt`
+- Authentication and user workspace routes are intentionally not public content.
+
+## Technology
+
+- Angular 21 standalone application with signals, Vite, Tailwind CSS, and DaisyUI
+- Supabase Postgres, Auth, Storage, Realtime, Row Level Security, and Edge Functions
+- Nx workspace with Vitest and Playwright
+- Cloudflare Worker deployment and AWS SES email delivery
+
+## Maintenance rule
+
+When a product capability changes, update the matching document in `doc/`, this concise file, and `llm-full.txt`. When a new public route is added, also update `sitemap.xml` and `robots.txt`.

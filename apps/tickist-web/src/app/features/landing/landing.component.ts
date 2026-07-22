@@ -1,4 +1,4 @@
-import { NgOptimizedImage } from '@angular/common';
+import { DOCUMENT, NgOptimizedImage } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
@@ -30,6 +30,7 @@ import {
 })
 export class LandingComponent {
   private readonly themeService = inject(ThemeService);
+  private readonly document = inject(DOCUMENT);
 
   readonly isDarkTheme = this.themeService.isDark;
   readonly brandLogoSrc = computed(() =>
@@ -37,6 +38,11 @@ export class LandingComponent {
   );
   readonly themeButtonLabel = computed(() =>
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
+  );
+  readonly blogLink = computed(() =>
+    this.document.documentElement.lang.toLowerCase().startsWith('pl')
+      ? '/pl/blog'
+      : '/en/blog'
   );
 
   readonly icons = {
