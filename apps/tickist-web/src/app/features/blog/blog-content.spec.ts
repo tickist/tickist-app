@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import {
   BLOG_CONTENT_BY_LOCALE,
+  findBlogArticle,
+  findBlogCategory,
   getBlogContent,
   isBlogLocale,
 } from './blog-content';
@@ -21,5 +23,12 @@ describe('blog content registry', () => {
     expect(isBlogLocale('pl')).toBe(true);
     expect(isBlogLocale('de')).toBe(false);
     expect(getBlogContent('en').pathPrefix).toBe('/en/blog');
+  });
+
+  test('does not infer articles or categories across locales', () => {
+    expect(findBlogArticle('en', 'missing')).toBeUndefined();
+    expect(findBlogCategory('pl', 'missing')).toBeUndefined();
+    expect(getBlogContent('en').posts).toEqual([]);
+    expect(getBlogContent('pl').posts).toEqual([]);
   });
 });

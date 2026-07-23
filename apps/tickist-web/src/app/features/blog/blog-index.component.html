@@ -22,25 +22,75 @@
 
   <section class="blog-hero" aria-labelledby="blog-title">
     <p class="blog-eyebrow">{{ content().name }} · Tickist</p>
-    <h1 id="blog-title">{{ content().title }}</h1>
-    <p>{{ content().description }}</p>
+    <h1 id="blog-title">{{ category()?.name ?? content().title }}</h1>
+    <p>{{ category()?.description ?? content().description }}</p>
   </section>
 
-  @if (content().posts.length > 0) {
+  @if (categories().length) {
+  <nav class="blog-taxonomy" aria-label="Blog categories">
+    <a
+      [routerLink]="content().pathPrefix"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      {{ content().navigation.allCategoriesLabel }}
+    </a>
+    @for (item of categories(); track item.slug) {
+    <a
+      [routerLink]="content().pathPrefix + '/category/' + item.slug"
+      routerLinkActive="active"
+    >
+      {{ item.name }}
+    </a>
+    }
+  </nav>
+  } @if (activeTag()) {
+  <div class="blog-active-filter">
+    <span>#{{ activeTag() }}</span>
+    <a [routerLink]="pagePath(1)">×</a>
+  </div>
+  } @if (invalid()) {
+  <section class="blog-empty-state">
+    <h2>{{ content().article.notFoundTitle }}</h2>
+    <p>{{ content().article.notFoundDescription }}</p>
+  </section>
+  } @else if (posts().length > 0) {
   <section class="blog-posts" aria-label="Blog posts">
-    @for (post of content().posts; track trackPost($index, post)) {
+    @for (post of posts(); track trackPost($index, post)) {
     <article class="blog-post-card">
-      <p class="blog-post-card__meta">
-        {{ post.publishedAt | date : 'longDate' }} ·
-        {{ post.readingTimeMinutes }}
-        {{ content().emptyState.readingTimeLabel }}
-      </p>
-      <h2>
-        <a [routerLink]="['/', locale(), 'blog', post.slug]">
-          {{ post.title }}
-        </a>
-      </h2>
-      <p>{{ post.excerpt }}</p>
+      <a [routerLink]="post.url" class="blog-post-card__cover" tabindex="-1">
+        <img
+          [src]="post.coverImage"
+          [alt]="post.coverImageAlt"
+          width="1200"
+          height="630"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+      <div class="blog-post-card__body">
+        <p class="blog-post-card__meta">
+          <a [routerLink]="content().pathPrefix + '/category/' + post.category">
+            {{ categoryName(post.category) }}
+          </a>
+          · {{ post.publishedAt | date : 'longDate' }} ·
+          {{ post.readingMinutes }}
+          {{ content().emptyState.readingTimeLabel }}
+        </p>
+        <h2>
+          <a [routerLink]="post.url">{{ post.title }}</a>
+        </h2>
+        <p>{{ post.description }}</p>
+        @if (post.tags.length) {
+        <div class="blog-tags">
+          @for (tag of post.tags; track tag) {
+          <a [routerLink]="content().pathPrefix" [queryParams]="{ tag }">
+            #{{ tag }}
+          </a>
+          }
+        </div>
+        }
+      </div>
     </article>
     }
   </section>
@@ -52,10 +102,21 @@
     <h2 id="blog-empty-title">{{ content().emptyState.title }}</h2>
     <p>{{ content().emptyState.description }}</p>
   </section>
+  } @if (pageCount() > 1) {
+  <nav class="blog-pagination" aria-label="Blog pages">
+    @if (page() > 1) {
+    <a [routerLink]="pagePath(page() - 1)">←</a>
+    }
+    <span>{{ page() }} / {{ pageCount() }}</span>
+    @if (page() < pageCount()) {
+    <a [routerLink]="pagePath(page() + 1)">→</a>
+    }
+  </nav>
   }
 
   <footer class="blog-footer">
     <a routerLink="/">Tickist</a>
+    <a [href]="'/' + locale() + '/blog/feed.xml'">RSS</a>
     <a routerLink="/auth/signup">{{ content().navigation.signUpLabel }}</a>
   </footer>
 </main>

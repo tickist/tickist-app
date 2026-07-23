@@ -60,10 +60,12 @@ Routes under `/app/**` are private and must not be listed in the public sitemap.
 ### Public blog
 
 - The public blog is implemented in `apps/tickist-web/src/app/features/blog/` and is available without authentication.
-- `blog-content.ts` is the repository-owned content registry. `en` and `pl` each own separate post, category, and tag arrays. There is no translation key, shared article database, or automatic localization between editions.
+- `apps/tickist-web/content/blog/` is the repository-owned Markdown source. `en` and `pl` each own separate articles and `categories.json`. There is no translation key, shared article database, or automatic localization between editions.
 - The first release has empty post registries. There is no CMS, administration panel, database-backed publishing flow, or comments.
-- A future post must be added in the matching locale registry with its slug, ISO dates, excerpt, category, tags, reading time, SEO title/description, and repository content source. Update the article rendering path, sitemap, tests, `doc/blog.md`, and both LLM files in the same change.
-- The blog index is lazy loaded and responsive. The Worker supplies route-specific title, description, canonical, index directive, Open Graph, Twitter-card, and JSON-LD `CollectionPage` metadata in the initial HTML. Angular mirrors this after client-side navigation.
+- `tools/scripts/generate-blog-content.mjs` validates front matter, renders and sanitizes Markdown, calculates reading time, and generates the Angular content registry, sitemap, robots rules, and per-locale RSS feeds. `npm run blog:check` rejects stale generated artifacts.
+- New Markdown defaults to `draft: true`; drafts are validated but excluded from public articles, sitemap, and RSS. `draft: false` is an explicit publication action.
+- Published posts are available at `/{locale}/blog/{slug}` with responsive article rendering, table of contents, category and tag navigation, native/link sharing, canonical and social metadata, and `BlogPosting` JSON-LD. Category archives and pagination use the same generated registry.
+- The Cloudflare Worker injects generated route-specific metadata into initial SPA HTML and applies security headers. Angular mirrors that metadata after client navigation.
 - Social sharing belongs on public article pages once articles exist. Use only the article's canonical HTTPS URL. Do not add comments without a separate moderation and privacy design.
 
 ## 4. Data and security model
@@ -118,7 +120,7 @@ The codebase is an Nx workspace. `apps/tickist-web` is the active Angular app; `
 ## 8. Public metadata and documentation policy
 
 - `robots.txt` and `sitemap.xml` live in `apps/tickist-web/public/` and are deployed as root assets.
-- The sitemap contains only public, indexable pages: the landing page plus the English and Polish blog indexes. Add article URLs only after their public route and canonical metadata are implemented.
+- The generated sitemap contains only public, indexable pages: the landing page, both blog indexes, published articles, populated category archives, and required pagination routes. Drafts never appear.
 - `llm.txt` is the concise LLM discovery file; this file is its complete reference.
 - Repository knowledge for coding agents lives in the root `doc/` directory. Read `doc/README.md` before changing a documented area.
 - When a feature changes, update the relevant `doc/` page, `llm.txt`, and `llm-full.txt`. When a public route changes, update `sitemap.xml` and `robots.txt` in the same change.

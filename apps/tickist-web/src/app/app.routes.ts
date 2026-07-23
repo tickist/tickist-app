@@ -113,6 +113,38 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: ':locale/blog/page/:page',
+    canActivate: [blogLocaleGuard],
+    loadComponent: () =>
+      import('./features/blog/blog-index.component').then(
+        (m) => m.BlogIndexComponent
+      ),
+  },
+  {
+    path: ':locale/blog/category/:categorySlug/page/:page',
+    canActivate: [blogLocaleGuard],
+    loadComponent: () =>
+      import('./features/blog/blog-index.component').then(
+        (m) => m.BlogIndexComponent
+      ),
+  },
+  {
+    path: ':locale/blog/category/:categorySlug',
+    canActivate: [blogLocaleGuard],
+    loadComponent: () =>
+      import('./features/blog/blog-index.component').then(
+        (m) => m.BlogIndexComponent
+      ),
+  },
+  {
+    path: ':locale/blog/:slug',
+    canActivate: [blogLocaleGuard],
+    loadComponent: () =>
+      import('./features/blog/blog-article.component').then(
+        (m) => m.BlogArticleComponent
+      ),
+  },
+  {
     path: '**',
     component: NotFoundComponent,
   },

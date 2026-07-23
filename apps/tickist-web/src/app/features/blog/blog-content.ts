@@ -1,73 +1,78 @@
-/**
- * Repository-owned public blog content.
- *
- * Each locale owns an independent registry. Do not add translation keys or
- * infer an equivalent post in another locale: an English post and a Polish
- * post are separate editorial records, even when they cover a similar topic.
- */
+import { GENERATED_BLOG_CONTENT } from './blog-content.generated';
+
 export const BLOG_LOCALES = ['en', 'pl'] as const;
+export const BLOG_PAGE_SIZE = 12;
 
 export type BlogLocale = (typeof BLOG_LOCALES)[number];
 
+export interface BlogHeading {
+  readonly depth: 2 | 3;
+  readonly id: string;
+  readonly text: string;
+}
+
 export interface BlogCategory {
-  slug: string;
-  name: string;
-  description: string;
-}
-
-export interface BlogTag {
-  slug: string;
-  name: string;
-}
-
-export interface BlogPostSeo {
-  title: string;
-  description: string;
-  imageUrl?: string;
-  noIndex?: boolean;
+  readonly locale: BlogLocale;
+  readonly slug: string;
+  readonly name: string;
+  readonly description: string;
 }
 
 export interface BlogPost {
-  slug: string;
-  title: string;
-  excerpt: string;
-  publishedAt: string;
-  updatedAt?: string;
-  readingTimeMinutes: number;
-  categorySlug: string;
-  tagSlugs: readonly string[];
-  seo: BlogPostSeo;
-  /** Repository-relative Markdown source for the article body. */
-  sourcePath: string;
+  readonly locale: BlogLocale;
+  readonly slug: string;
+  readonly title: string;
+  readonly description: string;
+  readonly publishedAt: string;
+  readonly updatedAt: string | null;
+  readonly readingMinutes: number;
+  readonly category: string;
+  readonly tags: readonly string[];
+  readonly coverImage: string;
+  readonly coverImageAlt: string;
+  readonly bodyHtml: string;
+  readonly headings: readonly BlogHeading[];
+  readonly url: string;
+}
+
+export interface BlogGeneratedContent {
+  readonly articles: readonly BlogPost[];
+  readonly categories: readonly BlogCategory[];
 }
 
 export interface BlogLocaleContent {
-  locale: BlogLocale;
-  name: string;
-  pathPrefix: `/${BlogLocale}/blog`;
-  title: string;
-  description: string;
-  emptyState: {
-    eyebrow: string;
-    title: string;
-    description: string;
-    readingTimeLabel: string;
+  readonly locale: BlogLocale;
+  readonly name: string;
+  readonly pathPrefix: `/${BlogLocale}/blog`;
+  readonly title: string;
+  readonly description: string;
+  readonly emptyState: {
+    readonly eyebrow: string;
+    readonly title: string;
+    readonly description: string;
+    readonly readingTimeLabel: string;
   };
-  navigation: {
-    homeLabel: string;
-    signUpLabel: string;
+  readonly navigation: {
+    readonly homeLabel: string;
+    readonly signUpLabel: string;
+    readonly allCategoriesLabel: string;
+    readonly backToBlogLabel: string;
   };
-  categories: readonly BlogCategory[];
-  tags: readonly BlogTag[];
-  posts: readonly BlogPost[];
+  readonly article: {
+    readonly updatedLabel: string;
+    readonly contentsLabel: string;
+    readonly shareLabel: string;
+    readonly copyLabel: string;
+    readonly copiedLabel: string;
+    readonly notFoundTitle: string;
+    readonly notFoundDescription: string;
+  };
+  readonly categories: readonly BlogCategory[];
+  readonly posts: readonly BlogPost[];
 }
 
-/**
- * Add posts, categories, and tags to the matching locale only. A locale's
- * arrays are deliberately separate to keep editorial calendars independent.
- */
-export const BLOG_CONTENT_BY_LOCALE: Readonly<
-  Record<BlogLocale, BlogLocaleContent>
+const LOCALE_UI: Readonly<
+  Record<BlogLocale, Omit<BlogLocaleContent, 'categories' | 'posts'>>
 > = {
   en: {
     locale: 'en',
@@ -86,10 +91,19 @@ export const BLOG_CONTENT_BY_LOCALE: Readonly<
     navigation: {
       homeLabel: 'Tickist home',
       signUpLabel: 'Create a free workspace',
+      allCategoriesLabel: 'All articles',
+      backToBlogLabel: 'Back to the blog',
     },
-    categories: [],
-    tags: [],
-    posts: [],
+    article: {
+      updatedLabel: 'Updated',
+      contentsLabel: 'On this page',
+      shareLabel: 'Share',
+      copyLabel: 'Copy link',
+      copiedLabel: 'Copied',
+      notFoundTitle: 'Article not found',
+      notFoundDescription:
+        'This article does not exist or is not published in the English edition.',
+    },
   },
   pl: {
     locale: 'pl',
@@ -108,10 +122,42 @@ export const BLOG_CONTENT_BY_LOCALE: Readonly<
     navigation: {
       homeLabel: 'Strona główna Tickist',
       signUpLabel: 'Utwórz darmową przestrzeń',
+      allCategoriesLabel: 'Wszystkie artykuły',
+      backToBlogLabel: 'Wróć do bloga',
     },
-    categories: [],
-    tags: [],
-    posts: [],
+    article: {
+      updatedLabel: 'Aktualizacja',
+      contentsLabel: 'Na tej stronie',
+      shareLabel: 'Udostępnij',
+      copyLabel: 'Kopiuj link',
+      copiedLabel: 'Skopiowano',
+      notFoundTitle: 'Nie znaleziono artykułu',
+      notFoundDescription:
+        'Ten artykuł nie istnieje albo nie został opublikowany w polskiej wersji.',
+    },
+  },
+};
+
+export const BLOG_CONTENT_BY_LOCALE: Readonly<
+  Record<BlogLocale, BlogLocaleContent>
+> = {
+  en: {
+    ...LOCALE_UI.en,
+    categories: GENERATED_BLOG_CONTENT.categories.filter(
+      (category) => category.locale === 'en'
+    ),
+    posts: GENERATED_BLOG_CONTENT.articles.filter(
+      (article) => article.locale === 'en'
+    ),
+  },
+  pl: {
+    ...LOCALE_UI.pl,
+    categories: GENERATED_BLOG_CONTENT.categories.filter(
+      (category) => category.locale === 'pl'
+    ),
+    posts: GENERATED_BLOG_CONTENT.articles.filter(
+      (article) => article.locale === 'pl'
+    ),
   },
 };
 
@@ -121,4 +167,20 @@ export function isBlogLocale(value: string | null): value is BlogLocale {
 
 export function getBlogContent(locale: BlogLocale): BlogLocaleContent {
   return BLOG_CONTENT_BY_LOCALE[locale];
+}
+
+export function findBlogArticle(
+  locale: BlogLocale,
+  slug: string
+): BlogPost | undefined {
+  return getBlogContent(locale).posts.find((post) => post.slug === slug);
+}
+
+export function findBlogCategory(
+  locale: BlogLocale,
+  slug: string
+): BlogCategory | undefined {
+  return getBlogContent(locale).categories.find(
+    (category) => category.slug === slug
+  );
 }

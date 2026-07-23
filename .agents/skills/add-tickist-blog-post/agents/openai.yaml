@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Add Tickist Blog Post'
+  short_description: 'Create a localized Tickist Markdown draft'
+  default_prompt: 'Use $add-tickist-blog-post to create a repository-backed Tickist blog draft from the provided Markdown without publishing it.'

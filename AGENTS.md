@@ -28,7 +28,8 @@ Never treat private routes, user data, API endpoints, or password-recovery URLs 
 
 ### Public blog content
 
-- Blog content is repository-owned in `features/blog/blog-content.ts`; there is no CMS, admin panel, database persistence, or comments in the first version.
+- Blog source is repository-owned Markdown under `apps/tickist-web/content/blog/`; `features/blog/blog-content.generated.ts` is generated output. There is no CMS, admin panel, database persistence, or comments in the first version.
+- Use the repository-local `add-tickist-blog-post` skill for importing supplied Markdown. Keep new entries as drafts unless publication is explicit.
 - Each language has a separate editorial registry. Never auto-translate, share a translation key, or infer article equivalents between locale registries.
 - Before publishing a post, ensure its category, tags, canonical metadata, social-sharing URL, and sitemap policy are valid for that exact locale. Add `hreflang` only for intentionally linked language variants.
 - Read `doc/blog.md` before changing the blog schema, routes, metadata, or publication workflow.

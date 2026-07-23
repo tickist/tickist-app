@@ -19,9 +19,10 @@ Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring wor
 ## Public web surface
 
 - Canonical public pages: `https://tickist.com/`, `https://tickist.com/en/blog`, and `https://tickist.com/pl/blog`.
-- The public blog is responsive, requires no sign-in, and has no posts, comments, CMS, or admin panel in its first release.
-- Blog content is code-reviewed repository content in `apps/tickist-web/src/app/features/blog/blog-content.ts`. English and Polish have independent post/category/tag registries; do not infer translations or link records automatically.
-- The Cloudflare Worker supplies canonical, robots, Open Graph, Twitter-card, and JSON-LD metadata for each blog language index before Angular runs.
+- The public blog is responsive, requires no sign-in, and has no comments, CMS, or admin panel.
+- Blog content is code-reviewed Markdown in `apps/tickist-web/content/blog/`. English and Polish have independent article/category/tag collections; do not infer translations or link records automatically.
+- Draft Markdown is excluded from public output. Published articles are generated into locale article routes, category/tag navigation, RSS, sitemap entries, and sanitized HTML with canonical, Open Graph, Twitter-card, and JSON-LD metadata.
+- The Cloudflare Worker injects generated blog metadata into initial SPA HTML; Angular mirrors it after client navigation.
 - Sitemap: `https://tickist.com/sitemap.xml`
 - Crawler policy: `https://tickist.com/robots.txt`
 - Authentication and user workspace routes are intentionally not public content.

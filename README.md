@@ -54,9 +54,9 @@ The UI source lives in `apps/tickist-web/src/app/`. Its main areas are `auth`, `
 
 ## Public blog
 
-The public blog is available at `/en/blog` and `/pl/blog`. Both language editions have independent repository-owned post, category, and tag registries; they are not automatic translations of one another. The first release intentionally has no posts, comments, CMS, or administration panel.
+The public blog is available at `/en/blog` and `/pl/blog`. Both language editions have independent repository-owned Markdown, category, and tag catalogues; they are not automatic translations of one another. The first release intentionally has no comments, CMS, or administration panel.
 
-Add future articles through a reviewed code change in `apps/tickist-web/src/app/features/blog/blog-content.ts`. Follow [the blog content guide](doc/blog.md) for the locale boundary, taxonomy, canonical metadata, social sharing, and sitemap requirements.
+Add articles under `apps/tickist-web/content/blog/{en|pl}/`, then run `npm run blog:generate` and `npm run blog:check`. Drafts remain outside public output until `draft: false`. Follow [the blog content guide](doc/blog.md) for the front matter, locale boundary, taxonomy, article images, canonical metadata, RSS, and sitemap requirements.
 
 ## Prerequisites
 

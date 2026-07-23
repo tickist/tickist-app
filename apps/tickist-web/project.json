@@ -9,6 +9,7 @@
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
+      "dependsOn": ["blog-content"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/tickist-web",
@@ -23,6 +24,12 @@
         }
       },
       "defaultConfiguration": "development"
+    },
+    "blog-content": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run blog:check"
+      }
     },
     "serve": {
       "continuous": true,

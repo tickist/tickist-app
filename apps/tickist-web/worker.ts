@@ -1,3 +1,5 @@
+import { GENERATED_BLOG_CONTENT } from './src/app/features/blog/blog-content.generated';
+
 type AssetFetcher = {
   fetch: (request: Request) => Promise<Response>;
 };
@@ -36,79 +38,251 @@ const SECURITY_HEADERS: Record<string, string> = {
     'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
 };
 
+type BlogLocale = 'en' | 'pl';
+
 type BlogSeo = {
-  locale: 'en' | 'pl';
+  locale: BlogLocale;
   title: string;
   description: string;
   canonicalUrl: string;
+  robots: string;
+  type: 'website' | 'article';
+  image?: string;
+  imageAlt?: string;
+  jsonLd: readonly Record<string, unknown>[];
 };
 
-const BLOG_SEO_BY_PATH: Readonly<Record<string, BlogSeo>> = {
-  '/en/blog': {
-    locale: 'en',
+const BLOG_INDEX: Readonly<
+  Record<BlogLocale, { title: string; description: string }>
+> = {
+  en: {
     title: 'Tickist Blog | Practical task management',
     description:
       'Practical guides for calmer task management, focused projects, and sustainable productivity.',
-    canonicalUrl: 'https://tickist.com/en/blog',
   },
-  '/pl/blog': {
-    locale: 'pl',
+  pl: {
     title: 'Blog Tickist | Spokojne zarządzanie zadaniami',
     description:
       'Praktyczne wskazówki o spokojniejszym zarządzaniu zadaniami, projektami i produktywności.',
-    canonicalUrl: 'https://tickist.com/pl/blog',
   },
 };
 
-const withBlogMetadata = (response: Response, url: URL): Response => {
-  const normalizedPath = url.pathname.replace(/\/$/, '') || '/';
-  const blogSeo = BLOG_SEO_BY_PATH[normalizedPath];
-  const contentType = response.headers.get('content-type') ?? '';
+const escapeHtml = (value: string): string =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 
-  if (!blogSeo || !contentType.includes('text/html')) {
-    return response;
+export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
+  const normalizedPath = url.pathname.replace(/\/$/, '') || '/';
+  const match = /^\/(en|pl)\/blog(?:\/(.*))?$/.exec(normalizedPath);
+  if (!match) {
+    return undefined;
+  }
+  const locale = match[1] as BlogLocale;
+  const suffix = match[2] ?? '';
+  const index = BLOG_INDEX[locale];
+  const basePath = `/${locale}/blog`;
+  const localeArticles = GENERATED_BLOG_CONTENT.articles.filter(
+    (article) => article.locale === locale
+  );
+  const baseJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: index.title,
+    description: index.description,
+    url: `https://tickist.com${normalizedPath}`,
+    inLanguage: locale,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Tickist',
+      url: 'https://tickist.com',
+    },
+  };
+
+  if (!suffix || /^page\/\d+$/.test(suffix)) {
+    const page = suffix ? Number(suffix.slice('page/'.length)) : 1;
+    const pageCount = Math.max(1, Math.ceil(localeArticles.length / 12));
+    const invalidPage =
+      !Number.isInteger(page) || (!!suffix && page < 2) || page > pageCount;
+    return {
+      locale,
+      title: index.title,
+      description: index.description,
+      canonicalUrl: `https://tickist.com${normalizedPath}`,
+      robots:
+        url.searchParams.has('tag') || invalidPage
+          ? 'noindex,follow'
+          : 'index,follow,max-image-preview:large',
+      type: 'website',
+      jsonLd: [baseJsonLd],
+    };
   }
 
+  const categoryMatch = /^category\/([^/]+)(?:\/page\/\d+)?$/.exec(suffix);
+  if (categoryMatch) {
+    const category = GENERATED_BLOG_CONTENT.categories.find(
+      (item) => item.locale === locale && item.slug === categoryMatch[1]
+    );
+    if (!category) {
+      return {
+        locale,
+        title: index.title,
+        description: index.description,
+        canonicalUrl: `https://tickist.com${basePath}`,
+        robots: 'noindex,follow',
+        type: 'website',
+        jsonLd: [],
+      };
+    }
+    const categoryPageMatch = /\/page\/(\d+)$/.exec(suffix);
+    const categoryPage = categoryPageMatch ? Number(categoryPageMatch[1]) : 1;
+    const categoryPageCount = Math.max(
+      1,
+      Math.ceil(
+        localeArticles.filter((article) => article.category === category.slug)
+          .length / 12
+      )
+    );
+    return {
+      locale,
+      title: `${category.name} | ${index.title}`,
+      description: category.description,
+      canonicalUrl: `https://tickist.com${normalizedPath}`,
+      robots:
+        (categoryPageMatch && categoryPage < 2) ||
+        categoryPage > categoryPageCount
+          ? 'noindex,follow'
+          : 'index,follow,max-image-preview:large',
+      type: 'website',
+      jsonLd: [
+        {
+          ...baseJsonLd,
+          '@type': 'CollectionPage',
+          name: category.name,
+          description: category.description,
+        },
+      ],
+    };
+  }
+
+  const article = GENERATED_BLOG_CONTENT.articles.find(
+    (item) => item.locale === locale && item.slug === suffix
+  );
+  if (!article) {
+    return {
+      locale,
+      title: index.title,
+      description: index.description,
+      canonicalUrl: `https://tickist.com${basePath}`,
+      robots: 'noindex,follow',
+      type: 'website',
+      jsonLd: [],
+    };
+  }
+  const category = GENERATED_BLOG_CONTENT.categories.find(
+    (item) => item.locale === locale && item.slug === article.category
+  );
+  const published = `${article.publishedAt}T00:00:00Z`;
+  const modified = article.updatedAt
+    ? `${article.updatedAt}T00:00:00Z`
+    : published;
+  return {
+    locale,
+    title: `${article.title} | Tickist`,
+    description: article.description,
+    canonicalUrl: `https://tickist.com${article.url}`,
+    robots: 'index,follow,max-image-preview:large',
+    type: 'article',
+    image: `https://tickist.com${article.coverImage}`,
+    imageAlt: article.coverImageAlt,
+    jsonLd: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: article.title,
+        description: article.description,
+        image: `https://tickist.com${article.coverImage}`,
+        datePublished: published,
+        dateModified: modified,
+        inLanguage: locale,
+        mainEntityOfPage: `https://tickist.com${article.url}`,
+        author: {
+          '@type': 'Organization',
+          name: 'Tickist Team',
+          url: 'https://tickist.com',
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Tickist',
+          url: 'https://tickist.com',
+        },
+        articleSection: category?.name ?? article.category,
+        keywords: article.tags.join(', '),
+      },
+    ],
+  };
+};
+
+const withBlogMetadata = (response: Response, url: URL): Response => {
+  const seo = blogSeoForUrl(url);
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!seo || !contentType.includes('text/html')) {
+    return response;
+  }
+  const image = seo.image ?? 'https://tickist.com/icons/icon-512x512.png';
+  const jsonLd = seo.jsonLd
+    .map(
+      (entry) =>
+        `<script data-blog-json-ld="true" type="application/ld+json">${JSON.stringify(
+          entry
+        ).replace(/</g, '\\u003c')}</script>`
+    )
+    .join('');
   return new HTMLRewriter()
     .on('html', {
-      element: (element) => element.setAttribute('lang', blogSeo.locale),
+      element: (element) => element.setAttribute('lang', seo.locale),
     })
     .on('title', {
-      element: (element) => element.setInnerContent(blogSeo.title),
+      element: (element) => element.setInnerContent(seo.title),
     })
     .on('meta[name="description"]', {
-      element: (element) =>
-        element.setAttribute('content', blogSeo.description),
+      element: (element) => element.setAttribute('content', seo.description),
     })
     .on('head', {
       element: (element) => {
         element.append(
-          `<link rel="canonical" href="${blogSeo.canonicalUrl}">` +
-            `<meta name="robots" content="index,follow,max-image-preview:large">` +
-            `<meta property="og:type" content="website">` +
-            `<meta property="og:site_name" content="Tickist">` +
-            `<meta property="og:title" content="${blogSeo.title}">` +
-            `<meta property="og:description" content="${blogSeo.description}">` +
-            `<meta property="og:url" content="${blogSeo.canonicalUrl}">` +
-            `<meta property="og:locale" content="${blogSeo.locale}">` +
-            `<meta name="twitter:card" content="summary">` +
-            `<meta name="twitter:title" content="${blogSeo.title}">` +
-            `<meta name="twitter:description" content="${blogSeo.description}">` +
-            `<script id="tickist-blog-structured-data" type="application/ld+json">${JSON.stringify(
-              {
-                '@context': 'https://schema.org',
-                '@type': 'CollectionPage',
-                name: blogSeo.title,
-                description: blogSeo.description,
-                url: blogSeo.canonicalUrl,
-                inLanguage: blogSeo.locale,
-                isPartOf: {
-                  '@type': 'WebSite',
-                  name: 'Tickist',
-                  url: 'https://tickist.com',
-                },
-              }
-            )}</script>`,
+          `<link rel="canonical" href="${escapeHtml(seo.canonicalUrl)}">` +
+            `<link rel="alternate" type="application/rss+xml" href="/${
+              seo.locale
+            }/blog/feed.xml" title="${escapeHtml(
+              seo.locale === 'pl' ? 'Blog Tickist RSS' : 'Tickist Blog RSS'
+            )}">` +
+            `<meta name="robots" content="${seo.robots}">` +
+            `<meta property="og:type" content="${seo.type}">` +
+            '<meta property="og:site_name" content="Tickist">' +
+            `<meta property="og:title" content="${escapeHtml(seo.title)}">` +
+            `<meta property="og:description" content="${escapeHtml(
+              seo.description
+            )}">` +
+            `<meta property="og:url" content="${escapeHtml(
+              seo.canonicalUrl
+            )}">` +
+            `<meta property="og:locale" content="${
+              seo.locale === 'pl' ? 'pl_PL' : 'en_US'
+            }">` +
+            `<meta property="og:image" content="${escapeHtml(image)}">` +
+            `<meta property="og:image:alt" content="${escapeHtml(
+              seo.imageAlt ?? seo.title
+            )}">` +
+            '<meta name="twitter:card" content="summary_large_image">' +
+            `<meta name="twitter:title" content="${escapeHtml(seo.title)}">` +
+            `<meta name="twitter:description" content="${escapeHtml(
+              seo.description
+            )}">` +
+            `<meta name="twitter:image" content="${escapeHtml(image)}">` +
+            jsonLd,
           { html: true }
         );
       },
@@ -172,10 +346,7 @@ const withSecurityHeaders = (response: Response): Response => {
 
 const MCP_MAX_BODY_BYTES = 64 * 1024; // 64 KB limit for MCP requests
 
-const proxyMcp = async (
-  request: Request,
-  env: Env
-): Promise<Response> => {
+const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
   // CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
@@ -201,16 +372,14 @@ const proxyMcp = async (
   // Resolve the Supabase Functions URL
   const functionsUrl =
     env.NG_APP_SUPABASE_FUNCTIONS_URL ||
-    (env.NG_APP_SUPABASE_URL
-      ? `${env.NG_APP_SUPABASE_URL}/functions/v1`
-      : '');
+    (env.NG_APP_SUPABASE_URL ? `${env.NG_APP_SUPABASE_URL}/functions/v1` : '');
 
   if (!functionsUrl) {
     return withSecurityHeaders(
-      new Response(
-        JSON.stringify({ error: 'MCP endpoint not configured.' }),
-        { status: 502, headers: { 'Content-Type': 'application/json' } }
-      )
+      new Response(JSON.stringify({ error: 'MCP endpoint not configured.' }), {
+        status: 502,
+        headers: { 'Content-Type': 'application/json' },
+      })
     );
   }
 
@@ -221,10 +390,10 @@ const proxyMcp = async (
   );
   if (contentLength > MCP_MAX_BODY_BYTES) {
     return withSecurityHeaders(
-      new Response(
-        JSON.stringify({ error: 'Request body too large.' }),
-        { status: 413, headers: { 'Content-Type': 'application/json' } }
-      )
+      new Response(JSON.stringify({ error: 'Request body too large.' }), {
+        status: 413,
+        headers: { 'Content-Type': 'application/json' },
+      })
     );
   }
 
@@ -241,9 +410,7 @@ const proxyMcp = async (
 
   // Supabase edge functions require apikey header
   const apiKey =
-    env.NG_APP_SUPABASE_PUBLISHABLE_KEY ||
-    env.NG_APP_SUPABASE_ANON_KEY ||
-    '';
+    env.NG_APP_SUPABASE_PUBLISHABLE_KEY || env.NG_APP_SUPABASE_ANON_KEY || '';
   if (apiKey) {
     upstreamHeaders.set('apikey', apiKey);
   }
@@ -266,10 +433,10 @@ const proxyMcp = async (
     return withSecurityHeaders(response);
   } catch {
     return withSecurityHeaders(
-      new Response(
-        JSON.stringify({ error: 'Failed to reach MCP backend.' }),
-        { status: 502, headers: { 'Content-Type': 'application/json' } }
-      )
+      new Response(JSON.stringify({ error: 'Failed to reach MCP backend.' }), {
+        status: 502,
+        headers: { 'Content-Type': 'application/json' },
+      })
     );
   }
 };
