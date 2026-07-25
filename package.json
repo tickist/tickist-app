@@ -51,7 +51,7 @@
     "zone.js": "~0.16.0"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.2.0",
+    "@analogjs/vite-plugin-angular": "^2.6.4",
     "@analogjs/vitest-angular": "^2.2.0",
     "@angular-devkit/build-angular": "21.2.19",
     "@angular-devkit/core": "21.2.19",
@@ -61,7 +61,7 @@
     "@angular/compiler-cli": "21.2.18",
     "@angular/language-service": "21.2.18",
     "@eslint/js": "^9.39.2",
-    "@nx/angular": "22.7.7",
+    "@nx/angular": "23.1.0",
     "@nx/devkit": "22.7.7",
     "@nx/eslint": "22.7.7",
     "@nx/eslint-plugin": "22.7.7",
@@ -90,7 +90,7 @@
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
     "nx": "22.7.7",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.23",
     "postcss-nesting": "^13.0.2",
     "prettier": "^2.8.8",
     "tailwindcss": "^3.4.19",
