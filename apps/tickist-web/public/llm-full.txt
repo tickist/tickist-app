@@ -116,6 +116,8 @@ The codebase is an Nx workspace. `apps/tickist-web` is the active Angular app; `
 - E2E uses `SUPABASE_E2E_DB_URL` and resets that database in setup and teardown.
 - E2E refuses to reset a database matching `SUPABASE_REMOTE_DB_URL`. It also refuses the regular local development database unless the developer explicitly sets `E2E_ALLOW_LOCAL_DB_RESET=true`; that exception is limited to localhost.
 - The standard CI browser command is `npx nx e2e tickist-web-e2e -- --project=chromium`.
+- `npm run demo:seed` validates a deterministic English demo dataset without connecting to Supabase. The marked Maya Chen account contains 30 projects, 200 tasks, and exactly 40 completed tasks; applying it requires an administrative secret, and remote writes require a matching project reference plus explicit confirmation.
+- `npm run db:backup:remote` creates an authenticated, encrypted local disaster-recovery archive containing logical database, Auth, migration and Storage data plus physical Storage objects. The tool verifies the complete archive after creation and never automates destructive restore or retention deletion.
 
 ## 8. Public metadata and documentation policy
 

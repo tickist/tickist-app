@@ -6,6 +6,8 @@
 
 Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring work, reminders, collaboration, dashboards, statistics, notifications, backup/restore, and API tokens. It is a private workspace application: project, task, tag, team, settings, and API routes require an authenticated user.
 
+Repository operators can generate a deterministic English demo account with 30 projects and 200 tasks under strict Auth-marker and project-confirmation guards. They can also create locally encrypted, authenticated Supabase disaster-recovery archives containing database, Auth, migration, Storage metadata, and physical Storage objects.
+
 ## Canonical knowledge
 
 - Full product and technical reference: [llm-full.txt](/llm-full.txt)

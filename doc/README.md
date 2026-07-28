@@ -8,8 +8,10 @@ This directory is the English, repository-native knowledge base for coding agent
 2. [Architecture](architecture.md) — frontend, data, security, and integration boundaries.
 3. [Edge Functions](edge-functions.md) — server-side automation endpoints and their access model.
 4. [Operations](operations.md) — local development, tests, database workflow, and deployment.
-5. [Public content](public-content.md) — sitemap, robots, LLM files, and indexing rules.
-6. [Public blog](blog.md) — repository-authored multilingual blog, taxonomy, and SEO rules.
+5. [Demo data seeding](demo-data-seeding.md) — deterministic English demonstration account and safety controls.
+6. [Encrypted database backups](encrypted-database-backups.md) — complete Supabase export, encryption, and recovery contract.
+7. [Public content](public-content.md) — sitemap, robots, LLM files, and indexing rules.
+8. [Public blog](blog.md) — repository-authored multilingual blog, taxonomy, and SEO rules.
 
 ## Maintenance contract
 

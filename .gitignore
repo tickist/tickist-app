@@ -34,6 +34,9 @@ yarn-error.log
 testem.log
 /typings
 .env*
+!.env.example
+!.env.demo.example
+!.env.backup.example
 .local_env
 .local_env.e2e
 .mcp.json
@@ -62,6 +65,7 @@ supabase/.temp/
 
 backup_from_firebase/*
 reports/firebase-migration/*
+/backups/
 
 .nx/polygraph
 .claude/worktrees

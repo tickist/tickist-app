@@ -33,6 +33,11 @@ Use `npm run db:push:local`, `db:pull:local`, `db:types:local`, and `db:reset:lo
 
 Treat remote resets as destructive. Production schema changes belong in a new, numbered, backward-compatible migration. Never reuse an existing migration number and do not edit a migration that has already been shared.
 
+Repository-managed operator tools also provide a deterministic English demo account and encrypted disaster-recovery backups:
+
+- [Demo data seeding](demo-data-seeding.md)
+- [Encrypted database backups](encrypted-database-backups.md)
+
 ## E2E isolation
 
 Playwright resets `SUPABASE_E2E_DB_URL`, not the normal application database. It rejects a target matching `SUPABASE_REMOTE_DB_URL`. It also rejects the normal local database unless `E2E_ALLOW_LOCAL_DB_RESET=true` is intentionally set; the opt-in only permits localhost.

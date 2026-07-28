@@ -173,6 +173,21 @@ npm run db:types:remote
 
 After changing the schema, reset the local stack if needed, regenerate types, and add a new numbered migration. Do not rename or edit a migration that has already reached a shared environment.
 
+### Demo account and encrypted backups
+
+Tickist includes guarded operator tools for a deterministic English demo account and complete encrypted Supabase backups:
+
+```bash
+npm run demo:seed
+npm run demo:seed:test
+npm run db:backup:test
+npm run db:backup:remote
+```
+
+The demo dry run makes no connection. Applying it requires an administrative Supabase secret and explicit remote-project confirmation; replacement additionally requires the exact marked demo email. Backups include Postgres, Auth, migration history, Storage metadata, and physical Storage objects, then authenticate and verify the encrypted archive.
+
+Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backups](doc/encrypted-database-backups.md) before applying either operator workflow.
+
 ## Environment and secrets
 
 `.env.example` documents the supported variables. The important groups are:
@@ -182,7 +197,7 @@ After changing the schema, reset the local stack if needed, regenerate types, an
 | Browser app                | `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, optional `NG_APP_SUPABASE_FUNCTIONS_URL` |
 | Local database tooling     | `SUPABASE_DB_URL`                                                                                  |
 | E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                   |
-| Remote tooling             | `SUPABASE_REMOTE_DB_URL`                                                                           |
+| Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                   |
 | Edge Functions and workers | `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`                                                  |
 | Email delivery             | `EMAIL_FROM`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                           |
 
