@@ -1,4 +1,9 @@
-import { Component, computed, inject } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { TaskDataService, type Task } from '../../data/task-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SlicePipe } from '@angular/common';
@@ -12,6 +17,7 @@ import { AppViewStateService } from '../app-shell/app-view-state.service';
   standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SlicePipe, RouterLink, TaskListComponent],
 })
 export class DashboardComponent {

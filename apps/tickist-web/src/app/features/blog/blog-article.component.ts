@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -25,6 +26,7 @@ const SITE_ORIGIN = 'https://tickist.com';
   selector: 'app-blog-article',
   imports: [RouterLink],
   templateUrl: './blog-article.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './blog-article.component.css',
 })
 export class BlogArticleComponent {

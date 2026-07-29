@@ -118,7 +118,7 @@
     color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
-.landing-button lucide-icon {
+.landing-button ng-icon {
   width: 1.1rem;
   height: 1.1rem;
 }
@@ -242,7 +242,7 @@
   gap: 0.4rem;
 }
 
-.landing-proof lucide-icon {
+.landing-proof ng-icon {
   width: 0.95rem;
   color: var(--color-success);
 }
@@ -395,7 +395,7 @@
   text-align: left;
 }
 
-.preview-nav-item lucide-icon {
+.preview-nav-item ng-icon {
   width: 0.9rem;
 }
 .preview-nav-item span {
@@ -470,7 +470,7 @@
   color: var(--landing-muted);
 }
 
-.preview-main__header lucide-icon {
+.preview-main__header ng-icon {
   width: 0.9rem;
 }
 
@@ -631,7 +631,7 @@
   color: var(--color-primary);
 }
 
-.landing-preview__float lucide-icon {
+.landing-preview__float ng-icon {
   width: 1rem;
 }
 .landing-preview__float strong,
@@ -768,9 +768,9 @@
   color: var(--color-primary);
 }
 
-.feature-card__icon lucide-icon,
-.workflow-steps__icon lucide-icon,
-.landing-cta__icon lucide-icon {
+.feature-card__icon ng-icon,
+.workflow-steps__icon ng-icon,
+.landing-cta__icon ng-icon {
   width: 1.35rem;
 }
 .feature-card__icon--blue {
@@ -948,7 +948,7 @@
   border-radius: 1.2rem;
   background: var(--color-base-100);
 }
-.landing-open-source__mark lucide-icon {
+.landing-open-source__mark ng-icon {
   width: 2.3rem;
   height: 2.3rem;
 }

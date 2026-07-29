@@ -31,10 +31,10 @@
         [attr.title]="themeButtonLabel()"
         (click)="toggleTheme()"
       >
-        <lucide-icon
-          [name]="isDarkTheme() ? icons.Sun : icons.Moon"
+        <ng-icon
+          [svg]="isDarkTheme() ? icons.Sun : icons.Moon"
           class="h-4 w-4"
-        ></lucide-icon>
+        ></ng-icon>
       </button>
     </div>
   </header>
@@ -60,7 +60,7 @@
       <div class="landing-hero__actions">
         <a routerLink="/auth/signup" class="landing-button">
           Start planning for free
-          <lucide-icon [name]="icons.ArrowRight"></lucide-icon>
+          <ng-icon [svg]="icons.ArrowRight"></ng-icon>
         </a>
         <a routerLink="/auth" class="landing-button landing-button--ghost">
           Open your workspace
@@ -69,15 +69,15 @@
 
       <ul class="landing-proof" aria-label="Product highlights">
         <li>
-          <lucide-icon [name]="icons.CheckCircle2"></lucide-icon>
+          <ng-icon [svg]="icons.CheckCircle2"></ng-icon>
           Free to use
         </li>
         <li>
-          <lucide-icon [name]="icons.CheckCircle2"></lucide-icon>
+          <ng-icon [svg]="icons.CheckCircle2"></ng-icon>
           Works on every device
         </li>
         <li>
-          <lucide-icon [name]="icons.CheckCircle2"></lucide-icon>
+          <ng-icon [svg]="icons.CheckCircle2"></ng-icon>
           Your data stays yours
         </li>
       </ul>
@@ -102,12 +102,12 @@
             type="button"
             class="preview-nav-item preview-nav-item--active"
           >
-            <lucide-icon [name]="icons.LayoutDashboard"></lucide-icon>
+            <ng-icon [svg]="icons.LayoutDashboard"></ng-icon>
             Today
             <span>4</span>
           </button>
           <button type="button" class="preview-nav-item">
-            <lucide-icon [name]="icons.Inbox"></lucide-icon>
+            <ng-icon [svg]="icons.Inbox"></ng-icon>
             Inbox
             <span>7</span>
           </button>
@@ -133,7 +133,7 @@
               <h2>Good afternoon</h2>
             </div>
             <button type="button" aria-label="Search preview">
-              <lucide-icon [name]="icons.Search"></lucide-icon>
+              <ng-icon [svg]="icons.Search"></ng-icon>
             </button>
           </div>
 
@@ -189,7 +189,7 @@
       </div>
 
       <div class="landing-preview__float">
-        <span><lucide-icon [name]="icons.Zap"></lucide-icon></span>
+        <span><ng-icon [svg]="icons.Zap"></ng-icon></span>
         <div>
           <strong>Focus protected</strong>
           <small>Only the next step, never the clutter.</small>
@@ -218,7 +218,7 @@
     <div class="feature-grid">
       <article class="feature-card feature-card--wide feature-card--primary">
         <div class="feature-card__icon">
-          <lucide-icon [name]="icons.ListTodo"></lucide-icon>
+          <ng-icon [svg]="icons.ListTodo"></ng-icon>
         </div>
         <div>
           <p class="feature-card__label">Daily clarity</p>
@@ -241,7 +241,7 @@
 
       <article class="feature-card">
         <div class="feature-card__icon feature-card__icon--blue">
-          <lucide-icon [name]="icons.FolderTree"></lucide-icon>
+          <ng-icon [svg]="icons.FolderTree"></ng-icon>
         </div>
         <p class="feature-card__label">Project thinking</p>
         <h3>From big outcomes to one doable action.</h3>
@@ -250,7 +250,7 @@
 
       <article class="feature-card">
         <div class="feature-card__icon feature-card__icon--green">
-          <lucide-icon [name]="icons.Repeat2"></lucide-icon>
+          <ng-icon [svg]="icons.Repeat2"></ng-icon>
         </div>
         <p class="feature-card__label">Reliable routines</p>
         <h3>Recurring work that resets itself.</h3>
@@ -263,7 +263,7 @@
       <article class="feature-card feature-card--wide feature-card--collab">
         <div>
           <div class="feature-card__icon feature-card__icon--rose">
-            <lucide-icon [name]="icons.Users"></lucide-icon>
+            <ng-icon [svg]="icons.Users"></ng-icon>
           </div>
           <p class="feature-card__label">Shared momentum</p>
           <h3>Plan alone. Deliver together.</h3>
@@ -290,7 +290,7 @@
       <li>
         <span class="workflow-steps__number">01</span>
         <div class="workflow-steps__icon">
-          <lucide-icon [name]="icons.Inbox"></lucide-icon>
+          <ng-icon [svg]="icons.Inbox"></ng-icon>
         </div>
         <h3>Capture everything</h3>
         <p>
@@ -301,7 +301,7 @@
       <li>
         <span class="workflow-steps__number">02</span>
         <div class="workflow-steps__icon">
-          <lucide-icon [name]="icons.Tag"></lucide-icon>
+          <ng-icon [svg]="icons.Tag"></ng-icon>
         </div>
         <h3>Make it actionable</h3>
         <p>Add a project, priority and date only when they help you decide.</p>
@@ -309,7 +309,7 @@
       <li>
         <span class="workflow-steps__number">03</span>
         <div class="workflow-steps__icon">
-          <lucide-icon [name]="icons.CalendarDays"></lucide-icon>
+          <ng-icon [svg]="icons.CalendarDays"></ng-icon>
         </div>
         <h3>Work from Today</h3>
         <p>
@@ -321,7 +321,7 @@
 
   <section id="open-source" class="landing-open-source">
     <div class="landing-open-source__mark">
-      <lucide-icon [name]="icons.Github"></lucide-icon>
+      <ng-icon [svg]="icons.Github"></ng-icon>
     </div>
     <div>
       <p class="landing-kicker">Open by design</p>
@@ -338,14 +338,14 @@
       class="landing-button landing-button--ghost"
     >
       View on GitHub
-      <lucide-icon [name]="icons.ArrowRight"></lucide-icon>
+      <ng-icon [svg]="icons.ArrowRight"></ng-icon>
     </a>
   </section>
 
   <section class="landing-cta">
     <div class="landing-cta__glow"></div>
     <div class="landing-cta__icon">
-      <lucide-icon [name]="icons.Shield"></lucide-icon>
+      <ng-icon [svg]="icons.Shield"></ng-icon>
     </div>
     <p class="landing-kicker">Your next action is clear</p>
     <h2>Build a system you can trust.</h2>
@@ -353,7 +353,7 @@
     <div class="landing-cta__actions">
       <a routerLink="/auth/signup" class="landing-button">
         Create your workspace
-        <lucide-icon [name]="icons.ArrowRight"></lucide-icon>
+        <ng-icon [svg]="icons.ArrowRight"></ng-icon>
       </a>
       <a routerLink="/auth" class="landing-button landing-button--ghost"
         >Log in</a

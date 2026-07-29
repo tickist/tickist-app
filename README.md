@@ -60,7 +60,7 @@ Add articles under `apps/tickist-web/content/blog/{en|pl}/`, then run `npm run b
 
 ## Prerequisites
 
-- Node.js **20**
+- Node.js **24** (at least 24.15)
 - npm
 - Docker Desktop or Docker Engine (required by Supabase CLI)
 - Supabase CLI — invoked through `npx`, so a global installation is optional

@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { ProjectPickerComponent, ProjectPickerItem } from './project-picker.component';
+import {
+  ProjectPickerComponent,
+  ProjectPickerItem,
+} from './project-picker.component';
 
 describe('ProjectPickerComponent', () => {
   let fixture: ComponentFixture<ProjectPickerComponent>;
@@ -40,6 +43,11 @@ describe('ProjectPickerComponent', () => {
         .querySelector('.project-picker__trigger .project-picker__icon')
         ?.getAttribute('style')
     ).toMatch(/14,\s*165,\s*233/);
+    expect(
+      fixture.nativeElement.querySelector(
+        '.project-picker__trigger ng-icon svg'
+      )
+    ).not.toBeNull();
   });
 
   it('filters results while keeping the parent-child context visible', () => {
@@ -107,7 +115,9 @@ function getOptionButtons(
 function optionLabels(options: HTMLButtonElement[]): string[] {
   return options.map(
     (option) =>
-      option.querySelector('.project-picker__option-text')?.textContent?.trim() ?? ''
+      option
+        .querySelector('.project-picker__option-text')
+        ?.textContent?.trim() ?? ''
   );
 }
 

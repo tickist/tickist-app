@@ -1,5 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, effect, inject } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import {
@@ -20,6 +26,7 @@ const SITE_ORIGIN = 'https://tickist.com';
   selector: 'app-blog-index',
   imports: [RouterLink, RouterLinkActive, DatePipe],
   templateUrl: './blog-index.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './blog-index.component.css',
 })
 export class BlogIndexComponent {

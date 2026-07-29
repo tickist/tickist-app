@@ -2,6 +2,9 @@
   "name": "@tickist/source",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=24.15.0 <25"
+  },
   "scripts": {
     "prestart": "npm run supabase:ensure",
     "start": "dotenv -e .local_env -- nx serve tickist-web --host 0.0.0.0",
@@ -52,15 +55,17 @@
     "@angular/platform-server": "22.0.8",
     "@angular/router": "22.0.8",
     "@angular/ssr": "22.0.8",
+    "@ng-icons/core": "^34.0.0",
+    "@ng-icons/lucide": "^34.0.0",
+    "@ng-icons/simple-icons": "^34.0.0",
     "@supabase/supabase-js": "^2.89.0",
     "express": "^4.22.2",
-    "lucide-angular": "^0.575.0",
     "rxjs": "~7.8.0",
     "zone.js": "0.16.2"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.2.0",
-    "@analogjs/vitest-angular": "^2.2.0",
+    "@analogjs/vite-plugin-angular": "^2.6.4",
+    "@analogjs/vitest-angular": "^2.6.4",
     "@angular-devkit/build-angular": "22.0.8",
     "@angular-devkit/core": "22.0.8",
     "@angular-devkit/schematics": "22.0.8",
@@ -78,6 +83,7 @@
     "@nx/vite": "23.1.0",
     "@nx/web": "23.1.0",
     "@nx/workspace": "23.1.0",
+    "@oxc-project/runtime": "^0.111.0",
     "@playwright/test": "^1.57.0",
     "@schematics/angular": "22.0.8",
     "@swc-node/register": "1.11.1",

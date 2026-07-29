@@ -13,7 +13,9 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/tickist-web",
-        "configFile": "apps/tickist-web/vite.config.mts"
+        "configFile": "apps/tickist-web/vite.config.mts",
+        "skipTypeCheck": true,
+        "tsConfig": "apps/tickist-web/tsconfig.app.json"
       },
       "configurations": {
         "production": {

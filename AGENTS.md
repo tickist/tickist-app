@@ -58,7 +58,7 @@ Do not list `/app/**`, `/auth/**`, `/mcp`, `/env.js`, user-generated paths, or s
 
 ## Local development and Nx
 
-- Use Node 20 and npm.
+- Use Node 24 (at least 24.15) and npm.
 - Start the app with `npm run start`; it verifies the local Tickist Supabase stack and serves port 4200.
 - Use Nx through the workspace package manager: `npm exec nx <target>` or `npx nx` where Playwright argument forwarding is required.
 - For workspace exploration, invoke `nx-workspace` first. For task execution, use `nx-run-tasks`. For scaffolding, invoke `nx-generate` before exploration.

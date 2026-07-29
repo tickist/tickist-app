@@ -1,4 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupabaseAuthService } from './supabase-auth.service';
 import { NgClass } from '@angular/common';
@@ -10,6 +16,7 @@ import { ThemeService } from '../../core/ui/theme.service';
   standalone: true,
   imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './auth-reset.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-reset.component.css',
 })
 export class AuthResetComponent {
