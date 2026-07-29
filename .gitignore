@@ -71,3 +71,5 @@ reports/firebase-migration/*
 .claude/worktrees
 .nx/self-healing
 .claude/settings.local.json
+
+.nx/migrate-runs
