@@ -4,6 +4,8 @@
 
 Tickist gives projects, priorities, and deadlines one calm home. The intended user outcome is not merely storing tasks; it is knowing which next action deserves attention.
 
+The public landing page also introduces [Spendist](https://spendist.app/), a related open-source application for tracking spending, recurring payments, and everyday personal finances.
+
 ## Public blog
 
 Tickist has a public, responsive blog for visitors who are not signed in. The blog indexes are available in English (`/en/blog`) and Polish (`/pl/blog`). Each language has an independent editorial catalogue: posts are not automatically translated or paired across languages.

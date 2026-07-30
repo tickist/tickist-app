@@ -28,6 +28,7 @@ Repository operators can generate a deterministic English demo account with 30 p
 - Sitemap: `https://tickist.com/sitemap.xml`
 - Crawler policy: `https://tickist.com/robots.txt`
 - Authentication and user workspace routes are intentionally not public content.
+- The landing page links to `https://spendist.app/`, a related open-source application for tracking spending, recurring payments, and personal finances.
 
 ## Technology
 

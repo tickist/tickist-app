@@ -57,6 +57,8 @@ The product is not a public content site or a generic file store. It is an authe
 
 Routes under `/app/**` are private and must not be listed in the public sitemap. Authentication pages are transactional routes, not content intended for search indexing.
 
+The bottom of the public landing page introduces Spendist, a related open-source application for tracking spending, recurring payments, and everyday personal finances, and links visitors to `https://spendist.app/`.
+
 ### Public blog
 
 - The public blog is implemented in `apps/tickist-web/src/app/features/blog/` and is available without authentication.
