@@ -1,4 +1,11 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 
 import {
@@ -21,6 +28,7 @@ import { ComposerModalService } from '../task-fab/composer-modal.service';
   standalone: true,
   imports: [ReactiveFormsModule, TaskListComponent, ProjectHeaderComponent],
   templateUrl: './app-shell.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app-shell.component.css',
 })
 export class AppShellComponent {

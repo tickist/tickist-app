@@ -1,0 +1,42 @@
+# Tickist
+
+> Tickist is an open-source task and project workspace built with Angular and Supabase. It helps people collect work in an Inbox, organize it into projects, plan deadlines and reminders, and focus on the next useful action.
+
+## Product summary
+
+Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring work, reminders, collaboration, dashboards, statistics, notifications, backup/restore, and API tokens. It is a private workspace application: project, task, tag, team, settings, and API routes require an authenticated user.
+
+Repository operators can generate a deterministic English demo account with 30 projects and 200 tasks under strict Auth-marker and project-confirmation guards. They can also create locally encrypted, authenticated Supabase disaster-recovery archives containing database, Auth, migration, Storage metadata, and physical Storage objects.
+
+## Canonical knowledge
+
+- Full product and technical reference: [llm-full.txt](/llm-full.txt)
+- Feature reference for repository-aware tools: [product features](https://github.com/tickist/tickist-app/blob/develop/doc/product-features.md)
+- Architecture and data boundaries: [architecture](https://github.com/tickist/tickist-app/blob/develop/doc/architecture.md)
+- Server-side automation: [Edge Functions](https://github.com/tickist/tickist-app/blob/develop/doc/edge-functions.md)
+- Operations, local development, testing, and deployment: [operations](https://github.com/tickist/tickist-app/blob/develop/doc/operations.md)
+- Public web and crawler policy: [public content](https://github.com/tickist/tickist-app/blob/develop/doc/public-content.md)
+- Contributor instructions: [AGENTS.md](https://github.com/tickist/tickist-app/blob/develop/AGENTS.md)
+
+## Public web surface
+
+- Canonical public pages: `https://tickist.com/`, `https://tickist.com/en/blog`, and `https://tickist.com/pl/blog`.
+- The public blog is responsive, requires no sign-in, and has no comments, CMS, or admin panel.
+- Blog content is code-reviewed Markdown in `apps/tickist-web/content/blog/`. English and Polish have independent article/category/tag collections; do not infer translations or link records automatically.
+- Draft Markdown is excluded from public output. Published articles are generated into locale article routes, category/tag navigation, RSS, sitemap entries, and sanitized HTML with canonical, Open Graph, Twitter-card, and JSON-LD metadata.
+- The Cloudflare Worker injects generated blog metadata into initial SPA HTML; Angular mirrors it after client navigation.
+- Sitemap: `https://tickist.com/sitemap.xml`
+- Crawler policy: `https://tickist.com/robots.txt`
+- Authentication and user workspace routes are intentionally not public content.
+- The landing page links to `https://spendist.app/`, a related open-source application for tracking spending, recurring payments, and personal finances.
+
+## Technology
+
+- Angular 21 standalone application with signals, Vite, Tailwind CSS, and DaisyUI
+- Supabase Postgres, Auth, Storage, Realtime, Row Level Security, and Edge Functions
+- Nx workspace with Vitest and Playwright
+- Cloudflare Worker deployment and AWS SES email delivery
+
+## Maintenance rule
+
+When a product capability changes, update the matching document in `doc/`, this concise file, and `llm-full.txt`. When a new public route is added, also update `sitemap.xml` and `robots.txt`.

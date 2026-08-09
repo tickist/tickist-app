@@ -5,6 +5,7 @@ import {
   inject,
   signal,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import {
   RouterOutlet,
@@ -35,6 +36,7 @@ import { environment } from '../../../environments/environment';
     TaskFabComponent,
   ],
   templateUrl: './app-viewport.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app-viewport.component.css',
 })
 export class AppViewportComponent implements OnDestroy {

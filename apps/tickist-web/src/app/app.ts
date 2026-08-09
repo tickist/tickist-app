@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PwaUpdateService } from './core/pwa/pwa-update.service';
 import { ToastContainerComponent } from './core/ui/toast-container.component';
@@ -7,6 +7,7 @@ import { ToastContainerComponent } from './core/ui/toast-container.component';
   imports: [RouterOutlet, ToastContainerComponent],
   selector: 'app-root',
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app.css',
 })
 export class App {

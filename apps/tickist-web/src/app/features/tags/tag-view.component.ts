@@ -1,4 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { TagDataService } from '../../data/tag-data.service';
 import { TaskDataService, Task } from '../../data/task-data.service';
@@ -10,6 +16,7 @@ import { AppViewStateService } from '../app-shell/app-view-state.service';
   standalone: true,
   imports: [UpperCasePipe, TaskListComponent],
   templateUrl: './tag-view.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tag-view.component.css',
 })
 export class TagViewComponent {

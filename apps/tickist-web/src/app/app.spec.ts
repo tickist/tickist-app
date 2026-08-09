@@ -22,4 +22,19 @@ describe('App', () => {
       compiled.querySelector('[data-testid="landing-title"]')?.textContent
     ).toContain('clear next action');
   });
+
+  it('should link to Spendist from the landing page', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const link = fixture.nativeElement.querySelector(
+      '[data-testid="spendist-link"]'
+    ) as HTMLAnchorElement | null;
+
+    expect(link?.href).toBe('https://spendist.app/');
+    expect(link?.textContent).toContain('Visit Spendist');
+  });
 });

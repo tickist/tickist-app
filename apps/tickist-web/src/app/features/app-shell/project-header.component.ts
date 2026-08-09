@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 import { Project } from '../../data/project-data.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
@@ -22,6 +29,7 @@ type FilterOption = 'all' | 'done' | 'not-done';
   standalone: true,
   imports: [ProjectIconComponent],
   templateUrl: './project-header.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './project-header.component.css',
 })
 export class ProjectHeaderComponent {

@@ -5,6 +5,7 @@ import {
   computed,
   inject,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
@@ -52,6 +53,7 @@ type ProjectTreeNode = {
   standalone: true,
   imports: [RouterLink, NgTemplateOutlet, ProjectIconComponent],
   templateUrl: './app-sidebar.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app-sidebar.component.css',
 })
 export class AppSidebarComponent {

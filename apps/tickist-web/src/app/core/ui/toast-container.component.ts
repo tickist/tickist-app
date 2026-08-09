@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { ToastMessage, ToastService } from './toast.service';
 
@@ -39,6 +39,7 @@ import { ToastMessage, ToastService } from './toast.service';
       }
     </section>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./toast-container.component.css'],
 })
 export class ToastContainerComponent {

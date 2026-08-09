@@ -10,6 +10,7 @@ import { appRoutes } from './app.routes';
 import {
   provideClientHydration,
   withEventReplay,
+  withNoIncrementalHydration,
 } from '@angular/platform-browser';
 import { provideSupabase } from './config/supabase.provider';
 import { environment } from '../environments/environment';
@@ -17,7 +18,7 @@ import { PasswordRecoveryFlowService } from './features/auth/password-recovery-f
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(withEventReplay(), withNoIncrementalHydration()),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(

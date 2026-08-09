@@ -137,7 +137,9 @@
           class="weekday-date"
           type="date"
           [value]="
-            dueDateFilter()?.mode === 'day' ? dueDateFilter()?.dateKey : ''
+            dueDateFilter()?.mode === 'day'
+              ? $safeNavigationMigration(dueDateFilter()?.dateKey)
+              : ''
           "
           (change)="selectSpecificDate($event)"
         />

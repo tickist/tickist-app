@@ -10,6 +10,7 @@ import {
   computed,
   inject,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 import {
@@ -18,10 +19,7 @@ import {
   TaskStep,
   TaskUpdateInput,
 } from '../../data/task-data.service';
-import {
-  Project,
-  ProjectDataService,
-} from '../../data/project-data.service';
+import { Project, ProjectDataService } from '../../data/project-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
@@ -48,6 +46,7 @@ let nextTaskCardId = 0;
   imports: [LinkifyPipe, ProjectPickerComponent],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(document:mousedown)': 'handleDocumentMouseDown($event)',
     '(document:keydown.escape)': 'handleEscapeKey()',
@@ -255,7 +254,9 @@ export class TaskCardComponent implements OnChanges {
       return `Reminders: ${this.task.reminderCount}`;
     }
 
-    return `Reminders: ${this.task.reminderCount}. Next: ${this.formatReminderDate(
+    return `Reminders: ${
+      this.task.reminderCount
+    }. Next: ${this.formatReminderDate(
       nextReminder.remindAt,
       nextReminder.timezone
     )}`;
@@ -411,10 +412,7 @@ export class TaskCardComponent implements OnChanges {
     return this.tagLookup().get(tagId)?.name ?? 'Tag';
   }
 
-  async addTag(
-    tagId: string,
-    successMessage = 'Tag added.'
-  ): Promise<boolean> {
+  async addTag(tagId: string, successMessage = 'Tag added.'): Promise<boolean> {
     if (!tagId || this.task.tags.includes(tagId)) {
       return false;
     }
@@ -516,7 +514,9 @@ export class TaskCardComponent implements OnChanges {
     if (!existing) {
       return 'Create tag';
     }
-    return this.task.tags.includes(existing.id) ? 'Already added' : 'Add existing';
+    return this.task.tags.includes(existing.id)
+      ? 'Already added'
+      : 'Add existing';
   }
 
   handleTagSearchEnter(event: Event): void {

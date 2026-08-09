@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import worker from '../worker';
+import worker, { blogSeoForUrl } from '../worker';
 
 /**
  * Tests for the Cloudflare Worker /mcp proxy route.
@@ -21,6 +21,27 @@ const buildEnv = (overrides: Partial<WorkerEnv> = {}): WorkerEnv => ({
   NG_APP_SUPABASE_PUBLISHABLE_KEY: 'test-publishable-key',
   NG_APP_SUPABASE_FUNCTIONS_URL: 'https://test.supabase.co/functions/v1',
   ...overrides,
+});
+
+describe('Worker blog metadata', () => {
+  it('derives index metadata and RSS discovery from the locale route', () => {
+    const seo = blogSeoForUrl(new URL('https://tickist.com/pl/blog'));
+
+    expect(seo?.locale).toBe('pl');
+    expect(seo?.canonicalUrl).toBe('https://tickist.com/pl/blog');
+    expect(seo?.robots).toContain('index,follow');
+    expect(seo?.jsonLd[0]?.['@type']).toBe('Blog');
+  });
+
+  it('keeps tag filters and unknown article paths out of the index', () => {
+    expect(
+      blogSeoForUrl(new URL('https://tickist.com/en/blog?tag=planning'))?.robots
+    ).toBe('noindex,follow');
+    expect(
+      blogSeoForUrl(new URL('https://tickist.com/en/blog/not-published'))
+        ?.robots
+    ).toBe('noindex,follow');
+  });
 });
 
 describe('Worker /env.js runtime config', () => {

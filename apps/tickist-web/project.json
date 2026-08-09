@@ -9,10 +9,13 @@
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
+      "dependsOn": ["blog-content"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/tickist-web",
-        "configFile": "apps/tickist-web/vite.config.mts"
+        "configFile": "apps/tickist-web/vite.config.mts",
+        "skipTypeCheck": true,
+        "tsConfig": "apps/tickist-web/tsconfig.app.json"
       },
       "configurations": {
         "production": {
@@ -23,6 +26,12 @@
         }
       },
       "defaultConfiguration": "development"
+    },
+    "blog-content": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run blog:check"
+      }
     },
     "serve": {
       "continuous": true,

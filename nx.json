@@ -60,5 +60,8 @@
     }
   },
   "defaultProject": "tickist-web",
-  "analytics": true
+  "analytics": true,
+  "migrate": {
+    "agentic": true
+  }
 }

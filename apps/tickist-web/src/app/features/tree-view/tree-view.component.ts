@@ -1,4 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { TaskDataService } from '../../data/task-data.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -24,6 +30,7 @@ interface TreeGroup {
   standalone: true,
   imports: [DatePipe, LinkifyPipe],
   templateUrl: './tree-view.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tree-view.component.css',
 })
 export class TreeViewComponent {

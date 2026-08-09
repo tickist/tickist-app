@@ -1,0 +1,135 @@
+@if (article(); as post) {
+<article class="article-shell">
+  <nav class="breadcrumbs" aria-label="Breadcrumbs">
+    <a routerLink="/">Tickist</a><span aria-hidden="true">/</span>
+    <a [routerLink]="content().pathPrefix">{{ content().title }}</a>
+  </nav>
+
+  <header class="article-header">
+    @if (category(); as item) {
+    <a
+      class="category"
+      [routerLink]="content().pathPrefix + '/category/' + item.slug"
+    >
+      {{ item.name }}
+    </a>
+    }
+    <h1>{{ post.title }}</h1>
+    <p class="lead">{{ post.description }}</p>
+    <div class="article-meta">
+      <span>Tickist Team</span>
+      <time [attr.datetime]="post.publishedAt">{{ post.publishedAt }}</time>
+      @if (post.updatedAt) {
+      <span>
+        {{ content().article.updatedLabel }}
+        <time [attr.datetime]="post.updatedAt">{{ post.updatedAt }}</time>
+      </span>
+      }
+      <span>
+        {{ post.readingMinutes }}
+        {{ content().emptyState.readingTimeLabel }}
+      </span>
+    </div>
+  </header>
+
+  <img
+    class="cover"
+    [src]="post.coverImage"
+    [alt]="post.coverImageAlt"
+    width="1200"
+    height="630"
+    fetchpriority="high"
+    decoding="sync"
+  />
+
+  <div class="article-layout">
+    <div>
+      <div class="article-body" [innerHTML]="post.bodyHtml"></div>
+
+      @if (post.tags.length) {
+      <div class="tags" aria-label="Tags">
+        @for (tag of post.tags; track tag) {
+        <a [routerLink]="content().pathPrefix" [queryParams]="{ tag }">
+          #{{ tag }}
+        </a>
+        }
+      </div>
+      }
+
+      <section class="share" [attr.aria-label]="content().article.shareLabel">
+        <span>{{ content().article.shareLabel }}</span>
+        @if (nativeShareAvailable) {
+        <button type="button" (click)="share()">
+          {{ content().article.shareLabel }}
+        </button>
+        }
+        <button type="button" (click)="copy()">
+          {{
+            copied()
+              ? content().article.copiedLabel
+              : content().article.copyLabel
+          }}
+        </button>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          [href]="
+            'https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl()
+          "
+        >
+          Facebook
+        </a>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          [href]="
+            'https://www.linkedin.com/sharing/share-offsite/?url=' +
+            encodedUrl()
+          "
+        >
+          LinkedIn
+        </a>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          [href]="
+            'https://twitter.com/intent/tweet?url=' +
+            encodedUrl() +
+            '&text=' +
+            encodedTitle()
+          "
+        >
+          X
+        </a>
+      </section>
+    </div>
+
+    @if (post.headings.length) {
+    <aside class="toc">
+      <strong>{{ content().article.contentsLabel }}</strong>
+      <ol>
+        @for (heading of post.headings; track heading.id) {
+        <li [class.nested]="heading.depth === 3">
+          <a [href]="'#' + heading.id">{{ heading.text }}</a>
+        </li>
+        }
+      </ol>
+    </aside>
+    }
+  </div>
+
+  <footer class="article-footer">
+    <a [routerLink]="content().pathPrefix">
+      ← {{ content().navigation.backToBlogLabel }}
+    </a>
+  </footer>
+</article>
+} @else {
+<section class="article-shell not-found">
+  <h1>{{ content().article.notFoundTitle }}</h1>
+  <p>{{ content().article.notFoundDescription }}</p>
+  <a [routerLink]="content().pathPrefix">
+    {{ content().navigation.backToBlogLabel }}
+  </a>
+</section>
+}

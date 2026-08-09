@@ -1,10 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ComposerModalService } from './composer-modal.service';
 
 @Component({
   selector: 'app-task-fab',
   imports: [],
   templateUrl: './task-fab.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './task-fab.component.css',
 })
 export class TaskFabComponent {

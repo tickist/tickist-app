@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { LucideAngularModule } from 'lucide-angular';
+import { NgIcon } from '@ng-icons/core';
 import {
   projectIconLabel,
   resolveProjectIconData,
@@ -7,7 +7,7 @@ import {
 
 @Component({
   selector: 'app-project-icon',
-  imports: [LucideAngularModule],
+  imports: [NgIcon],
   templateUrl: './project-icon.component.html',
   styleUrl: './project-icon.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

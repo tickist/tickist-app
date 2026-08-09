@@ -153,7 +153,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: '../../dist/tickist-web',
       emptyOutDir: true,
-      rollupOptions: {
+      rolldownOptions: {
         input: {
           main: resolve(__dirname, 'src/main.ts'),
           index: resolve(__dirname, 'index.html'),
