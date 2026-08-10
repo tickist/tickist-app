@@ -11,7 +11,7 @@ The product is not a public content site or a generic file store. It is an authe
 ### Projects
 
 - Each user has one Inbox project for uncategorised tasks.
-- Projects can be active, nested under another project, or organised into special sidebar groups such as Someday/Maybe, routine reminders, weekdays, and future work.
+- Projects can be active, nested under another project, or organised into special sidebar groups such as Someday/Maybe, routine reminders, weekdays, and future work. A selected project task list includes that project's tasks and every nested descendant by default. If descendants exist, independent checkboxes beside the selected project and each descendant temporarily include or exclude that project's own tasks; changing the selected project resets all of them to included.
 - Projects have a name, description, colour, icon, task-view preference, and defaults for task creation.
 - A project owner can invite collaborators. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
 

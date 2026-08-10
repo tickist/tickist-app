@@ -19,6 +19,10 @@ import { TaskDataService } from '../../data/task-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import {
+  buildHierarchy,
+  collectDescendantIds,
+} from '../../core/projects/project-tree';
 
 type NavSectionState = {
   inbox: boolean;
@@ -67,6 +71,7 @@ export class AppSidebarComponent {
 
   readonly projectList = computed(() => this.projectsService.list());
   readonly selectedProjectId = this.viewState.selectedProjectId;
+  readonly excludedProjectIds = this.viewState.excludedProjectIds;
   readonly taskList = computed(() => this.tasksService.list());
   readonly user = computed(() => this.session.user());
   readonly dueDateFilter = this.viewState.dueDateFilter;
@@ -198,6 +203,21 @@ export class AppSidebarComponent {
   readonly activeTree = computed(() => this.buildTree('active'));
   readonly somedayTree = computed(() => this.buildTree('someday'));
   readonly routineTree = computed(() => this.buildTree('routine'));
+  readonly selectedProjectDescendantIds = computed(() => {
+    const projectId = this.selectedProjectId();
+    if (!projectId) {
+      return new Set<string>();
+    }
+    return collectDescendantIds(buildHierarchy(this.projectList()), projectId);
+  });
+  readonly selectedProjectHierarchyIds = computed(() => {
+    const projectId = this.selectedProjectId();
+    const projectIds = new Set(this.selectedProjectDescendantIds());
+    if (projectId) {
+      projectIds.add(projectId);
+    }
+    return projectIds;
+  });
   readonly projectTaskCounts = computed(() => {
     const counts = new Map<string, number>();
     const inboxByOwner = new Map<string, string>();
@@ -298,6 +318,22 @@ export class AppSidebarComponent {
       return 0;
     }
     return this.projectTaskCounts().get(projectId) ?? 0;
+  }
+
+  shouldShowProjectTaskCheckbox(projectId: string): boolean {
+    return (
+      this.selectedProjectDescendantIds().size > 0 &&
+      this.selectedProjectHierarchyIds().has(projectId)
+    );
+  }
+
+  areProjectTasksIncluded(projectId: string): boolean {
+    return !this.excludedProjectIds().has(projectId);
+  }
+
+  setProjectTasksIncluded(projectId: string, event: Event): void {
+    const included = (event.target as HTMLInputElement).checked;
+    this.viewState.setProjectTasksIncluded(projectId, included);
   }
 
   isSharedProject(project: Project): boolean {
