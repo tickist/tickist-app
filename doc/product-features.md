@@ -16,6 +16,7 @@ Posts, categories, and tags are published from the repository rather than an adm
 
 - Each account has one Inbox for uncategorised tasks.
 - Projects can be nested to represent outcomes and their component work.
+- Selecting a project shows tasks from that project and all nested subprojects. When the selected project has descendants, independent checkboxes beside the selected project and each descendant can include or exclude that project's own tasks. All projects in the hierarchy are included by default, and the selection resets when the user moves to another project.
 - Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view.
 - The sidebar groups active work and special planning buckets such as Someday/Maybe, routine reminders, weekdays, and future work.
 - Project owners can share a project by invitation. Recipients accept or decline from the Team view; accepted members can leave shared projects.

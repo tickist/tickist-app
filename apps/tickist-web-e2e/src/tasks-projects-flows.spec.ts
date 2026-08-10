@@ -77,6 +77,24 @@ async function createProject(
   await expect(page.locator('app-project-composer')).toHaveCount(0);
 }
 
+async function createChildProject(
+  page: Page,
+  parentName: string,
+  childName: string
+): Promise<void> {
+  const menu = await openProjectContextMenu(page, parentName);
+  await menu.getByRole('button', { name: 'Create child project' }).click();
+
+  const composer = page.locator('app-project-composer');
+  await expect(composer).toBeVisible();
+  await composer.getByLabel('Project name').fill(childName);
+  await composer
+    .getByRole('textbox', { name: 'Description' })
+    .fill(`Child of ${parentName}`);
+  await composer.getByRole('button', { name: 'Save project' }).click();
+  await expect(composer).toHaveCount(0);
+}
+
 async function selectInbox(page: Page): Promise<void> {
   const inboxButton = page
     .locator('aside button.sidebar-link')
@@ -290,6 +308,58 @@ test('creates project and adds a task into that project', async ({
   await page.reload();
   await selectProjectByName(page, projectName);
   await expect(taskCardByName(page, taskName)).toBeVisible();
+});
+
+test('filters parent and subproject tasks with independent checkboxes', async ({
+  page,
+}, testInfo) => {
+  const suffix = uniqueSuffix(testInfo);
+  const parentName = `Parent ${suffix}`;
+  const childName = `Child ${suffix}`;
+  const parentTask = `Parent task ${suffix}`;
+  const childTask = `Child task ${suffix}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, parentName, 'Parent project');
+  await selectProjectByName(page, parentName);
+  await page.getByPlaceholder('What needs doing?').fill(parentTask);
+  await page.getByRole('button', { name: 'Add task' }).click();
+  await expect(taskCardByName(page, parentTask)).toBeVisible();
+
+  await createChildProject(page, parentName, childName);
+  await selectProjectByName(page, childName);
+  await page.getByPlaceholder('What needs doing?').fill(childTask);
+  await page.getByRole('button', { name: 'Add task' }).click();
+  await expect(taskCardByName(page, childTask)).toBeVisible();
+
+  await selectProjectByName(page, parentName);
+  const parentCheckbox = page.getByRole('checkbox', {
+    name: `Include tasks from ${parentName}`,
+  });
+  const childCheckbox = page.getByRole('checkbox', {
+    name: `Include tasks from ${childName}`,
+  });
+
+  await expect(parentCheckbox).toBeChecked();
+  await expect(childCheckbox).toBeChecked();
+  await expect(taskCardByName(page, parentTask)).toBeVisible();
+  await expect(taskCardByName(page, childTask)).toBeVisible();
+
+  await childCheckbox.uncheck();
+  await expect(taskCardByName(page, parentTask)).toBeVisible();
+  await expect(taskCardByName(page, childTask)).toHaveCount(0);
+
+  await childCheckbox.check();
+  await parentCheckbox.uncheck();
+  await expect(taskCardByName(page, parentTask)).toHaveCount(0);
+  await expect(taskCardByName(page, childTask)).toBeVisible();
+
+  await selectInbox(page);
+  await selectProjectByName(page, parentName);
+  await expect(parentCheckbox).toBeChecked();
+  await expect(childCheckbox).toBeChecked();
+  await expect(taskCardByName(page, parentTask)).toBeVisible();
+  await expect(taskCardByName(page, childTask)).toBeVisible();
 });
 
 test('shows completion date and sorts project tasks', async ({

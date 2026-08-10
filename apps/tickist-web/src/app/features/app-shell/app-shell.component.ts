@@ -22,6 +22,10 @@ import { TaskListComponent } from './task-list.component';
 import { ProjectHeaderComponent } from './project-header.component';
 import { ToastService } from '../../core/ui/toast.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
+import {
+  buildProjectTaskScope,
+  taskMatchesProjectScope,
+} from './project-task-scope';
 
 @Component({
   selector: 'app-shell',
@@ -54,6 +58,13 @@ export class AppShellComponent {
   readonly loadingProjects = this.projectsService.loadingSignal;
   readonly loadingTags = this.tagsService.loadingSignal;
   readonly selectedProjectId = this.viewState.selectedProjectId;
+  readonly includedProjectIds = computed(() =>
+    buildProjectTaskScope(
+      this.projectList(),
+      this.selectedProjectId(),
+      this.viewState.excludedProjectIds()
+    )
+  );
   readonly selectedTaskId = signal<string | null>(null);
   readonly searchTerm = this.viewState.searchTerm;
   readonly dueDateFilter = this.viewState.dueDateFilter;
@@ -107,11 +118,12 @@ export class AppShellComponent {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
     const dueFilter = this.dueDateFilter();
     const filtered = tasks.filter((task) => {
-      const matchesProject = projectId
-        ? projectId === inboxId
-          ? task.projectId === projectId || !task.projectId
-          : task.projectId === projectId
-        : true;
+      const matchesProject = taskMatchesProjectScope(
+        task,
+        projectId,
+        inboxId,
+        this.includedProjectIds()
+      );
       const matchesSearch = normalizedSearch
         ? task.name.toLowerCase().includes(normalizedSearch) ||
           (task.description ?? '').toLowerCase().includes(normalizedSearch)

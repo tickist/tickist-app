@@ -193,27 +193,44 @@
     (mouseleave)="onProjectLeave(node.project.id)"
   >
     <div class="project-row" [style.padding-left.px]="level * 12">
-      <button
-        type="button"
-        class="sidebar-subitem"
-        [class.text-primary]="selectedProjectId() === node.project.id"
-        (click)="selectProject(node.project.id)"
-      >
-        <span class="project-main">
-          <app-project-icon
-            [icon]="node.project.icon"
-            [size]="15"
-            [style.color]="node.project.color"
-          ></app-project-icon>
-          <span class="project-name">{{ node.project.name }}</span>
-          @if (isSharedProject(node.project)) {
-          <span class="project-shared-badge" title="Shared list">Shared</span>
-          }
-        </span>
-        <span class="project-count">{{
-          projectTaskCount(node.project.id)
-        }}</span>
-      </button>
+      <div class="project-selection">
+        @if (shouldShowProjectTaskCheckbox(node.project.id)) {
+        <label
+          class="project-task-visibility"
+          [title]="'Include tasks from ' + node.project.name"
+        >
+          <input
+            type="checkbox"
+            class="checkbox checkbox-primary checkbox-xs"
+            [checked]="areProjectTasksIncluded(node.project.id)"
+            [attr.aria-label]="'Include tasks from ' + node.project.name"
+            (click)="$event.stopPropagation()"
+            (change)="setProjectTasksIncluded(node.project.id, $event)"
+          />
+        </label>
+        }
+        <button
+          type="button"
+          class="sidebar-subitem"
+          [class.text-primary]="selectedProjectId() === node.project.id"
+          (click)="selectProject(node.project.id)"
+        >
+          <span class="project-main">
+            <app-project-icon
+              [icon]="node.project.icon"
+              [size]="15"
+              [style.color]="node.project.color"
+            ></app-project-icon>
+            <span class="project-name">{{ node.project.name }}</span>
+            @if (isSharedProject(node.project)) {
+            <span class="project-shared-badge" title="Shared list">Shared</span>
+            }
+          </span>
+          <span class="project-count">{{
+            projectTaskCount(node.project.id)
+          }}</span>
+        </button>
+      </div>
       @if (hoveredProjectId() === node.project.id || menuProjectId() ===
       node.project.id) {
       <div class="project-options">

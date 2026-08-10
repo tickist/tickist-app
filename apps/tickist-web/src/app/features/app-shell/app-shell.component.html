@@ -63,6 +63,7 @@
         <app-task-list
           [tasks]="filteredTasks()"
           [project]="project"
+          [projectResolver]="projectForTaskList"
           [viewMode]="project.taskView === 'simple' ? 'simple' : 'extended'"
           emptyText="No tasks yet. Add one below."
         ></app-task-list>

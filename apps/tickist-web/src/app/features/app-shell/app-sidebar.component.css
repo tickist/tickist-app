@@ -73,6 +73,14 @@
   min-width: 0;
 }
 
+.project-selection {
+  @apply flex min-w-0 items-center gap-1;
+}
+
+.project-task-visibility {
+  @apply flex shrink-0 cursor-pointer items-center justify-center;
+}
+
 .project-main {
   @apply flex min-w-0 flex-1 items-center gap-2;
 }
