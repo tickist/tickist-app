@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  signal,
+} from '@angular/core';
 
 import { Project } from '../../data/project-data.service';
 import { Task } from '../../data/task-data.service';
@@ -20,6 +25,7 @@ export class TaskListComponent {
   readonly projectResolver = input<TaskProjectResolver | null>(null);
   readonly viewMode = input<TaskViewMode>('extended');
   readonly emptyText = input('No tasks yet.');
+  readonly openMenuTaskId = signal<string | null>(null);
 
   projectFor(task: Task): Project | null {
     const resolver = this.projectResolver();
@@ -28,5 +34,15 @@ export class TaskListComponent {
 
   trackTask(_index: number, task: Task): string {
     return task.id;
+  }
+
+  setTaskMenuOpen(taskId: string, open: boolean): void {
+    if (open) {
+      this.openMenuTaskId.set(taskId);
+      return;
+    }
+    if (this.openMenuTaskId() === taskId) {
+      this.openMenuTaskId.set(null);
+    }
   }
 }

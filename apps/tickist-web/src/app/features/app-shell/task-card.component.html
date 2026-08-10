@@ -67,6 +67,7 @@
           class="icon-btn"
           title="More actions"
           aria-label="More actions"
+          [attr.aria-expanded]="menuOpen()"
           (click)="menuOpen.set(!menuOpen())"
         >
           ⋮

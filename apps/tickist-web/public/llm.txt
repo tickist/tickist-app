@@ -4,7 +4,7 @@
 
 ## Product summary
 
-Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring work, reminders, collaboration, dashboards, statistics, notifications, backup/restore, and API tokens. Selecting a project includes tasks from all of its nested subprojects by default, with per-project checkboxes for temporarily narrowing that hierarchy. Task editing shows creation and latest modification timestamps. Shared-project assignees are shown by display label, and new shared tasks default to the person creating them. It is a private workspace application: project, task, tag, team, settings, and API routes require an authenticated user.
+Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring work, reminders, collaboration, dashboards, statistics, notifications, backup/restore, and API tokens. Selecting a project includes tasks from all of its nested subprojects by default, with per-project checkboxes for temporarily narrowing that hierarchy. Task editing shows creation and latest modification timestamps, and only one task-card actions menu remains open within a list. Shared-project assignees are shown by display label, and new shared tasks default to the person creating them. It is a private workspace application: project, task, tag, team, settings, and API routes require an authenticated user.
 
 Repository operators can generate a deterministic English demo account with 30 projects and 200 tasks under strict Auth-marker and project-confirmation guards. They can also create locally encrypted, authenticated Supabase disaster-recovery archives containing database, Auth, migration, Storage metadata, and physical Storage objects.
 

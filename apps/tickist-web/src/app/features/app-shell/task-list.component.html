@@ -5,6 +5,8 @@
     [task]="task"
     [project]="projectFor(task)"
     [viewMode]="viewMode()"
+    [menuOpen]="openMenuTaskId() === task.id"
+    (menuOpenChange)="setTaskMenuOpen(task.id, $event)"
   ></app-task-card>
   }
 </div>

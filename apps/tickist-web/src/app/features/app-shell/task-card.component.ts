@@ -9,6 +9,7 @@ import {
   ViewChildren,
   computed,
   inject,
+  model,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -84,7 +85,7 @@ export class TaskCardComponent implements OnChanges {
   readonly stepsOpen = signal(false);
   readonly projectPickerOpen = signal(false);
   readonly descriptionEditing = signal(false);
-  readonly menuOpen = signal(false);
+  readonly menuOpen = model(false);
   readonly tagMenuOpen = signal(false);
   readonly descriptionDraft = signal('');
   readonly tagSearch = signal('');
