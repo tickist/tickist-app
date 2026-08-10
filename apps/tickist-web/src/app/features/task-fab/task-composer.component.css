@@ -105,6 +105,82 @@
   padding: 0.45rem;
 }
 
+.task-history {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(var(--bc) / 0.1);
+  border-radius: 1rem;
+  background: rgb(var(--b2) / 0.54);
+}
+
+.task-history__header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.task-history__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: rgb(255 170 59 / 0.18);
+  color: rgb(var(--bc));
+  font-size: 1rem;
+}
+
+.task-history__title,
+.task-history__description,
+.task-history__list,
+.task-history__entry dd {
+  margin: 0;
+}
+
+.task-history__title {
+  font-size: 0.92rem;
+  color: rgb(var(--bc));
+}
+
+.task-history__description {
+  margin-top: 0.25rem;
+  color: rgb(var(--bc) / 0.58);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.task-history__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.task-history__entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid rgb(255 170 59 / 0.34);
+}
+
+.task-history__entry dt {
+  color: rgb(var(--bc) / 0.58);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.task-history__entry dd {
+  color: rgb(var(--bc) / 0.86);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
 @media (max-width: 640px) {
   .repeat-options,
   .reminder-row,
@@ -118,5 +194,9 @@
 
   .step-actions .sheet-shell__button {
     flex: 1;
+  }
+
+  .task-history__list {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

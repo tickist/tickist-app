@@ -31,6 +31,8 @@ Task activity is managed at the database level. A trigger updates `modification_
 
 Row Level Security is mandatory. Browser requests use the authenticated Supabase role; policies decide whether a user may read or mutate a row. SQL grants allow the API role to reach the tables, but RLS remains the row-level decision point. Do not bypass these boundaries by adding broad client-side secrets or service-role credentials to the app.
 
+The `list_accessible_project_assignees` security-definer function exposes only user IDs and display labels for owners and accepted members of projects available to the current user. It does not expose Auth records or profile preferences to the browser.
+
 ## Server-side automation
 
 Edge Functions handle reminders, shared-project updates, invitations, notification digests, outbox enqueueing, email delivery, routines, and MCP integration. Sensitive functions use `INTERNAL_FUNCTION_SECRET` or a validated user JWT as appropriate. AWS SES credentials remain in Edge Function secrets.

@@ -14,7 +14,11 @@ import {
   TaskCreateInput,
 } from '../../data/task-data.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Project, ProjectDataService } from '../../data/project-data.service';
+import {
+  Project,
+  ProjectDataService,
+  defaultTaskAssigneeIds,
+} from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppViewStateService } from './app-view-state.service';
@@ -238,6 +242,14 @@ export class AppShellComponent {
       name: this.form.value.name ?? '',
       estimateMinutes: this.form.value.estimateMinutes ?? null,
       projectId: this.form.value.projectId || this.inboxProjectId() || null,
+      assigneeIds: defaultTaskAssigneeIds(
+        this.projectList().find(
+          (project) =>
+            project.id ===
+            (this.form.value.projectId || this.inboxProjectId())
+        ),
+        currentUser.id
+      ),
     };
     await this.tasksService.createTask(payload);
     this.form.reset({ name: '', estimateMinutes: 15, projectId: '' });
@@ -401,6 +413,10 @@ export class AppShellComponent {
       ownerId: currentUser.id,
       name: this.projectTaskForm.value.name ?? '',
       projectId,
+      assigneeIds: defaultTaskAssigneeIds(
+        this.projectList().find((project) => project.id === projectId),
+        currentUser.id
+      ),
     };
     await this.tasksService.createTask(payload);
     this.projectTaskForm.reset({ name: '' });

@@ -47,6 +47,39 @@ describe('TaskComposerComponent repeat custom cadence', () => {
                 ancestorId: null,
                 taskView: 'extended',
                 shareWithIds: [],
+                members: [],
+              },
+              {
+                id: 'shared-project',
+                ownerId: 'owner-1',
+                name: 'Shared project',
+                description: '',
+                color: '#394264',
+                icon: 'users',
+                isActive: true,
+                isInbox: false,
+                projectType: 'active',
+                ancestorId: null,
+                taskView: 'extended',
+                shareWithIds: ['member-1'],
+                members: [
+                  {
+                    projectId: 'shared-project',
+                    userId: 'member-1',
+                    status: 'accepted',
+                    role: 'editor',
+                    invitedEmail: 'bob@example.com',
+                    invitedProjectName: 'Shared project',
+                    invitedBy: 'owner-1',
+                    invitedAt: null,
+                    acceptedAt: null,
+                    declinedAt: null,
+                  },
+                ],
+                assignees: [
+                  { userId: 'owner-1', label: 'Alice Owner' },
+                  { userId: 'member-1', label: 'Bob Member' },
+                ],
               },
             ],
           },
@@ -61,7 +94,11 @@ describe('TaskComposerComponent repeat custom cadence', () => {
         {
           provide: SupabaseSessionService,
           useValue: {
-            user: () => ({ id: 'owner-1' }),
+            user: () => ({
+              id: 'owner-1',
+              email: 'alice@example.com',
+              user_metadata: { full_name: 'Alice Owner' },
+            }),
           },
         },
         {
@@ -113,6 +150,54 @@ describe('TaskComposerComponent repeat custom cadence', () => {
         repeatInterval: 730,
       })
     );
+  });
+
+  it('shows member names and assigns a new shared task to its creator', async () => {
+    component.preset = {
+      mode: 'create',
+      defaults: { projectId: 'shared-project' },
+    };
+    fixture.detectChanges();
+
+    expect(component.assigneeOptions()).toEqual([
+      { userId: 'owner-1', label: 'Alice Owner' },
+      { userId: 'member-1', label: 'Bob Member' },
+    ]);
+    expect(component.taskForm.controls.assigneeId.value).toBe('owner-1');
+
+    component.taskForm.controls.name.setValue('Shared task');
+    await component.submit();
+
+    expect(createTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        projectId: 'shared-project',
+        assigneeIds: ['owner-1'],
+      })
+    );
+  });
+
+  it('shows creation and modification timestamps only while editing', () => {
+    component.selectTab('extra');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.task-history')).toBeNull();
+
+    component.preset = {
+      mode: 'edit',
+      task: createTask({
+        createdAt: '2026-08-01T08:15:00.000Z',
+        updatedAt: '2026-08-09T17:45:00.000Z',
+      }),
+    };
+    component.selectTab('extra');
+    fixture.detectChanges();
+
+    const history = fixture.nativeElement.querySelector('.task-history');
+    expect(history).not.toBeNull();
+    expect(history.textContent).toContain('Created');
+    expect(history.textContent).toContain('Last modified');
+    expect(history.textContent).toContain('2026');
+    expect(history.querySelectorAll('time')).toHaveLength(2);
   });
 
   it('maps existing 14-day interval to custom 2 weeks in edit mode', () => {

@@ -34,6 +34,11 @@ export interface ProjectMember {
   projectIcon?: string | null;
 }
 
+export interface ProjectAssigneeOption {
+  userId: string;
+  label: string;
+}
+
 export interface Project {
   id: string;
   ownerId: string;
@@ -48,6 +53,7 @@ export interface Project {
   taskView: string;
   shareWithIds: string[];
   members: ProjectMember[];
+  assignees?: ProjectAssigneeOption[];
   defaultPriority?: string;
   defaultFinishDate?: number | null;
   defaultTypeFinishDate?: number | null;
@@ -59,6 +65,28 @@ export function isProjectSharedByMultipleMembers(
 ): boolean {
   return project.members.filter((member) => member.status === 'accepted')
     .length >= 2;
+}
+
+export function isProjectSharedWithOthers(
+  project: Pick<Project, 'ownerId' | 'members'>,
+  currentUserId: string
+): boolean {
+  return (
+    project.ownerId !== currentUserId ||
+    project.members.some(
+      (member) =>
+        member.status === 'accepted' && member.userId !== project.ownerId
+    )
+  );
+}
+
+export function defaultTaskAssigneeIds(
+  project: Pick<Project, 'ownerId' | 'members'> | null | undefined,
+  currentUserId: string
+): string[] {
+  return project && isProjectSharedWithOthers(project, currentUserId)
+    ? [currentUserId]
+    : [];
 }
 
 export interface ProjectCreateInput {
@@ -137,6 +165,12 @@ type ProjectMemberRow = {
         icon: string | null;
       }[]
     | null;
+};
+
+type ProjectAssigneeRow = {
+  project_id: string;
+  user_id: string;
+  label: string;
 };
 
 type ProjectRow = {
@@ -251,6 +285,60 @@ export class ProjectDataService {
     );
     this.memberships.set(memberships);
     this.attachMembershipsToProjects(memberships);
+    await this.refreshAssigneeOptions();
+  }
+
+  private async refreshAssigneeOptions(): Promise<void> {
+    if (!this.supabase) {
+      return;
+    }
+
+    const { data, error } = await this.supabase.rpc(
+      'list_accessible_project_assignees'
+    );
+    if (error || !data) {
+      console.warn('[Projects] Unable to fetch assignee labels.', error);
+      this.attachFallbackAssigneeOptions();
+      return;
+    }
+
+    const optionsByProject = new Map<string, ProjectAssigneeOption[]>();
+    for (const row of data as ProjectAssigneeRow[]) {
+      const options = optionsByProject.get(row.project_id) ?? [];
+      options.push({ userId: row.user_id, label: row.label });
+      optionsByProject.set(row.project_id, options);
+    }
+
+    this.projects.update((projects) =>
+      projects.map((project) => ({
+        ...project,
+        assignees:
+          optionsByProject.get(project.id) ??
+          this.fallbackAssigneeOptions(project),
+      }))
+    );
+  }
+
+  private attachFallbackAssigneeOptions(): void {
+    this.projects.update((projects) =>
+      projects.map((project) => ({
+        ...project,
+        assignees: this.fallbackAssigneeOptions(project),
+      }))
+    );
+  }
+
+  private fallbackAssigneeOptions(project: Project): ProjectAssigneeOption[] {
+    const options = new Map<string, string>([
+      [project.ownerId, 'Project owner'],
+    ]);
+    for (const member of project.members) {
+      if (member.status !== 'accepted' || options.has(member.userId)) {
+        continue;
+      }
+      options.set(member.userId, member.invitedEmail ?? 'Project member');
+    }
+    return Array.from(options, ([userId, label]) => ({ userId, label }));
   }
 
   async inviteByEmail(
