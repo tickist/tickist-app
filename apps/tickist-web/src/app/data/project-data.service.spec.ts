@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 import {
   ProjectDataService,
+  defaultTaskAssigneeIds,
   isProjectSharedByMultipleMembers,
+  isProjectSharedWithOthers,
 } from './project-data.service';
 import { StatisticsDataService } from './statistics-data.service';
 
@@ -72,6 +74,10 @@ describe('ProjectDataService schema compatibility', () => {
     expect(service.list()).toEqual([
       expect.objectContaining({
         id: 'project-1',
+        assignees: [
+          { userId: 'owner-1', label: 'Owner Name' },
+          { userId: 'member-1', label: 'Member Name' },
+        ],
         shareWithIds: ['member-1'],
         members: [
           expect.objectContaining({
@@ -176,8 +182,64 @@ describe('isProjectSharedByMultipleMembers', () => {
   });
 });
 
+describe('isProjectSharedWithOthers', () => {
+  test('detects an accepted collaborator for the owner', () => {
+    expect(
+      isProjectSharedWithOthers(
+        {
+          ownerId: 'owner-1',
+          members: [createProjectMember('member-1')],
+        },
+        'owner-1'
+      )
+    ).toBe(true);
+  });
+
+  test('does not treat a pending invitation as shared work', () => {
+    expect(
+      isProjectSharedWithOthers(
+        {
+          ownerId: 'owner-1',
+          members: [createProjectMember('member-1', 'pending')],
+        },
+        'owner-1'
+      )
+    ).toBe(false);
+  });
+
+  test('detects a project owned by another user', () => {
+    expect(
+      isProjectSharedWithOthers({ ownerId: 'owner-1', members: [] }, 'member-1')
+    ).toBe(true);
+  });
+});
+
+describe('defaultTaskAssigneeIds', () => {
+  test('defaults a shared task to its creator', () => {
+    expect(
+      defaultTaskAssigneeIds(
+        {
+          ownerId: 'owner-1',
+          members: [createProjectMember('member-1')],
+        },
+        'owner-1'
+      )
+    ).toEqual(['owner-1']);
+  });
+
+  test('keeps a private task unassigned', () => {
+    expect(
+      defaultTaskAssigneeIds(
+        { ownerId: 'owner-1', members: [] },
+        'owner-1'
+      )
+    ).toEqual([]);
+  });
+});
+
 function createSupabaseMock(): {
   from: ReturnType<typeof vi.fn>;
+  rpc: ReturnType<typeof vi.fn>;
   projectSelects: string[];
   membershipSelects: string[];
 } {
@@ -187,6 +249,26 @@ function createSupabaseMock(): {
   return {
     projectSelects,
     membershipSelects,
+    rpc: vi.fn(async (name: string) => {
+      if (name !== 'list_accessible_project_assignees') {
+        throw new Error(`Unexpected RPC: ${name}`);
+      }
+      return {
+        data: [
+          {
+            project_id: 'project-1',
+            user_id: 'owner-1',
+            label: 'Owner Name',
+          },
+          {
+            project_id: 'project-1',
+            user_id: 'member-1',
+            label: 'Member Name',
+          },
+        ],
+        error: null,
+      };
+    }),
     from: vi.fn((table: string) => {
       if (table === 'projects') {
         return {
@@ -213,7 +295,10 @@ function createSupabaseMock(): {
   };
 }
 
-function createInboxConflictSupabaseMock(): { from: ReturnType<typeof vi.fn> } {
+function createInboxConflictSupabaseMock(): {
+  from: ReturnType<typeof vi.fn>;
+  rpc: ReturnType<typeof vi.fn>;
+} {
   const inboxRow = legacyProjectRow({
     id: 'inbox-1',
     name: 'Inbox',
@@ -223,6 +308,7 @@ function createInboxConflictSupabaseMock(): { from: ReturnType<typeof vi.fn> } {
   let shouldReturnInbox = false;
 
   return {
+    rpc: vi.fn(async () => ({ data: [], error: null })),
     from: vi.fn((table: string) => {
       if (table === 'projects') {
         return {

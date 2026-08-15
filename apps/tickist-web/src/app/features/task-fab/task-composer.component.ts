@@ -9,6 +9,7 @@ import {
   Output,
   signal,
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import {
   FormArray,
   FormBuilder,
@@ -16,6 +17,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import {
   Task,
@@ -27,7 +29,12 @@ import {
   TaskReminderDataService,
   TaskReminderDraft,
 } from '../../data/task-reminder-data.service';
-import { ProjectDataService } from '../../data/project-data.service';
+import {
+  Project,
+  ProjectDataService,
+  defaultTaskAssigneeIds,
+  isProjectSharedWithOthers,
+} from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
@@ -73,6 +80,7 @@ type TaskFormDefaults = {
 @Component({
   selector: 'app-task-composer',
   imports: [
+    DatePipe,
     ReactiveFormsModule,
     ProjectPickerComponent,
     SheetScaffoldComponent,
@@ -128,19 +136,21 @@ export class TaskComposerComponent {
       return [];
     }
     const options = new Map<string, string>();
-    const ownerLabel =
-      project.ownerId === this.user()?.id
-        ? this.user()?.email ?? 'You'
-        : 'Project owner';
-    options.set(project.ownerId, ownerLabel);
+    for (const assignee of project.assignees ?? []) {
+      options.set(assignee.userId, assignee.label);
+    }
+    if (!options.has(project.ownerId)) {
+      options.set(project.ownerId, 'Project owner');
+    }
     for (const member of project.members) {
-      if (member.status !== 'accepted') {
+      if (member.status !== 'accepted' || options.has(member.userId)) {
         continue;
       }
-      options.set(
-        member.userId,
-        member.invitedEmail ?? member.userId.slice(0, 8)
-      );
+      options.set(member.userId, member.invitedEmail ?? 'Project member');
+    }
+    const currentUser = this.user();
+    if (currentUser && options.has(currentUser.id)) {
+      options.set(currentUser.id, this.currentUserLabel());
     }
     return Array.from(options, ([userId, label]) => ({ userId, label }));
   }
@@ -200,6 +210,17 @@ export class TaskComposerComponent {
   private reminderEditVersion = 0;
 
   constructor() {
+    this.taskForm.controls.projectId.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((projectId) => {
+        if (this.editingTask()) {
+          return;
+        }
+        this.taskForm.controls.assigneeId.setValue(
+          this.defaultAssigneeId(projectId)
+        );
+      });
+
     effect(() => {
       if (!this.user()) {
         this.taskForm.disable();
@@ -531,9 +552,11 @@ export class TaskComposerComponent {
   }
 
   private resetForm(overrides?: Partial<TaskFormDefaults>): void {
+    const projectId = overrides?.projectId ?? this.defaultFormValue.projectId;
     const next: TaskFormDefaults = {
       ...this.defaultFormValue,
       ...overrides,
+      assigneeId: overrides?.assigneeId ?? this.defaultAssigneeId(projectId),
       tags: [...(overrides?.tags ?? this.defaultFormValue.tags)],
     };
     this.taskForm.reset({
@@ -681,8 +704,33 @@ export class TaskComposerComponent {
     return mode === 'on' ? 0 : 1;
   }
 
-  private isSharedProject(project: { ownerId: string; members: unknown[] }) {
-    return project.members.length > 0 || project.ownerId !== this.user()?.id;
+  private defaultAssigneeId(projectId: string): string {
+    const currentUser = this.user();
+    const project = this.projects().find((item) => item.id === projectId);
+    return currentUser
+      ? defaultTaskAssigneeIds(project, currentUser.id)[0] ?? ''
+      : '';
+  }
+
+  private currentUserLabel(): string {
+    const currentUser = this.user();
+    const metadata = currentUser?.user_metadata as
+      | Record<string, unknown>
+      | undefined;
+    for (const key of ['full_name', 'name']) {
+      const value = metadata?.[key];
+      if (typeof value === 'string' && value.trim()) {
+        return value.trim();
+      }
+    }
+    return currentUser?.email?.trim() || 'You';
+  }
+
+  private isSharedProject(project: Project): boolean {
+    const currentUserId = this.user()?.id;
+    return currentUserId
+      ? isProjectSharedWithOthers(project, currentUserId)
+      : false;
   }
 }
 
