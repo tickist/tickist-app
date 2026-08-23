@@ -11,10 +11,12 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -55,6 +57,7 @@ type RepeatMode =
   | 'custom';
 type RepeatUnit = 'day' | 'week' | 'month' | 'year';
 type RepeatFromMode = 'completion_date' | 'due_date';
+type SuspensionMode = 'indefinite' | 'until';
 
 type TaskFormDefaults = {
   name: string;
@@ -72,6 +75,8 @@ type TaskFormDefaults = {
   tags: string[];
   assigneeId: string;
   isActive: boolean;
+  suspensionMode: SuspensionMode;
+  suspendUntil: string;
   pinned: boolean;
   estimateMinutes: number;
   spentMinutes: number;
@@ -175,6 +180,8 @@ export class TaskComposerComponent {
     tags: [],
     assigneeId: '',
     isActive: true,
+    suspensionMode: 'indefinite',
+    suspendUntil: '',
     pinned: false,
     estimateMinutes: 15,
     spentMinutes: 0,
@@ -183,26 +190,31 @@ export class TaskComposerComponent {
     this.applyPreset(value);
   }
 
-  readonly taskForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(3)]],
-    priority: ['B'],
-    projectId: [''],
-    taskType: ['normal'],
-    completeMode: ['by'],
-    finishDate: [''],
-    finishTime: [''],
-    description: [''],
-    repeatMode: ['never'],
-    repeatEvery: [1],
-    repeatUnit: ['day'],
-    repeatFrom: ['completion_date'],
-    tags: this.fb.nonNullable.control<string[]>([]),
-    assigneeId: [''],
-    isActive: [true],
-    pinned: [false],
-    estimateMinutes: [15],
-    spentMinutes: [0],
-  });
+  readonly taskForm = this.fb.nonNullable.group(
+    {
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      priority: ['B'],
+      projectId: [''],
+      taskType: ['normal'],
+      completeMode: ['by'],
+      finishDate: [''],
+      finishTime: [''],
+      description: [''],
+      repeatMode: ['never'],
+      repeatEvery: [1],
+      repeatUnit: ['day'],
+      repeatFrom: ['completion_date'],
+      tags: this.fb.nonNullable.control<string[]>([]),
+      assigneeId: [''],
+      isActive: [true],
+      suspensionMode: this.fb.nonNullable.control<SuspensionMode>('indefinite'),
+      suspendUntil: [''],
+      pinned: [false],
+      estimateMinutes: [15],
+      spentMinutes: [0],
+    },
+    { validators: suspensionValidator }
+  );
 
   readonly stepsArray = this.fb.array<FormGroup>([]);
   readonly remindersArray = this.fb.array<FormGroup>([]);
@@ -281,6 +293,8 @@ export class TaskComposerComponent {
         tags: [...task.tags],
         assigneeId: task.assigneeIds?.[0] ?? '',
         isActive: task.isActive,
+        suspensionMode: task.suspendUntil ? 'until' : 'indefinite',
+        suspendUntil: normalizeDateTimeInputValue(task.suspendUntil),
         pinned: task.pinned,
         estimateMinutes: task.estimateMinutes ?? 15,
         spentMinutes: task.spentMinutes ?? 0,
@@ -430,6 +444,7 @@ export class TaskComposerComponent {
   }
 
   async submit(addAnother = false): Promise<void> {
+    this.taskForm.updateValueAndValidity();
     if (this.taskForm.invalid || !this.user()) {
       this.taskForm.markAllAsTouched();
       return;
@@ -451,6 +466,11 @@ export class TaskComposerComponent {
         repeatInterval,
         value.repeatFrom as RepeatFromMode,
         !!value.finishDate
+      );
+      const suspendUntil = this.resolveSuspendUntil(
+        value.isActive,
+        value.suspensionMode as SuspensionMode,
+        value.suspendUntil
       );
       const stepsPayload = this.steps.controls
         .map((control, index) => {
@@ -491,6 +511,7 @@ export class TaskComposerComponent {
           tags: value.tags,
           assigneeIds: value.assigneeId ? [value.assigneeId] : [],
           isActive: value.isActive,
+          suspendUntil,
           pinned: value.pinned,
           steps: stepsPayload,
         };
@@ -524,6 +545,7 @@ export class TaskComposerComponent {
         tags: value.tags,
         assigneeIds: value.assigneeId ? [value.assigneeId] : [],
         isActive: value.isActive,
+        suspendUntil,
         pinned: value.pinned,
         steps: stepsPayload,
       };
@@ -575,6 +597,8 @@ export class TaskComposerComponent {
       tags: next.tags,
       assigneeId: next.assigneeId,
       isActive: next.isActive,
+      suspensionMode: next.suspensionMode,
+      suspendUntil: next.suspendUntil,
       pinned: next.pinned,
       estimateMinutes: next.estimateMinutes,
       spentMinutes: next.spentMinutes,
@@ -597,6 +621,23 @@ export class TaskComposerComponent {
         timezone: raw.timezone ?? resolveBrowserTimezone(),
       };
     });
+  }
+
+  minimumSuspendUntil(): string {
+    return normalizeDateTimeInputValue(
+      new Date(Date.now() + 60_000).toISOString()
+    );
+  }
+
+  private resolveSuspendUntil(
+    isActive: boolean,
+    mode: SuspensionMode,
+    value: string
+  ): string | null {
+    if (isActive || mode === 'indefinite') {
+      return null;
+    }
+    return new Date(value).toISOString();
   }
 
   private getRepeatInterval(
@@ -760,6 +801,42 @@ function normalizeTimeInputValue(value: string | null | undefined): string {
   const trimmed = value.trim();
   const timeMatch = /^(\d{2}:\d{2})/.exec(trimmed);
   return timeMatch ? timeMatch[1] : '';
+}
+
+function normalizeDateTimeInputValue(value: string | null | undefined): string {
+  if (!value) {
+    return '';
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return '';
+  }
+  const year = parsed.getFullYear();
+  const month = `${parsed.getMonth() + 1}`.padStart(2, '0');
+  const day = `${parsed.getDate()}`.padStart(2, '0');
+  const hours = `${parsed.getHours()}`.padStart(2, '0');
+  const minutes = `${parsed.getMinutes()}`.padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function suspensionValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+  const value = control.value as {
+    isActive?: boolean;
+    suspensionMode?: SuspensionMode;
+    suspendUntil?: string;
+  };
+  if (value.isActive || value.suspensionMode !== 'until') {
+    return null;
+  }
+
+  const suspendUntilMs = value.suspendUntil
+    ? new Date(value.suspendUntil).getTime()
+    : Number.NaN;
+  return Number.isNaN(suspendUntilMs) || suspendUntilMs <= Date.now()
+    ? { invalidSuspension: true }
+    : null;
 }
 
 function resolveBrowserTimezone(): string {

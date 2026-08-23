@@ -31,7 +31,9 @@ Task-card overflow actions are exclusive within a task list: opening the menu on
 
 ### Status and completion
 
-Open, completed, and all-task filters are available in project task lists. Completing a task records its completion timestamp; reopening it clears the timestamp. When completed tasks are visible, the card displays a `Completed DD-MM-YYYY` badge next to the task name.
+Tasks can be active or suspended. A suspension can remain in place until the user resumes the task or end automatically at a chosen date and time. Suspended tasks show a pause indicator instead of a completion checkbox, are excluded from active-work summaries, and are counted in the selected project's header across the currently included project hierarchy. A database scheduler resumes due tasks every minute, while an in-app status clock updates an open view without requiring a reload.
+
+Open, suspended, completed, and all-task filters are available in project task lists. The open filter excludes suspended tasks. Completing a task records its completion timestamp; reopening it clears the timestamp. When completed tasks are visible, the card displays a `Completed DD-MM-YYYY` badge next to the task name.
 
 ### Ordering and filtering
 

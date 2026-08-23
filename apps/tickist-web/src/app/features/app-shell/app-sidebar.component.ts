@@ -16,6 +16,7 @@ import {
 } from '../../data/project-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import { TaskDataService } from '../../data/task-data.service';
+import { TaskStatusService } from '../../data/task-status.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
@@ -68,11 +69,14 @@ export class AppSidebarComponent {
   private readonly composer = inject(ComposerModalService);
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly session = inject(SupabaseSessionService);
+  private readonly taskStatus = inject(TaskStatusService);
 
   readonly projectList = computed(() => this.projectsService.list());
   readonly selectedProjectId = this.viewState.selectedProjectId;
   readonly excludedProjectIds = this.viewState.excludedProjectIds;
-  readonly taskList = computed(() => this.tasksService.list());
+  readonly taskList = computed(() =>
+    this.tasksService.list().filter((task) => this.taskStatus.isAvailable(task))
+  );
   readonly user = computed(() => this.session.user());
   readonly dueDateFilter = this.viewState.dueDateFilter;
   readonly navState = signal<NavSectionState>({

@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TaskListComponent } from '../app-shell/task-list.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
+import { TaskStatusService } from '../../data/task-status.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,6 +26,7 @@ export class DashboardComponent {
   private readonly projects = inject(ProjectDataService);
   private readonly session = inject(SupabaseSessionService);
   private readonly viewState = inject(AppViewStateService);
+  private readonly taskStatus = inject(TaskStatusService);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
@@ -51,7 +53,11 @@ export class DashboardComponent {
   readonly taskList = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
     return this.tasks.list().filter((task) => {
-      if (task.ownerId !== this.user()?.id || task.onHold) {
+      if (
+        task.ownerId !== this.user()?.id ||
+        task.onHold ||
+        this.taskStatus.isSuspended(task)
+      ) {
         return false;
       }
       if (!normalizedSearch) {

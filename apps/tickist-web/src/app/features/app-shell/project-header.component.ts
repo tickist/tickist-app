@@ -22,7 +22,7 @@ type SortOption =
   | 'alpha-asc'
   | 'alpha-desc';
 
-type FilterOption = 'all' | 'done' | 'not-done';
+type FilterOption = 'all' | 'done' | 'not-done' | 'suspended';
 
 @Component({
   selector: 'app-project-header',
@@ -37,6 +37,7 @@ export class ProjectHeaderComponent {
   @Input() viewMode: 'extended' | 'simple' = 'extended';
   @Input() sort: SortOption = 'priority-desc';
   @Input() filter: FilterOption = 'not-done';
+  @Input() suspendedCount = 0;
 
   @Output() toggleSimple = new EventEmitter<boolean>();
   @Output() openEdit = new EventEmitter<void>();
@@ -62,6 +63,7 @@ export class ProjectHeaderComponent {
   readonly filterOptions: { label: string; value: FilterOption }[] = [
     { label: 'all tasks', value: 'all' },
     { label: 'not done', value: 'not-done' },
+    { label: 'suspended', value: 'suspended' },
     { label: 'done', value: 'done' },
   ];
 

@@ -30,6 +30,7 @@ import {
   buildProjectTaskScope,
   taskMatchesProjectScope,
 } from './project-task-scope';
+import { TaskStatusService } from '../../data/task-status.service';
 
 @Component({
   selector: 'app-shell',
@@ -50,6 +51,7 @@ export class AppShellComponent {
   private readonly viewState = inject(AppViewStateService);
   private readonly toasts = inject(ToastService);
   private readonly composer = inject(ComposerModalService);
+  private readonly taskStatus = inject(TaskStatusService);
 
   readonly user = computed(() => this.session.user());
   readonly taskList = computed(() => this.tasksService.list());
@@ -115,29 +117,33 @@ export class AppShellComponent {
   readonly projectTaskForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
   });
-  readonly filteredTasks = computed(() => {
-    const tasks = this.taskList();
+  readonly projectScopedTasks = computed(() => {
     const projectId = this.selectedProjectId();
     const inboxId = this.inboxProjectId();
+    const includedProjectIds = this.includedProjectIds();
+    return this.taskList().filter((task) =>
+      taskMatchesProjectScope(task, projectId, inboxId, includedProjectIds)
+    );
+  });
+  readonly suspendedTaskCount = computed(
+    () =>
+      this.projectScopedTasks().filter(
+        (task) => !task.isDone && this.taskStatus.isSuspended(task)
+      ).length
+  );
+  readonly filteredTasks = computed(() => {
+    const tasks = this.projectScopedTasks();
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
     const dueFilter = this.dueDateFilter();
     const filtered = tasks.filter((task) => {
-      const matchesProject = taskMatchesProjectScope(
-        task,
-        projectId,
-        inboxId,
-        this.includedProjectIds()
-      );
       const matchesSearch = normalizedSearch
         ? task.name.toLowerCase().includes(normalizedSearch) ||
           (task.description ?? '').toLowerCase().includes(normalizedSearch)
         : true;
-      const matchesFilter =
-        this.filterOption() === 'all'
-          ? true
-          : this.filterOption() === 'done'
-          ? task.isDone
-          : !task.isDone;
+      const matchesFilter = this.taskStatus.matchesFilter(
+        task,
+        this.filterOption()
+      );
       const matchesDueDate = (() => {
         if (!dueFilter) {
           return true;
@@ -155,7 +161,7 @@ export class AppShellComponent {
         }
         return this.monthKey(finishDate) === dueFilter.monthKey;
       })();
-      return matchesProject && matchesSearch && matchesFilter && matchesDueDate;
+      return matchesSearch && matchesFilter && matchesDueDate;
     });
     return this.sortTasks(filtered);
   });
@@ -195,7 +201,9 @@ export class AppShellComponent {
     | 'alpha-asc'
     | 'alpha-desc'
   >('priority-desc');
-  readonly filterOption = signal<'all' | 'done' | 'not-done'>('not-done');
+  readonly filterOption = signal<'all' | 'done' | 'not-done' | 'suspended'>(
+    'not-done'
+  );
   private redirectScheduled = false;
 
   constructor() {
@@ -245,8 +253,7 @@ export class AppShellComponent {
       assigneeIds: defaultTaskAssigneeIds(
         this.projectList().find(
           (project) =>
-            project.id ===
-            (this.form.value.projectId || this.inboxProjectId())
+            project.id === (this.form.value.projectId || this.inboxProjectId())
         ),
         currentUser.id
       ),
@@ -313,7 +320,7 @@ export class AppShellComponent {
     this.sortOption.set(option);
   }
 
-  setFilter(option: 'all' | 'done' | 'not-done') {
+  setFilter(option: 'all' | 'done' | 'not-done' | 'suspended') {
     this.filterOption.set(option);
   }
 

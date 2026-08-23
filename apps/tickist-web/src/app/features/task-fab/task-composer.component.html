@@ -389,6 +389,49 @@
           </div>
         </div>
 
+        @if (!taskForm.controls.isActive.value) {
+        <div class="sheet-field" data-testid="task-suspension-options">
+          <span class="sheet-field__label">Resume</span>
+          <div class="sheet-choice-row">
+            <label class="sheet-choice">
+              <input
+                type="radio"
+                value="indefinite"
+                formControlName="suspensionMode"
+              />
+              <span>When I resume it</span>
+            </label>
+            <label class="sheet-choice">
+              <input
+                type="radio"
+                value="until"
+                formControlName="suspensionMode"
+              />
+              <span>At a date and time</span>
+            </label>
+          </div>
+        </div>
+
+        @if (taskForm.controls.suspensionMode.value === 'until') {
+        <label class="sheet-field">
+          <span class="sheet-field__label">Resume at</span>
+          <input
+            type="datetime-local"
+            class="sheet-input"
+            formControlName="suspendUntil"
+            [min]="minimumSuspendUntil()"
+            aria-label="Resume at"
+            aria-describedby="suspend-until-error"
+          />
+          @if (taskForm.controls.suspendUntil.touched &&
+          taskForm.hasError('invalidSuspension')) {
+          <span id="suspend-until-error" class="sheet-field__hint" role="alert">
+            Choose a future date and time.
+          </span>
+          }
+        </label>
+        } }
+
         <label class="sheet-field sheet-field--inline">
           <input type="checkbox" formControlName="pinned" />
           <span class="sheet-field__label">Pinned</span>

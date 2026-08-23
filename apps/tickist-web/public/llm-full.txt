@@ -24,13 +24,15 @@ The product is not a public content site or a generic file store. It is an authe
 - Assignee selectors in accepted shared projects use member display labels rather than internal user IDs. Tasks created through either the full composer or quick project entry are assigned to their creator by default when the selected project is shared; users may still choose another member or leave the task unassigned.
 - Priorities are A, B, C, and normal. Task types include normal, next action, and need info.
 - Completion is a first-class activity: when `is_done` changes to true, the database records `when_complete`; reopening a task clears that value. Task cards show the completion date when completed tasks are included by the active filter.
-- Task views can filter all, open, or completed tasks. They can sort by priority, due date, creation date, modification date, or alphabetical name.
+- Tasks can be suspended indefinitely or until a future date and time. Suspended tasks use `is_active=false`; `suspend_until=null` means indefinite suspension. A due suspension is resumed in Postgres within approximately one minute, and the browser treats an expired timestamp as active while that update completes.
+- Project task views can filter all, active open, suspended, or completed tasks. The active-open filter excludes suspended work. Suspended cards show a non-interactive pause indicator instead of a completion checkbox, and the project header counts suspended, incomplete tasks across the currently included project hierarchy.
+- Task views can sort by priority, due date, creation date, modification date, or alphabetical name.
 - Recurring-task completion resets the next occurrence instead of treating the task as permanently finished.
 
 ### Organization and focus
 
-- The dashboard groups today, overdue, pinned, next-action, and need-info tasks.
-- The task tree presents project-oriented task groups.
+- The dashboard groups today, overdue, pinned, next-action, and need-info tasks; suspended work is excluded from these active-work groups.
+- The task tree and sidebar task counts exclude suspended work until it resumes.
 - The tag view filters by one or more tags, supports OR/AND matching, can include completed work, and has the same primary sorting choices as project task lists.
 - Statistics report completion, late completion, overdue work, and inactive projects for a selected time window.
 
@@ -96,6 +98,8 @@ Important Edge Functions:
 - `tickist-mcp`: server-side integration surface for MCP clients.
 
 Schedulers and secrets are production infrastructure. Never expose an internal secret or an email-outbox payload to an unauthenticated client.
+
+Postgres also schedules `resume_due_tasks()` every minute through `pg_cron`. The function activates incomplete tasks whose `suspend_until` timestamp has arrived and clears the consumed timestamp; it is not executable by browser roles.
 
 ## 6. Technical architecture
 

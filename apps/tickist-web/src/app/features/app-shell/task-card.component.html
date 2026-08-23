@@ -5,6 +5,16 @@
   [class.task-card--overlay]="projectPickerOpen()"
 >
   <div class="task-card__row">
+    @if (isSuspended()) {
+    <span
+      class="task-card__paused"
+      role="img"
+      aria-label="Suspended"
+      [title]="suspensionStatusLabel()"
+      data-testid="task-suspended-icon"
+      >⏸</span
+    >
+    } @else {
     <label class="task-card__check">
       <input
         type="checkbox"
@@ -14,6 +24,7 @@
         [style.boxShadow]="'0 0 0 1px ' + priorityColor(task.priority)"
       />
     </label>
+    }
     <div class="task-card__title">
       @if (taskTypeLabel(); as taskTypeBadgeLabel) {
       <span
@@ -33,11 +44,9 @@
       >
         Completed {{ completionDate }}
       </span>
-      }
-      @if (taskTimeLabel(); as summary) {
+      } @if (taskTimeLabel(); as summary) {
       <span class="task-card__time">({{ summary }})</span>
-      }
-      @if (isSharedTask()) {
+      } @if (isSharedTask()) {
       <span class="task-card__shared" title="Shared list">Shared</span>
       }
     </div>
@@ -297,7 +306,10 @@
           (keydown)="onTagMenuTriggerKeydown($event)"
         >
           <span>Add existing tag…</span>
-          <span class="tag-add__chevron" [class.tag-add__chevron--open]="tagMenuOpen()">
+          <span
+            class="tag-add__chevron"
+            [class.tag-add__chevron--open]="tagMenuOpen()"
+          >
             ▾
           </span>
         </button>
@@ -308,7 +320,8 @@
           role="listbox"
           aria-label="Add existing tag"
         >
-          @for (option of filteredAvailableTags(); track option.id; let index = $index) {
+          @for (option of filteredAvailableTags(); track option.id; let index =
+          $index) {
           <button
             #tagMenuOption
             type="button"
@@ -319,7 +332,7 @@
             (click)="selectTagFromMenu(option.id)"
             (keydown)="onTagMenuOptionKeydown($event, index)"
           >
-          {{ option.name }}
+            {{ option.name }}
           </button>
           }
         </div>
