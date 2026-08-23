@@ -153,7 +153,7 @@ async function expectSharedSheetLayout(
 
 async function setProjectFilter(
   page: Page,
-  label: 'all tasks' | 'done' | 'not done'
+  label: 'all tasks' | 'done' | 'not done' | 'suspended'
 ): Promise<void> {
   const filterButton = page.locator('button[title="Filter"]').first();
   await filterButton.click();
@@ -393,19 +393,73 @@ test('shows completion date and sorts project tasks', async ({
   await firstCard.locator('.task-card__check input[type="checkbox"]').click();
   await setProjectFilter(page, 'all tasks');
   await expect(firstCard).toBeVisible();
-  await expect(firstCard.locator('[data-testid="task-completed-date"]')).toHaveText(
-    /Completed \d{2}-\d{2}-\d{4}/
-  );
+  await expect(
+    firstCard.locator('[data-testid="task-completed-date"]')
+  ).toHaveText(/Completed \d{2}-\d{2}-\d{4}/);
 
   await setProjectFilter(page, 'done');
   await expect(firstCard).toBeVisible();
-  await expect(firstCard.locator('[data-testid="task-completed-date"]')).toBeVisible();
+  await expect(
+    firstCard.locator('[data-testid="task-completed-date"]')
+  ).toBeVisible();
 
   await setProjectFilter(page, 'all tasks');
   await setProjectSort(page, 'modification date ↓');
   await expect
     .poll(() => visibleTaskNames(page))
     .toEqual([firstTask, secondTask]);
+});
+
+test('suspends a task with a resume time and separates it from active work', async ({
+  page,
+}, testInfo) => {
+  const suffix = uniqueSuffix(testInfo);
+  const projectName = `Suspension project ${suffix}`;
+  const taskName = `Suspended task ${suffix}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, 'Project for suspension regression');
+  await selectProjectByName(page, projectName);
+  await page.getByPlaceholder('What needs doing?').fill(taskName);
+  await page.getByRole('button', { name: 'Add task' }).click();
+
+  let card = taskCardByName(page, taskName);
+  await card.getByRole('button', { name: 'Edit task' }).click();
+  const composer = page.locator('app-task-composer');
+  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByLabel('Suspended').check();
+  await composer.getByLabel('At a date and time').check();
+  await composer.getByLabel('Resume at').fill(`${futureDateInput(1)}T09:30`);
+  await composer.getByRole('button', { name: 'Update task' }).click();
+
+  await expect(card).toHaveCount(0);
+  await expect(page.getByTestId('project-suspended-count')).toContainText(
+    'Suspended: 1'
+  );
+
+  await setProjectFilter(page, 'suspended');
+  card = taskCardByName(page, taskName);
+  await expect(card).toBeVisible();
+  await expect(card.getByTestId('task-suspended-icon')).toBeVisible();
+  await expect(card.locator('.task-card__check')).toHaveCount(0);
+
+  await card.getByRole('button', { name: 'Edit task' }).click();
+  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByLabel('Active').check();
+  await composer.getByRole('button', { name: 'Update task' }).click();
+
+  await expect(page.getByTestId('project-suspended-count')).toContainText(
+    'Suspended: 0'
+  );
+  card = taskCardByName(page, taskName);
+  await expect(card.locator('.task-card__check')).toBeVisible();
+
+  await setProjectFilter(page, 'suspended');
+  await expect(card).toHaveCount(0);
+
+  await setProjectFilter(page, 'not done');
+  card = taskCardByName(page, taskName);
+  await expect(card.locator('.task-card__check')).toBeVisible();
 });
 
 test('validates quick task entry and repeats it above a long task list', async ({

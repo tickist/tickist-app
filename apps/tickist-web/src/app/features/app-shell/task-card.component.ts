@@ -26,6 +26,7 @@ import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
+import { TaskStatusService } from '../../data/task-status.service';
 
 type TaskViewMode = 'extended' | 'simple';
 type RepeatMode =
@@ -65,6 +66,7 @@ export class TaskCardComponent implements OnChanges {
   private readonly projectsService = inject(ProjectDataService);
   private readonly composer = inject(ComposerModalService);
   private readonly toasts = inject(ToastService);
+  private readonly taskStatus = inject(TaskStatusService);
 
   @ViewChild('tagMenuTrigger')
   private tagMenuTrigger?: ElementRef<HTMLButtonElement>;
@@ -282,6 +284,24 @@ export class TaskCardComponent implements OnChanges {
         : 'Task reopened.',
       'Failed to update completion.'
     );
+  }
+
+  isSuspended(): boolean {
+    return !this.task.isDone && this.taskStatus.isSuspended(this.task);
+  }
+
+  suspensionStatusLabel(): string {
+    if (!this.task.suspendUntil) {
+      return 'Suspended indefinitely';
+    }
+    const date = new Date(this.task.suspendUntil);
+    if (Number.isNaN(date.getTime())) {
+      return 'Suspended indefinitely';
+    }
+    return `Suspended until ${date.toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    })}`;
   }
 
   async togglePin(): Promise<void> {

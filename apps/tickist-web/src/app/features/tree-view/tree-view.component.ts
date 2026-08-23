@@ -11,6 +11,7 @@ import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { DatePipe } from '@angular/common';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
+import { TaskStatusService } from '../../data/task-status.service';
 
 interface TreeGroup {
   id: string;
@@ -38,13 +39,17 @@ export class TreeViewComponent {
   private readonly projects = inject(ProjectDataService);
   private readonly session = inject(SupabaseSessionService);
   private readonly viewState = inject(AppViewStateService);
+  private readonly taskStatus = inject(TaskStatusService);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
   readonly taskList = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
     return this.tasks.list().filter((task) => {
-      if (task.ownerId !== this.user()?.id) {
+      if (
+        task.ownerId !== this.user()?.id ||
+        this.taskStatus.isSuspended(task)
+      ) {
         return false;
       }
       if (!normalizedSearch) {

@@ -26,11 +26,13 @@ describe('TaskCardComponent toolbar status icons', () => {
         ...payload,
       })
     );
-    createTagMock = vi.fn(async ({ ownerId, name }: { ownerId: string; name: string }) => ({
-      id: 'tag-created',
-      ownerId,
-      name,
-    }));
+    createTagMock = vi.fn(
+      async ({ ownerId, name }: { ownerId: string; name: string }) => ({
+        id: 'tag-created',
+        ownerId,
+        name,
+      })
+    );
 
     await TestBed.configureTestingModule({
       imports: [TaskCardComponent],
@@ -105,7 +107,9 @@ describe('TaskCardComponent toolbar status icons', () => {
     expect(tags.classList.contains('configured')).toBe(true);
     expect(repeat.classList.contains('configured')).toBe(true);
     expect(reminders.classList.contains('configured')).toBe(true);
-    expect(reminders.getAttribute('aria-label')).toContain('Reminders: 2. Next:');
+    expect(reminders.getAttribute('aria-label')).toContain(
+      'Reminders: 2. Next:'
+    );
     expect(steps.classList.contains('configured')).toBe(true);
   });
 
@@ -145,6 +149,36 @@ describe('TaskCardComponent toolbar status icons', () => {
     ) as HTMLElement | null;
 
     expect(badge?.textContent).toContain('Completed 20-07-2026');
+  });
+
+  it('replaces the completion checkbox with a pause for a suspended task', () => {
+    component.task = createTask({
+      isActive: false,
+      suspendUntil: '2099-08-24T12:30:00.000Z',
+    });
+    fixture.detectChanges();
+
+    const pause = fixture.nativeElement.querySelector(
+      '[data-testid="task-suspended-icon"]'
+    ) as HTMLElement | null;
+    expect(pause?.getAttribute('aria-label')).toBe('Suspended');
+    expect(pause?.getAttribute('title')).toContain('Suspended until');
+    expect(fixture.nativeElement.querySelector('.task-card__check')).toBeNull();
+  });
+
+  it('restores the completion checkbox after the suspension expires', () => {
+    component.task = createTask({
+      isActive: false,
+      suspendUntil: '2020-01-01T00:00:00.000Z',
+    });
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="task-suspended-icon"]')
+    ).toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('.task-card__check')
+    ).not.toBeNull();
   });
 
   it('sets active class on click even when icon is not configured', () => {

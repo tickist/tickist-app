@@ -13,6 +13,7 @@
           "
           [sort]="sortOption()"
           [filter]="filterOption()"
+          [suspendedCount]="suspendedTaskCount()"
           (toggleSimple)="
             setProjectTaskView(headerProject, $event ? 'simple' : 'extended')
           "

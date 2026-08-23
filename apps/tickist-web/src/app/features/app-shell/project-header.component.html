@@ -9,6 +9,10 @@
     @if (project.description) {
     <p class="project-desc">{{ project.description }}</p>
     }
+    <p class="project-header__suspended" data-testid="project-suspended-count">
+      <span aria-hidden="true">⏸</span>
+      Suspended: {{ suspendedCount }}
+    </p>
   </div>
 
   <div class="project-header__actions">

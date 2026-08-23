@@ -24,6 +24,13 @@
   @apply mt-2 text-sm md:text-base text-base-content opacity-70 max-w-3xl leading-relaxed;
 }
 
+.project-header__suspended {
+  @apply mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold;
+  color: rgb(var(--bc) / 0.74);
+  background: rgb(var(--bc) / 0.08);
+  border: 1px solid rgb(var(--bc) / 0.14);
+}
+
 .project-header__actions {
   @apply flex flex-wrap items-center gap-2 md:justify-end;
 }

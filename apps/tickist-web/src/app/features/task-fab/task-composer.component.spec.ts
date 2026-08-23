@@ -335,6 +335,70 @@ describe('TaskComposerComponent repeat custom cadence', () => {
       })
     );
   });
+
+  it('requires a future date and stores it as UTC for a timed suspension', async () => {
+    component.selectTab('extra');
+    component.taskForm.patchValue({
+      name: 'Pause task',
+      isActive: false,
+      suspensionMode: 'until',
+      suspendUntil: '',
+    });
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector(
+        '[data-testid="task-suspension-options"]'
+      )
+    ).not.toBeNull();
+
+    await component.submit();
+    expect(createTaskMock).not.toHaveBeenCalled();
+
+    const localValue = futureDateTimeInput(1);
+    component.taskForm.controls.suspendUntil.setValue(localValue);
+    await component.submit();
+
+    expect(createTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isActive: false,
+        suspendUntil: new Date(localValue).toISOString(),
+      })
+    );
+  });
+
+  it('stores an indefinite suspension without a resume timestamp', async () => {
+    component.taskForm.patchValue({
+      name: 'Pause indefinitely',
+      isActive: false,
+      suspensionMode: 'indefinite',
+    });
+
+    await component.submit();
+
+    expect(createTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({ isActive: false, suspendUntil: null })
+    );
+  });
+
+  it('restores a timed suspension and clears it when the task becomes active', async () => {
+    const suspendUntil = new Date(Date.now() + 86_400_000).toISOString();
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ isActive: false, suspendUntil }),
+    };
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.suspensionMode.value).toBe('until');
+    expect(component.taskForm.controls.suspendUntil.value).not.toBe('');
+
+    component.taskForm.controls.isActive.setValue(true);
+    await component.submit();
+
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({ isActive: true, suspendUntil: null })
+    );
+  });
 });
 
 describe('TaskComposerComponent shared sheet layout', () => {
@@ -429,4 +493,14 @@ function createTask(overrides: Partial<Task> = {}): Task {
     updatedAt: null,
     ...overrides,
   };
+}
+
+function futureDateTimeInput(days: number): string {
+  const date = new Date(Date.now() + days * 86_400_000);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  const hours = `${date.getHours()}`.padStart(2, '0');
+  const minutes = `${date.getMinutes()}`.padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }

@@ -9,7 +9,7 @@ Tickist is a task and project workspace for keeping everyday work clear: collect
 ## Highlights
 
 - **Inbox and projects** — including hierarchical projects, shared access, project settings, and extended or compact task views.
-- **Task management** — priorities, due dates, completion dates, descriptions, subtasks, tags, time estimates, pinned tasks, task types, and recurring rules.
+- **Task management** — priorities, due dates, completion dates, timed or indefinite suspension, descriptions, subtasks, tags, time estimates, pinned tasks, task types, and recurring rules.
 - **Find the right work** — project, tag, search, date, and completion filters; sorting by priority, due date, creation date, modification date, or name.
 - **Stay on top of work** — dashboard, task tree, project activity, reminders, and statistics.
 - **Notifications** — in-app notifications and email delivery through a transactional outbox, Supabase Edge Functions, and AWS SES.
