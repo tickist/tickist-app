@@ -9,10 +9,18 @@
     @if (project.description) {
     <p class="project-desc">{{ project.description }}</p>
     }
-    <p class="project-header__suspended" data-testid="project-suspended-count">
+    <button
+      type="button"
+      class="project-header__suspended"
+      data-testid="project-suspended-count"
+      title="Show suspended tasks"
+      [class.active]="filter === 'suspended'"
+      [attr.aria-pressed]="filter === 'suspended'"
+      (click)="selectFilter('suspended')"
+    >
       <span aria-hidden="true">⏸</span>
       Suspended: {{ suspendedCount }}
-    </p>
+    </button>
   </div>
 
   <div class="project-header__actions">

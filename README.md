@@ -8,31 +8,32 @@ Tickist is a task and project workspace for keeping everyday work clear: collect
 
 ## Highlights
 
-- **Inbox and projects** — including hierarchical projects, shared access, project settings, and extended or compact task views.
+- **Inbox and projects** — including hierarchical projects, shared access, project settings, a searchable 151-icon Lucide branding catalogue, and extended or compact task views.
 - **Task management** — priorities, due dates, completion dates, timed or indefinite suspension, descriptions, subtasks, tags, time estimates, pinned tasks, task types, and recurring rules.
 - **Find the right work** — project, tag, search, date, and completion filters; sorting by priority, due date, creation date, modification date, or name.
 - **Stay on top of work** — dashboard, task tree, project activity, reminders, and statistics.
 - **Notifications** — in-app notifications and email delivery through a transactional outbox, Supabase Edge Functions, and AWS SES.
 - **Portable data** — import/export support with stable identifiers for safe migration between installations.
+- **MCP integrations** — authenticated project, task, and tag tools over the stateless MCP `2026-07-28` Streamable HTTP protocol, with legacy-client compatibility.
 - **Public multilingual blog** — lightweight, repository-authored English and Polish blog indexes with independent editorial catalogues, taxonomy support, and crawl-ready metadata.
 
 ## Architecture
 
 ```text
-Angular 21 browser app
+Angular 22 browser app
         │
         ├── Supabase Auth, Postgres, Storage and Realtime
         │       └── Row Level Security enforces project and task access
         │
         └── Supabase Edge Functions ──> AWS SES email delivery
 
-Cloudflare Worker serves the production SPA and its runtime /env.js configuration.
+Cloudflare Worker serves the production SPA, its runtime `/env.js` configuration, and the authenticated `/mcp` proxy.
 ```
 
 | Area                  | Technology                                                  |
 | --------------------- | ----------------------------------------------------------- |
-| Frontend              | Angular 21, standalone components, signals, Vite            |
-| Workspace and testing | Nx 22, Vitest, Playwright                                   |
+| Frontend              | Angular 22, standalone components, signals, Vite            |
+| Workspace and testing | Nx 23, Vitest, Playwright                                   |
 | UI                    | Tailwind CSS, DaisyUI, Lucide                               |
 | Backend               | Supabase: Postgres, Auth, Storage, Realtime, Edge Functions |
 | Delivery              | Cloudflare Worker, GitHub Actions, AWS SES                  |

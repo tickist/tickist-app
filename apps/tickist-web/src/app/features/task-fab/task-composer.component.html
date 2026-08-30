@@ -413,24 +413,35 @@
         </div>
 
         @if (taskForm.controls.suspensionMode.value === 'until') {
-        <label class="sheet-field">
-          <span class="sheet-field__label">Resume at</span>
-          <input
-            type="datetime-local"
-            class="sheet-input"
-            formControlName="suspendUntil"
-            [min]="minimumSuspendUntil()"
-            aria-label="Resume at"
-            aria-describedby="suspend-until-error"
-          />
-          @if (taskForm.controls.suspendUntil.touched &&
-          taskForm.hasError('invalidSuspension')) {
-          <span id="suspend-until-error" class="sheet-field__hint" role="alert">
-            Choose a future date and time.
-          </span>
-          }
-        </label>
-        } }
+        <div class="sheet-grid-two">
+          <label class="sheet-field">
+            <span class="sheet-field__label">Resume date</span>
+            <input
+              type="date"
+              class="sheet-input"
+              formControlName="suspendUntil"
+              [min]="minimumSuspendDate()"
+              aria-label="Resume date"
+              aria-describedby="suspend-until-error"
+            />
+          </label>
+          <label class="sheet-field">
+            <span class="sheet-field__label">Resume time</span>
+            <input
+              type="time"
+              class="sheet-input"
+              formControlName="suspendUntilTime"
+              aria-label="Resume time"
+              aria-describedby="suspend-until-error"
+            />
+          </label>
+        </div>
+        @if (taskForm.controls.suspendUntil.touched &&
+        taskForm.hasError('invalidSuspension')) {
+        <span id="suspend-until-error" class="sheet-field__hint" role="alert">
+          Choose a future date and time.
+        </span>
+        } } }
 
         <label class="sheet-field sheet-field--inline">
           <input type="checkbox" formControlName="pinned" />

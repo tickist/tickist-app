@@ -166,15 +166,15 @@
         >
           {{ feedback.message }}
         </p>
-        }
-
-        @if (editingProject()?.members?.length) {
+        } @if (editingProject()?.members?.length) {
         <div class="sheet-muted-card">
           <p class="sheet-field__label">People with access</p>
           <div class="sheet-chip-list">
-            @for (member of editingProject()?.members ?? []; track member.userId) {
+            @for (member of editingProject()?.members ?? []; track
+            member.userId) {
             <span class="sheet-chip">
-              {{ memberLabel(member.userId) }} · {{ memberStatusLabel(member.status) }}
+              {{ memberLabel(member.userId) }} ·
+              {{ memberStatusLabel(member.status) }}
               <button
                 type="button"
                 [disabled]="inviteSubmitting()"
@@ -187,9 +187,7 @@
             }
           </div>
         </div>
-        }
-
-        @if (invites().length) {
+        } @if (invites().length) {
         <div class="sheet-chip-list">
           @for (email of invites(); track email) {
           <span class="sheet-chip">
@@ -231,8 +229,22 @@
 
         <div class="sheet-field">
           <span class="sheet-field__label">Icon</span>
+          <label class="icon-search">
+            <span class="project-composer-sr-only">Search project icons</span>
+            <input
+              #iconSearchInput
+              type="search"
+              class="sheet-input"
+              placeholder="Search icons"
+              [value]="iconSearch()"
+              (input)="iconSearch.set(iconSearchInput.value)"
+            />
+            <span class="icon-search__count" aria-live="polite">
+              {{ filteredIconOptions().length }} icons
+            </span>
+          </label>
           <div class="icon-grid">
-            @for (icon of iconOptions; track icon.key) {
+            @for (icon of filteredIconOptions(); track icon.key) {
             <button
               type="button"
               class="icon-pill"
@@ -243,9 +255,11 @@
             >
               <app-project-icon
                 [icon]="icon.key"
-                [size]="16"
+                [size]="18"
               ></app-project-icon>
             </button>
+            } @empty {
+            <p class="icon-grid__empty">No icons match this search.</p>
             }
           </div>
         </div>

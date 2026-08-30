@@ -169,7 +169,10 @@ export default defineConfig(({ mode }) => {
       watch: false,
       globals: true,
       environment: 'jsdom',
-      include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+      include: [
+        '{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+        '../../supabase/functions/tickist-mcp/**/*.spec.ts',
+      ],
       setupFiles: ['src/test-setup.ts'],
       reporters: ['default'],
       coverage: {

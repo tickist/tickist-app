@@ -345,18 +345,38 @@ const withSecurityHeaders = (response: Response): Response => {
 };
 
 const MCP_MAX_BODY_BYTES = 64 * 1024; // 64 KB limit for MCP requests
+const MCP_ALLOWED_ORIGINS = new Set([
+  'https://tickist.com',
+  'https://www.tickist.com',
+  'http://localhost:4200',
+  'http://127.0.0.1:4200',
+]);
+
+const mcpCorsHeaders = (origin: string | null): Record<string, string> => ({
+  'Access-Control-Allow-Origin': origin ?? '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers':
+    'accept, authorization, content-type, mcp-protocol-version, mcp-method, mcp-name',
+  'Access-Control-Max-Age': '86400',
+  Vary: 'Origin',
+});
 
 const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
+  const origin = request.headers.get('Origin');
+  if (origin && !MCP_ALLOWED_ORIGINS.has(origin)) {
+    return withSecurityHeaders(
+      new Response(JSON.stringify({ error: 'Forbidden origin.' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
+  }
+
   // CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'authorization, content-type',
-        'Access-Control-Max-Age': '86400',
-      },
+      headers: mcpCorsHeaders(origin),
     });
   }
 
@@ -366,6 +386,20 @@ const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
         status: 405,
         headers: { 'Content-Type': 'application/json' },
       })
+    );
+  }
+
+  const requestContentType = request.headers.get('Content-Type');
+  const contentType = requestContentType?.split(';', 1)[0].trim().toLowerCase();
+  if (!requestContentType || contentType !== 'application/json') {
+    return withSecurityHeaders(
+      new Response(
+        JSON.stringify({ error: 'Content-Type must be application/json.' }),
+        {
+          status: 415,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
     );
   }
 
@@ -383,7 +417,9 @@ const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
     );
   }
 
-  // Enforce body size limit
+  // Reject a declared oversized body before reading it. The measured-byte
+  // check below remains authoritative because Content-Length is optional and
+  // can be inaccurate.
   const contentLength = parseInt(
     request.headers.get('content-length') ?? '0',
     10
@@ -397,10 +433,39 @@ const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
     );
   }
 
+  const requestBody = await request.arrayBuffer();
+  if (requestBody.byteLength > MCP_MAX_BODY_BYTES) {
+    return withSecurityHeaders(
+      new Response(JSON.stringify({ error: 'Request body too large.' }), {
+        status: 413,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
+  }
+
   // Build upstream request
   const targetUrl = `${functionsUrl}/tickist-mcp`;
   const upstreamHeaders = new Headers();
-  upstreamHeaders.set('Content-Type', 'application/json');
+  upstreamHeaders.set('Content-Type', requestContentType);
+
+  for (const headerName of [
+    'Accept',
+    'Origin',
+    'MCP-Protocol-Version',
+    'Mcp-Method',
+    'Mcp-Name',
+  ]) {
+    const headerValue = request.headers.get(headerName);
+    if (headerValue) {
+      upstreamHeaders.set(headerName, headerValue);
+    }
+  }
+
+  for (const [headerName, headerValue] of request.headers) {
+    if (headerName.toLowerCase().startsWith('mcp-param-')) {
+      upstreamHeaders.set(headerName, headerValue);
+    }
+  }
 
   // Forward Authorization header as-is
   const authHeader = request.headers.get('Authorization');
@@ -419,12 +484,15 @@ const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
     const upstream = await fetch(targetUrl, {
       method: 'POST',
       headers: upstreamHeaders,
-      body: request.body,
+      body: requestBody,
     });
 
     const responseHeaders = new Headers(upstream.headers);
-    // Allow cross-origin for MCP clients
-    responseHeaders.set('Access-Control-Allow-Origin', '*');
+    for (const [headerName, headerValue] of Object.entries(
+      mcpCorsHeaders(origin)
+    )) {
+      responseHeaders.set(headerName, headerValue);
+    }
 
     const response = new Response(upstream.body, {
       status: upstream.status,

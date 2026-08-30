@@ -12,7 +12,7 @@ The product is not a public content site or a generic file store. It is an authe
 
 - Each user has one Inbox project for uncategorised tasks.
 - Projects can be active, nested under another project, or organised into special sidebar groups such as Someday/Maybe, routine reminders, weekdays, and future work. A selected project task list includes that project's tasks and every nested descendant by default. If descendants exist, independent checkboxes beside the selected project and each descendant temporarily include or exclude that project's own tasks; changing the selected project resets all of them to included.
-- Projects have a name, description, colour, icon, task-view preference, and defaults for task creation.
+- Projects have a name, description, colour, icon, task-view preference, and defaults for task creation. Branding provides a searchable catalogue of 151 Lucide icons.
 - A project owner can invite collaborators. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
 
 ### Tasks
@@ -24,8 +24,8 @@ The product is not a public content site or a generic file store. It is an authe
 - Assignee selectors in accepted shared projects use member display labels rather than internal user IDs. Tasks created through either the full composer or quick project entry are assigned to their creator by default when the selected project is shared; users may still choose another member or leave the task unassigned.
 - Priorities are A, B, C, and normal. Task types include normal, next action, and need info.
 - Completion is a first-class activity: when `is_done` changes to true, the database records `when_complete`; reopening a task clears that value. Task cards show the completion date when completed tasks are included by the active filter.
-- Tasks can be suspended indefinitely or until a future date and time. Suspended tasks use `is_active=false`; `suspend_until=null` means indefinite suspension. A due suspension is resumed in Postgres within approximately one minute, and the browser treats an expired timestamp as active while that update completes.
-- Project task views can filter all, active open, suspended, or completed tasks. The active-open filter excludes suspended work. Suspended cards show a non-interactive pause indicator instead of a completion checkbox, and the project header counts suspended, incomplete tasks across the currently included project hierarchy.
+- Tasks can be suspended indefinitely or until a future date and time. The time defaults to local `00:00` when the user selects a resume date without changing it. Suspended tasks use `is_active=false`; `suspend_until=null` means indefinite suspension. A due suspension is resumed in Postgres within approximately one minute, and the browser treats an expired timestamp as active while that update completes.
+- Project task views can filter all, active open, suspended, or completed tasks. The active-open filter excludes suspended work. Suspended cards show a non-interactive pause indicator instead of a completion checkbox, and the project header counts suspended, incomplete tasks across the currently included project hierarchy. Clicking that count selects the suspended-task filter.
 - Task views can sort by priority, due date, creation date, modification date, or alphabetical name.
 - Recurring-task completion resets the next occurrence instead of treating the task as permanently finished.
 
@@ -40,6 +40,15 @@ The product is not a public content site or a generic file store. It is an authe
 
 - Account settings include profile/avatar handling, password changes, notification preferences, backup/restore, and API-token management.
 - Export/import uses stable IDs and timestamps to support resilient migration and conflict handling.
+- Placeholder text uses one muted slate colour across application forms in both themes, keeping hints visually secondary to entered values.
+
+### MCP integrations
+
+- Authenticated clients can manage projects, tasks, and tags through the private `POST /mcp` Streamable HTTP endpoint.
+- The primary protocol is stateless MCP `2026-07-28`: every request carries its protocol version and client capabilities, and matching HTTP routing headers are required. `server/discover` reports the server identity and capabilities and advertises only the modern `2026-07-28` revision; legacy negotiation remains separate.
+- Initialization-based MCP `2025-06-18` remains supported for existing clients. The endpoint does not use protocol sessions in either era.
+- Modern results include `resultType`, deterministic tool discovery, required cache hints, text content, and object-shaped structured JSON content. Requests and tool arguments are validated before handlers run. Header mismatches, unsupported versions, notifications, and unknown methods use the status and JSON-RPC behavior defined by the selected protocol era.
+- Access requires a Supabase JWT or a personal API token from authenticated settings. Stored API-token scopes are enforced for every project, task, and tag tool; writes that reference a project verify ownership or accepted membership before using the service-role client. Client-visible failures omit database diagnostics. The Cloudflare Worker and Supabase Edge Function validate origins and preserve MCP routing headers. OAuth discovery and dynamic client registration are not exposed.
 
 ## 3. User-visible routes
 
@@ -95,7 +104,7 @@ Important Edge Functions:
 - `notification-digest-runner`: queues daily and weekly digests from notification preferences.
 - `enqueue-notification`: authenticated endpoint for adding an application email to the outbox.
 - `send-emails`: internal-secret-protected batch sender using AWS SES.
-- `tickist-mcp`: server-side integration surface for MCP clients.
+- `tickist-mcp`: dual-era MCP `2026-07-28` and `2025-06-18` integration surface for authenticated clients.
 
 Schedulers and secrets are production infrastructure. Never expose an internal secret or an email-outbox payload to an unauthenticated client.
 
@@ -104,7 +113,7 @@ Postgres also schedules `resume_due_tasks()` every minute through `pg_cron`. The
 ## 6. Technical architecture
 
 ```text
-Browser (Angular 21)
+Browser (Angular 22)
   ├─ Supabase Auth / PostgREST / Realtime / Storage
   │    └─ Postgres with RLS and migrations
   └─ Edge Functions
@@ -113,7 +122,7 @@ Browser (Angular 21)
 Cloudflare Worker
   ├─ serves the single-page application
   ├─ provides runtime browser configuration at /env.js
-  └─ exposes the dedicated /mcp endpoint
+  └─ validates and proxies the dedicated /mcp Streamable HTTP endpoint
 ```
 
 The codebase is an Nx workspace. `apps/tickist-web` is the active Angular app; `apps/tickist-web-e2e` contains Playwright journeys. Unit tests use Vitest. Production builds are served through the Cloudflare Worker defined in `apps/tickist-web/worker.ts`.

@@ -426,7 +426,7 @@
 }
 
 .task-card__panel--description textarea::placeholder {
-  color: rgb(var(--bc) / 0.45);
+  color: var(--tickist-placeholder-color);
 }
 
 .task-card__panel--description textarea:focus-visible {
@@ -556,7 +556,7 @@
 }
 
 .tag-add__input::placeholder {
-  color: var(--tag-picker-muted);
+  color: var(--tickist-placeholder-color);
 }
 
 .tag-add__create {

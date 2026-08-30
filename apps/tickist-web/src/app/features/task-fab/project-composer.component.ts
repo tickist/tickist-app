@@ -106,6 +106,19 @@ export class ProjectComposerComponent {
     '#94A3B8',
   ];
   readonly iconOptions = PROJECT_ICON_OPTIONS;
+  readonly iconSearch = signal('');
+  readonly filteredIconOptions = computed(() => {
+    const query = this.iconSearch().trim().toLocaleLowerCase();
+    if (!query) {
+      return this.iconOptions;
+    }
+
+    return this.iconOptions.filter(
+      (option) =>
+        option.label.toLocaleLowerCase().includes(query) ||
+        option.key.includes(query)
+    );
+  });
 
   @Output() dismiss = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
@@ -362,6 +375,7 @@ export class ProjectComposerComponent {
     this.currentPreset = preset;
     this.inviteInput.set('');
     this.invites.set([]);
+    this.iconSearch.set('');
     this.activeTab.set('general');
 
     if (!preset) {

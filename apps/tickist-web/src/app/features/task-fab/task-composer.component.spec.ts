@@ -343,6 +343,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
       isActive: false,
       suspensionMode: 'until',
       suspendUntil: '',
+      suspendUntilTime: '00:00',
     });
     fixture.detectChanges();
 
@@ -355,14 +356,43 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     await component.submit();
     expect(createTaskMock).not.toHaveBeenCalled();
 
-    const localValue = futureDateTimeInput(1);
-    component.taskForm.controls.suspendUntil.setValue(localValue);
+    const localDate = futureDateInput(1);
+    component.taskForm.controls.suspendUntil.setValue(localDate);
+    component.taskForm.controls.suspendUntilTime.setValue('09:30');
     await component.submit();
 
     expect(createTaskMock).toHaveBeenCalledWith(
       expect.objectContaining({
         isActive: false,
-        suspendUntil: new Date(localValue).toISOString(),
+        suspendUntil: new Date(`${localDate}T09:30`).toISOString(),
+      })
+    );
+  });
+
+  it('defaults a timed suspension to midnight when only a date is entered', async () => {
+    const localDate = futureDateInput(1);
+    component.selectTab('extra');
+    component.taskForm.patchValue({
+      name: 'Pause from midnight',
+      isActive: false,
+      suspensionMode: 'until',
+      suspendUntil: localDate,
+    });
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.suspendUntilTime.value).toBe('00:00');
+    expect(
+      (
+        fixture.nativeElement.querySelector(
+          'input[aria-label="Resume time"]'
+        ) as HTMLInputElement
+      ).value
+    ).toBe('00:00');
+    await component.submit();
+
+    expect(createTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        suspendUntil: new Date(`${localDate}T00:00`).toISOString(),
       })
     );
   });
@@ -391,6 +421,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
 
     expect(component.taskForm.controls.suspensionMode.value).toBe('until');
     expect(component.taskForm.controls.suspendUntil.value).not.toBe('');
+    expect(component.taskForm.controls.suspendUntilTime.value).not.toBe('');
 
     component.taskForm.controls.isActive.setValue(true);
     await component.submit();
@@ -495,12 +526,10 @@ function createTask(overrides: Partial<Task> = {}): Task {
   };
 }
 
-function futureDateTimeInput(days: number): string {
+function futureDateInput(days: number): string {
   const date = new Date(Date.now() + days * 86_400_000);
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
-  const hours = `${date.getHours()}`.padStart(2, '0');
-  const minutes = `${date.getMinutes()}`.padStart(2, '0');
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
+  return `${year}-${month}-${day}`;
 }

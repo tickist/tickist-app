@@ -17,7 +17,7 @@ Posts, categories, and tags are published from the repository rather than an adm
 - Each account has one Inbox for uncategorised tasks.
 - Projects can be nested to represent outcomes and their component work.
 - Selecting a project shows tasks from that project and all nested subprojects. When the selected project has descendants, independent checkboxes beside the selected project and each descendant can include or exclude that project's own tasks. All projects in the hierarchy are included by default, and the selection resets when the user moves to another project.
-- Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view.
+- Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view. Branding offers a searchable catalogue of 151 tree-shaken Lucide icons.
 - The sidebar groups active work and special planning buckets such as Someday/Maybe, routine reminders, weekdays, and future work.
 - Project owners can share a project by invitation. Recipients accept or decline from the Team view; accepted members can leave shared projects.
 
@@ -31,7 +31,7 @@ Task-card overflow actions are exclusive within a task list: opening the menu on
 
 ### Status and completion
 
-Tasks can be active or suspended. A suspension can remain in place until the user resumes the task or end automatically at a chosen date and time. Suspended tasks show a pause indicator instead of a completion checkbox, are excluded from active-work summaries, and are counted in the selected project's header across the currently included project hierarchy. A database scheduler resumes due tasks every minute, while an in-app status clock updates an open view without requiring a reload.
+Tasks can be active or suspended. A suspension can remain in place until the user resumes the task or end automatically at a chosen date and time. The resume time defaults to `00:00` when the user selects a date without changing the time. Suspended tasks show a pause indicator instead of a completion checkbox, are excluded from active-work summaries, and are counted in the selected project's header across the currently included project hierarchy. The header count is a shortcut that selects the suspended-task filter. A database scheduler resumes due tasks every minute, while an in-app status clock updates an open view without requiring a reload.
 
 Open, suspended, completed, and all-task filters are available in project task lists. The open filter excludes suspended tasks. Completing a task records its completion timestamp; reopening it clears the timestamp. When completed tasks are visible, the card displays a `Completed DD-MM-YYYY` badge next to the task name.
 
@@ -61,6 +61,8 @@ Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Co
 ## Settings and portability
 
 Settings cover profile data, avatar, password changes, email notification preferences, backup/restore, and API tokens. Export/import uses stable IDs and modification timestamps to make data transfer and duplicate handling reliable.
+
+Form placeholders use one muted slate colour across light and dark application surfaces so hints remain visually secondary to entered values.
 
 ## Notifications
 
