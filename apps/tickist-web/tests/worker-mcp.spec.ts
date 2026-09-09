@@ -94,6 +94,7 @@ describe('Worker /mcp proxy', () => {
     const req = new Request('https://tickist.com/mcp', { method: 'GET' });
     const res = await worker.fetch(req, buildEnv());
     expect(res.status).toBe(405);
+    expect(res.headers.get('x-robots-tag')).toBe('noindex, nofollow');
     const body = await res.json();
     expect(body.error).toContain('Method not allowed');
   });
@@ -101,17 +102,35 @@ describe('Worker /mcp proxy', () => {
   it('returns 204 for OPTIONS /mcp (CORS preflight)', async () => {
     const req = new Request('https://tickist.com/mcp', {
       method: 'OPTIONS',
-      headers: { Origin: 'https://tickist.com' },
+      headers: {
+        Origin: 'https://tickist.com',
+        'Access-Control-Request-Headers':
+          'Authorization, Content-Type, MCP-Param-Project',
+      },
     });
     const res = await worker.fetch(req, buildEnv());
     expect(res.status).toBe(204);
     expect(res.headers.get('access-control-allow-methods')).toContain('POST');
     expect(res.headers.get('access-control-allow-headers')).toContain(
-      'mcp-protocol-version'
+      'mcp-param-project'
     );
     expect(res.headers.get('access-control-allow-origin')).toBe(
       'https://tickist.com'
     );
+  });
+
+  it('rejects unknown CORS request headers', async () => {
+    const req = new Request('https://tickist.com/mcp', {
+      method: 'OPTIONS',
+      headers: {
+        Origin: 'https://tickist.com',
+        'Access-Control-Request-Headers': 'X-Untrusted-Header',
+      },
+    });
+
+    const res = await worker.fetch(req, buildEnv());
+
+    expect(res.status).toBe(403);
   });
 
   it('returns 403 for an untrusted Origin header', async () => {
@@ -159,23 +178,7 @@ describe('Worker /mcp proxy', () => {
     expect(res.status).toBe(413);
   });
 
-  it('returns 502 when functions URL is not configured', async () => {
-    const req = new Request('https://tickist.com/mcp', {
-      method: 'POST',
-      body: '{}',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const env = buildEnv({
-      NG_APP_SUPABASE_URL: undefined,
-      NG_APP_SUPABASE_FUNCTIONS_URL: undefined,
-    });
-    const res = await worker.fetch(req, env);
-    expect(res.status).toBe(502);
-    const body = await res.json();
-    expect(body.error).toContain('not configured');
-  });
-
-  it('proxies modern MCP headers to the Supabase function', async () => {
+  it('proxies modern MCP headers to the dedicated Worker', async () => {
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(
@@ -212,7 +215,10 @@ describe('Worker /mcp proxy', () => {
       },
     });
 
-    const res = await worker.fetch(req, buildEnv());
+    const res = await worker.fetch(
+      req,
+      buildEnv({ MCP_UPSTREAM_URL: 'https://mcp.tickist.com/mcp' })
+    );
     expect(res.status).toBe(200);
 
     // Verify the upstream fetch was called with correct URL and headers.
@@ -221,13 +227,11 @@ describe('Worker /mcp proxy', () => {
       string,
       RequestInit
     ];
-    expect(targetUrl).toBe('https://test.supabase.co/functions/v1/tickist-mcp');
+    expect(targetUrl).toBe('https://mcp.tickist.com/mcp');
     expect((fetchOpts.headers as Headers).get('Authorization')).toBe(
       'Bearer test-token'
     );
-    expect((fetchOpts.headers as Headers).get('apikey')).toBe(
-      'test-publishable-key'
-    );
+    expect((fetchOpts.headers as Headers).has('apikey')).toBe(false);
     expect((fetchOpts.headers as Headers).get('Accept')).toBe(
       'application/json, text/event-stream'
     );
@@ -239,9 +243,7 @@ describe('Worker /mcp proxy', () => {
     expect((fetchOpts.headers as Headers).get('Mcp-Param-Project')).toBe(
       'project-1'
     );
-    expect((fetchOpts.headers as Headers).get('Origin')).toBe(
-      'https://tickist.com'
-    );
+    expect((fetchOpts.headers as Headers).has('Origin')).toBe(false);
 
     fetchSpy.mockRestore();
   });

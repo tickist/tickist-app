@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { AuthShellComponent } from './auth-shell.component';
 import { redirectIfAuthenticatedGuard } from './redirect-if-authenticated.guard';
+import { supabaseAuthGuard } from './auth.guard';
 
 export const AUTH_ROUTES: Route[] = [
   {
@@ -26,6 +27,12 @@ export const AUTH_ROUTES: Route[] = [
       import('./auth-update-password.component').then(
         (m) => m.AuthUpdatePasswordComponent
       ),
+  },
+  {
+    path: 'oauth/consent',
+    canActivate: [supabaseAuthGuard],
+    loadComponent: () =>
+      import('./oauth-consent.component').then((m) => m.OAuthConsentComponent),
   },
   {
     path: '**',

@@ -44,11 +44,15 @@ The product is not a public content site or a generic file store. It is an authe
 
 ### MCP integrations
 
-- Authenticated clients can manage projects, tasks, and tags through the private `POST /mcp` Streamable HTTP endpoint.
+- Authenticated clients manage projects, tasks, and tags at `https://mcp.tickist.com/mcp`; `https://tickist.com/mcp` remains a temporary compatibility proxy.
 - The primary protocol is stateless MCP `2026-07-28`: every request carries its protocol version and client capabilities, and matching HTTP routing headers are required. `server/discover` reports the server identity and capabilities and advertises only the modern `2026-07-28` revision; legacy negotiation remains separate.
 - Initialization-based MCP `2025-06-18` remains supported for existing clients. The endpoint does not use protocol sessions in either era.
 - Modern results include `resultType`, deterministic tool discovery, required cache hints, text content, and object-shaped structured JSON content. Requests and tool arguments are validated before handlers run. Header mismatches, unsupported versions, notifications, and unknown methods use the status and JSON-RPC behavior defined by the selected protocol era.
-- Access requires a Supabase JWT or a personal API token from authenticated settings. Stored API-token scopes are enforced for every project, task, and tag tool; writes that reference a project verify ownership or accepted membership before using the service-role client. Client-visible failures omit database diagnostics. The Cloudflare Worker and Supabase Edge Function validate origins and preserve MCP routing headers. OAuth discovery and dynamic client registration are not exposed.
+- OAuth 2.1 uses authorization code with PKCE through Supabase Auth. The Worker publishes RFC 9728 metadata, supports dynamic client registration for compatibility, and verifies issuer, exact audience, expiry, subject, the live user, `tickist_mcp = true`, and the signed `tickist_mcp_scopes` claim. Consent is handled at `/auth/oauth/consent`; users list and revoke grants at `/app/settings/connected-apps`.
+- Tickist's Supabase OAuth server is reserved for MCP clients. Supabase accepts the standard `openid` scope; the access-token hook supplies all six project, task, and tag tool permissions in `tickist_mcp_scopes`. Personal tokens retain their independently selected `projects:*`, `tasks:*`, and `tags:*` scopes.
+- OAuth tools use the public Supabase publishable key and the user's Bearer token, so RLS authorizes owners and accepted project members. The MCP Worker has no service-role credential. Tool permissions are enforced before handlers, and mutations write payload-free user audit records.
+- Existing hashed `tk_` personal tokens retain their scopes and are temporarily forwarded to the old Edge Function. That function is a compatibility backend, not a second independently maintained MCP catalogue, and is retired after a separately approved token transition.
+- Host, Origin, CORS request headers, strict UTF-8 JSON, actual body size, request identifiers, arguments, and tool names are validated before data access. A dedicated Cloudflare binding limits MCP POST requests per hashed connecting address and does not trust unverified Bearer values as limiter keys. Credentials and user payloads are not logged; client-visible failures omit database diagnostics, and all MCP Worker responses are noindex.
 
 ## 3. User-visible routes
 
@@ -104,7 +108,7 @@ Important Edge Functions:
 - `notification-digest-runner`: queues daily and weekly digests from notification preferences.
 - `enqueue-notification`: authenticated endpoint for adding an application email to the outbox.
 - `send-emails`: internal-secret-protected batch sender using AWS SES.
-- `tickist-mcp`: dual-era MCP `2026-07-28` and `2025-06-18` integration surface for authenticated clients.
+- `tickist-mcp`: temporary compatibility backend for existing hashed personal API tokens.
 
 Schedulers and secrets are production infrastructure. Never expose an internal secret or an email-outbox payload to an unauthenticated client.
 
@@ -119,13 +123,12 @@ Browser (Angular 22)
   └─ Edge Functions
        └─ AWS SES for application email
 
-Cloudflare Worker
-  ├─ serves the single-page application
-  ├─ provides runtime browser configuration at /env.js
-  └─ validates and proxies the dedicated /mcp Streamable HTTP endpoint
+Cloudflare Workers
+  ├─ tickist-app: Angular assets, /env.js, and temporary /mcp proxy
+  └─ tickist-mcp: MCP HTTP, health, and OAuth metadata
 ```
 
-The codebase is an Nx workspace. `apps/tickist-web` is the active Angular app; `apps/tickist-web-e2e` contains Playwright journeys. Unit tests use Vitest. Production builds are served through the Cloudflare Worker defined in `apps/tickist-web/worker.ts`.
+The codebase is an Nx workspace. `apps/tickist-web` is the Angular app, `apps/mcp` is the dedicated MCP server, `libs/data-access/tickist` is its RLS-backed data layer, and `apps/tickist-web-e2e` contains Playwright journeys. Unit tests use Vitest. Production uses separate application and MCP Cloudflare Workers.
 
 ## 7. Local development and test safety
 

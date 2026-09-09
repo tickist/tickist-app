@@ -6,7 +6,11 @@
     "target": "es2022",
     "module": "preserve",
     "lib": ["es2020", "dom"],
-    "paths": {},
+    "paths": {
+      "@tickist/data-access-tickist": [
+        "./libs/data-access/tickist/src/index.ts"
+      ]
+    },
     "isolatedModules": true,
     "strict": false,
     "noUncheckedSideEffectImports": false,

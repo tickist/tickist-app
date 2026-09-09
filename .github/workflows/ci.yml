@@ -28,10 +28,22 @@ jobs:
       - run: npm ci
 
       - name: Lint
-        run: npx nx lint tickist-web
+        run: |
+          npx nx lint tickist-web
+          npx nx lint mcp
+          npx nx lint data-access-tickist
 
       - name: Unit tests
-        run: npx nx test tickist-web
+        run: |
+          npx nx test tickist-web
+          npx nx test mcp
+          npx nx test data-access-tickist
+
+      - name: MCP typecheck, build, and Worker dry-run
+        run: |
+          npx nx run mcp:typecheck
+          npx nx build mcp
+          npm run mcp:worker:check
 
       # - name: E2E tests
       #   run: npx nx e2e tickist-web

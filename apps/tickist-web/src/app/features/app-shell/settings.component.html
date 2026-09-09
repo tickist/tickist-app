@@ -334,6 +334,12 @@
         } @if (activeTab() === 'api-tokens') {
         <section class="sheet-form settings-panel">
           <section class="sheet-section">
+            <section class="token-create-card" aria-label="OAuth applications">
+              <h3>Connected applications</h3>
+              <p class="sheet-field__hint">Review MCP clients connected through OAuth and revoke their grants.</p>
+              <a routerLink="/app/settings/connected-apps" class="sheet-shell__button sheet-shell__button--secondary">Manage connected applications</a>
+            </section>
+
             <!-- Create token form -->
             <section class="token-create-card" aria-label="Create new token">
               <h3>New token</h3>

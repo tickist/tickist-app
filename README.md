@@ -14,7 +14,7 @@ Tickist is a task and project workspace for keeping everyday work clear: collect
 - **Stay on top of work** — dashboard, task tree, project activity, reminders, and statistics.
 - **Notifications** — in-app notifications and email delivery through a transactional outbox, Supabase Edge Functions, and AWS SES.
 - **Portable data** — import/export support with stable identifiers for safe migration between installations.
-- **MCP integrations** — authenticated project, task, and tag tools over the stateless MCP `2026-07-28` Streamable HTTP protocol, with legacy-client compatibility.
+- **MCP integrations** — OAuth 2.1 and scoped personal-token access to project, task, and tag tools over MCP `2026-07-28`, with `2025-06-18` compatibility.
 - **Public multilingual blog** — lightweight, repository-authored English and Polish blog indexes with independent editorial catalogues, taxonomy support, and crawl-ready metadata.
 
 ## Architecture
@@ -27,7 +27,7 @@ Angular 22 browser app
         │
         └── Supabase Edge Functions ──> AWS SES email delivery
 
-Cloudflare Worker serves the production SPA, its runtime `/env.js` configuration, and the authenticated `/mcp` proxy.
+The `tickist-app` Cloudflare Worker serves the production SPA and runtime configuration. A separate `tickist-mcp` Worker serves `https://mcp.tickist.com/mcp`; `https://tickist.com/mcp` remains a temporary compatibility proxy.
 ```
 
 | Area                  | Technology                                                  |
@@ -42,8 +42,11 @@ Cloudflare Worker serves the production SPA, its runtime `/env.js` configuration
 
 ```text
 apps/
-  tickist-web/          Angular application and Cloudflare Worker
+  tickist-web/          Angular application and SPA Cloudflare Worker
+  mcp/                  Dedicated HTTP and STDIO MCP server
   tickist-web-e2e/      Playwright journeys and database-reset safety checks
+libs/data-access/
+  tickist/              User-token Supabase access for MCP
 supabase/
   migrations/           Ordered, backward-compatible database migrations
   functions/            Edge Functions for reminders, sharing, and email
@@ -130,6 +133,13 @@ npm exec nx lint tickist-web
 npm exec nx test tickist-web
 npm exec nx build tickist-web --configuration production
 
+# Dedicated MCP checks
+npm exec nx lint mcp
+npm exec nx test mcp
+npm exec nx typecheck mcp
+npm exec nx build mcp
+npm exec nx worker:dry-run mcp
+
 # Playwright E2E in the CI browser configuration
 npx nx e2e tickist-web-e2e -- --project=chromium
 
@@ -193,16 +203,19 @@ Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backu
 
 `.env.example` documents the supported variables. The important groups are:
 
-| Purpose                    | Variables                                                                                          |
-| -------------------------- | -------------------------------------------------------------------------------------------------- |
-| Browser app                | `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, optional `NG_APP_SUPABASE_FUNCTIONS_URL` |
-| Local database tooling     | `SUPABASE_DB_URL`                                                                                  |
-| E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                   |
-| Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                   |
-| Edge Functions and workers | `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`                                                  |
-| Email delivery             | `EMAIL_FROM`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                           |
+| Purpose                    | Variables                                                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Browser app                | `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, optional `NG_APP_SUPABASE_FUNCTIONS_URL`             |
+| Local database tooling     | `SUPABASE_DB_URL`                                                                                              |
+| E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                               |
+| Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                               |
+| Edge Functions and workers | `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`                                                              |
+| MCP production smoke tests | `MCP_SMOKE_EMAIL`, `MCP_SMOKE_PASSWORD` (dedicated test user), `MCP_PERSONAL_SMOKE_TOKEN` (scoped `tk_` token) |
+| Email delivery             | `EMAIL_FROM`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                                       |
 
 `SUPABASE_SECRET_KEY`, database URLs with passwords, AWS credentials, and `INTERNAL_FUNCTION_SECRET` are server-side secrets. Never expose them through Angular runtime configuration or commit them to the repository. Legacy `*_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `ROUTINE_RUNNER_SECRET` names exist only as rollout fallbacks; use the publishable/secret names above for new configuration.
+
+The production MCP smoke test mints a fresh OAuth access token on every run through dynamic client registration, authorization code, and S256 PKCE, then revokes the resulting grant. Do not store an expiring OAuth JWT as a repository secret.
 
 ## Notifications and email
 
@@ -222,9 +235,12 @@ Production deployment is triggered by a push to `master`. The workflow:
 
 1. verifies lint, unit tests, and a production build;
 2. pushes Supabase migrations;
-3. syncs required Edge Function secrets and scheduler Vault values;
-4. deploys Edge Functions;
-5. builds the application and deploys the Cloudflare Worker.
+3. configures and verifies the Supabase OAuth server, dynamic registration, consent path, and MCP token hook;
+4. syncs required Edge Function secrets and scheduler Vault values;
+5. deploys Edge Functions;
+6. builds the application and MCP projects;
+7. deploys the application and MCP Cloudflare Workers separately;
+8. verifies MCP health, OAuth metadata, authentication challenges, OAuth and personal-token authentication, and modern and legacy protocol calls.
 
 Deployment configuration and required GitHub secrets are defined in [`.github/workflows/production.yml`](.github/workflows/production.yml). Treat `SUPABASE_REMOTE_DB_URL` as production infrastructure, not as a convenience variable for local work.
 

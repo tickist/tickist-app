@@ -63,6 +63,13 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'settings/connected-apps',
+        loadComponent: () =>
+          import('./features/app-shell/connected-apps.component').then(
+            (m) => m.ConnectedAppsComponent
+          ),
+      },
+      {
         path: 'task/new',
         loadComponent: () =>
           import('./features/task-fab/task-composer-page.component').then(
