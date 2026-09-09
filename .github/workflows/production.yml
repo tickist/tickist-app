@@ -779,6 +779,7 @@ jobs:
           modern_payload="$(curl -fsS --max-time 20 \
             -X POST \
             -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Accept: application/json, text/event-stream' \
             -H 'Content-Type: application/json' \
             -H 'MCP-Protocol-Version: 2026-07-28' \
             -H 'Mcp-Method: tools/list' \
@@ -789,6 +790,7 @@ jobs:
           modern_tool_payload="$(curl -fsS --max-time 20 \
             -X POST \
             -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Accept: application/json, text/event-stream' \
             -H 'Content-Type: application/json' \
             -H 'MCP-Protocol-Version: 2026-07-28' \
             -H 'Mcp-Method: tools/call' \
@@ -800,6 +802,7 @@ jobs:
           legacy_payload="$(curl -fsS --max-time 20 \
             -X POST \
             -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Accept: application/json, text/event-stream' \
             -H 'Content-Type: application/json' \
             --data '{"jsonrpc":"2.0","id":4,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
             "${mcp_origin}/mcp")"
@@ -808,6 +811,7 @@ jobs:
           legacy_tool_payload="$(curl -fsS --max-time 20 \
             -X POST \
             -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Accept: application/json, text/event-stream' \
             -H 'Content-Type: application/json' \
             --data '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
             "${mcp_origin}/mcp")"
@@ -821,6 +825,7 @@ jobs:
           personal_tool_payload="$(curl -fsS --max-time 20 \
             -X POST \
             -H "Authorization: Bearer ${MCP_PERSONAL_SMOKE_TOKEN}" \
+            -H 'Accept: application/json, text/event-stream' \
             -H 'Content-Type: application/json' \
             --data '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
             "${mcp_origin}/mcp")"
