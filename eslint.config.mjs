@@ -60,4 +60,16 @@ export default [
     // Override or add rules here
     rules: {},
   },
+  {
+    files: [
+      'apps/mcp/**/*.spec.ts',
+      'apps/tickist-web/src/**/*.spec.ts',
+      'apps/tickist-web/tests/**/*.spec.ts',
+      'libs/**/*.spec.ts',
+      'supabase/functions/tickist-mcp/**/*.spec.ts',
+    ],
+    rules: {
+      'playwright/no-standalone-expect': 'off',
+    },
+  },
 ];

@@ -1,0 +1,25 @@
+name = "tickist-mcp"
+main = "apps/mcp/src/worker.ts"
+compatibility_date = "2026-09-08"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+
+[vars]
+MCP_RESOURCE_URL = "https://mcp.tickist.com/mcp"
+MCP_ALLOWED_AUDIENCE = "https://mcp.tickist.com/mcp"
+MCP_ALLOWED_HOSTS = "mcp.tickist.com"
+
+[[routes]]
+pattern = "mcp.tickist.com/*"
+zone_name = "tickist.com"
+
+[[ratelimits]]
+name = "MCP_RATE_LIMITER"
+namespace_id = "687421"
+
+  [ratelimits.simple]
+  limit = 120
+  period = 60
+
+# SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, MCP_OAUTH_ISSUER, and the temporary
+# LEGACY_MCP_URL compatibility bridge are configured in Cloudflare.

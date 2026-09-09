@@ -40,7 +40,7 @@
 }
 
 .new-task-form__input::placeholder {
-  color: rgb(var(--bc) / 0.34);
+  color: var(--tickist-placeholder-color);
   font-style: italic;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .new-task-form__input:focus::placeholder {
-  color: rgb(var(--bc) / 0.24);
+  color: var(--tickist-placeholder-color);
 }
 
 .new-task-form__input[aria-invalid='true'] {

@@ -77,6 +77,7 @@ type TaskFormDefaults = {
   isActive: boolean;
   suspensionMode: SuspensionMode;
   suspendUntil: string;
+  suspendUntilTime: string;
   pinned: boolean;
   estimateMinutes: number;
   spentMinutes: number;
@@ -182,6 +183,7 @@ export class TaskComposerComponent {
     isActive: true,
     suspensionMode: 'indefinite',
     suspendUntil: '',
+    suspendUntilTime: '00:00',
     pinned: false,
     estimateMinutes: 15,
     spentMinutes: 0,
@@ -209,6 +211,7 @@ export class TaskComposerComponent {
       isActive: [true],
       suspensionMode: this.fb.nonNullable.control<SuspensionMode>('indefinite'),
       suspendUntil: [''],
+      suspendUntilTime: ['00:00'],
       pinned: [false],
       estimateMinutes: [15],
       spentMinutes: [0],
@@ -294,7 +297,8 @@ export class TaskComposerComponent {
         assigneeId: task.assigneeIds?.[0] ?? '',
         isActive: task.isActive,
         suspensionMode: task.suspendUntil ? 'until' : 'indefinite',
-        suspendUntil: normalizeDateTimeInputValue(task.suspendUntil),
+        suspendUntil: normalizeDateTimeDateValue(task.suspendUntil),
+        suspendUntilTime: normalizeDateTimeTimeValue(task.suspendUntil),
         pinned: task.pinned,
         estimateMinutes: task.estimateMinutes ?? 15,
         spentMinutes: task.spentMinutes ?? 0,
@@ -470,7 +474,8 @@ export class TaskComposerComponent {
       const suspendUntil = this.resolveSuspendUntil(
         value.isActive,
         value.suspensionMode as SuspensionMode,
-        value.suspendUntil
+        value.suspendUntil,
+        value.suspendUntilTime
       );
       const stepsPayload = this.steps.controls
         .map((control, index) => {
@@ -599,6 +604,7 @@ export class TaskComposerComponent {
       isActive: next.isActive,
       suspensionMode: next.suspensionMode,
       suspendUntil: next.suspendUntil,
+      suspendUntilTime: next.suspendUntilTime,
       pinned: next.pinned,
       estimateMinutes: next.estimateMinutes,
       spentMinutes: next.spentMinutes,
@@ -623,21 +629,20 @@ export class TaskComposerComponent {
     });
   }
 
-  minimumSuspendUntil(): string {
-    return normalizeDateTimeInputValue(
-      new Date(Date.now() + 60_000).toISOString()
-    );
+  minimumSuspendDate(): string {
+    return formatLocalDate(new Date());
   }
 
   private resolveSuspendUntil(
     isActive: boolean,
     mode: SuspensionMode,
-    value: string
+    date: string,
+    time: string
   ): string | null {
     if (isActive || mode === 'indefinite') {
       return null;
     }
-    return new Date(value).toISOString();
+    return new Date(localDateTime(date, time)).toISOString();
   }
 
   private getRepeatInterval(
@@ -803,20 +808,36 @@ function normalizeTimeInputValue(value: string | null | undefined): string {
   return timeMatch ? timeMatch[1] : '';
 }
 
-function normalizeDateTimeInputValue(value: string | null | undefined): string {
+function normalizeDateTimeTimeValue(value: string | null | undefined): string {
+  if (!value) {
+    return '00:00';
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return '00:00';
+  }
+  const hours = `${parsed.getHours()}`.padStart(2, '0');
+  const minutes = `${parsed.getMinutes()}`.padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+function normalizeDateTimeDateValue(value: string | null | undefined): string {
   if (!value) {
     return '';
   }
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return '';
-  }
-  const year = parsed.getFullYear();
-  const month = `${parsed.getMonth() + 1}`.padStart(2, '0');
-  const day = `${parsed.getDate()}`.padStart(2, '0');
-  const hours = `${parsed.getHours()}`.padStart(2, '0');
-  const minutes = `${parsed.getMinutes()}`.padStart(2, '0');
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
+  return Number.isNaN(parsed.getTime()) ? '' : formatLocalDate(parsed);
+}
+
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function localDateTime(date: string, time: string): string {
+  return `${date}T${time || '00:00'}`;
 }
 
 function suspensionValidator(
@@ -826,13 +847,16 @@ function suspensionValidator(
     isActive?: boolean;
     suspensionMode?: SuspensionMode;
     suspendUntil?: string;
+    suspendUntilTime?: string;
   };
   if (value.isActive || value.suspensionMode !== 'until') {
     return null;
   }
 
   const suspendUntilMs = value.suspendUntil
-    ? new Date(value.suspendUntil).getTime()
+    ? new Date(
+        localDateTime(value.suspendUntil, value.suspendUntilTime ?? '00:00')
+      ).getTime()
     : Number.NaN;
   return Number.isNaN(suspendUntilMs) || suspendUntilMs <= Date.now()
     ? { invalidSuspension: true }

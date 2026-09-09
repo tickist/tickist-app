@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { SupabaseSessionService } from './supabase-session.service';
 
-export const supabaseAuthGuard: CanActivateFn = async () => {
+export const supabaseAuthGuard: CanActivateFn = async (_route, state) => {
   const session = inject(SupabaseSessionService);
   const router = inject(Router);
 
@@ -12,5 +12,7 @@ export const supabaseAuthGuard: CanActivateFn = async () => {
     return true;
   }
 
-  return router.createUrlTree(['/auth']);
+  return router.createUrlTree(['/auth'], {
+    queryParams: { returnUrl: state.url },
+  });
 };

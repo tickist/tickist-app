@@ -78,7 +78,10 @@ export class AuthShellComponent {
         type: 'success',
         text: 'Signed in successfully. Redirecting…',
       });
-      await this.router.navigateByUrl('/app');
+      const returnUrl = safeReturnUrl(
+        this.route.snapshot.queryParamMap.get('returnUrl')
+      );
+      await this.router.navigateByUrl(returnUrl);
     } catch (error) {
       this.message.set({
         type: 'error',
@@ -95,4 +98,8 @@ export class AuthShellComponent {
   toggleTheme(): void {
     this.themeService.toggleTheme();
   }
+}
+
+function safeReturnUrl(value: string | null): string {
+  return value?.startsWith('/') && !value.startsWith('//') ? value : '/app';
 }

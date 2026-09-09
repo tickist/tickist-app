@@ -9,7 +9,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { startWith } from 'rxjs';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ToastService } from '../../core/ui/toast.service';
@@ -48,7 +48,7 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
 
 @Component({
   selector: 'app-settings',
-  imports: [ReactiveFormsModule, SheetScaffoldComponent, DatePipe],
+  imports: [ReactiveFormsModule, SheetScaffoldComponent, DatePipe, RouterLink],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

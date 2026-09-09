@@ -1,0 +1,44 @@
+<main class="oauth-page">
+  <section class="oauth-card">
+    <header>
+      <p class="oauth-card__eyebrow">Connected application</p>
+      <h1>Allow access to Tickist?</h1>
+      <p>An external MCP client is requesting access to your workspace.</p>
+    </header>
+
+    @if (loading()) {
+    <p role="status">Loading authorization request…</p>
+    } @else if (error(); as message) {
+    <p class="oauth-card__error" role="alert">{{ message }}</p>
+    } @else if (details(); as authorization) {
+    <section class="oauth-card__client">
+      <strong>{{ authorization.client.name }}</strong>
+      <span>{{ authorization.client.uri }}</span>
+    </section>
+    <section>
+      <h2>Requested access</h2>
+      <p>
+        The application may read and change projects, tasks, and tags according
+        to these scopes:
+      </p>
+      <code>{{ authorization.scope }}</code>
+    </section>
+    <p class="oauth-card__warning">
+      Only approve clients you trust. You can revoke access later in settings.
+    </p>
+    <footer>
+      <button type="button" [disabled]="deciding()" (click)="decide('deny')">
+        Deny
+      </button>
+      <button
+        type="button"
+        class="oauth-card__primary"
+        [disabled]="deciding()"
+        (click)="decide('approve')"
+      >
+        {{ deciding() ? 'Saving…' : 'Allow access' }}
+      </button>
+    </footer>
+    }
+  </section>
+</main>

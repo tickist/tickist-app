@@ -1,0 +1,36 @@
+{
+  "name": "mcp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mcp/src",
+  "projectType": "application",
+  "tags": ["type:app", "runtime:worker"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": { "command": "tsc -p apps/mcp/tsconfig.json --noEmit" }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["typecheck"],
+      "options": {
+        "command": "esbuild apps/mcp/src/main.ts --bundle --platform=node --format=esm --target=node24 --outfile=dist/apps/mcp/main.mjs"
+      }
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/apps/mcp"],
+      "options": { "config": "apps/mcp/vitest.config.mts" }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": { "lintFilePatterns": ["apps/mcp/**/*.ts"] }
+    },
+    "worker:dry-run": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["typecheck"],
+      "options": {
+        "command": "wrangler deploy --config wrangler.mcp.toml --dry-run"
+      }
+    }
+  }
+}

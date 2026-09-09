@@ -7,6 +7,8 @@
 - `supabase/migrations/` contains ordered database migrations.
 - `supabase/functions/` contains Deno-based Edge Functions.
 - `apps/tickist-web/worker.ts` is the Cloudflare Worker used in production.
+- `apps/mcp/` is the dedicated HTTP and STDIO MCP server.
+- `libs/data-access/tickist/` is its user-token Supabase data layer.
 
 The frontend is organised around `auth`, `app-shell`, `blog`, `dashboard`, `tags`, `task-fab`, `team`, `tree-view`, `statistics`, `core`, and `data`.
 
@@ -23,7 +25,7 @@ Supabase owns authentication and the relational data model. Core tables include:
 - `projects`, `project_members`;
 - `tasks`, `task_steps`, `task_tags`, `task_assignees`, `task_reminders`;
 - `tags`, `notifications`, `notification_preferences`, `routine_reminders`;
-- `api_tokens`, `email_outbox`, and activity/audit support tables.
+- `api_tokens`, `mcp_audit_events`, `email_outbox`, and activity/audit support tables.
 
 Task activity is managed at the database level. A trigger updates `modification_date` on every task update and sets or clears `when_complete` when the completion state changes.
 
@@ -35,8 +37,12 @@ The `list_accessible_project_assignees` security-definer function exposes only u
 
 ## Server-side automation
 
-Edge Functions handle reminders, shared-project updates, invitations, notification digests, outbox enqueueing, email delivery, routines, and MCP integration. Sensitive functions use `INTERNAL_FUNCTION_SECRET` or a validated user JWT as appropriate. AWS SES credentials remain in Edge Function secrets.
+Edge Functions handle reminders, shared-project updates, invitations, notification digests, outbox enqueueing, email delivery, and routines. The old `tickist-mcp` function remains only as a temporary bridge for hashed personal tokens. Sensitive functions use `INTERNAL_FUNCTION_SECRET`, a validated user JWT, or a hashed personal API token as appropriate. AWS SES credentials remain in Edge Function secrets.
 
 ## Cloudflare deployment
 
-The Worker serves built SPA assets, runtime configuration, and the dedicated `/mcp` endpoint. SPA fallback is enabled for application routes. For the public blog indexes (`/en/blog` and `/pl/blog`), it injects locale-specific title, description, canonical, robots, Open Graph, Twitter-card, and JSON-LD metadata into the initial HTML response. The Worker must not turn private API or workspace paths into indexable public content.
+Two Workers are deployed independently. `tickist-app` serves SPA assets and runtime configuration; its old `/mcp` route proxies to the MCP hostname during the compatibility period. `tickist-mcp` serves `mcp.tickist.com`, validates Host, Origin, body and Bearer credentials, and exposes health plus OAuth metadata. A dedicated Cloudflare Rate Limiting binding allows 120 MCP POST requests per minute per hashed connecting address; unverified Bearer values never select rate-limit buckets. Its official SDK server sends the user's token to Supabase through the publishable key, leaving project and task access to RLS. It never receives a service-role key.
+
+Supabase Auth is the OAuth 2.1 authorization server and is reserved for MCP clients in this project. Supabase currently accepts standard identity scopes, so clients request `openid`; the configured access-token hook marks OAuth client tokens with the exact MCP audience, `tickist_mcp = true`, and a signed `tickist_mcp_scopes` claim containing the project, task, and tag tool permissions. Ordinary browser/session tokens have no `client_id` and remain unchanged. The Angular app owns the noindex consent and grant-management screens. The MCP Worker owns RFC 9728 resource metadata and verifies issuer, audience, expiry, subject, live user, and both MCP claims before data access.
+
+SPA fallback remains enabled for application routes. For public blog indexes, the app Worker injects locale-specific title, description, canonical, robots, Open Graph, Twitter-card, and JSON-LD metadata. It adds `X-Robots-Tag: noindex, nofollow` to `/auth/**` and `/app/**`; the dedicated MCP Worker adds the same header to health, metadata, and protocol responses. Technical MCP and OAuth routes must never enter the sitemap.

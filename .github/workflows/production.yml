@@ -40,6 +40,9 @@ jobs:
       NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
       NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
       NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
+      MCP_SMOKE_EMAIL: ${{ secrets.MCP_SMOKE_EMAIL }}
+      MCP_SMOKE_PASSWORD: ${{ secrets.MCP_SMOKE_PASSWORD }}
+      MCP_PERSONAL_SMOKE_TOKEN: ${{ secrets.MCP_PERSONAL_SMOKE_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,11 +56,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify app
+      - name: Verify app and MCP
         run: |
           npx nx lint tickist-web
           npx nx test tickist-web
           npx nx build tickist-web --configuration production
+          npx nx lint mcp
+          npx nx test mcp
+          npx nx run mcp:typecheck
+          npx nx build mcp
+          npm run mcp:worker:check
 
       - uses: supabase/setup-cli@v1
         with:
@@ -221,6 +229,128 @@ jobs:
       - name: Push production DB migrations
         run: supabase db push --db-url "$SUPABASE_REMOTE_DB_URL"
 
+      - name: Configure Supabase MCP access token hook
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::error::Missing required GitHub secret: SUPABASE_ACCESS_TOKEN"
+            exit 1
+          fi
+
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "::error::Missing required GitHub secret: SUPABASE_PROJECT_REF"
+            exit 1
+          fi
+
+          management_url="https://api.supabase.com/v1/projects/${SUPABASE_PROJECT_REF}/config/auth"
+          hook_uri="pg-functions://postgres/public/tickist_mcp_access_token_hook"
+          payload_file="$(mktemp)"
+          response_file="$(mktemp)"
+          discovery_file="$(mktemp)"
+          trap 'rm -f "$payload_file" "$response_file" "$discovery_file"' EXIT
+
+          jq -n \
+            --arg hookUri "$hook_uri" \
+            '{
+              hook_custom_access_token_enabled: true,
+              hook_custom_access_token_uri: $hookUri,
+              oauth_server_enabled: true,
+              oauth_server_allow_dynamic_registration: true,
+              oauth_server_authorization_path: "/auth/oauth/consent"
+            }' > "$payload_file"
+
+          curl --fail --silent --show-error \
+            --retry 3 \
+            --retry-all-errors \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --request PATCH \
+            --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data-binary "@${payload_file}" \
+            --output "$response_file" \
+            "$management_url"
+
+          curl --fail --silent --show-error \
+            --retry 3 \
+            --retry-all-errors \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            --output "$response_file" \
+            "$management_url"
+
+          if ! jq -e \
+            --arg hookUri "$hook_uri" \
+            '.hook_custom_access_token_enabled == true and
+             .hook_custom_access_token_uri == $hookUri and
+             .oauth_server_enabled == true and
+             .oauth_server_allow_dynamic_registration == true and
+             .oauth_server_authorization_path == "/auth/oauth/consent"' \
+            "$response_file" > /dev/null; then
+            echo "::error::Supabase MCP OAuth server or access token hook verification failed."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --retry 3 \
+            --retry-all-errors \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --output "$discovery_file" \
+            "${NG_APP_SUPABASE_URL%/}/.well-known/oauth-authorization-server/auth/v1"
+
+          if ! jq -e \
+            --arg issuer "${NG_APP_SUPABASE_URL%/}/auth/v1" \
+            '.issuer == $issuer and
+             .authorization_endpoint == ($issuer + "/oauth/authorize") and
+             .token_endpoint == ($issuer + "/oauth/token") and
+             .registration_endpoint == ($issuer + "/oauth/clients/register") and
+             (.code_challenge_methods_supported | index("S256") != null)' \
+            "$discovery_file" > /dev/null; then
+            echo "::error::Supabase OAuth discovery or dynamic registration is unavailable."
+            exit 1
+          fi
+
+          echo "Supabase MCP OAuth server and access token hook are enabled."
+
+      - name: Verify MCP access token hook claims
+        run: |
+          psql "$SUPABASE_PSQL_DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          do $$
+          declare
+            ordinary_event jsonb :=
+              '{"claims":{"aud":"authenticated","sub":"00000000-0000-4000-8000-000000000001"}}'::jsonb;
+            oauth_event jsonb :=
+              '{"claims":{"aud":"authenticated","client_id":"test-client","sub":"00000000-0000-4000-8000-000000000001"}}'::jsonb;
+            ordinary_result jsonb;
+            oauth_result jsonb;
+          begin
+            ordinary_result := public.tickist_mcp_access_token_hook(ordinary_event);
+            if ordinary_result is distinct from ordinary_event then
+              raise exception 'MCP hook changed a non-OAuth token';
+            end if;
+
+            oauth_result := public.tickist_mcp_access_token_hook(oauth_event);
+            if oauth_result #>> '{claims,aud}' <> 'https://mcp.tickist.com/mcp'
+              or oauth_result #>> '{claims,tickist_mcp}' <> 'true'
+              or not (
+                oauth_result #> '{claims,tickist_mcp_scopes}' @>
+                '[
+                  "projects:read",
+                  "projects:write",
+                  "tasks:read",
+                  "tasks:write",
+                  "tags:read",
+                  "tags:write"
+                ]'::jsonb
+              )
+            then
+              raise exception 'MCP hook did not issue the required claims';
+            end if;
+          end;
+          $$;
+          SQL
+
       - name: Sync Supabase Edge Function secrets
         run: |
           supabase_secret_key="${SUPABASE_SECRET_KEY:-${SUPABASE_SERVICE_ROLE_KEY:-}}"
@@ -346,7 +476,381 @@ jobs:
           npx --yes wrangler@4 secret bulk "$secrets_file" --config wrangler.toml
           rm -f "$secrets_file"
 
-      - name: Verify Cloudflare runtime env
+      - name: Deploy MCP Cloudflare Worker
+        run: |
+          publishable_key="${NG_APP_SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-}}}"
+
+          if [ -z "$NG_APP_SUPABASE_URL" ] || [ -z "$publishable_key" ]; then
+            echo "::error::Missing Supabase URL or publishable key for MCP Worker."
+            exit 1
+          fi
+
+          if [ -z "$NG_APP_SUPABASE_FUNCTIONS_URL" ]; then
+            functions_url="${NG_APP_SUPABASE_URL%/}/functions/v1"
+          else
+            functions_url="${NG_APP_SUPABASE_FUNCTIONS_URL%/}"
+          fi
+
+          secrets_file="$(mktemp)"
+          trap 'rm -f "$secrets_file"' EXIT
+
+          jq -n \
+            --arg supabaseUrl "${NG_APP_SUPABASE_URL%/}" \
+            --arg publishableKey "$publishable_key" \
+            --arg oauthIssuer "${NG_APP_SUPABASE_URL%/}/auth/v1" \
+            --arg legacyMcpUrl "${functions_url}/tickist-mcp" \
+            '{
+              SUPABASE_URL: $supabaseUrl,
+              SUPABASE_PUBLISHABLE_KEY: $publishableKey,
+              MCP_OAUTH_ISSUER: $oauthIssuer,
+              LEGACY_MCP_URL: $legacyMcpUrl
+            }' > "$secrets_file"
+
+          npm run mcp:worker:deploy -- --secrets-file "$secrets_file"
+
+      - name: Mint MCP OAuth smoke token
+        run: |
+          for key in MCP_SMOKE_EMAIL MCP_SMOKE_PASSWORD NG_APP_SUPABASE_URL NG_APP_SUPABASE_PUBLISHABLE_KEY; do
+            if [ -z "${!key}" ]; then
+              echo "::error::Missing required GitHub secret: ${key}"
+              exit 1
+            fi
+          done
+
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs';
+          import { createHash, randomBytes } from 'node:crypto';
+          import { createClient } from '@supabase/supabase-js';
+
+          const supabaseUrl = process.env.NG_APP_SUPABASE_URL.replace(/\/$/, '');
+          const publishableKey = process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY;
+          const redirectUri = 'https://tickist.com/auth/oauth/ci-callback';
+          const authBase = `${supabaseUrl}/auth/v1`;
+          const verifier = randomBytes(48).toString('base64url');
+          const challenge = createHash('sha256')
+            .update(verifier)
+            .digest('base64url');
+          const state = randomBytes(24).toString('base64url');
+
+          const registrationResponse = await fetch(
+            `${authBase}/oauth/clients/register`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                client_name: 'Tickist production smoke test',
+                client_uri: 'https://tickist.com',
+                redirect_uris: [redirectUri],
+                grant_types: ['authorization_code'],
+                response_types: ['code'],
+                token_endpoint_auth_method: 'none',
+              }),
+            }
+          );
+          if (!registrationResponse.ok) {
+            throw new Error(
+              `Dynamic client registration failed with HTTP ${registrationResponse.status}.`
+            );
+          }
+          const registration = await registrationResponse.json();
+          if (typeof registration.client_id !== 'string' || !registration.client_id) {
+            throw new Error('Dynamic client registration returned no client_id.');
+          }
+
+          const authorizationUrl = new URL(`${authBase}/oauth/authorize`);
+          authorizationUrl.search = new URLSearchParams({
+            client_id: registration.client_id,
+            redirect_uri: redirectUri,
+            response_type: 'code',
+            scope: 'openid',
+            state,
+            code_challenge: challenge,
+            code_challenge_method: 'S256',
+          }).toString();
+          const authorizationResponse = await fetch(authorizationUrl, {
+            headers: { apikey: publishableKey },
+            redirect: 'manual',
+          });
+          const consentLocation = authorizationResponse.headers.get('location');
+          if (!consentLocation) {
+            throw new Error(
+              `OAuth authorization did not redirect to consent (HTTP ${authorizationResponse.status}).`
+            );
+          }
+          const authorizationId =
+            new URL(consentLocation, 'https://tickist.com').searchParams.get(
+              'authorization_id'
+            );
+          if (!authorizationId) {
+            throw new Error('OAuth consent redirect is missing authorization_id.');
+          }
+
+          const supabase = createClient(supabaseUrl, publishableKey, {
+            auth: {
+              autoRefreshToken: false,
+              detectSessionInUrl: false,
+              persistSession: false,
+            },
+          });
+          const signIn = await supabase.auth.signInWithPassword({
+            email: process.env.MCP_SMOKE_EMAIL,
+            password: process.env.MCP_SMOKE_PASSWORD,
+          });
+          if (signIn.error || !signIn.data.session) {
+            throw new Error('MCP smoke user sign-in failed.');
+          }
+
+          const details = await supabase.auth.oauth.getAuthorizationDetails(
+            authorizationId
+          );
+          if (details.error || !details.data) {
+            throw new Error('OAuth authorization details could not be loaded.');
+          }
+          const decision =
+            'redirect_url' in details.data
+              ? details
+              : await supabase.auth.oauth.approveAuthorization(authorizationId, {
+                  skipBrowserRedirect: true,
+                });
+          if (decision.error || !decision.data?.redirect_url) {
+            throw new Error('OAuth authorization could not be approved.');
+          }
+          const callback = new URL(decision.data.redirect_url);
+          const code = callback.searchParams.get('code');
+          if (callback.searchParams.get('state') !== state || !code) {
+            throw new Error('OAuth callback state or authorization code is invalid.');
+          }
+
+          const tokenResponse = await fetch(`${authBase}/oauth/token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              grant_type: 'authorization_code',
+              client_id: registration.client_id,
+              code,
+              redirect_uri: redirectUri,
+              code_verifier: verifier,
+            }),
+          });
+          if (!tokenResponse.ok) {
+            throw new Error(
+              `OAuth code exchange failed with HTTP ${tokenResponse.status}.`
+            );
+          }
+          const tokens = await tokenResponse.json();
+          if (typeof tokens.access_token !== 'string' || !tokens.access_token) {
+            throw new Error('OAuth code exchange returned no access token.');
+          }
+
+          appendFileSync(
+            process.env.GITHUB_ENV,
+            `MCP_SMOKE_TOKEN=${tokens.access_token}\n` +
+              `MCP_SMOKE_CLIENT_ID=${registration.client_id}\n`
+          );
+          console.log('Fresh MCP OAuth smoke token minted through DCR and PKCE.');
+          NODE
+
+      - name: Verify MCP Cloudflare Worker
+        run: |
+          mcp_origin="https://mcp.tickist.com"
+          health_payload=""
+
+          for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            if health_payload="$(curl -fsS --max-time 20 "${mcp_origin}/health")"; then
+              break
+            fi
+            if [ "$attempt" -eq 12 ]; then
+              echo "::error::Unable to reach ${mcp_origin}/health after deployment."
+              exit 1
+            fi
+            sleep 10
+          done
+
+          if ! printf '%s' "$health_payload" | jq -e \
+            '.status == "ok" and .service == "tickist-mcp" and .protocolVersion == "2026-07-28"' \
+            > /dev/null; then
+            echo "::error::MCP health response is invalid."
+            exit 1
+          fi
+
+          metadata_payload="$(curl -fsS --max-time 20 \
+            "${mcp_origin}/.well-known/oauth-protected-resource/mcp")"
+          expected_issuer="${NG_APP_SUPABASE_URL%/}/auth/v1"
+          if ! printf '%s' "$metadata_payload" | jq -e \
+            --arg resource "${mcp_origin}/mcp" \
+            --arg issuer "$expected_issuer" \
+            '.resource == $resource and .authorization_servers == [$issuer] and .resource_name == "Tickist MCP"' \
+            > /dev/null; then
+            echo "::error::MCP RFC 9728 metadata is invalid."
+            exit 1
+          fi
+
+          headers_file="$(mktemp)"
+          challenge_status="$(curl -sS -D "$headers_file" -o /dev/null -w '%{http_code}' \
+            -X POST -H 'Content-Type: application/json' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
+            "${mcp_origin}/mcp")"
+          if [ "$challenge_status" != "401" ] || \
+             ! grep -qi '^www-authenticate: Bearer.*resource_metadata=' "$headers_file"; then
+            echo "::error::MCP endpoint did not return the RFC 9728 Bearer challenge."
+            exit 1
+          fi
+
+          origin_status="$(curl -sS -o /dev/null -w '%{http_code}' \
+            -X POST -H 'Content-Type: application/json' \
+            -H 'Origin: https://attacker.invalid' --data '{}' \
+            "${mcp_origin}/mcp")"
+          if [ "$origin_status" != "403" ]; then
+            echo "::error::MCP endpoint accepted an untrusted Origin."
+            exit 1
+          fi
+
+          host_status="$(curl -sS -o /dev/null -w '%{http_code}' \
+            -X POST -H 'Content-Type: application/json' \
+            -H 'Host: attacker.invalid' --data '{}' \
+            "${mcp_origin}/mcp")"
+          if [ "$host_status" != "403" ]; then
+            echo "::error::MCP endpoint accepted an untrusted Host."
+            exit 1
+          fi
+
+          node <<'NODE'
+          const token = process.env.MCP_SMOKE_TOKEN || '';
+          const expectedAudience = 'https://mcp.tickist.com/mcp';
+          const expectedIssuer =
+            (process.env.NG_APP_SUPABASE_URL || '').replace(/\/$/, '') + '/auth/v1';
+          const requiredScopes = [
+            'projects:read',
+            'projects:write',
+            'tasks:read',
+            'tasks:write',
+            'tags:read',
+            'tags:write',
+          ];
+
+          try {
+            const parts = token.split('.');
+            if (parts.length !== 3) throw new Error('not a JWT');
+            const claims = JSON.parse(
+              Buffer.from(parts[1], 'base64url').toString('utf8')
+            );
+            const audiences = Array.isArray(claims.aud)
+              ? claims.aud
+              : [claims.aud];
+            if (
+              claims.iss !== expectedIssuer ||
+              !audiences.includes(expectedAudience) ||
+              claims.tickist_mcp !== true ||
+              typeof claims.sub !== 'string' ||
+              !claims.sub ||
+              typeof claims.client_id !== 'string' ||
+              claims.client_id !== process.env.MCP_SMOKE_CLIENT_ID ||
+              typeof claims.exp !== 'number' ||
+              claims.exp <= Math.floor(Date.now() / 1000) ||
+              !Array.isArray(claims.tickist_mcp_scopes) ||
+              !requiredScopes.every((scope) =>
+                claims.tickist_mcp_scopes.includes(scope)
+              )
+            ) {
+              throw new Error('required OAuth claims are missing');
+            }
+          } catch (error) {
+            console.log(
+              `::error::MCP_SMOKE_TOKEN failed OAuth claim validation: ${error.message}`
+            );
+            process.exit(1);
+          }
+          NODE
+
+          modern_payload="$(curl -fsS --max-time 20 \
+            -X POST \
+            -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            -H 'MCP-Protocol-Version: 2026-07-28' \
+            -H 'Mcp-Method: tools/list' \
+            --data '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}' \
+            "${mcp_origin}/mcp")"
+          printf '%s' "$modern_payload" | jq -e '.result.tools | length > 0' > /dev/null
+
+          modern_tool_payload="$(curl -fsS --max-time 20 \
+            -X POST \
+            -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            -H 'MCP-Protocol-Version: 2026-07-28' \
+            -H 'Mcp-Method: tools/call' \
+            -H 'Mcp-Name: list_projects' \
+            --data '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"list_projects","arguments":{},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}' \
+            "${mcp_origin}/mcp")"
+          printf '%s' "$modern_tool_payload" | jq -e '.result.isError != true' > /dev/null
+
+          legacy_payload="$(curl -fsS --max-time 20 \
+            -X POST \
+            -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            --data '{"jsonrpc":"2.0","id":4,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
+            "${mcp_origin}/mcp")"
+          printf '%s' "$legacy_payload" | jq -e '.result.protocolVersion == "2025-06-18"' > /dev/null
+
+          legacy_tool_payload="$(curl -fsS --max-time 20 \
+            -X POST \
+            -H "Authorization: Bearer ${MCP_SMOKE_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            --data '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
+            "${mcp_origin}/mcp")"
+          printf '%s' "$legacy_tool_payload" | jq -e '.result.isError != true' > /dev/null
+
+          if [[ "$MCP_PERSONAL_SMOKE_TOKEN" != tk_* ]]; then
+            echo "::error::Missing scoped tk_ GitHub secret: MCP_PERSONAL_SMOKE_TOKEN"
+            exit 1
+          fi
+
+          personal_tool_payload="$(curl -fsS --max-time 20 \
+            -X POST \
+            -H "Authorization: Bearer ${MCP_PERSONAL_SMOKE_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            --data '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
+            "${mcp_origin}/mcp")"
+          printf '%s' "$personal_tool_payload" | jq -e '.result.isError != true' > /dev/null
+
+      - name: Revoke MCP smoke grant
+        if: ${{ always() }}
+        run: |
+          if [ -z "${MCP_SMOKE_CLIENT_ID:-}" ]; then
+            echo "No MCP smoke grant was created."
+            exit 0
+          fi
+
+          node --input-type=module <<'NODE'
+          import { createClient } from '@supabase/supabase-js';
+
+          const supabase = createClient(
+            process.env.NG_APP_SUPABASE_URL,
+            process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY,
+            {
+              auth: {
+                autoRefreshToken: false,
+                detectSessionInUrl: false,
+                persistSession: false,
+              },
+            }
+          );
+          const signIn = await supabase.auth.signInWithPassword({
+            email: process.env.MCP_SMOKE_EMAIL,
+            password: process.env.MCP_SMOKE_PASSWORD,
+          });
+          if (signIn.error || !signIn.data.session) {
+            throw new Error('Could not sign in to revoke the MCP smoke grant.');
+          }
+          const revoked = await supabase.auth.oauth.revokeGrant({
+            clientId: process.env.MCP_SMOKE_CLIENT_ID,
+          });
+          if (revoked.error) {
+            throw new Error('Could not revoke the MCP smoke grant.');
+          }
+          console.log('MCP smoke grant revoked.');
+          NODE
+
+      - name: Verify Cloudflare routes
         run: |
           runtime_env="$(curl -fsS https://tickist.com/env.js)"
 
@@ -362,5 +866,41 @@ jobs:
 
           if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
             echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_PUBLISHABLE_KEY."
+            exit 1
+          fi
+
+          response_headers="$(mktemp)"
+          response_body="$(mktemp)"
+          mcp_status="$(curl -sS \
+            -D "$response_headers" \
+            -o "$response_body" \
+            -w '%{http_code}' \
+            -X POST \
+            -H 'Content-Type: application/json' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18"}}' \
+            https://tickist.com/mcp)"
+
+          if [ "$mcp_status" != "401" ]; then
+            echo "::error::MCP route did not enforce authentication (HTTP ${mcp_status})."
+            sed -n '1,20p' "$response_body"
+            exit 1
+          fi
+
+          if ! grep -qi '^www-authenticate: Bearer.*resource_metadata=' "$response_headers"; then
+            echo "::error::MCP route is missing the expected Bearer challenge."
+            exit 1
+          fi
+
+          forbidden_origin_status="$(curl -sS \
+            -o /dev/null \
+            -w '%{http_code}' \
+            -X POST \
+            -H 'Content-Type: application/json' \
+            -H 'Origin: https://attacker.invalid' \
+            --data '{}' \
+            https://tickist.com/mcp)"
+
+          if [ "$forbidden_origin_status" != "403" ]; then
+            echo "::error::MCP route accepted an untrusted browser origin (HTTP ${forbidden_origin_status})."
             exit 1
           fi

@@ -61,8 +61,7 @@
 .project-picker__trigger:focus-visible {
   outline: none;
   border-color: var(--project-picker-border-strong);
-  box-shadow:
-    0 0 0 2px var(--project-picker-surface),
+  box-shadow: 0 0 0 2px var(--project-picker-surface),
     0 0 0 3px color-mix(in srgb, var(--project-picker-text) 20%, transparent);
 }
 
@@ -90,7 +89,8 @@
 
 .project-picker__shared,
 .project-picker__option-shared {
-  border: 1px solid color-mix(in srgb, var(--project-picker-text) 18%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--project-picker-text) 18%, transparent);
   border-radius: 999px;
   color: color-mix(in srgb, var(--project-picker-text) 70%, transparent);
   font-size: 0.65rem;
@@ -136,14 +136,13 @@
 }
 
 .project-picker__search-input::placeholder {
-  color: var(--project-picker-muted);
+  color: var(--tickist-placeholder-color);
 }
 
 .project-picker__search-input:focus-visible {
   outline: none;
   border-color: var(--project-picker-border-strong);
-  box-shadow:
-    0 0 0 2px var(--project-picker-surface),
+  box-shadow: 0 0 0 2px var(--project-picker-surface),
     0 0 0 3px color-mix(in srgb, var(--project-picker-text) 16%, transparent);
 }
 
@@ -156,7 +155,8 @@
 .project-picker__group + .project-picker__group {
   margin-top: 0.45rem;
   padding-top: 0.45rem;
-  border-top: 1px solid color-mix(in srgb, var(--project-picker-text) 8%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--project-picker-text) 8%, transparent);
 }
 
 .project-picker__group-label {

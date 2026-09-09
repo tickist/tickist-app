@@ -84,6 +84,72 @@ import {
   lucideWallet as Wallet,
   lucideWrench as Wrench,
   lucideBaby as Baby,
+  lucideApple as Apple,
+  lucideArchive as Archive,
+  lucideArmchair as Armchair,
+  lucideAtom as Atom,
+  lucideAward as Award,
+  lucideBackpack as Backpack,
+  lucideBanknote as Banknote,
+  lucideBath as Bath,
+  lucideBedDouble as BedDouble,
+  lucideBeer as Beer,
+  lucideBird as Bird,
+  lucideBlocks as Blocks,
+  lucideBot as Bot,
+  lucideBox as Box,
+  lucideCake as Cake,
+  lucideCalculator as Calculator,
+  lucideChefHat as ChefHat,
+  lucideCircleDollarSign as CircleDollarSign,
+  lucideCircleUserRound as CircleUserRound,
+  lucideClapperboard as Clapperboard,
+  lucideCode2 as Code2,
+  lucideConstruction as Construction,
+  lucideCpu as Cpu,
+  lucideCrown as Crown,
+  lucideDog as Dog,
+  lucideDroplets as Droplets,
+  lucideEarth as Earth,
+  lucideFactory as Factory,
+  lucideFlower2 as Flower2,
+  lucideFootprints as Footprints,
+  lucideGem as Gem,
+  lucideHandHeart as HandHeart,
+  lucideHotel as Hotel,
+  lucideLanguages as Languages,
+  lucideLibrary as Library,
+  lucideMail as Mail,
+  lucideMedal as Medal,
+  lucideMountain as Mountain,
+  lucidePackage as Package,
+  lucidePhone as Phone,
+  lucidePill as Pill,
+  lucidePizza as Pizza,
+  lucidePlug as Plug,
+  lucidePresentation as Presentation,
+  lucidePuzzle as Puzzle,
+  lucideRadio as Radio,
+  lucideRecycle as Recycle,
+  lucideRoute as Route,
+  lucideSchool as School,
+  lucideShip as Ship,
+  lucideShoppingBag as ShoppingBag,
+  lucideSprout as Sprout,
+  lucideStore as Store,
+  lucideTent as Tent,
+  lucideTicket as Ticket,
+  lucideToolCase as ToolCase,
+  lucideTruck as Truck,
+  lucideTv as Tv,
+  lucideUmbrella as Umbrella,
+  lucideUniversity as University,
+  lucideUserRound as UserRound,
+  lucideVideo as Video,
+  lucideVolleyball as Volleyball,
+  lucideWaves as Waves,
+  lucideWifi as Wifi,
+  lucideWine as Wine,
 } from '@ng-icons/lucide';
 
 export type ProjectIconKey =
@@ -171,7 +237,73 @@ export type ProjectIconKey =
   | 'timer'
   | 'sandwich'
   | 'coffee'
-  | 'podcast';
+  | 'podcast'
+  | 'apple'
+  | 'archive'
+  | 'armchair'
+  | 'atom'
+  | 'award'
+  | 'backpack'
+  | 'banknote'
+  | 'bath'
+  | 'bed-double'
+  | 'beer'
+  | 'bird'
+  | 'blocks'
+  | 'bot'
+  | 'box'
+  | 'cake'
+  | 'calculator'
+  | 'chef-hat'
+  | 'circle-dollar-sign'
+  | 'circle-user-round'
+  | 'clapperboard'
+  | 'code-2'
+  | 'construction'
+  | 'cpu'
+  | 'crown'
+  | 'dog'
+  | 'droplets'
+  | 'earth'
+  | 'factory'
+  | 'flower-2'
+  | 'footprints'
+  | 'gem'
+  | 'hand-heart'
+  | 'hotel'
+  | 'languages'
+  | 'library'
+  | 'mail'
+  | 'medal'
+  | 'mountain'
+  | 'package'
+  | 'phone'
+  | 'pill'
+  | 'pizza'
+  | 'plug'
+  | 'presentation'
+  | 'puzzle'
+  | 'radio'
+  | 'recycle'
+  | 'route'
+  | 'school'
+  | 'ship'
+  | 'shopping-bag'
+  | 'sprout'
+  | 'store'
+  | 'tent'
+  | 'ticket'
+  | 'tool-case'
+  | 'truck'
+  | 'tv'
+  | 'umbrella'
+  | 'university'
+  | 'user-round'
+  | 'video'
+  | 'volleyball'
+  | 'waves'
+  | 'wifi'
+  | 'wine';
 
 export interface ProjectIconOption {
   key: ProjectIconKey;
@@ -266,6 +398,72 @@ export const PROJECT_ICON_OPTIONS: ProjectIconOption[] = [
   { key: 'sandwich', label: 'Meal' },
   { key: 'coffee', label: 'Coffee' },
   { key: 'podcast', label: 'Podcast' },
+  { key: 'apple', label: 'Apple' },
+  { key: 'archive', label: 'Archive' },
+  { key: 'armchair', label: 'Relax' },
+  { key: 'atom', label: 'Science' },
+  { key: 'award', label: 'Award' },
+  { key: 'backpack', label: 'Backpack' },
+  { key: 'banknote', label: 'Cash' },
+  { key: 'bath', label: 'Bathroom' },
+  { key: 'bed-double', label: 'Sleep' },
+  { key: 'beer', label: 'Beer' },
+  { key: 'bird', label: 'Bird' },
+  { key: 'blocks', label: 'Modules' },
+  { key: 'bot', label: 'Automation' },
+  { key: 'box', label: 'Box' },
+  { key: 'cake', label: 'Birthday' },
+  { key: 'calculator', label: 'Accounting' },
+  { key: 'chef-hat', label: 'Cooking' },
+  { key: 'circle-dollar-sign', label: 'Revenue' },
+  { key: 'circle-user-round', label: 'Profile' },
+  { key: 'clapperboard', label: 'Production' },
+  { key: 'code-2', label: 'Code' },
+  { key: 'construction', label: 'Construction' },
+  { key: 'cpu', label: 'Hardware' },
+  { key: 'crown', label: 'Premium' },
+  { key: 'dog', label: 'Dog' },
+  { key: 'droplets', label: 'Water' },
+  { key: 'earth', label: 'Earth' },
+  { key: 'factory', label: 'Factory' },
+  { key: 'flower-2', label: 'Garden' },
+  { key: 'footprints', label: 'Walking' },
+  { key: 'gem', label: 'Gem' },
+  { key: 'hand-heart', label: 'Charity' },
+  { key: 'hotel', label: 'Hotel' },
+  { key: 'languages', label: 'Languages' },
+  { key: 'library', label: 'Library' },
+  { key: 'mail', label: 'Email' },
+  { key: 'medal', label: 'Medal' },
+  { key: 'mountain', label: 'Adventure' },
+  { key: 'package', label: 'Delivery' },
+  { key: 'phone', label: 'Phone' },
+  { key: 'pill', label: 'Medicine' },
+  { key: 'pizza', label: 'Pizza' },
+  { key: 'plug', label: 'Energy' },
+  { key: 'presentation', label: 'Presentation' },
+  { key: 'puzzle', label: 'Puzzle' },
+  { key: 'radio', label: 'Radio' },
+  { key: 'recycle', label: 'Recycling' },
+  { key: 'route', label: 'Route' },
+  { key: 'school', label: 'School' },
+  { key: 'ship', label: 'Shipping' },
+  { key: 'shopping-bag', label: 'Retail' },
+  { key: 'sprout', label: 'Growth' },
+  { key: 'store', label: 'Store' },
+  { key: 'tent', label: 'Camping' },
+  { key: 'ticket', label: 'Tickets' },
+  { key: 'tool-case', label: 'Tools' },
+  { key: 'truck', label: 'Logistics' },
+  { key: 'tv', label: 'Television' },
+  { key: 'umbrella', label: 'Weather' },
+  { key: 'university', label: 'University' },
+  { key: 'user-round', label: 'Personal' },
+  { key: 'video', label: 'Video call' },
+  { key: 'volleyball', label: 'Sports' },
+  { key: 'waves', label: 'Sea' },
+  { key: 'wifi', label: 'Network' },
+  { key: 'wine', label: 'Wine' },
 ];
 
 const ICONS_BY_KEY: Record<ProjectIconKey, string> = {
@@ -354,6 +552,72 @@ const ICONS_BY_KEY: Record<ProjectIconKey, string> = {
   sandwich: Sandwich,
   coffee: Coffee,
   podcast: Podcast,
+  apple: Apple,
+  archive: Archive,
+  armchair: Armchair,
+  atom: Atom,
+  award: Award,
+  backpack: Backpack,
+  banknote: Banknote,
+  bath: Bath,
+  'bed-double': BedDouble,
+  beer: Beer,
+  bird: Bird,
+  blocks: Blocks,
+  bot: Bot,
+  box: Box,
+  cake: Cake,
+  calculator: Calculator,
+  'chef-hat': ChefHat,
+  'circle-dollar-sign': CircleDollarSign,
+  'circle-user-round': CircleUserRound,
+  clapperboard: Clapperboard,
+  'code-2': Code2,
+  construction: Construction,
+  cpu: Cpu,
+  crown: Crown,
+  dog: Dog,
+  droplets: Droplets,
+  earth: Earth,
+  factory: Factory,
+  'flower-2': Flower2,
+  footprints: Footprints,
+  gem: Gem,
+  'hand-heart': HandHeart,
+  hotel: Hotel,
+  languages: Languages,
+  library: Library,
+  mail: Mail,
+  medal: Medal,
+  mountain: Mountain,
+  package: Package,
+  phone: Phone,
+  pill: Pill,
+  pizza: Pizza,
+  plug: Plug,
+  presentation: Presentation,
+  puzzle: Puzzle,
+  radio: Radio,
+  recycle: Recycle,
+  route: Route,
+  school: School,
+  ship: Ship,
+  'shopping-bag': ShoppingBag,
+  sprout: Sprout,
+  store: Store,
+  tent: Tent,
+  ticket: Ticket,
+  'tool-case': ToolCase,
+  truck: Truck,
+  tv: Tv,
+  umbrella: Umbrella,
+  university: University,
+  'user-round': UserRound,
+  video: Video,
+  volleyball: Volleyball,
+  waves: Waves,
+  wifi: Wifi,
+  wine: Wine,
 };
 
 const ICON_KEYS = new Set<ProjectIconKey>(

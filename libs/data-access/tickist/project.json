@@ -1,0 +1,14 @@
+{
+  "name": "data-access-tickist",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/data-access/tickist/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project data-access-tickist --web",
+  "targets": {
+    "test": {
+      "executor": "@nx/vitest:test",
+      "options": { "config": "libs/data-access/tickist/vitest.config.mts" }
+    }
+  }
+}

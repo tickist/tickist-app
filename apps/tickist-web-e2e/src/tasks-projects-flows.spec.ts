@@ -268,6 +268,28 @@ async function openProjectContextMenu(page: Page, projectName: string) {
   return menu;
 }
 
+test('uses muted placeholders and supports project icon search', async ({
+  page,
+}) => {
+  await ensureAuthenticated(page);
+  const composer = await openCreateProjectModal(page);
+  const projectName = composer.getByLabel('Project name');
+
+  const placeholderColor = await projectName.evaluate(
+    (element) => getComputedStyle(element, '::placeholder').color
+  );
+  expect(placeholderColor).toBe('rgb(100, 116, 139)');
+
+  await composer.getByRole('button', { name: /Branding/ }).click();
+  const iconSearch = composer.getByRole('searchbox', {
+    name: 'Search project icons',
+  });
+  await expect(iconSearch).toBeVisible();
+  await iconSearch.fill('pizza');
+  await expect(composer.getByRole('button', { name: 'Pizza' })).toBeVisible();
+  await expect(composer.getByRole('button', { name: 'Folder' })).toHaveCount(0);
+});
+
 test('adds task to inbox and keeps it after reload', async ({
   page,
 }, testInfo) => {
@@ -429,7 +451,8 @@ test('suspends a task with a resume time and separates it from active work', asy
   await composer.getByRole('button', { name: 'Extra' }).click();
   await composer.getByLabel('Suspended').check();
   await composer.getByLabel('At a date and time').check();
-  await composer.getByLabel('Resume at').fill(`${futureDateInput(1)}T09:30`);
+  await composer.getByLabel('Resume date').fill(futureDateInput(1));
+  await expect(composer.getByLabel('Resume time')).toHaveValue('00:00');
   await composer.getByRole('button', { name: 'Update task' }).click();
 
   await expect(card).toHaveCount(0);
@@ -437,7 +460,11 @@ test('suspends a task with a resume time and separates it from active work', asy
     'Suspended: 1'
   );
 
-  await setProjectFilter(page, 'suspended');
+  await page.getByTestId('project-suspended-count').click();
+  await expect(page.getByTestId('project-suspended-count')).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
   card = taskCardByName(page, taskName);
   await expect(card).toBeVisible();
   await expect(card.getByTestId('task-suspended-icon')).toBeVisible();

@@ -11,6 +11,7 @@ interface Env {
   /** @deprecated Prefer NG_APP_SUPABASE_PUBLISHABLE_KEY. */
   NG_APP_SUPABASE_ANON_KEY?: string;
   NG_APP_SUPABASE_FUNCTIONS_URL?: string;
+  MCP_UPSTREAM_URL?: string;
 }
 
 const CONTENT_SECURITY_POLICY = [
@@ -345,18 +346,81 @@ const withSecurityHeaders = (response: Response): Response => {
 };
 
 const MCP_MAX_BODY_BYTES = 64 * 1024; // 64 KB limit for MCP requests
+const MCP_ALLOWED_ORIGINS = new Set([
+  'https://tickist.com',
+  'https://www.tickist.com',
+  'http://localhost:4200',
+  'http://127.0.0.1:4200',
+]);
+const MCP_CORS_REQUEST_HEADERS = new Set([
+  'accept',
+  'authorization',
+  'content-type',
+  'last-event-id',
+  'mcp-method',
+  'mcp-name',
+  'mcp-protocol-version',
+  'mcp-resume-from',
+  'mcp-session-id',
+]);
+
+const requestedMcpCorsHeaders = (request: Request): string[] | null => {
+  const requested = (
+    request.headers.get('Access-Control-Request-Headers') ?? ''
+  )
+    .split(',')
+    .map((header) => header.trim().toLowerCase())
+    .filter(Boolean);
+  return requested.every(
+    (header) =>
+      MCP_CORS_REQUEST_HEADERS.has(header) ||
+      /^mcp-param-[a-z0-9-]+$/u.test(header)
+  )
+    ? requested
+    : null;
+};
+
+const mcpCorsHeaders = (
+  origin: string | null,
+  requestedHeaders: readonly string[] = []
+): Record<string, string> => ({
+  'Access-Control-Allow-Origin': origin ?? '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers':
+    requestedHeaders.length > 0
+      ? requestedHeaders.join(', ')
+      : [...MCP_CORS_REQUEST_HEADERS].join(', '),
+  'Access-Control-Expose-Headers':
+    'MCP-Protocol-Version, MCP-Session-Id, WWW-Authenticate',
+  'Access-Control-Max-Age': '86400',
+  Vary: 'Origin',
+});
 
 const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
+  const origin = request.headers.get('Origin');
+  if (origin && !MCP_ALLOWED_ORIGINS.has(origin)) {
+    return withSecurityHeaders(
+      new Response(JSON.stringify({ error: 'Forbidden origin.' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
+  }
+
   // CORS preflight
   if (request.method === 'OPTIONS') {
+    const requestedHeaders = requestedMcpCorsHeaders(request);
+    if (!requestedHeaders) {
+      return withSecurityHeaders(
+        new Response(JSON.stringify({ error: 'Forbidden CORS header.' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+    }
     return new Response(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'authorization, content-type',
-        'Access-Control-Max-Age': '86400',
-      },
+      headers: mcpCorsHeaders(origin, requestedHeaders),
     });
   }
 
@@ -369,21 +433,23 @@ const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
     );
   }
 
-  // Resolve the Supabase Functions URL
-  const functionsUrl =
-    env.NG_APP_SUPABASE_FUNCTIONS_URL ||
-    (env.NG_APP_SUPABASE_URL ? `${env.NG_APP_SUPABASE_URL}/functions/v1` : '');
-
-  if (!functionsUrl) {
+  const requestContentType = request.headers.get('Content-Type');
+  const contentType = requestContentType?.split(';', 1)[0].trim().toLowerCase();
+  if (!requestContentType || contentType !== 'application/json') {
     return withSecurityHeaders(
-      new Response(JSON.stringify({ error: 'MCP endpoint not configured.' }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      new Response(
+        JSON.stringify({ error: 'Content-Type must be application/json.' }),
+        {
+          status: 415,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
     );
   }
 
-  // Enforce body size limit
+  // Reject a declared oversized body before reading it. The measured-byte
+  // check below remains authoritative because Content-Length is optional and
+  // can be inaccurate.
   const contentLength = parseInt(
     request.headers.get('content-length') ?? '0',
     10
@@ -397,10 +463,39 @@ const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
     );
   }
 
+  const requestBody = await request.arrayBuffer();
+  if (requestBody.byteLength > MCP_MAX_BODY_BYTES) {
+    return withSecurityHeaders(
+      new Response(JSON.stringify({ error: 'Request body too large.' }), {
+        status: 413,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
+  }
+
   // Build upstream request
-  const targetUrl = `${functionsUrl}/tickist-mcp`;
+  const targetUrl =
+    env.MCP_UPSTREAM_URL?.trim() || 'https://mcp.tickist.com/mcp';
   const upstreamHeaders = new Headers();
-  upstreamHeaders.set('Content-Type', 'application/json');
+  upstreamHeaders.set('Content-Type', requestContentType);
+
+  for (const headerName of [
+    'Accept',
+    'MCP-Protocol-Version',
+    'Mcp-Method',
+    'Mcp-Name',
+  ]) {
+    const headerValue = request.headers.get(headerName);
+    if (headerValue) {
+      upstreamHeaders.set(headerName, headerValue);
+    }
+  }
+
+  for (const [headerName, headerValue] of request.headers) {
+    if (headerName.toLowerCase().startsWith('mcp-param-')) {
+      upstreamHeaders.set(headerName, headerValue);
+    }
+  }
 
   // Forward Authorization header as-is
   const authHeader = request.headers.get('Authorization');
@@ -408,23 +503,19 @@ const proxyMcp = async (request: Request, env: Env): Promise<Response> => {
     upstreamHeaders.set('Authorization', authHeader);
   }
 
-  // Supabase edge functions require apikey header
-  const apiKey =
-    env.NG_APP_SUPABASE_PUBLISHABLE_KEY || env.NG_APP_SUPABASE_ANON_KEY || '';
-  if (apiKey) {
-    upstreamHeaders.set('apikey', apiKey);
-  }
-
   try {
     const upstream = await fetch(targetUrl, {
       method: 'POST',
       headers: upstreamHeaders,
-      body: request.body,
+      body: requestBody,
     });
 
     const responseHeaders = new Headers(upstream.headers);
-    // Allow cross-origin for MCP clients
-    responseHeaders.set('Access-Control-Allow-Origin', '*');
+    for (const [headerName, headerValue] of Object.entries(
+      mcpCorsHeaders(origin)
+    )) {
+      responseHeaders.set(headerName, headerValue);
+    }
 
     const response = new Response(upstream.body, {
       status: upstream.status,
@@ -449,17 +540,46 @@ export default {
       return envResponse(env);
     }
 
-    // Proxy /mcp to the Supabase tickist-mcp edge function
+    // Keep the legacy public address as a compatibility proxy to the MCP Worker.
     if (url.pathname === '/mcp') {
-      return proxyMcp(request, env);
+      return withNoIndex(await proxyMcp(request, env));
     }
 
     const assetResponse = await env.ASSETS.fetch(request);
     if (assetResponse.status === 404 && shouldServeHtmlFallback(request)) {
       const fallbackResponse = await fallbackToIndex(request, env);
-      return withSecurityHeaders(withBlogMetadata(fallbackResponse, url));
+      return withRouteIndexPolicy(
+        withSecurityHeaders(withBlogMetadata(fallbackResponse, url)),
+        url
+      );
     }
 
-    return withSecurityHeaders(withBlogMetadata(assetResponse, url));
+    return withRouteIndexPolicy(
+      withSecurityHeaders(withBlogMetadata(assetResponse, url)),
+      url
+    );
   },
 };
+
+function withRouteIndexPolicy(response: Response, url: URL): Response {
+  const isPrivateRoute =
+    url.pathname === '/app' ||
+    url.pathname.startsWith('/app/') ||
+    url.pathname === '/auth' ||
+    url.pathname.startsWith('/auth/');
+  if (!isPrivateRoute) {
+    return response;
+  }
+
+  return withNoIndex(response);
+}
+
+function withNoIndex(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set('X-Robots-Tag', 'noindex, nofollow');
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}

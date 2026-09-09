@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Project } from '../../data/project-data.service';
 import { ProjectHeaderComponent } from './project-header.component';
@@ -35,6 +35,18 @@ describe('ProjectHeaderComponent', () => {
       fixture.nativeElement.querySelectorAll('button.filter-option')
     ).map((button) => (button as HTMLElement).textContent?.trim());
     expect(labels).toContain('suspended');
+  });
+
+  it('selects the suspended filter when the count is clicked', () => {
+    const changeFilter = vi.fn();
+    fixture.componentInstance.changeFilter.subscribe(changeFilter);
+    const countButton = fixture.nativeElement.querySelector(
+      '[data-testid="project-suspended-count"]'
+    ) as HTMLButtonElement;
+
+    countButton.click();
+
+    expect(changeFilter).toHaveBeenCalledWith('suspended');
   });
 });
 

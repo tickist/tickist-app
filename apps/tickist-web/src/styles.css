@@ -11,6 +11,7 @@
   --tickist-native-select-popup-bg: rgb(var(--b1));
   --tickist-native-select-popup-group-bg: rgb(var(--b2));
   --tickist-native-select-popup-text: rgb(var(--bc));
+  --tickist-placeholder-color: rgb(100 116 139);
 }
 
 [data-theme='tickist'] {
@@ -78,6 +79,12 @@
 body {
   @apply m-0 min-h-screen bg-base-100 text-base-content font-sans antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--tickist-placeholder-color);
+  opacity: 1;
 }
 
 @layer base {
@@ -264,7 +271,7 @@ body {
 
   .sheet-input::placeholder,
   .sheet-textarea::placeholder {
-    color: rgb(var(--bc) / 0.42);
+    color: var(--tickist-placeholder-color);
   }
 
   .sheet-input:focus,
@@ -542,7 +549,7 @@ body {
 
 .input::placeholder,
 .auth-input::placeholder {
-  color: rgb(var(--bc) / 0.5);
+  color: var(--tickist-placeholder-color);
 }
 
 .input:-webkit-autofill,

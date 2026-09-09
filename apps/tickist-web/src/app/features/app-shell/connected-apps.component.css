@@ -1,0 +1,65 @@
+:host {
+  display: block;
+  min-height: 100%;
+  background: rgb(var(--b1));
+  color: rgb(var(--bc));
+}
+
+.connected-apps {
+  width: min(48rem, 100%);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.connected-apps header {
+  margin-bottom: 1.5rem;
+}
+
+.connected-apps h1 {
+  margin-block: 0.8rem 0.25rem;
+  font-size: 2rem;
+}
+
+.connected-apps h2,
+.connected-apps p {
+  margin: 0;
+}
+
+.connected-apps__list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.connected-apps__list article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(var(--bc) / 0.15);
+  border-radius: 1rem;
+  background: rgb(var(--b2));
+}
+
+.connected-apps__list p,
+.connected-apps__list small {
+  overflow-wrap: anywhere;
+  color: rgb(var(--bc) / 0.7);
+}
+
+.connected-apps button {
+  min-height: 2.5rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgb(var(--er) / 0.6);
+  border-radius: 0.65rem;
+  background: transparent;
+  color: rgb(var(--er));
+  cursor: pointer;
+}
+
+.connected-apps__error,
+.connected-apps__empty {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgb(var(--b2));
+}

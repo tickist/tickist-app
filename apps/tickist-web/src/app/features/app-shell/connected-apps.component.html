@@ -1,0 +1,34 @@
+<main class="connected-apps">
+  <header>
+    <a routerLink="/app/settings">← Back to settings</a>
+    <h1>Connected applications</h1>
+    <p>Review and revoke OAuth applications that can access Tickist.</p>
+  </header>
+
+  @if (error(); as message) {
+  <p class="connected-apps__error" role="alert">{{ message }}</p>
+  } @if (loading()) {
+  <p role="status">Loading connected applications…</p>
+  } @else if (grants().length === 0) {
+  <p class="connected-apps__empty">No connected applications.</p>
+  } @else {
+  <section class="connected-apps__list">
+    @for (grant of grants(); track grant.client.id) {
+    <article>
+      <div>
+        <h2>{{ grant.client.name }}</h2>
+        <p>{{ grant.client.uri }}</p>
+        <small>Scopes: {{ grant.scopes.join(', ') }}</small>
+      </div>
+      <button
+        type="button"
+        [disabled]="revoking() !== null"
+        (click)="revoke(grant.client.id)"
+      >
+        {{ revoking() === grant.client.id ? 'Revoking…' : 'Revoke' }}
+      </button>
+    </article>
+    }
+  </section>
+  }
+</main>

@@ -56,6 +56,27 @@ describe('ProjectComposerComponent sheet header', () => {
     expect(fixture.nativeElement.textContent).toContain('Edit project');
     expect(fixture.nativeElement.textContent).toContain('Trip planning');
   });
+
+  it('searches the expanded project icon catalogue by label or key', () => {
+    component.selectTab('branding');
+    component.iconSearch.set('pizza');
+    fixture.detectChanges();
+
+    expect(component.iconOptions.length).toBeGreaterThan(140);
+    expect(component.filteredIconOptions().map((option) => option.key)).toEqual(
+      ['pizza']
+    );
+    expect(
+      fixture.nativeElement.querySelector(
+        'button.icon-pill[aria-label="Pizza"]'
+      )
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector(
+        'button.icon-pill[aria-label="Folder"]'
+      )
+    ).toBeNull();
+  });
 });
 
 function createProject(overrides: Partial<Project> = {}): Project {
