@@ -102,6 +102,9 @@ jobs:
           if (!parsed.username) {
             errors.push('username is missing');
           }
+          if (!parsed.password) {
+            errors.push('password is missing');
+          }
           if (!parsed.hostname || parsed.hostname.startsWith('@')) {
             errors.push('host is missing or starts with @');
           }
@@ -133,18 +136,28 @@ jobs:
             const escaped = rawValue.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
             return `${key}='${escaped}'`;
           };
+          const maskSecret = (secret) => {
+            const escaped = secret
+              .replace(/%/g, '%25')
+              .replace(/\r/g, '%0D')
+              .replace(/\n/g, '%0A');
+            console.log(`::add-mask::${escaped}`);
+          };
           const database = decodeUrlPart('database name', parsed.pathname.replace(/^\//, ''));
           const port = parsed.port || '5432';
           const sslmode = parsed.searchParams.get('sslmode') || 'require';
+          const password = decodeUrlPart('password', parsed.password);
           const connection = [
             keywordValue('host', parsed.hostname),
             keywordValue('port', port),
             keywordValue('dbname', database),
             keywordValue('user', decodeUrlPart('username', parsed.username)),
-            keywordValue('password', decodeUrlPart('password', parsed.password)),
+            keywordValue('password', password),
             keywordValue('sslmode', sslmode),
           ].join(' ');
 
+          maskSecret(password);
+          maskSecret(connection);
           appendFileSync(process.env.GITHUB_ENV, `SUPABASE_PSQL_DB_URL=${connection}\n`);
           console.log(`SUPABASE_REMOTE_DB_URL parsed for host ${parsed.hostname}.`);
           NODE
@@ -642,6 +655,7 @@ jobs:
             throw new Error('OAuth code exchange returned no access token.');
           }
 
+          console.log(`::add-mask::${tokens.access_token}`);
           appendFileSync(
             process.env.GITHUB_ENV,
             `MCP_SMOKE_TOKEN=${tokens.access_token}\n` +
