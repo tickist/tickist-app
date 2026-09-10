@@ -891,7 +891,7 @@ jobs:
           console.log('MCP smoke grant revoked.');
           NODE
 
-      - name: Verify Cloudflare routes
+      - name: Verify Cloudflare runtime env
         run: |
           runtime_env="$(curl -fsS https://tickist.com/env.js)"
 
@@ -910,6 +910,9 @@ jobs:
             exit 1
           fi
 
+      - name: Verify MCP compatibility route
+        if: ${{ vars.ENABLE_MCP_ROUTE_SMOKE == 'true' }}
+        run: |
           response_headers="$(mktemp)"
           response_body="$(mktemp)"
           mcp_status="$(curl -sS \

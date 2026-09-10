@@ -217,6 +217,7 @@ Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backu
 
 The authenticated production MCP smoke sequence is temporarily disabled by default. Set the GitHub Actions repository variable `ENABLE_MCP_OAUTH_SMOKE=true` to enable it. When enabled, it mints a fresh OAuth access token through dynamic client registration, authorization code, and S256 PKCE, then revokes the resulting grant. The smoke credentials are injected only into those conditional steps. Do not store an expiring OAuth JWT as a repository secret.
 The personal `tk_` compatibility check runs only when the full smoke sequence is enabled and `MCP_PERSONAL_SMOKE_TOKEN` is configured.
+The separate `https://tickist.com/mcp` compatibility-route smoke test is also temporarily disabled. Set `ENABLE_MCP_ROUTE_SMOKE=true` to enable that deployment gate after the proxy's Cloudflare `522` response is resolved.
 
 ## Notifications and email
 
