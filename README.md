@@ -210,13 +210,13 @@ Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backu
 | E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                   |
 | Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                   |
 | Edge Functions and workers | `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`                                                  |
-| MCP production smoke tests | `MCP_SMOKE_EMAIL`, `MCP_SMOKE_PASSWORD` (dedicated test user)                                      |
+| MCP production smoke tests | `MCP_SMOKE_EMAIL`, `MCP_SMOKE_PASSWORD` (dedicated test user; used only when enabled)              |
 | Email delivery             | `EMAIL_FROM`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                           |
 
 `SUPABASE_SECRET_KEY`, database URLs with passwords, AWS credentials, and `INTERNAL_FUNCTION_SECRET` are server-side secrets. Never expose them through Angular runtime configuration or commit them to the repository. Legacy `*_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `ROUTINE_RUNNER_SECRET` names exist only as rollout fallbacks; use the publishable/secret names above for new configuration.
 
-The production MCP smoke test mints a fresh OAuth access token on every run through dynamic client registration, authorization code, and S256 PKCE, then revokes the resulting grant. Do not store an expiring OAuth JWT as a repository secret.
-The personal `tk_` compatibility check runs only when `MCP_PERSONAL_SMOKE_TOKEN` is configured; adding that secret enables the check automatically.
+The authenticated production MCP smoke sequence is temporarily disabled by default. Set the GitHub Actions repository variable `ENABLE_MCP_OAUTH_SMOKE=true` to enable it. When enabled, it mints a fresh OAuth access token through dynamic client registration, authorization code, and S256 PKCE, then revokes the resulting grant. The smoke credentials are injected only into those conditional steps. Do not store an expiring OAuth JWT as a repository secret.
+The personal `tk_` compatibility check runs only when the full smoke sequence is enabled and `MCP_PERSONAL_SMOKE_TOKEN` is configured.
 
 ## Notifications and email
 
