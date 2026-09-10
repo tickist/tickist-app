@@ -203,19 +203,20 @@ Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backu
 
 `.env.example` documents the supported variables. The important groups are:
 
-| Purpose                    | Variables                                                                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Browser app                | `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, optional `NG_APP_SUPABASE_FUNCTIONS_URL`             |
-| Local database tooling     | `SUPABASE_DB_URL`                                                                                              |
-| E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                               |
-| Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                               |
-| Edge Functions and workers | `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`                                                              |
-| MCP production smoke tests | `MCP_SMOKE_EMAIL`, `MCP_SMOKE_PASSWORD` (dedicated test user), `MCP_PERSONAL_SMOKE_TOKEN` (scoped `tk_` token) |
-| Email delivery             | `EMAIL_FROM`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                                       |
+| Purpose                    | Variables                                                                                          |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| Browser app                | `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, optional `NG_APP_SUPABASE_FUNCTIONS_URL` |
+| Local database tooling     | `SUPABASE_DB_URL`                                                                                  |
+| E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                   |
+| Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                   |
+| Edge Functions and workers | `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`                                                  |
+| MCP production smoke tests | `MCP_SMOKE_EMAIL`, `MCP_SMOKE_PASSWORD` (dedicated test user)                                      |
+| Email delivery             | `EMAIL_FROM`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                           |
 
 `SUPABASE_SECRET_KEY`, database URLs with passwords, AWS credentials, and `INTERNAL_FUNCTION_SECRET` are server-side secrets. Never expose them through Angular runtime configuration or commit them to the repository. Legacy `*_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `ROUTINE_RUNNER_SECRET` names exist only as rollout fallbacks; use the publishable/secret names above for new configuration.
 
 The production MCP smoke test mints a fresh OAuth access token on every run through dynamic client registration, authorization code, and S256 PKCE, then revokes the resulting grant. Do not store an expiring OAuth JWT as a repository secret.
+The personal `tk_` compatibility check runs only when `MCP_PERSONAL_SMOKE_TOKEN` is configured; adding that secret enables the check automatically.
 
 ## Notifications and email
 

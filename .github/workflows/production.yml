@@ -825,21 +825,25 @@ jobs:
             | node tools/scripts/parse-mcp-http-response.mjs \
             | jq -e '.result.isError != true' > /dev/null
 
-          if [[ "$MCP_PERSONAL_SMOKE_TOKEN" != tk_* ]]; then
-            echo "::error::Missing scoped tk_ GitHub secret: MCP_PERSONAL_SMOKE_TOKEN"
-            exit 1
-          fi
+          if [ -z "${MCP_PERSONAL_SMOKE_TOKEN:-}" ]; then
+            echo "::warning::Skipping personal tk_ token smoke test because MCP_PERSONAL_SMOKE_TOKEN is not configured."
+          else
+            if [[ "$MCP_PERSONAL_SMOKE_TOKEN" != tk_* ]]; then
+              echo "::error::MCP_PERSONAL_SMOKE_TOKEN must start with tk_."
+              exit 1
+            fi
 
-          personal_tool_payload="$(curl -fsS --max-time 20 \
-            -X POST \
-            -H "Authorization: Bearer ${MCP_PERSONAL_SMOKE_TOKEN}" \
-            -H 'Accept: application/json, text/event-stream' \
-            -H 'Content-Type: application/json' \
-            --data '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
-            "${mcp_origin}/mcp")"
-          printf '%s' "$personal_tool_payload" \
-            | node tools/scripts/parse-mcp-http-response.mjs \
-            | jq -e '.result.isError != true' > /dev/null
+            personal_tool_payload="$(curl -fsS --max-time 20 \
+              -X POST \
+              -H "Authorization: Bearer ${MCP_PERSONAL_SMOKE_TOKEN}" \
+              -H 'Accept: application/json, text/event-stream' \
+              -H 'Content-Type: application/json' \
+              --data '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
+              "${mcp_origin}/mcp")"
+            printf '%s' "$personal_tool_payload" \
+              | node tools/scripts/parse-mcp-http-response.mjs \
+              | jq -e '.result.isError != true' > /dev/null
+          fi
 
       - name: Revoke MCP smoke grant
         if: ${{ always() }}
