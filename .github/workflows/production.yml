@@ -344,7 +344,8 @@ jobs:
             end if;
 
             oauth_result := public.tickist_mcp_access_token_hook(oauth_event);
-            if oauth_result #>> '{claims,aud}' <> 'https://mcp.tickist.com/mcp'
+            if oauth_result #> '{claims,aud}' <>
+                '["authenticated", "https://mcp.tickist.com/mcp"]'::jsonb
               or oauth_result #>> '{claims,tickist_mcp}' <> 'true'
               or not (
                 oauth_result #> '{claims,tickist_mcp_scopes}' @>
