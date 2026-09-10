@@ -785,7 +785,9 @@ jobs:
             -H 'Mcp-Method: tools/list' \
             --data '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}' \
             "${mcp_origin}/mcp")"
-          printf '%s' "$modern_payload" | jq -e '.result.tools | length > 0' > /dev/null
+          printf '%s' "$modern_payload" \
+            | node tools/scripts/parse-mcp-http-response.mjs \
+            | jq -e '.result.tools | length > 0' > /dev/null
 
           modern_tool_payload="$(curl -fsS --max-time 20 \
             -X POST \
@@ -797,7 +799,9 @@ jobs:
             -H 'Mcp-Name: list_projects' \
             --data '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"list_projects","arguments":{},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}' \
             "${mcp_origin}/mcp")"
-          printf '%s' "$modern_tool_payload" | jq -e '.result.isError != true' > /dev/null
+          printf '%s' "$modern_tool_payload" \
+            | node tools/scripts/parse-mcp-http-response.mjs \
+            | jq -e '.result.isError != true' > /dev/null
 
           legacy_payload="$(curl -fsS --max-time 20 \
             -X POST \
@@ -806,7 +810,9 @@ jobs:
             -H 'Content-Type: application/json' \
             --data '{"jsonrpc":"2.0","id":4,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
             "${mcp_origin}/mcp")"
-          printf '%s' "$legacy_payload" | jq -e '.result.protocolVersion == "2025-06-18"' > /dev/null
+          printf '%s' "$legacy_payload" \
+            | node tools/scripts/parse-mcp-http-response.mjs \
+            | jq -e '.result.protocolVersion == "2025-06-18"' > /dev/null
 
           legacy_tool_payload="$(curl -fsS --max-time 20 \
             -X POST \
@@ -815,7 +821,9 @@ jobs:
             -H 'Content-Type: application/json' \
             --data '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
             "${mcp_origin}/mcp")"
-          printf '%s' "$legacy_tool_payload" | jq -e '.result.isError != true' > /dev/null
+          printf '%s' "$legacy_tool_payload" \
+            | node tools/scripts/parse-mcp-http-response.mjs \
+            | jq -e '.result.isError != true' > /dev/null
 
           if [[ "$MCP_PERSONAL_SMOKE_TOKEN" != tk_* ]]; then
             echo "::error::Missing scoped tk_ GitHub secret: MCP_PERSONAL_SMOKE_TOKEN"
@@ -829,7 +837,9 @@ jobs:
             -H 'Content-Type: application/json' \
             --data '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"list_projects","arguments":{}}}' \
             "${mcp_origin}/mcp")"
-          printf '%s' "$personal_tool_payload" | jq -e '.result.isError != true' > /dev/null
+          printf '%s' "$personal_tool_payload" \
+            | node tools/scripts/parse-mcp-http-response.mjs \
+            | jq -e '.result.isError != true' > /dev/null
 
       - name: Revoke MCP smoke grant
         if: ${{ always() }}
