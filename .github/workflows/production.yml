@@ -40,9 +40,6 @@ jobs:
       NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
       NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
       NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
-      MCP_SMOKE_EMAIL: ${{ secrets.MCP_SMOKE_EMAIL }}
-      MCP_SMOKE_PASSWORD: ${{ secrets.MCP_SMOKE_PASSWORD }}
-      MCP_PERSONAL_SMOKE_TOKEN: ${{ secrets.MCP_PERSONAL_SMOKE_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -523,6 +520,10 @@ jobs:
           npm run mcp:worker:deploy -- --secrets-file "$secrets_file"
 
       - name: Mint MCP OAuth smoke token
+        if: ${{ vars.ENABLE_MCP_OAUTH_SMOKE == 'true' }}
+        env:
+          MCP_SMOKE_EMAIL: ${{ secrets.MCP_SMOKE_EMAIL }}
+          MCP_SMOKE_PASSWORD: ${{ secrets.MCP_SMOKE_PASSWORD }}
         run: |
           for key in MCP_SMOKE_EMAIL MCP_SMOKE_PASSWORD NG_APP_SUPABASE_URL NG_APP_SUPABASE_PUBLISHABLE_KEY; do
             if [ -z "${!key}" ]; then
@@ -666,6 +667,9 @@ jobs:
           NODE
 
       - name: Verify MCP Cloudflare Worker
+        if: ${{ vars.ENABLE_MCP_OAUTH_SMOKE == 'true' }}
+        env:
+          MCP_PERSONAL_SMOKE_TOKEN: ${{ secrets.MCP_PERSONAL_SMOKE_TOKEN }}
         run: |
           mcp_origin="https://mcp.tickist.com"
           health_payload=""
@@ -847,7 +851,10 @@ jobs:
           fi
 
       - name: Revoke MCP smoke grant
-        if: ${{ always() }}
+        if: ${{ always() && vars.ENABLE_MCP_OAUTH_SMOKE == 'true' }}
+        env:
+          MCP_SMOKE_EMAIL: ${{ secrets.MCP_SMOKE_EMAIL }}
+          MCP_SMOKE_PASSWORD: ${{ secrets.MCP_SMOKE_PASSWORD }}
         run: |
           if [ -z "${MCP_SMOKE_CLIENT_ID:-}" ]; then
             echo "No MCP smoke grant was created."
