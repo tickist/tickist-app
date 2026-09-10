@@ -17,26 +17,30 @@ interface TokenClaims {
   tickist_mcp_scopes?: string[];
 }
 
-export function decodeClaims(token: string): TokenClaims {
-  try {
-    const part = token.split('.')[1];
-    if (!part) throw new Error();
-    const normalized = part.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
-    return JSON.parse(atob(padded)) as TokenClaims;
-  } catch {
-    throw new OAuthError(
-      OAuthErrorCode.InvalidToken,
-      'Malformed access token.'
-    );
-  }
-}
-
 export class SupabaseTokenVerifier implements OAuthTokenVerifier {
   constructor(private readonly env: McpEnvironment) {}
 
   async verifyAccessToken(token: string): Promise<AuthInfo> {
-    const claims = decodeClaims(token);
+    const supabase = createClient(
+      this.env.SUPABASE_URL,
+      this.env.SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+          persistSession: false,
+        },
+      }
+    );
+    const { data, error } = await supabase.auth.getClaims(token);
+    if (error || !data) {
+      throw new OAuthError(
+        OAuthErrorCode.InvalidToken,
+        'Access token signature could not be verified.'
+      );
+    }
+
+    const claims = data.claims as TokenClaims;
     const audience = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
     if (!claims.exp || claims.exp <= Math.floor(Date.now() / 1000)) {
       throw new OAuthError(
@@ -52,6 +56,7 @@ export class SupabaseTokenVerifier implements OAuthTokenVerifier {
     }
     if (
       !claims.tickist_mcp ||
+      !claims.sub ||
       !audience.includes(this.env.MCP_ALLOWED_AUDIENCE)
     ) {
       throw new OAuthError(
@@ -71,32 +76,13 @@ export class SupabaseTokenVerifier implements OAuthTokenVerifier {
       );
     }
 
-    const supabase = createClient(
-      this.env.SUPABASE_URL,
-      this.env.SUPABASE_PUBLISHABLE_KEY,
-      {
-        auth: {
-          autoRefreshToken: false,
-          detectSessionInUrl: false,
-          persistSession: false,
-        },
-      }
-    );
-    const { data, error } = await supabase.auth.getUser(token);
-    if (error || !data.user || data.user.id !== claims.sub) {
-      throw new OAuthError(
-        OAuthErrorCode.InvalidToken,
-        'Access token could not be verified.'
-      );
-    }
-
     return {
       token,
       clientId: claims.client_id ?? 'unknown-oauth-client',
       scopes: claims.tickist_mcp_scopes,
       expiresAt: claims.exp,
       resource: new URL(this.env.MCP_RESOURCE_URL),
-      extra: { userId: data.user.id },
+      extra: { userId: claims.sub },
     };
   }
 }
