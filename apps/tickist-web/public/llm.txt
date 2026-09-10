@@ -8,7 +8,7 @@ Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring wor
 
 Repository operators can generate a deterministic English demo account with 30 projects and 200 tasks under strict Auth-marker and project-confirmation guards. They can also create locally encrypted, authenticated Supabase disaster-recovery archives containing database, Auth, migration, Storage metadata, and physical Storage objects.
 
-Authenticated integrations use `https://mcp.tickist.com/mcp` for project, task, and tag operations. The official SDK server supports MCP `2026-07-28`, retains `2025-06-18` compatibility, and accepts OAuth 2.1 PKCE tokens or scoped personal Bearer tokens. OAuth requests use the user's Supabase token and RLS; the MCP Worker has no service-role credential. The old `https://tickist.com/mcp` address is a temporary proxy.
+Authenticated integrations use the exclusive `https://mcp.tickist.com/mcp` endpoint for project, task, and tag operations. The official SDK server supports MCP `2026-07-28`, retains `2025-06-18` compatibility, and accepts OAuth 2.1 PKCE tokens or scoped personal Bearer tokens. OAuth requests use the user's Supabase token and RLS; the MCP Worker has no service-role credential.
 
 ## Canonical knowledge
 

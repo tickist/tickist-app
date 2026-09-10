@@ -44,7 +44,7 @@ The product is not a public content site or a generic file store. It is an authe
 
 ### MCP integrations
 
-- Authenticated clients manage projects, tasks, and tags at `https://mcp.tickist.com/mcp`; `https://tickist.com/mcp` remains a temporary compatibility proxy.
+- Authenticated clients manage projects, tasks, and tags exclusively at `https://mcp.tickist.com/mcp`; the main application Worker does not expose or proxy `/mcp`.
 - The primary protocol is stateless MCP `2026-07-28`: every request carries its protocol version and client capabilities, and matching HTTP routing headers are required. `server/discover` reports the server identity and capabilities and advertises only the modern `2026-07-28` revision; legacy negotiation remains separate.
 - Initialization-based MCP `2025-06-18` remains supported for existing clients. The endpoint does not use protocol sessions in either era.
 - Modern results include `resultType`, deterministic tool discovery, required cache hints, text content, and object-shaped structured JSON content. Requests and tool arguments are validated before handlers run. Header mismatches, unsupported versions, notifications, and unknown methods use the status and JSON-RPC behavior defined by the selected protocol era.

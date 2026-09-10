@@ -23,7 +23,7 @@ Tickist Edge Functions live in `supabase/functions/`. They are server-side integ
 
 ## MCP protocol contract
 
-The primary endpoint is `https://mcp.tickist.com/mcp`, served by the dedicated `tickist-mcp` Cloudflare Worker from `apps/mcp`. The old `https://tickist.com/mcp` route remains a temporary proxy to that Worker during migration. Both modern stateless MCP `2026-07-28` and initialization-based `2025-06-18` clients use the same official TypeScript SDK server definition. STDIO uses that definition through `apps/mcp/src/main.ts`.
+The only public MCP endpoint is `https://mcp.tickist.com/mcp`, served by the dedicated `tickist-mcp` Cloudflare Worker from `apps/mcp`. The main application Worker does not expose or proxy `/mcp`. Both modern stateless MCP `2026-07-28` and initialization-based `2025-06-18` clients use the same official TypeScript SDK server definition. STDIO uses that definition through `apps/mcp/src/main.ts`.
 
 Modern clients are stateless. Every request must include the `2026-07-28` protocol version and client capabilities in `params._meta`, plus matching `MCP-Protocol-Version` and `Mcp-Method` HTTP headers. `tools/call` also requires a matching `Mcp-Name`. The server implements `server/discover`, advertises only the modern `2026-07-28` revision there, returns `resultType: "complete"`, includes cache metadata where required, and uses the standard header-mismatch and unsupported-version errors. Legacy compatibility is negotiated separately: those clients continue to use `initialize` and `notifications/initialized` before listing or calling tools.
 

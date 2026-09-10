@@ -16,7 +16,6 @@ The following are not indexable content:
 
 - `/app/**` — authenticated user workspace;
 - `/auth/**` — transactional sign-in and recovery flows;
-- `/mcp` — temporary technical proxy to `https://mcp.tickist.com/mcp`;
 - `https://mcp.tickist.com/**` — technical MCP Worker, health, and OAuth metadata;
 - `/auth/oauth/consent` — transactional OAuth consent;
 - `/app/settings/connected-apps` — private OAuth grant management;

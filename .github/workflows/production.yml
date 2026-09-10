@@ -891,7 +891,7 @@ jobs:
           console.log('MCP smoke grant revoked.');
           NODE
 
-      - name: Verify Cloudflare routes
+      - name: Verify Cloudflare runtime env
         run: |
           runtime_env="$(curl -fsS https://tickist.com/env.js)"
 
@@ -907,41 +907,5 @@ jobs:
 
           if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
             echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_PUBLISHABLE_KEY."
-            exit 1
-          fi
-
-          response_headers="$(mktemp)"
-          response_body="$(mktemp)"
-          mcp_status="$(curl -sS \
-            -D "$response_headers" \
-            -o "$response_body" \
-            -w '%{http_code}' \
-            -X POST \
-            -H 'Content-Type: application/json' \
-            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18"}}' \
-            https://tickist.com/mcp)"
-
-          if [ "$mcp_status" != "401" ]; then
-            echo "::error::MCP route did not enforce authentication (HTTP ${mcp_status})."
-            sed -n '1,20p' "$response_body"
-            exit 1
-          fi
-
-          if ! grep -qi '^www-authenticate: Bearer.*resource_metadata=' "$response_headers"; then
-            echo "::error::MCP route is missing the expected Bearer challenge."
-            exit 1
-          fi
-
-          forbidden_origin_status="$(curl -sS \
-            -o /dev/null \
-            -w '%{http_code}' \
-            -X POST \
-            -H 'Content-Type: application/json' \
-            -H 'Origin: https://attacker.invalid' \
-            --data '{}' \
-            https://tickist.com/mcp)"
-
-          if [ "$forbidden_origin_status" != "403" ]; then
-            echo "::error::MCP route accepted an untrusted browser origin (HTTP ${forbidden_origin_status})."
             exit 1
           fi

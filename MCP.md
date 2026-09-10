@@ -5,25 +5,22 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that 
 ## Features
 
 - **13 tools**: Full CRUD for tasks, projects, and tags
-- **Dual authentication**: OAuth 2.0 (ChatGPT) + Bearer API tokens (Codex/CLI)
-- **Deployed as**: Supabase Edge Function, proxied through `tickist.com/mcp`
-- **Protocol**: MCP 2025-06-18 over Streamable HTTP
+- **Dual authentication**: OAuth 2.1 (ChatGPT) + Bearer API tokens (Codex/CLI)
+- **Deployed as**: Dedicated Cloudflare Worker at `mcp.tickist.com`
+- **Protocol**: MCP 2026-07-28 with 2025-06-18 compatibility
 
 ## Endpoint
 
-**Production** (preferred):
-```
-POST https://tickist.com/mcp
-```
+**Production**:
 
-**Direct Supabase** (alternative):
 ```
-POST https://<your-project>.supabase.co/functions/v1/tickist-mcp
+POST https://mcp.tickist.com/mcp
 ```
 
 **Local development**:
+
 ```
-POST http://localhost:54321/functions/v1/tickist-mcp
+POST http://localhost:8787/mcp
 ```
 
 ---
@@ -56,30 +53,30 @@ Tokens are hashed (SHA-256) before storage. The raw value is shown once at creat
 
 ### Projects
 
-| Tool | Description |
-|------|-------------|
-| `list_projects` | List all projects (filter: `is_active`) |
-| `get_project` | Get project by ID |
+| Tool             | Description                                     |
+| ---------------- | ----------------------------------------------- |
+| `list_projects`  | List all projects (filter: `is_active`)         |
+| `get_project`    | Get project by ID                               |
 | `create_project` | Create project (name, description, color, icon) |
-| `update_project` | Update project fields |
+| `update_project` | Update project fields                           |
 
 ### Tasks
 
-| Tool | Description |
-|------|-------------|
-| `list_tasks` | List tasks (filter: project, status, priority; limit) |
-| `get_task` | Get task with steps and tags |
-| `create_task` | Create task (auto-assigns to inbox if no project) |
-| `update_task` | Update task fields |
-| `complete_task` | Mark done or reopen |
-| `delete_task` | Permanently delete |
+| Tool            | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `list_tasks`    | List tasks (filter: project, status, priority; limit) |
+| `get_task`      | Get task with steps and tags                          |
+| `create_task`   | Create task (auto-assigns to inbox if no project)     |
+| `update_task`   | Update task fields                                    |
+| `complete_task` | Mark done or reopen                                   |
+| `delete_task`   | Permanently delete                                    |
 
 ### Tags
 
-| Tool | Description |
-|------|-------------|
-| `list_tags` | List all tags |
-| `create_tag` | Create a new tag |
+| Tool              | Description                 |
+| ----------------- | --------------------------- |
+| `list_tags`       | List all tags               |
+| `create_tag`      | Create a new tag            |
 | `add_tag_to_task` | Associate a tag with a task |
 
 ---
@@ -89,7 +86,7 @@ Tokens are hashed (SHA-256) before storage. The raw value is shown once at creat
 ### Initialize session
 
 ```bash
-curl -X POST https://tickist.com/mcp \
+curl -X POST https://mcp.tickist.com/mcp \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -107,7 +104,7 @@ curl -X POST https://tickist.com/mcp \
 ### List tools
 
 ```bash
-curl -X POST https://tickist.com/mcp \
+curl -X POST https://mcp.tickist.com/mcp \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
@@ -116,7 +113,7 @@ curl -X POST https://tickist.com/mcp \
 ### Create a task
 
 ```bash
-curl -X POST https://tickist.com/mcp \
+curl -X POST https://mcp.tickist.com/mcp \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -140,7 +137,7 @@ curl -X POST https://tickist.com/mcp \
 
 1. Enable Supabase OAuth server in `config.toml`
 2. Register Tickist as a ChatGPT action:
-   - **MCP endpoint**: `https://tickist.com/mcp`
+   - **MCP endpoint**: `https://mcp.tickist.com/mcp`
    - **Auth type**: OAuth 2.0
 3. Users log in via Tickist's Supabase auth page
 
@@ -152,7 +149,7 @@ Add to your MCP client config:
 {
   "mcpServers": {
     "tickist": {
-      "url": "https://tickist.com/mcp",
+      "url": "https://mcp.tickist.com/mcp",
       "headers": {
         "Authorization": "Bearer <your-api-token>"
       }
@@ -169,7 +166,7 @@ Add to your MCP client config:
 - **Body size limit**: 64 KB maximum per request
 - **Token storage**: SHA-256 hashed, raw value never stored
 - **Ownership checks**: Every query filters by authenticated `owner_id`
-- **Service role**: Used internally; all access scoped to the authenticated user
+- **Service role**: Not available to the MCP Worker
 - **RLS**: Database-level row security policies also enforced
 
 ---
@@ -177,11 +174,14 @@ Add to your MCP client config:
 ## Development
 
 ```bash
-# Serve locally
-npx supabase functions serve tickist-mcp --env-file .local_env
+# Check the Cloudflare Worker bundle
+npm run mcp:worker:check
 
-# Deploy
-npx supabase functions deploy tickist-mcp
+# Run the dedicated Worker locally
+npm exec wrangler -- dev --config wrangler.mcp.toml
+
+# Deploy the dedicated Worker
+npm run mcp:worker:deploy
 
 # Apply api_tokens migration
 npm run db:push:local

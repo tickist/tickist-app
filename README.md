@@ -27,7 +27,7 @@ Angular 22 browser app
         │
         └── Supabase Edge Functions ──> AWS SES email delivery
 
-The `tickist-app` Cloudflare Worker serves the production SPA and runtime configuration. A separate `tickist-mcp` Worker serves `https://mcp.tickist.com/mcp`; `https://tickist.com/mcp` remains a temporary compatibility proxy.
+The `tickist-app` Cloudflare Worker serves the production SPA and runtime configuration. A separate `tickist-mcp` Worker exclusively serves MCP at `https://mcp.tickist.com/mcp`.
 ```
 
 | Area                  | Technology                                                  |
