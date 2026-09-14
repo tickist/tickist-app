@@ -226,6 +226,8 @@ Application email is intentionally decoupled from the browser:
 2. Supabase schedulers invoke digest and reminder workers.
 3. `send-emails` sends batches through AWS SES and records delivery state.
 
+When an incomplete task resumes from suspension, a database trigger creates an in-app notification for its owner and queues the corresponding email in the same transaction. This applies to both scheduled and manual resumes.
+
 Read [docs/EMAIL.md](docs/EMAIL.md) for SES SMTP, DNS, outbox behavior, schedulers, retries, and the security model. [DEPLOY.md](DEPLOY.md) covers deployment and smoke-testing the mail stack.
 
 ## CI and deployment
