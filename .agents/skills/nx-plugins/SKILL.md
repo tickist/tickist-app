@@ -1,9 +1,10 @@
 ---
 name: nx-plugins
-description: Find and add Nx plugins. USE WHEN user wants to discover available plugins, install a new plugin, or add support for a specific framework or technology to the workspace.
+description: Discover or install an Nx plugin for a requested framework or workspace capability.
 ---
 
-## Finding and Installing new plugins
+# Nx plugins
 
-- List plugins: `pnpm nx list`
-- Install plugins `pnpm nx add <plugin>`. Example: `pnpm nx add @nx/react`.
+Use `npm exec nx list` to discover plugins and `npm exec nx list PLUGIN` for installed capabilities. Match the workspace's Nx version and installed plugin guidance.
+
+When installation is part of the request, use `npm exec nx add PLUGIN`. Inspect dependency, lockfile, and Nx configuration changes, then verify the new capability. A discovery-only question does not require installation.

@@ -1,10 +1,12 @@
 ---
 name: caveman-stats
-description: >
-  Show real token usage and estimated savings for the current session.
-  Reads directly from the Claude Code session log — no AI estimation.
-  Triggers on /caveman-stats. Output is injected by the mode-tracker hook;
-  the model itself does not compute the numbers.
+description: Report measured session token usage when the current runtime exposes it.
 ---
 
-This skill is delivered by `hooks/caveman-stats.js` (read by `hooks/caveman-mode-tracker.js` on `/caveman-stats`). The model does not need to do anything when this skill fires — the hook returns `decision: "block"` with the formatted stats as the reason. The user sees the numbers immediately.
+# Token statistics
+
+Use actual usage fields exposed by the current runtime or an explicitly available statistics integration. State the measurement's scope.
+
+This repository does not install the upstream Claude Code mode-tracker or statistics hooks. If usage data is unavailable, say so rather than promising an automatic hook response.
+
+Do not estimate token savings from word counts or claim a counterfactual percentage without a measured baseline.
