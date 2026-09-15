@@ -250,10 +250,10 @@ Deployment configuration and required GitHub secrets are defined in [`.github/wo
 1. Branch from `develop` using a focused name such as `rewrite/<feature>` or `supabase/<area>`.
 2. Keep Angular components standalone and prefer signals. Use built-in Angular template control flow (`@if`, `@for`, `@switch`).
 3. Add or update Vitest and Playwright coverage when a user journey, routing rule, or data contract changes.
-4. Before review, run lint, unit tests, a production build, and relevant E2E.
+4. Verify the changed behaviour with the relevant Nx targets. Instruction/documentation-only changes need formatting and configuration/link checks, not an app build or database reset.
 5. Use imperative, scoped commits, for example `feat(tasks): add completion badge`.
 
-The full working agreement is in [AGENTS.md](AGENTS.md). See [MIGRATION_PLAN.md](MIGRATION_PLAN.md) for migration and architecture decisions.
+The working agreement is in [AGENTS.md](AGENTS.md); [agent tooling](doc/agent-tooling.md) explains skills, hooks, and task-specific verification. See [MIGRATION_PLAN.md](MIGRATION_PLAN.md) for migration and architecture decisions.
 
 ## Useful links
 
