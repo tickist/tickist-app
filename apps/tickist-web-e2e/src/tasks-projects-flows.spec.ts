@@ -489,6 +489,8 @@ test('suspends a task with a resume time and separates it from active work', asy
     .filter({ hasText: 'Task resumed' })
     .filter({ hasText: `Task "${taskName}" is active again.` });
   await expect(resumeNotification).toBeVisible();
+  await page.getByRole('button', { name: 'Close notifications' }).click();
+  await expect(resumeNotification).toHaveCount(0);
 
   await setProjectFilter(page, 'suspended');
   await expect(card).toHaveCount(0);
