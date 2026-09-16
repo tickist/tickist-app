@@ -1,9 +1,6 @@
 ---
 name: nx-plugins
-description: Find and add Nx plugins. USE WHEN user wants to discover available plugins, install a new plugin, or add support for a specific framework or technology to the workspace.
+description: Discover or install an Nx plugin for a requested framework or workspace capability.
 ---
 
-## Finding and Installing new plugins
-
-- List plugins: `pnpm nx list`
-- Install plugins `pnpm nx add <plugin>`. Example: `pnpm nx add @nx/react`.
+Read the [canonical nx-plugins skill](../../../.agents/skills/nx-plugins/SKILL.md) and follow its task-specific workflow. Resolve supporting references and scripts from that canonical directory.

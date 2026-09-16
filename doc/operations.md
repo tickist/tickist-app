@@ -25,6 +25,8 @@ npm exec nx lint tickist-web-e2e
 npx nx e2e tickist-web-e2e -- --project=chromium
 ```
 
+Choose checks that exercise the change; the commands above are available targets, not a mandatory sequence for every edit. Instruction/documentation-only work uses explicit-file formatting and configuration/link checks plus `git diff --check`. See [Agent tooling](agent-tooling.md).
+
 Add focused Vitest coverage for services and components. Add Playwright coverage for critical user journeys, especially when changing authentication, routes, data contracts, task/project interactions, or public metadata.
 
 ## Database workflow
@@ -40,7 +42,7 @@ Repository-managed operator tools also provide a deterministic English demo acco
 
 ## E2E isolation
 
-Playwright resets `SUPABASE_E2E_DB_URL`, not the normal application database. It rejects a target matching `SUPABASE_REMOTE_DB_URL`. It also rejects the normal local database unless `E2E_ALLOW_LOCAL_DB_RESET=true` is intentionally set; the opt-in only permits localhost.
+Playwright resets `SUPABASE_E2E_DB_URL`, not the normal application database. It rejects a target matching `SUPABASE_REMOTE_DB_URL`. It also rejects the normal local database unless `E2E_ALLOW_LOCAL_DB_RESET=true` is intentionally set; the opt-in only permits localhost. Obtain explicit authorization to reset ordinary local data before setting that flag. Check the database and browser API targets together; a local-looking variable alone does not prove the test setup is isolated.
 
 CI creates its E2E environment from a local Supabase stack, runs Chromium on pushes to `develop` and `master`, and tears the stack down afterwards.
 

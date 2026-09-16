@@ -51,3 +51,13 @@ Task or preference change
 ```
 
 The outbox makes sending idempotent and observable. Failed delivery is retried only when appropriate; exhausted attempts become terminal rather than silently looping.
+
+## Scheduler observability retention
+
+`supabase/migrations/0020_retain_scheduler_observability.sql` schedules a daily
+03:17 UTC maintenance job. It retains seven days of completed `pg_cron` run
+history in `cron.job_run_details` and 24 hours of `pg_net` HTTP responses in
+`net._http_response`. These are diagnostic records only; the job never deletes
+application tasks, reminders, notifications, email-outbox records, or scheduler
+definitions. Keeping this history bounded prevents scheduler diagnostics from
+consuming database storage indefinitely.
