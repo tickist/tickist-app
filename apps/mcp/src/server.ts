@@ -13,6 +13,10 @@ import { toolError, toolResult } from './result';
 const Empty = z.object({});
 const Uuid = z.string().uuid();
 const Priority = z.enum(['A', 'B', 'C', 'normal']);
+const Repeat = z.object({
+  interval_days: z.number().int().positive(),
+  from: z.enum(['completion_date', 'due_date']),
+});
 
 function operation<T extends z.ZodRawShape>(
   server: McpServer,
@@ -31,8 +35,9 @@ function operation<T extends z.ZodRawShape>(
       inputSchema: schema as StandardSchemaWithJSON,
       annotations: {
         readOnlyHint: readOnly,
-        destructiveHint: name === 'delete_task',
-        idempotentHint: readOnly || name === 'complete_task',
+        destructiveHint: name === 'delete_task' || name === 'delete_project',
+        idempotentHint:
+          readOnly || name === 'suspend_task' || name === 'resume_task',
         openWorldHint: false,
       },
     },
@@ -76,10 +81,13 @@ export function createTickistMcpServer(
     server,
     'list_projects',
     'List all projects accessible to the authenticated user.',
-    z.object({ is_active: z.boolean().optional() }),
+    z.object({
+      is_active: z.boolean().optional(),
+      ancestor_id: Uuid.nullable().optional(),
+    }),
     'projects:read',
     connection.scopes,
-    ({ is_active }) => access.listProjects(is_active ?? true)
+    (input) => access.listProjects(input)
   );
   operation(
     server,
@@ -99,6 +107,7 @@ export function createTickistMcpServer(
       description: z.string().optional(),
       color: z.string().optional(),
       icon: z.string().optional(),
+      ancestor_id: Uuid.nullable().optional(),
     }),
     'projects:write',
     connection.scopes,
@@ -117,6 +126,7 @@ export function createTickistMcpServer(
         color: z.string().optional(),
         icon: z.string().optional(),
         is_active: z.boolean().optional(),
+        ancestor_id: Uuid.nullable().optional(),
       })
       .refine((value) =>
         Object.entries(value).some(
@@ -128,13 +138,24 @@ export function createTickistMcpServer(
     ({ project_id, ...changes }) => access.updateProject(project_id, changes),
     false
   );
+  operation(
+    server,
+    'delete_project',
+    'Permanently delete an owned non-Inbox project. Tasks become unattached and direct children become root projects.',
+    z.object({ project_id: Uuid }),
+    'projects:write',
+    connection.scopes,
+    ({ project_id }) => access.deleteProject(project_id),
+    false
+  );
 
   operation(
     server,
     'list_tasks',
-    'List accessible tasks with optional project, state, priority, and limit filters.',
+    'List accessible tasks with optional project, descendant-project, state, priority, and limit filters.',
     z.object({
       project_id: Uuid.optional(),
+      include_descendants: z.boolean().optional(),
       is_done: z.boolean().optional(),
       is_active: z.boolean().optional(),
       priority: Priority.optional(),
@@ -164,6 +185,7 @@ export function createTickistMcpServer(
       priority: Priority.optional(),
       finish_date: z.iso.date().optional(),
       pinned: z.boolean().optional(),
+      repeat: Repeat.optional(),
     }),
     'tasks:write',
     connection.scopes,
@@ -184,6 +206,7 @@ export function createTickistMcpServer(
         finish_date: z.iso.date().nullable().optional(),
         pinned: z.boolean().optional(),
         on_hold: z.boolean().optional(),
+        repeat: Repeat.nullable().optional(),
       })
       .refine((value) =>
         Object.entries(value).some(
@@ -198,11 +221,34 @@ export function createTickistMcpServer(
   operation(
     server,
     'complete_task',
-    'Mark an accessible task as done or reopen it.',
+    'Complete or reopen a task. Completing a recurring task advances its due date and resets its steps.',
     z.object({ task_id: Uuid, is_done: z.boolean().optional() }),
     'tasks:write',
     connection.scopes,
     ({ task_id, is_done }) => access.completeTask(task_id, is_done ?? true),
+    false
+  );
+  operation(
+    server,
+    'suspend_task',
+    'Suspend an incomplete task indefinitely or until a future date and time.',
+    z.object({
+      task_id: Uuid,
+      until: z.iso.datetime({ offset: true }).nullable().optional(),
+    }),
+    'tasks:write',
+    connection.scopes,
+    ({ task_id, until }) => access.suspendTask(task_id, until),
+    false
+  );
+  operation(
+    server,
+    'resume_task',
+    'Resume a suspended incomplete task and clear its suspension deadline.',
+    z.object({ task_id: Uuid }),
+    'tasks:write',
+    connection.scopes,
+    ({ task_id }) => access.resumeTask(task_id),
     false
   );
   operation(

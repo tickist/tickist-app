@@ -11,6 +11,7 @@ export interface SignInPayload {
 export interface SignUpPayload {
   email: string;
   password: string;
+  timezone: string;
 }
 
 export interface ChangePasswordPayload {
@@ -47,7 +48,15 @@ export class SupabaseAuthService {
 
   async signUpWithPassword(payload: SignUpPayload): Promise<AuthResponse> {
     const client = this.ensureClient();
-    return client.auth.signUp(payload);
+    return client.auth.signUp({
+      email: payload.email,
+      password: payload.password,
+      options: {
+        data: {
+          timezone: normalizeBrowserTimezone(payload.timezone),
+        },
+      },
+    });
   }
 
   async sendPasswordReset(email: string): Promise<void> {
@@ -108,5 +117,28 @@ export class SupabaseAuthService {
       return 'http://localhost:4200/auth/update-password';
     }
     return `${window.location.origin}/auth/update-password`;
+  }
+}
+
+export function resolveBrowserTimezone(): string {
+  try {
+    return normalizeBrowserTimezone(
+      Intl.DateTimeFormat().resolvedOptions().timeZone
+    );
+  } catch {
+    return 'Europe/Warsaw';
+  }
+}
+
+function normalizeBrowserTimezone(value: string): string {
+  const timezone = value.trim();
+  if (!timezone) {
+    return 'Europe/Warsaw';
+  }
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: timezone }).format();
+    return timezone;
+  } catch {
+    return 'Europe/Warsaw';
   }
 }

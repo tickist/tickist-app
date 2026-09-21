@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { nextRecurringFinishDate } from './task-lifecycle';
 
 export interface TickistConnection {
   supabaseUrl: string;
@@ -11,10 +12,21 @@ export interface TickistConnection {
 
 export interface ListTasksInput {
   project_id?: string;
+  include_descendants?: boolean;
   is_done?: boolean;
   is_active?: boolean;
   priority?: 'A' | 'B' | 'C' | 'normal';
   limit?: number;
+}
+
+export interface ListProjectsInput {
+  is_active?: boolean;
+  ancestor_id?: string | null;
+}
+
+export interface RepeatInput {
+  interval_days: number;
+  from: 'completion_date' | 'due_date';
 }
 
 type JsonRecord = Record<string, unknown>;
@@ -23,6 +35,42 @@ function compact(values: JsonRecord): JsonRecord {
   return Object.fromEntries(
     Object.entries(values).filter(([, value]) => value !== undefined)
   );
+}
+
+function normalizedTask(row: JsonRecord): JsonRecord {
+  const interval =
+    typeof row['repeat_interval'] === 'number' ? row['repeat_interval'] : 0;
+  const isDone = row['is_done'] === true;
+  const isActive = row['is_active'] !== false;
+  const suspendUntil =
+    typeof row['suspend_until'] === 'string' ? row['suspend_until'] : null;
+  const futureSuspension =
+    suspendUntil === null || Date.parse(suspendUntil) > Date.now();
+
+  return {
+    ...row,
+    repeat:
+      interval > 0
+        ? {
+            interval_days: interval,
+            from: row['from_repeating'] === 1 ? 'due_date' : 'completion_date',
+          }
+        : null,
+    suspension: {
+      is_suspended: !isDone && !isActive && futureSuspension,
+      until: suspendUntil,
+    },
+  };
+}
+
+function repeatColumns(repeat: RepeatInput | null): JsonRecord {
+  return repeat
+    ? {
+        repeat_interval: repeat.interval_days,
+        repeat_delta: null,
+        from_repeating: repeat.from === 'due_date' ? 1 : 0,
+      }
+    : { repeat_interval: 0, repeat_delta: null, from_repeating: null };
 }
 
 export class TickistDataAccess {
@@ -45,14 +93,19 @@ export class TickistDataAccess {
     );
   }
 
-  async listProjects(isActive = true): Promise<unknown[]> {
-    const { data, error } = await this.client
+  async listProjects(input: ListProjectsInput = {}): Promise<unknown[]> {
+    let query = this.client
       .from('projects')
       .select(
-        'id, name, description, color, icon, is_active, is_inbox, project_type, created_at'
+        'id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, created_at'
       )
-      .eq('is_active', isActive)
       .order('name');
+    query = query.eq('is_active', input.is_active ?? true);
+    if (input.ancestor_id === null) query = query.is('ancestor_id', null);
+    if (typeof input.ancestor_id === 'string') {
+      query = query.eq('ancestor_id', input.ancestor_id);
+    }
+    const { data, error } = await query;
     if (error) throw new Error('Failed to list projects.');
     return data ?? [];
   }
@@ -72,7 +125,11 @@ export class TickistDataAccess {
     description?: string;
     color?: string;
     icon?: string;
+    ancestor_id?: string | null;
   }): Promise<unknown> {
+    if (input.ancestor_id) {
+      await this.assertValidProjectParent(input.ancestor_id);
+    }
     return this.mutate('create_project', 'project', undefined, async () => {
       const { data, error } = await this.client
         .from('projects')
@@ -83,6 +140,7 @@ export class TickistDataAccess {
             description: input.description,
             color: input.color,
             icon: input.icon,
+            ancestor_id: input.ancestor_id,
           })
         )
         .select()
@@ -100,8 +158,12 @@ export class TickistDataAccess {
       color?: string;
       icon?: string;
       is_active?: boolean;
+      ancestor_id?: string | null;
     }
   ): Promise<unknown> {
+    if (changes.ancestor_id) {
+      await this.assertValidProjectParent(changes.ancestor_id, projectId);
+    }
     return this.mutate('update_project', 'project', projectId, async () => {
       const { data, error } = await this.client
         .from('projects')
@@ -114,22 +176,55 @@ export class TickistDataAccess {
     });
   }
 
+  async deleteProject(projectId: string): Promise<unknown> {
+    return this.mutate('delete_project', 'project', projectId, async () => {
+      const { data: project, error: projectError } = await this.client
+        .from('projects')
+        .select('id, is_inbox')
+        .eq('id', projectId)
+        .maybeSingle();
+      if (projectError || !project) throw new Error('Project not found.');
+      if (project.is_inbox) throw new Error('Inbox project cannot be deleted.');
+
+      const { data, error } = await this.client
+        .from('projects')
+        .delete()
+        .eq('id', projectId)
+        .select('id')
+        .maybeSingle();
+      if (error) throw new Error('Failed to delete project.');
+      if (!data) throw new Error('Project not found.');
+      return { deleted: true, project_id: projectId };
+    });
+  }
+
   async listTasks(input: ListTasksInput): Promise<unknown[]> {
+    if (input.include_descendants && !input.project_id) {
+      throw new Error('include_descendants requires project_id.');
+    }
     let query = this.client
       .from('tasks')
       .select(
-        'id, name, description, project_id, priority, is_done, is_active, on_hold, pinned, finish_date, finish_time, creation_date, modification_date'
+        'id, name, description, project_id, priority, is_done, is_active, suspend_until, on_hold, pinned, finish_date, finish_time, repeat_interval, repeat_delta, from_repeating, creation_date, modification_date'
       )
       .order('creation_date', { ascending: false })
       .limit(input.limit ?? 100);
-    if (input.project_id) query = query.eq('project_id', input.project_id);
+    if (input.project_id) {
+      const projectIds = input.include_descendants
+        ? await this.accessibleProjectSubtree(input.project_id)
+        : [input.project_id];
+      query =
+        projectIds.length === 1
+          ? query.eq('project_id', projectIds[0])
+          : query.in('project_id', projectIds);
+    }
     if (input.is_done !== undefined) query = query.eq('is_done', input.is_done);
     if (input.is_active !== undefined)
       query = query.eq('is_active', input.is_active);
     if (input.priority) query = query.eq('priority', input.priority);
     const { data, error } = await query;
     if (error) throw new Error('Failed to list tasks.');
-    return data ?? [];
+    return (data ?? []).map((row) => normalizedTask(row as JsonRecord));
   }
 
   async getTask(taskId: string): Promise<unknown> {
@@ -151,13 +246,13 @@ export class TickistDataAccess {
         .select('tag_id, tags:tag_id(id, name)')
         .eq('task_id', taskId),
     ]);
-    return {
+    return normalizedTask({
       ...task,
       steps: steps ?? [],
       tags: (taskTags ?? [])
         .map((row) => (row as JsonRecord)['tags'])
         .filter(Boolean),
-    };
+    });
   }
 
   async createTask(input: {
@@ -167,7 +262,11 @@ export class TickistDataAccess {
     priority?: 'A' | 'B' | 'C' | 'normal';
     finish_date?: string;
     pinned?: boolean;
+    repeat?: RepeatInput;
   }): Promise<unknown> {
+    if (input.repeat?.from === 'due_date' && !input.finish_date) {
+      throw new Error('repeat.from due_date requires finish_date.');
+    }
     let projectId = input.project_id;
     if (!projectId) {
       const { data, error } = await this.client
@@ -192,12 +291,13 @@ export class TickistDataAccess {
             priority: input.priority,
             finish_date: input.finish_date,
             pinned: input.pinned,
+            ...(input.repeat ? repeatColumns(input.repeat) : {}),
           })
         )
         .select()
         .single();
       if (error) throw new Error('Failed to create task.');
-      return data;
+      return normalizedTask(data as JsonRecord);
     });
   }
 
@@ -211,28 +311,79 @@ export class TickistDataAccess {
       finish_date?: string | null;
       pinned?: boolean;
       on_hold?: boolean;
+      repeat?: RepeatInput | null;
     }
   ): Promise<unknown> {
+    if (changes.repeat?.from === 'due_date') {
+      const finishDate =
+        changes.finish_date === undefined
+          ? await this.taskFinishDate(taskId)
+          : changes.finish_date;
+      if (!finishDate) {
+        throw new Error('repeat.from due_date requires finish_date.');
+      }
+    }
+    const { repeat, ...taskChanges } = changes;
     return this.mutate('update_task', 'task', taskId, async () => {
       const { data, error } = await this.client
         .from('tasks')
-        .update(
-          compact({
-            ...changes,
+        .update({
+          ...compact({
+            ...taskChanges,
             modification_date: new Date().toISOString(),
             last_editor_id: this.connection.userId,
-          })
-        )
+          }),
+          ...(repeat !== undefined ? repeatColumns(repeat) : {}),
+        })
         .eq('id', taskId)
         .select()
         .single();
       if (error) throw new Error('Failed to update task.');
-      return data;
+      return normalizedTask(data as JsonRecord);
     });
   }
 
   async completeTask(taskId: string, isDone = true): Promise<unknown> {
     return this.mutate('complete_task', 'task', taskId, async () => {
+      const { data: current, error: currentError } = await this.client
+        .from('tasks')
+        .select('id, is_done, finish_date, repeat_interval, from_repeating')
+        .eq('id', taskId)
+        .maybeSingle();
+      if (currentError || !current) throw new Error('Task not found.');
+
+      if (isDone && (current.repeat_interval ?? 0) > 0) {
+        const timezone = await this.userTimezone();
+        const nextFinishDate = nextRecurringFinishDate(
+          current.finish_date,
+          current.repeat_interval,
+          current.from_repeating,
+          timezone
+        );
+        const { data, error: taskError } = await this.client
+          .from('tasks')
+          .update({
+            is_done: false,
+            finish_date: nextFinishDate,
+            when_complete: null,
+            modification_date: new Date().toISOString(),
+            last_editor_id: this.connection.userId,
+          })
+          .eq('id', taskId)
+          .select()
+          .single();
+        if (taskError || !data)
+          throw new Error('Failed to advance recurring task.');
+
+        const { error: stepsError } = await this.client
+          .from('task_steps')
+          .update({ is_done: false })
+          .eq('task_id', taskId);
+        if (stepsError)
+          throw new Error('Failed to reset recurring task steps.');
+        return normalizedTask(data as JsonRecord);
+      }
+
       const { data, error } = await this.client
         .from('tasks')
         .update({
@@ -245,7 +396,62 @@ export class TickistDataAccess {
         .select()
         .single();
       if (error) throw new Error('Failed to complete task.');
-      return data;
+      return normalizedTask(data as JsonRecord);
+    });
+  }
+
+  async suspendTask(taskId: string, until?: string | null): Promise<unknown> {
+    if (until && Date.parse(until) <= Date.now()) {
+      throw new Error('Suspension deadline must be in the future.');
+    }
+    return this.mutate('suspend_task', 'task', taskId, async () => {
+      const { data: task, error: taskError } = await this.client
+        .from('tasks')
+        .select('id, is_done')
+        .eq('id', taskId)
+        .maybeSingle();
+      if (taskError || !task) throw new Error('Task not found.');
+      if (task.is_done) throw new Error('Completed tasks cannot be suspended.');
+
+      const { data, error } = await this.client
+        .from('tasks')
+        .update({
+          is_active: false,
+          suspend_until: until ?? null,
+          modification_date: new Date().toISOString(),
+          last_editor_id: this.connection.userId,
+        })
+        .eq('id', taskId)
+        .select()
+        .single();
+      if (error || !data) throw new Error('Failed to suspend task.');
+      return normalizedTask(data as JsonRecord);
+    });
+  }
+
+  async resumeTask(taskId: string): Promise<unknown> {
+    return this.mutate('resume_task', 'task', taskId, async () => {
+      const { data: task, error: taskError } = await this.client
+        .from('tasks')
+        .select('id, is_done')
+        .eq('id', taskId)
+        .maybeSingle();
+      if (taskError || !task) throw new Error('Task not found.');
+      if (task.is_done) throw new Error('Completed tasks cannot be resumed.');
+
+      const { data, error } = await this.client
+        .from('tasks')
+        .update({
+          is_active: true,
+          suspend_until: null,
+          modification_date: new Date().toISOString(),
+          last_editor_id: this.connection.userId,
+        })
+        .eq('id', taskId)
+        .select()
+        .single();
+      if (error || !data) throw new Error('Failed to resume task.');
+      return normalizedTask(data as JsonRecord);
     });
   }
 
@@ -304,6 +510,65 @@ export class TickistDataAccess {
     });
   }
 
+  private async assertValidProjectParent(
+    parentId: string,
+    projectId?: string
+  ): Promise<void> {
+    const hierarchy = await this.projectHierarchy();
+    const parent = hierarchy.find((project) => project.id === parentId);
+    if (!parent) throw new Error('Parent project not found.');
+    if (parent.is_inbox) throw new Error('Inbox cannot be a parent project.');
+    if (!projectId) return;
+    if (parentId === projectId) {
+      throw new Error('A project cannot be its own parent.');
+    }
+    const descendants = collectDescendantProjectIds(hierarchy, projectId);
+    if (descendants.includes(parentId)) {
+      throw new Error('A project cannot be moved below its descendant.');
+    }
+  }
+
+  private async accessibleProjectSubtree(projectId: string): Promise<string[]> {
+    const hierarchy = await this.projectHierarchy();
+    if (!hierarchy.some((project) => project.id === projectId)) {
+      throw new Error('Project not found.');
+    }
+    return [projectId, ...collectDescendantProjectIds(hierarchy, projectId)];
+  }
+
+  private async projectHierarchy(): Promise<
+    { id: string; ancestor_id: string | null; is_inbox: boolean }[]
+  > {
+    const { data, error } = await this.client
+      .from('projects')
+      .select('id, ancestor_id, is_inbox');
+    if (error) throw new Error('Failed to inspect project hierarchy.');
+    return (data ?? []) as {
+      id: string;
+      ancestor_id: string | null;
+      is_inbox: boolean;
+    }[];
+  }
+
+  private async taskFinishDate(taskId: string): Promise<string | null> {
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('finish_date')
+      .eq('id', taskId)
+      .maybeSingle();
+    if (error || !data) throw new Error('Task not found.');
+    return data.finish_date ?? null;
+  }
+
+  private async userTimezone(): Promise<string> {
+    const { data } = await this.client
+      .from('app_users')
+      .select('timezone')
+      .eq('auth_user_id', this.connection.userId)
+      .maybeSingle();
+    return typeof data?.timezone === 'string' ? data.timezone : 'Europe/Warsaw';
+  }
+
   private async mutate<T>(
     toolName: string,
     targetType: string,
@@ -349,4 +614,29 @@ export class TickistDataAccess {
       throw error;
     }
   }
+}
+
+type ProjectHierarchyRow = {
+  id: string;
+  ancestor_id: string | null;
+  is_inbox: boolean;
+};
+
+function collectDescendantProjectIds(
+  hierarchy: ProjectHierarchyRow[],
+  rootId: string
+): string[] {
+  const descendants: string[] = [];
+  const queue = [rootId];
+  const visited = new Set(queue);
+  while (queue.length > 0) {
+    const parentId = queue.shift();
+    for (const project of hierarchy) {
+      if (project.ancestor_id !== parentId || visited.has(project.id)) continue;
+      visited.add(project.id);
+      descendants.push(project.id);
+      queue.push(project.id);
+    }
+  }
+  return descendants;
 }
