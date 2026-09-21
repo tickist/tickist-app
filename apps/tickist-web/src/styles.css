@@ -11,7 +11,7 @@
   --tickist-native-select-popup-bg: rgb(var(--b1));
   --tickist-native-select-popup-group-bg: rgb(var(--b2));
   --tickist-native-select-popup-text: rgb(var(--bc));
-  --tickist-placeholder-color: rgb(100 116 139);
+  --tickist-placeholder-color: rgb(71 85 105);
 }
 
 [data-theme='tickist'] {
