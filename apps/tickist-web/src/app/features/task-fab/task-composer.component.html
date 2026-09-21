@@ -375,6 +375,14 @@
     } @case ('extra') {
     <form [formGroup]="taskForm" class="sheet-form">
       <section class="sheet-section">
+        <header class="sheet-section__header">
+          <span class="sheet-section__eyebrow">Extra</span>
+          <h3 class="sheet-section__title">Task settings</h3>
+          <p class="sheet-section__description">
+            Manage status, assignment, pinning, and time estimates.
+          </p>
+        </header>
+
         <div class="sheet-field">
           <span class="sheet-field__label">Status</span>
           <div class="sheet-choice-row">
@@ -482,46 +490,49 @@
             />
           </label>
         </div>
-
-        @if (editingTask(); as task) {
-        <section class="task-history" aria-labelledby="task-history-title">
-          <header class="task-history__header">
-            <span class="task-history__icon" aria-hidden="true">↺</span>
-            <div>
-              <h3 id="task-history-title" class="task-history__title">
-                Task history
-              </h3>
-              <p class="task-history__description">
-                Creation and latest modification timestamps.
-              </p>
-            </div>
-          </header>
-
-          <dl class="task-history__list">
-            <div class="task-history__entry">
-              <dt>Created</dt>
-              <dd>
-                @if (task.createdAt) {
-                <time [attr.datetime]="task.createdAt">
-                  {{ task.createdAt | date : 'medium' }}
-                </time>
-                } @else { Not available }
-              </dd>
-            </div>
-            <div class="task-history__entry">
-              <dt>Last modified</dt>
-              <dd>
-                @if (task.updatedAt) {
-                <time [attr.datetime]="task.updatedAt">
-                  {{ task.updatedAt | date : 'medium' }}
-                </time>
-                } @else { Not available }
-              </dd>
-            </div>
-          </dl>
-        </section>
-        }
       </section>
+
+      @if (editingTask(); as task) {
+      <section
+        class="sheet-section sheet-section--soft task-history"
+        aria-labelledby="task-history-title"
+      >
+        <header class="task-history__header">
+          <span class="task-history__icon" aria-hidden="true">↺</span>
+          <div>
+            <h3 id="task-history-title" class="task-history__title">
+              Task history
+            </h3>
+            <p class="task-history__description">
+              Creation and latest modification timestamps.
+            </p>
+          </div>
+        </header>
+
+        <dl class="task-history__list">
+          <div class="task-history__entry">
+            <dt>Created</dt>
+            <dd>
+              @if (task.createdAt) {
+              <time [attr.datetime]="task.createdAt">
+                {{ task.createdAt | date : 'medium' }}
+              </time>
+              } @else { Not available }
+            </dd>
+          </div>
+          <div class="task-history__entry">
+            <dt>Last modified</dt>
+            <dd>
+              @if (task.updatedAt) {
+              <time [attr.datetime]="task.updatedAt">
+                {{ task.updatedAt | date : 'medium' }}
+              </time>
+              } @else { Not available }
+            </dd>
+          </div>
+        </dl>
+      </section>
+      }
     </form>
     } }
   </div>

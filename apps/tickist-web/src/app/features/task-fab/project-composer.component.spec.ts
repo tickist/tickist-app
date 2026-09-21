@@ -57,6 +57,30 @@ describe('ProjectComposerComponent sheet header', () => {
     expect(fixture.nativeElement.textContent).toContain('Trip planning');
   });
 
+  it('uses themed buttons instead of a native project type dropdown', () => {
+    fixture.detectChanges();
+
+    const options = Array.from(
+      fixture.nativeElement.querySelectorAll<HTMLButtonElement>(
+        '.project-type-option'
+      )
+    );
+    expect(options.map((option) => option.textContent?.trim())).toEqual([
+      'Active',
+      'Someday/maybe',
+      'Routine',
+    ]);
+    expect(
+      fixture.nativeElement.querySelector(
+        'select[formcontrolname="projectType"]'
+      )
+    ).toBeNull();
+
+    options[1].click();
+
+    expect(component.form.controls.projectType.value).toBe('someday');
+  });
+
   it('searches the expanded project icon catalogue by label or key', () => {
     component.selectTab('branding');
     component.iconSearch.set('pizza');
