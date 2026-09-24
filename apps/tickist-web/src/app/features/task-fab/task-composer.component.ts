@@ -123,7 +123,7 @@ export class TaskComposerComponent {
   readonly sheetEyebrow = computed(() =>
     this.editingTask() ? 'Edit task' : 'Create task'
   );
-  readonly sheetTitle = computed(() => this.editingTask()?.name || 'New task');
+  readonly sheetTitle = computed(() => (this.editingTask() ? '' : 'New task'));
   readonly filteredTags = computed(() => {
     const query = this.tagSearch().trim().toLowerCase();
     return this.tags().filter((tag) => tag.name.toLowerCase().includes(query));

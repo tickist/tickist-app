@@ -108,6 +108,11 @@ export class ProjectComposerComponent {
     '#475569',
     '#94A3B8',
   ];
+  readonly projectTypes = [
+    { value: 'active', label: 'Active' },
+    { value: 'someday', label: 'Someday/maybe' },
+    { value: 'routine', label: 'Routine' },
+  ] as const;
   readonly iconOptions = PROJECT_ICON_OPTIONS;
   readonly iconSearch = signal('');
   readonly filteredIconOptions = computed(() => {

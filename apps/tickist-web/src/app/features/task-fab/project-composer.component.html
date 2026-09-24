@@ -24,14 +24,29 @@
         </label>
 
         <div class="sheet-grid-two">
-          <label class="sheet-field">
+          <div class="sheet-field">
             <span class="sheet-field__label">Project type</span>
-            <select class="sheet-select" formControlName="projectType">
-              <option value="active">Active</option>
-              <option value="someday">Someday/maybe</option>
-              <option value="routine">Routine</option>
-            </select>
-          </label>
+            <div
+              class="sheet-pill-group"
+              role="group"
+              aria-label="Project type"
+            >
+              @for (type of projectTypes; track type.value) {
+              <button
+                type="button"
+                class="sheet-pill project-type-option"
+                [class.active]="form.controls.projectType.value === type.value"
+                [attr.aria-pressed]="
+                  form.controls.projectType.value === type.value
+                "
+                [disabled]="form.disabled || submitting()"
+                (click)="form.controls.projectType.setValue(type.value)"
+              >
+                {{ type.label }}
+              </button>
+              }
+            </div>
+          </div>
 
           <label class="sheet-field">
             <span class="sheet-field__label">Status</span>
