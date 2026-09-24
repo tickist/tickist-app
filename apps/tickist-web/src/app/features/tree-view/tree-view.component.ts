@@ -12,6 +12,7 @@ import { DatePipe } from '@angular/common';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
 import { TaskStatusService } from '../../data/task-status.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 
 interface TreeGroup {
   id: string;
@@ -40,6 +41,7 @@ export class TreeViewComponent {
   private readonly session = inject(SupabaseSessionService);
   private readonly viewState = inject(AppViewStateService);
   private readonly taskStatus = inject(TaskStatusService);
+  private readonly workspaces = inject(WorkspaceDataService);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
@@ -48,7 +50,8 @@ export class TreeViewComponent {
     return this.tasks.list().filter((task) => {
       if (
         task.ownerId !== this.user()?.id ||
-        this.taskStatus.isSuspended(task)
+        this.taskStatus.isSuspended(task) ||
+        !this.workspaces.includesTask(task, this.projects.list())
       ) {
         return false;
       }
@@ -64,7 +67,11 @@ export class TreeViewComponent {
   readonly projectList = computed(() =>
     this.projects
       .list()
-      .filter((project) => project.ownerId === this.user()?.id)
+      .filter(
+        (project) =>
+          project.ownerId === this.user()?.id &&
+          this.workspaces.includesProject(project)
+      )
   );
 
   readonly groups = computed<TreeGroup[]>(() => {

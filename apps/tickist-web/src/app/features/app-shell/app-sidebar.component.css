@@ -139,9 +139,17 @@
 .project-menu {
   @apply fixed w-56 rounded-2xl border border-white/10 p-2 shadow-lg shadow-black/40;
   z-index: 2100;
+  max-height: min(75vh, 30rem);
+  overflow-y: auto;
   background: rgb(var(--b1) / 0.96);
   border-color: rgb(var(--bc) / 0.16);
   backdrop-filter: blur(8px);
+}
+
+.project-menu__section-label {
+  padding: 0.5rem 0.75rem 0.2rem;
+  font-size: 0.75rem;
+  opacity: 0.6;
 }
 
 .project-menu button {

@@ -24,6 +24,45 @@
         />
       </a>
     </div>
+    <div class="workspace-switcher">
+      <button
+        type="button"
+        class="btn btn-sm btn-ghost border border-white/10"
+        aria-label="Select workspace"
+        aria-controls="workspace-menu"
+        [attr.aria-expanded]="workspaceMenuOpen()"
+        (click)="workspaceMenuOpen.set(!workspaceMenuOpen())"
+      >
+        {{ workspaceLabel() }} <span aria-hidden="true">⌄</span>
+      </button>
+      @if (workspaceMenuOpen()) {
+      <div
+        id="workspace-menu"
+        class="workspace-switcher__menu"
+        role="group"
+        aria-label="Workspaces"
+      >
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm"
+          [attr.aria-pressed]="selectedWorkspaceId() === null"
+          (click)="selectWorkspace(null)"
+        >
+          All
+        </button>
+        @for (workspace of workspaceList(); track workspace.id) {
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm"
+          [attr.aria-pressed]="selectedWorkspaceId() === workspace.id"
+          (click)="selectWorkspace(workspace.id)"
+        >
+          {{ workspace.name }}
+        </button>
+        }
+      </div>
+      }
+    </div>
     <div
       class="order-3 flex w-full items-center md:order-none md:flex-1 md:w-auto"
     >
@@ -90,6 +129,8 @@
       <button
         type="button"
         class="btn btn-circle btn-ghost border border-white/10"
+        aria-label="Open notifications"
+        title="Open notifications"
         (click)="toggleNotifications()"
       >
         <div class="indicator">

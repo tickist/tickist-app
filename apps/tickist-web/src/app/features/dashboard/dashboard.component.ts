@@ -12,6 +12,7 @@ import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TaskListComponent } from '../app-shell/task-list.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { TaskStatusService } from '../../data/task-status.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,13 +28,18 @@ export class DashboardComponent {
   private readonly session = inject(SupabaseSessionService);
   private readonly viewState = inject(AppViewStateService);
   private readonly taskStatus = inject(TaskStatusService);
+  private readonly workspaces = inject(WorkspaceDataService);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
   readonly projectList = computed(() =>
     this.projects
       .list()
-      .filter((project) => project.ownerId === this.user()?.id)
+      .filter(
+        (project) =>
+          project.ownerId === this.user()?.id &&
+          this.workspaces.includesProject(project)
+      )
   );
   readonly projectNameMap = computed(() => {
     const map = new Map<string, string>();
@@ -56,7 +62,8 @@ export class DashboardComponent {
       if (
         task.ownerId !== this.user()?.id ||
         task.onHold ||
-        this.taskStatus.isSuspended(task)
+        this.taskStatus.isSuspended(task) ||
+        !this.workspaces.includesTask(task, this.projects.list())
       ) {
         return false;
       }

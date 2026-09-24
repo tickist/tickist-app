@@ -9,6 +9,7 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
   let service: SupabaseAuthService;
   let signInWithPasswordMock: ReturnType<typeof vi.fn>;
   let resetPasswordForEmailMock: ReturnType<typeof vi.fn>;
+  let signUpMock: ReturnType<typeof vi.fn>;
   let updateUserMock: ReturnType<typeof vi.fn>;
   let clearSessionMock: ReturnType<typeof vi.fn>;
   let clearPasswordRecoveryPendingMock: ReturnType<typeof vi.fn>;
@@ -16,6 +17,7 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
   beforeEach(() => {
     signInWithPasswordMock = vi.fn();
     resetPasswordForEmailMock = vi.fn();
+    signUpMock = vi.fn();
     updateUserMock = vi.fn();
     clearSessionMock = vi.fn();
     clearPasswordRecoveryPendingMock = vi.fn();
@@ -28,6 +30,7 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
           useValue: {
             auth: {
               resetPasswordForEmail: resetPasswordForEmailMock,
+              signUp: signUpMock,
               signInWithPassword: signInWithPasswordMock,
               updateUser: updateUserMock,
             },
@@ -54,11 +57,40 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
 
     await service.sendPasswordReset('user@tickist.dev');
 
-    expect(resetPasswordForEmailMock).toHaveBeenCalledWith(
-      'user@tickist.dev',
-      {
-        redirectTo: `${window.location.origin}/auth/update-password`,
-      }
+    expect(resetPasswordForEmailMock).toHaveBeenCalledWith('user@tickist.dev', {
+      redirectTo: `${window.location.origin}/auth/update-password`,
+    });
+  });
+
+  it('stores the browser timezone in signup metadata', async () => {
+    signUpMock.mockResolvedValue({ data: {}, error: null });
+
+    await service.signUpWithPassword({
+      email: 'user@tickist.dev',
+      password: 'Password123!',
+      timezone: 'Europe/Warsaw',
+    });
+
+    expect(signUpMock).toHaveBeenCalledWith({
+      email: 'user@tickist.dev',
+      password: 'Password123!',
+      options: { data: { timezone: 'Europe/Warsaw' } },
+    });
+  });
+
+  it('falls back to Warsaw for an invalid signup timezone', async () => {
+    signUpMock.mockResolvedValue({ data: {}, error: null });
+
+    await service.signUpWithPassword({
+      email: 'user@tickist.dev',
+      password: 'Password123!',
+      timezone: 'invalid/timezone',
+    });
+
+    expect(signUpMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: { data: { timezone: 'Europe/Warsaw' } },
+      })
     );
   });
 

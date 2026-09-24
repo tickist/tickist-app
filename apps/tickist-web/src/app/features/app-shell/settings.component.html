@@ -83,6 +83,74 @@
             </button>
           </section>
         </section>
+        } @if (activeTab() === 'workspaces') {
+        <section class="sheet-form settings-panel" aria-label="Workspaces">
+          <section class="sheet-section">
+            <p class="sheet-field__hint">
+              Organize projects into personal workspaces. Shared project
+              recipients choose their own workspace.
+            </p>
+            @for (workspace of workspaceList(); track workspace.id) {
+            <div class="workspace-settings-row">
+              @if (editingWorkspaceId() === workspace.id) {
+              <input
+                class="sheet-input"
+                [value]="editingWorkspaceName()"
+                maxlength="80"
+                aria-label="Workspace name"
+                (input)="onEditingWorkspaceNameInput($event)"
+              />
+              <button
+                type="button"
+                class="sheet-shell__button sheet-shell__button--secondary"
+                [disabled]="workspaceSaving()"
+                (click)="renameWorkspace()"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                class="sheet-shell__button sheet-shell__button--ghost"
+                (click)="editingWorkspaceId.set(null)"
+              >
+                Cancel
+              </button>
+              } @else {
+              <span>{{ workspace.name }}</span>
+              <button
+                type="button"
+                class="sheet-shell__button sheet-shell__button--ghost"
+                [attr.aria-label]="'Rename ' + workspace.name"
+                (click)="startWorkspaceRename(workspace.id, workspace.name)"
+              >
+                Rename
+              </button>
+              }
+            </div>
+            }
+            <div class="workspace-settings-row">
+              <input
+                class="sheet-input"
+                [value]="newWorkspaceName()"
+                maxlength="80"
+                placeholder="New workspace name"
+                aria-label="New workspace name"
+                (input)="onNewWorkspaceNameInput($event)"
+              />
+              <button
+                type="button"
+                class="sheet-shell__button sheet-shell__button--secondary"
+                [disabled]="workspaceSaving() || !newWorkspaceName().trim()"
+                (click)="createWorkspace()"
+              >
+                Create
+              </button>
+            </div>
+            @if (workspaceError(); as error) {
+            <p class="sheet-field__error" role="alert">{{ error }}</p>
+            }
+          </section>
+        </section>
         } @if (activeTab() === 'password') {
         <section class="sheet-form settings-panel">
           <form class="sheet-form" [formGroup]="passwordForm" data-testid="settings-password-form"

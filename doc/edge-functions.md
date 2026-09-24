@@ -27,7 +27,7 @@ The only public MCP endpoint is `https://mcp.tickist.com/mcp`, served by the ded
 
 Modern clients are stateless. Every request must include the `2026-07-28` protocol version and client capabilities in `params._meta`, plus matching `MCP-Protocol-Version` and `Mcp-Method` HTTP headers. `tools/call` also requires a matching `Mcp-Name`. The server implements `server/discover`, advertises only the modern `2026-07-28` revision there, returns `resultType: "complete"`, includes cache metadata where required, and uses the standard header-mismatch and unsupported-version errors. Legacy compatibility is negotiated separately: those clients continue to use `initialize` and `notifications/initialized` before listing or calling tools.
 
-The endpoint exposes a deterministic catalogue of project, task, and tag tools. Object-shaped tool results include text content and structured JSON content; array results remain text JSON for compatibility. Requests and tool arguments are validated before handlers run. The Worker rejects untrusted `Host` and `Origin` values, requires strict UTF-8 JSON, measures the body limit independently of `Content-Length`, returns `X-Robots-Tag: noindex, nofollow`, and never logs credentials or user payloads. Its separate Cloudflare Rate Limiting binding permits 120 MCP POST requests per minute per SHA-256 hash of the Cloudflare connecting address. The pre-authentication limiter never trusts an unverified Bearer value as a bucket key.
+The endpoint exposes a deterministic catalogue of 16 project, task, and tag tools. Project tools cover nested-project relationships, recursive task listing, and guarded non-Inbox deletion. Task tools accept semantic recurrence, advance recurring tasks in the user's stored timezone, and suspend or resume incomplete tasks. Object-shaped tool results include text content and structured JSON content; array results remain text JSON for compatibility. Requests and nested tool arguments are validated before handlers run. The Worker rejects untrusted `Host` and `Origin` values, requires strict UTF-8 JSON, measures the body limit independently of `Content-Length`, returns `X-Robots-Tag: noindex, nofollow`, and never logs credentials or user payloads. Its separate Cloudflare Rate Limiting binding permits 120 MCP POST requests per minute per SHA-256 hash of the Cloudflare connecting address. The pre-authentication limiter never trusts an unverified Bearer value as a bucket key.
 
 OAuth 2.1 authorization-code access uses PKCE through Supabase Auth. The access-token hook preserves Supabase's `authenticated` audience for Auth and PostgREST while adding the exact MCP resource audience. The Worker publishes RFC 9728 protected-resource metadata and authorization-server metadata, cryptographically verifies access-token signatures against Supabase Auth signing keys, then accepts tokens only when issuer, MCP audience, expiry, subject, `tickist_mcp`, and the signed `tickist_mcp_scopes` claim checks pass. It forwards the user's Bearer token to Supabase PostgREST, where RLS remains the data-authorization boundary. The browser consent route is `/auth/oauth/consent`; connected grants are listed and revoked at `/app/settings/connected-apps`. Supabase dynamic client registration remains enabled for client compatibility.
 
@@ -51,3 +51,13 @@ Task or preference change
 ```
 
 The outbox makes sending idempotent and observable. Failed delivery is retried only when appropriate; exhausted attempts become terminal rather than silently looping.
+
+## Scheduler observability retention
+
+`supabase/migrations/0020_retain_scheduler_observability.sql` schedules a daily
+03:17 UTC maintenance job. It retains seven days of completed `pg_cron` run
+history in `cron.job_run_details` and 24 hours of `pg_net` HTTP responses in
+`net._http_response`. These are diagnostic records only; the job never deletes
+application tasks, reminders, notifications, email-outbox records, or scheduler
+definitions. Keeping this history bounded prevents scheduler diagnostics from
+consuming database storage indefinitely.

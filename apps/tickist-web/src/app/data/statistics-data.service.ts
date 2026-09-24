@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
+import { WorkspaceDataService } from './workspace-data.service';
 
 export const STATISTICS_WINDOW_DAYS = 30;
 
@@ -56,6 +57,8 @@ const GROUP_ORDER: StatsProjectGroupKey[] = ['active', 'someday', 'routine'];
 export class StatisticsDataService {
   private readonly supabase = inject(SUPABASE_CLIENT, { optional: true });
   private readonly session = inject(SupabaseSessionService);
+  private readonly workspaces = inject(WorkspaceDataService);
+  private lastWorkspaceId = this.workspaces.selectedWorkspaceId();
 
   private readonly overviewState = signal<StatsOverview>(
     createEmptyStatsOverview()
@@ -73,6 +76,12 @@ export class StatisticsDataService {
   readonly error = computed(() => this.errorState());
 
   constructor() {
+    effect(() => {
+      const workspaceId = this.workspaces.selectedWorkspaceId();
+      if (workspaceId === this.lastWorkspaceId) return;
+      this.lastWorkspaceId = workspaceId;
+      this.markDirty();
+    });
     effect(() => {
       const user = this.session.user();
       if (!user) {
@@ -137,9 +146,13 @@ export class StatisticsDataService {
     this.loadingState.set(true);
     this.errorState.set(null);
 
-    const { data, error } = await this.supabase.rpc('get_statistics_overview', {
-      window_days: windowDays,
-    });
+    const { data, error } = await this.supabase.rpc(
+      'get_statistics_overview_v2',
+      {
+        window_days: windowDays,
+        workspace_id: this.workspaces.selectedWorkspaceId(),
+      }
+    );
 
     if (sequence !== this.refreshSequence) {
       return;
@@ -171,7 +184,9 @@ export class StatisticsDataService {
     this.dirtyState.set(true);
   }
 
-  private async refreshIfNeeded(windowDays = this.lastWindowDays): Promise<void> {
+  private async refreshIfNeeded(
+    windowDays = this.lastWindowDays
+  ): Promise<void> {
     if (this.loadingState()) {
       this.pendingRefreshAfterLoad = true;
       return;

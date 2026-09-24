@@ -200,6 +200,20 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     expect(history.querySelectorAll('time')).toHaveLength(2);
   });
 
+  it('keeps the editable task name out of the edit sheet header', () => {
+    const task = createTask({ name: 'Editable task name' });
+
+    component.preset = { mode: 'edit', task };
+    fixture.detectChanges();
+
+    expect(component.sheetEyebrow()).toBe('Edit task');
+    expect(component.sheetTitle()).toBe('');
+    expect(
+      fixture.nativeElement.querySelector('.sheet-shell__title')
+    ).toBeNull();
+    expect(component.taskForm.controls.name.value).toBe('Editable task name');
+  });
+
   it('maps existing 14-day interval to custom 2 weeks in edit mode', () => {
     component.preset = {
       mode: 'edit',

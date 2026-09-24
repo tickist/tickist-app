@@ -271,6 +271,7 @@
   [style.top.px]="menuPosition()?.top"
   [style.left.px]="menuPosition()?.left"
 >
+  @if (project.ownerId === user()?.id) {
   <button type="button" (click)="editProject(project)">Edit</button>
   @if (projectTypeKey(project) !== 'active') {
   <button type="button" (click)="convertProjectType(project, 'active')">
@@ -288,10 +289,25 @@
   <button type="button" (click)="createChildProject(project)">
     Create child project
   </button>
+  }
   @if (!project.isInbox) {
+  <div class="project-menu__section-label">Move to workspace</div>
+  @for (workspace of workspaceList(); track workspace.id) {
+  <button
+    type="button"
+    (click)="moveProjectToWorkspace(project, workspace.id)"
+    [attr.aria-current]="
+      workspaceForProject(project) === workspace.id ? 'true' : null
+    "
+  >
+    {{ workspace.name }}
+  </button>
+  }
+  @if (project.ownerId === user()?.id) {
   <button type="button" class="text-error" (click)="deleteProject(project)">
     Delete
   </button>
+  }
   }
 </div>
 }

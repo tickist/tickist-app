@@ -278,7 +278,7 @@ test('uses muted placeholders and supports project icon search', async ({
   const placeholderColor = await projectName.evaluate(
     (element) => getComputedStyle(element, '::placeholder').color
   );
-  expect(placeholderColor).toBe('rgb(100, 116, 139)');
+  expect(placeholderColor).toBe('rgb(71, 85, 105)');
 
   await composer.getByRole('button', { name: /Branding/ }).click();
   const iconSearch = composer.getByRole('searchbox', {
@@ -480,6 +480,17 @@ test('suspends a task with a resume time and separates it from active work', asy
   );
   card = taskCardByName(page, taskName);
   await expect(card.locator('.task-card__check')).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByPlaceholder(/Search tasks/)).toBeVisible();
+  await page.getByRole('button', { name: 'Open notifications' }).click();
+  const resumeNotification = page
+    .locator('li')
+    .filter({ hasText: 'Task resumed' })
+    .filter({ hasText: `Task "${taskName}" is active again.` });
+  await expect(resumeNotification).toBeVisible();
+  await page.getByRole('button', { name: 'Close notifications' }).click();
+  await expect(resumeNotification).toHaveCount(0);
 
   await setProjectFilter(page, 'suspended');
   await expect(card).toHaveCount(0);

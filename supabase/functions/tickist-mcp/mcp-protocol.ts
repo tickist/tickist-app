@@ -57,6 +57,12 @@ export interface McpToolDefinition {
   name: string;
   description: string;
   inputSchema: Record<string, unknown>;
+  annotations?: {
+    readOnlyHint: boolean;
+    destructiveHint: boolean;
+    idempotentHint: boolean;
+    openWorldHint: boolean;
+  };
 }
 
 export interface McpToolResult {
@@ -403,7 +409,7 @@ export const completeResult = <T extends Record<string, unknown>>(
 
 // ─── Tool Definitions ────────────────────────────────────────────────────────
 
-export const TOOL_DEFINITIONS: McpToolDefinition[] = [
+const TOOL_DEFINITIONS_BASE: McpToolDefinition[] = [
   // Projects
   {
     name: 'list_projects',
@@ -414,6 +420,11 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
         is_active: {
           type: 'boolean',
           description: 'Filter by active status. Defaults to true.',
+        },
+        ancestor_id: {
+          type: ['string', 'null'],
+          format: 'uuid',
+          description: 'Filter by parent project; null selects root projects.',
         },
       },
     },
@@ -443,6 +454,11 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
         description: { type: 'string', description: 'Project description' },
         color: { type: 'string', description: 'Hex color, e.g. #394264' },
         icon: { type: 'string', description: 'Icon identifier, e.g. tick' },
+        ancestor_id: {
+          type: ['string', 'null'],
+          format: 'uuid',
+          description: 'Parent project UUID or null for a root project',
+        },
       },
       required: ['name'],
     },
@@ -463,6 +479,27 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
         color: { type: 'string', description: 'New hex color' },
         icon: { type: 'string', description: 'New icon identifier' },
         is_active: { type: 'boolean', description: 'Set active status' },
+        ancestor_id: {
+          type: ['string', 'null'],
+          format: 'uuid',
+          description: 'Parent project UUID or null to detach',
+        },
+      },
+      required: ['project_id'],
+    },
+  },
+  {
+    name: 'delete_project',
+    description:
+      'Permanently delete an owned non-Inbox project. Tasks become unattached and direct children become root projects.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          format: 'uuid',
+          description: 'Project UUID',
+        },
       },
       required: ['project_id'],
     },
@@ -472,7 +509,7 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
   {
     name: 'list_tasks',
     description:
-      'List tasks. Filterable by project_id, is_done, is_active, priority. Returns up to 100 tasks by default.',
+      'List tasks. Filterable by project_id, descendant projects, is_done, is_active, and priority. Returns up to 100 tasks by default.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -480,6 +517,10 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
           type: 'string',
           format: 'uuid',
           description: 'Filter by project',
+        },
+        include_descendants: {
+          type: 'boolean',
+          description: 'Include tasks from all descendant projects.',
         },
         is_done: {
           type: 'boolean',
@@ -536,6 +577,17 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
           description: 'Due date in YYYY-MM-DD format',
         },
         pinned: { type: 'boolean', description: 'Pin the task' },
+        repeat: {
+          type: 'object',
+          properties: {
+            interval_days: { type: 'integer', minimum: 1 },
+            from: {
+              type: 'string',
+              enum: ['completion_date', 'due_date'],
+            },
+          },
+          required: ['interval_days', 'from'],
+        },
       },
       required: ['name'],
     },
@@ -566,13 +618,54 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
         },
         pinned: { type: 'boolean', description: 'Pin/unpin' },
         on_hold: { type: 'boolean', description: 'Put on hold / resume' },
+        repeat: {
+          type: ['object', 'null'],
+          properties: {
+            interval_days: { type: 'integer', minimum: 1 },
+            from: {
+              type: 'string',
+              enum: ['completion_date', 'due_date'],
+            },
+          },
+          required: ['interval_days', 'from'],
+        },
+      },
+      required: ['task_id'],
+    },
+  },
+  {
+    name: 'suspend_task',
+    description:
+      'Suspend an incomplete task indefinitely or until a future date and time',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        task_id: { type: 'string', format: 'uuid', description: 'Task UUID' },
+        until: {
+          type: ['string', 'null'],
+          format: 'date-time',
+          description:
+            'Future ISO timestamp with an offset, or null for indefinite suspension',
+        },
+      },
+      required: ['task_id'],
+    },
+  },
+  {
+    name: 'resume_task',
+    description: 'Resume a suspended incomplete task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        task_id: { type: 'string', format: 'uuid', description: 'Task UUID' },
       },
       required: ['task_id'],
     },
   },
   {
     name: 'complete_task',
-    description: 'Mark a task as done (or reopen it)',
+    description:
+      'Complete or reopen a task. Recurring completion advances the due date and resets steps.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -628,6 +721,33 @@ export const TOOL_DEFINITIONS: McpToolDefinition[] = [
   },
 ];
 
+const READ_ONLY_TOOLS = new Set([
+  'list_projects',
+  'get_project',
+  'list_tasks',
+  'get_task',
+  'list_tags',
+]);
+
+export const TOOL_DEFINITIONS: McpToolDefinition[] = TOOL_DEFINITIONS_BASE.map(
+  (tool) => {
+    const readOnly = READ_ONLY_TOOLS.has(tool.name);
+    return {
+      ...tool,
+      annotations: {
+        readOnlyHint: readOnly,
+        destructiveHint:
+          tool.name === 'delete_task' || tool.name === 'delete_project',
+        idempotentHint:
+          readOnly ||
+          tool.name === 'suspend_task' ||
+          tool.name === 'resume_task',
+        openWorldHint: false,
+      },
+    };
+  }
+);
+
 const matchesJsonSchemaType = (value: unknown, type: string): boolean => {
   switch (type) {
     case 'null':
@@ -667,6 +787,96 @@ const isValidDate = (value: string): boolean => {
   );
 };
 
+const isValidDateTime = (value: string): boolean =>
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/.test(
+    value
+  ) && !Number.isNaN(Date.parse(value));
+
+const validateSchemaValue = (
+  key: string,
+  value: unknown,
+  propertySchema: Record<string, unknown>
+): string | null => {
+  const declaredType = propertySchema.type;
+  const allowedTypes = Array.isArray(declaredType)
+    ? declaredType.filter((type): type is string => typeof type === 'string')
+    : typeof declaredType === 'string'
+    ? [declaredType]
+    : [];
+  if (
+    allowedTypes.length > 0 &&
+    !allowedTypes.some((type) => matchesJsonSchemaType(value, type))
+  ) {
+    return `${key} must be ${allowedTypes.join(' or ')}`;
+  }
+  if (value === null) return null;
+
+  if (
+    Array.isArray(propertySchema.enum) &&
+    !propertySchema.enum.includes(value)
+  ) {
+    return `${key} must be one of: ${propertySchema.enum.join(', ')}`;
+  }
+  if (
+    propertySchema.format === 'uuid' &&
+    typeof value === 'string' &&
+    !isValidUuid(value)
+  ) {
+    return `${key} must be a UUID`;
+  }
+  if (
+    propertySchema.format === 'date' &&
+    typeof value === 'string' &&
+    !isValidDate(value)
+  ) {
+    return `${key} must be a valid YYYY-MM-DD date`;
+  }
+  if (
+    propertySchema.format === 'date-time' &&
+    typeof value === 'string' &&
+    !isValidDateTime(value)
+  ) {
+    return `${key} must be a valid ISO date-time with an offset`;
+  }
+  if (
+    typeof value === 'number' &&
+    typeof propertySchema.minimum === 'number' &&
+    value < propertySchema.minimum
+  ) {
+    return `${key} must be at least ${propertySchema.minimum}`;
+  }
+  if (
+    typeof value === 'number' &&
+    typeof propertySchema.maximum === 'number' &&
+    value > propertySchema.maximum
+  ) {
+    return `${key} must be at most ${propertySchema.maximum}`;
+  }
+  if (isRecord(value) && isRecord(propertySchema.properties)) {
+    const required = Array.isArray(propertySchema.required)
+      ? propertySchema.required.filter(
+          (nestedKey): nestedKey is string => typeof nestedKey === 'string'
+        )
+      : [];
+    for (const nestedKey of required) {
+      if (!Object.prototype.hasOwnProperty.call(value, nestedKey)) {
+        return `${key}.${nestedKey} is required`;
+      }
+    }
+    for (const [nestedKey, nestedValue] of Object.entries(value)) {
+      const nestedSchema = propertySchema.properties[nestedKey];
+      if (!isRecord(nestedSchema) || nestedValue === undefined) continue;
+      const error = validateSchemaValue(
+        `${key}.${nestedKey}`,
+        nestedValue,
+        nestedSchema
+      );
+      if (error) return error;
+    }
+  }
+  return null;
+};
+
 export const validateToolArguments = (
   toolName: string,
   args: Record<string, unknown>
@@ -694,57 +904,8 @@ export const validateToolArguments = (
       continue;
     }
 
-    const declaredType = propertySchema.type;
-    const allowedTypes = Array.isArray(declaredType)
-      ? declaredType.filter((type): type is string => typeof type === 'string')
-      : typeof declaredType === 'string'
-      ? [declaredType]
-      : [];
-    if (
-      allowedTypes.length > 0 &&
-      !allowedTypes.some((type) => matchesJsonSchemaType(value, type))
-    ) {
-      return `${key} must be ${allowedTypes.join(' or ')}`;
-    }
-
-    if (
-      Array.isArray(propertySchema.enum) &&
-      !propertySchema.enum.includes(value)
-    ) {
-      return `${key} must be one of: ${propertySchema.enum.join(', ')}`;
-    }
-
-    if (
-      propertySchema.format === 'uuid' &&
-      typeof value === 'string' &&
-      !isValidUuid(value)
-    ) {
-      return `${key} must be a UUID`;
-    }
-
-    if (
-      propertySchema.format === 'date' &&
-      typeof value === 'string' &&
-      !isValidDate(value)
-    ) {
-      return `${key} must be a valid YYYY-MM-DD date`;
-    }
-
-    if (
-      typeof value === 'number' &&
-      typeof propertySchema.minimum === 'number' &&
-      value < propertySchema.minimum
-    ) {
-      return `${key} must be at least ${propertySchema.minimum}`;
-    }
-
-    if (
-      typeof value === 'number' &&
-      typeof propertySchema.maximum === 'number' &&
-      value > propertySchema.maximum
-    ) {
-      return `${key} must be at most ${propertySchema.maximum}`;
-    }
+    const error = validateSchemaValue(key, value, propertySchema);
+    if (error) return error;
   }
 
   return null;

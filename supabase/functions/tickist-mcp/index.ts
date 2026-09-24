@@ -20,6 +20,7 @@ import {
   getProject,
   createProject,
   updateProject,
+  deleteProject,
 } from './tools/projects.ts';
 import {
   listTasks,
@@ -28,6 +29,8 @@ import {
   updateTask,
   completeTask,
   deleteTask,
+  suspendTask,
+  resumeTask,
 } from './tools/tasks.ts';
 import { listTags, createTag, addTagToTask } from './tools/tags.ts';
 
@@ -78,11 +81,14 @@ const TOOL_HANDLERS: Record<string, ToolHandler> = {
   get_project: getProject,
   create_project: createProject,
   update_project: updateProject,
+  delete_project: deleteProject,
   list_tasks: listTasks,
   get_task: getTask,
   create_task: createTask,
   update_task: updateTask,
   complete_task: completeTask,
+  suspend_task: suspendTask,
+  resume_task: resumeTask,
   delete_task: deleteTask,
   list_tags: listTags,
   create_tag: createTag,

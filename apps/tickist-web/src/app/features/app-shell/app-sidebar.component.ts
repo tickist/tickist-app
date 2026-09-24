@@ -17,6 +17,7 @@ import {
 import { AppViewStateService } from './app-view-state.service';
 import { TaskDataService } from '../../data/task-data.service';
 import { TaskStatusService } from '../../data/task-status.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
@@ -70,12 +71,30 @@ export class AppSidebarComponent {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly session = inject(SupabaseSessionService);
   private readonly taskStatus = inject(TaskStatusService);
+  readonly workspaces = inject(WorkspaceDataService);
 
-  readonly projectList = computed(() => this.projectsService.list());
+  readonly projectList = computed(() =>
+    this.projectsService
+      .list()
+      .filter((project) =>
+        this.workspaces.includesProject(project, this.projectsService.list())
+      )
+  );
+  readonly workspaceList = this.workspaces.list;
+
+  workspaceForProject(project: Project): string | null {
+    return this.workspaces.workspaceFor(project, this.projectsService.list());
+  }
   readonly selectedProjectId = this.viewState.selectedProjectId;
   readonly excludedProjectIds = this.viewState.excludedProjectIds;
   readonly taskList = computed(() =>
-    this.tasksService.list().filter((task) => this.taskStatus.isAvailable(task))
+    this.tasksService
+      .list()
+      .filter(
+        (task) =>
+          this.taskStatus.isAvailable(task) &&
+          this.workspaces.includesTask(task, this.projectsService.list())
+      )
   );
   readonly user = computed(() => this.session.user());
   readonly dueDateFilter = this.viewState.dueDateFilter;
@@ -426,6 +445,39 @@ export class AppSidebarComponent {
       id: project.id,
       projectType,
     });
+  }
+
+  async moveProjectToWorkspace(
+    project: Project,
+    workspaceId: string
+  ): Promise<void> {
+    this.closeMenu();
+    if (project.ownerId === this.user()?.id) {
+      await this.projectsService.updateProject({ id: project.id, workspaceId });
+      await this.projectsService.refresh();
+    } else {
+      const projects = this.projectsService.list();
+      let root = project;
+      const visited = new Set([root.id]);
+      while (root.ancestorId) {
+        const parent = projects.find(
+          (item) => item.id === root.ancestorId && item.ownerId === root.ownerId
+        );
+        if (!parent || visited.has(parent.id)) break;
+        visited.add(parent.id);
+        root = parent;
+      }
+      const descendants = collectDescendantIds(
+        buildHierarchy(projects),
+        root.id
+      );
+      const projectIds = [root.id, ...descendants].filter((id) =>
+        this.projectsService
+          .list()
+          .some((item) => item.id === id && item.ownerId === root.ownerId)
+      );
+      await this.workspaces.assignSharedProjects(projectIds, workspaceId);
+    }
   }
 
   async deleteProject(project: Project): Promise<void> {

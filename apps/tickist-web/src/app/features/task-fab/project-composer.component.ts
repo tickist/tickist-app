@@ -25,6 +25,7 @@ import {
 } from '../../core/projects/project-tree';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import {
   SheetScaffoldComponent,
   SheetScaffoldTab,
@@ -48,6 +49,8 @@ export class ProjectComposerComponent {
   private readonly fb = inject(FormBuilder);
   private readonly projects = inject(ProjectDataService);
   private readonly session = inject(SupabaseSessionService);
+  private readonly workspaces = inject(WorkspaceDataService);
+  readonly workspaceList = this.workspaces.list;
   private currentPreset: ProjectComposerPreset | null = null;
 
   readonly user = computed(() => this.session.user());
@@ -84,7 +87,7 @@ export class ProjectComposerComponent {
       : new Set<string>();
 
     return this.projectOptions().filter((project) => {
-      if (project.isInbox) {
+      if (project.isInbox || project.ownerId !== this.user()?.id) {
         return false;
       }
       if (!editingProjectId) {
@@ -105,6 +108,11 @@ export class ProjectComposerComponent {
     '#475569',
     '#94A3B8',
   ];
+  readonly projectTypes = [
+    { value: 'active', label: 'Active' },
+    { value: 'someday', label: 'Someday/maybe' },
+    { value: 'routine', label: 'Routine' },
+  ] as const;
   readonly iconOptions = PROJECT_ICON_OPTIONS;
   readonly iconSearch = signal('');
   readonly filteredIconOptions = computed(() => {
@@ -131,6 +139,7 @@ export class ProjectComposerComponent {
     description: '',
     projectType: 'active',
     ancestorId: '',
+    workspaceId: '',
     isActive: true,
     color: '#1D4ED8',
     icon: 'folder',
@@ -149,6 +158,7 @@ export class ProjectComposerComponent {
     description: [this.defaultFormState.description],
     projectType: [this.defaultFormState.projectType],
     ancestorId: [this.defaultFormState.ancestorId],
+    workspaceId: [this.defaultFormState.workspaceId],
     isActive: [this.defaultFormState.isActive],
     color: [this.defaultFormState.color],
     icon: [this.defaultFormState.icon],
@@ -295,6 +305,17 @@ export class ProjectComposerComponent {
     return this.tabs.some((candidate) => candidate.key === tab);
   }
 
+  selectAncestor(projectId: string): void {
+    this.form.controls.ancestorId.setValue(projectId);
+    const parent = this.projectOptions().find(
+      (project) => project.id === projectId
+    );
+    if (parent)
+      this.form.controls.workspaceId.setValue(
+        this.workspaces.workspaceFor(parent, this.projectOptions()) ?? ''
+      );
+  }
+
   async submit(): Promise<void> {
     const user = this.user();
     if (this.form.invalid || !user) {
@@ -311,6 +332,10 @@ export class ProjectComposerComponent {
           description: this.form.value.description ?? '',
           projectType: this.form.value.projectType ?? 'active',
           ancestorId: this.form.value.ancestorId || null,
+          workspaceId:
+            this.form.value.workspaceId ||
+            this.workspaces.selectedWorkspaceId() ||
+            this.workspaces.privateWorkspaceId(),
           isActive: this.form.value.isActive ?? true,
           color: this.form.value.color ?? '#1D4ED8',
           icon: this.form.value.icon ?? 'folder',
@@ -330,6 +355,10 @@ export class ProjectComposerComponent {
           description: this.form.value.description ?? '',
           projectType: this.form.value.projectType ?? 'active',
           ancestorId: this.form.value.ancestorId || null,
+          workspaceId:
+            this.form.value.workspaceId ||
+            this.workspaces.selectedWorkspaceId() ||
+            this.workspaces.privateWorkspaceId(),
           isActive: this.form.value.isActive ?? true,
           color: this.form.value.color ?? '#1D4ED8',
           icon: this.form.value.icon ?? 'folder',
@@ -392,6 +421,8 @@ export class ProjectComposerComponent {
         description: project.description ?? '',
         projectType: project.projectType ?? 'active',
         ancestorId: project.ancestorId ?? '',
+        workspaceId:
+          this.workspaces.workspaceFor(project, this.projectOptions()) ?? '',
         isActive: project.isActive,
         color: project.color ?? '#1D4ED8',
         icon: resolveProjectIconKey(project.icon),
@@ -410,6 +441,13 @@ export class ProjectComposerComponent {
         preset.defaults?.projectType ?? this.defaultFormState.projectType,
       ancestorId:
         preset.defaults?.ancestorId ?? this.defaultFormState.ancestorId,
+      workspaceId: preset.defaults?.ancestorId
+        ? this.projectOptions().find(
+            (project) => project.id === preset.defaults?.ancestorId
+          )?.workspaceId ?? ''
+        : this.workspaces.selectedWorkspaceId() ??
+          this.workspaces.privateWorkspaceId() ??
+          '',
       color: preset.defaults?.color ?? this.defaultFormState.color,
       icon: resolveProjectIconKey(
         preset.defaults?.icon ?? this.defaultFormState.icon

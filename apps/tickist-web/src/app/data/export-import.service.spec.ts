@@ -58,6 +58,23 @@ describe('ExportImportService helpers', () => {
       )
     ).toBe(true);
   });
+
+  it('accepts old backups and rejects a new backup with a missing workspace', () => {
+    const oldBackup = createPayload();
+    expect(validateTickistExportDocument(oldBackup).ok).toBe(true);
+
+    const newBackup = createPayload();
+    newBackup.formatVersion = 2;
+    newBackup.workspaces = [
+      { stableId: 'private-id', name: 'Private', kind: 'private' },
+    ];
+    newBackup.projects[0].workspaceStableId = 'missing-id';
+    const validation = validateTickistExportDocument(newBackup);
+    expect(validation.ok).toBe(false);
+    expect(
+      validation.errors.some((error) => error.includes('missing workspace'))
+    ).toBe(true);
+  });
 });
 
 function createPayload(): TickistExportDocument {

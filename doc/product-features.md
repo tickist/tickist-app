@@ -15,11 +15,14 @@ Posts, categories, and tags are published from the repository rather than an adm
 ## Inbox and projects
 
 - Each account has one Inbox for uncategorised tasks.
+- Each account starts with Work and Private workspaces. Existing projects are assigned to Private. Users can create and rename workspaces in Settings; the navigation switcher offers All and each workspace. The selection filters project and task views, dashboard, tags, tree, and statistics. Inbox and notifications remain available across workspaces.
+- Each owned project belongs to one workspace; subprojects use their parent's workspace and move with it. A recipient of a shared project assigns it independently to one of their own workspaces, initially Private.
 - Projects can be nested to represent outcomes and their component work.
 - Selecting a project shows tasks from that project and all nested subprojects. When the selected project has descendants, independent checkboxes beside the selected project and each descendant can include or exclude that project's own tasks. All projects in the hierarchy are included by default, and the selection resets when the user moves to another project.
 - Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view. Branding offers a searchable catalogue of 151 tree-shaken Lucide icons.
 - The sidebar groups active work and special planning buckets such as Someday/Maybe, routine reminders, weekdays, and future work.
 - Project owners can share a project by invitation. Recipients accept or decline from the Team view; accepted members can leave shared projects.
+- MCP clients can create and move nested projects, recursively list a selected project's tasks, and delete owned non-Inbox projects. Deleting a project leaves its tasks unattached and promotes its direct children to root projects.
 
 ## Tasks
 
@@ -31,7 +34,7 @@ Task-card overflow actions are exclusive within a task list: opening the menu on
 
 ### Status and completion
 
-Tasks can be active or suspended. A suspension can remain in place until the user resumes the task or end automatically at a chosen date and time. The resume time defaults to `00:00` when the user selects a date without changing the time. Suspended tasks show a pause indicator instead of a completion checkbox, are excluded from active-work summaries, and are counted in the selected project's header across the currently included project hierarchy. The header count is a shortcut that selects the suspended-task filter. A database scheduler resumes due tasks every minute, while an in-app status clock updates an open view without requiring a reload.
+Tasks can be active or suspended. A suspension can remain in place until the user resumes the task or end automatically at a chosen date and time. The resume time defaults to `00:00` when the user selects a date without changing the time. Suspended tasks show a pause indicator instead of a completion checkbox, are excluded from active-work summaries, and are counted in the selected project's header across the currently included project hierarchy. The header count is a shortcut that selects the suspended-task filter. A database scheduler resumes due tasks every minute, while an in-app status clock updates an open view without requiring a reload. Every incomplete-task transition from suspended to active creates an in-app notification for the task owner and immediately queues an owner email through the transactional outbox; this covers both scheduled and manual resumes.
 
 Open, suspended, completed, and all-task filters are available in project task lists. The open filter excludes suspended tasks. Completing a task records its completion timestamp; reopening it clears the timestamp. When completed tasks are visible, the card displays a `Completed DD-MM-YYYY` badge next to the task name.
 
@@ -51,6 +54,10 @@ Tag views support tag selection, OR/AND matching, untagged-task mode, completed-
 
 Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Completing a recurring task creates the next occurrence rather than leaving an ordinary completed item. Reminders store a date, time, timezone, and delivery state.
 
+MCP clients use a semantic repeat interval and completion- or due-date anchor. Completing a recurring task through MCP advances the same task and resets its steps. MCP clients can also suspend incomplete tasks indefinitely or until a future timestamp and resume them explicitly.
+
+Each account stores an IANA timezone. New registrations capture the browser timezone, falling back to `Europe/Warsaw`; existing accounts are initialised to `Europe/Warsaw`. Server-side recurrence uses this timezone to determine the user's local completion date.
+
 ## Focus views
 
 - **Dashboard:** today, overdue, pinned, next-action, and need-info work; project next-action coverage.
@@ -61,6 +68,8 @@ Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Co
 ## Settings and portability
 
 Settings cover profile data, avatar, password changes, email notification preferences, backup/restore, and API tokens. Export/import uses stable IDs and modification timestamps to make data transfer and duplicate handling reliable.
+
+Version 2 backups include workspace definitions and project assignments. Version 1 backups remain importable and place imported projects in Private.
 
 Form placeholders use one muted slate colour across light and dark application surfaces so hints remain visually secondary to entered values.
 
