@@ -39,7 +39,7 @@ describe('createTickistMcpServer', () => {
       }
     )._registeredTools;
 
-    expect(Object.keys(tools)).toHaveLength(16);
+    expect(Object.keys(tools)).toHaveLength(17);
     expect(Object.keys(tools)).toEqual(
       expect.arrayContaining(['delete_project', 'suspend_task', 'resume_task'])
     );
