@@ -3,7 +3,7 @@ import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 
 const EXPORT_FORMAT = 'tickist-json';
-const EXPORT_FORMAT_VERSION = 1;
+const EXPORT_FORMAT_VERSION = 2;
 const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
 
 export interface TickistExportOptions {
@@ -25,11 +25,18 @@ export interface TickistExportDocument {
     onlyActive: boolean;
     projectIds: string[];
   };
+  workspaces?: TickistExportWorkspace[];
   projects: TickistExportProject[];
   tags: TickistExportTag[];
   tasks: TickistExportTask[];
   taskSteps: TickistExportTaskStep[];
   taskTags: TickistExportTaskTag[];
+}
+
+export interface TickistExportWorkspace {
+  stableId: string;
+  name: string;
+  kind: 'work' | 'private' | null;
 }
 
 export interface TickistExportProject {
@@ -41,6 +48,7 @@ export interface TickistExportProject {
   isActive: boolean;
   isInbox: boolean;
   projectType: string;
+  workspaceStableId?: string | null;
   ancestorStableId: string | null;
   taskView: string;
   defaultPriority: string | null;
@@ -144,6 +152,7 @@ interface ExportProjectRow {
   is_active: boolean;
   is_inbox: boolean;
   project_type: string | null;
+  workspace_id: string | null;
   ancestor_id: string | null;
   task_view: string | null;
   default_priority: string | null;
@@ -152,6 +161,13 @@ interface ExportProjectRow {
   dialog_time_when_task_finished: boolean | null;
   created_at: string | null;
   updated_at: string | null;
+}
+
+interface ExportWorkspaceRow {
+  id: string;
+  stable_id: string;
+  name: string;
+  kind: 'work' | 'private' | null;
 }
 
 interface ExportTagRow {
@@ -225,10 +241,21 @@ export class ExportImportService {
     const userId = this.ensureUserId();
     const normalized = normalizeExportOptions(options);
 
+    const { data: workspaceData, error: workspaceError } = await client
+      .from('workspaces')
+      .select('id, stable_id, name, kind')
+      .eq('owner_id', userId);
+    if (workspaceError)
+      throw new Error(`Could not export workspaces: ${workspaceError.message}`);
+    const workspaceRows = (workspaceData ?? []) as ExportWorkspaceRow[];
+    const workspaceStableById = new Map(
+      workspaceRows.map((row) => [row.id, row.stable_id])
+    );
+
     let projectQuery = client
       .from('projects')
       .select(
-        'id, stable_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, created_at, updated_at'
+        'id, stable_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, workspace_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished, created_at, updated_at'
       )
       .eq('owner_id', userId);
 
@@ -314,6 +341,17 @@ export class ExportImportService {
         onlyActive: normalized.onlyActive,
         projectIds: normalized.projectIds,
       },
+      workspaces: workspaceRows
+        .filter(
+          (row) =>
+            !normalized.projectIds.length ||
+            projectRows.some((project) => project.workspace_id === row.id)
+        )
+        .map((row) => ({
+          stableId: row.stable_id,
+          name: row.name,
+          kind: row.kind,
+        })),
       projects: projectRows.map((project) => ({
         stableId: project.stable_id,
         name: project.name,
@@ -323,6 +361,9 @@ export class ExportImportService {
         isActive: project.is_active,
         isInbox: project.is_inbox,
         projectType: project.project_type ?? 'active',
+        workspaceStableId: project.workspace_id
+          ? workspaceStableById.get(project.workspace_id) ?? null
+          : null,
         ancestorStableId: project.ancestor_id
           ? projectStableById.get(project.ancestor_id) ?? null
           : null,
@@ -465,10 +506,19 @@ export class ExportImportService {
     const client = this.ensureClient();
     const userId = this.ensureUserId();
 
+    const workspaceMap = await this.upsertWorkspaces(
+      client,
+      userId,
+      parsed.payload,
+      dryRun,
+      result
+    );
+
     const projectMap = await this.upsertProjects(
       client,
       userId,
       parsed.payload,
+      workspaceMap,
       { dryRun, skipOlder },
       result
     );
@@ -538,10 +588,67 @@ export class ExportImportService {
     };
   }
 
+  private async upsertWorkspaces(
+    client: NonNullable<typeof this.supabase>,
+    userId: string,
+    payload: TickistExportDocument,
+    dryRun: boolean,
+    result: ImportResult
+  ): Promise<Map<string, string>> {
+    const { data, error } = await client
+      .from('workspaces')
+      .select('id, stable_id, name, kind')
+      .eq('owner_id', userId);
+    if (error) {
+      result.ok = false;
+      result.errors.push(`Could not inspect workspaces: ${error.message}`);
+      return new Map();
+    }
+    const existing = (data ?? []) as ExportWorkspaceRow[];
+    const privateId = existing.find((row) => row.kind === 'private')?.id;
+    const map = new Map<string, string>();
+    if (privateId) map.set('__private__', privateId);
+    for (const workspace of payload.workspaces ?? []) {
+      const match = existing.find((row) =>
+        workspace.kind
+          ? row.kind === workspace.kind
+          : row.stable_id === workspace.stableId ||
+            row.name.toLowerCase() === workspace.name.toLowerCase()
+      );
+      if (match) {
+        map.set(workspace.stableId, match.id);
+        continue;
+      }
+      if (dryRun) {
+        map.set(workspace.stableId, `dry-run:${workspace.stableId}`);
+        continue;
+      }
+      const { data: created, error: createError } = await client
+        .from('workspaces')
+        .insert({
+          owner_id: userId,
+          stable_id: workspace.stableId,
+          name: workspace.name,
+        })
+        .select('id')
+        .single();
+      if (createError || !created) {
+        result.ok = false;
+        result.errors.push(
+          `Could not import workspace ${workspace.name}: ${
+            createError?.message ?? 'unknown error'
+          }`
+        );
+      } else map.set(workspace.stableId, created.id as string);
+    }
+    return map;
+  }
+
   private async upsertProjects(
     client: NonNullable<typeof this.supabase>,
     userId: string,
     payload: TickistExportDocument,
+    workspaceMap: Map<string, string>,
     options: Required<TickistImportOptions>,
     result: ImportResult
   ): Promise<Map<string, string>> {
@@ -665,6 +772,11 @@ export class ExportImportService {
         is_active: project.isActive,
         is_inbox: shouldSetInboxFlag,
         project_type: project.projectType,
+        workspace_id: shouldSetInboxFlag
+          ? null
+          : workspaceMap.get(project.workspaceStableId ?? '__private__') ??
+            workspaceMap.get('__private__') ??
+            null,
         ancestor_id: null,
         task_view: project.taskView,
         default_priority: project.defaultPriority,
@@ -1235,12 +1347,18 @@ export function validateTickistExportDocument(
   if (payload.format !== EXPORT_FORMAT) {
     errors.push(`Unsupported export format: ${String(payload.format)}.`);
   }
-  if (payload.formatVersion !== EXPORT_FORMAT_VERSION) {
+  if (
+    payload.formatVersion !== 1 &&
+    payload.formatVersion !== EXPORT_FORMAT_VERSION
+  ) {
     errors.push(
       `Unsupported format version: ${String(
         payload.formatVersion
-      )}. Expected ${EXPORT_FORMAT_VERSION}.`
+      )}. Expected 1 or ${EXPORT_FORMAT_VERSION}.`
     );
+  }
+  if (payload.formatVersion === 2 && !Array.isArray(payload.workspaces)) {
+    errors.push('Missing workspaces list.');
   }
   if (!Array.isArray(payload.projects)) {
     errors.push('Missing projects list.');
@@ -1267,6 +1385,26 @@ export function validateTickistExportDocument(
   };
 
   if (!errors.length) {
+    if (payload.workspaces) {
+      collectStableIdErrors(
+        'workspace',
+        payload.workspaces.map((workspace) => workspace.stableId),
+        errors
+      );
+      const workspaceIds = new Set(
+        payload.workspaces.map((workspace) => workspace.stableId)
+      );
+      for (const project of payload.projects) {
+        if (
+          project.workspaceStableId &&
+          !workspaceIds.has(project.workspaceStableId)
+        ) {
+          errors.push(
+            `Project ${project.stableId} references missing workspace ${project.workspaceStableId}.`
+          );
+        }
+      }
+    }
     collectStableIdErrors(
       'project',
       payload.projects.map((project) => project.stableId),

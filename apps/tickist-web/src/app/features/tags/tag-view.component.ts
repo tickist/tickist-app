@@ -10,6 +10,8 @@ import { TagDataService } from '../../data/tag-data.service';
 import { TaskDataService, Task } from '../../data/task-data.service';
 import { TaskListComponent } from '../app-shell/task-list.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
+import { ProjectDataService } from '../../data/project-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 
 @Component({
   selector: 'app-tag-view',
@@ -23,9 +25,17 @@ export class TagViewComponent {
   private readonly tagsService = inject(TagDataService);
   private readonly tasksService = inject(TaskDataService);
   private readonly viewState = inject(AppViewStateService);
+  private readonly projects = inject(ProjectDataService);
+  private readonly workspaces = inject(WorkspaceDataService);
 
   readonly tags = computed(() => this.tagsService.list());
-  readonly tasks = computed(() => this.tasksService.list());
+  readonly tasks = computed(() =>
+    this.tasksService
+      .list()
+      .filter((task) =>
+        this.workspaces.includesTask(task, this.projects.list())
+      )
+  );
   readonly searchTerm = this.viewState.searchTerm;
 
   readonly selectedTags = signal<Set<string>>(new Set());

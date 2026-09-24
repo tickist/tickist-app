@@ -11,7 +11,7 @@ import { SupabaseSessionService } from '../features/auth/supabase-session.servic
 import { StatisticsDataService } from './statistics-data.service';
 
 const PROJECT_SELECT =
-  'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished';
+  'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, workspace_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished';
 const LEGACY_MEMBERSHIP_SELECT =
   'project_id, user_id, role, invited_at, projects(id, name, owner_id, color, icon)';
 
@@ -50,6 +50,7 @@ export interface Project {
   isInbox: boolean;
   projectType: string;
   ancestorId: string | null;
+  workspaceId?: string | null;
   taskView: string;
   shareWithIds: string[];
   members: ProjectMember[];
@@ -60,11 +61,12 @@ export interface Project {
   dialogTimeWhenTaskFinished?: boolean;
 }
 
-export function isProjectSharedByMultipleMembers(
-  project: { members: ReadonlyArray<{ status?: string | null }> }
-): boolean {
-  return project.members.filter((member) => member.status === 'accepted')
-    .length >= 2;
+export function isProjectSharedByMultipleMembers(project: {
+  members: ReadonlyArray<{ status?: string | null }>;
+}): boolean {
+  return (
+    project.members.filter((member) => member.status === 'accepted').length >= 2
+  );
 }
 
 export function isProjectSharedWithOthers(
@@ -98,6 +100,7 @@ export interface ProjectCreateInput {
   isInbox?: boolean;
   projectType?: string;
   ancestorId?: string | null;
+  workspaceId?: string | null;
   taskView?: string;
   shareWithIds?: string[];
   isActive?: boolean;
@@ -118,6 +121,7 @@ export interface ProjectUpdateInput {
   isInbox?: boolean;
   projectType?: string;
   ancestorId?: string | null;
+  workspaceId?: string | null;
   taskView?: string;
   shareWithIds?: string[];
   defaultPriority?: string;
@@ -184,6 +188,7 @@ type ProjectRow = {
   is_inbox: boolean;
   project_type: string | null;
   ancestor_id: string | null;
+  workspace_id: string | null;
   task_view: string | null;
   default_priority: string | null;
   default_finish_date: number | null;
@@ -458,6 +463,7 @@ export class ProjectDataService {
         project_type: rest.projectType ?? 'active',
         is_active: rest.isActive ?? true,
         ancestor_id: rest.ancestorId ?? null,
+        workspace_id: rest.workspaceId ?? null,
         task_view: rest.taskView ?? 'extended',
         default_priority: rest.defaultPriority ?? 'B',
         default_finish_date: rest.defaultFinishDate ?? null,
@@ -471,7 +477,9 @@ export class ProjectDataService {
     if (error || !data) {
       await this.handleOwnerConstraintError(error, input.ownerId);
       if (rest.isInbox && isDuplicateInboxError(error)) {
-        const existingInbox = await this.fetchInboxProjectByOwner(input.ownerId);
+        const existingInbox = await this.fetchInboxProjectByOwner(
+          input.ownerId
+        );
         if (existingInbox) {
           this.upsertCachedProject(existingInbox);
           await this.refreshMemberships();
@@ -528,6 +536,7 @@ export class ProjectDataService {
     if (rest.isInbox !== undefined) payload.is_inbox = rest.isInbox;
     if (rest.projectType !== undefined) payload.project_type = rest.projectType;
     if (rest.ancestorId !== undefined) payload.ancestor_id = rest.ancestorId;
+    if (rest.workspaceId !== undefined) payload.workspace_id = rest.workspaceId;
     if (rest.taskView !== undefined) payload.task_view = rest.taskView;
     if (rest.defaultPriority !== undefined)
       payload.default_priority = rest.defaultPriority;
@@ -567,13 +576,16 @@ export class ProjectDataService {
         });
       }
 
-      await this.supabase
-        .from('project_members')
-        .delete()
-        .eq('project_id', input.id);
-      if (shareWithIds.length) {
+      if (removed.length) {
+        await this.supabase
+          .from('project_members')
+          .delete()
+          .eq('project_id', input.id)
+          .in('user_id', removed);
+      }
+      if (added.length) {
         await this.supabase.from('project_members').insert(
-          shareWithIds.map((userId) => ({
+          added.map((userId) => ({
             project_id: input.id,
             user_id: userId,
             status: 'accepted',
@@ -601,6 +613,9 @@ export class ProjectDataService {
         )
       );
     }
+    if (rest.workspaceId !== undefined || rest.ancestorId !== undefined) {
+      await this.refresh();
+    }
     await this.refreshMemberships();
     return updated;
   }
@@ -621,7 +636,8 @@ export class ProjectDataService {
   ): void {
     const membershipsByProject = new Map<string, ProjectMember[]>();
     for (const membership of memberships) {
-      const projectMembers = membershipsByProject.get(membership.projectId) ?? [];
+      const projectMembers =
+        membershipsByProject.get(membership.projectId) ?? [];
       projectMembers.push(membership);
       membershipsByProject.set(membership.projectId, projectMembers);
     }
@@ -750,7 +766,9 @@ export class ProjectDataService {
     return this.mapProjectRow(data as ProjectRow);
   }
 
-  private async fetchInboxProjectByOwner(ownerId: string): Promise<Project | null> {
+  private async fetchInboxProjectByOwner(
+    ownerId: string
+  ): Promise<Project | null> {
     if (!this.supabase) {
       return (
         this.projects().find(
@@ -797,6 +815,7 @@ export class ProjectDataService {
       isInbox: row.is_inbox,
       projectType: row.project_type ?? 'active',
       ancestorId: row.ancestor_id,
+      workspaceId: row.workspace_id,
       taskView: row.task_view ?? 'extended',
       defaultPriority: row.default_priority ?? undefined,
       defaultFinishDate: row.default_finish_date ?? undefined,

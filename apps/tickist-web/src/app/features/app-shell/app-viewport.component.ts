@@ -6,6 +6,8 @@ import {
   signal,
   OnDestroy,
   ChangeDetectionStrategy,
+  HostListener,
+  ElementRef,
 } from '@angular/core';
 import {
   RouterOutlet,
@@ -22,6 +24,7 @@ import { AppSidebarComponent } from './app-sidebar.component';
 import { TaskFabComponent } from '../task-fab/task-fab.component';
 import { filter, Subscription } from 'rxjs';
 import { ThemeService } from '../../core/ui/theme.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -46,6 +49,8 @@ export class AppViewportComponent implements OnDestroy {
   private readonly viewState = inject(AppViewStateService);
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
+  private readonly workspaces = inject(WorkspaceDataService);
+  private readonly host = inject(ElementRef<HTMLElement>);
   private routerSub: Subscription | null = null;
 
   readonly user = computed(() => this.session.user());
@@ -69,6 +74,15 @@ export class AppViewportComponent implements OnDestroy {
   );
   readonly notificationsOpen = signal(false);
   readonly profileMenuOpen = signal(false);
+  readonly workspaceMenuOpen = signal(false);
+  readonly workspaceList = this.workspaces.list;
+  readonly selectedWorkspaceId = this.workspaces.selectedWorkspaceId;
+  readonly workspaceLabel = computed(
+    () =>
+      this.workspaceList().find(
+        (workspace) => workspace.id === this.selectedWorkspaceId()
+      )?.name ?? 'All'
+  );
   readonly aboutModalOpen = signal(false);
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
@@ -131,6 +145,31 @@ export class AppViewportComponent implements OnDestroy {
   clearSearch(input?: HTMLInputElement | null): void {
     this.viewState.clearSearch();
     input?.focus();
+  }
+
+  selectWorkspace(workspaceId: string | null): void {
+    this.workspaces.select(workspaceId);
+    this.workspaceMenuOpen.set(false);
+    const selectedProjectId = this.viewState.selectedProjectId();
+    if (selectedProjectId) {
+      this.viewState.selectProject(null);
+      void this.router.navigate(['/app']);
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeWorkspaceMenuOnOutsideClick(event: MouseEvent): void {
+    const switcher = this.host.nativeElement.querySelector(
+      '.workspace-switcher'
+    );
+    if (switcher && !switcher.contains(event.target as Node)) {
+      this.workspaceMenuOpen.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  closeWorkspaceMenuOnEscape(): void {
+    this.workspaceMenuOpen.set(false);
   }
 
   toggleNotifications(): void {

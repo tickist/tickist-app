@@ -49,11 +49,20 @@ export class TickistDataAccess {
     const { data, error } = await this.client
       .from('projects')
       .select(
-        'id, name, description, color, icon, is_active, is_inbox, project_type, created_at'
+        'id, name, description, color, icon, is_active, is_inbox, project_type, workspace_id, created_at'
       )
       .eq('is_active', isActive)
       .order('name');
     if (error) throw new Error('Failed to list projects.');
+    return data ?? [];
+  }
+
+  async listWorkspaces(): Promise<unknown[]> {
+    const { data, error } = await this.client
+      .from('workspaces')
+      .select('id, name, kind')
+      .order('name');
+    if (error) throw new Error('Failed to list workspaces.');
     return data ?? [];
   }
 
@@ -72,6 +81,7 @@ export class TickistDataAccess {
     description?: string;
     color?: string;
     icon?: string;
+    workspace_id?: string;
   }): Promise<unknown> {
     return this.mutate('create_project', 'project', undefined, async () => {
       const { data, error } = await this.client
@@ -83,6 +93,7 @@ export class TickistDataAccess {
             description: input.description,
             color: input.color,
             icon: input.icon,
+            workspace_id: input.workspace_id,
           })
         )
         .select()
@@ -99,6 +110,7 @@ export class TickistDataAccess {
       description?: string;
       color?: string;
       icon?: string;
+      workspace_id?: string;
       is_active?: boolean;
     }
   ): Promise<unknown> {

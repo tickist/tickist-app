@@ -31,6 +31,7 @@ import {
   taskMatchesProjectScope,
 } from './project-task-scope';
 import { TaskStatusService } from '../../data/task-status.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 
 @Component({
   selector: 'app-shell',
@@ -52,6 +53,7 @@ export class AppShellComponent {
   private readonly toasts = inject(ToastService);
   private readonly composer = inject(ComposerModalService);
   private readonly taskStatus = inject(TaskStatusService);
+  private readonly workspaces = inject(WorkspaceDataService);
 
   readonly user = computed(() => this.session.user());
   readonly taskList = computed(() => this.tasksService.list());
@@ -121,8 +123,10 @@ export class AppShellComponent {
     const projectId = this.selectedProjectId();
     const inboxId = this.inboxProjectId();
     const includedProjectIds = this.includedProjectIds();
-    return this.taskList().filter((task) =>
-      taskMatchesProjectScope(task, projectId, inboxId, includedProjectIds)
+    return this.taskList().filter(
+      (task) =>
+        taskMatchesProjectScope(task, projectId, inboxId, includedProjectIds) &&
+        this.workspaces.includesTask(task, this.projectList())
     );
   });
   readonly suspendedTaskCount = computed(
@@ -219,6 +223,14 @@ export class AppShellComponent {
     this.route.paramMap.subscribe((params) => {
       const projectId = params.get('projectId');
       this.viewState.selectProject(projectId);
+    });
+
+    effect(() => {
+      const projectId = this.selectedProjectId();
+      const project = this.projectList().find((item) => item.id === projectId);
+      if (project && !this.workspaces.includesProject(project, this.projectList())) {
+        this.workspaces.select(this.workspaces.workspaceFor(project, this.projectList()));
+      }
     });
 
     this.route.queryParamMap.subscribe((params) => {

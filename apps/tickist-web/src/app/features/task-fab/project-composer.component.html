@@ -53,11 +53,28 @@
             [disabled]="form.disabled || submitting()"
             emptyOptionLabel="No parent"
             emptyOptionIcon="folder"
-            (selectedProjectIdChange)="
-              form.controls.ancestorId.setValue($event)
-            "
+            (selectedProjectIdChange)="selectAncestor($event)"
           ></app-project-picker>
         </div>
+
+        <label class="sheet-field">
+          <span class="sheet-field__label">Workspace</span>
+          <select
+            class="sheet-select"
+            formControlName="workspaceId"
+            [attr.aria-disabled]="!!form.controls.ancestorId.value"
+            [disabled]="!!form.controls.ancestorId.value || submitting()"
+          >
+            @for (workspace of workspaceList(); track workspace.id) {
+            <option [value]="workspace.id">{{ workspace.name }}</option>
+            }
+          </select>
+          @if (form.controls.ancestorId.value) {
+          <span class="sheet-field__hint"
+            >Subprojects use their parent’s workspace.</span
+          >
+          }
+        </label>
 
         <label class="sheet-field project-composer-field--placeholder">
           <span class="sheet-field__label project-composer-sr-only"

@@ -20,7 +20,7 @@ export const listProjects = async (
   let query = supabase
     .from('projects')
     .select(
-      'id, name, description, color, icon, is_active, is_inbox, project_type, created_at'
+      'id, name, description, color, icon, is_active, is_inbox, project_type, workspace_id, created_at'
     )
     .eq('owner_id', userId)
     .order('name');

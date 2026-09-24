@@ -22,7 +22,7 @@ The browser reads public runtime configuration from `/env.js` in production. Onl
 
 Supabase owns authentication and the relational data model. Core tables include:
 
-- `projects`, `project_members`;
+- `projects`, `project_members`, `workspaces`, `member_project_workspaces`;
 - `tasks`, `task_steps`, `task_tags`, `task_assignees`, `task_reminders`;
 - `tags`, `notifications`, `notification_preferences`, `routine_reminders`;
 - `api_tokens`, `mcp_audit_events`, `email_outbox`, and activity/audit support tables.
@@ -32,6 +32,8 @@ Task activity is managed at the database level. A trigger updates `modification_
 ## Authorization
 
 Row Level Security is mandatory. Browser requests use the authenticated Supabase role; policies decide whether a user may read or mutate a row. SQL grants allow the API role to reach the tables, but RLS remains the row-level decision point. Do not bypass these boundaries by adding broad client-side secrets or service-role credentials to the app.
+
+Each project owner's workspace is stored on the project and constrained to the same owner. Accepted members may store their own workspace choice for a shared project. Workspace selection filters views but does not grant or revoke project access. The single Inbox has no workspace. A database trigger supplies Private for older project writers that omit a workspace.
 
 The `list_accessible_project_assignees` security-definer function exposes only user IDs and display labels for owners and accepted members of projects available to the current user. It does not expose Auth records or profile preferences to the browser.
 

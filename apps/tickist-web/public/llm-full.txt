@@ -11,6 +11,7 @@ The product is not a public content site or a generic file store. It is an authe
 ### Projects
 
 - Each user has one Inbox project for uncategorised tasks.
+- Users start with Work and Private workspaces, can create and rename others in Settings, and can select All or one workspace in the navigation bar. Existing projects begin in Private. The choice filters project and task views, dashboard, tags, tree, and statistics; Inbox and notifications stay available. Subprojects share their parent's workspace. Recipients place shared projects in their own workspace independently of the owner.
 - Projects can be active, nested under another project, or organised into special sidebar groups such as Someday/Maybe, routine reminders, weekdays, and future work. A selected project task list includes that project's tasks and every nested descendant by default. If descendants exist, independent checkboxes beside the selected project and each descendant temporarily include or exclude that project's own tasks; changing the selected project resets all of them to included.
 - Projects have a name, description, colour, icon, task-view preference, and defaults for task creation. Branding provides a searchable catalogue of 151 Lucide icons.
 - A project owner can invite collaborators. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
@@ -40,6 +41,7 @@ The product is not a public content site or a generic file store. It is an authe
 
 - Account settings include profile/avatar handling, password changes, notification preferences, backup/restore, and API-token management.
 - Export/import uses stable IDs and timestamps to support resilient migration and conflict handling.
+- Version 2 backups include workspaces and project assignments; importing an older backup assigns projects to Private.
 - Placeholder text uses one muted slate colour across application forms in both themes, keeping hints visually secondary to entered values.
 
 ### MCP integrations

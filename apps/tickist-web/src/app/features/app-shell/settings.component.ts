@@ -26,12 +26,19 @@ import { TagDataService } from '../../data/tag-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import { NotificationPreferencesService } from '../../data/notification-preferences.service';
 import { ApiTokenService } from '../../data/api-token.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import {
   SheetScaffoldComponent,
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
 
-type SettingsTab = 'account' | 'password' | 'notifications' | 'backup' | 'api-tokens';
+type SettingsTab =
+  | 'account'
+  | 'workspaces'
+  | 'password'
+  | 'notifications'
+  | 'backup'
+  | 'api-tokens';
 type WeekdayOption = { value: number; label: string };
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -65,6 +72,7 @@ export class SettingsComponent {
     NotificationPreferencesService
   );
   private readonly apiTokenService = inject(ApiTokenService);
+  private readonly workspaces = inject(WorkspaceDataService);
   private readonly fb = inject(FormBuilder);
   private readonly toasts = inject(ToastService);
   private readonly router = inject(Router);
@@ -74,12 +82,57 @@ export class SettingsComponent {
   readonly activeTab = signal<SettingsTab>('account');
   readonly tabs: readonly SheetScaffoldTab<SettingsTab>[] = [
     { key: 'account', label: 'Account', icon: '👤' },
+    { key: 'workspaces', label: 'Workspaces', icon: '🗂️' },
     { key: 'password', label: 'Password', icon: '🔒' },
     { key: 'notifications', label: 'Notifications', icon: '🔔' },
     { key: 'backup', label: 'Backup & Restore', icon: '🗂️' },
     { key: 'api-tokens', label: 'API Tokens', icon: '🔑' },
   ];
   readonly updating = signal(false);
+  readonly workspaceList = this.workspaces.list;
+  readonly newWorkspaceName = signal('');
+  readonly editingWorkspaceId = signal<string | null>(null);
+  readonly editingWorkspaceName = signal('');
+  readonly workspaceSaving = signal(false);
+  readonly workspaceError = signal<string | null>(null);
+
+  onNewWorkspaceNameInput(event: Event): void {
+    this.newWorkspaceName.set((event.target as HTMLInputElement | null)?.value ?? '');
+  }
+
+  onEditingWorkspaceNameInput(event: Event): void {
+    this.editingWorkspaceName.set((event.target as HTMLInputElement | null)?.value ?? '');
+  }
+
+  async createWorkspace(): Promise<void> {
+    this.workspaceSaving.set(true);
+    const error = await this.workspaces.create(this.newWorkspaceName());
+    this.workspaceSaving.set(false);
+    this.workspaceError.set(error);
+    if (!error) {
+      this.newWorkspaceName.set('');
+      this.toasts.success('Workspace created.');
+    }
+  }
+
+  startWorkspaceRename(workspaceId: string, name: string): void {
+    this.editingWorkspaceId.set(workspaceId);
+    this.editingWorkspaceName.set(name);
+    this.workspaceError.set(null);
+  }
+
+  async renameWorkspace(): Promise<void> {
+    const id = this.editingWorkspaceId();
+    if (!id) return;
+    this.workspaceSaving.set(true);
+    const error = await this.workspaces.rename(id, this.editingWorkspaceName());
+    this.workspaceSaving.set(false);
+    this.workspaceError.set(error);
+    if (!error) {
+      this.editingWorkspaceId.set(null);
+      this.toasts.success('Workspace renamed.');
+    }
+  }
   readonly passwordUpdating = signal(false);
   readonly passwordError = signal<string | null>(null);
   readonly avatarUploading = signal(false);
@@ -580,7 +633,9 @@ export class SettingsComponent {
       if (result) {
         this.revealedToken.set(result.rawToken);
         this.newTokenName.set('MCP Token');
-        this.toasts.success('API token created. Copy it now — it won\'t be shown again.');
+        this.toasts.success(
+          "API token created. Copy it now — it won't be shown again."
+        );
       } else {
         this.toasts.error('Could not create API token.');
       }
@@ -709,7 +764,8 @@ function buildBackupFilename(): string {
 
 function formatImportCounts(result: ImportResult): string {
   return [
-    `${result.counts.projects.created + result.counts.projects.updated
+    `${
+      result.counts.projects.created + result.counts.projects.updated
     } projects`,
     `${result.counts.tags.created + result.counts.tags.updated} tags`,
     `${result.counts.tasks.created + result.counts.tasks.updated} tasks`,

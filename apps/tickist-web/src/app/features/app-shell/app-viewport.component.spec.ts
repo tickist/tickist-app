@@ -11,6 +11,7 @@ import {
   type NotificationItem,
 } from '../../data/notification-data.service';
 import { AppViewStateService } from './app-view-state.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import {
   AppViewportComponent,
   isRememberedAppUrl,
@@ -29,11 +30,17 @@ class MockToastContainerComponent {}
 describe('AppViewportComponent theme toggle', () => {
   let notifications: ReturnType<typeof signal<NotificationItem[]>>;
   let markAllAsRead: ReturnType<typeof vi.fn>;
+  const selectedWorkspaceId = signal<string | null>(null);
+  const selectWorkspace = vi.fn((id: string | null) =>
+    selectedWorkspaceId.set(id)
+  );
 
   beforeEach(async () => {
     localStorage.clear();
     notifications = signal<NotificationItem[]>([]);
     markAllAsRead = vi.fn(async () => undefined);
+    selectedWorkspaceId.set(null);
+    selectWorkspace.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [AppViewportComponent],
@@ -62,9 +69,21 @@ describe('AppViewportComponent theme toggle', () => {
           },
         },
         {
+          provide: WorkspaceDataService,
+          useValue: {
+            list: signal([
+              { id: 'work-id', name: 'Work', kind: 'work' },
+            ]).asReadonly(),
+            selectedWorkspaceId: selectedWorkspaceId.asReadonly(),
+            select: selectWorkspace,
+          },
+        },
+        {
           provide: AppViewStateService,
           useValue: {
             searchTerm: signal('').asReadonly(),
+            selectedProjectId: signal(null).asReadonly(),
+            selectProject: vi.fn(),
             updateSearchTerm: vi.fn(),
             clearSearch: vi.fn(),
             rememberLastNonSheetAppUrl: vi.fn(),
@@ -109,6 +128,28 @@ describe('AppViewportComponent theme toggle', () => {
     expect(nextTheme).not.toBe(initialTheme);
   });
 
+  it('renders the workspace switcher and selects a workspace', () => {
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    fixture.detectChanges();
+    const trigger = fixture.nativeElement.querySelector(
+      '[aria-label="Select workspace"]'
+    ) as HTMLButtonElement;
+    expect(trigger.textContent).toContain('All');
+    trigger.click();
+    fixture.detectChanges();
+    const options = fixture.nativeElement.querySelectorAll(
+      '#workspace-menu button'
+    ) as NodeListOf<HTMLButtonElement>;
+    const option = Array.from(options).find(
+      (button) => button.textContent?.trim() === 'Work'
+    );
+    expect(option).toBeTruthy();
+    option?.click();
+    fixture.detectChanges();
+    expect(selectWorkspace).toHaveBeenCalledWith('work-id');
+    expect(trigger.textContent).toContain('Work');
+  });
+
   it('marks all unread notifications as read from the notifications menu', async () => {
     notifications.set([
       {
@@ -136,8 +177,9 @@ describe('AppViewportComponent theme toggle', () => {
 
     const button = Array.from(
       fixture.nativeElement.querySelectorAll('button')
-    ).find((candidate): candidate is HTMLButtonElement =>
-      candidate.textContent?.includes('Read all') ?? false
+    ).find(
+      (candidate): candidate is HTMLButtonElement =>
+        candidate.textContent?.includes('Read all') ?? false
     );
 
     expect(button).toBeTruthy();

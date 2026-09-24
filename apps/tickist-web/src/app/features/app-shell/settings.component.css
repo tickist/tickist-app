@@ -533,3 +533,16 @@
     min-width: 0;
   }
 }
+
+.workspace-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+}
+
+.workspace-settings-row > span,
+.workspace-settings-row > input {
+  flex: 1 1 12rem;
+}

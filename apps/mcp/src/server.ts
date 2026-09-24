@@ -83,6 +83,15 @@ export function createTickistMcpServer(
   );
   operation(
     server,
+    'list_workspaces',
+    "List the authenticated user's workspaces.",
+    Empty,
+    'projects:read',
+    connection.scopes,
+    () => access.listWorkspaces()
+  );
+  operation(
+    server,
     'get_project',
     'Get a single accessible project by its ID.',
     z.object({ project_id: Uuid }),
@@ -99,6 +108,7 @@ export function createTickistMcpServer(
       description: z.string().optional(),
       color: z.string().optional(),
       icon: z.string().optional(),
+      workspace_id: Uuid.optional(),
     }),
     'projects:write',
     connection.scopes,
@@ -116,6 +126,7 @@ export function createTickistMcpServer(
         description: z.string().optional(),
         color: z.string().optional(),
         icon: z.string().optional(),
+        workspace_id: Uuid.optional(),
         is_active: z.boolean().optional(),
       })
       .refine((value) =>

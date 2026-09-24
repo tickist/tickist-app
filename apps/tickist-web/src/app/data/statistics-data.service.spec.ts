@@ -8,14 +8,17 @@ import {
   StatisticsDataService,
 } from './statistics-data.service';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
+import { WorkspaceDataService } from './workspace-data.service';
 
 describe('StatisticsDataService', () => {
   const rpcMock = vi.fn();
   const userState = signal(null as User | null);
+  const workspaceState = signal<string | null>(null);
 
   beforeEach(() => {
     rpcMock.mockReset();
     userState.set(null);
+    workspaceState.set(null);
   });
 
   it('calls the statistics RPC with the default window and normalizes groups', async () => {
@@ -55,6 +58,10 @@ describe('StatisticsDataService', () => {
       providers: [
         StatisticsDataService,
         {
+          provide: WorkspaceDataService,
+          useValue: { selectedWorkspaceId: workspaceState.asReadonly() },
+        },
+        {
           provide: SUPABASE_CLIENT,
           useValue: {
             rpc: rpcMock,
@@ -72,8 +79,9 @@ describe('StatisticsDataService', () => {
     const service = TestBed.inject(StatisticsDataService);
     await service.refresh();
 
-    expect(rpcMock).toHaveBeenCalledWith('get_statistics_overview', {
+    expect(rpcMock).toHaveBeenCalledWith('get_statistics_overview_v2', {
       window_days: 30,
+      workspace_id: null,
     });
     expect(service.error()).toBeNull();
     expect(service.loading()).toBe(false);
@@ -94,6 +102,10 @@ describe('StatisticsDataService', () => {
     TestBed.configureTestingModule({
       providers: [
         StatisticsDataService,
+        {
+          provide: WorkspaceDataService,
+          useValue: { selectedWorkspaceId: workspaceState.asReadonly() },
+        },
         {
           provide: SUPABASE_CLIENT,
           useValue: {
@@ -129,6 +141,10 @@ describe('StatisticsDataService', () => {
     TestBed.configureTestingModule({
       providers: [
         StatisticsDataService,
+        {
+          provide: WorkspaceDataService,
+          useValue: { selectedWorkspaceId: workspaceState.asReadonly() },
+        },
         {
           provide: SUPABASE_CLIENT,
           useValue: {
@@ -171,6 +187,10 @@ describe('StatisticsDataService', () => {
     TestBed.configureTestingModule({
       providers: [
         StatisticsDataService,
+        {
+          provide: WorkspaceDataService,
+          useValue: { selectedWorkspaceId: workspaceState.asReadonly() },
+        },
         {
           provide: SUPABASE_CLIENT,
           useValue: {

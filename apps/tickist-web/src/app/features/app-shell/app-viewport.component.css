@@ -20,6 +20,32 @@
   );
 }
 
+.workspace-switcher {
+  position: relative;
+  flex-shrink: 0;
+}
+.workspace-switcher__menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  min-width: 12rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background: var(--color-base-200, #1e293b);
+  box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.25);
+}
+.workspace-switcher__menu .btn {
+  justify-content: flex-start;
+}
+.workspace-switcher__menu .btn[aria-pressed='true'] {
+  color: var(--color-primary, #28bca5);
+}
+
 .app-menu {
   max-height: 80vh;
   overflow-y: auto;

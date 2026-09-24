@@ -15,6 +15,8 @@ Posts, categories, and tags are published from the repository rather than an adm
 ## Inbox and projects
 
 - Each account has one Inbox for uncategorised tasks.
+- Each account starts with Work and Private workspaces. Existing projects are assigned to Private. Users can create and rename workspaces in Settings; the navigation switcher offers All and each workspace. The selection filters project and task views, dashboard, tags, tree, and statistics. Inbox and notifications remain available across workspaces.
+- Each owned project belongs to one workspace; subprojects use their parent's workspace and move with it. A recipient of a shared project assigns it independently to one of their own workspaces, initially Private.
 - Projects can be nested to represent outcomes and their component work.
 - Selecting a project shows tasks from that project and all nested subprojects. When the selected project has descendants, independent checkboxes beside the selected project and each descendant can include or exclude that project's own tasks. All projects in the hierarchy are included by default, and the selection resets when the user moves to another project.
 - Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view. Branding offers a searchable catalogue of 151 tree-shaken Lucide icons.
@@ -61,6 +63,8 @@ Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Co
 ## Settings and portability
 
 Settings cover profile data, avatar, password changes, email notification preferences, backup/restore, and API tokens. Export/import uses stable IDs and modification timestamps to make data transfer and duplicate handling reliable.
+
+Version 2 backups include workspace definitions and project assignments. Version 1 backups remain importable and place imported projects in Private.
 
 Form placeholders use one muted slate colour across light and dark application surfaces so hints remain visually secondary to entered values.
 
