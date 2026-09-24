@@ -27,6 +27,8 @@ Supabase owns authentication and the relational data model. Core tables include:
 - `tags`, `notifications`, `notification_preferences`, `routine_reminders`;
 - `api_tokens`, `mcp_audit_events`, `email_outbox`, and activity/audit support tables.
 
+`app_users.timezone` stores the account's validated IANA timezone. An Auth trigger creates the application profile from signup metadata, while existing profiles default to `Europe/Warsaw`.
+
 Task activity is managed at the database level. A trigger updates `modification_date` on every task update and sets or clears `when_complete` when the completion state changes.
 
 ## Authorization
@@ -43,7 +45,7 @@ Edge Functions handle reminders, shared-project updates, invitations, notificati
 
 ## Cloudflare deployment
 
-Two Workers are deployed independently. `tickist-app` serves SPA assets and runtime configuration; its old `/mcp` route proxies to the MCP hostname during the compatibility period. `tickist-mcp` serves `mcp.tickist.com`, validates Host, Origin, body and Bearer credentials, and exposes health plus OAuth metadata. A dedicated Cloudflare Rate Limiting binding allows 120 MCP POST requests per minute per hashed connecting address; unverified Bearer values never select rate-limit buckets. Its official SDK server sends the user's token to Supabase through the publishable key, leaving project and task access to RLS. It never receives a service-role key.
+Two Workers are deployed independently. `tickist-app` serves SPA assets and runtime configuration and does not expose `/mcp`. `tickist-mcp` serves `mcp.tickist.com`, validates Host, Origin, body and Bearer credentials, and exposes health plus OAuth metadata. A dedicated Cloudflare Rate Limiting binding allows 120 MCP POST requests per minute per hashed connecting address; unverified Bearer values never select rate-limit buckets. Its official SDK server sends the user's token to Supabase through the publishable key, leaving project and task access to RLS. It never receives a service-role key.
 
 Supabase Auth is the OAuth 2.1 authorization server and is reserved for MCP clients in this project. Supabase currently accepts standard identity scopes, so clients request `openid`; the configured access-token hook marks OAuth client tokens with both the standard `authenticated` audience and the exact MCP resource audience, `tickist_mcp = true`, and a signed `tickist_mcp_scopes` claim containing the project, task, and tag tool permissions. Ordinary browser/session tokens have no `client_id` and remain unchanged. The Angular app owns the noindex consent and grant-management screens. The MCP Worker owns RFC 9728 resource metadata, verifies the JWT signature against Supabase Auth signing keys, and then checks issuer, MCP audience, expiry, subject, and both MCP claims before data access. Supabase PostgREST applies user-scoped RLS to every data operation.
 

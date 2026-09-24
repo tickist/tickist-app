@@ -22,6 +22,7 @@ Posts, categories, and tags are published from the repository rather than an adm
 - Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view. Branding offers a searchable catalogue of 151 tree-shaken Lucide icons.
 - The sidebar groups active work and special planning buckets such as Someday/Maybe, routine reminders, weekdays, and future work.
 - Project owners can share a project by invitation. Recipients accept or decline from the Team view; accepted members can leave shared projects.
+- MCP clients can create and move nested projects, recursively list a selected project's tasks, and delete owned non-Inbox projects. Deleting a project leaves its tasks unattached and promotes its direct children to root projects.
 
 ## Tasks
 
@@ -52,6 +53,10 @@ Tag views support tag selection, OR/AND matching, untagged-task mode, completed-
 ### Repeating tasks and reminders
 
 Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Completing a recurring task creates the next occurrence rather than leaving an ordinary completed item. Reminders store a date, time, timezone, and delivery state.
+
+MCP clients use a semantic repeat interval and completion- or due-date anchor. Completing a recurring task through MCP advances the same task and resets its steps. MCP clients can also suspend incomplete tasks indefinitely or until a future timestamp and resume them explicitly.
+
+Each account stores an IANA timezone. New registrations capture the browser timezone, falling back to `Europe/Warsaw`; existing accounts are initialised to `Europe/Warsaw`. Server-side recurrence uses this timezone to determine the user's local completion date.
 
 ## Focus views
 

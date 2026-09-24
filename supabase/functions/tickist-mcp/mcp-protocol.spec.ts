@@ -177,8 +177,8 @@ describe('MCP Protocol helpers', () => {
   });
 
   describe('TOOL_DEFINITIONS', () => {
-    it('defines 13 tools', () => {
-      expect(TOOL_DEFINITIONS).toHaveLength(13);
+    it('defines 16 tools', () => {
+      expect(TOOL_DEFINITIONS).toHaveLength(16);
     });
 
     it('every tool has name, description, and inputSchema', () => {
@@ -196,11 +196,14 @@ describe('MCP Protocol helpers', () => {
       expect(names).toContain('get_project');
       expect(names).toContain('create_project');
       expect(names).toContain('update_project');
+      expect(names).toContain('delete_project');
       expect(names).toContain('list_tasks');
       expect(names).toContain('get_task');
       expect(names).toContain('create_task');
       expect(names).toContain('update_task');
       expect(names).toContain('complete_task');
+      expect(names).toContain('suspend_task');
+      expect(names).toContain('resume_task');
       expect(names).toContain('delete_task');
       expect(names).toContain('list_tags');
       expect(names).toContain('create_tag');
@@ -217,6 +220,17 @@ describe('MCP Protocol helpers', () => {
       expect(
         (getProject?.inputSchema as Record<string, unknown>).required
       ).toContain('project_id');
+    });
+
+    it('marks destructive and non-idempotent lifecycle operations correctly', () => {
+      const byName = new Map(TOOL_DEFINITIONS.map((tool) => [tool.name, tool]));
+      expect(byName.get('delete_project')?.annotations?.destructiveHint).toBe(
+        true
+      );
+      expect(byName.get('complete_task')?.annotations?.idempotentHint).toBe(
+        false
+      );
+      expect(byName.get('resume_task')?.annotations?.idempotentHint).toBe(true);
     });
   });
 
@@ -666,6 +680,24 @@ describe('MCP Protocol helpers', () => {
       expect(validateToolArguments('list_tasks', { limit: 501 })).toBe(
         'limit must be at most 500'
       );
+      expect(
+        validateToolArguments('create_task', {
+          name: 'Task',
+          repeat: { from: 'due_date' },
+        })
+      ).toBe('repeat.interval_days is required');
+      expect(
+        validateToolArguments('create_task', {
+          name: 'Task',
+          repeat: { interval_days: 0, from: 'completion_date' },
+        })
+      ).toBe('repeat.interval_days must be at least 1');
+      expect(
+        validateToolArguments('suspend_task', {
+          task_id: TEST_UUID,
+          until: '2026-09-21T12:00:00',
+        })
+      ).toBe('until must be a valid ISO date-time with an offset');
     });
 
     it('accepts valid current tool arguments', () => {
@@ -673,6 +705,18 @@ describe('MCP Protocol helpers', () => {
         validateToolArguments('complete_task', {
           task_id: TEST_UUID,
           is_done: false,
+        })
+      ).toBeNull();
+      expect(
+        validateToolArguments('create_task', {
+          name: 'Task',
+          repeat: { interval_days: 7, from: 'due_date' },
+        })
+      ).toBeNull();
+      expect(
+        validateToolArguments('suspend_task', {
+          task_id: TEST_UUID,
+          until: '2026-09-21T12:00:00+02:00',
         })
       ).toBeNull();
 

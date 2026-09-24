@@ -6,7 +6,10 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SupabaseAuthService } from './supabase-auth.service';
+import {
+  SupabaseAuthService,
+  resolveBrowserTimezone,
+} from './supabase-auth.service';
 import { NgClass } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
@@ -59,7 +62,11 @@ export class AuthSignupComponent {
     this.isSubmitting.set(true);
     this.message.set(null);
     try {
-      const response = await this.auth.signUpWithPassword({ email, password });
+      const response = await this.auth.signUpWithPassword({
+        email,
+        password,
+        timezone: resolveBrowserTimezone(),
+      });
       if (response.error) {
         throw response.error;
       }
