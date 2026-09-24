@@ -278,7 +278,7 @@ test('uses muted placeholders and supports project icon search', async ({
   const placeholderColor = await projectName.evaluate(
     (element) => getComputedStyle(element, '::placeholder').color
   );
-  expect(placeholderColor).toBe('rgb(100, 116, 139)');
+  expect(placeholderColor).toBe('rgb(71, 85, 105)');
 
   await composer.getByRole('button', { name: /Branding/ }).click();
   const iconSearch = composer.getByRole('searchbox', {
