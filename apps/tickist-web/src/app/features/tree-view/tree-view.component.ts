@@ -47,6 +47,7 @@ export class TreeViewComponent {
   readonly searchTerm = this.viewState.searchTerm;
   readonly taskList = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
+
     return this.tasks.list().filter((task) => {
       if (
         task.ownerId !== this.user()?.id ||
@@ -55,9 +56,11 @@ export class TreeViewComponent {
       ) {
         return false;
       }
+
       if (!normalizedSearch) {
         return true;
       }
+
       return (
         task.name.toLowerCase().includes(normalizedSearch) ||
         (task.description ?? '').toLowerCase().includes(normalizedSearch)
@@ -89,6 +92,7 @@ export class TreeViewComponent {
     }
 
     const inboxId = 'inbox';
+
     if (!map.has(inboxId)) {
       map.set(inboxId, {
         id: inboxId,
@@ -100,6 +104,7 @@ export class TreeViewComponent {
 
     for (const task of tasks) {
       const projectId = task.projectId ?? inboxId;
+
       if (!map.has(projectId)) {
         map.set(projectId, {
           id: projectId,
@@ -108,6 +113,7 @@ export class TreeViewComponent {
           tasks: [],
         });
       }
+
       map.get(projectId)?.tasks.push({
         id: task.id,
         name: task.name,
@@ -128,11 +134,13 @@ export class TreeViewComponent {
   toggle(groupId: string): void {
     this.expanded.update((current) => {
       const next = new Set(current);
+
       if (next.has(groupId)) {
         next.delete(groupId);
       } else {
         next.add(groupId);
       }
+
       return next;
     });
   }

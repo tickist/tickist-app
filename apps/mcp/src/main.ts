@@ -11,6 +11,7 @@ export function readStdioConnection(
   const accessToken = environment['TICKIST_ACCESS_TOKEN'];
   const userId = environment['TICKIST_USER_ID'];
   const scopes = environment['TICKIST_SCOPES']?.split(/\s+/u).filter(Boolean);
+
   if (
     !supabaseUrl ||
     !publishableKey ||
@@ -22,6 +23,7 @@ export function readStdioConnection(
       'SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, TICKIST_ACCESS_TOKEN, TICKIST_USER_ID, and TICKIST_SCOPES are required.'
     );
   }
+
   return {
     supabaseUrl,
     publishableKey,

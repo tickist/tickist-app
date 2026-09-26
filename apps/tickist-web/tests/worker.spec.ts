@@ -69,6 +69,7 @@ describe('Worker /env.js runtime config', () => {
         NG_APP_SUPABASE_ANON_KEY: 'legacy-anon-key',
       })
     );
+
     const script = await res.text();
 
     expect(script).toContain(

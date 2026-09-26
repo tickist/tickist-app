@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SupabaseClient, User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../../config/supabase.provider';
 import { SupabaseAuthService } from './supabase-auth.service';
 import { SupabaseSessionService } from './supabase-session.service';
@@ -34,7 +34,7 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
               signInWithPassword: signInWithPasswordMock,
               updateUser: updateUserMock,
             },
-          } as unknown as SupabaseClient,
+          },
         },
         {
           provide: SupabaseSessionService,
@@ -140,5 +140,5 @@ function createUser(): User {
     aud: 'authenticated',
     created_at: '2026-03-09T00:00:00.000Z',
     email: 'user@tickist.dev',
-  } as User;
+  };
 }

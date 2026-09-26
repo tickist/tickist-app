@@ -7,7 +7,8 @@ import { ComposerModalService } from './composer-modal.service';
 
 describe('ComposerModalService task defaults', () => {
   let service: ComposerModalService;
-  let navigate: ReturnType<typeof vi.fn>;
+  let navigate: typeof router.navigate;
+
   const router = {
     url: '/app',
     navigate: vi.fn(async () => true),

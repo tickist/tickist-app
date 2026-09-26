@@ -29,6 +29,7 @@ jobs:
 
       - name: Lint
         run: |
+          npx nx run-many -t oxlint --all
           npx nx lint tickist-web
           npx nx lint mcp
           npx nx lint data-access-tickist

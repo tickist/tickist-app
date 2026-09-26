@@ -8,6 +8,7 @@ const supabaseUrl = readSupabaseEnv(
   'NG_APP_SUPABASE_URL',
   'http://127.0.0.1:54321'
 );
+
 const fallbackFunctionsUrl = deriveSupabaseFunctionsUrl(
   supabaseUrl,
   'http://127.0.0.1:54321/functions/v1'

@@ -38,11 +38,13 @@ export class NotificationDataService {
       this.items.set([]);
       this.activeRecipient.set(recipientId);
       this.loading.set(false);
+
       return;
     }
 
     this.loading.set(true);
     this.activeRecipient.set(recipientId);
+
     const { data, error } = await this.supabase
       .from('notifications')
       .select(
@@ -53,11 +55,14 @@ export class NotificationDataService {
       .limit(50);
 
     this.loading.set(false);
+
     if (error || !data) {
       console.warn('[Notifications] Unable to fetch notifications', error);
+
       return;
     }
 
+    // SAFETY: The notifications projection selects every NotificationRow column from the RLS-protected notifications table.
     this.items.set(
       (data as NotificationRow[]).map((row) => ({
         id: row.id,
@@ -76,18 +81,24 @@ export class NotificationDataService {
     if (!this.supabase) {
       return;
     }
+
     const target = this.items().find((item) => item.id === notificationId);
+
     if (!target || target.isRead) {
       return;
     }
+
     const { error } = await this.supabase
       .from('notifications')
       .update({ is_read: true })
       .eq('id', notificationId);
+
     if (error) {
       console.warn('[Notifications] Unable to mark as read', error);
+
       return;
     }
+
     this.items.update((current) =>
       current.map((item) =>
         item.id === notificationId ? { ...item, isRead: true } : item
@@ -99,8 +110,10 @@ export class NotificationDataService {
     if (!this.supabase) {
       return;
     }
+
     const recipientId = this.activeRecipient();
     const hasUnreadNotifications = this.items().some((item) => !item.isRead);
+
     if (!recipientId || !hasUnreadNotifications) {
       return;
     }
@@ -110,15 +123,15 @@ export class NotificationDataService {
       .update({ is_read: true })
       .eq('recipient_id', recipientId)
       .eq('is_read', false);
+
     if (error) {
       console.warn('[Notifications] Unable to mark all as read', error);
+
       return;
     }
 
     this.items.update((current) =>
-      current.map((item) =>
-        item.isRead ? item : { ...item, isRead: true }
-      )
+      current.map((item) => (item.isRead ? item : { ...item, isRead: true }))
     );
   }
 }

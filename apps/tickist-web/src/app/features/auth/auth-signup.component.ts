@@ -51,25 +51,32 @@ export class AuthSignupComponent {
     if (this.isDisabled) {
       return;
     }
+
     const { email, password, confirm } = this.form.getRawValue();
+
     if (password !== confirm) {
       this.message.set({
         type: 'error',
         text: 'Passwords must match.',
       });
+
       return;
     }
+
     this.isSubmitting.set(true);
     this.message.set(null);
+
     try {
       const response = await this.auth.signUpWithPassword({
         email,
         password,
         timezone: resolveBrowserTimezone(),
       });
+
       if (response.error) {
         throw response.error;
       }
+
       this.message.set({
         type: 'success',
         text: 'Check your inbox to confirm the account.',

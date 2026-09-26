@@ -6,6 +6,7 @@ async function waitForAuthOrApp(page: Page): Promise<'auth' | 'app'> {
     .poll(
       () => {
         const { pathname } = new URL(page.url());
+
         return pathname;
       },
       { timeout: 15000 }
@@ -13,6 +14,7 @@ async function waitForAuthOrApp(page: Page): Promise<'auth' | 'app'> {
     .toMatch(/^\/(?:app(?:\/|$)|auth\/?$)/);
 
   const { pathname } = new URL(page.url());
+
   return pathname.startsWith('/app') ? 'app' : 'auth';
 }
 
@@ -41,6 +43,7 @@ test('signup flow leads to app dashboard', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: 'Create account' }).click();
 
   const postSignupLocation = await waitForAuthOrApp(page);
+
   if (postSignupLocation === 'auth') {
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password', { exact: true }).fill(password);

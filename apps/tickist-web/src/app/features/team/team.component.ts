@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ProjectDataService, ProjectMember } from '../../data/project-data.service';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
+import {
+  ProjectDataService,
+  ProjectMember,
+} from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { RouterLink } from '@angular/router';
@@ -35,19 +43,24 @@ export class TeamComponent {
   );
   readonly sharedProjects = computed<TeamProject[]>(() => {
     const userId = this.user()?.id;
+
     if (!userId) {
       return [];
     }
+
     const rows: TeamProject[] = [];
+
     for (const project of this.projects.list()) {
       if (!project.members.length) {
         continue;
       }
+
       if (project.ownerId === userId) {
         for (const member of project.members) {
           if (member.status !== 'accepted') {
             continue;
           }
+
           rows.push({
             projectId: project.id,
             projectName: project.name,
@@ -56,11 +69,14 @@ export class TeamComponent {
             canLeave: false,
           });
         }
+
         continue;
       }
+
       const currentMember = project.members.find(
         (member) => member.userId === userId && member.status === 'accepted'
       );
+
       if (currentMember) {
         rows.push({
           projectId: project.id,
@@ -71,6 +87,7 @@ export class TeamComponent {
         });
       }
     }
+
     return rows.sort((a, b) => a.projectName.localeCompare(b.projectName));
   });
 
@@ -79,6 +96,7 @@ export class TeamComponent {
       invite.projectId,
       'accepted'
     );
+
     if (accepted) {
       await this.tasks.refresh();
       this.toasts.success('Shared list accepted.');
@@ -92,6 +110,7 @@ export class TeamComponent {
       invite.projectId,
       'declined'
     );
+
     if (declined) {
       this.toasts.info('Invite declined.');
     } else {
@@ -101,10 +120,13 @@ export class TeamComponent {
 
   async leave(project: TeamProject): Promise<void> {
     const confirmed = confirm(`Leave "${project.projectName}"?`);
+
     if (!confirmed) {
       return;
     }
+
     const left = await this.projects.leaveSharedProject(project.projectId);
+
     if (left) {
       await this.tasks.refresh();
       this.toasts.info('You left the shared list.');

@@ -1,3 +1,4 @@
+import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -39,10 +40,13 @@ type SettingsTab =
   | 'notifications'
   | 'backup'
   | 'api-tokens';
+
 type WeekdayOption = { value: number; label: string };
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+
 const DEFAULT_NOTIFICATION_TIME = '20:00';
+
 const WEEKDAY_OPTIONS: WeekdayOption[] = [
   { value: 0, label: 'Sunday' },
   { value: 1, label: 'Monday' },
@@ -97,11 +101,17 @@ export class SettingsComponent {
   readonly workspaceError = signal<string | null>(null);
 
   onNewWorkspaceNameInput(event: Event): void {
-    this.newWorkspaceName.set((event.target as HTMLInputElement | null)?.value ?? '');
+    this.newWorkspaceName.set(
+      (event.target instanceof HTMLInputElement ? event.target : null)?.value ??
+        ''
+    );
   }
 
   onEditingWorkspaceNameInput(event: Event): void {
-    this.editingWorkspaceName.set((event.target as HTMLInputElement | null)?.value ?? '');
+    this.editingWorkspaceName.set(
+      (event.target instanceof HTMLInputElement ? event.target : null)?.value ??
+        ''
+    );
   }
 
   async createWorkspace(): Promise<void> {
@@ -109,6 +119,7 @@ export class SettingsComponent {
     const error = await this.workspaces.create(this.newWorkspaceName());
     this.workspaceSaving.set(false);
     this.workspaceError.set(error);
+
     if (!error) {
       this.newWorkspaceName.set('');
       this.toasts.success('Workspace created.');
@@ -123,11 +134,13 @@ export class SettingsComponent {
 
   async renameWorkspace(): Promise<void> {
     const id = this.editingWorkspaceId();
+
     if (!id) return;
     this.workspaceSaving.set(true);
     const error = await this.workspaces.rename(id, this.editingWorkspaceName());
     this.workspaceSaving.set(false);
     this.workspaceError.set(error);
+
     if (!error) {
       this.editingWorkspaceId.set(null);
       this.toasts.success('Workspace renamed.');
@@ -203,17 +216,22 @@ export class SettingsComponent {
   readonly avatarPreviewUrl = computed(() => {
     const metadata = this.userMetadata();
     const avatarUrl = asOptionalString(metadata['avatar_url']);
+
     if (!avatarUrl) {
       return null;
     }
+
     const version = asOptionalString(metadata['avatar_version']);
+
     return appendCacheVersion(avatarUrl, version);
   });
   readonly availableProjects = computed(() => {
     const userId = this.user()?.id;
+
     if (!userId) {
       return [];
     }
+
     return this.projects
       .list()
       .filter((project) => project.ownerId === userId)
@@ -257,18 +275,21 @@ export class SettingsComponent {
   );
   readonly passwordsMismatch = computed(() => {
     const { newPassword, confirmPassword } = this.passwordFormValue();
+
     return Boolean(
       newPassword && confirmPassword && newPassword !== confirmPassword
     );
   });
   readonly passwordMatchesCurrent = computed(() => {
     const { currentPassword, newPassword } = this.passwordFormValue();
+
     return Boolean(
       currentPassword && newPassword && currentPassword === newPassword
     );
   });
   readonly passwordSubmitDisabled = computed(() => {
     this.passwordFormStatus();
+
     return (
       this.passwordForm.invalid ||
       this.passwordUpdating() ||
@@ -278,6 +299,7 @@ export class SettingsComponent {
   });
   readonly notificationsSubmitDisabled = computed(() => {
     this.notificationsFormStatus();
+
     return (
       this.notificationsForm.invalid ||
       this.notificationsSaving() ||
@@ -300,6 +322,7 @@ export class SettingsComponent {
       const allowedIds = new Set(
         this.availableProjects().map((project) => project.id)
       );
+
       this.selectedProjectIds.update((current) =>
         current.filter((projectId) => allowedIds.has(projectId))
       );
@@ -321,10 +344,12 @@ export class SettingsComponent {
         this.notificationPreferencesList(),
         'weekly_summary'
       );
+
       const daily = findNotificationPreference(
         this.notificationPreferencesList(),
         'daily_summary'
       );
+
       this.notificationsForm.patchValue(
         {
           weeklyEmailEnabled: weekly.enabled,
@@ -341,7 +366,9 @@ export class SettingsComponent {
   }
 
   select(tab: string): void {
-    this.activeTab.set(tab as SettingsTab);
+    const selected = this.tabs.find((entry) => entry.key === tab);
+
+    if (selected) this.activeTab.set(selected.key);
   }
 
   async closePanel(): Promise<void> {
@@ -352,12 +379,15 @@ export class SettingsComponent {
     switch (this.activeTab()) {
       case 'account':
         await this.saveAccount();
+
         return;
       case 'password':
         await this.changePassword();
+
         return;
       case 'notifications':
         await this.saveNotifications();
+
         return;
       default:
         return;
@@ -366,15 +396,21 @@ export class SettingsComponent {
 
   async saveAccount(): Promise<void> {
     const user = this.user();
+
     if (!user) {
       this.toasts.error('You must be signed in.');
+
       return;
     }
+
     if (this.accountForm.invalid) {
       this.accountForm.markAllAsTouched();
+
       return;
     }
+
     this.updating.set(true);
+
     try {
       const fullName = this.accountForm.value.displayName?.trim() ?? '';
       await this.auth.updateProfileMetadata({ full_name: fullName });
@@ -396,6 +432,7 @@ export class SettingsComponent {
 
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
+
       return;
     }
 
@@ -403,15 +440,18 @@ export class SettingsComponent {
       this.passwordError.set(
         'New password must be different from the current password.'
       );
+
       return;
     }
 
     if (this.passwordsMismatch()) {
       this.passwordError.set('Passwords must match.');
+
       return;
     }
 
     this.passwordUpdating.set(true);
+
     try {
       const { currentPassword, newPassword } = this.passwordForm.getRawValue();
       await this.auth.changePasswordWithCurrentPassword({
@@ -435,13 +475,16 @@ export class SettingsComponent {
 
   async saveNotifications(): Promise<void> {
     const user = this.user();
+
     if (!user) {
       this.toasts.error('You must be signed in.');
+
       return;
     }
 
     if (this.notificationsForm.invalid) {
       this.notificationsForm.markAllAsTouched();
+
       return;
     }
 
@@ -452,6 +495,7 @@ export class SettingsComponent {
 
     const raw = this.notificationsForm.getRawValue();
     this.notificationsSaving.set(true);
+
     try {
       await this.notificationPreferences.save(user.id, [
         {
@@ -488,6 +532,7 @@ export class SettingsComponent {
   async exportBackup(): Promise<void> {
     if (!this.user()) {
       this.toasts.error('You must be signed in.');
+
       return;
     }
 
@@ -497,15 +542,18 @@ export class SettingsComponent {
 
     if (this.exportSelectedProjectsOnly() && projectIds.length === 0) {
       this.toasts.error('Select at least one project for filtered export.');
+
       return;
     }
 
     this.exportBusy.set(true);
+
     try {
       const blob = await this.exportImportService.exportToBlob({
         onlyActive: this.exportOnlyActive(),
         projectIds,
       });
+
       this.downloadBlob(blob, buildBackupFilename());
       this.toasts.success('Backup exported.');
     } catch (error) {
@@ -517,36 +565,47 @@ export class SettingsComponent {
   }
 
   onExportOnlyActiveChanged(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
+
     this.exportOnlyActive.set(target?.checked ?? false);
   }
 
   onExportSelectedProjectsChanged(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
+
     const checked = target?.checked ?? false;
     this.exportSelectedProjectsOnly.set(checked);
+
     if (!checked) {
       this.selectedProjectIds.set([]);
     }
   }
 
   onProjectSelectionChanged(projectId: string, event: Event): void {
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
+
     const checked = target?.checked ?? false;
 
     this.selectedProjectIds.update((current) => {
       if (checked && !current.includes(projectId)) {
         return [...current, projectId];
       }
+
       if (!checked) {
         return current.filter((id) => id !== projectId);
       }
+
       return current;
     });
   }
 
   async onImportFileSelected(event: Event): Promise<void> {
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
+
     const file = target?.files?.item(0) ?? null;
 
     this.importFile.set(file);
@@ -560,7 +619,9 @@ export class SettingsComponent {
       const validation = await this.exportImportService.validateImportFile(
         file
       );
+
       this.importValidation.set(validation);
+
       if (validation.ok) {
         this.toasts.success('Import file validated.');
       } else {
@@ -574,26 +635,32 @@ export class SettingsComponent {
 
   async runImport(dryRun: boolean): Promise<void> {
     const file = this.importFile();
+
     if (!file) {
       this.toasts.error('Choose a JSON file first.');
+
       return;
     }
 
     this.importBusy.set(true);
+
     try {
       const result = await this.exportImportService.importFromFile(file, {
         dryRun,
         skipOlder: true,
       });
+
       this.importValidation.set(result);
 
       if (!result.ok) {
         this.toasts.error('Import failed. Review reported errors.');
+
         return;
       }
 
       if (dryRun) {
         this.toasts.success(`Dry run complete: ${formatImportCounts(result)}.`);
+
         return;
       }
 
@@ -613,14 +680,18 @@ export class SettingsComponent {
 
   async createApiToken(): Promise<void> {
     const user = this.user();
+
     if (!user) {
       this.toasts.error('You must be signed in.');
+
       return;
     }
 
     const name = this.newTokenName().trim();
+
     if (!name) {
       this.toasts.error('Token name is required.');
+
       return;
     }
 
@@ -630,6 +701,7 @@ export class SettingsComponent {
 
     try {
       const result = await this.apiTokenService.createToken(user.id, name);
+
       if (result) {
         this.revealedToken.set(result.rawToken);
         this.newTokenName.set('MCP Token');
@@ -649,8 +721,10 @@ export class SettingsComponent {
 
   async deleteApiToken(tokenId: string): Promise<void> {
     this.tokenDeleting.set(tokenId);
+
     try {
       const deleted = await this.apiTokenService.deleteToken(tokenId);
+
       if (deleted) {
         this.toasts.success('Token revoked.');
       } else {
@@ -666,7 +740,9 @@ export class SettingsComponent {
 
   async copyToken(): Promise<void> {
     const token = this.revealedToken();
+
     if (!token) return;
+
     try {
       await navigator.clipboard.writeText(token);
       this.tokenCopied.set(true);
@@ -678,29 +754,40 @@ export class SettingsComponent {
   }
 
   onTokenNameChange(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
+
     this.newTokenName.set(target?.value ?? '');
   }
 
   async onAvatarSelected(event: Event): Promise<void> {
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
+
     const file = target?.files?.item(0) ?? null;
+
     if (target) {
       target.value = '';
     }
+
     const validation = this.avatarService.validateAvatarFile(file);
+
     if (!validation.ok) {
       this.toasts.error(validation.reason ?? 'Invalid avatar file.');
+
       return;
     }
 
     const user = this.user();
+
     if (!user || !file) {
       this.toasts.error('You must be signed in.');
+
       return;
     }
 
     this.avatarUploading.set(true);
+
     try {
       const upload = await this.avatarService.uploadAvatar(file);
       await this.auth.updateProfileMetadata({
@@ -720,10 +807,12 @@ export class SettingsComponent {
   async removeAvatar(): Promise<void> {
     if (!this.user()) {
       this.toasts.error('You must be signed in.');
+
       return;
     }
 
     this.avatarRemoving.set(true);
+
     try {
       const metadata = this.userMetadata();
       const avatarPath = asOptionalString(metadata['avatar_path']) ?? null;
@@ -742,9 +831,10 @@ export class SettingsComponent {
     }
   }
 
-  private userMetadata(): Record<string, unknown> {
-    const metadata = this.user()?.user_metadata;
-    return isRecord(metadata) ? metadata : {};
+  private userMetadata() {
+    return (
+      ProfileMetadataSchema.safeParse(this.user()?.user_metadata).data ?? {}
+    );
   }
 
   private downloadBlob(blob: Blob, fileName: string): void {
@@ -759,6 +849,7 @@ export class SettingsComponent {
 
 function buildBackupFilename(): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+
   return `tickist-backup-${timestamp}.json`;
 }
 
@@ -776,18 +867,14 @@ function appendCacheVersion(url: string, version: string | null): string {
   if (!version) {
     return url;
   }
+
   const separator = url.includes('?') ? '&' : '?';
+
   return `${url}${separator}v=${encodeURIComponent(version)}`;
 }
 
-function asOptionalString(value: unknown): string | null {
-  return typeof value === 'string' && value.trim().length > 0
-    ? value.trim()
-    : null;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+function asOptionalString(value: string | null | undefined): string | null {
+  return value != null && value.trim().length > 0 ? value.trim() : null;
 }
 
 function findNotificationPreference(
@@ -795,6 +882,7 @@ function findNotificationPreference(
   key: 'weekly_summary' | 'daily_summary'
 ) {
   const match = items.find((item) => item.key === key);
+
   if (match) {
     return match;
   }

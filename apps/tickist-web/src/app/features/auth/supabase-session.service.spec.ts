@@ -1,19 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type {
-  AuthChangeEvent,
-  Session,
-  SupabaseClient,
-  User,
-} from '@supabase/supabase-js';
+import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../../config/supabase.provider';
 import { SupabaseSessionService } from './supabase-session.service';
 
 describe('SupabaseSessionService password recovery state', () => {
   let service: SupabaseSessionService;
+
   let authStateChangeHandler:
     | ((event: AuthChangeEvent, session: Session | null) => void)
     | null;
+
   let signOutMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
@@ -40,6 +37,7 @@ describe('SupabaseSessionService password recovery state', () => {
                   ) => void
                 ) => {
                   authStateChangeHandler = callback;
+
                   return {
                     data: {
                       subscription: {
@@ -51,7 +49,7 @@ describe('SupabaseSessionService password recovery state', () => {
               ),
               signOut: signOutMock,
             },
-          } as unknown as SupabaseClient,
+          },
         },
       ],
     }).compileComponents();
@@ -63,7 +61,11 @@ describe('SupabaseSessionService password recovery state', () => {
   it('marks password recovery as pending when Supabase emits PASSWORD_RECOVERY', () => {
     authStateChangeHandler?.('PASSWORD_RECOVERY', {
       user: createUser(),
-    } as Session);
+      access_token: 'test-access-token',
+      refresh_token: 'test-refresh-token',
+      token_type: 'bearer',
+      expires_in: 3600,
+    });
 
     expect(service.passwordRecoveryPending()).toBe(true);
     expect(sessionStorage.getItem('tickist.password-recovery-pending')).toBe(
@@ -98,6 +100,7 @@ describe('SupabaseSessionService password recovery state', () => {
                   ) => void
                 ) => {
                   authStateChangeHandler = callback;
+
                   return {
                     data: {
                       subscription: {
@@ -109,7 +112,7 @@ describe('SupabaseSessionService password recovery state', () => {
               ),
               signOut: signOutMock,
             },
-          } as unknown as SupabaseClient,
+          },
         },
       ],
     }).compileComponents();
@@ -141,5 +144,5 @@ function createUser(): User {
     aud: 'authenticated',
     created_at: '2026-03-10T00:00:00.000Z',
     email: 'user@tickist.dev',
-  } as User;
+  };
 }

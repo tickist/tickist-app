@@ -1,3 +1,4 @@
+import { fixtureHost, requiredElement } from '../../../testing/dom';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -14,6 +15,7 @@ import { ToastService } from '../../core/ui/toast.service';
 import { Router } from '@angular/router';
 import { NotificationPreferencesService } from '../../data/notification-preferences.service';
 import { ApiTokenService } from '../../data/api-token.service';
+
 vi.setConfig({ testTimeout: 60000 });
 
 describe('SettingsComponent sheet layout', () => {
@@ -144,23 +146,25 @@ describe('SettingsComponent sheet layout', () => {
 
   it('renders settings in the shared sheet shell', () => {
     expect(
-      fixture.nativeElement.querySelector('[data-testid="settings-sheet"]')
+      fixtureHost(fixture).querySelector('[data-testid="settings-sheet"]')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelector('.sheet-shell__tabs')
+      fixtureHost(fixture).querySelector('.sheet-shell__tabs')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelector('.sheet-shell__panel-scroll')
+      fixtureHost(fixture).querySelector('.sheet-shell__panel-scroll')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelectorAll('.sheet-shell__footer')
+      fixtureHost(fixture).querySelectorAll('.sheet-shell__footer')
     ).toHaveLength(1);
   });
 
   it('closes back to the last app route', async () => {
-    const closeButton = fixture.nativeElement.querySelector(
-      '.sheet-shell__close'
-    ) as HTMLButtonElement | null;
+    const closeButton = requiredElement(
+      fixtureHost(fixture),
+      '.sheet-shell__close',
+      HTMLButtonElement
+    );
 
     closeButton?.click();
     await fixture.whenStable();
@@ -172,9 +176,11 @@ describe('SettingsComponent sheet layout', () => {
     lastAppUrl.set(null);
     fixture.detectChanges();
 
-    const closeButton = fixture.nativeElement.querySelector(
-      '.sheet-shell__close'
-    ) as HTMLButtonElement | null;
+    const closeButton = requiredElement(
+      fixtureHost(fixture),
+      '.sheet-shell__close',
+      HTMLButtonElement
+    );
 
     closeButton?.click();
     await fixture.whenStable();
@@ -186,20 +192,25 @@ describe('SettingsComponent sheet layout', () => {
     fixture.componentInstance.select('notifications');
     fixture.detectChanges();
 
-    const weeklyToggle = fixture.nativeElement.querySelector(
-      '#weekly-email-enabled'
-    ) as HTMLInputElement | null;
-    const dailyToggle = fixture.nativeElement.querySelector(
-      '#daily-email-enabled'
-    ) as HTMLInputElement | null;
+    const weeklyToggle = requiredElement(
+      fixtureHost(fixture),
+      '#weekly-email-enabled',
+      HTMLInputElement
+    );
+
+    const dailyToggle = requiredElement(
+      fixtureHost(fixture),
+      '#daily-email-enabled',
+      HTMLInputElement
+    );
 
     expect(
-      fixture.nativeElement.querySelector(
+      fixtureHost(fixture).querySelector(
         '[data-testid="settings-notifications-form"]'
       )
     ).not.toBeNull();
-    expect(fixture.nativeElement.textContent).toContain('Weekly summary');
-    expect(fixture.nativeElement.textContent).toContain('Daily summary');
+    expect(fixtureHost(fixture).textContent).toContain('Weekly summary');
+    expect(fixtureHost(fixture).textContent).toContain('Daily summary');
     expect(weeklyToggle?.checked).toBe(true);
     expect(dailyToggle?.checked).toBe(false);
   });
@@ -208,12 +219,17 @@ describe('SettingsComponent sheet layout', () => {
     fixture.componentInstance.select('notifications');
     fixture.detectChanges();
 
-    const weeklyToggle = fixture.nativeElement.querySelector(
-      '#weekly-email-enabled'
-    ) as HTMLInputElement | null;
-    const dailyToggle = fixture.nativeElement.querySelector(
-      '#daily-email-enabled'
-    ) as HTMLInputElement | null;
+    const weeklyToggle = requiredElement(
+      fixtureHost(fixture),
+      '#weekly-email-enabled',
+      HTMLInputElement
+    );
+
+    const dailyToggle = requiredElement(
+      fixtureHost(fixture),
+      '#daily-email-enabled',
+      HTMLInputElement
+    );
 
     expect(weeklyToggle).not.toBeNull();
     expect(dailyToggle).not.toBeNull();
@@ -436,19 +452,25 @@ describe('SettingsComponent password form', () => {
   });
 
   function getSubmitButton(): HTMLButtonElement {
-    const button = fixture.nativeElement.querySelector(
-      '[data-testid="settings-password-submit"]'
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="settings-password-submit"]',
+      HTMLButtonElement
+    );
+
     if (!button) {
       throw new Error('Missing settings password submit button');
     }
+
     return button;
   }
 
   function getInlineError(): HTMLParagraphElement | null {
-    return fixture.nativeElement.querySelector(
-      '[data-testid="settings-password-error"]'
-    ) as HTMLParagraphElement | null;
+    return requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="settings-password-error"]',
+      HTMLParagraphElement
+    );
   }
 });
 
@@ -482,6 +504,7 @@ function buildNotificationPreferencesProvider() {
     },
   };
 }
+
 function buildApiTokenProvider() {
   return {
     provide: ApiTokenService,

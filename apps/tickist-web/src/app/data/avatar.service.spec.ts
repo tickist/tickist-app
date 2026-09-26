@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 import { AvatarService } from './avatar.service';
@@ -30,7 +29,7 @@ describe('AvatarService', () => {
           provide: SUPABASE_CLIENT,
           useValue: {
             storage: { from },
-          } as unknown as SupabaseClient,
+          },
         },
       ],
     });

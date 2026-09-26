@@ -1,3 +1,4 @@
+import { fixtureHost, requiredElement } from '../testing/dom';
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { provideRouter, Router } from '@angular/router';
@@ -17,7 +18,7 @@ describe('App', () => {
     await router.navigateByUrl('/');
     fixture.detectChanges();
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
+    const compiled = fixtureHost(fixture);
     expect(
       compiled.querySelector('[data-testid="landing-title"]')?.textContent
     ).toContain('clear next action');
@@ -30,9 +31,11 @@ describe('App', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const link = fixture.nativeElement.querySelector(
-      '[data-testid="spendist-link"]'
-    ) as HTMLAnchorElement | null;
+    const link = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="spendist-link"]',
+      HTMLAnchorElement
+    );
 
     expect(link?.href).toBe('https://spendist.app/');
     expect(link?.textContent).toContain('Visit Spendist');

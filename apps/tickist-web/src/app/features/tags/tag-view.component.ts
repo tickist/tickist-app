@@ -60,13 +60,17 @@ export class TagViewComponent {
 
   readonly tagCounts = computed(() => {
     const counts = new Map<string, number>();
+
     for (const task of this.tasks()) {
       const ids = task.tags ?? [];
+
       if (!ids.length) continue;
+
       for (const id of ids) {
         counts.set(id, (counts.get(id) ?? 0) + 1);
       }
     }
+
     return counts;
   });
 
@@ -78,6 +82,7 @@ export class TagViewComponent {
 
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
     let list: Task[] = this.tasks();
+
     if (normalizedSearch) {
       list = list.filter(
         (task) =>
@@ -85,9 +90,11 @@ export class TagViewComponent {
           (task.description ?? '').toLowerCase().includes(normalizedSearch)
       );
     }
+
     if (!includeCompleted) {
       list = list.filter((task) => !task.isDone);
     }
+
     if (showUntagged) {
       list = list.filter((task) => !task.tags.length);
     } else if (selected.size) {
@@ -98,6 +105,7 @@ export class TagViewComponent {
             [...selected].every((id) => task.tags.includes(id))
       );
     }
+
     return this.sortTasks(list);
   });
 
@@ -110,11 +118,13 @@ export class TagViewComponent {
     this.visibleCount.set(this.pageSize);
     this.selectedTags.update((current) => {
       const next = new Set(current);
+
       if (next.has(tagId)) {
         next.delete(tagId);
       } else {
         next.add(tagId);
       }
+
       return next;
     });
   }
@@ -179,6 +189,7 @@ export class TagViewComponent {
   private sortTasks(tasks: Task[]): Task[] {
     const option = this.sortOption();
     const byString = (a: string, b: string) => a.localeCompare(b);
+
     return [...tasks].sort((a, b) => {
       switch (option) {
         case 'priority-asc':

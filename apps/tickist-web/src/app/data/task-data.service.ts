@@ -162,20 +162,28 @@ export class TaskDataService {
       this.tasks.set([]);
       this.loading.set(false);
       console.warn('[Tasks] Supabase client missing; skipping fetch.');
+
       return;
     }
+
     this.loading.set(true);
+
     const query = this.supabase
       .from('tasks')
       .select(
         'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_assignees(user_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
       );
+
     const { data, error } = await query;
+
     if (error || !data) {
       console.warn('[Tasks] Unable to fetch from Supabase yet.', error);
       this.loading.set(false);
+
       return;
     }
+
+    // SAFETY: TASK_SELECT lists the TaskRow columns; this assertion stays at the untyped Supabase query boundary.
     const typedData = data as TaskRow[];
     this.tasks.set(typedData.map(mapTaskRowToTask));
     this.loading.set(false);
@@ -188,10 +196,12 @@ export class TaskDataService {
 
     if (!this.supabase) {
       console.warn('[Tasks] Supabase client missing; cannot create task.');
+
       return null;
     }
 
     const insertPayload = toTaskInsertPayload(input);
+
     const { data, error } = await this.supabase
       .from('tasks')
       .insert(insertPayload)
@@ -200,6 +210,7 @@ export class TaskDataService {
 
     if (error || !data) {
       console.error('[Tasks] Failed to create task', error);
+
       return null;
     }
 
@@ -243,9 +254,11 @@ export class TaskDataService {
 
     this.markStatisticsDirty();
     const created = await this.fetchTaskById(data.id);
+
     if (created) {
       this.setTasks((current) => [...current, created]);
     }
+
     return created;
   }
 
@@ -254,18 +267,22 @@ export class TaskDataService {
 
     if (!this.supabase) {
       console.warn('[Tasks] Supabase client missing; cannot update task.');
+
       return null;
     }
 
     const { tags, assigneeIds, steps, ...patchInput } = input;
+
     const recurringCompletion =
       !!previous &&
       !previous.isDone &&
       input.isDone === true &&
       previous.repeatInterval > 0;
+
     const effectivePatchInput = recurringCompletion
       ? buildRecurringCompletionPatch(previous, patchInput)
       : patchInput;
+
     const updatePayload = toTaskUpdatePayload(effectivePatchInput);
 
     if (Object.keys(updatePayload).length) {
@@ -273,14 +290,17 @@ export class TaskDataService {
         .from('tasks')
         .update(updatePayload)
         .eq('id', input.id);
+
       if (error) {
         console.error('[Tasks] Failed to update task', error);
+
         return null;
       }
     }
 
     if (tags) {
       await this.supabase.from('task_tags').delete().eq('task_id', input.id);
+
       if (tags.length) {
         await this.supabase
           .from('task_tags')
@@ -293,6 +313,7 @@ export class TaskDataService {
         .from('task_assignees')
         .delete()
         .eq('task_id', input.id);
+
       if (assigneeIds.length) {
         await this.supabase.from('task_assignees').insert(
           Array.from(new Set(assigneeIds)).map((userId) => ({
@@ -305,6 +326,7 @@ export class TaskDataService {
 
     if (steps) {
       await this.supabase.from('task_steps').delete().eq('task_id', input.id);
+
       if (steps.length) {
         await this.supabase.from('task_steps').insert(
           steps.map((step, index) => ({
@@ -320,10 +342,13 @@ export class TaskDataService {
         .from('task_steps')
         .delete()
         .eq('task_id', input.id);
+
       if (deleteError) {
         console.error('[Tasks] Failed to reset task steps', deleteError);
+
         return null;
       }
+
       if (previous?.steps.length) {
         const { error: insertError } = await this.supabase
           .from('task_steps')
@@ -335,8 +360,10 @@ export class TaskDataService {
               is_done: false,
             }))
           );
+
         if (insertError) {
           console.error('[Tasks] Failed to recreate task steps', insertError);
+
           return null;
         }
       }
@@ -344,6 +371,7 @@ export class TaskDataService {
 
     this.markStatisticsDirty();
     const updated = await this.fetchTaskById(input.id);
+
     if (updated) {
       this.setTasks((current) =>
         current.map((task) => (task.id === updated.id ? updated : task))
@@ -355,12 +383,14 @@ export class TaskDataService {
         await this.callTaskReminderFunction(updated.id, 'completed');
       }
     }
+
     return updated;
   }
 
   async deleteTask(taskId: string): Promise<boolean> {
     if (!this.supabase) {
       console.warn('[Tasks] Supabase client missing; cannot delete task.');
+
       return false;
     }
 
@@ -370,12 +400,16 @@ export class TaskDataService {
       .from('tasks')
       .delete()
       .eq('id', taskId);
+
     if (error) {
       console.error('[Tasks] Failed to delete task', error);
+
       return false;
     }
+
     this.setTasks((current) => current.filter((task) => task.id !== taskId));
     this.markStatisticsDirty();
+
     return true;
   }
 
@@ -383,6 +417,7 @@ export class TaskDataService {
     if (!this.supabase) {
       return this.tasks().find((task) => task.id === id) ?? null;
     }
+
     const { data, error } = await this.supabase
       .from('tasks')
       .select(
@@ -393,8 +428,11 @@ export class TaskDataService {
 
     if (error || !data) {
       console.error('[Tasks] Failed to fetch task by id', error);
+
       return null;
     }
+
+    // SAFETY: TASK_SELECT lists the TaskRow columns; this assertion stays at the untyped Supabase query boundary.
     return mapTaskRowToTask(data as TaskRow);
   }
 
@@ -411,19 +449,24 @@ export class TaskDataService {
     event: 'created' | 'completed' | 'snoozed'
   ) {
     const functionsUrl = this.supabaseConfig?.functionsUrl;
+
     if (!functionsUrl || !this.supabase) {
       return;
     }
+
     try {
       const headers = await this.getFunctionAuthHeaders();
+
       if (!headers) {
         return;
       }
+
       const response = await fetch(`${functionsUrl}/task-reminder`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ taskId, event }),
       });
+
       if (!response.ok) {
         console.warn(
           '[Tasks] Edge function responded with error',
@@ -442,27 +485,34 @@ export class TaskDataService {
     if (!this.supabase) {
       return null;
     }
+
     const { data, error } = await this.supabase.auth.getSession();
     const accessToken = data.session?.access_token;
+
     if (error || !accessToken) {
       console.warn(
         '[Tasks] Missing active Supabase session; skipping edge function call.',
         error
       );
+
       return null;
     }
+
     const publishableKey = (
       this.supabaseConfig?.publishableKey ??
       this.supabaseConfig?.anonKey ??
       ''
     ).trim();
+
     if (!publishableKey) {
       console.warn(
         '[Tasks] Missing Supabase publishable key; skipping edge function call.'
       );
+
       return null;
     }
-    const headers: Record<string, string> = {
+
+    const headers = {
       'Content-Type': 'application/json',
       // Authorization must carry a user session JWT for verify_jwt=true functions.
       Authorization: `Bearer ${accessToken}`,
@@ -470,6 +520,7 @@ export class TaskDataService {
       // Function body verifies end-user identity from session JWT.
       'x-user-jwt': accessToken,
     };
+
     return headers;
   }
 }
@@ -485,6 +536,7 @@ function buildRecurringCompletionPatch(
 
   if (anchorMode === 1 && previous.finishDate) {
     const dueDate = new Date(previous.finishDate);
+
     if (!Number.isNaN(dueDate.getTime())) {
       const dueDay = startOfLocalDay(dueDate);
       base = dueDay < today ? today : dueDay;
@@ -506,6 +558,7 @@ function buildRecurringCompletionPatch(
 function startOfLocalDay(date: Date): Date {
   const local = new Date(date);
   local.setHours(0, 0, 0, 0);
+
   return local;
 }
 
@@ -589,29 +642,47 @@ function toTaskInsertPayload(input: TaskCreateInput) {
 function toTaskUpdatePayload(
   input: Omit<TaskUpdateInput, 'id' | 'tags' | 'assigneeIds' | 'steps'>
 ) {
-  const payload: Record<string, unknown> = {};
+  const payload: Partial<TaskRow> = {};
+
   if (input.name !== undefined) payload.name = input.name;
+
   if (input.projectId !== undefined) payload.project_id = input.projectId;
+
   if (input.description !== undefined) payload.description = input.description;
+
   if (input.finishDate !== undefined) payload.finish_date = input.finishDate;
+
   if (input.finishTime !== undefined) payload.finish_time = input.finishTime;
+
   if (input.typeFinishDate !== undefined)
     payload.type_finish_date = input.typeFinishDate;
+
   if (input.priority !== undefined) payload.priority = input.priority;
+
   if (input.repeatInterval !== undefined)
     payload.repeat_interval = input.repeatInterval;
+
   if (input.fromRepeating !== undefined)
     payload.from_repeating = input.fromRepeating;
+
   if (input.estimateMinutes !== undefined)
     payload.estimate_minutes = input.estimateMinutes;
+
   if (input.isDone !== undefined) payload.is_done = input.isDone;
+
   if (input.isActive !== undefined) payload.is_active = input.isActive;
+
   if (input.onHold !== undefined) payload.on_hold = input.onHold;
+
   if (input.taskType !== undefined) payload.task_type = input.taskType;
+
   if (input.pinned !== undefined) payload.pinned = input.pinned;
+
   if (input.suspendUntil !== undefined)
     payload.suspend_until = input.suspendUntil;
+
   if (input.spentMinutes !== undefined)
     payload.spent_minutes = input.spentMinutes;
+
   return payload;
 }

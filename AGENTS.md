@@ -18,7 +18,7 @@ Read the relevant document when changing its contract: [product behaviour](doc/p
 
 - Carry an implementation through relevant verification and fix failures introduced by it. Make reversible decisions within the requested scope; ask only when a missing choice changes behaviour, scope, or authority.
 - Prefer concise, complete sentences. Load a skill when its workflow helps or the user names it, not merely because a keyword matches. Announce it on first use. Read only supporting references relevant to the task.
-- Preserve unrelated work. Use a focused branch from `develop` (`rewrite/<feature>` or `supabase/<area>`) for a new task; continue an existing task on its branch.
+- Preserve unrelated work. Work directly on `develop`; create a feature branch only with the user's explicit approval.
 - Commit, push, publish, and deploy when requested. Existing authorization covers the named action and its verification; do not repeatedly ask. A previous feature's push request does not authorize publishing later work.
 - A handoff states the result, meaningful verification, and unresolved limitations. Verify remote refs after a push; a feature-branch or `develop` push is not a production deployment. Production runs from `master`.
 
@@ -41,7 +41,7 @@ Read the relevant document when changing its contract: [product behaviour](doc/p
 
 - Match existing Angular standalone components, signals, and built-in `@if` / `@for` / `@switch` control flow. Use RxJS where streams fit.
 - Avoid `any`, non-null assertions, unused imports, and dead symbols. Use snake_case database columns.
-- Preserve responsive sheets/forms, supported themes, semantic controls, and keyboard access. Formatting and static rules live in Prettier and ESLint configuration.
+- Preserve responsive sheets/forms, supported themes, semantic controls, and keyboard access. Formatting and static rules live in Prettier, ESLint, and Oxlint configuration.
 - Run repository targets through npm/Nx; `npm run start` checks the local Supabase stack and serves port 4200. Use `nx-workspace` for unfamiliar targets/dependencies, `nx-generate` for actual scaffolding, and `nx-run-tasks` for task selection or troubleshooting.
 - Match verification to changed behaviour. App changes normally need lint, focused unit tests, a build, and relevant critical-journey E2E; database contracts need a local integration check. Add regressions for changed routes, access rules, data contracts, and task/project interactions.
 - Documentation and agent-instruction changes need formatting, link/config checks, and `git diff --check`; they do not require application E2E. Run changed executable helpers against representative inputs.

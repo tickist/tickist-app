@@ -3,14 +3,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseTokenVerifier } from './auth';
 import { MCP_TOOL_SCOPES } from './config';
 
-const { getClaims } = vi.hoisted(() => ({ getClaims: vi.fn() }));
-
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn(() => ({ auth: { getClaims } })),
-}));
+const getClaims = vi.fn();
 
 describe('SupabaseTokenVerifier', () => {
   const userId = '00000000-0000-4000-8000-000000000001';
+
   const environment = {
     SUPABASE_URL: 'https://tickist-test.supabase.co',
     SUPABASE_PUBLISHABLE_KEY: 'publishable-test-key',
@@ -37,7 +34,7 @@ describe('SupabaseTokenVerifier', () => {
       },
       error: null,
     });
-    const verifier = new SupabaseTokenVerifier(environment);
+    const verifier = new SupabaseTokenVerifier(environment, { getClaims });
     const result = await verifier.verifyAccessToken('signed.jwt.token');
 
     expect(getClaims).toHaveBeenCalledWith('signed.jwt.token');
@@ -61,11 +58,25 @@ describe('SupabaseTokenVerifier', () => {
       },
       error: null,
     });
-    const verifier = new SupabaseTokenVerifier(environment);
+    const verifier = new SupabaseTokenVerifier(environment, { getClaims });
 
     await expect(
       verifier.verifyAccessToken('signed.jwt.token')
     ).rejects.toThrow('missing Tickist MCP tool permissions');
+  });
+
+  it.each([
+    { exp: 'not-a-number' },
+    { tickist_mcp: 'true' },
+    { tickist_mcp_scopes: [42] },
+    { aud: {} },
+  ])('rejects malformed signed claims: %j', async (fields) => {
+    getClaims.mockResolvedValue({ data: { claims: fields }, error: null });
+    const verifier = new SupabaseTokenVerifier(environment, { getClaims });
+
+    await expect(
+      verifier.verifyAccessToken('signed.jwt.token')
+    ).rejects.toThrow('Invalid token claims');
   });
 
   it('rejects a token whose signature Supabase cannot verify', async () => {
@@ -73,7 +84,7 @@ describe('SupabaseTokenVerifier', () => {
       data: null,
       error: new Error('Invalid JWT signature'),
     });
-    const verifier = new SupabaseTokenVerifier(environment);
+    const verifier = new SupabaseTokenVerifier(environment, { getClaims });
 
     await expect(
       verifier.verifyAccessToken('forged.jwt.token')

@@ -36,11 +36,15 @@ export function requireEnvironment(
     'MCP_ALLOWED_AUDIENCE',
     'MCP_OAUTH_ISSUER',
   ] as const;
+
   for (const key of keys) {
     if (!env[key]) throw new Error(`Missing environment variable: ${key}`);
   }
+
   if (!env.MCP_RATE_LIMITER) {
     throw new Error('Missing environment binding: MCP_RATE_LIMITER');
   }
+
+  // SAFETY: All required string variables and the rate limiter binding were checked above.
   return env as McpEnvironment;
 }

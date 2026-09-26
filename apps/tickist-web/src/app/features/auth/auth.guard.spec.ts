@@ -1,15 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { describe, expect, test, vi } from 'vitest';
 import { supabaseAuthGuard } from './auth.guard';
 import { SupabaseSessionService } from './supabase-session.service';
 
 describe('supabaseAuthGuard', () => {
   test('preserves the protected OAuth consent URL across sign-in', async () => {
-    const urlTree = { redirected: true };
-    const createUrlTree = vi.fn(() => urlTree);
     TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         {
           provide: SupabaseSessionService,
           useValue: {
@@ -17,17 +16,22 @@ describe('supabaseAuthGuard', () => {
             user: () => null,
           },
         },
-        { provide: Router, useValue: { createUrlTree } },
       ],
     });
 
+    const router = TestBed.inject(Router);
+    const state = router.routerState.snapshot;
+    Object.defineProperty(state, 'url', {
+      value: '/auth/oauth/consent?authorization_id=request-1',
+    });
+    const urlTree = router.createUrlTree(['/auth']);
+
+    const createUrlTree = vi
+      .spyOn(router, 'createUrlTree')
+      .mockReturnValue(urlTree);
+
     const result = await TestBed.runInInjectionContext(() =>
-      supabaseAuthGuard(
-        {} as never,
-        {
-          url: '/auth/oauth/consent?authorization_id=request-1',
-        } as never
-      )
+      supabaseAuthGuard(state.root, state)
     );
 
     expect(result).toBe(urlTree);

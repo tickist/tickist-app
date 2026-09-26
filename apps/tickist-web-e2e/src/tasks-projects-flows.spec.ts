@@ -8,6 +8,7 @@ import {
 
 function uniqueSuffix(testInfo: TestInfo): string {
   const randomPart = Math.random().toString(36).slice(2, 8);
+
   return `${testInfo.project.name}-${Date.now()}-${randomPart}`;
 }
 
@@ -22,8 +23,10 @@ async function ensureAuthenticated(page: Page): Promise<void> {
   await page.goto('/');
 
   const pathname = new URL(page.url()).pathname;
+
   if (pathname.startsWith('/app')) {
     await expect(page.getByPlaceholder(/Search tasks/)).toBeVisible();
+
     return;
   }
 
@@ -46,6 +49,7 @@ async function ensureActiveProjectsExpanded(page: Page): Promise<void> {
     'aria-expanded',
     /^(true|false)$/
   );
+
   if ((await activeProjectsButton.getAttribute('aria-expanded')) === 'false') {
     await activeProjectsButton.click();
   }
@@ -60,6 +64,7 @@ async function openCreateProjectModal(page: Page): Promise<Locator> {
   await expect(composer).toBeVisible();
   await expect(composer.getByLabel('Project name')).toBeVisible();
   await expectSharedSheetLayout(page, composer);
+
   return composer;
 }
 
@@ -111,6 +116,7 @@ async function selectProjectByName(
   projectName: string
 ): Promise<void> {
   await ensureActiveProjectsExpanded(page);
+
   const projectButton = page
     .locator('button.sidebar-subitem')
     .filter({
@@ -144,6 +150,7 @@ async function expectSharedSheetLayout(
 
   const viewport = page.viewportSize();
   const box = await sheet.boundingBox();
+
   if (!viewport || !box) {
     throw new Error('Shared sheet layout could not be measured.');
   }
@@ -158,10 +165,12 @@ async function setProjectFilter(
   const filterButton = page.locator('button[title="Filter"]').first();
   await filterButton.click();
   const exactLabel = new RegExp(`^\\s*${escapeRegExp(label)}\\s*$`);
+
   const option = page
     .locator('button.filter-option')
     .filter({ hasText: exactLabel })
     .first();
+
   await expect(option).toBeVisible();
   await option.click();
   await expect(option).toHaveAttribute('aria-pressed', 'true');
@@ -169,6 +178,7 @@ async function setProjectFilter(
   // DaisyUI dropdown can stay open via :focus-within; blur and move focus outside.
   await page.evaluate(() => {
     const active = document.activeElement;
+
     if (active instanceof HTMLElement) {
       active.blur();
     }
@@ -212,10 +222,13 @@ async function inboxCount(page: Page): Promise<number> {
     .filter({ hasText: /^\s*Inbox(?:\s|\(|$)/ })
     .first()
     .innerText();
+
   const match = text.match(/\((\d+)\)/);
+
   if (!match) {
     throw new Error(`Cannot parse Inbox count from: ${text}`);
   }
+
   return Number(match[1]);
 }
 
@@ -232,6 +245,7 @@ function futureDateInput(daysFromToday: number): string {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
+
   return `${year}-${month}-${day}`;
 }
 
@@ -240,6 +254,7 @@ async function openTaskMenu(taskCard: ReturnType<typeof taskCardByName>) {
   await taskCard.getByRole('button', { name: 'More actions' }).click();
   const menu = taskCard.locator('.task-menu');
   await expect(menu).toBeVisible();
+
   return menu;
 }
 
@@ -256,6 +271,7 @@ async function openProjectContextMenu(page: Page, projectName: string) {
       has: page.locator('.project-name', { hasText: projectName }),
     })
     .first();
+
   await expect(row).toBeVisible();
   await row.hover();
 
@@ -265,6 +281,7 @@ async function openProjectContextMenu(page: Page, projectName: string) {
 
   const menu = page.locator('.project-menu.project-menu--overlay');
   await expect(menu).toBeVisible();
+
   return menu;
 }
 
@@ -278,12 +295,15 @@ test('uses muted placeholders and supports project icon search', async ({
   const placeholderColor = await projectName.evaluate(
     (element) => getComputedStyle(element, '::placeholder').color
   );
+
   expect(placeholderColor).toBe('rgb(71, 85, 105)');
 
   await composer.getByRole('button', { name: /Branding/ }).click();
+
   const iconSearch = composer.getByRole('searchbox', {
     name: 'Search project icons',
   });
+
   await expect(iconSearch).toBeVisible();
   await iconSearch.fill('pizza');
   await expect(composer.getByRole('button', { name: 'Pizza' })).toBeVisible();
@@ -355,9 +375,11 @@ test('filters parent and subproject tasks with independent checkboxes', async ({
   await expect(taskCardByName(page, childTask)).toBeVisible();
 
   await selectProjectByName(page, parentName);
+
   const parentCheckbox = page.getByRole('checkbox', {
     name: `Include tasks from ${parentName}`,
   });
+
   const childCheckbox = page.getByRole('checkbox', {
     name: `Include tasks from ${childName}`,
   });
@@ -484,10 +506,12 @@ test('suspends a task with a resume time and separates it from active work', asy
   await page.reload();
   await expect(page.getByPlaceholder(/Search tasks/)).toBeVisible();
   await page.getByRole('button', { name: 'Open notifications' }).click();
+
   const resumeNotification = page
     .locator('li')
     .filter({ hasText: 'Task resumed' })
     .filter({ hasText: `Task "${taskName}" is active again.` });
+
   await expect(resumeNotification).toBeVisible();
   await page.getByRole('button', { name: 'Close notifications' }).click();
   await expect(resumeNotification).toHaveCount(0);
@@ -714,6 +738,7 @@ test('keeps the project sidebar vertically scrollable on mobile', async ({
     clientHeight: node.clientHeight,
     scrollHeight: node.scrollHeight,
   }));
+
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
 
   await sidebar.evaluate((node) => node.scrollTo({ top: node.scrollHeight }));

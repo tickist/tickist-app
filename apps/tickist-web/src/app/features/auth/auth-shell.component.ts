@@ -66,21 +66,27 @@ export class AuthShellComponent {
     if (this.isDisabled) {
       return;
     }
+
     this.isSubmitting.set(true);
     this.message.set(null);
+
     try {
       const { email, password } = this.form.getRawValue();
       const response = await this.auth.signInWithPassword({ email, password });
+
       if (response.error) {
         throw response.error;
       }
+
       this.message.set({
         type: 'success',
         text: 'Signed in successfully. Redirecting…',
       });
+
       const returnUrl = safeReturnUrl(
         this.route.snapshot.queryParamMap.get('returnUrl')
       );
+
       await this.router.navigateByUrl(returnUrl);
     } catch (error) {
       this.message.set({

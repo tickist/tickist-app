@@ -55,6 +55,7 @@ jobs:
 
       - name: Verify app and MCP
         run: |
+          npx nx run-many -t oxlint --all
           npx nx lint tickist-web
           npx nx test tickist-web
           npx nx build tickist-web --configuration production

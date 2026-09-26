@@ -40,6 +40,7 @@ export class BlogArticleComponent {
 
   readonly locale = computed<BlogLocale>(() => {
     const locale = this.params().get('locale');
+
     return isBlogLocale(locale) ? locale : 'en';
   });
   readonly content = computed(() => getBlogContent(this.locale()));
@@ -48,6 +49,7 @@ export class BlogArticleComponent {
   );
   readonly category = computed(() => {
     const article = this.article();
+
     return article
       ? findBlogCategory(this.locale(), article.category)
       : undefined;
@@ -57,7 +59,8 @@ export class BlogArticleComponent {
   );
   readonly copied = signal(false);
   readonly nativeShareAvailable =
-    isPlatformBrowser(this.platformId) && typeof navigator.share === 'function';
+    isPlatformBrowser(this.platformId) &&
+    typeof navigator.share !== 'undefined';
   readonly encodedUrl = computed(() => encodeURIComponent(this.absoluteUrl()));
   readonly encodedTitle = computed(() =>
     encodeURIComponent(this.article()?.title ?? 'Tickist')
@@ -69,9 +72,11 @@ export class BlogArticleComponent {
 
   async share(): Promise<void> {
     const article = this.article();
+
     if (!this.nativeShareAvailable || !article) {
       return;
     }
+
     try {
       await navigator.share({
         title: article.title,
@@ -86,6 +91,7 @@ export class BlogArticleComponent {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+
     try {
       await navigator.clipboard.writeText(this.absoluteUrl());
     } catch {
@@ -96,6 +102,7 @@ export class BlogArticleComponent {
       this.document.execCommand('copy');
       input.remove();
     }
+
     this.copied.set(true);
     setTimeout(() => this.copied.set(false), 2000);
   }
@@ -103,6 +110,7 @@ export class BlogArticleComponent {
   private applyMetadata(): void {
     const article = this.article();
     const content = this.content();
+
     if (!article) {
       this.seo.apply({
         title: `${content.article.notFoundTitle} | Tickist`,
@@ -111,12 +119,16 @@ export class BlogArticleComponent {
         locale: content.locale,
         robots: 'noindex,follow',
       });
+
       return;
     }
+
     const published = `${article.publishedAt}T00:00:00Z`;
+
     const modified = article.updatedAt
       ? `${article.updatedAt}T00:00:00Z`
       : null;
+
     const categoryName = this.category()?.name ?? article.category;
     this.seo.apply({
       title: `${article.title} | Tickist`,

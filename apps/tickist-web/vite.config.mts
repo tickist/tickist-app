@@ -34,6 +34,7 @@ const resolveBuildCommit = (loaded: Record<string, string>): string => {
 export default defineConfig(({ mode }) => {
   const isTestMode = mode === 'test';
   const loaded = loadEnv(mode, __dirname, '');
+
   const mergedEnv = {
     NG_APP_SUPABASE_URL:
       loaded.NG_APP_SUPABASE_URL ?? process.env.NG_APP_SUPABASE_URL ?? '',
@@ -60,6 +61,7 @@ export default defineConfig(({ mode }) => {
       loaded.SUPABASE_REMOTE_DB_URL ?? process.env.SUPABASE_REMOTE_DB_URL ?? '',
     NG_APP_BUILD_COMMIT: resolveBuildCommit(loaded),
   };
+
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/tickist-web',

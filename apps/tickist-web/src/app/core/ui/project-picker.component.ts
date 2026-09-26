@@ -119,6 +119,7 @@ export class ProjectPickerComponent {
 
   groupedOptions(): PickerGroup[] {
     const query = this.searchQuery().trim();
+
     const groups = new Map<PickerGroupKey, PickerOption[]>(
       (['inbox', 'active', 'someday', 'routine'] as const).map((key) => [
         key,
@@ -127,6 +128,7 @@ export class ProjectPickerComponent {
     );
 
     let index = 0;
+
     if (!query || this.matchesSearch(this.emptyOptionLabel)) {
       if (this.includeEmptyOption) {
         groups.get('inbox')?.push({
@@ -146,6 +148,7 @@ export class ProjectPickerComponent {
     }
 
     const projectOptions = this.buildProjectOptions(query);
+
     for (const option of projectOptions) {
       groups.get(option.groupKey)?.push({
         ...option,
@@ -154,18 +157,22 @@ export class ProjectPickerComponent {
       index += 1;
     }
 
-    return (['inbox', 'active', 'someday', 'routine'] as const)
-      .map((key) => ({
-        key,
-        label: this.groupLabel(key, groups.get(key) ?? []),
-        options: groups.get(key) ?? [],
-      }))
-      .filter((group) => group.options.length > 0);
+    return (['inbox', 'active', 'someday', 'routine'] as const).flatMap(
+      (key) => {
+        const options = groups.get(key) ?? [];
+
+        return options.length > 0
+          ? [{ key, label: this.groupLabel(key, options), options }]
+          : [];
+      }
+    );
   }
 
   selectedOption(): PickerOption {
     return (
-      this.allOptions().find((option) => option.id === this.selectedProjectId) ??
+      this.allOptions().find(
+        (option) => option.id === this.selectedProjectId
+      ) ??
       this.allOptions()[0] ?? {
         id: '',
         name: this.emptyOptionLabel,
@@ -185,10 +192,13 @@ export class ProjectPickerComponent {
     if (this.disabled) {
       return;
     }
+
     if (this.isOpen()) {
       this.close(true);
+
       return;
     }
+
     this.open();
   }
 
@@ -201,25 +211,33 @@ export class ProjectPickerComponent {
     if (this.disabled) {
       return;
     }
+
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       this.open(false, false);
+
       return;
     }
+
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.open(true, false);
+
       return;
     }
+
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
+
       if (this.isOpen()) {
         this.close(true);
       } else {
         this.open(false, true);
       }
+
       return;
     }
+
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close(true);
@@ -228,26 +246,35 @@ export class ProjectPickerComponent {
 
   onOptionKeydown(event: KeyboardEvent, index: number): void {
     const total = this.options().length;
+
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       this.focusIndex((index + 1) % total);
+
       return;
     }
+
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.focusIndex((index - 1 + total) % total);
+
       return;
     }
+
     if (event.key === 'Home') {
       event.preventDefault();
       this.focusIndex(0);
+
       return;
     }
+
     if (event.key === 'End') {
       event.preventDefault();
       this.focusIndex(total - 1);
+
       return;
     }
+
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close(true);
@@ -257,37 +284,46 @@ export class ProjectPickerComponent {
   onSearchInput(value: string): void {
     this.searchQuery.set(value);
     const options = this.options();
+
     if (!options.length) {
       this.activeIndex.set(0);
+
       return;
     }
 
     const selectedIndex = options.findIndex(
       (option) => option.id === this.selectedProjectId
     );
+
     this.activeIndex.set(selectedIndex >= 0 ? selectedIndex : 0);
   }
 
   onSearchKeydown(event: KeyboardEvent): void {
     const total = this.options().length;
+
     if (!total) {
       if (event.key === 'Escape') {
         event.preventDefault();
         this.close(true);
       }
+
       return;
     }
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       this.focusIndex(0);
+
       return;
     }
+
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.focusIndex(total - 1);
+
       return;
     }
+
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close(true);
@@ -302,10 +338,13 @@ export class ProjectPickerComponent {
     if (!this.isOpen()) {
       return;
     }
+
     const target = event.target;
+
     if (!(target instanceof Node)) {
       return;
     }
+
     if (!this.host.nativeElement.contains(target)) {
       this.close(false);
     }
@@ -319,6 +358,7 @@ export class ProjectPickerComponent {
     if (!this.isOpen()) {
       return;
     }
+
     this.positionMenu();
   }
 
@@ -334,24 +374,31 @@ export class ProjectPickerComponent {
     if (!this.options().length) {
       return;
     }
+
     this.isOpen.set(true);
     this.searchQuery.set('');
     this.positionMenu();
+
     const selectedIndex = this.options().findIndex(
       (option) => option.id === this.selectedProjectId
     );
+
     if (focusSearch) {
       this.activeIndex.set(selectedIndex >= 0 ? selectedIndex : 0);
       queueMicrotask(() => {
         this.positionMenu();
         this.searchInput?.nativeElement.focus();
       });
+
       return;
     }
+
     if (selectedIndex >= 0) {
       this.focusIndex(selectedIndex);
+
       return;
     }
+
     this.focusIndex(preferLast ? this.options().length - 1 : 0);
   }
 
@@ -359,8 +406,10 @@ export class ProjectPickerComponent {
     if (!this.isOpen()) {
       return;
     }
+
     this.isOpen.set(false);
     this.searchQuery.set('');
+
     if (focusTrigger) {
       queueMicrotask(() => this.triggerButton?.nativeElement.focus());
     }
@@ -370,6 +419,7 @@ export class ProjectPickerComponent {
     if (!this.options().length) {
       return;
     }
+
     const safeIndex = Math.max(0, Math.min(index, this.options().length - 1));
     this.activeIndex.set(safeIndex);
     queueMicrotask(() =>
@@ -379,6 +429,7 @@ export class ProjectPickerComponent {
 
   private positionMenu(): void {
     const trigger = this.triggerButton?.nativeElement;
+
     if (!trigger) {
       return;
     }
@@ -388,22 +439,27 @@ export class ProjectPickerComponent {
     const viewportHeight = window.innerHeight;
     const gutter = 12;
     const desiredWidth = rect.width;
+
     const width = Math.max(
       220,
       Math.min(desiredWidth, viewportWidth - gutter * 2)
     );
+
     const left = Math.min(
       Math.max(gutter, rect.left),
       viewportWidth - width - gutter
     );
+
     const belowTop = rect.bottom + 6;
     const belowSpace = viewportHeight - belowTop - gutter;
     const aboveSpace = rect.top - gutter;
     const shouldOpenAbove = belowSpace < 220 && aboveSpace > belowSpace;
+
     const maxHeight = Math.min(
       260,
       Math.max(180, shouldOpenAbove ? aboveSpace : belowSpace)
     );
+
     const top = shouldOpenAbove
       ? Math.max(gutter, rect.top - maxHeight - 6)
       : belowTop;
@@ -418,6 +474,7 @@ export class ProjectPickerComponent {
 
   private allOptions(): PickerOption[] {
     const options: PickerOption[] = [];
+
     if (this.includeEmptyOption) {
       options.push({
         id: '',
@@ -428,25 +485,30 @@ export class ProjectPickerComponent {
         color: null,
         level: 0,
         index: 0,
-          parentLabel: null,
-          isShared: false,
+        parentLabel: null,
+        isShared: false,
       });
     }
+
     const projectOptions = this.buildProjectOptions('');
+
     for (const project of projectOptions) {
       options.push({
         ...project,
         index: options.length,
       });
     }
+
     return options;
   }
 
   private matchesSearch(name: string): boolean {
     const query = this.searchQuery().trim().toLocaleLowerCase();
+
     if (!query) {
       return true;
     }
+
     return name.toLocaleLowerCase().includes(query);
   }
 
@@ -454,6 +516,7 @@ export class ProjectPickerComponent {
     const labelById = new Map(
       this.projects.map((project) => [project.id, project.name] as const)
     );
+
     const results: Omit<PickerOption, 'index'>[] = [];
 
     (['inbox', 'active', 'someday', 'routine'] as const).forEach((groupKey) => {
@@ -461,6 +524,7 @@ export class ProjectPickerComponent {
         if (this.includeEmptyOption && project.isInbox) {
           return false;
         }
+
         return this.projectGroupKey(project) === groupKey;
       });
 
@@ -479,10 +543,14 @@ export class ProjectPickerComponent {
           isInbox: project.isInbox ?? false,
         }))
       );
+
       const visibleTree = query
         ? filterHierarchy(
             projectTree,
-            (project) => project.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+            (project) =>
+              project.name
+                .toLocaleLowerCase()
+                .includes(query.toLocaleLowerCase()),
             true
           )
         : projectTree;
@@ -516,18 +584,24 @@ export class ProjectPickerComponent {
     }
 
     const type = (project.projectType ?? 'active').toLocaleLowerCase();
+
     if (type === 'routine') {
       return 'routine';
     }
+
     if (type === 'someday' || type === 'maybe') {
       return 'someday';
     }
+
     return 'active';
   }
 
   private isSharedProject(projectId: string): boolean {
     const project = this.projects.find((item) => item.id === projectId);
-    return isProjectSharedByMultipleMembers({ members: project?.members ?? [] });
+
+    return isProjectSharedByMultipleMembers({
+      members: project?.members ?? [],
+    });
   }
 
   private groupLabel(
@@ -537,6 +611,7 @@ export class ProjectPickerComponent {
     if (!options.length) {
       return null;
     }
+
     if (
       key === 'inbox' &&
       options.length === 1 &&
@@ -545,6 +620,7 @@ export class ProjectPickerComponent {
     ) {
       return null;
     }
+
     return PICKER_GROUP_LABELS[key];
   }
 }

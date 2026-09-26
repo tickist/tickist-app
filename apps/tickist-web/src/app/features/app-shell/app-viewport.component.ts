@@ -1,3 +1,4 @@
+import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
   Component,
   computed,
@@ -55,12 +56,17 @@ export class AppViewportComponent implements OnDestroy {
 
   readonly user = computed(() => this.session.user());
   readonly avatarUrl = computed(() => {
-    const metadata = getUserMetadata(this.user()?.user_metadata);
+    const metadata =
+      ProfileMetadataSchema.safeParse(this.user()?.user_metadata).data ?? {};
+
     const avatarUrl = asOptionalString(metadata['avatar_url']);
+
     if (!avatarUrl) {
       return null;
     }
+
     const version = asOptionalString(metadata['avatar_version']);
+
     return appendCacheVersion(avatarUrl, version);
   });
   readonly notifications = this.notificationsService.list;
@@ -100,12 +106,14 @@ export class AppViewportComponent implements OnDestroy {
 
   constructor() {
     const initialUrl = this.router.url;
+
     if (isRememberedAppUrl(initialUrl)) {
       this.viewState.rememberLastNonSheetAppUrl(initialUrl);
     }
 
     effect(() => {
       const user = this.user();
+
       if (user) {
         void this.notificationsService.refresh(user.id);
       } else {
@@ -123,9 +131,11 @@ export class AppViewportComponent implements OnDestroy {
       )
       .subscribe((event) => {
         this.currentUrl.set(event.urlAfterRedirects);
+
         if (isRememberedAppUrl(event.urlAfterRedirects)) {
           this.viewState.rememberLastNonSheetAppUrl(event.urlAfterRedirects);
         }
+
         this.profileMenuOpen.set(false);
         this.aboutModalOpen.set(false);
         this.notificationsOpen.set(false);
@@ -138,7 +148,9 @@ export class AppViewportComponent implements OnDestroy {
   }
 
   onSearchInput(event: Event) {
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
+
     this.viewState.updateSearchTerm(target?.value ?? '');
   }
 
@@ -151,6 +163,7 @@ export class AppViewportComponent implements OnDestroy {
     this.workspaces.select(workspaceId);
     this.workspaceMenuOpen.set(false);
     const selectedProjectId = this.viewState.selectedProjectId();
+
     if (selectedProjectId) {
       this.viewState.selectProject(null);
       void this.router.navigate(['/app']);
@@ -162,7 +175,11 @@ export class AppViewportComponent implements OnDestroy {
     const switcher = this.host.nativeElement.querySelector(
       '.workspace-switcher'
     );
-    if (switcher && !switcher.contains(event.target as Node)) {
+
+    if (
+      switcher &&
+      !switcher.contains(event.target instanceof Node ? event.target : null)
+    ) {
       this.workspaceMenuOpen.set(false);
     }
   }
@@ -175,11 +192,14 @@ export class AppViewportComponent implements OnDestroy {
   toggleNotifications(): void {
     if (!this.notifications().length && !this.notificationsLoading()) {
       const userId = this.user()?.id;
+
       if (userId) {
         void this.notificationsService.refresh(userId);
       }
     }
+
     this.notificationsOpen.update((open) => !open);
+
     if (this.notificationsOpen()) {
       this.profileMenuOpen.set(false);
     }
@@ -187,6 +207,7 @@ export class AppViewportComponent implements OnDestroy {
 
   toggleProfileMenu(): void {
     this.profileMenuOpen.update((open) => !open);
+
     if (this.profileMenuOpen()) {
       this.notificationsOpen.set(false);
     }
@@ -216,6 +237,7 @@ export class AppViewportComponent implements OnDestroy {
 
   avatarInitial() {
     const email = this.user()?.email ?? '';
+
     return email ? email.charAt(0).toUpperCase() : '?';
   }
 
@@ -237,32 +259,27 @@ export class AppViewportComponent implements OnDestroy {
   }
 }
 
-function getUserMetadata(value: unknown): Record<string, unknown> {
-  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return {};
-}
-
-function asOptionalString(value: unknown): string | null {
-  return typeof value === 'string' && value.trim().length > 0
-    ? value.trim()
-    : null;
+function asOptionalString(value: string | null | undefined): string | null {
+  return value != null && value.trim().length > 0 ? value.trim() : null;
 }
 
 function appendCacheVersion(url: string, version: string | null): string {
   if (!version) {
     return url;
   }
+
   const separator = url.includes('?') ? '&' : '?';
+
   return `${url}${separator}v=${encodeURIComponent(version)}`;
 }
 
 function shortCommit(commit: string): string {
   const normalized = commit.trim();
+
   if (!normalized || normalized === 'unknown') {
     return 'unknown';
   }
+
   return normalized.slice(0, 12);
 }
 

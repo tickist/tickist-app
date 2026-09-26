@@ -44,9 +44,11 @@ export class ToastService {
   dismiss(id: string): void {
     this.messagesSignal.update((current) => {
       const toast = current.find((item) => item.id === id);
+
       if (toast?.timeoutId) {
         clearTimeout(toast.timeoutId);
       }
+
       return current.filter((item) => item.id !== id);
     });
   }
@@ -59,12 +61,14 @@ export class ToastService {
     action?: () => void | Promise<void>
   ): void {
     const id =
-      typeof crypto?.randomUUID === 'function'
+      typeof crypto?.randomUUID !== 'undefined'
         ? crypto.randomUUID()
         : `toast-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
     const timeoutId = duration
       ? setTimeout(() => this.dismiss(id), duration)
       : undefined;
+
     this.messagesSignal.update((current) => [
       ...current,
       { id, message, type, actionLabel, action, timeoutId },

@@ -1,3 +1,8 @@
+import {
+  fixtureHost,
+  requiredElement,
+  elementsOfType,
+} from '../../../testing/dom';
 import assert from 'node:assert/strict';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { Component, signal } from '@angular/core';
@@ -31,6 +36,7 @@ describe('AppViewportComponent theme toggle', () => {
   let notifications: ReturnType<typeof signal<NotificationItem[]>>;
   let markAllAsRead: ReturnType<typeof vi.fn>;
   const selectedWorkspaceId = signal<string | null>(null);
+
   const selectWorkspace = vi.fn((id: string | null) =>
     selectedWorkspaceId.set(id)
   );
@@ -112,9 +118,11 @@ describe('AppViewportComponent theme toggle', () => {
     const fixture = TestBed.createComponent(AppViewportComponent);
     fixture.detectChanges();
 
-    const button = fixture.nativeElement.querySelector(
-      '[data-testid="theme-toggle"]'
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="theme-toggle"]',
+      HTMLButtonElement
+    );
 
     expect(button).not.toBeNull();
     expect(button?.getAttribute('aria-label')).toBeTruthy();
@@ -131,18 +139,27 @@ describe('AppViewportComponent theme toggle', () => {
   it('renders the workspace switcher and selects a workspace', () => {
     const fixture = TestBed.createComponent(AppViewportComponent);
     fixture.detectChanges();
-    const trigger = fixture.nativeElement.querySelector(
-      '[aria-label="Select workspace"]'
-    ) as HTMLButtonElement;
+
+    const trigger = requiredElement(
+      fixtureHost(fixture),
+      '[aria-label="Select workspace"]',
+      HTMLButtonElement
+    );
+
     expect(trigger.textContent).toContain('All');
     trigger.click();
     fixture.detectChanges();
-    const options = fixture.nativeElement.querySelectorAll(
-      '#workspace-menu button'
-    ) as NodeListOf<HTMLButtonElement>;
+
+    const options = elementsOfType(
+      fixtureHost(fixture),
+      '#workspace-menu button',
+      HTMLButtonElement
+    );
+
     const option = Array.from(options).find(
       (button) => button.textContent?.trim() === 'Work'
     );
+
     expect(option).toBeTruthy();
     option?.click();
     fixture.detectChanges();
@@ -176,7 +193,7 @@ describe('AppViewportComponent theme toggle', () => {
     fixture.detectChanges();
 
     const button = Array.from(
-      fixture.nativeElement.querySelectorAll('button')
+      fixtureHost(fixture).querySelectorAll('button')
     ).find(
       (candidate): candidate is HTMLButtonElement =>
         candidate.textContent?.includes('Read all') ?? false
@@ -197,9 +214,11 @@ describe('AppViewportComponent theme toggle', () => {
     fixture.componentInstance.notificationsOpen.set(true);
     fixture.detectChanges();
 
-    const button = fixture.nativeElement.querySelector(
-      'button[aria-label="Close notifications"]'
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      'button[aria-label="Close notifications"]',
+      HTMLButtonElement
+    );
 
     expect(button).toBeTruthy();
     expect(button?.textContent?.trim()).toBe('×');
@@ -212,9 +231,11 @@ describe('AppViewportComponent theme toggle', () => {
     fixture.componentInstance.sidebarOpen.set(true);
     fixture.detectChanges();
 
-    const button = fixture.nativeElement.querySelector(
-      'button[aria-label="Close sidebar"]'
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      'button[aria-label="Close sidebar"]',
+      HTMLButtonElement
+    );
 
     expect(button).toBeTruthy();
     expect(button?.textContent?.trim()).toBe('✕');

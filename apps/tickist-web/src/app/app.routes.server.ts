@@ -16,19 +16,23 @@ export const serverRoutes: ServerRoute[] = [
 
 function blogServerRoutes(locale: BlogLocale): ServerRoute[] {
   const content = getBlogContent(locale);
+
   const categories = content.categories.filter((category) =>
     content.posts.some((post) => post.category === category.slug)
   );
+
   const archivePages = Array.from(
     {
       length: Math.max(0, Math.ceil(content.posts.length / BLOG_PAGE_SIZE) - 1),
     },
     (_, index) => ({ page: String(index + 2) })
   );
+
   const categoryPages = categories.flatMap((category) => {
     const total = content.posts.filter(
       (post) => post.category === category.slug
     ).length;
+
     return Array.from(
       {
         length: Math.max(0, Math.ceil(total / BLOG_PAGE_SIZE) - 1),

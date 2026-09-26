@@ -32,6 +32,16 @@
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
     },
+    "oxlint": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/.oxlintrc.json",
+        "{workspaceRoot}/tools/oxlint/anti-slop/**/*",
+        { "externalDependencies": ["oxlint", "@oxlint/plugins"] }
+      ]
+    },
     "@nx/vitest:test": {
       "cache": true,
       "inputs": ["default", "^production"]
@@ -56,6 +66,12 @@
         "testTargetName": "vitest:test",
         "ciTargetName": "test-ci",
         "testMode": "watch"
+      }
+    },
+    {
+      "plugin": "@nx/oxlint",
+      "options": {
+        "targetName": "oxlint"
       }
     }
   ],

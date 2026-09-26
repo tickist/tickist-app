@@ -36,6 +36,7 @@ export class ThemeService {
   private resolveInitialTheme(): ThemeName {
     const currentTheme =
       this.document.documentElement.getAttribute('data-theme');
+
     if (isThemeName(currentTheme)) {
       return currentTheme;
     }
@@ -45,12 +46,13 @@ export class ThemeService {
     }
 
     const storedTheme = this.safeGetStoredTheme();
+
     if (storedTheme) {
       return storedTheme;
     }
 
     const prefersDark =
-      typeof window.matchMedia === 'function' &&
+      typeof window.matchMedia !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     return prefersDark ? 'tickist' : 'tickist-light';
@@ -64,6 +66,7 @@ export class ThemeService {
     root.style.colorScheme = colorScheme;
 
     this.document.body?.setAttribute('data-theme', theme);
+
     if (this.document.body) {
       this.document.body.style.colorScheme = colorScheme;
     }
@@ -80,6 +83,7 @@ export class ThemeService {
   private safeGetStoredTheme(): ThemeName | null {
     try {
       const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+
       return isThemeName(storedTheme) ? storedTheme : null;
     } catch {
       return null;

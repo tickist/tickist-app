@@ -41,6 +41,7 @@ export class BlogIndexComponent {
 
   readonly locale = computed<BlogLocale>(() => {
     const locale = this.routeParams().get('locale');
+
     return isBlogLocale(locale) ? locale : 'en';
   });
   readonly content = computed(() => getBlogContent(this.locale()));
@@ -53,6 +54,7 @@ export class BlogIndexComponent {
   );
   readonly category = computed(() => {
     const slug = this.categorySlug();
+
     return slug ? findBlogCategory(this.locale(), slug) : undefined;
   });
   readonly activeTag = computed(
@@ -108,6 +110,7 @@ export class BlogIndexComponent {
     const base = this.category()
       ? `${this.content().pathPrefix}/category/${this.category()?.slug}`
       : this.content().pathPrefix;
+
     return page === 1 ? base : `${base}/page/${page}`;
   }
 
@@ -115,9 +118,11 @@ export class BlogIndexComponent {
     const content = this.content();
     const category = this.category();
     const path = this.pagePath(this.page());
+
     const title = category
       ? `${category.name} | ${content.title}`
       : `${content.title} | Tickist`;
+
     const description = category?.description ?? content.description;
     this.seo.apply({
       title,

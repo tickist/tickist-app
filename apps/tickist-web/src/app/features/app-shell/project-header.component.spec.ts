@@ -1,3 +1,4 @@
+import { fixtureHost, requiredElement } from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -20,29 +21,36 @@ describe('ProjectHeaderComponent', () => {
 
   it('shows the suspended count and filter option', () => {
     expect(
-      fixture.nativeElement.querySelector(
+      fixtureHost(fixture).querySelector(
         '[data-testid="project-suspended-count"]'
       ).textContent
     ).toContain('Suspended: 3');
 
-    const filterButton = fixture.nativeElement.querySelector(
-      'button[title="Filter"]'
-    ) as HTMLButtonElement;
+    const filterButton = requiredElement(
+      fixtureHost(fixture),
+      'button[title="Filter"]',
+      HTMLButtonElement
+    );
+
     filterButton.click();
     fixture.detectChanges();
 
     const labels = Array.from(
-      fixture.nativeElement.querySelectorAll('button.filter-option')
-    ).map((button) => (button as HTMLElement).textContent?.trim());
+      fixtureHost(fixture).querySelectorAll('button.filter-option')
+    ).map((button) => button.textContent?.trim());
+
     expect(labels).toContain('suspended');
   });
 
   it('selects the suspended filter when the count is clicked', () => {
     const changeFilter = vi.fn();
     fixture.componentInstance.changeFilter.subscribe(changeFilter);
-    const countButton = fixture.nativeElement.querySelector(
-      '[data-testid="project-suspended-count"]'
-    ) as HTMLButtonElement;
+
+    const countButton = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="project-suspended-count"]',
+      HTMLButtonElement
+    );
 
     countButton.click();
 

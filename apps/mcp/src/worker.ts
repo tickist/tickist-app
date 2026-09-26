@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
   buildOAuthProtectedResourceMetadata,
   createMcpHandler,
@@ -21,10 +22,14 @@ import { createTickistMcpServer } from './server';
 
 preloadSchemas();
 
-const app = new Hono();
+const app = new Hono<{ Bindings: McpEnvironment }>();
+
 const handlers = new WeakMap<McpEnvironment, McpHttpHandler>();
+
 const MODERN_PROTOCOL_VERSION = '2026-07-28';
+
 const MAX_BODY_BYTES = 64 * 1024;
+
 const CORS_REQUEST_HEADERS = new Set([
   'accept',
   'authorization',
@@ -39,6 +44,7 @@ const CORS_REQUEST_HEADERS = new Set([
 
 function oauthMetadata(env: McpEnvironment) {
   const issuer = env.MCP_OAUTH_ISSUER.replace(/\/$/u, '');
+
   return {
     issuer,
     authorization_endpoint: `${issuer}/oauth/authorize`,
@@ -62,14 +68,18 @@ function metadataOptions(env: McpEnvironment): AuthMetadataOptions {
 }
 
 function allowedHosts(env: McpEnvironment): string[] {
-  return [
+  const hosts = new Set<string>();
+
+  for (const raw of [
     new URL(env.MCP_RESOURCE_URL).hostname,
     ...(env.MCP_ALLOWED_HOSTS?.split(',') ?? []),
-  ]
-    .map((host) => host.trim())
-    .filter(
-      (host, index, hosts) => Boolean(host) && hosts.indexOf(host) === index
-    );
+  ]) {
+    const host = raw.trim();
+
+    if (host) hosts.add(host);
+  }
+
+  return [...hosts];
 }
 
 function requestedCorsHeaders(request: Request): string[] | Response {
@@ -79,11 +89,13 @@ function requestedCorsHeaders(request: Request): string[] | Response {
     .split(',')
     .map((header) => header.trim().toLowerCase())
     .filter(Boolean);
+
   const invalid = requested.filter(
     (header) =>
       !CORS_REQUEST_HEADERS.has(header) &&
       !/^mcp-param-[a-z0-9-]+$/u.test(header)
   );
+
   return invalid.length === 0
     ? requested
     : Response.json({ error: 'cors_header_forbidden' }, { status: 403 });
@@ -98,6 +110,7 @@ function withResponseHeaders(
   headers.set('X-Robots-Tag', 'noindex, nofollow');
 
   const origin = request.headers.get('Origin');
+
   if (env && origin && !originValidationResponse(request, allowedHosts(env))) {
     headers.set('Access-Control-Allow-Origin', origin);
     headers.append('Vary', 'Origin');
@@ -124,13 +137,17 @@ function withResponseHeaders(
 
 function handlerFor(env: McpEnvironment): McpHttpHandler {
   const current = handlers.get(env);
+
   if (current) return current;
+
   const handler = createMcpHandler(
     ({ authInfo }) => {
-      const userId = authInfo?.extra?.['userId'];
-      if (!authInfo || typeof userId !== 'string') {
+      const userId = z.string().safeParse(authInfo?.extra?.['userId']).data;
+
+      if (!authInfo || userId === undefined) {
         throw new Error('Authenticated MCP request context is required.');
       }
+
       return createTickistMcpServer({
         supabaseUrl: env.SUPABASE_URL,
         publishableKey: env.SUPABASE_PUBLISHABLE_KEY,
@@ -142,15 +159,18 @@ function handlerFor(env: McpEnvironment): McpHttpHandler {
     },
     { legacy: 'stateless' }
   );
+
   handlers.set(env, handler);
+
   return handler;
 }
 
 function metadataDocumentResponse(
   request: Request,
-  metadata: object
+  metadata: ReturnType<typeof buildOAuthProtectedResourceMetadata>
 ): Response {
   const headers = { 'Access-Control-Allow-Origin': '*' };
+
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -160,12 +180,14 @@ function metadataDocumentResponse(
       },
     });
   }
+
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return Response.json(
       { error: 'method_not_allowed' },
       { status: 405, headers: { ...headers, Allow: 'GET, HEAD, OPTIONS' } }
     );
   }
+
   return request.method === 'HEAD'
     ? new Response(null, { headers })
     : Response.json(metadata, { headers });
@@ -175,6 +197,7 @@ function bearerToken(request: Request): string | undefined {
   const match = /^Bearer\s+(\S+)$/iu.exec(
     request.headers.get('Authorization')?.trim() ?? ''
   );
+
   return match?.[1];
 }
 
@@ -183,10 +206,12 @@ async function rateLimitKey(request: Request): Promise<string> {
   // value must never select its own bucket. Otherwise arbitrary token rotation
   // would bypass the limit.
   const source = `ip:${request.headers.get('CF-Connecting-IP') ?? 'unknown'}`;
+
   const digest = await crypto.subtle.digest(
     'SHA-256',
     new TextEncoder().encode(source)
   );
+
   return Array.from(new Uint8Array(digest), (byte) =>
     byte.toString(16).padStart(2, '0')
   ).join('');
@@ -194,28 +219,36 @@ async function rateLimitKey(request: Request): Promise<string> {
 
 async function validatedRequest(request: Request): Promise<Request | Response> {
   if (request.method === 'OPTIONS') return request;
+
   if (request.method !== 'POST') {
     return Response.json({ error: 'method_not_allowed' }, { status: 405 });
   }
+
   const contentType = request.headers
     .get('Content-Type')
     ?.split(';', 1)[0]
     .trim()
     .toLowerCase();
+
   if (contentType !== 'application/json') {
     return Response.json(
       { error: 'Content-Type must be application/json.' },
       { status: 415 }
     );
   }
+
   const declared = Number(request.headers.get('Content-Length') ?? '0');
+
   if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
     return Response.json({ error: 'Request body too large.' }, { status: 413 });
   }
+
   const body = await request.arrayBuffer();
+
   if (body.byteLength > MAX_BODY_BYTES) {
     return Response.json({ error: 'Request body too large.' }, { status: 413 });
   }
+
   try {
     JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(body));
   } catch {
@@ -224,6 +257,8 @@ async function validatedRequest(request: Request): Promise<Request | Response> {
       { status: 400 }
     );
   }
+
+  // oxlint-disable-next-line unicorn/no-invalid-fetch-options -- This path accepts POST only.
   return new Request(request, { body });
 }
 
@@ -237,8 +272,10 @@ async function forwardPersonalToken(
       { status: 503 }
     );
   }
+
   const headers = new Headers(request.headers);
   headers.set('apikey', env.SUPABASE_PUBLISHABLE_KEY);
+
   return fetch(env.LEGACY_MCP_URL, {
     method: request.method,
     headers,
@@ -248,10 +285,10 @@ async function forwardPersonalToken(
 
 app.use('*', async (context, next) => {
   await next();
+
   const env =
-    context.req.path === '/mcp'
-      ? requireEnvironment(context.env as Partial<McpEnvironment>)
-      : undefined;
+    context.req.path === '/mcp' ? requireEnvironment(context.env) : undefined;
+
   context.res = withResponseHeaders(context.res, context.req.raw, env);
 });
 
@@ -265,14 +302,17 @@ app.get('/health', (context) =>
 );
 
 app.use('/.well-known/*', async (context, next) => {
-  const env = requireEnvironment(context.env as Partial<McpEnvironment>);
+  const env = requireEnvironment(context.env);
   const response = oauthMetadataResponse(context.req.raw, metadataOptions(env));
+
   if (response) return response;
+
   return next();
 });
 
 app.all('/.well-known/oauth-protected-resource', (context) => {
-  const env = requireEnvironment(context.env as Partial<McpEnvironment>);
+  const env = requireEnvironment(context.env);
+
   return metadataDocumentResponse(
     context.req.raw,
     buildOAuthProtectedResourceMetadata(metadataOptions(env))
@@ -280,17 +320,20 @@ app.all('/.well-known/oauth-protected-resource', (context) => {
 });
 
 app.all('/mcp', async (context) => {
-  const env = requireEnvironment(context.env as Partial<McpEnvironment>);
+  const env = requireEnvironment(context.env);
   const hosts = allowedHosts(env);
+
   const rejected =
     hostHeaderValidationResponse(context.req.raw, hosts) ??
     originValidationResponse(context.req.raw, hosts);
+
   if (rejected) return rejected;
 
   if (context.req.raw.method === 'POST') {
     const rateLimit = await env.MCP_RATE_LIMITER.limit({
       key: await rateLimitKey(context.req.raw),
     });
+
     if (!rateLimit.success) {
       return Response.json(
         { error: 'rate_limit_exceeded' },
@@ -300,15 +343,19 @@ app.all('/mcp', async (context) => {
   }
 
   const checked = await validatedRequest(context.req.raw);
+
   if (checked instanceof Response) return checked;
+
   if (checked.method === 'OPTIONS') {
     const requestedHeaders = requestedCorsHeaders(checked);
+
     return requestedHeaders instanceof Response
       ? requestedHeaders
       : new Response(null, { status: 204 });
   }
 
   const token = bearerToken(checked);
+
   if (token?.startsWith('tk_')) return forwardPersonalToken(checked, env);
 
   const gate = requireBearerAuth({
@@ -317,8 +364,11 @@ app.all('/mcp', async (context) => {
       new URL(env.MCP_RESOURCE_URL)
     ),
   });
+
   const auth = await gate(checked);
+
   if (auth instanceof Response) return auth;
+
   return handlerFor(env).fetch(checked, { authInfo: auth });
 });
 

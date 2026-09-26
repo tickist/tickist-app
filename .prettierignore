@@ -6,3 +6,5 @@
 .angular
 
 .nx/self-healing
+# Preserve the vendored upstream plugin source.
+/tools/oxlint/anti-slop

@@ -1,3 +1,4 @@
+import type { JsonRecord } from '@tickist/data-access-tickist';
 import type { AuthInfo } from '@modelcontextprotocol/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseTokenVerifier } from './auth';
@@ -23,7 +24,7 @@ const authInfo: AuthInfo = {
   extra: { userId: '00000000-0000-4000-8000-000000000001' },
 };
 
-function request(body: object, headers: HeadersInit = {}): Request {
+function request(body: JsonRecord, headers: HeadersInit = {}): Request {
   return new Request(env.MCP_RESOURCE_URL, {
     method: 'POST',
     headers: {
@@ -56,6 +57,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(response.status).toBe(200);
     expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow');
     await expect(response.json()).resolves.toMatchObject({
@@ -72,6 +74,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       issuer: env.MCP_OAUTH_ISSUER,
@@ -91,6 +94,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(response.status).toBe(401);
     expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow');
     expect(response.headers.get('www-authenticate')).toContain(
@@ -113,6 +117,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(response.status).toBe(204);
     expect(response.headers.get('access-control-allow-origin')).toBe(
       'https://mcp.tickist.com'
@@ -136,6 +141,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(response.status).toBe(403);
   });
 
@@ -144,6 +150,7 @@ describe('Tickist MCP Worker', () => {
       SupabaseTokenVerifier.prototype,
       'verifyAccessToken'
     );
+
     const badHost = await app.request(
       request(
         { jsonrpc: '2.0', id: 1, method: 'server/discover' },
@@ -154,6 +161,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     const badOrigin = await app.request(
       request(
         { jsonrpc: '2.0', id: 1, method: 'server/discover' },
@@ -164,6 +172,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(badHost.status).toBe(403);
     expect(badOrigin.status).toBe(403);
     expect(verify).not.toHaveBeenCalled();
@@ -183,6 +192,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(response.status).toBe(413);
   });
 
@@ -191,6 +201,7 @@ describe('Tickist MCP Worker', () => {
       SupabaseTokenVerifier.prototype,
       'verifyAccessToken'
     );
+
     const response = await app.request(
       request({ jsonrpc: '2.0', id: 1, method: 'server/discover' }),
       undefined,
@@ -199,6 +210,7 @@ describe('Tickist MCP Worker', () => {
         MCP_RATE_LIMITER: { limit: async () => ({ success: false }) },
       }
     );
+
     expect(response.status).toBe(429);
     expect(response.headers.get('retry-after')).toBe('60');
     expect(verify).not.toHaveBeenCalled();
@@ -206,11 +218,13 @@ describe('Tickist MCP Worker', () => {
 
   it('uses one pre-auth rate-limit bucket for rotating invalid tokens', async () => {
     const keys: string[] = [];
+
     const rateLimitedEnv: McpEnvironment = {
       ...env,
       MCP_RATE_LIMITER: {
         limit: async ({ key }) => {
           keys.push(key);
+
           return { success: true };
         },
       },
@@ -228,6 +242,7 @@ describe('Tickist MCP Worker', () => {
         undefined,
         rateLimitedEnv
       );
+
       expect(response.status).toBe(401);
     }
 
@@ -240,6 +255,7 @@ describe('Tickist MCP Worker', () => {
       SupabaseTokenVerifier.prototype,
       'verifyAccessToken'
     ).mockResolvedValue(authInfo);
+
     const modern = await app.request(
       request(
         {
@@ -261,6 +277,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(modern.status).toBe(200);
     await expect(modern.json()).resolves.toMatchObject({
       result: { supportedVersions: ['2026-07-28'] },
@@ -280,6 +297,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(legacy.status).toBe(200);
     await expect(legacy.text()).resolves.toContain('2025-06-18');
   });
@@ -290,6 +308,7 @@ describe('Tickist MCP Worker', () => {
       'verifyAccessToken'
     ).mockResolvedValue({ ...authInfo, scopes: ['tags:write'] });
     const fetchRequest = vi.spyOn(globalThis, 'fetch');
+
     const response = await app.request(
       request(
         {
@@ -317,6 +336,7 @@ describe('Tickist MCP Worker', () => {
       undefined,
       env
     );
+
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       result: {

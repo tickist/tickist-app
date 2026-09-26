@@ -1,3 +1,4 @@
+import { fixtureHost, requiredElement } from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Task, TaskDataService } from '../../data/task-data.service';
@@ -180,7 +181,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     component.selectTab('extra');
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.task-history')).toBeNull();
+    expect(fixtureHost(fixture).querySelector('.task-history')).toBeNull();
 
     component.preset = {
       mode: 'edit',
@@ -192,7 +193,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     component.selectTab('extra');
     fixture.detectChanges();
 
-    const history = fixture.nativeElement.querySelector('.task-history');
+    const history = fixtureHost(fixture).querySelector('.task-history');
     expect(history).not.toBeNull();
     expect(history.textContent).toContain('Created');
     expect(history.textContent).toContain('Last modified');
@@ -209,7 +210,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     expect(component.sheetEyebrow()).toBe('Edit task');
     expect(component.sheetTitle()).toBe('');
     expect(
-      fixture.nativeElement.querySelector('.sheet-shell__title')
+      fixtureHost(fixture).querySelector('.sheet-shell__title')
     ).toBeNull();
     expect(component.taskForm.controls.name.value).toBe('Editable task name');
   });
@@ -362,7 +363,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     fixture.detectChanges();
 
     expect(
-      fixture.nativeElement.querySelector(
+      fixtureHost(fixture).querySelector(
         '[data-testid="task-suspension-options"]'
       )
     ).not.toBeNull();
@@ -396,10 +397,10 @@ describe('TaskComposerComponent repeat custom cadence', () => {
 
     expect(component.taskForm.controls.suspendUntilTime.value).toBe('00:00');
     expect(
-      (
-        fixture.nativeElement.querySelector(
-          'input[aria-label="Resume time"]'
-        ) as HTMLInputElement
+      requiredElement(
+        fixtureHost(fixture),
+        'input[aria-label="Resume time"]',
+        HTMLInputElement
       ).value
     ).toBe('00:00');
     await component.submit();
@@ -496,13 +497,13 @@ describe('TaskComposerComponent shared sheet layout', () => {
 
   it('renders the shared sheet shell with a single footer and scroll panel', () => {
     expect(
-      fixture.nativeElement.querySelector('[data-testid="task-composer-sheet"]')
+      fixtureHost(fixture).querySelector('[data-testid="task-composer-sheet"]')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelector('.sheet-shell__panel-scroll')
+      fixtureHost(fixture).querySelector('.sheet-shell__panel-scroll')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelectorAll('.sheet-shell__footer')
+      fixtureHost(fixture).querySelectorAll('.sheet-shell__footer')
     ).toHaveLength(1);
   });
 });
@@ -533,6 +534,7 @@ function createTask(overrides: Partial<Task> = {}): Task {
     reminderCount: 0,
     reminders: [],
     tags: [],
+    assigneeIds: [],
     steps: [],
     createdAt: null,
     updatedAt: null,
@@ -545,5 +547,6 @@ function futureDateInput(days: number): string {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
+
   return `${year}-${month}-${day}`;
 }

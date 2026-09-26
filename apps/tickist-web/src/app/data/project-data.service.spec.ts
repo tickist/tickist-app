@@ -229,20 +229,12 @@ describe('defaultTaskAssigneeIds', () => {
 
   test('keeps a private task unassigned', () => {
     expect(
-      defaultTaskAssigneeIds(
-        { ownerId: 'owner-1', members: [] },
-        'owner-1'
-      )
+      defaultTaskAssigneeIds({ ownerId: 'owner-1', members: [] }, 'owner-1')
     ).toEqual([]);
   });
 });
 
-function createSupabaseMock(): {
-  from: ReturnType<typeof vi.fn>;
-  rpc: ReturnType<typeof vi.fn>;
-  projectSelects: string[];
-  membershipSelects: string[];
-} {
+function createSupabaseMock() {
   const projectSelects: string[] = [];
   const membershipSelects: string[] = [];
 
@@ -253,6 +245,7 @@ function createSupabaseMock(): {
       if (name !== 'list_accessible_project_assignees') {
         throw new Error(`Unexpected RPC: ${name}`);
       }
+
       return {
         data: [
           {
@@ -274,37 +267,40 @@ function createSupabaseMock(): {
         return {
           select: vi.fn((columns: string) => {
             projectSelects.push(columns);
+
             return Promise.resolve({ data: [legacyProjectRow()], error: null });
           }),
         };
       }
+
       if (table === 'project_members') {
         return {
           select: vi.fn((columns: string) => {
             membershipSelects.push(columns);
+
             return {
-              order: vi.fn(async () =>
-                ({ data: [legacyMemberRow()], error: null })
-              ),
+              order: vi.fn(async () => ({
+                data: [legacyMemberRow()],
+                error: null,
+              })),
             };
           }),
         };
       }
+
       throw new Error(`Unexpected table: ${table}`);
     }),
   };
 }
 
-function createInboxConflictSupabaseMock(): {
-  from: ReturnType<typeof vi.fn>;
-  rpc: ReturnType<typeof vi.fn>;
-} {
+function createInboxConflictSupabaseMock() {
   const inboxRow = legacyProjectRow({
     id: 'inbox-1',
     name: 'Inbox',
     is_inbox: true,
     project_members: [],
   });
+
   let shouldReturnInbox = false;
 
   return {
@@ -321,28 +317,37 @@ function createInboxConflictSupabaseMock(): {
             })),
           })),
           select: vi.fn(() => {
-            const filters: Record<string, unknown> = {};
+            const filters: Record<string, string | boolean> = {};
+
             const query = {
-              eq: vi.fn((column: string, value: unknown) => {
+              eq: vi.fn((column: string, value: string | boolean) => {
                 filters[column] = value;
                 shouldReturnInbox =
                   filters['owner_id'] === 'owner-1' &&
                   filters['is_inbox'] === true;
+
                 return query;
               }),
               maybeSingle: vi.fn(async () => ({
                 data: shouldReturnInbox ? inboxRow : null,
                 error: null,
               })),
+              // oxlint-disable-next-line unicorn/no-thenable -- Supabase query mocks are intentionally thenable.
               then: (
-                resolve: (value: { data: ProjectRow[]; error: null }) => unknown,
-                reject: (reason?: unknown) => unknown
-              ) => Promise.resolve({ data: [], error: null }).then(resolve, reject),
+                resolve: (value: { data: ProjectRow[]; error: null }) => void,
+                reject: (cause?: unknown) => void
+              ) =>
+                Promise.resolve({ data: [], error: null }).then(
+                  resolve,
+                  reject
+                ),
             };
+
             return query;
           }),
         };
       }
+
       if (table === 'project_members') {
         return {
           select: vi.fn(() => ({
@@ -350,12 +355,13 @@ function createInboxConflictSupabaseMock(): {
           })),
         };
       }
+
       throw new Error(`Unexpected table: ${table}`);
     }),
   };
 }
 
-function duplicateInboxError(): { code: string; message: string } {
+function duplicateInboxError() {
   return {
     code: '23505',
     message:

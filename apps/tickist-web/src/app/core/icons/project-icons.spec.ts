@@ -20,6 +20,7 @@ describe('project icon catalogue', () => {
     for (const option of PROJECT_ICON_OPTIONS) {
       expect(resolveProjectIconData(option.key)).toContain('<svg');
     }
+
     expect(resolveProjectIconKey('unknown-icon')).toBe('folder');
   });
 });

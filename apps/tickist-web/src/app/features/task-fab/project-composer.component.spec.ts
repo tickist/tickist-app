@@ -1,3 +1,4 @@
+import { fixtureHost } from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Project, ProjectDataService } from '../../data/project-data.service';
@@ -36,13 +37,13 @@ describe('ProjectComposerComponent sheet header', () => {
   it('shows create title and shared sticky footer in create mode', () => {
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Create project');
-    expect(fixture.nativeElement.textContent).toContain('New project');
+    expect(fixtureHost(fixture).textContent).toContain('Create project');
+    expect(fixtureHost(fixture).textContent).toContain('New project');
     expect(
-      fixture.nativeElement.querySelector('.sheet-shell__footer')
+      fixtureHost(fixture).querySelector('.sheet-shell__footer')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelector('.sheet-shell__panel-scroll')
+      fixtureHost(fixture).querySelector('.sheet-shell__panel-scroll')
     ).not.toBeNull();
   });
 
@@ -53,25 +54,26 @@ describe('ProjectComposerComponent sheet header', () => {
     };
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Edit project');
-    expect(fixture.nativeElement.textContent).toContain('Trip planning');
+    expect(fixtureHost(fixture).textContent).toContain('Edit project');
+    expect(fixtureHost(fixture).textContent).toContain('Trip planning');
   });
 
   it('uses themed buttons instead of a native project type dropdown', () => {
     fixture.detectChanges();
 
     const options = Array.from(
-      fixture.nativeElement.querySelectorAll<HTMLButtonElement>(
+      fixtureHost(fixture).querySelectorAll<HTMLButtonElement>(
         '.project-type-option'
       )
     );
+
     expect(options.map((option) => option.textContent?.trim())).toEqual([
       'Active',
       'Someday/maybe',
       'Routine',
     ]);
     expect(
-      fixture.nativeElement.querySelector(
+      fixtureHost(fixture).querySelector(
         'select[formcontrolname="projectType"]'
       )
     ).toBeNull();
@@ -91,12 +93,10 @@ describe('ProjectComposerComponent sheet header', () => {
       ['pizza']
     );
     expect(
-      fixture.nativeElement.querySelector(
-        'button.icon-pill[aria-label="Pizza"]'
-      )
+      fixtureHost(fixture).querySelector('button.icon-pill[aria-label="Pizza"]')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelector(
+      fixtureHost(fixture).querySelector(
         'button.icon-pill[aria-label="Folder"]'
       )
     ).toBeNull();
@@ -117,6 +117,7 @@ function createProject(overrides: Partial<Project> = {}): Project {
     ancestorId: null,
     taskView: 'extended',
     shareWithIds: [],
+    members: [],
     ...overrides,
   };
 }

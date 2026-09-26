@@ -45,8 +45,10 @@ export class AuthResetComponent {
     if (this.isDisabled) {
       return;
     }
+
     this.isSubmitting.set(true);
     this.message.set(null);
+
     try {
       const { email } = this.form.getRawValue();
       await this.auth.sendPasswordReset(email);

@@ -129,6 +129,7 @@ The app is available at [http://localhost:4200](http://localhost:4200). The star
 npm run start
 
 # Static checks, unit tests, and production build
+npm exec nx run-many -t oxlint --all
 npm exec nx lint tickist-web
 npm exec nx test tickist-web
 npm exec nx build tickist-web --configuration production
@@ -249,7 +250,7 @@ Deployment configuration and required GitHub secrets are defined in [`.github/wo
 
 ## Contributing
 
-1. Branch from `develop` using a focused name such as `rewrite/<feature>` or `supabase/<area>`.
+1. Work directly on `develop`. Create a feature branch only when the owner explicitly asks for one.
 2. Keep Angular components standalone and prefer signals. Use built-in Angular template control flow (`@if`, `@for`, `@switch`).
 3. Add or update Vitest and Playwright coverage when a user journey, routing rule, or data contract changes.
 4. Verify the changed behaviour with the relevant Nx targets. Instruction/documentation-only changes need formatting and configuration/link checks, not an app build or database reset.

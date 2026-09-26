@@ -1,3 +1,4 @@
+import type { JsonRecord } from './src/app/core/json';
 import { GENERATED_BLOG_CONTENT } from './src/app/features/blog/blog-content.generated';
 
 type AssetFetcher = {
@@ -28,7 +29,7 @@ const CONTENT_SECURITY_POLICY = [
   'upgrade-insecure-requests',
 ].join('; ');
 
-const SECURITY_HEADERS: Record<string, string> = {
+const SECURITY_HEADERS = {
   'Content-Security-Policy': CONTENT_SECURITY_POLICY,
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
@@ -49,7 +50,7 @@ type BlogSeo = {
   type: 'website' | 'article';
   image?: string;
   imageAlt?: string;
-  jsonLd: readonly Record<string, unknown>[];
+  jsonLd: readonly JsonRecord[];
 };
 
 const BLOG_INDEX: Readonly<
@@ -77,16 +78,22 @@ const escapeHtml = (value: string): string =>
 export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
   const normalizedPath = url.pathname.replace(/\/$/, '') || '/';
   const match = /^\/(en|pl)\/blog(?:\/(.*))?$/.exec(normalizedPath);
+
   if (!match) {
     return undefined;
   }
-  const locale = match[1] as BlogLocale;
+
+  const locale = match[1];
+
+  if (locale !== 'en' && locale !== 'pl') return undefined;
   const suffix = match[2] ?? '';
   const index = BLOG_INDEX[locale];
   const basePath = `/${locale}/blog`;
+
   const localeArticles = GENERATED_BLOG_CONTENT.articles.filter(
     (article) => article.locale === locale
   );
+
   const baseJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -104,8 +111,10 @@ export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
   if (!suffix || /^page\/\d+$/.test(suffix)) {
     const page = suffix ? Number(suffix.slice('page/'.length)) : 1;
     const pageCount = Math.max(1, Math.ceil(localeArticles.length / 12));
+
     const invalidPage =
       !Number.isInteger(page) || (!!suffix && page < 2) || page > pageCount;
+
     return {
       locale,
       title: index.title,
@@ -121,10 +130,12 @@ export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
   }
 
   const categoryMatch = /^category\/([^/]+)(?:\/page\/\d+)?$/.exec(suffix);
+
   if (categoryMatch) {
     const category = GENERATED_BLOG_CONTENT.categories.find(
       (item) => item.locale === locale && item.slug === categoryMatch[1]
     );
+
     if (!category) {
       return {
         locale,
@@ -136,8 +147,10 @@ export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
         jsonLd: [],
       };
     }
+
     const categoryPageMatch = /\/page\/(\d+)$/.exec(suffix);
     const categoryPage = categoryPageMatch ? Number(categoryPageMatch[1]) : 1;
+
     const categoryPageCount = Math.max(
       1,
       Math.ceil(
@@ -145,6 +158,7 @@ export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
           .length / 12
       )
     );
+
     return {
       locale,
       title: `${category.name} | ${index.title}`,
@@ -170,6 +184,7 @@ export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
   const article = GENERATED_BLOG_CONTENT.articles.find(
     (item) => item.locale === locale && item.slug === suffix
   );
+
   if (!article) {
     return {
       locale,
@@ -181,13 +196,17 @@ export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
       jsonLd: [],
     };
   }
+
   const category = GENERATED_BLOG_CONTENT.categories.find(
     (item) => item.locale === locale && item.slug === article.category
   );
+
   const published = `${article.publishedAt}T00:00:00Z`;
+
   const modified = article.updatedAt
     ? `${article.updatedAt}T00:00:00Z`
     : published;
+
   return {
     locale,
     title: `${article.title} | Tickist`,
@@ -228,10 +247,13 @@ export const blogSeoForUrl = (url: URL): BlogSeo | undefined => {
 const withBlogMetadata = (response: Response, url: URL): Response => {
   const seo = blogSeoForUrl(url);
   const contentType = response.headers.get('content-type') ?? '';
+
   if (!seo || !contentType.includes('text/html')) {
     return response;
   }
+
   const image = seo.image ?? 'https://tickist.com/icons/icon-512x512.png';
+
   const jsonLd = seo.jsonLd
     .map(
       (entry) =>
@@ -240,6 +262,7 @@ const withBlogMetadata = (response: Response, url: URL): Response => {
         ).replace(/</g, '\\u003c')}</script>`
     )
     .join('');
+
   return new HTMLRewriter()
     .on('html', {
       element: (element) => element.setAttribute('lang', seo.locale),
@@ -290,7 +313,7 @@ const withBlogMetadata = (response: Response, url: URL): Response => {
     .transform(response);
 };
 
-const buildEnvPayload = (env: Env): Record<string, string> => ({
+const buildEnvPayload = (env: Env) => ({
   NG_APP_SUPABASE_URL: env.NG_APP_SUPABASE_URL ?? '',
   NG_APP_SUPABASE_PUBLISHABLE_KEY:
     env.NG_APP_SUPABASE_PUBLISHABLE_KEY ?? env.NG_APP_SUPABASE_ANON_KEY ?? '',
@@ -302,12 +325,14 @@ const buildEnvPayload = (env: Env): Record<string, string> => ({
 
 const envResponse = (env: Env): Response => {
   const body = `globalThis.__env = ${JSON.stringify(buildEnvPayload(env))};\n`;
+
   const response = new Response(body, {
     headers: {
       'content-type': 'application/javascript; charset=utf-8',
       'cache-control': 'no-store, max-age=0',
     },
   });
+
   return withSecurityHeaders(response);
 };
 
@@ -315,7 +340,9 @@ const shouldServeHtmlFallback = (request: Request): boolean => {
   if (request.method !== 'GET') {
     return false;
   }
+
   const accept = request.headers.get('accept') ?? '';
+
   return accept.includes('text/html');
 };
 
@@ -325,18 +352,22 @@ const fallbackToIndex = async (
 ): Promise<Response> => {
   const url = new URL(request.url);
   url.pathname = '/index.html';
+
   const fallbackRequest = new Request(url.toString(), {
     method: 'GET',
     headers: request.headers,
   });
+
   return env.ASSETS.fetch(fallbackRequest);
 };
 
 const withSecurityHeaders = (response: Response): Response => {
   const headers = new Headers(response.headers);
+
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
     headers.set(name, value);
   }
+
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -353,8 +384,10 @@ export default {
     }
 
     const assetResponse = await env.ASSETS.fetch(request);
+
     if (assetResponse.status === 404 && shouldServeHtmlFallback(request)) {
       const fallbackResponse = await fallbackToIndex(request, env);
+
       return withRouteIndexPolicy(
         withSecurityHeaders(withBlogMetadata(fallbackResponse, url)),
         url
@@ -374,6 +407,7 @@ function withRouteIndexPolicy(response: Response, url: URL): Response {
     url.pathname.startsWith('/app/') ||
     url.pathname === '/auth' ||
     url.pathname.startsWith('/auth/');
+
   if (!isPrivateRoute) {
     return response;
   }
@@ -384,6 +418,7 @@ function withRouteIndexPolicy(response: Response, url: URL): Response {
 function withNoIndex(response: Response): Response {
   const headers = new Headers(response.headers);
   headers.set('X-Robots-Tag', 'noindex, nofollow');
+
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,

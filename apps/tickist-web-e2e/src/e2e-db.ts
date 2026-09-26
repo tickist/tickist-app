@@ -4,13 +4,18 @@ import { spawn } from 'node:child_process';
 import { workspaceRoot } from '@nx/devkit';
 
 type ResetPhase = 'setup' | 'teardown';
+
 const DEFAULT_RESET_ATTEMPTS = 3;
+
 const RETRY_BASE_DELAY_MS = 5000;
+
 const LOCAL_SCHEMA_READY_TIMEOUT_MS = 60000;
+
 const LOCAL_SCHEMA_READY_RETRY_MS = 1000;
 
 export async function resetDatabase(phase: ResetPhase): Promise<void> {
   const envFile = resolveEnvFile();
+
   const dbUrl =
     process.env['SUPABASE_E2E_DB_URL'] ??
     (envFile ? readEnvValue(envFile, 'SUPABASE_E2E_DB_URL') : null);
@@ -24,6 +29,7 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
   const localDbUrl =
     process.env['SUPABASE_DB_URL'] ??
     (envFile ? readEnvValue(envFile, 'SUPABASE_DB_URL') : null);
+
   if (
     localDbUrl &&
     areSameDatabaseUrl(dbUrl, localDbUrl) &&
@@ -37,6 +43,7 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
   const remoteDbUrl =
     process.env['SUPABASE_REMOTE_DB_URL'] ??
     (envFile ? readEnvValue(envFile, 'SUPABASE_REMOTE_DB_URL') : null);
+
   if (remoteDbUrl && areSameDatabaseUrl(dbUrl, remoteDbUrl)) {
     throw new Error(
       'Refusing to reset database: SUPABASE_E2E_DB_URL points to SUPABASE_REMOTE_DB_URL. E2E cannot target production/staging shared database.'
@@ -52,11 +59,13 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
 
 export async function ensureE2EAuthUser(): Promise<void> {
   const envFile = resolveEnvFile();
+
   const supabaseUrl =
     readFirstAvailableEnvValue(
       ['NG_APP_SUPABASE_URL', 'SUPABASE_URL', 'API_URL'],
       envFile
     ) ?? 'http://127.0.0.1:54321';
+
   const publishableKey = readFirstAvailableEnvValue(
     [
       'NG_APP_SUPABASE_PUBLISHABLE_KEY',
@@ -87,6 +96,7 @@ export async function ensureE2EAuthUser(): Promise<void> {
     email,
     password
   );
+
   if (signInAttempt.ok) {
     return;
   }
@@ -100,7 +110,9 @@ export async function ensureE2EAuthUser(): Promise<void> {
     },
     body: JSON.stringify({ email, password }),
   });
+
   const signUpText = await signUp.text();
+
   if (!signUp.ok && !signUpText.toLowerCase().includes('already registered')) {
     throw new Error(
       `[e2e-db] Failed to create e2e auth user (${
@@ -115,6 +127,7 @@ export async function ensureE2EAuthUser(): Promise<void> {
     email,
     password
   );
+
   if (!postSignUpSignIn.ok) {
     throw new Error(
       `[e2e-db] Failed to sign in e2e auth user after signup (${
@@ -135,9 +148,11 @@ async function resetDatabaseWithRetry(
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
       await runCommand('npx', ['supabase', 'db', 'reset', ...resetArgs]);
+
       return;
     } catch (error) {
       lastError = toError(error);
+
       if (attempt >= attempts) {
         break;
       }
@@ -160,9 +175,11 @@ async function resetDatabaseWithRetry(
 
 function resolveResetAttempts(): number {
   const fromEnv = Number(process.env['E2E_DB_RESET_ATTEMPTS'] ?? '');
+
   if (Number.isInteger(fromEnv) && fromEnv > 0) {
     return fromEnv;
   }
+
   return DEFAULT_RESET_ATTEMPTS;
 }
 
@@ -172,11 +189,12 @@ function wait(ms: number): Promise<void> {
   });
 }
 
-function toError(error: unknown): Error {
-  if (error instanceof Error) {
-    return error;
+function toError(cause: unknown): Error {
+  if (cause instanceof Error) {
+    return cause;
   }
-  return new Error(String(error));
+
+  return new Error(String(cause));
 }
 
 function areSameDatabaseUrl(left: string, right: string): boolean {
@@ -189,6 +207,7 @@ function resolveResetArgs(dbUrl: string): string[] {
   if (isLocalDatabaseUrl(dbUrl)) {
     return [];
   }
+
   return ['--db-url', dbUrl];
 }
 
@@ -196,6 +215,7 @@ function isLocalDatabaseUrl(raw: string): boolean {
   try {
     const parsed = new URL(raw);
     const hostname = parsed.hostname.toLowerCase();
+
     return (
       hostname === '127.0.0.1' || hostname === 'localhost' || hostname === '::1'
     );
@@ -212,6 +232,7 @@ async function waitForLocalSchema(
     ['NG_APP_SUPABASE_URL', 'SUPABASE_URL', 'API_URL'],
     envFile
   );
+
   const apiKey = readFirstAvailableEnvValue(
     [
       'NG_APP_SUPABASE_ANON_KEY',
@@ -230,7 +251,11 @@ async function waitForLocalSchema(
     );
   }
 
-  const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/task_reminders?select=id&limit=1`;
+  const endpoint = `${supabaseUrl.replace(
+    /\/+$/,
+    ''
+  )}/rest/v1/task_reminders?select=id&limit=1`;
+
   const deadline = Date.now() + LOCAL_SCHEMA_READY_TIMEOUT_MS;
   let lastStatus = 'request did not complete';
 
@@ -242,6 +267,7 @@ async function waitForLocalSchema(
           Authorization: `Bearer ${apiKey}`,
         },
       });
+
       lastStatus = `HTTP ${response.status}`;
 
       if (response.status !== 404 && response.status < 500) {
@@ -268,12 +294,14 @@ function allowsExplicitLocalDatabaseReset(dbUrl: string): boolean {
 
 function normalizeDatabaseUrl(raw: string): string {
   const trimmed = raw.trim();
+
   try {
     const parsed = new URL(trimmed);
     const protocol = parsed.protocol.toLowerCase();
     const hostname = parsed.hostname.toLowerCase();
     const port = parsed.port || defaultPort(protocol);
     const pathname = parsed.pathname || '/';
+
     return `${protocol}//${hostname}:${port}${pathname}`;
   } catch {
     return trimmed;
@@ -284,6 +312,7 @@ function defaultPort(protocol: string): string {
   if (protocol === 'postgresql:' || protocol === 'postgres:') {
     return '5432';
   }
+
   return '';
 }
 
@@ -291,38 +320,50 @@ function readEnvValue(file: string, key: string): string | null {
   const fullPath = resolve(workspaceRoot, file);
   const content = readFileSync(fullPath, 'utf-8');
   const lines = content.split(/\r?\n/);
+
   for (const line of lines) {
     const trimmed = line.trim();
+
     if (!trimmed || trimmed.startsWith('#')) {
       continue;
     }
+
     const separator = trimmed.indexOf('=');
+
     if (separator === -1) {
       continue;
     }
+
     const name = trimmed.slice(0, separator).trim();
+
     if (name !== key) {
       continue;
     }
+
     let value = trimmed.slice(separator + 1).trim();
+
     if (
       (value.startsWith('"') && value.endsWith('"')) ||
       (value.startsWith("'") && value.endsWith("'"))
     ) {
       value = value.slice(1, -1);
     }
+
     return value;
   }
+
   return null;
 }
 
 function resolveEnvFile(): string | null {
   const explicit = process.env['E2E_ENV_FILE'];
+
   if (explicit) {
     return explicit;
   }
 
   const candidates = ['.env.e2e', '.local_env.e2e'];
+
   for (const file of candidates) {
     if (existsSync(resolve(workspaceRoot, file))) {
       return file;
@@ -338,6 +379,7 @@ function readFirstAvailableEnvValue(
 ): string | null {
   for (const key of keys) {
     const fromProcess = process.env[key];
+
     if (fromProcess) {
       return fromProcess;
     }
@@ -349,6 +391,7 @@ function readFirstAvailableEnvValue(
 
   for (const key of keys) {
     const fromFile = readEnvValue(envFile, key);
+
     if (fromFile) {
       return fromFile;
     }
@@ -364,6 +407,7 @@ function runCommand(command: string, args: string[]): Promise<void> {
       stdio: 'inherit',
       shell: false,
     });
+
     child.on('error', reject);
     child.on('exit', (code) => {
       if (code === 0) {
@@ -390,7 +434,9 @@ async function callAuthTokenEndpoint(
     },
     body: JSON.stringify({ email, password }),
   });
+
   const body = await response.text();
+
   return {
     ok: response.ok,
     status: response.status,
@@ -402,5 +448,6 @@ function truncateForLog(value: string, max = 300): string {
   if (value.length <= max) {
     return value;
   }
+
   return `${value.slice(0, max)}...`;
 }

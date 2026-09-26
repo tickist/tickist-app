@@ -1,3 +1,4 @@
+import type { ProfileMetadata } from '../../config/profile-metadata';
 import { Injectable, inject } from '@angular/core';
 import type { AuthResponse } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../../config/supabase.provider';
@@ -32,22 +33,26 @@ export class SupabaseAuthService {
         'Supabase is not configured. Provide NG_APP_SUPABASE_URL and NG_APP_SUPABASE_PUBLISHABLE_KEY.'
       );
     }
+
     return this.supabase;
   }
 
   async signInWithPassword(payload: SignInPayload): Promise<AuthResponse> {
     const client = this.ensureClient();
     const response = await client.auth.signInWithPassword(payload);
+
     if (response.error) {
       this.session.clearSession();
     } else {
       this.session.clearPasswordRecoveryPending();
     }
+
     return response;
   }
 
   async signUpWithPassword(payload: SignUpPayload): Promise<AuthResponse> {
     const client = this.ensureClient();
+
     return client.auth.signUp({
       email: payload.email,
       password: payload.password,
@@ -62,9 +67,11 @@ export class SupabaseAuthService {
   async sendPasswordReset(email: string): Promise<void> {
     const client = this.ensureClient();
     const redirectTo = this.getPasswordResetRedirectTo();
+
     const { error } = await client.auth.resetPasswordForEmail(email, {
       redirectTo,
     });
+
     if (error) {
       throw error;
     }
@@ -73,6 +80,7 @@ export class SupabaseAuthService {
   async updatePassword(password: string): Promise<void> {
     const client = this.ensureClient();
     const { error } = await client.auth.updateUser({ password });
+
     if (error) {
       throw error;
     }
@@ -92,6 +100,7 @@ export class SupabaseAuthService {
       email,
       password: payload.currentPassword,
     });
+
     if (verification.error) {
       throw new Error('Current password is incorrect.');
     }
@@ -99,12 +108,16 @@ export class SupabaseAuthService {
     await this.updatePassword(payload.newPassword);
   }
 
-  async updateProfileMetadata(patch: Record<string, unknown>): Promise<void> {
+  async updateProfileMetadata(patch: {
+    [K in keyof ProfileMetadata]?: string | null;
+  }): Promise<void> {
     const client = this.ensureClient();
     const { error } = await client.auth.updateUser({ data: patch });
+
     if (error) {
       throw error;
     }
+
     await this.session.refreshUser();
   }
 
@@ -116,6 +129,7 @@ export class SupabaseAuthService {
     if (typeof window === 'undefined') {
       return 'http://localhost:4200/auth/update-password';
     }
+
     return `${window.location.origin}/auth/update-password`;
   }
 }
@@ -132,11 +146,14 @@ export function resolveBrowserTimezone(): string {
 
 function normalizeBrowserTimezone(value: string): string {
   const timezone = value.trim();
+
   if (!timezone) {
     return 'Europe/Warsaw';
   }
+
   try {
     new Intl.DateTimeFormat('en-US', { timeZone: timezone }).format();
+
     return timezone;
   } catch {
     return 'Europe/Warsaw';

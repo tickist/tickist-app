@@ -26,13 +26,16 @@ export class TaskComposerPageComponent {
 
   readonly preset = computed<TaskComposerPreset | null>(() => {
     const taskId = this.route.snapshot.paramMap.get('taskId');
+
     if (taskId) {
       const task = this.tasks.list().find((item) => item.id === taskId) ?? null;
+
       return task ? { mode: 'edit', task } : null;
     }
 
     const queryMap = this.route.snapshot.queryParamMap;
     const tags = queryMap.get('tags');
+
     return {
       mode: 'create',
       defaults: {

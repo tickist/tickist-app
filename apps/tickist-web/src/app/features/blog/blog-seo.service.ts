@@ -1,9 +1,11 @@
+import type { JsonRecord } from '../../core/json';
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { BlogLocale } from './blog-content';
 
 const SITE_ORIGIN = 'https://tickist.com';
+
 const DEFAULT_IMAGE = `${SITE_ORIGIN}/icons/icon-512x512.png`;
 
 export interface BlogSeoConfig {
@@ -20,7 +22,7 @@ export interface BlogSeoConfig {
   readonly category?: string;
   readonly tags?: readonly string[];
   readonly alternates?: readonly { locale: BlogLocale; path: string }[];
-  readonly jsonLd?: readonly Record<string, unknown>[];
+  readonly jsonLd?: readonly JsonRecord[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -31,11 +33,13 @@ export class BlogSeoService {
 
   apply(config: BlogSeoConfig): void {
     const canonical = `${SITE_ORIGIN}${config.path}`;
+
     const image = config.image?.startsWith('http')
       ? config.image
       : `${SITE_ORIGIN}${
           config.image ?? DEFAULT_IMAGE.replace(SITE_ORIGIN, '')
         }`;
+
     this.document.documentElement.lang = config.locale;
     this.title.setTitle(config.title);
     this.updateName('description', config.description);
@@ -60,6 +64,7 @@ export class BlogSeoService {
     );
     this.replaceLink('canonical', canonical);
     this.removeManaged('link[data-blog-alternate="true"]');
+
     for (const alternate of config.alternates ?? []) {
       this.appendLink(
         'alternate',
@@ -67,18 +72,23 @@ export class BlogSeoService {
         alternate.locale
       );
     }
+
     this.appendFeed(config.locale);
     this.clearArticleMeta();
+
     if (config.type === 'article') {
       if (config.publishedAt) {
         this.updateProperty('article:published_time', config.publishedAt);
       }
+
       if (config.updatedAt) {
         this.updateProperty('article:modified_time', config.updatedAt);
       }
+
       if (config.category) {
         this.updateProperty('article:section', config.category);
       }
+
       for (const tag of config.tags ?? []) {
         this.meta.addTag({
           property: 'article:tag',
@@ -87,6 +97,7 @@ export class BlogSeoService {
         });
       }
     }
+
     this.replaceJsonLd(config.jsonLd ?? []);
   }
 
@@ -100,6 +111,7 @@ export class BlogSeoService {
 
   private clearArticleMeta(): void {
     this.removeManaged('meta[data-blog-article="true"]');
+
     for (const property of [
       'article:published_time',
       'article:modified_time',
@@ -118,10 +130,12 @@ export class BlogSeoService {
     const link = this.document.createElement('link');
     link.rel = rel;
     link.href = href;
+
     if (hreflang) {
       link.hreflang = hreflang;
       link.setAttribute('data-blog-alternate', 'true');
     }
+
     this.document.head.appendChild(link);
   }
 
@@ -136,8 +150,9 @@ export class BlogSeoService {
     this.document.head.appendChild(link);
   }
 
-  private replaceJsonLd(entries: readonly Record<string, unknown>[]): void {
+  private replaceJsonLd(entries: readonly JsonRecord[]): void {
     this.removeManaged('script[data-blog-json-ld="true"]');
+
     for (const entry of entries) {
       const script = this.document.createElement('script');
       script.type = 'application/ld+json';

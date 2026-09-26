@@ -1,3 +1,4 @@
+import { fixtureHost, requiredElement } from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -33,9 +34,11 @@ describe('TaskFabComponent routing actions', () => {
   });
 
   it('navigates to task create route from FAB', async () => {
-    const addTaskButton = fixture.nativeElement.querySelector(
-      '.fab-main'
-    ) as HTMLButtonElement | null;
+    const addTaskButton = requiredElement(
+      fixtureHost(fixture),
+      '.fab-main',
+      HTMLButtonElement
+    );
 
     addTaskButton?.click();
     await fixture.whenStable();
@@ -47,9 +50,11 @@ describe('TaskFabComponent routing actions', () => {
     component.hovered.set(true);
     fixture.detectChanges();
 
-    const addProjectButton = fixture.nativeElement.querySelector(
-      '.fab-mini'
-    ) as HTMLButtonElement | null;
+    const addProjectButton = requiredElement(
+      fixtureHost(fixture),
+      '.fab-mini',
+      HTMLButtonElement
+    );
 
     addProjectButton?.click();
     await fixture.whenStable();

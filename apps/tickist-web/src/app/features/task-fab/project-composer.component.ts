@@ -82,6 +82,7 @@ export class ProjectComposerComponent {
   readonly availableAncestorOptions = computed(() => {
     const editingProjectId = this.editingProject()?.id ?? null;
     const projectTree = buildHierarchy(this.projectOptions());
+
     const descendantIds = editingProjectId
       ? collectDescendantIds(projectTree, editingProjectId)
       : new Set<string>();
@@ -90,9 +91,11 @@ export class ProjectComposerComponent {
       if (project.isInbox || project.ownerId !== this.user()?.id) {
         return false;
       }
+
       if (!editingProjectId) {
         return true;
       }
+
       return project.id !== editingProjectId && !descendantIds.has(project.id);
     });
   });
@@ -117,6 +120,7 @@ export class ProjectComposerComponent {
   readonly iconSearch = signal('');
   readonly filteredIconOptions = computed(() => {
     const query = this.iconSearch().trim().toLocaleLowerCase();
+
     if (!query) {
       return this.iconOptions;
     }
@@ -191,39 +195,51 @@ export class ProjectComposerComponent {
 
   async addInvite(): Promise<void> {
     const input = this.inviteInput().trim();
+
     if (!input) {
       return;
     }
+
     const editing = this.editingProject();
+
     if (!editing) {
       if (!this.invites().includes(input)) {
         this.invites.set([...this.invites(), input]);
       }
+
       this.inviteInput.set('');
       this.inviteFeedback.set({
         type: 'info',
         message: 'Invite will be sent after the project is saved.',
       });
+
       return;
     }
+
     this.inviteSubmitting.set(true);
     this.inviteFeedback.set(null);
+
     try {
       const result = await this.projects.inviteByEmail(editing.id, input);
+
       if (!result) {
         this.inviteFeedback.set({
           type: 'error',
           message: 'Invite could not be sent right now.',
         });
+
         return;
       }
+
       if (result.ok === false) {
         this.inviteFeedback.set({
           type: 'error',
           message: result.message,
         });
+
         return;
       }
+
       this.inviteFeedback.set({
         type: result.code === 'already_member' ? 'info' : 'success',
         message:
@@ -248,15 +264,20 @@ export class ProjectComposerComponent {
 
   async removeMember(userId: string): Promise<void> {
     const editing = this.editingProject();
+
     if (!editing) {
       return;
     }
+
     this.inviteSubmitting.set(true);
+
     try {
       await this.projects.removeMember(editing.id, userId);
+
       const refreshed =
         this.projects.list().find((project) => project.id === editing.id) ??
         editing;
+
       this.editingProject.set(refreshed);
       this.inviteFeedback.set({
         type: 'success',
@@ -270,6 +291,7 @@ export class ProjectComposerComponent {
   memberLabel(userId: string): string {
     const project = this.editingProject();
     const member = project?.members.find((item) => item.userId === userId);
+
     return member?.invitedEmail ?? userId.slice(0, 8);
   }
 
@@ -290,6 +312,7 @@ export class ProjectComposerComponent {
     if (input && !this.invites().includes(input)) {
       this.invites.set([...this.invites(), input]);
     }
+
     this.inviteInput.set('');
   }
 
@@ -307,9 +330,11 @@ export class ProjectComposerComponent {
 
   selectAncestor(projectId: string): void {
     this.form.controls.ancestorId.setValue(projectId);
+
     const parent = this.projectOptions().find(
       (project) => project.id === projectId
     );
+
     if (parent)
       this.form.controls.workspaceId.setValue(
         this.workspaces.workspaceFor(parent, this.projectOptions()) ?? ''
@@ -318,13 +343,18 @@ export class ProjectComposerComponent {
 
   async submit(): Promise<void> {
     const user = this.user();
+
     if (this.form.invalid || !user) {
       this.form.markAllAsTouched();
+
       return;
     }
+
     this.submitting.set(true);
+
     try {
       const editing = this.editingProject();
+
       if (editing) {
         await this.projects.updateProject({
           id: editing.id,
@@ -373,6 +403,7 @@ export class ProjectComposerComponent {
           shareInvites: this.invites(),
         });
       }
+
       this.created.emit();
     } finally {
       this.submitting.set(false);
@@ -385,17 +416,22 @@ export class ProjectComposerComponent {
     if (!raw) {
       return null;
     }
+
     const parsed = new Date(raw);
+
     if (Number.isNaN(parsed.getTime())) {
       return null;
     }
+
     // Normalize to whole days so the smallint column only stores offsets.
     const base = new Date();
     base.setHours(0, 0, 0, 0);
     parsed.setHours(0, 0, 0, 0);
+
     const diffDays = Math.round(
       (parsed.getTime() - base.getTime()) / 86_400_000
     );
+
     // Clamp to the Postgres smallint bounds.
     return Math.max(Math.min(diffDays, 32_767), -32_768);
   }
@@ -410,6 +446,7 @@ export class ProjectComposerComponent {
     if (!preset) {
       this.editingProject.set(null);
       this.resetForm();
+
       return;
     }
 
@@ -432,6 +469,7 @@ export class ProjectComposerComponent {
         taskView: project.taskView ?? 'extended',
         dialogTime: project.dialogTimeWhenTaskFinished ?? false,
       });
+
       return;
     }
 

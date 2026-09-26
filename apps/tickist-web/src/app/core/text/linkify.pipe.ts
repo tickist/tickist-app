@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 const URL_REGEX = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi;
+
 const TRAILING_PUNCTUATION = /[),.!?;:]+$/;
 
 @Pipe({
@@ -27,6 +28,7 @@ export class LinkifyPipe implements PipeTransform {
 
       output.push(escapeHtml(value.slice(lastIndex, start)));
       output.push(buildAnchor(urlPart));
+
       if (trailing) {
         output.push(escapeHtml(trailing));
       }
@@ -39,6 +41,7 @@ export class LinkifyPipe implements PipeTransform {
     }
 
     output.push(escapeHtml(value.slice(lastIndex)));
+
     return output.join('');
   }
 }

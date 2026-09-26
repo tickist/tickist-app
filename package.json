@@ -80,17 +80,19 @@
     "@angular/language-service": "22.0.8",
     "@cloudflare/workers-types": "^5.20260904.1",
     "@eslint/js": "^9.39.2",
-    "@nx/angular": "23.1.0",
-    "@nx/devkit": "23.1.0",
-    "@nx/eslint": "23.1.0",
-    "@nx/eslint-plugin": "23.1.0",
-    "@nx/js": "23.1.0",
-    "@nx/playwright": "23.1.0",
-    "@nx/vite": "23.1.0",
-    "@nx/vitest": "23.1.0",
-    "@nx/web": "23.1.0",
-    "@nx/workspace": "23.1.0",
+    "@nx/angular": "23.2.1",
+    "@nx/devkit": "23.2.1",
+    "@nx/eslint": "23.2.1",
+    "@nx/eslint-plugin": "23.2.1",
+    "@nx/js": "23.2.1",
+    "@nx/oxlint": "23.2.1",
+    "@nx/playwright": "23.2.1",
+    "@nx/vite": "23.2.1",
+    "@nx/vitest": "23.2.1",
+    "@nx/web": "23.2.1",
+    "@nx/workspace": "23.2.1",
     "@oxc-project/runtime": "^0.111.0",
+    "@oxlint/plugins": "1.85.0",
     "@playwright/test": "^1.57.0",
     "@schematics/angular": "22.0.8",
     "@swc-node/register": "1.11.1",
@@ -114,7 +116,8 @@
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
     "marked": "^18.0.7",
-    "nx": "23.1.0",
+    "nx": "23.2.1",
+    "oxlint": "1.85.0",
     "postcss": "^8.5.6",
     "postcss-nesting": "^13.0.2",
     "prettier": "^2.8.8",
@@ -133,6 +136,9 @@
     "includedScripts": []
   },
   "overrides": {
+    "@rolldown/binding-wasm32-wasi": {
+      "@napi-rs/wasm-runtime": "1.1.6"
+    },
     "sockjs": {
       "uuid": "11.1.1"
     }

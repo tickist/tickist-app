@@ -34,7 +34,9 @@ Keep hooks for concrete, repeatable automation that improves a workflow. Before 
 - run only the relevant deterministic check, not a whole build or destructive E2E reset after every edit;
 - preserve task authorization and surface actionable failures without credentials.
 
-Use ESLint, Prettier, and existing Nx targets for code standards. This update does not change runtime permissions, enable plugins, install global hooks, or alter production/authentication hooks.
+Use Oxlint and ESLint through Nx, plus Prettier, for code standards. ESLint still checks Angular templates and rules outside Oxlint's coverage. This tooling does not change runtime permissions, install global hooks, or alter production/authentication hooks.
+
+The locally maintained anti-slop rules live in [`tools/oxlint/anti-slop/`](../tools/oxlint/anti-slop/UPSTREAM.md). Their provenance and upstream revision are recorded beside the copied source. Review local policy and its existing findings before updating that copy.
 
 ## Maintenance and verification
 

@@ -12,7 +12,7 @@ import { WorkspaceDataService } from './workspace-data.service';
 
 describe('StatisticsDataService', () => {
   const rpcMock = vi.fn();
-  const userState = signal(null as User | null);
+  const userState = signal<User | null>(null);
   const workspaceState = signal<string | null>(null);
 
   beforeEach(() => {
@@ -132,7 +132,14 @@ describe('StatisticsDataService', () => {
   });
 
   it('refreshes when activated after being marked dirty', async () => {
-    const user = { id: 'user-1' } as User;
+    const user = {
+      id: 'user-1',
+      app_metadata: {},
+      user_metadata: {},
+      aud: 'authenticated',
+      created_at: '2026-03-10T00:00:00Z',
+    } satisfies User;
+
     rpcMock.mockResolvedValue({
       data: createEmptyStatsOverview(),
       error: null,
@@ -178,7 +185,14 @@ describe('StatisticsDataService', () => {
   });
 
   it('does not refetch in a loop after an RPC error while active', async () => {
-    const user = { id: 'user-1' } as User;
+    const user = {
+      id: 'user-1',
+      app_metadata: {},
+      user_metadata: {},
+      aud: 'authenticated',
+      created_at: '2026-03-10T00:00:00Z',
+    } satisfies User;
+
     rpcMock.mockResolvedValue({
       data: null,
       error: { message: 'missing function' },

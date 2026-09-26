@@ -36,6 +36,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   readonly error = this.statistics.error;
   readonly summaryCards = computed<SummaryCard[]>(() => {
     const overview = this.overview();
+
     return [
       {
         key: 'completed',
@@ -64,9 +65,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     ];
   });
   readonly groups = computed(() => this.overview().groups);
-  readonly title = computed(
-    () => `Last ${this.overview().windowDays} days`
-  );
+  readonly title = computed(() => `Last ${this.overview().windowDays} days`);
 
   ngOnInit(): void {
     this.statistics.activate();

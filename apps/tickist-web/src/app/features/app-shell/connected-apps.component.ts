@@ -37,6 +37,7 @@ export class ConnectedAppsComponent {
     this.revoking.set(clientId);
     this.error.set(null);
     const { error } = await this.supabase.auth.oauth.revokeGrant({ clientId });
+
     if (error) this.error.set(error.message);
     else
       this.grants.update((items) =>
@@ -49,9 +50,12 @@ export class ConnectedAppsComponent {
     if (!this.supabase) {
       this.error.set('Supabase is not configured.');
       this.loading.set(false);
+
       return;
     }
+
     const { data, error } = await this.supabase.auth.oauth.listGrants();
+
     if (error) this.error.set(error.message);
     else this.grants.set(data ?? []);
     this.loading.set(false);

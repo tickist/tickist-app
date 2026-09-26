@@ -10,23 +10,24 @@ describe('PasswordRecoveryFlowService', () => {
   let navigationEvents: Subject<NavigationEnd>;
   let navigateByUrlMock: ReturnType<typeof vi.fn>;
   let recoveryPending: ReturnType<typeof signal<boolean>>;
-  let router: Router & { url: string };
+  let router: RecoveryRouter;
 
   beforeEach(() => {
     navigationEvents = new Subject<NavigationEnd>();
     navigateByUrlMock = vi.fn(async () => true);
     recoveryPending = signal(false);
+    router = {
+      url: '/',
+      events: navigationEvents,
+      navigateByUrl: navigateByUrlMock,
+    };
 
     TestBed.configureTestingModule({
       providers: [
         PasswordRecoveryFlowService,
         {
           provide: Router,
-          useValue: {
-            url: '/',
-            events: navigationEvents,
-            navigateByUrl: navigateByUrlMock,
-          },
+          useValue: router,
         },
         {
           provide: SupabaseSessionService,
@@ -37,7 +38,6 @@ describe('PasswordRecoveryFlowService', () => {
       ],
     });
 
-    router = TestBed.inject(Router) as Router & { url: string };
     TestBed.inject(PasswordRecoveryFlowService);
   });
 
@@ -74,3 +74,9 @@ describe('PasswordRecoveryFlowService', () => {
     expect(navigateByUrlMock).not.toHaveBeenCalled();
   });
 });
+
+interface RecoveryRouter {
+  url: string;
+  events: Subject<NavigationEnd>;
+  navigateByUrl: ReturnType<typeof vi.fn>;
+}

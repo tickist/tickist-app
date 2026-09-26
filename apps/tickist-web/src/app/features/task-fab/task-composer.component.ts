@@ -1,3 +1,5 @@
+import { z } from 'zod';
+import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -47,6 +49,7 @@ import {
 } from '../../core/ui/sheet-scaffold.component';
 
 type TabKey = 'general' | 'repeat' | 'reminders' | 'tags' | 'steps' | 'extra';
+
 type RepeatMode =
   | 'never'
   | 'daily'
@@ -55,8 +58,11 @@ type RepeatMode =
   | 'monthly'
   | 'yearly'
   | 'custom';
+
 type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+
 type RepeatFromMode = 'completion_date' | 'due_date';
+
 type SuspensionMode = 'indefinite' | 'until';
 
 type TaskFormDefaults = {
@@ -126,38 +132,50 @@ export class TaskComposerComponent {
   readonly sheetTitle = computed(() => (this.editingTask() ? '' : 'New task'));
   readonly filteredTags = computed(() => {
     const query = this.tagSearch().trim().toLowerCase();
+
     return this.tags().filter((tag) => tag.name.toLowerCase().includes(query));
   });
   selectedProject() {
     const projectId = this.taskForm.controls.projectId.value;
+
     if (!projectId) {
       return null;
     }
+
     return this.projects().find((project) => project.id === projectId) ?? null;
   }
 
   assigneeOptions() {
     const project = this.selectedProject();
+
     if (!project || !this.isSharedProject(project)) {
       return [];
     }
+
     const options = new Map<string, string>();
+
     for (const assignee of project.assignees ?? []) {
       options.set(assignee.userId, assignee.label);
     }
+
     if (!options.has(project.ownerId)) {
       options.set(project.ownerId, 'Project owner');
     }
+
     for (const member of project.members) {
       if (member.status !== 'accepted' || options.has(member.userId)) {
         continue;
       }
+
       options.set(member.userId, member.invitedEmail ?? 'Project member');
     }
+
     const currentUser = this.user();
+
     if (currentUser && options.has(currentUser.id)) {
       options.set(currentUser.id, this.currentUserLabel());
     }
+
     return Array.from(options, ([userId, label]) => ({ userId, label }));
   }
 
@@ -202,10 +220,11 @@ export class TaskComposerComponent {
       finishDate: [''],
       finishTime: [''],
       description: [''],
-      repeatMode: ['never'],
+      repeatMode: this.fb.nonNullable.control<RepeatMode>('never'),
       repeatEvery: [1],
-      repeatUnit: ['day'],
-      repeatFrom: ['completion_date'],
+      repeatUnit: this.fb.nonNullable.control<RepeatUnit>('day'),
+      repeatFrom:
+        this.fb.nonNullable.control<RepeatFromMode>('completion_date'),
       tags: this.fb.nonNullable.control<string[]>([]),
       assigneeId: [''],
       isActive: [true],
@@ -231,6 +250,7 @@ export class TaskComposerComponent {
         if (this.editingTask()) {
           return;
         }
+
         this.taskForm.controls.assigneeId.setValue(
           this.defaultAssigneeId(projectId)
         );
@@ -248,10 +268,13 @@ export class TaskComposerComponent {
       if (this.editingTask()) {
         return;
       }
+
       const inboxId = this.inboxProjectId();
+
       if (!inboxId) {
         return;
       }
+
       if (!this.taskForm.controls.projectId.value) {
         this.taskForm.controls.projectId.setValue(inboxId);
       }
@@ -261,6 +284,7 @@ export class TaskComposerComponent {
   private applyPreset(preset: TaskComposerPreset | null): void {
     this.currentPreset = preset;
     this.activeTab.set('general');
+
     if (!preset || preset.mode === 'create') {
       this.editingTask.set(null);
       this.reminderLoadTaskId = null;
@@ -271,15 +295,18 @@ export class TaskComposerComponent {
         tags: preset?.defaults?.tags ?? [],
         priority: preset?.defaults?.priority ?? 'B',
       });
+
       return;
     }
 
     if (preset.mode === 'edit' && preset.task) {
       const task = preset.task;
       this.editingTask.set(task);
+
       const { mode, every, unit } = this.repeatModeFromInterval(
         task.repeatInterval
       );
+
       this.resetForm({
         name: task.name,
         priority: (task.priority ?? 'B').toUpperCase(),
@@ -326,6 +353,7 @@ export class TaskComposerComponent {
 
   toggleTag(tagId: string): void {
     const current = this.taskForm.controls.tags.value;
+
     if (current.includes(tagId)) {
       this.taskForm.controls.tags.setValue(
         current.filter((id) => id !== tagId)
@@ -381,9 +409,11 @@ export class TaskComposerComponent {
 
   moveStep(index: number, direction: 'up' | 'down'): void {
     const target = direction === 'up' ? index - 1 : index + 1;
+
     if (target < 0 || target >= this.steps.length) {
       return;
     }
+
     const sourceValue = this.steps.at(index).value;
     const targetValue = this.steps.at(target).value;
     this.steps.at(index).setValue(targetValue);
@@ -410,12 +440,14 @@ export class TaskComposerComponent {
     this.reminderLoadTaskId = taskId;
     const editVersion = this.reminderEditVersion;
     const reminders = await this.reminderService.listForTask(taskId);
+
     if (
       this.reminderLoadTaskId !== taskId ||
       this.reminderEditVersion !== editVersion
     ) {
       return;
     }
+
     this.clearReminders();
     reminders.forEach((reminder) => {
       const inputValue = toReminderInputValue(reminder.remindAt);
@@ -431,59 +463,73 @@ export class TaskComposerComponent {
   async createTag(name: string): Promise<void> {
     const trimmed = name.trim();
     const owner = this.user();
+
     if (!trimmed || !owner) {
       return;
     }
+
     const created = await this.tagService.createTag({
       ownerId: owner.id,
       name: trimmed,
     });
+
     if (created) {
       this.taskForm.controls.tags.setValue([
         ...this.taskForm.controls.tags.value,
         created.id,
       ]);
     }
+
     this.tagSearch.set('');
   }
 
   async submit(addAnother = false): Promise<void> {
     this.taskForm.updateValueAndValidity();
+
     if (this.taskForm.invalid || !this.user()) {
       this.taskForm.markAllAsTouched();
+
       return;
     }
 
     this.submitting.set(true);
+
     try {
       const value = this.taskForm.getRawValue();
       const owner = this.user();
+
       if (!owner) {
         return;
       }
+
       const repeatInterval = this.getRepeatInterval(
-        value.repeatMode as RepeatMode,
+        value.repeatMode,
         value.repeatEvery,
-        value.repeatUnit as RepeatUnit
+        value.repeatUnit
       );
+
       const repeatFrom = this.getRepeatFromValue(
         repeatInterval,
-        value.repeatFrom as RepeatFromMode,
+        value.repeatFrom,
         !!value.finishDate
       );
+
       const suspendUntil = this.resolveSuspendUntil(
         value.isActive,
-        value.suspensionMode as SuspensionMode,
+        value.suspensionMode,
         value.suspendUntil,
         value.suspendUntilTime
       );
+
       const stepsPayload = this.steps.controls
         .map((control, index) => {
           const { content, isDone } = control.getRawValue();
           const trimmed = content?.trim();
+
           if (!trimmed) {
             return null;
           }
+
           return {
             content: trimmed,
             isDone: !!isDone,
@@ -496,6 +542,7 @@ export class TaskComposerComponent {
           ): step is { content: string; isDone: boolean; position: number } =>
             !!step
         );
+
       const editing = this.editingTask();
 
       if (editing) {
@@ -520,7 +567,9 @@ export class TaskComposerComponent {
           pinned: value.pinned,
           steps: stepsPayload,
         };
+
         const updated = await this.taskService.updateTask(updatePayload);
+
         if (updated) {
           await this.reminderService.saveForTask(
             updated.id,
@@ -530,6 +579,7 @@ export class TaskComposerComponent {
           await this.taskService.refresh();
           this.created.emit();
         }
+
         return;
       }
 
@@ -556,6 +606,7 @@ export class TaskComposerComponent {
       };
 
       const created = await this.taskService.createTask(payload);
+
       if (created) {
         await this.reminderService.saveForTask(
           created.id,
@@ -563,6 +614,7 @@ export class TaskComposerComponent {
           this.reminderDrafts()
         );
         await this.taskService.refresh();
+
         if (addAnother) {
           this.resetForm({
             projectId: value.projectId,
@@ -580,12 +632,14 @@ export class TaskComposerComponent {
 
   private resetForm(overrides?: Partial<TaskFormDefaults>): void {
     const projectId = overrides?.projectId ?? this.defaultFormValue.projectId;
+
     const next: TaskFormDefaults = {
       ...this.defaultFormValue,
       ...overrides,
       assigneeId: overrides?.assigneeId ?? this.defaultAssigneeId(projectId),
       tags: [...(overrides?.tags ?? this.defaultFormValue.tags)],
     };
+
     this.taskForm.reset({
       name: next.name,
       priority: next.priority,
@@ -614,12 +668,8 @@ export class TaskComposerComponent {
 
   private reminderDrafts(): TaskReminderDraft[] {
     return this.reminders.controls.map((control) => {
-      const raw = control.getRawValue() as {
-        id?: string;
-        date?: string;
-        time?: string;
-        timezone?: string;
-      };
+      const raw = ReminderDraftSchema.parse(control.getRawValue());
+
       return {
         id: raw.id ?? null,
         date: raw.date ?? '',
@@ -642,6 +692,7 @@ export class TaskComposerComponent {
     if (isActive || mode === 'indefinite') {
       return null;
     }
+
     return new Date(localDateTime(date, time)).toISOString();
   }
 
@@ -676,20 +727,21 @@ export class TaskComposerComponent {
     if (repeatInterval <= 0) {
       return null;
     }
+
     if (mode === 'due_date' && hasDueDate) {
       return 1;
     }
+
     return 0;
   }
 
-  private repeatModeFromInterval(interval: number | null | undefined): {
-    mode: RepeatMode;
-    every: number;
-    unit: RepeatUnit;
-  } {
+  private repeatModeFromInterval(
+    interval: number | null | undefined
+  ): RepeatState {
     if (!interval || interval <= 0) {
       return { mode: 'never', every: 1, unit: 'day' };
     }
+
     switch (interval) {
       case 1:
         return { mode: 'daily', every: 1, unit: 'day' };
@@ -700,11 +752,14 @@ export class TaskComposerComponent {
       case 365:
         return { mode: 'yearly', every: 1, unit: 'year' };
     }
+
     const unit = this.repeatUnitFromInterval(interval);
+
     const every = Math.max(
       1,
       Math.round(interval / this.repeatUnitMultiplier(unit))
     );
+
     return { mode: 'custom', every, unit };
   }
 
@@ -725,12 +780,15 @@ export class TaskComposerComponent {
     if (interval % 365 === 0) {
       return 'year';
     }
+
     if (interval % 30 === 0) {
       return 'month';
     }
+
     if (interval % 7 === 0) {
       return 'week';
     }
+
     return 'day';
   }
 
@@ -753,6 +811,7 @@ export class TaskComposerComponent {
   private defaultAssigneeId(projectId: string): string {
     const currentUser = this.user();
     const project = this.projects().find((item) => item.id === projectId);
+
     return currentUser
       ? defaultTaskAssigneeIds(project, currentUser.id)[0] ?? ''
       : '';
@@ -760,20 +819,25 @@ export class TaskComposerComponent {
 
   private currentUserLabel(): string {
     const currentUser = this.user();
-    const metadata = currentUser?.user_metadata as
-      | Record<string, unknown>
-      | undefined;
-    for (const key of ['full_name', 'name']) {
+
+    const metadata = ProfileMetadataSchema.safeParse(
+      currentUser?.user_metadata
+    ).data;
+
+    for (const key of ['full_name', 'name'] as const) {
       const value = metadata?.[key];
-      if (typeof value === 'string' && value.trim()) {
+
+      if (value && value.trim()) {
         return value.trim();
       }
     }
+
     return currentUser?.email?.trim() || 'You';
   }
 
   private isSharedProject(project: Project): boolean {
     const currentUserId = this.user()?.id;
+
     return currentUserId
       ? isProjectSharedWithOthers(project, currentUserId)
       : false;
@@ -784,18 +848,24 @@ function normalizeDateInputValue(value: string | null | undefined): string {
   if (!value) {
     return '';
   }
+
   const trimmed = value.trim();
   const dateOnlyMatch = /^(\d{4}-\d{2}-\d{2})/.exec(trimmed);
+
   if (dateOnlyMatch) {
     return dateOnlyMatch[1];
   }
+
   const parsed = new Date(trimmed);
+
   if (Number.isNaN(parsed.getTime())) {
     return '';
   }
+
   const year = parsed.getFullYear();
   const month = `${parsed.getMonth() + 1}`.padStart(2, '0');
   const day = `${parsed.getDate()}`.padStart(2, '0');
+
   return `${year}-${month}-${day}`;
 }
 
@@ -803,8 +873,10 @@ function normalizeTimeInputValue(value: string | null | undefined): string {
   if (!value) {
     return '';
   }
+
   const trimmed = value.trim();
   const timeMatch = /^(\d{2}:\d{2})/.exec(trimmed);
+
   return timeMatch ? timeMatch[1] : '';
 }
 
@@ -812,12 +884,16 @@ function normalizeDateTimeTimeValue(value: string | null | undefined): string {
   if (!value) {
     return '00:00';
   }
+
   const parsed = new Date(value);
+
   if (Number.isNaN(parsed.getTime())) {
     return '00:00';
   }
+
   const hours = `${parsed.getHours()}`.padStart(2, '0');
   const minutes = `${parsed.getMinutes()}`.padStart(2, '0');
+
   return `${hours}:${minutes}`;
 }
 
@@ -825,7 +901,9 @@ function normalizeDateTimeDateValue(value: string | null | undefined): string {
   if (!value) {
     return '';
   }
+
   const parsed = new Date(value);
+
   return Number.isNaN(parsed.getTime()) ? '' : formatLocalDate(parsed);
 }
 
@@ -833,6 +911,7 @@ function formatLocalDate(date: Date): string {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
+
   return `${year}-${month}-${day}`;
 }
 
@@ -843,12 +922,12 @@ function localDateTime(date: string, time: string): string {
 function suspensionValidator(
   control: AbstractControl
 ): ValidationErrors | null {
-  const value = control.value as {
-    isActive?: boolean;
-    suspensionMode?: SuspensionMode;
-    suspendUntil?: string;
-    suspendUntilTime?: string;
-  };
+  const parsed = SuspensionValueSchema.safeParse(control.value);
+
+  if (!parsed.success) return { invalidSuspension: true };
+
+  const value = parsed.data;
+
   if (value.isActive || value.suspensionMode !== 'until') {
     return null;
   }
@@ -858,6 +937,7 @@ function suspensionValidator(
         localDateTime(value.suspendUntil, value.suspendUntilTime ?? '00:00')
       ).getTime()
     : Number.NaN;
+
   return Number.isNaN(suspendUntilMs) || suspendUntilMs <= Date.now()
     ? { invalidSuspension: true }
     : null;
@@ -871,18 +951,46 @@ function resolveBrowserTimezone(): string {
   }
 }
 
-function toReminderInputValue(value: string): { date: string; time: string } {
+function toReminderInputValue(value: string): ReminderInputValue {
   const date = new Date(value);
+
   if (Number.isNaN(date.getTime())) {
     return { date: '', time: '' };
   }
+
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
   const hours = `${date.getHours()}`.padStart(2, '0');
   const minutes = `${date.getMinutes()}`.padStart(2, '0');
+
   return {
     date: `${year}-${month}-${day}`,
     time: `${hours}:${minutes}`,
   };
 }
+
+interface RepeatState {
+  mode: RepeatMode;
+  every: number;
+  unit: RepeatUnit;
+}
+
+interface ReminderInputValue {
+  date: string;
+  time: string;
+}
+
+const ReminderDraftSchema = z.object({
+  id: z.string().optional(),
+  date: z.string().optional(),
+  time: z.string().optional(),
+  timezone: z.string().optional(),
+});
+
+const SuspensionValueSchema = z.object({
+  isActive: z.boolean().optional(),
+  suspensionMode: z.enum(['indefinite', 'until']).optional(),
+  suspendUntil: z.string().optional(),
+  suspendUntilTime: z.string().optional(),
+});

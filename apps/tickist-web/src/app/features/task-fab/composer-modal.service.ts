@@ -5,6 +5,7 @@ import { Task } from '../../data/task-data.service';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 
 export type ProjectComposerMode = 'create' | 'edit';
+
 export type TaskComposerMode = 'create' | 'edit';
 
 export interface ProjectComposerPreset {
@@ -38,6 +39,7 @@ export class ComposerModalService {
   ): Promise<void> {
     if (preset.mode === 'edit' && preset.task) {
       await this.router.navigate(['/app/task', preset.task.id, 'edit']);
+
       return;
     }
 
@@ -54,6 +56,7 @@ export class ComposerModalService {
   async openProjectModal(preset: ProjectComposerPreset): Promise<void> {
     if (preset.mode === 'edit' && preset.project) {
       await this.router.navigate(['/app/project', preset.project.id, 'edit']);
+
       return;
     }
 
@@ -82,6 +85,7 @@ function withActiveProjectDefault(
   }
 
   const match = currentUrl.match(/^\/app\/tasks\/([^/?#]+)(?:[/?#]|$)/);
+
   if (!match?.[1]) {
     return defaults;
   }
@@ -100,15 +104,19 @@ function buildTaskQueryParams(
   }
 
   const params: Params = {};
+
   if (defaults.projectId) {
     params['projectId'] = defaults.projectId;
   }
+
   if (defaults.priority) {
     params['priority'] = defaults.priority;
   }
+
   if (defaults.tags?.length) {
     params['tags'] = defaults.tags.join(',');
   }
+
   return Object.keys(params).length ? params : undefined;
 }
 
@@ -120,17 +128,22 @@ function buildProjectQueryParams(
   }
 
   const params: Params = {};
+
   if (defaults.projectType) {
     params['projectType'] = defaults.projectType;
   }
+
   if (defaults.ancestorId) {
     params['ancestorId'] = defaults.ancestorId;
   }
+
   if (defaults.color) {
     params['color'] = defaults.color;
   }
+
   if (defaults.icon) {
     params['icon'] = defaults.icon;
   }
+
   return Object.keys(params).length ? params : undefined;
 }

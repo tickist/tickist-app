@@ -1,3 +1,8 @@
+import {
+  fixtureHost,
+  requiredElement,
+  elementsOfType,
+} from '../../../testing/dom';
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -51,20 +56,25 @@ describe('SheetScaffoldComponent', () => {
 
   it('renders title, tabs and projected footer content', () => {
     expect(
-      fixture.nativeElement.querySelector('[data-testid="shared-sheet"]')
+      fixtureHost(fixture).querySelector('[data-testid="shared-sheet"]')
     ).not.toBeNull();
-    expect(fixture.nativeElement.textContent).toContain('Shared sheet');
-    expect(fixture.nativeElement.textContent).toContain('General');
-    expect(fixture.nativeElement.textContent).toContain('Projected footer');
+    expect(fixtureHost(fixture).textContent).toContain('Shared sheet');
+    expect(fixtureHost(fixture).textContent).toContain('General');
+    expect(fixtureHost(fixture).textContent).toContain('Projected footer');
   });
 
   it('emits tab changes and close requests', () => {
-    const tabButton = fixture.nativeElement.querySelectorAll(
-      '.sheet-shell__tab'
-    )[1] as HTMLButtonElement;
-    const closeButton = fixture.nativeElement.querySelector(
-      '.sheet-shell__close'
-    ) as HTMLButtonElement;
+    const tabButton = elementsOfType(
+      fixtureHost(fixture),
+      '.sheet-shell__tab',
+      HTMLButtonElement
+    )[1];
+
+    const closeButton = requiredElement(
+      fixtureHost(fixture),
+      '.sheet-shell__close',
+      HTMLButtonElement
+    );
 
     tabButton.click();
     closeButton.click();
@@ -75,10 +85,10 @@ describe('SheetScaffoldComponent', () => {
 
   it('keeps scroll responsibility on the panel content', () => {
     expect(
-      fixture.nativeElement.querySelector('.sheet-shell__panel-scroll')
+      fixtureHost(fixture).querySelector('.sheet-shell__panel-scroll')
     ).not.toBeNull();
     expect(
-      fixture.nativeElement.querySelectorAll('.sheet-shell__footer')
+      fixtureHost(fixture).querySelectorAll('.sheet-shell__footer')
     ).toHaveLength(1);
   });
 });
