@@ -16,7 +16,11 @@ import {
   type NotificationItem,
 } from '../../data/notification-data.service';
 import { AppViewStateService } from './app-view-state.service';
-import { WorkspaceDataService } from '../../data/workspace-data.service';
+import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import {
+  WorkspaceDataService,
+  type Workspace,
+} from '../../data/workspace-data.service';
 import {
   AppViewportComponent,
   isRememberedAppUrl,
@@ -35,6 +39,8 @@ class MockToastContainerComponent {}
 describe('AppViewportComponent theme toggle', () => {
   let notifications: ReturnType<typeof signal<NotificationItem[]>>;
   let markAllAsRead: ReturnType<typeof vi.fn>;
+  const workspaceItems = signal<Workspace[]>([]);
+
   const selectedWorkspaceId = signal<string | null>(null);
 
   const selectWorkspace = vi.fn((id: string | null) =>
@@ -47,6 +53,7 @@ describe('AppViewportComponent theme toggle', () => {
     markAllAsRead = vi.fn(async () => undefined);
     selectedWorkspaceId.set(null);
     selectWorkspace.mockClear();
+    workspaceItems.set([{ id: 'work-id', name: 'Work', kind: 'work' }]);
 
     await TestBed.configureTestingModule({
       imports: [AppViewportComponent],
@@ -77,9 +84,7 @@ describe('AppViewportComponent theme toggle', () => {
         {
           provide: WorkspaceDataService,
           useValue: {
-            list: signal([
-              { id: 'work-id', name: 'Work', kind: 'work' },
-            ]).asReadonly(),
+            list: workspaceItems.asReadonly(),
             selectedWorkspaceId: selectedWorkspaceId.asReadonly(),
             select: selectWorkspace,
           },
@@ -107,6 +112,7 @@ describe('AppViewportComponent theme toggle', () => {
             DatePipe,
             MockSidebarComponent,
             MockTaskFabComponent,
+            ProjectIconComponent,
             MockToastContainerComponent,
           ],
         },
@@ -165,6 +171,70 @@ describe('AppViewportComponent theme toggle', () => {
     fixture.detectChanges();
     expect(selectWorkspace).toHaveBeenCalledWith('work-id');
     expect(trigger.textContent).toContain('Work');
+  });
+
+  it('places the workspace control immediately before the profile button', () => {
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    fixture.detectChanges();
+
+    const switcher = requiredElement(
+      fixtureHost(fixture),
+      '.workspace-switcher',
+      HTMLDivElement
+    );
+
+    expect(switcher.nextElementSibling?.getAttribute('aria-label')).toBe(
+      'Open profile menu'
+    );
+    expect(switcher.querySelector('app-project-icon')).not.toBeNull();
+  });
+
+  it('keeps long workspace names available in the trigger tooltip', () => {
+    const name = 'A workspace with a much longer name';
+    workspaceItems.set([{ id: 'work-id', name, kind: 'work' }]);
+    selectedWorkspaceId.set('work-id');
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    fixture.detectChanges();
+
+    const trigger = requiredElement(
+      fixtureHost(fixture),
+      '[aria-label="Select workspace"]',
+      HTMLButtonElement
+    );
+
+    expect(trigger.title).toBe('Workspace: ' + name);
+    expect(
+      trigger.querySelector('.workspace-switcher__label')?.textContent
+    ).toBe(name);
+  });
+
+  it('returns keyboard focus to the trigger when Escape closes the workspace list', () => {
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    document.body.append(fixtureHost(fixture));
+    fixture.detectChanges();
+
+    const trigger = requiredElement(
+      fixtureHost(fixture),
+      '[aria-label="Select workspace"]',
+      HTMLButtonElement
+    );
+
+    trigger.click();
+    fixture.detectChanges();
+
+    const option = requiredElement(
+      fixtureHost(fixture),
+      '#workspace-menu button',
+      HTMLButtonElement
+    );
+
+    option.focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(fixtureHost(fixture).querySelector('#workspace-menu')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+    fixtureHost(fixture).remove();
   });
 
   it('marks all unread notifications as read from the notifications menu', async () => {

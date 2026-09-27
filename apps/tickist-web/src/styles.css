@@ -8,9 +8,9 @@
   --tickist-surface-strong: rgb(var(--b1) / 0.86);
   --tickist-shadow: 0 14px 35px rgb(0 0 0 / 0.24);
   --tickist-native-select-scheme: dark;
-  --tickist-native-select-popup-bg: rgb(var(--b1));
-  --tickist-native-select-popup-group-bg: rgb(var(--b2));
-  --tickist-native-select-popup-text: rgb(var(--bc));
+  --tickist-native-select-popup-bg: var(--color-base-100);
+  --tickist-native-select-popup-group-bg: var(--color-base-200);
+  --tickist-native-select-popup-text: var(--color-base-content);
   --tickist-placeholder-color: rgb(71 85 105);
 }
 
@@ -36,9 +36,9 @@
   --color-error: #fb7185;
   --color-error-content: #3f0b15;
   --tickist-native-select-scheme: dark;
-  --tickist-native-select-popup-bg: rgb(var(--b1));
-  --tickist-native-select-popup-group-bg: rgb(var(--b2));
-  --tickist-native-select-popup-text: rgb(var(--bc));
+  --tickist-native-select-popup-bg: var(--color-base-100);
+  --tickist-native-select-popup-group-bg: var(--color-base-200);
+  --tickist-native-select-popup-text: var(--color-base-content);
   background-color: #0f172a;
   color-scheme: dark;
 }
@@ -65,9 +65,9 @@
   --color-error: #be123c;
   --color-error-content: #fff1f4;
   --tickist-native-select-scheme: light;
-  --tickist-native-select-popup-bg: rgb(var(--b2));
-  --tickist-native-select-popup-group-bg: rgb(var(--b3));
-  --tickist-native-select-popup-text: rgb(var(--bc));
+  --tickist-native-select-popup-bg: var(--color-base-200);
+  --tickist-native-select-popup-group-bg: var(--color-base-300);
+  --tickist-native-select-popup-text: var(--color-base-content);
   background-color: #f8fafc;
   color-scheme: light;
 }

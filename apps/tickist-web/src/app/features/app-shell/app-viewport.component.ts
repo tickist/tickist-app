@@ -9,6 +9,7 @@ import {
   ChangeDetectionStrategy,
   HostListener,
   ElementRef,
+  ViewChild,
 } from '@angular/core';
 import {
   RouterOutlet,
@@ -25,7 +26,11 @@ import { AppSidebarComponent } from './app-sidebar.component';
 import { TaskFabComponent } from '../task-fab/task-fab.component';
 import { filter, Subscription } from 'rxjs';
 import { ThemeService } from '../../core/ui/theme.service';
-import { WorkspaceDataService } from '../../data/workspace-data.service';
+import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import {
+  WorkspaceDataService,
+  type Workspace,
+} from '../../data/workspace-data.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -38,6 +43,7 @@ import { environment } from '../../../environments/environment';
     NgOptimizedImage,
     AppSidebarComponent,
     TaskFabComponent,
+    ProjectIconComponent,
   ],
   templateUrl: './app-viewport.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +57,7 @@ export class AppViewportComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
   private readonly workspaces = inject(WorkspaceDataService);
-  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private routerSub: Subscription | null = null;
 
   readonly user = computed(() => this.session.user());
@@ -83,6 +89,16 @@ export class AppViewportComponent implements OnDestroy {
   readonly workspaceMenuOpen = signal(false);
   readonly workspaceList = this.workspaces.list;
   readonly selectedWorkspaceId = this.workspaces.selectedWorkspaceId;
+  @ViewChild('workspaceTrigger')
+  private workspaceTrigger?: ElementRef<HTMLButtonElement>;
+
+  readonly workspaceIcon = computed(() => {
+    const selected = this.workspaceList().find(
+      (workspace) => workspace.id === this.selectedWorkspaceId()
+    );
+
+    return selected ? this.iconForWorkspace(selected.kind) : 'folder-open';
+  });
   readonly workspaceLabel = computed(
     () =>
       this.workspaceList().find(
@@ -140,6 +156,7 @@ export class AppViewportComponent implements OnDestroy {
         this.aboutModalOpen.set(false);
         this.notificationsOpen.set(false);
         this.sidebarOpen.set(false);
+        this.workspaceMenuOpen.set(false);
       });
   }
 
@@ -159,8 +176,40 @@ export class AppViewportComponent implements OnDestroy {
     input?.focus();
   }
 
+  iconForWorkspace(kind: Workspace['kind']): string {
+    return kind === 'work'
+      ? 'briefcase'
+      : kind === 'private'
+      ? 'house'
+      : 'folder';
+  }
+
+  toggleWorkspaceMenu(): void {
+    this.workspaceMenuOpen.update((open) => !open);
+
+    if (this.workspaceMenuOpen()) {
+      this.profileMenuOpen.set(false);
+      this.notificationsOpen.set(false);
+    }
+  }
+
+  openWorkspaceMenu(event: Event): void {
+    event.preventDefault();
+    this.workspaceMenuOpen.set(true);
+    this.profileMenuOpen.set(false);
+    this.notificationsOpen.set(false);
+    setTimeout(() =>
+      this.host.nativeElement
+        .querySelector<HTMLButtonElement>(
+          '.workspace-switcher__option[aria-pressed="true"]'
+        )
+        ?.focus()
+    );
+  }
+
   selectWorkspace(workspaceId: string | null): void {
     this.workspaces.select(workspaceId);
+    this.workspaceTrigger?.nativeElement.focus();
     this.workspaceMenuOpen.set(false);
     const selectedProjectId = this.viewState.selectedProjectId();
 
@@ -186,6 +235,8 @@ export class AppViewportComponent implements OnDestroy {
 
   @HostListener('document:keydown.escape')
   closeWorkspaceMenuOnEscape(): void {
+    if (this.workspaceMenuOpen()) this.workspaceTrigger?.nativeElement.focus();
+
     this.workspaceMenuOpen.set(false);
   }
 
@@ -202,6 +253,7 @@ export class AppViewportComponent implements OnDestroy {
 
     if (this.notificationsOpen()) {
       this.profileMenuOpen.set(false);
+      this.workspaceMenuOpen.set(false);
     }
   }
 
@@ -210,6 +262,7 @@ export class AppViewportComponent implements OnDestroy {
 
     if (this.profileMenuOpen()) {
       this.notificationsOpen.set(false);
+      this.workspaceMenuOpen.set(false);
     }
   }
 

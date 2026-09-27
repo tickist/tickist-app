@@ -22,28 +22,147 @@
 
 .workspace-switcher {
   position: relative;
+  flex: 0 0 auto;
+}
+
+.workspace-switcher__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 11rem;
+  height: 2.75rem;
+  padding: 0 0.85rem;
+  border: 1px solid
+    color-mix(in srgb, var(--color-base-content) 15%, transparent);
+  border-radius: 0.85rem;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.workspace-switcher__trigger app-project-icon,
+.workspace-switcher__option app-project-icon {
+  display: flex;
   flex-shrink: 0;
 }
+
+.workspace-switcher__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.workspace-switcher__chevron {
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--color-base-content) 65%, transparent);
+}
+
+.workspace-switcher__trigger:hover,
+.workspace-switcher__trigger[aria-expanded='true'] {
+  border-color: var(--color-primary);
+}
+
+.workspace-switcher__trigger:focus-visible,
+.workspace-switcher__option:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
 .workspace-switcher__menu {
   position: absolute;
   top: calc(100% + 0.5rem);
-  left: 0;
+  right: 0;
   z-index: 60;
-  display: flex;
-  flex-direction: column;
-  min-width: 12rem;
+  width: 16rem;
+  max-width: calc(100vw - 1.5rem);
   max-height: 60vh;
   overflow-y: auto;
   padding: 0.5rem;
+  border: 1px solid
+    color-mix(in srgb, var(--color-base-content) 15%, transparent);
   border-radius: 1rem;
-  background: var(--color-base-200, #1e293b);
+  background: var(--color-base-200);
+  color: var(--color-base-content);
   box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.25);
 }
-.workspace-switcher__menu .btn {
-  justify-content: flex-start;
+
+.workspace-switcher__heading {
+  margin: 0;
+  padding: 0.4rem 0.65rem 0.6rem;
+  color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
-.workspace-switcher__menu .btn[aria-pressed='true'] {
-  color: var(--color-primary, #28bca5);
+
+.workspace-switcher__option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.65rem;
+  border: 0;
+  border-radius: 0.65rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.workspace-switcher__option-label {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.workspace-switcher__check {
+  width: 1rem;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.workspace-switcher__option:hover {
+  background: color-mix(in srgb, var(--color-base-content) 7%, transparent);
+}
+
+.workspace-switcher__option[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+}
+
+@media (max-width: 767px) {
+  .workspace-switcher__trigger {
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+  }
+
+  .workspace-switcher__label,
+  .workspace-switcher__chevron {
+    display: none;
+  }
+
+  .app-navbar__actions > .btn,
+  .app-navbar__actions > .theme-toggle-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    min-height: 2.5rem;
+  }
+
+  .app-navbar__actions > .btn img {
+    width: 2rem;
+    height: 2rem;
+  }
 }
 
 .app-menu {
