@@ -2,6 +2,8 @@
 
 This directory is the English, repository-native knowledge base for coding agents and other LLM-assisted tools. It describes the product and its operating constraints; it is not a replacement for source code, tests, or database migrations.
 
+Business strategy, funding plans, budgets, and unpublished social media drafts live in the separate [Tickist management repository](https://github.com/tickist/management) (access required). Technical documentation and repository-owned blog sources remain in this application repository. The former `docs/MOBILE_STRATEGY.md` is preserved as historical material at `archive/MOBILE_STRATEGY.md` in management.
+
 ## Choose by task
 
 - [Product features](product-features.md) — user-facing behaviour and vocabulary.

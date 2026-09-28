@@ -40,6 +40,8 @@ The `tickist-app` Cloudflare Worker serves the production SPA and runtime config
 
 ## Repository map
 
+This public repository owns the application code, tests, migrations, CI, technical and product documentation, and published blog sources. Strategy, funding plans, budgets, and unpublished social media drafts belong in the separate [Tickist management repository](https://github.com/tickist/management) (access required). Management is not a build or deployment dependency.
+
 ```text
 apps/
   tickist-web/          Angular application and SPA Cloudflare Worker

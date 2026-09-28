@@ -49,6 +49,8 @@ Read the relevant document when changing its contract: [product behaviour](doc/p
 
 ## Documentation
 
+Keep strategy, funding plans, budgets, and unpublished social media drafts in [tickist/management](https://github.com/tickist/management). Application code, technical and product documentation, and repository-owned blog sources remain here. Management is a separate repository, not an application dependency.
+
 Product behaviour changes update the relevant English `doc/` page and both public LLM files (`llm.txt`, `llm-full.txt`). Update README for changed setup, commands, architecture, or positioning. Blog content/schema changes also update `doc/blog.md` and the LLM editorial/SEO contract. Indexable-route changes also update sitemap, robots, and `doc/public-content.md`; use the generator for generated artifacts.
 
 For internal tooling or instruction-only changes, update the affected developer guidance; do not describe them as product capabilities in the public LLM files. Agent configuration and hook maintenance are documented in [agent tooling](doc/agent-tooling.md).

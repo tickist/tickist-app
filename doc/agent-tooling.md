@@ -6,6 +6,8 @@ Tickist's instruction layout follows [OpenAI's guidance on skills and prompts fo
 
 `AGENTS.md` contains shared repository facts, access boundaries, and delivery expectations. `CLAUDE.md` imports it instead of maintaining another copy. The knowledge-base index routes by task. Product contracts remain in their domain documents and source code.
 
+Business strategy, budgets, funding plans, and social media drafts are maintained in [tickist/management](https://github.com/tickist/management), with its own agent instructions. Keep implementation guidance and blog publication sources in this repository; builds and deployments must not require management access.
+
 ## Skills
 
 Canonical maintained entrypoints live under `.agents/skills/`. The existing Claude skill symlinks use those files. GitHub and OpenCode entrypoints forward to the corresponding canonical skill with concise discovery metadata; their older bundled reference/script copies are not the active workflow.
