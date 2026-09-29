@@ -23,6 +23,22 @@ describe('SettingsComponent sheet layout', () => {
   let lastAppUrl: ReturnType<typeof signal<string | null>>;
   let navigateByUrl: ReturnType<typeof vi.fn>;
 
+  it('offers a deletion request without promising immediate erasure', () => {
+    fixture.detectChanges();
+
+    const host = fixtureHost(fixture);
+
+    const link = requiredElement<HTMLAnchorElement>(
+      host,
+      'a[href^="mailto:remove-account@tickist.com"]',
+      HTMLAnchorElement
+    );
+
+    expect(link.textContent).toContain('Request account deletion');
+    expect(host.textContent).toContain('verify the request');
+    expect(host.textContent).not.toContain('wiped immediately');
+  });
+
   beforeEach(async () => {
     lastAppUrl = signal<string | null>('/app/tasks/project-1');
     navigateByUrl = vi.fn(async () => true);

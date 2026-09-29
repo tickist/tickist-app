@@ -76,3 +76,7 @@ Form placeholders use one muted slate colour across light and dark application s
 ## Notifications
 
 Users can receive daily or weekly email summaries according to timezone-aware preferences. Task reminders and notification digests use a database-backed email outbox and server-side workers; the browser does not send SES email directly.
+
+## Account deletion
+
+Settings links to `remove-account@tickist.com` to request permanent deletion. An operator verifies the request and uses the guarded deletion tool. Shared work requires review first; backups follow a separate retention process. This is not immediate self-service erasure. See [account deletion](account-deletion.md).

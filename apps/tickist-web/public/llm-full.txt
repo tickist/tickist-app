@@ -152,3 +152,5 @@ The codebase is an Nx workspace. `apps/tickist-web` is the Angular app, `apps/mc
 - `llm.txt` is the concise LLM discovery file; this file is its complete reference.
 - Repository knowledge for coding agents lives in the root `doc/` directory. Read `doc/README.md` before changing a documented area.
 - When a feature changes, update the relevant `doc/` page, `llm.txt`, and `llm-full.txt`. When a public route changes, update `sitemap.xml` and `robots.txt` in the same change.
+
+Account deletion: Settings provides a request link to remove-account@tickist.com. Requests require identity verification and operator processing. Shared work is reviewed before deletion; backup retention is separate. This is not immediate self-service erasure.

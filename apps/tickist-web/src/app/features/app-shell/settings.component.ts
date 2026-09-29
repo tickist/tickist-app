@@ -423,10 +423,6 @@ export class SettingsComponent {
     }
   }
 
-  async deleteAccount(): Promise<void> {
-    this.toasts.error('Account removal is not enabled in this build.');
-  }
-
   async changePassword(): Promise<void> {
     this.passwordError.set(null);
 

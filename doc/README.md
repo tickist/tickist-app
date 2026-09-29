@@ -17,6 +17,8 @@ Business strategy, funding plans, budgets, and unpublished social media drafts l
 
 Read the page that governs the change; no sequential tour is required. For repository instructions, skills, and hooks, use [Agent tooling](agent-tooling.md).
 
+- [Account deletion](account-deletion.md) — verified mail requests, operator preview/apply, and deletion limits.
+
 ## Maintenance contract
 
 Keep these documents factual and concise. When a product capability changes, update the relevant page and both public LLM files:

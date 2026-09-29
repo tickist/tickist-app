@@ -42,6 +42,7 @@ Repository-managed operator tools also provide a deterministic English demo acco
 
 - [Demo data seeding](demo-data-seeding.md)
 - [Encrypted database backups](encrypted-database-backups.md)
+- [Account deletion](account-deletion.md) — guarded operator workflow after verifying an email request
 
 ## E2E isolation
 

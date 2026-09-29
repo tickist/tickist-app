@@ -44,3 +44,5 @@ Authenticated integrations use the exclusive `https://mcp.tickist.com/mcp` endpo
 ## Maintenance rule
 
 When a product capability changes, update the matching document in `doc/`, this concise file, and `llm-full.txt`. When a new public route is added, also update `sitemap.xml` and `robots.txt`.
+
+Account deletion: Settings provides a request link to remove-account@tickist.com. Requests require identity verification and operator processing. Shared work is reviewed before deletion; backup retention is separate. This is not immediate self-service erasure.

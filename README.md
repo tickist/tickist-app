@@ -202,6 +202,8 @@ The demo dry run makes no connection. Applying it requires an administrative Sup
 
 Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backups](doc/encrypted-database-backups.md) before applying either operator workflow.
 
+Account deletion requests are handled through `remove-account@tickist.com`. The guarded operator workflow, preview/apply commands, migration requirement, and backup limitations are described in [account deletion](doc/account-deletion.md). Run its safety tests with `npm run account:delete:test`.
+
 ## Environment and secrets
 
 `.env.example` documents the supported variables. The important groups are:
