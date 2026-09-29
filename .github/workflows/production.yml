@@ -53,6 +53,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify legal release sources
+        run: node tools/legal/release.mjs --check
+
       - name: Verify app and MCP
         run: |
           npx nx run-many -t oxlint --all

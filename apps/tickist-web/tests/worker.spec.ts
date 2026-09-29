@@ -21,8 +21,11 @@ describe('Worker blog metadata', () => {
     const seo = blogSeoForUrl(new URL('https://tickist.com/pl/blog'));
 
     expect(seo?.locale).toBe('pl');
+
     expect(seo?.canonicalUrl).toBe('https://tickist.com/pl/blog');
+
     expect(seo?.robots).toContain('index,follow');
+
     expect(seo?.jsonLd[0]?.['@type']).toBe('Blog');
   });
 
@@ -30,6 +33,7 @@ describe('Worker blog metadata', () => {
     expect(
       blogSeoForUrl(new URL('https://tickist.com/en/blog?tag=planning'))?.robots
     ).toBe('noindex,follow');
+
     expect(
       blogSeoForUrl(new URL('https://tickist.com/en/blog/not-published'))
         ?.robots
@@ -46,14 +50,19 @@ describe('Worker /env.js runtime config', () => {
     const req = new Request('https://tickist.com/env.js', { method: 'GET' });
 
     const res = await worker.fetch(req, buildEnv());
+
     const script = await res.text();
 
     expect(res.status).toBe(200);
+
     expect(res.headers.get('content-type')).toContain('application/javascript');
+
     expect(res.headers.get('cache-control')).toContain('no-store');
+
     expect(script).toContain(
       '"NG_APP_SUPABASE_URL":"https://test.supabase.co"'
     );
+
     expect(script).toContain(
       '"NG_APP_SUPABASE_PUBLISHABLE_KEY":"test-publishable-key"'
     );
@@ -75,11 +84,31 @@ describe('Worker /env.js runtime config', () => {
     expect(script).toContain(
       '"NG_APP_SUPABASE_PUBLISHABLE_KEY":"legacy-anon-key"'
     );
+
     expect(script).toContain('"NG_APP_SUPABASE_ANON_KEY":"legacy-anon-key"');
   });
 });
 
 describe('Worker route boundaries', () => {
+  it('prevents automatic analytics injection while allowing the consented beacon', async () => {
+    stubAssets.fetch.mockResolvedValueOnce(
+      new Response('<html></html>', {
+        headers: { 'content-type': 'text/html', 'cache-control': 'no-cache' },
+      })
+    );
+
+    const response = await worker.fetch(
+      new Request('https://tickist.com/app/tasks/project-id'),
+      buildEnv()
+    );
+
+    expect(response.headers.get('cache-control')).toContain('no-transform');
+
+    expect(response.headers.get('Content-Security-Policy')).toContain(
+      'https://static.cloudflareinsights.com/beacon.min.js'
+    );
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -91,6 +120,7 @@ describe('Worker route boundaries', () => {
     );
 
     expect(response.status).toBe(200);
+
     expect(response.headers.get('X-Robots-Tag')).toBe('noindex, nofollow');
   });
 
@@ -104,6 +134,7 @@ describe('Worker route boundaries', () => {
     const res = await worker.fetch(req, buildEnv());
 
     expect(await res.text()).toBe('asset');
+
     expect(stubAssets.fetch).toHaveBeenCalledWith(req);
   });
 });

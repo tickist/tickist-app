@@ -2,7 +2,8 @@
 begin;
 create function pg_temp.legal_assert(ok boolean, label text) returns void language plpgsql as $$
 begin if ok is distinct from true then raise exception 'Legal assertion failed: %', label; end if; end; $$;
-select pg_temp.legal_assert(not exists(select 1 from public.legal_releases), 'empty fixture release catalog required');
+-- Deselect deployment releases inside this rollback-only test; never delete them.
+update public.legal_releases set is_current=false where is_current;
 do $$ begin
  begin
   insert into auth.users(id,email,raw_user_meta_data,raw_app_meta_data) values ('af000000-0000-4000-8000-000000000001','legal@example.invalid','{}','{}');
@@ -46,10 +47,10 @@ insert into public.legal_releases(version,locale,terms_text,privacy_text,publish
 values ('future','en','Fixture','Fixture',now()+interval '1 day');
 set local role anon;
 do $$ begin
- if (select count(*) from public.legal_releases) <> 1 then raise exception 'Future legal release exposed to anon'; end if;
+ if exists(select 1 from public.legal_releases where version='future') then raise exception 'Future legal release exposed to anon'; end if;
 end $$;
 reset role;
-select pg_temp.legal_assert((select count(*)=1 from public.legal_releases where published_at<=now()),'one published release');
+select pg_temp.legal_assert((select count(*)=1 from public.legal_releases where is_current and published_at<=now()),'one current published release');
 select set_config('request.jwt.claim.sub','af000000-0000-4000-8000-000000000001',true);
 set local role authenticated;
 do $$ begin

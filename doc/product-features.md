@@ -21,7 +21,7 @@ Posts, categories, and tags are published from the repository rather than an adm
 - Selecting a project shows tasks from that project and all nested subprojects. When the selected project has descendants, independent checkboxes beside the selected project and each descendant can include or exclude that project's own tasks. All projects in the hierarchy are included by default, and the selection resets when the user moves to another project.
 - Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view. Branding offers a searchable catalogue of 151 tree-shaken Lucide icons.
 - The sidebar groups active work and special planning buckets such as Someday/Maybe, routine reminders, weekdays, and future work.
-- Project owners can share a project by invitation. Recipients accept or decline from the Team view; accepted members can leave shared projects.
+- Project owners can share a project by invitation. Email invitations require an existing Tickist account; an address without an account receives no invitation email or stored membership. Recipients accept or decline from the Team view; accepted members can leave shared projects.
 - MCP clients can create and move nested projects, recursively list a selected project's tasks, and delete owned non-Inbox projects. Deleting a project leaves its tasks unattached and promotes its direct children to root projects.
 
 ## Tasks
@@ -87,4 +87,6 @@ Pending project invitations expire after 30 days; accepted memberships remain ac
 
 ## Registration documents
 
-Signup links to the exact published terms and privacy version, requires an unchecked terms acceptance checkbox, and records the version with a server timestamp. Documents are public and downloadable. With no final release, the new form disables signup; migration 0026 also rejects ordinary unconfirmed signup without a valid current acceptance. No legal texts are seeded by the migration. See [registration and legal documents](legal-registration.md) for publication and email-confirmation requirements.
+Signup links to the exact published terms and privacy version, requires an unchecked terms acceptance checkbox, and records the version with a server timestamp. Documents are public and downloadable. With no final release, the new form disables signup; migration 0026 also rejects ordinary unconfirmed signup without a valid current acceptance. Migration 0027 publishes the Polish release 2026-09-30.1 from application-owned Markdown at deployment time. See [registration and legal documents](legal-registration.md) for publication and email-confirmation requirements.
+
+Optional Cloudflare Web Analytics, including signed-in views, starts only after consent. Refusal preserves feature access. Privacy settings allow changing the choice; withdrawal reloads to stop measurement. The choice lasts 180 days and is checked when the application opens. Operational Worker logs remain separate.

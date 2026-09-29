@@ -62,3 +62,19 @@ Read `DEPLOY.md` and `docs/EMAIL.md` before changing production email, scheduler
 Application history cleanup is documented in [data retention](data-retention.md); apply migration 0025 before updating the project-invite function.
 
 - [Registration and legal documents](legal-registration.md) — versioned public documents, server acceptance records and the publication gate.
+
+## Worker logs
+
+Both `wrangler.toml` and `wrangler.mcp.toml` enable Workers Logs and invocation
+logs through `[observability.logs]`. Each Worker's next deployment applies its
+configuration; editing these files does not enable logs on the deployed Worker.
+Invocation logs include request/response metadata such as the request URL,
+alongside application console messages and errors. Keep credentials and user
+content out of custom log messages.
+
+Cloudflare's [Workers Logs documentation](https://developers.cloudflare.com/workers/observability/logs/workers-logs/)
+specifies retention of 3 days on Workers Free and 7 days on Workers Paid. The
+Workers plan is separate from the domain's plan. These files do not configure
+external log destinations.
+
+The app uses `assets.run_worker_first = ["/*", "!/assets/*", "!/images/*"]` so SPA HTML, `/env.js`, legal noindex and consent/security headers actually execute the Worker. Bundles and images retain direct asset delivery. Check navigation responses as well as direct requests; SPA asset fallback can otherwise bypass the Worker.

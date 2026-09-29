@@ -1,6 +1,6 @@
 # Registration and legal documents
 
-Migration `0026_legal_registration.sql` adds a public release catalog and a private acceptance record. It contains no published documents. Unfinished legal preparation remains in the separate management repository; application builds never read that repository.
+Migration `0026_legal_registration.sql` adds a public release catalog and a private acceptance record. It contains no published documents. Migration `0027_publish_legal_release.sql` publishes the repository-owned Polish release `2026-09-30.1` from `docs/legal/2026-09-30.1/`, using the migration execution time as its publication date. Unfinished legal preparation remains in the separate management repository; application builds never read that repository.
 
 ## User flow
 
@@ -29,4 +29,12 @@ Focused Vitest coverage lives beside the signup and legal components and in `tes
 
 `tools/legal/registration.integration.sql` creates synthetic fixtures inside a transaction and rolls everything back. Run only against local Supabase with `ON_ERROR_STOP=1`; apply migration 0026 in that same transaction if it is not installed. Tests cover missing/stale acceptance, the server timestamp, own-record RLS, hidden future releases, immutable text, operator provisioning and account deletion. Never reset a non-isolated database for this test.
 
-The existing isolated E2E reset setup seeds a clearly labeled `e2e-fixture-v1` release only after successful reset of a local stack, using a server-side test key. It rejects remote API hosts and a nonempty release catalog. E2E fixtures are not deployable legal sources. Running the ordinary E2E suite still requires the existing database isolation/reset authorization.
+The existing isolated E2E reset setup seeds a clearly labeled `e2e-fixture-v1` release only after successful reset of a local stack, using a server-side test key. It rejects remote API hosts and unexpected existing releases; after an isolated reset it deselects the known deployment release and seeds the synthetic current release. It preserves the deployment text. E2E fixtures are not deployable legal sources. Running the ordinary E2E suite still requires the existing database isolation/reset authorization.
+
+## Current release and analytics
+
+Run `node tools/legal/release.mjs --check` to compare both Markdown sources byte-for-byte with migration 0027. The check runs in CI and before production deployment. `--write` regenerates only this unpublished migration; never rewrite it after deployment. Future document changes require a new version and migration. The version identifier is not the effective date; the legal page displays the database publication timestamp.
+
+The application offers optional Cloudflare Web Analytics on public and signed-in pages. No choice or refusal loads no beacon; allowing measurement loads it once. The public site token is supplied by `/env.js`. The browser stores the decision for 180 days, checked when the app opens. Privacy settings remain available; withdrawal reloads the page to stop an already-loaded beacon, including its listeners. A cross-tab storage change applies the same withdrawal. Users are warned to save unfinished edits first.
+
+`assets.run_worker_first` routes HTML through the Worker while JavaScript/CSS bundles and images retain direct static delivery. HTML responses carry `Cache-Control: no-transform` to prevent Cloudflare's automatic beacon injection, while application consent controls manual loading. Before considering the production rollout verified, check the actual edge response and browser requests: no injected or loaded beacon before choice or after refusal; one beacon after consent; no further measurement after withdrawal and reload. Workers request/security logs remain enabled independently of analytics consent; their purpose and retention are described in the privacy policy. See [Cloudflare installation documentation](https://developers.cloudflare.com/web-analytics/get-started/).

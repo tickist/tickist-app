@@ -19,7 +19,7 @@ describe('Legal E2E fixture guard', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it('refuses to insert fixtures when any release already exists', async () => {
+  it('refuses to insert fixtures when an unexpected release exists', async () => {
     const fetch = vi
       .fn()
       .mockResolvedValue(
@@ -31,6 +31,53 @@ describe('Legal E2E fixture guard', () => {
       seedLocalLegalFixture('http://127.0.0.1:54321', 'test-key')
     ).rejects.toThrow('nonempty release catalog');
     expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('preserves the deployment documents and selects a synthetic release after reset', async () => {
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify([{ version: '2026-09-30.1' }]))
+      )
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(new Response(null, { status: 201 }));
+
+    vi.stubGlobal('fetch', fetch);
+
+    await seedLocalLegalFixture('http://127.0.0.1:54321', 'test-key');
+
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      'http://127.0.0.1:54321/rest/v1/legal_releases?version=eq.2026-09-30.1',
+      expect.objectContaining({
+        method: 'PATCH',
+        body: JSON.stringify({ is_current: false }),
+      })
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      3,
+      'http://127.0.0.1:54321/rest/v1/legal_releases',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify(E2E_LEGAL_RELEASE),
+      })
+    );
+  });
+
+  it('does not insert a fixture when deselecting the deployment release fails', async () => {
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify([{ version: '2026-09-30.1' }]))
+      )
+      .mockResolvedValueOnce(new Response(null, { status: 500 }));
+
+    vi.stubGlobal('fetch', fetch);
+
+    await expect(
+      seedLocalLegalFixture('http://127.0.0.1:54321', 'test-key')
+    ).rejects.toThrow('Could not select');
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 
   it('inserts clearly labeled test documents into an empty local catalog', async () => {

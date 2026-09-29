@@ -200,6 +200,8 @@ npm run db:backup:remote
 
 The demo dry run makes no connection. Applying it requires an administrative Supabase secret and explicit remote-project confirmation; replacement additionally requires the exact marked demo email. Backups include Postgres, Auth, migration history, Storage metadata, and physical Storage objects, then authenticate and verify the encrypted archive.
 
+Preview local backup retention with `npm run db:backup:prune -- --project=PROJECT_REF --dir=/absolute/backup/directory`. Deletion is a separate explicit apply command; see the backup guide for confirmations and scheduling.
+
 Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backups](doc/encrypted-database-backups.md) before applying either operator workflow.
 
 Signup requires a published legal release after migration 0026. The migration contains no final text, so deploying it without an approved current release closes ordinary signup. Prepare publication and verify email confirmation using [registration and legal documents](doc/legal-registration.md).

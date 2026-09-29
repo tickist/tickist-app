@@ -8,6 +8,8 @@ Tickist's instruction layout follows [OpenAI's guidance on skills and prompts fo
 
 Business strategy, budgets, funding plans, and social media drafts are maintained in [tickist/management](https://github.com/tickist/management), with its own agent instructions. Keep implementation guidance and blog publication sources in this repository; builds and deployments must not require management access.
 
+The root `AGENTS.md` also records the owner's free-access and voluntary-funding constraints and points planning tasks to the current management documents. Keep changing budgets, weekly progress, and draft publication status in management rather than duplicating them in application instructions.
+
 ## Skills
 
 Canonical maintained entrypoints live under `.agents/skills/`. The existing Claude skill symlinks use those files. GitHub and OpenCode entrypoints forward to the corresponding canonical skill with concise discovery metadata; their older bundled reference/script copies are not the active workflow.
@@ -15,6 +17,10 @@ Canonical maintained entrypoints live under `.agents/skills/`. The existing Clau
 Use a skill when it adds needed knowledge or the user names it. Ordinary code search, a known command, and a request for brevity do not require loading a general tutorial. References are conditional: blog publication, Nx repository imports, and Cloud self-healing have different needs.
 
 The checked-in `skills-lock.json` records upstream installation provenance. Local adaptations are intentional; review diffs before using an installer to refresh them. Upstream READMEs describe their original packages and may assume integrations not installed here. Git history records Tickist's overrides.
+
+### GitHub CLI
+
+GitHub CLI (`gh`) is installed in the current environment. Check authentication separately with `gh auth status`; do not print tokens. Use `gh run list` and `gh run view` for Actions checks and pass `--repo tickist/tickist-app` when running from the parent workspace. The parent workspace guide also describes targeting the separate management repository.
 
 ### CI routing
 

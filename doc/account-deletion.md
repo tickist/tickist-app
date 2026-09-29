@@ -49,7 +49,7 @@ The Inbox deletion guard still rejects direct Inbox removal while its Auth owner
 
 Storage and Auth are separate systems. An error after file cleanup can leave the account present with its avatar removed. The CLI exits unsuccessfully and says so. Reinspect before retrying; do not report completion on a timeout or an unexpected verification error. The transactional database trigger prevents partial application-row cleanup on an Auth deletion failure.
 
-This operation does not erase backups, provider security logs, existing browser caches/exports, received email, Gmail correspondence, or account references freely typed inside another person's task content. Review those separately when fulfilling a request; do not claim that all copies were instantly erased. The agreed backup maximum is 30 days, but automated retention remains a separate unimplemented task. Reapply deletions before reopening a restored backup to users.
+This operation does not erase backups, provider security logs, existing browser caches/exports, received email, Gmail correspondence, or account references freely typed inside another person's task content. Review those separately when fulfilling a request; do not claim that all copies were instantly erased. The agreed backup maximum is 30 days, but the scoped cleanup helper is available; installing and monitoring its schedule remains an operator task. Reapply deletions before reopening a restored backup to users.
 
 ## Verification
 
@@ -60,3 +60,11 @@ npm run account:delete:test
 `tools/account-deletion/account-deletion.integration.sql` uses synthetic accounts within a transaction and rolls back. Run it only against local Supabase with all migrations applied, using `psql -v ON_ERROR_STOP=1`; never point it at the remote database. It checks RPC permissions, shared-data blockers, Inbox protection and cascades, cleanup of email/activity/token records, surviving unrelated data, and stale-account Storage authorization.
 
 The SDK behavior is based on [Supabase user management](https://supabase.com/docs/guides/auth/managing-user-data) and [Auth admin deletion](https://supabase.com/docs/reference/javascript/auth-admin-deleteuser). Backups and request correspondence require their own operational follow-up.
+
+## Manual records and restore procedure
+
+Keep the minimal case record (request, verified account UUID, execution date and outcome) in the support correspondence, not a copy of tasks or the account. Closed rights requests use the same 12-month correspondence period; retain only necessary evidence of a concrete ongoing dispute until final resolution, or longer only under a specific legal obligation. Do not record passwords or access tokens.
+
+Before restoring any backup, keep the restored service closed to users. Review completed deletion requests since the backup timestamp, reapply their Storage/Auth deletion using the existing preview and confirmation procedure, resolve shared-data blockers, and verify that those accounts and owned files are gone before reopening access. Keep the case record through the backup window so a restore cannot silently recreate a deleted account. This is a manual operator procedure, not an automated restore hook.
+
+Review closed Gmail support threads and attachments monthly and remove those exceeding 12 months, including Trash; treat unresolved disputes individually. On operator-managed shutdown, remove Tickist data under operator control, including contact correspondence and all local backup copies, within the agreed 30 days from closure. Ordinary rolling backup expiry does not extend that shutdown deadline. See [legal publication](legal-registration.md) and [backup retention](encrypted-database-backups.md).

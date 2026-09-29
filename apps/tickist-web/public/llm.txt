@@ -51,4 +51,8 @@ History retention (migration 0025): pending invitations expire after 30 days; no
 
 Terminal email history is cleaned after 30 days; minimal deduplication hashes linked to the account remain until account deletion. Unresolved legacy records require operator review.
 
-Registration documents (migration 0026): signup links to the exact published terms/privacy version and requires an unchecked terms checkbox. A database trigger validates the current version and records a server timestamp. Legal documents are public, downloadable and excluded from indexing. No final text is included in the migration; ordinary unconfirmed signup is unavailable until an approved current release is published. Existing login is unaffected. See [publication procedure](https://github.com/tickist/tickist-app/blob/develop/doc/legal-registration.md).
+Registration documents (migration 0026): signup links to the exact published terms/privacy version and requires an unchecked terms checkbox. A database trigger validates the current version and records a server timestamp. Legal documents are public, downloadable and excluded from indexing. Migration 0027 publishes the Polish release 2026-09-30.1 from repository-owned Markdown with its actual deployment timestamp. Ordinary unconfirmed signup requires the current published version. Existing login is unaffected. See [publication procedure](https://github.com/tickist/tickist-app/blob/develop/doc/legal-registration.md).
+
+Email invitations to shared projects require an existing Tickist account; addresses without an account are not emailed or saved as project members.
+
+Cloudflare Web Analytics is optional, including on signed-in pages: it loads after consent, with a persistent Privacy settings control and withdrawal by reload. Workers operational logs are separate.

@@ -22,4 +22,4 @@ Run handler regressions with `npm run retention:test`. Database tests also check
 
 ## Remaining scope
 
-Backup retention, Gmail cleanup and provider logs remain separate operational tasks. This migration does not deploy itself and is not proof of production retention.
+A local 30-day backup cleanup command is described in [encrypted database backups](encrypted-database-backups.md). It defaults to preview and requires explicit directory/project confirmation to delete expired pairs. Scheduling it, reviewing skipped files, Gmail cleanup and provider logs remain separate operational tasks. This migration does not deploy itself and is not proof of production retention.

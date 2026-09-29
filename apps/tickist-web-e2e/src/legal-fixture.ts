@@ -37,10 +37,32 @@ export async function seedLocalLegalFixture(
 
   const existing = await fetch(`${endpoint}?select=version`, { headers });
 
-  if (!existing.ok || (await existing.json()).length !== 0) {
+  const rows: Array<{ version: string }> = existing.ok
+    ? await existing.json()
+    : [];
+
+  // Migration 0027 publishes this real release during the isolated local reset.
+  // Preserve it unchanged, while selecting the test-only release for E2E signup.
+
+  if (
+    !existing.ok ||
+    rows.some((row) => row.version !== '2026-09-30.1') ||
+    rows.length > 1
+  ) {
     throw new Error(
       'Refusing to seed legal fixtures into a nonempty release catalog.'
     );
+  }
+
+  if (rows.length === 1) {
+    const deselect = await fetch(`${endpoint}?version=eq.2026-09-30.1`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ is_current: false }),
+    });
+
+    if (!deselect.ok)
+      throw new Error('Could not select the local test-only legal release.');
   }
 
   const response = await fetch(endpoint, {

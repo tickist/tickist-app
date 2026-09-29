@@ -14,7 +14,7 @@ const code = ts.transpileModule(source, {
   },
 }).outputText;
 
-async function requestInvitation(existing) {
+async function requestInvitation(existing, recipientExists = true) {
   let handler;
   const calls = { upserts: 0, notifications: 0, emails: [] };
   const client = {
@@ -23,7 +23,9 @@ async function requestInvitation(existing) {
       admin: {
         listUsers: async () => ({
           data: {
-            users: [{ id: 'recipient', email: 'recipient@example.invalid' }],
+            users: recipientExists
+              ? [{ id: 'recipient', email: 'recipient@example.invalid' }]
+              : [],
           },
         }),
       },
@@ -124,5 +126,14 @@ test('accepted membership is not replaced or emailed again', async () => {
   const r = await requestInvitation({ status: 'accepted' });
   assert.equal(r.body.code, 'already_member');
   assert.equal(r.calls.upserts, 0);
+  assert.equal(r.calls.emails.length, 0);
+});
+
+test('an email without a Tickist account receives no invitation or stored membership', async () => {
+  const r = await requestInvitation(null, false);
+  assert.equal(r.status, 200);
+  assert.equal(r.body.code, 'user_not_found');
+  assert.equal(r.calls.upserts, 0);
+  assert.equal(r.calls.notifications, 0);
   assert.equal(r.calls.emails.length, 0);
 });

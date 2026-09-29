@@ -12,6 +12,7 @@ interface Env {
   /** @deprecated Prefer NG_APP_SUPABASE_PUBLISHABLE_KEY. */
   NG_APP_SUPABASE_ANON_KEY?: string;
   NG_APP_SUPABASE_FUNCTIONS_URL?: string;
+  NG_APP_CLOUDFLARE_ANALYTICS_TOKEN?: string;
 }
 
 const CONTENT_SECURITY_POLICY = [
@@ -19,7 +20,7 @@ const CONTENT_SECURITY_POLICY = [
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
-  "script-src 'self'",
+  "script-src 'self' https://static.cloudflareinsights.com/beacon.min.js",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -321,6 +322,8 @@ const buildEnvPayload = (env: Env) => ({
   NG_APP_SUPABASE_ANON_KEY:
     env.NG_APP_SUPABASE_ANON_KEY ?? env.NG_APP_SUPABASE_PUBLISHABLE_KEY ?? '',
   NG_APP_SUPABASE_FUNCTIONS_URL: env.NG_APP_SUPABASE_FUNCTIONS_URL ?? '',
+  NG_APP_CLOUDFLARE_ANALYTICS_TOKEN:
+    env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ?? '',
 });
 
 const envResponse = (env: Env): Response => {
@@ -363,6 +366,12 @@ const fallbackToIndex = async (
 
 const withSecurityHeaders = (response: Response): Response => {
   const headers = new Headers(response.headers);
+
+  if (headers.get('content-type')?.includes('text/html')) {
+    // Prevent automatic beacon injection; the application loads it after consent.
+    const cacheControl = headers.get('cache-control') ?? 'no-cache';
+    headers.set('cache-control', `${cacheControl}, no-transform`);
+  }
 
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
     headers.set(name, value);

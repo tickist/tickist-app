@@ -14,12 +14,21 @@ Tickist is an Angular + Supabase task application in an npm/Nx workspace. Use No
 
 Read the relevant document when changing its contract: [product behaviour](doc/product-features.md), [architecture and access](doc/architecture.md), [automation](doc/edge-functions.md), [operations](doc/operations.md), [blog](doc/blog.md), or [public indexing](doc/public-content.md). Source, migrations, and tests settle stale documentation; routine edits do not require reading the whole knowledge base.
 
+## Sustainability and management context
+
+- Tickist should remain free to use, with public application code. The owner does not want access subscriptions, premium features, or premium services. Financial support must be voluntary and must not change access to features.
+- The first financial goal is to cover service costs, followed by development tools and eventually the creator's time. Keep infrastructure costs separate from development tools such as Codex. Do not invent costs, revenue, audience size, or funding profiles.
+- [tickist/management](https://github.com/tickist/management) owns strategy, budgets, outreach plans, and unpublished social media drafts. Its local checkout may be available at `../management`; application work must not depend on that checkout or access to the repository.
+- For strategy, funding, or weekly planning tasks, read management's `AGENTS.md`, `strategy/strategy.md`, `strategy/90-days.md`, and `content/calendar.md` as relevant. Use `finance/costs.md` and `finance/monthly.csv` for budgeting. Check current progress there instead of treating the original plan as completed work or assuming its start date.
+- Preparing drafts does not authorize posting, contacting people, opening a funding profile, or spending money. Preserve the owner's distinction between a proposed action and its actual execution.
+
 ## Working agreement
 
 - Carry an implementation through relevant verification and fix failures introduced by it. Make reversible decisions within the requested scope; ask only when a missing choice changes behaviour, scope, or authority.
 - Prefer concise, complete sentences. Load a skill when its workflow helps or the user names it, not merely because a keyword matches. Announce it on first use. Read only supporting references relevant to the task.
 - Preserve unrelated work. Work directly on `develop`; create a feature branch only with the user's explicit approval.
 - Commit, push, publish, and deploy when requested. Existing authorization covers the named action and its verification; do not repeatedly ask. A previous feature's push request does not authorize publishing later work.
+- GitHub CLI (`gh`) is installed in this environment. Use it for GitHub repository, PR, and Actions operations; check `gh auth status` when needed and never print tokens. From outside this repository, specify `--repo tickist/tickist-app`.
 - A handoff states the result, meaningful verification, and unresolved limitations. Verify remote refs after a push; a feature-branch or `develop` push is not a production deployment. Production runs from `master`.
 
 ## Product boundaries

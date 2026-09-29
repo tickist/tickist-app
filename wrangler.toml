@@ -2,8 +2,19 @@ name = "tickist-app"
 main = "apps/tickist-web/worker.ts"
 compatibility_date = "2026-02-01"
 
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[vars]
+# Public Web Analytics site token, not an API credential.
+NG_APP_CLOUDFLARE_ANALYTICS_TOKEN = "a80a9bc74177497489125a0e0870fa83"
+
 [assets]
 directory = "dist/tickist-web"
 binding = "ASSETS"
 html_handling = "auto-trailing-slash"
 not_found_handling = "single-page-application"
+# HTML must pass through the Worker for consent and security headers.
+# Large immutable assets and images still use direct static asset serving.
+run_worker_first = ["/*", "!/assets/*", "!/images/*"]
