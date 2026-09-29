@@ -406,7 +406,9 @@ function withRouteIndexPolicy(response: Response, url: URL): Response {
     url.pathname === '/app' ||
     url.pathname.startsWith('/app/') ||
     url.pathname === '/auth' ||
-    url.pathname.startsWith('/auth/');
+    url.pathname.startsWith('/auth/') ||
+    url.pathname === '/legal' ||
+    url.pathname.startsWith('/legal/');
 
   if (!isPrivateRoute) {
     return response;

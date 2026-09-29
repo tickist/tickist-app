@@ -158,3 +158,5 @@ Account deletion: Settings provides a request link to remove-account@tickist.com
 History retention (migration 0025): pending invitations expire after 30 days; notifications are kept for 180 days and MCP/activity history for 90 days. Daily cleanup preserves tasks, projects and accepted memberships.
 
 Terminal email history is cleaned after 30 days; minimal deduplication hashes linked to the account remain until account deletion. Unresolved legacy records require operator review.
+
+Registration documents (migration 0026): signup links to the exact published terms/privacy version and requires an unchecked terms checkbox. A database trigger validates the current version and records a server timestamp. Legal documents are public, downloadable and excluded from indexing. No final text is included in the migration; ordinary unconfirmed signup is unavailable until an approved current release is published. Existing login is unaffected. See [publication procedure](https://github.com/tickist/tickist-app/blob/develop/doc/legal-registration.md).

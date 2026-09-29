@@ -67,6 +67,38 @@
         placeholder="••••••••"
       />
     </label>
+    @if (legalRelease(); as legal) {
+    <label class="flex items-start gap-3 text-sm">
+      <input
+        type="checkbox"
+        formControlName="termsAccepted"
+        class="mt-0.5 h-5 w-5 shrink-0 appearance-auto"
+      />
+      <span
+        >I accept the
+        <a
+          [routerLink]="['/legal/terms', legal.version]"
+          target="_blank"
+          rel="noopener"
+          class="underline underline-offset-2"
+          >Terms of Service</a
+        >
+        (version {{ legal.version }}).</span
+      >
+    </label>
+    <p class="text-sm">
+      Read how Tickist uses your data in the
+      <a
+        [routerLink]="['/legal/privacy', legal.version]"
+        target="_blank"
+        rel="noopener"
+        class="underline underline-offset-2"
+        >Privacy Policy</a
+      >.
+    </p>
+    } @if (legalLoading()) {
+    <p role="status">Loading registration documents…</p>
+    }
     <button
       class="btn btn-primary text-primary-content"
       type="submit"

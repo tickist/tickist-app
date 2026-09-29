@@ -84,3 +84,7 @@ Settings links to `remove-account@tickist.com` to request permanent deletion. An
 ## History retention
 
 Pending project invitations expire after 30 days; accepted memberships remain active. Notifications are retained for 180 days and MCP/activity history for 90 days, processed by daily cleanup after migration 0025. See [data retention](data-retention.md) for rollout and limits.
+
+## Registration documents
+
+Signup links to the exact published terms and privacy version, requires an unchecked terms acceptance checkbox, and records the version with a server timestamp. Documents are public and downloadable. With no final release, the new form disables signup; migration 0026 also rejects ordinary unconfirmed signup without a valid current acceptance. No legal texts are seeded by the migration. See [registration and legal documents](legal-registration.md) for publication and email-confirmation requirements.

@@ -13,6 +13,8 @@ export interface SignUpPayload {
   email: string;
   password: string;
   timezone: string;
+  legalVersion: string;
+  termsAccepted: boolean;
 }
 
 export interface ChangePasswordPayload {
@@ -51,6 +53,10 @@ export class SupabaseAuthService {
   }
 
   async signUpWithPassword(payload: SignUpPayload): Promise<AuthResponse> {
+    if (!payload.termsAccepted || !payload.legalVersion.trim()) {
+      throw new Error('Accept the Terms of Service before registration.');
+    }
+
     const client = this.ensureClient();
 
     return client.auth.signUp({
@@ -59,6 +65,8 @@ export class SupabaseAuthService {
       options: {
         data: {
           timezone: normalizeBrowserTimezone(payload.timezone),
+          legal_version: payload.legalVersion,
+          terms_accepted: payload.termsAccepted,
         },
       },
     });

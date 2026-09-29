@@ -34,3 +34,5 @@ When a public, indexable route is added, changed, or removed, update:
 Do not add authenticated workspace routes, account flows, MCP endpoints, runtime configuration, or user-generated routes to the sitemap.
 
 - [Application history retention](data-retention.md) — periods, invitation expiry, migration and local tests.
+
+- [Registration and legal documents](legal-registration.md) — versioned public documents, server acceptance records and the publication gate.

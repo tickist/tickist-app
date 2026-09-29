@@ -84,6 +84,16 @@ describe('Worker route boundaries', () => {
     vi.clearAllMocks();
   });
 
+  it('serves legal pages without indexing them', async () => {
+    const response = await worker.fetch(
+      new Request('https://tickist.com/legal/terms/test-v1'),
+      buildEnv()
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex, nofollow');
+  });
+
   it('does not proxy the removed legacy MCP route', async () => {
     const req = new Request('https://tickist.com/mcp', {
       method: 'POST',

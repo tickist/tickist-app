@@ -60,3 +60,5 @@ CI creates its E2E environment from a local Supabase stack, runs Chromium on pus
 Read `DEPLOY.md` and `docs/EMAIL.md` before changing production email, scheduler, or secret configuration.
 
 Application history cleanup is documented in [data retention](data-retention.md); apply migration 0025 before updating the project-invite function.
+
+- [Registration and legal documents](legal-registration.md) — versioned public documents, server acceptance records and the publication gate.

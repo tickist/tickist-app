@@ -3,6 +3,8 @@ import { resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { workspaceRoot } from '@nx/devkit';
 
+import { E2E_LEGAL_VERSION, seedLocalLegalFixture } from './legal-fixture';
+
 type ResetPhase = 'setup' | 'teardown';
 
 const DEFAULT_RESET_ATTEMPTS = 3;
@@ -54,6 +56,8 @@ export async function resetDatabase(phase: ResetPhase): Promise<void> {
 
   if (isLocalDatabaseUrl(dbUrl)) {
     await waitForLocalSchema(envFile, phase);
+
+    if (phase === 'setup') await seedLegalFixtureAfterReset(envFile);
   }
 }
 
@@ -108,7 +112,11 @@ export async function ensureE2EAuthUser(): Promise<void> {
       apikey: publishableKey,
       Authorization: `Bearer ${publishableKey}`,
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({
+      email,
+      password,
+      data: { legal_version: E2E_LEGAL_VERSION, terms_accepted: true },
+    }),
   });
 
   const signUpText = await signUp.text();
@@ -135,6 +143,28 @@ export async function ensureE2EAuthUser(): Promise<void> {
       }): ${truncateForLog(postSignUpSignIn.body)}`
     );
   }
+}
+
+// Called only after the existing reset authorization checks and a successful local reset.
+async function seedLegalFixtureAfterReset(
+  envFile: string | null
+): Promise<void> {
+  const apiUrl = readFirstAvailableEnvValue(
+    ['NG_APP_SUPABASE_URL', 'SUPABASE_URL', 'API_URL'],
+    envFile
+  );
+
+  const secret = readFirstAvailableEnvValue(
+    [
+      'SUPABASE_SECRET_KEY',
+      'SECRET_KEY',
+      'SUPABASE_SERVICE_ROLE_KEY',
+      'SERVICE_ROLE_KEY',
+    ],
+    envFile
+  );
+
+  await seedLocalLegalFixture(apiUrl, secret);
 }
 
 async function resetDatabaseWithRetry(

@@ -107,6 +107,20 @@ export const appRoutes: Route[] = [
     ],
   },
   {
+    path: 'legal/:document/:version',
+    loadComponent: () =>
+      import('./features/legal/legal-document.component').then(
+        (m) => m.LegalDocumentComponent
+      ),
+  },
+  {
+    path: 'legal/:document',
+    loadComponent: () =>
+      import('./features/legal/legal-document.component').then(
+        (m) => m.LegalDocumentComponent
+      ),
+  },
+  {
     path: 'auth',
     loadChildren: () =>
       import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
