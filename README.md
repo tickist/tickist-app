@@ -204,6 +204,8 @@ Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backu
 
 Account deletion requests are handled through `remove-account@tickist.com`. The guarded operator workflow, preview/apply commands, migration requirement, and backup limitations are described in [account deletion](doc/account-deletion.md). Run its safety tests with `npm run account:delete:test`.
 
+History retention and rollout order are documented in [data retention](doc/data-retention.md). Run invitation regressions with `npm run retention:test`; database retention checks use local rollback transactions.
+
 ## Environment and secrets
 
 `.env.example` documents the supported variables. The important groups are:

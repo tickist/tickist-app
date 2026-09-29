@@ -80,3 +80,7 @@ Users can receive daily or weekly email summaries according to timezone-aware pr
 ## Account deletion
 
 Settings links to `remove-account@tickist.com` to request permanent deletion. An operator verifies the request and uses the guarded deletion tool. Shared work requires review first; backups follow a separate retention process. This is not immediate self-service erasure. See [account deletion](account-deletion.md).
+
+## History retention
+
+Pending project invitations expire after 30 days; accepted memberships remain active. Notifications are retained for 180 days and MCP/activity history for 90 days, processed by daily cleanup after migration 0025. See [data retention](data-retention.md) for rollout and limits.

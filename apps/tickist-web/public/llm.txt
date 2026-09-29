@@ -46,3 +46,7 @@ Authenticated integrations use the exclusive `https://mcp.tickist.com/mcp` endpo
 When a product capability changes, update the matching document in `doc/`, this concise file, and `llm-full.txt`. When a new public route is added, also update `sitemap.xml` and `robots.txt`.
 
 Account deletion: Settings provides a request link to remove-account@tickist.com. Requests require identity verification and operator processing. Shared work is reviewed before deletion; backup retention is separate. This is not immediate self-service erasure.
+
+History retention (migration 0025): pending invitations expire after 30 days; notifications are kept for 180 days and MCP/activity history for 90 days. Daily cleanup preserves tasks, projects and accepted memberships.
+
+Terminal email history is cleaned after 30 days; minimal deduplication hashes linked to the account remain until account deletion. Unresolved legacy records require operator review.

@@ -46,7 +46,8 @@
     "migration:firebase:avatars:backfill:remote": "dotenv -e .env -- node scripts/firebase-migration/backfill-avatar-metadata.mjs --target remote",
     "migration:firebase:import:remote:with-resets": "dotenv -e .env -- node scripts/firebase-migration/import.mjs --source ./backup_from_firebase --target remote --scope active --send-reset-links",
     "account:delete": "node tools/account-deletion/delete-account.mjs",
-    "account:delete:test": "node --test tools/account-deletion/delete-account.test.mjs"
+    "account:delete:test": "node --test tools/account-deletion/delete-account.test.mjs",
+    "retention:test": "node --test tools/retention/project-invite.test.cjs"
   },
   "private": true,
   "dependencies": {

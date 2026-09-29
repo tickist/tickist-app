@@ -58,3 +58,5 @@ CI creates its E2E environment from a local Supabase stack, runs Chromium on pus
 - Production deployment validates the app, pushes migrations, syncs Edge Function secrets and scheduler Vault values, deploys Edge Functions, and deploys the Cloudflare Worker.
 
 Read `DEPLOY.md` and `docs/EMAIL.md` before changing production email, scheduler, or secret configuration.
+
+Application history cleanup is documented in [data retention](data-retention.md); apply migration 0025 before updating the project-invite function.

@@ -32,3 +32,5 @@ When a public, indexable route is added, changed, or removed, update:
 - `apps/tickist-web/public/robots.txt`
 
 Do not add authenticated workspace routes, account flows, MCP endpoints, runtime configuration, or user-generated routes to the sitemap.
+
+- [Application history retention](data-retention.md) — periods, invitation expiry, migration and local tests.
