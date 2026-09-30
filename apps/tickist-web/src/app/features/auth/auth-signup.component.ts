@@ -17,6 +17,7 @@ import {
   LegalRelease,
 } from '../legal/legal-document.service';
 import { ThemeService } from '../../core/ui/theme.service';
+import { GoogleAnalyticsService } from '../../core/privacy/google-analytics.service';
 
 @Component({
   selector: 'app-auth-signup',
@@ -31,6 +32,7 @@ export class AuthSignupComponent {
   private readonly auth = inject(SupabaseAuthService);
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
+  private readonly analytics = inject(GoogleAnalyticsService);
 
   private readonly legalDocuments = inject(LegalDocumentService);
   readonly legalRelease = signal<LegalRelease | null>(null);
@@ -119,6 +121,8 @@ export class AuthSignupComponent {
       if (response.error) {
         throw response.error;
       }
+
+      if (response.data.user?.identities?.length) this.analytics.recordSignUp();
 
       this.message.set({
         type: 'success',

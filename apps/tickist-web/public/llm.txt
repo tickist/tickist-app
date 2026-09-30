@@ -56,3 +56,5 @@ Registration documents (migration 0026): signup links to the exact published ter
 Email invitations to shared projects require an existing Tickist account; addresses without an account are not emailed or saved as project members.
 
 Cloudflare Web Analytics is optional, including on signed-in pages: it loads after consent, with a persistent Privacy settings control and withdrawal by reload. Workers operational logs are separate.
+
+Google Analytics 4 is separate and optional: its tag loads only after explicit Google consent and publication of privacy release 2026-09-30.2. It sends fixed route templates, sign_up for successful new registrations, and app_open once per page lifetime; no account, task or project IDs, content, query strings or fragments are included. Referrers retain only allowlisted search/social origins. Existing Cloudflare consent never enables Google. Advertising consent is denied and automatic enhanced measurement is disabled. Google consent and non-renewing analytics cookies expire after 180 days; withdrawal disables collection, deletes the host cookies and reloads. Google remains disabled in environments without NG_APP_GA4_MEASUREMENT_ID.

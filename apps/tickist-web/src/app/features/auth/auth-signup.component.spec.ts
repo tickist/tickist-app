@@ -1,4 +1,5 @@
 import { signal } from '@angular/core';
+import { GoogleAnalyticsService } from '../../core/privacy/google-analytics.service';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
@@ -18,15 +19,25 @@ const release: LegalRelease = {
   published_at: '2026-09-29T00:00:00Z',
 };
 
-async function setup(document: LegalRelease | null) {
-  const signUp = vi.fn(async () => ({
-    error: new Error('Fixture stops before navigation'),
-  }));
+interface SignupFixture {
+  data: { user: { identities: Array<{ id: string }> } };
+  error: Error | null;
+}
 
+async function setup(document: LegalRelease | null) {
+  const signUp = vi.fn(
+    async (): Promise<SignupFixture> => ({
+      data: { user: { identities: [] } },
+      error: new Error('Fixture stops before navigation'),
+    })
+  );
+
+  const recordSignUp = vi.fn();
   await TestBed.configureTestingModule({
     imports: [AuthSignupComponent],
     providers: [
       provideRouter([]),
+      { provide: GoogleAnalyticsService, useValue: { recordSignUp } },
       {
         provide: SupabaseAuthService,
         useValue: { signUpWithPassword: signUp },
@@ -50,7 +61,7 @@ async function setup(document: LegalRelease | null) {
     confirm: 'Password123!',
   });
 
-  return { fixture, signUp };
+  return { fixture, signUp, recordSignUp };
 }
 
 describe('Registration legal documents', () => {
@@ -82,5 +93,31 @@ describe('Registration legal documents', () => {
     expect(root.textContent).toContain(
       'Registration is temporarily unavailable'
     );
+  });
+});
+
+describe('Consent-gated signup measurement', () => {
+  afterEach(() => vi.useRealTimers());
+  it.each([false, true])(
+    'records only new identities after a successful signup: new=%s',
+    async (newIdentity) => {
+      const { fixture, signUp, recordSignUp } = await setup(release);
+      vi.useFakeTimers();
+      fixture.componentInstance.form.controls.termsAccepted.setValue(true);
+      signUp.mockResolvedValue({
+        data: {
+          user: { identities: newIdentity ? [{ id: 'fixture-id' }] : [] },
+        },
+        error: null,
+      });
+      await fixture.componentInstance.handleSubmit();
+      expect(recordSignUp).toHaveBeenCalledTimes(newIdentity ? 1 : 0);
+    }
+  );
+  it('does not record a failed signup', async () => {
+    const { fixture, recordSignUp } = await setup(release);
+    fixture.componentInstance.form.controls.termsAccepted.setValue(true);
+    await fixture.componentInstance.handleSubmit();
+    expect(recordSignUp).not.toHaveBeenCalled();
   });
 });

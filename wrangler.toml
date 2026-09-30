@@ -10,6 +10,9 @@ invocation_logs = true
 # Public Web Analytics site token, not an API credential.
 NG_APP_CLOUDFLARE_ANALYTICS_TOKEN = "a80a9bc74177497489125a0e0870fa83"
 
+# Public GA4 measurement ID; Google Analytics still requires its own consent.
+NG_APP_GA4_MEASUREMENT_ID = "G-JWF4122K8L"
+
 [assets]
 directory = "dist/tickist-web"
 binding = "ASSETS"

@@ -59,6 +59,14 @@ export default defineConfig(({ mode }) => {
       loaded.SUPABASE_DB_URL ?? process.env.SUPABASE_DB_URL ?? '',
     SUPABASE_REMOTE_DB_URL:
       loaded.SUPABASE_REMOTE_DB_URL ?? process.env.SUPABASE_REMOTE_DB_URL ?? '',
+    NG_APP_GA4_MEASUREMENT_ID:
+      loaded.NG_APP_GA4_MEASUREMENT_ID ??
+      process.env.NG_APP_GA4_MEASUREMENT_ID ??
+      '',
+    NG_APP_CLOUDFLARE_ANALYTICS_TOKEN:
+      loaded.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ??
+      process.env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ??
+      '',
     NG_APP_BUILD_COMMIT: resolveBuildCommit(loaded),
   };
 
@@ -200,6 +208,12 @@ export default defineConfig(({ mode }) => {
       ),
       'import.meta.env.SUPABASE_REMOTE_DB_URL': JSON.stringify(
         mergedEnv.SUPABASE_REMOTE_DB_URL
+      ),
+      'import.meta.env.NG_APP_GA4_MEASUREMENT_ID': JSON.stringify(
+        mergedEnv.NG_APP_GA4_MEASUREMENT_ID
+      ),
+      'import.meta.env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN': JSON.stringify(
+        mergedEnv.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN
       ),
       'import.meta.env.NG_APP_BUILD_COMMIT': JSON.stringify(
         mergedEnv.NG_APP_BUILD_COMMIT

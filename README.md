@@ -88,6 +88,8 @@ cp .env.example .local_env.e2e
 
 Environment files are ignored by Git. Never put real secrets in committed files.
 
+Optional analytics use `NG_APP_CLOUDFLARE_ANALYTICS_TOKEN` and `NG_APP_GA4_MEASUREMENT_ID`. Leave both empty locally unless testing measurement. The production measurement ID is public runtime configuration in `wrangler.toml`. Google Analytics requires its own explicit consent and the published privacy release described in [registration and privacy](doc/legal-registration.md); Cloudflare consent does not authorize Google.
+
 ### 3. Start local Supabase
 
 ```bash

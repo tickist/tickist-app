@@ -68,6 +68,23 @@ describe('Worker /env.js runtime config', () => {
     );
   });
 
+  it('exposes independent public analytics configuration at runtime', async () => {
+    const response = await worker.fetch(
+      new Request('https://tickist.com/env.js'),
+      buildEnv({
+        NG_APP_GA4_MEASUREMENT_ID: 'G-JWF4122K8L',
+        NG_APP_CLOUDFLARE_ANALYTICS_TOKEN: 'a'.repeat(32),
+      })
+    );
+
+    const script = await response.text();
+    expect(script).toContain('"NG_APP_GA4_MEASUREMENT_ID":"G-JWF4122K8L"');
+    expect(script).toContain('"NG_APP_CLOUDFLARE_ANALYTICS_TOKEN"');
+    expect(response.headers.get('Content-Security-Policy')).toContain(
+      'https://www.googletagmanager.com/gtag/js'
+    );
+  });
+
   it('falls back to the legacy anon key for deployments not migrated yet', async () => {
     const req = new Request('https://tickist.com/env.js', { method: 'GET' });
 

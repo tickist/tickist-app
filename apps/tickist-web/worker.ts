@@ -13,6 +13,7 @@ interface Env {
   NG_APP_SUPABASE_ANON_KEY?: string;
   NG_APP_SUPABASE_FUNCTIONS_URL?: string;
   NG_APP_CLOUDFLARE_ANALYTICS_TOKEN?: string;
+  NG_APP_GA4_MEASUREMENT_ID?: string;
 }
 
 const CONTENT_SECURITY_POLICY = [
@@ -20,7 +21,7 @@ const CONTENT_SECURITY_POLICY = [
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
-  "script-src 'self' https://static.cloudflareinsights.com/beacon.min.js",
+  "script-src 'self' https://static.cloudflareinsights.com/beacon.min.js https://www.googletagmanager.com/gtag/js",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -324,6 +325,7 @@ const buildEnvPayload = (env: Env) => ({
   NG_APP_SUPABASE_FUNCTIONS_URL: env.NG_APP_SUPABASE_FUNCTIONS_URL ?? '',
   NG_APP_CLOUDFLARE_ANALYTICS_TOKEN:
     env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ?? '',
+  NG_APP_GA4_MEASUREMENT_ID: env.NG_APP_GA4_MEASUREMENT_ID ?? '',
 });
 
 const envResponse = (env: Env): Response => {
