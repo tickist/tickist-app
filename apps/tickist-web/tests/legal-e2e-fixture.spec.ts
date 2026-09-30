@@ -33,35 +33,67 @@ describe('Legal E2E fixture guard', () => {
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('preserves the deployment documents and selects a synthetic release after reset', async () => {
+  it.each([
+    ['2026-09-30.1'],
+    ['2026-09-30.2'],
+    ['2026-09-30.1', '2026-09-30.2'],
+  ])(
+    'preserves deployment documents %j and selects a synthetic release',
+    async (...versions) => {
+      const fetch = vi
+        .fn()
+        .mockResolvedValueOnce(
+          new Response(JSON.stringify(versions.map((version) => ({ version }))))
+        );
+
+      for (let index = 0; index < versions.length; index++) {
+        fetch.mockResolvedValueOnce(new Response(null, { status: 204 }));
+      }
+
+      fetch.mockResolvedValueOnce(new Response(null, { status: 201 }));
+      vi.stubGlobal('fetch', fetch);
+
+      await seedLocalLegalFixture('http://127.0.0.1:54321', 'test-key');
+
+      for (const [index, version] of versions.entries()) {
+        expect(fetch).toHaveBeenNthCalledWith(
+          index + 2,
+          `http://127.0.0.1:54321/rest/v1/legal_releases?version=eq.${version}`,
+          expect.objectContaining({
+            method: 'PATCH',
+            body: JSON.stringify({ is_current: false }),
+          })
+        );
+      }
+
+      expect(fetch).toHaveBeenLastCalledWith(
+        'http://127.0.0.1:54321/rest/v1/legal_releases',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify(E2E_LEGAL_RELEASE),
+        })
+      );
+    }
+  );
+
+  it('rejects duplicate deployment versions before any write', async () => {
     const fetch = vi
       .fn()
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify([{ version: '2026-09-30.1' }]))
-      )
-      .mockResolvedValueOnce(new Response(null, { status: 204 }))
-      .mockResolvedValueOnce(new Response(null, { status: 201 }));
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify([
+            { version: '2026-09-30.1' },
+            { version: '2026-09-30.1' },
+          ])
+        )
+      );
 
     vi.stubGlobal('fetch', fetch);
 
-    await seedLocalLegalFixture('http://127.0.0.1:54321', 'test-key');
-
-    expect(fetch).toHaveBeenNthCalledWith(
-      2,
-      'http://127.0.0.1:54321/rest/v1/legal_releases?version=eq.2026-09-30.1',
-      expect.objectContaining({
-        method: 'PATCH',
-        body: JSON.stringify({ is_current: false }),
-      })
-    );
-    expect(fetch).toHaveBeenNthCalledWith(
-      3,
-      'http://127.0.0.1:54321/rest/v1/legal_releases',
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify(E2E_LEGAL_RELEASE),
-      })
-    );
+    await expect(
+      seedLocalLegalFixture('http://127.0.0.1:54321', 'test-key')
+    ).rejects.toThrow('nonempty release catalog');
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 
   it('does not insert a fixture when deselecting the deployment release fails', async () => {

@@ -41,21 +41,22 @@ export async function seedLocalLegalFixture(
     ? await existing.json()
     : [];
 
-  // Migration 0027 publishes this real release during the isolated local reset.
-  // Preserve it unchanged, while selecting the test-only release for E2E signup.
+  // Migrations 0027 and 0028 publish these releases during the isolated reset.
+  // Preserve their text while selecting the test-only release for E2E signup.
+  const deploymentVersions = new Set(['2026-09-30.1', '2026-09-30.2']);
 
   if (
     !existing.ok ||
-    rows.some((row) => row.version !== '2026-09-30.1') ||
-    rows.length > 1
+    rows.some((row) => !deploymentVersions.has(row.version)) ||
+    new Set(rows.map((row) => row.version)).size !== rows.length
   ) {
     throw new Error(
       'Refusing to seed legal fixtures into a nonempty release catalog.'
     );
   }
 
-  if (rows.length === 1) {
-    const deselect = await fetch(`${endpoint}?version=eq.2026-09-30.1`, {
+  for (const { version } of rows) {
+    const deselect = await fetch(`${endpoint}?version=eq.${version}`, {
       method: 'PATCH',
       headers,
       body: JSON.stringify({ is_current: false }),
