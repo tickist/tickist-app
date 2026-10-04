@@ -3,6 +3,15 @@
   height: 100%;
 }
 
+.task-auto-save-status {
+  color: rgb(var(--bc) / 0.72);
+  font-size: 0.875rem;
+}
+
+.task-auto-save-status--error {
+  color: rgb(var(--er));
+}
+
 .task-composer-sr-only {
   position: absolute;
   width: 1px;

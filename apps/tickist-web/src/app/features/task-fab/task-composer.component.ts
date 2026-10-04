@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   EventEmitter,
   inject,
@@ -32,6 +33,7 @@ import {
 import {
   TaskReminderDataService,
   TaskReminderDraft,
+  isValidTaskReminderDraft,
 } from '../../data/task-reminder-data.service';
 import {
   Project,
@@ -115,6 +117,7 @@ export class TaskComposerComponent {
   private readonly projectService = inject(ProjectDataService);
   private readonly tagService = inject(TagDataService);
   private readonly reminderService = inject(TaskReminderDataService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly session = inject(SupabaseSessionService);
 
   readonly projects = computed(() => this.projectService.list());
@@ -125,6 +128,11 @@ export class TaskComposerComponent {
   );
   readonly activeTab = signal<TabKey>('general');
   readonly submitting = signal(false);
+  readonly autoSaveStatus = signal<'saved' | 'pending' | 'saving' | 'error'>(
+    'saved'
+  );
+  readonly autoSaveMessage = signal('Changes save automatically.');
+  readonly remindersLoading = signal(false);
   readonly tagSearch = signal('');
   readonly tabs: readonly SheetScaffoldTab<TabKey>[] = [
     { key: 'general', label: 'General', icon: '✏️' },
@@ -200,7 +208,6 @@ export class TaskComposerComponent {
   @Output() dismiss = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
   readonly editingTask = signal<Task | null>(null);
-  private currentPreset: TaskComposerPreset | null = null;
   private readonly defaultFormValue: TaskFormDefaults = {
     name: '',
     priority: 'B',
@@ -260,8 +267,37 @@ export class TaskComposerComponent {
   readonly remindersArray = this.fb.array<FormGroup>([]);
   private reminderLoadTaskId: string | null = null;
   private reminderEditVersion = 0;
+  private reminderLoadPromise: Promise<void> | null = null;
+  readonly remindersReady = signal(false);
+  private hydrating = false;
+  private pendingTaskSave = false;
+  private pendingReminderSave = false;
+  private saveTimer: ReturnType<typeof setTimeout> | null = null;
+  private saveInProgress: Promise<boolean> | null = null;
+  private savedTags: string[] = [];
+  private savedAssigneeIds: string[] = [];
+  private savedSteps: { content: string; isDone: boolean; position: number }[] =
+    [];
 
   constructor() {
+    this.taskForm.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.scheduleAutoSave('task'));
+    this.steps.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.scheduleAutoSave('task'));
+    this.reminders.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.scheduleAutoSave('reminders'));
+
+    this.destroyRef.onDestroy(() => {
+      if (this.saveTimer) clearTimeout(this.saveTimer);
+
+      if (this.pendingTaskSave || this.pendingReminderSave) {
+        void this.flushAutoSave();
+      }
+    });
+
     this.taskForm.controls.projectId.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((projectId) => {
@@ -276,9 +312,9 @@ export class TaskComposerComponent {
 
     effect(() => {
       if (!this.user()) {
-        this.taskForm.disable();
+        this.taskForm.disable({ emitEvent: false });
       } else {
-        this.taskForm.enable();
+        this.taskForm.enable({ emitEvent: false });
       }
     });
 
@@ -300,12 +336,26 @@ export class TaskComposerComponent {
   }
 
   private applyPreset(preset: TaskComposerPreset | null): void {
-    this.currentPreset = preset;
+    if (preset?.mode === 'edit' && preset.task?.id === this.editingTask()?.id) {
+      this.editingTask.set(preset.task);
+
+      return;
+    }
+
+    this.hydrating = true;
+    this.cancelScheduledSave();
+    this.pendingTaskSave = false;
+    this.pendingReminderSave = false;
+    this.remindersReady.set(false);
+    this.autoSaveStatus.set('saved');
+    this.autoSaveMessage.set('Changes save automatically.');
     this.activeTab.set('general');
 
     if (!preset || preset.mode === 'create') {
       this.editingTask.set(null);
       this.reminderLoadTaskId = null;
+      this.reminderLoadPromise = null;
+      this.remindersLoading.set(false);
       this.reminderEditVersion += 1;
       this.clearReminders();
       this.resetForm({
@@ -313,6 +363,7 @@ export class TaskComposerComponent {
         tags: preset?.defaults?.tags ?? [],
         priority: preset?.defaults?.priority ?? 'B',
       });
+      this.hydrating = false;
 
       return;
     }
@@ -350,8 +401,16 @@ export class TaskComposerComponent {
       });
       this.clearSteps();
       task.steps.forEach((step) => this.addStep(step.content, step.isDone));
+      this.savedTags = [...this.taskForm.controls.tags.value];
+      this.savedAssigneeIds = this.taskForm.controls.assigneeId.value
+        ? [this.taskForm.controls.assigneeId.value]
+        : [];
+      this.savedSteps = this.stepPayload();
       this.reminderEditVersion += 1;
-      void this.loadRemindersForTask(task.id);
+      this.clearReminders();
+      this.remindersLoading.set(true);
+      this.hydrating = false;
+      this.reminderLoadPromise = this.loadRemindersForTask(task.id);
     }
   }
 
@@ -457,25 +516,56 @@ export class TaskComposerComponent {
   private async loadRemindersForTask(taskId: string): Promise<void> {
     this.reminderLoadTaskId = taskId;
     const editVersion = this.reminderEditVersion;
-    const reminders = await this.reminderService.listForTask(taskId);
 
-    if (
-      this.reminderLoadTaskId !== taskId ||
-      this.reminderEditVersion !== editVersion
-    ) {
-      return;
+    try {
+      const reminders = await this.reminderService.listForTask(taskId);
+
+      if (
+        this.reminderLoadTaskId !== taskId ||
+        this.reminderEditVersion !== editVersion
+      ) {
+        return;
+      }
+
+      this.hydrating = true;
+      this.clearReminders();
+      reminders.forEach((reminder) => {
+        const inputValue = toReminderInputValue(reminder.remindAt);
+        this.addReminderControl(
+          inputValue.date,
+          inputValue.time,
+          reminder.id,
+          reminder.timezone
+        );
+      });
+      this.hydrating = false;
+      this.remindersReady.set(true);
+      this.remindersLoading.set(false);
+
+      if (this.pendingReminderSave) {
+        this.scheduleAutoSave('reminders');
+      } else if (!this.pendingTaskSave && this.autoSaveStatus() === 'error') {
+        this.autoSaveStatus.set('saved');
+        this.autoSaveMessage.set('Changes save automatically.');
+      }
+    } catch {
+      if (this.reminderLoadTaskId === taskId) {
+        this.remindersLoading.set(false);
+        this.autoSaveStatus.set('error');
+        this.autoSaveMessage.set(
+          'Could not load reminders. Retry before editing.'
+        );
+      }
     }
+  }
 
-    this.clearReminders();
-    reminders.forEach((reminder) => {
-      const inputValue = toReminderInputValue(reminder.remindAt);
-      this.addReminderControl(
-        inputValue.date,
-        inputValue.time,
-        reminder.id,
-        reminder.timezone
-      );
-    });
+  retryRemindersLoad(): void {
+    const task = this.editingTask();
+
+    if (!task || this.remindersLoading()) return;
+
+    this.remindersLoading.set(true);
+    this.reminderLoadPromise = this.loadRemindersForTask(task.id);
   }
 
   async createTag(name: string): Promise<void> {
@@ -499,6 +589,258 @@ export class TaskComposerComponent {
     }
 
     this.tagSearch.set('');
+  }
+
+  private scheduleAutoSave(kind: 'task' | 'reminders'): void {
+    if (this.hydrating || !this.editingTask()) return;
+
+    if (kind === 'task') {
+      this.pendingTaskSave = true;
+    } else {
+      this.pendingReminderSave = true;
+    }
+
+    this.autoSaveStatus.set('pending');
+    this.autoSaveMessage.set('Saving changes…');
+    this.cancelScheduledSave();
+    this.saveTimer = setTimeout(() => void this.flushAutoSave(), 500);
+  }
+
+  private cancelScheduledSave(): void {
+    if (!this.saveTimer) return;
+
+    clearTimeout(this.saveTimer);
+    this.saveTimer = null;
+  }
+
+  async flushAutoSave(): Promise<boolean> {
+    this.cancelScheduledSave();
+
+    if (this.saveInProgress) return this.saveInProgress;
+
+    if (!this.pendingTaskSave && !this.pendingReminderSave) return true;
+
+    this.saveInProgress = this.savePendingChanges();
+
+    try {
+      return await this.saveInProgress;
+    } finally {
+      this.saveInProgress = null;
+    }
+  }
+
+  private async savePendingChanges(): Promise<boolean> {
+    while (this.pendingTaskSave || this.pendingReminderSave) {
+      const editing = this.editingTask();
+
+      if (!editing || !this.user()) return false;
+
+      const saveTask = this.pendingTaskSave;
+      const saveReminders = this.pendingReminderSave;
+      this.pendingTaskSave = false;
+      this.pendingReminderSave = false;
+      this.autoSaveStatus.set('saving');
+      this.autoSaveMessage.set('Saving changes…');
+
+      let errorMessage = '';
+
+      if (saveTask) {
+        if (this.taskForm.invalid) {
+          this.pendingTaskSave = true;
+          errorMessage = 'Complete the required task fields to save changes.';
+        } else {
+          try {
+            const payload = this.buildTaskUpdatePayload(editing.id);
+            const updated = await this.taskService.updateTask(payload);
+
+            if (!updated) throw new Error('Task update failed.');
+
+            if (this.editingTask()?.id !== editing.id) return false;
+
+            this.editingTask.set(updated);
+
+            if (payload.tags) this.savedTags = [...payload.tags];
+
+            if (payload.assigneeIds) {
+              this.savedAssigneeIds = [...payload.assigneeIds];
+            }
+
+            if (payload.steps) {
+              this.savedSteps = payload.steps.map((step, index) => ({
+                content: step.content,
+                isDone: !!step.isDone,
+                position: step.position ?? index,
+              }));
+            }
+          } catch {
+            this.pendingTaskSave = true;
+            errorMessage = 'Could not save task changes. Retry the save.';
+          }
+        }
+      }
+
+      if (saveReminders) {
+        if (this.editingTask()?.id !== editing.id) return false;
+
+        if (this.reminderLoadPromise) await this.reminderLoadPromise;
+
+        if (this.editingTask()?.id !== editing.id) return false;
+
+        if (!this.remindersReady()) {
+          this.pendingReminderSave = true;
+          errorMessage = 'Could not load reminders. Retry before editing.';
+        } else {
+          const drafts = this.validReminderDrafts();
+
+          if (!drafts) {
+            this.pendingReminderSave = true;
+            errorMessage = 'Complete each reminder date and time to save.';
+          } else {
+            try {
+              await this.reminderService.saveForTask(
+                editing.id,
+                editing.ownerId,
+                drafts
+              );
+              await this.taskService.refresh();
+
+              if (this.editingTask()?.id !== editing.id) return false;
+            } catch {
+              this.pendingReminderSave = true;
+              errorMessage = 'Could not save reminders. Retry the save.';
+            }
+          }
+        }
+      }
+
+      if (errorMessage) {
+        this.autoSaveStatus.set('error');
+        this.autoSaveMessage.set(errorMessage);
+
+        return false;
+      }
+    }
+
+    this.autoSaveStatus.set('saved');
+    this.autoSaveMessage.set('All changes saved.');
+
+    return true;
+  }
+
+  private validReminderDrafts(): TaskReminderDraft[] | null {
+    const drafts: TaskReminderDraft[] = [];
+
+    for (const control of this.reminders.controls) {
+      const raw = ReminderDraftSchema.parse(control.getRawValue());
+
+      if (!raw.id && !raw.date && !raw.time) continue;
+
+      const draft: TaskReminderDraft = {
+        id: raw.id || null,
+        date: raw.date ?? '',
+        time: raw.time ?? '',
+        timezone: raw.timezone ?? resolveBrowserTimezone(),
+      };
+
+      if (!isValidTaskReminderDraft(draft)) return null;
+
+      if (!draft.id) {
+        draft.id = crypto.randomUUID();
+        control.get('id')?.setValue(draft.id, { emitEvent: false });
+      }
+
+      drafts.push(draft);
+    }
+
+    return drafts;
+  }
+
+  async requestClose(): Promise<void> {
+    if (this.editingTask()) {
+      if (this.reminderLoadPromise) await this.reminderLoadPromise;
+
+      if (!(await this.flushAutoSave())) return;
+    }
+
+    this.dismiss.emit();
+  }
+
+  async retryAutoSave(): Promise<void> {
+    if (!this.remindersReady()) {
+      this.retryRemindersLoad();
+
+      if (this.reminderLoadPromise) await this.reminderLoadPromise;
+    }
+
+    await this.flushAutoSave();
+  }
+
+  private stepPayload(): {
+    content: string;
+    isDone: boolean;
+    position: number;
+  }[] {
+    return this.steps.controls.flatMap((control, position) => {
+      const { content, isDone } = control.getRawValue();
+      const trimmed = content?.trim();
+
+      return trimmed ? [{ content: trimmed, isDone: !!isDone, position }] : [];
+    });
+  }
+
+  private buildTaskUpdatePayload(id: string): TaskUpdateInput {
+    const value = this.taskForm.getRawValue();
+
+    const repeatInterval = this.getRepeatInterval(
+      value.repeatMode,
+      value.repeatEvery,
+      value.repeatUnit
+    );
+
+    const assigneeIds = value.assigneeId ? [value.assigneeId] : [];
+    const steps = this.stepPayload();
+
+    const payload: TaskUpdateInput = {
+      id,
+      name: value.name,
+      projectId: value.projectId || null,
+      description: value.description ?? '',
+      finishDate: value.finishDate || null,
+      finishTime: value.finishTime || null,
+      typeFinishDate: this.typeFinishDateFromMode(value.completeMode),
+      priority: value.priority,
+      taskType: value.taskType?.toUpperCase(),
+      repeatInterval,
+      fromRepeating: this.getRepeatFromValue(
+        repeatInterval,
+        value.repeatFrom,
+        !!value.finishDate
+      ),
+      estimateMinutes: value.estimateMinutes ?? null,
+      spentMinutes: value.spentMinutes ?? null,
+      isActive: value.isActive,
+      suspendUntil: this.resolveSuspendUntil(
+        value.isActive,
+        value.suspensionMode,
+        value.suspendUntil,
+        value.suspendUntilTime
+      ),
+      pinned: value.pinned,
+    };
+
+    if (JSON.stringify(value.tags) !== JSON.stringify(this.savedTags)) {
+      payload.tags = [...value.tags];
+    }
+
+    if (JSON.stringify(assigneeIds) !== JSON.stringify(this.savedAssigneeIds)) {
+      payload.assigneeIds = assigneeIds;
+    }
+
+    if (JSON.stringify(steps) !== JSON.stringify(this.savedSteps)) {
+      payload.steps = steps;
+    }
+
+    return payload;
   }
 
   async submit(addAnother = false): Promise<void> {

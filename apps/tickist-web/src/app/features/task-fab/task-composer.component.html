@@ -6,7 +6,7 @@
   testId="task-composer-sheet"
   closeAriaLabel="Close task panel"
   (tabChange)="selectTab($event)"
-  (panelClose)="dismiss.emit()"
+  (panelClose)="requestClose()"
 >
   <div sheet-body>
     @switch (activeTab()) { @case ('general') {
@@ -210,7 +210,13 @@
     } @case ('reminders') {
     <section class="sheet-form">
       <section class="sheet-section">
-        @if (reminders.length) {
+        @if (editingTask() && remindersLoading()) {
+        <p class="sheet-field__hint" role="status">Loading reminders…</p>
+        } @else if (editingTask() && !remindersReady()) {
+        <p class="sheet-field__error" role="alert">
+          Could not load reminders. Retry from the footer.
+        </p>
+        } @else { @if (reminders.length) {
         <div class="reminders">
           @for (reminder of reminders.controls; track reminder; let i = $index)
           {
@@ -263,6 +269,7 @@
         >
           Add reminder
         </button>
+        }
       </section>
     </section>
     } @case ('tags') {
@@ -537,7 +544,23 @@
 
   <div sheet-footer class="sheet-footer-actions">
     <div class="sheet-footer-actions__group">
-      @if (!editingTask()) {
+      @if (editingTask()) {
+      <span
+        class="task-auto-save-status"
+        [class.task-auto-save-status--error]="autoSaveStatus() === 'error'"
+        [attr.role]="autoSaveStatus() === 'error' ? 'alert' : 'status'"
+      >
+        {{ autoSaveMessage() }}
+      </span>
+      @if (autoSaveStatus() === 'error') {
+      <button
+        type="button"
+        class="sheet-shell__button sheet-shell__button--secondary"
+        (click)="retryAutoSave()"
+      >
+        Retry
+      </button>
+      } } @else {
       <button
         type="button"
         class="sheet-shell__button sheet-shell__button--secondary"
@@ -546,15 +569,15 @@
       >
         Create and add more
       </button>
-      }
       <button
         type="button"
         class="sheet-shell__button sheet-shell__button--primary"
         [disabled]="submitting()"
         (click)="submit(false)"
       >
-        {{ editingTask() ? 'Update task' : 'Save' }}
+        Save
       </button>
+      }
     </div>
   </div>
 </app-sheet-scaffold>

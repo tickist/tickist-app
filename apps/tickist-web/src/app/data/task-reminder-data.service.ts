@@ -65,9 +65,7 @@ export class TaskReminderDataService {
       .order('remind_at', { ascending: true });
 
     if (error || !data) {
-      console.warn('[TaskReminders] Unable to fetch reminders', error);
-
-      return [];
+      throw error ?? new Error('Unable to fetch task reminders.');
     }
 
     // SAFETY: The reminder projection selects the TaskReminderRow columns from the RLS-protected reminder table.
@@ -100,7 +98,7 @@ export class TaskReminderDataService {
       .map((reminder) => reminder.id);
 
     if (idsToCancel.length) {
-      await this.supabase
+      const { error } = await this.supabase
         .from('task_reminders')
         .update({
           status: 'cancelled',
@@ -108,6 +106,8 @@ export class TaskReminderDataService {
         })
         .in('id', idsToCancel)
         .in('status', PENDING_STATUSES);
+
+      if (error) throw error;
     }
 
     const rows = normalizedDrafts.map((draft) => ({
@@ -235,6 +235,10 @@ function normalizeDraft(
     remindAt,
     timezone,
   };
+}
+
+export function isValidTaskReminderDraft(draft: TaskReminderDraft): boolean {
+  return normalizeDraft(draft) !== null;
 }
 
 function zonedDateTimeToIso(

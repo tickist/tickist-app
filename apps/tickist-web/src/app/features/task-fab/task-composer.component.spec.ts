@@ -326,6 +326,164 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     ]);
   });
 
+  it('automatically saves an edited assignee without using Update task', async () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ projectId: 'shared-project' }),
+    };
+    await vi.waitFor(() => expect(component.remindersReady()).toBe(true));
+    fixture.detectChanges();
+
+    component.taskForm.controls.assigneeId.setValue('member-1');
+
+    await vi.waitFor(() => expect(updateTaskMock).toHaveBeenCalledTimes(1));
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({ assigneeIds: ['member-1'] })
+    );
+    expect(component.autoSaveStatus()).toBe('saved');
+    expect(
+      fixtureHost(fixture).querySelector('.sheet-footer-actions__group')
+        ?.textContent
+    ).not.toContain('Update task');
+  });
+
+  it('automatically saves reminders with stable IDs and no task rewrite', async () => {
+    component.preset = { mode: 'edit', task: createTask() };
+    await vi.waitFor(() => expect(component.remindersReady()).toBe(true));
+
+    component.addReminder(futureDateInput(2), '09:30');
+    await component.flushAutoSave();
+
+    const firstId = component.reminders.at(0).get('id')?.value;
+
+    expect(firstId).toBeTruthy();
+    expect(saveRemindersMock).toHaveBeenCalledTimes(1);
+    expect(saveRemindersMock).toHaveBeenCalledWith('task-1', 'owner-1', [
+      expect.objectContaining({ id: firstId, time: '09:30' }),
+    ]);
+    expect(updateTaskMock).not.toHaveBeenCalled();
+
+    component.reminders.at(0).get('time')?.setValue('10:00');
+    await component.flushAutoSave();
+
+    expect(saveRemindersMock).toHaveBeenCalledTimes(2);
+    expect(saveRemindersMock).toHaveBeenLastCalledWith('task-1', 'owner-1', [
+      expect.objectContaining({ id: firstId, time: '10:00' }),
+    ]);
+  });
+
+  it('saves reminder removal without updating the task', async () => {
+    component.preset = { mode: 'edit', task: createTask() };
+    await vi.waitFor(() => expect(component.remindersReady()).toBe(true));
+
+    component.addReminder(futureDateInput(2), '09:30');
+    await component.flushAutoSave();
+    component.removeReminder(0);
+    await component.flushAutoSave();
+
+    expect(saveRemindersMock).toHaveBeenLastCalledWith('task-1', 'owner-1', []);
+    expect(updateTaskMock).not.toHaveBeenCalled();
+  });
+
+  it('waits for the database write before closing the editor', async () => {
+    component.preset = { mode: 'edit', task: createTask() };
+    let resolveSave: ((task: Task) => void) | undefined;
+    const dismiss = vi.fn();
+    component.dismiss.subscribe(dismiss);
+    updateTaskMock.mockImplementationOnce(
+      () =>
+        new Promise<Task>((resolve) => {
+          resolveSave = resolve;
+        })
+    );
+
+    component.taskForm.controls.priority.setValue('A');
+    const closing = component.requestClose();
+
+    await vi.waitFor(() => expect(updateTaskMock).toHaveBeenCalledTimes(1));
+    expect(dismiss).not.toHaveBeenCalled();
+
+    if (!resolveSave) throw new Error('Save did not start');
+
+    resolveSave(createTask({ priority: 'A' }));
+    await closing;
+
+    expect(dismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the editor open until an incomplete reminder is corrected', async () => {
+    component.preset = { mode: 'edit', task: createTask() };
+    await vi.waitFor(() => expect(component.remindersReady()).toBe(true));
+    const dismiss = vi.fn();
+    component.dismiss.subscribe(dismiss);
+
+    component.addReminder(futureDateInput(2), '');
+    await component.requestClose();
+
+    expect(saveRemindersMock).not.toHaveBeenCalled();
+    expect(component.autoSaveStatus()).toBe('error');
+    expect(dismiss).not.toHaveBeenCalled();
+
+    component.reminders.at(0).get('time')?.setValue('12:15');
+    await component.requestClose();
+
+    expect(saveRemindersMock).toHaveBeenCalledTimes(1);
+    expect(dismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it('preserves an unsaved draft when the task list refreshes', () => {
+    component.preset = { mode: 'edit', task: createTask() };
+    component.taskForm.controls.name.setValue('New draft title');
+
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ name: 'Older task title' }),
+    };
+
+    expect(component.taskForm.controls.name.value).toBe('New draft title');
+  });
+
+  it('serializes edits made while an automatic save is in flight', async () => {
+    component.preset = { mode: 'edit', task: createTask() };
+    let resolveFirst: ((task: Task) => void) | undefined;
+
+    updateTaskMock.mockImplementationOnce(
+      () =>
+        new Promise<Task>((resolve) => {
+          resolveFirst = resolve;
+        })
+    );
+
+    component.taskForm.controls.name.setValue('First draft title');
+    const saving = component.flushAutoSave();
+
+    component.taskForm.controls.name.setValue('Final draft title');
+
+    if (!resolveFirst) throw new Error('First save did not start');
+
+    resolveFirst(createTask({ name: 'First draft title' }));
+    await saving;
+
+    expect(updateTaskMock).toHaveBeenCalledTimes(2);
+    expect(updateTaskMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ name: 'Final draft title' })
+    );
+  });
+
+  it('keeps failed changes pending and saves them on retry', async () => {
+    component.preset = { mode: 'edit', task: createTask() };
+    updateTaskMock.mockResolvedValueOnce(null);
+    component.taskForm.controls.priority.setValue('A');
+
+    expect(await component.flushAutoSave()).toBe(false);
+    expect(component.autoSaveStatus()).toBe('error');
+
+    await component.retryAutoSave();
+
+    expect(updateTaskMock).toHaveBeenCalledTimes(2);
+    expect(component.autoSaveStatus()).toBe('saved');
+  });
+
   it('clears completion date and time in the update payload', async () => {
     component.preset = {
       mode: 'edit',
