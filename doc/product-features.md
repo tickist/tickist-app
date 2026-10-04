@@ -15,13 +15,13 @@ Posts, categories, and tags are published from the repository rather than an adm
 ## Inbox and projects
 
 - Each account has one Inbox for uncategorised tasks.
-- Each account starts with Work and Private workspaces. Existing projects are assigned to Private. Users can create and rename workspaces in Settings; the navigation switcher offers All and each workspace. The selection filters project and task views, dashboard, tags, tree, and statistics. Inbox and notifications remain available across workspaces.
+- Each account starts with Work and Private workspaces. Existing projects are assigned to Private. Users can create and rename workspaces in Settings; the navigation switcher beside the avatar offers All and each workspace, with a fixed-width label on desktop and an icon on mobile. The selection filters project and task views, dashboard, tags, tree, and statistics. Inbox and notifications remain available across workspaces.
 - Each owned project belongs to one workspace; subprojects use their parent's workspace and move with it. A recipient of a shared project assigns it independently to one of their own workspaces, initially Private.
 - Projects can be nested to represent outcomes and their component work.
 - Selecting a project shows tasks from that project and all nested subprojects. When the selected project has descendants, independent checkboxes beside the selected project and each descendant can include or exclude that project's own tasks. All projects in the hierarchy are included by default, and the selection resets when the user moves to another project.
 - Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view. Branding offers a searchable catalogue of 151 tree-shaken Lucide icons.
 - The sidebar groups active work and special planning buckets such as Someday/Maybe, routine reminders, weekdays, and future work.
-- Project owners can share a project by invitation. Recipients accept or decline from the Team view; accepted members can leave shared projects.
+- Project owners can share a project by invitation. Email invitations require an existing Tickist account; an address without an account receives no invitation email or stored membership. Recipients accept or decline from the Team view; accepted members can leave shared projects.
 - MCP clients can create and move nested projects, recursively list a selected project's tasks, and delete owned non-Inbox projects. Deleting a project leaves its tasks unattached and promotes its direct children to root projects.
 
 ## Tasks
@@ -76,3 +76,19 @@ Form placeholders use one muted slate colour across light and dark application s
 ## Notifications
 
 Users can receive daily or weekly email summaries according to timezone-aware preferences. Task reminders and notification digests use a database-backed email outbox and server-side workers; the browser does not send SES email directly.
+
+## Account deletion
+
+Settings links to `remove-account@tickist.com` to request permanent deletion. An operator verifies the request and uses the guarded deletion tool. Shared work requires review first; backups follow a separate retention process. This is not immediate self-service erasure. See [account deletion](account-deletion.md).
+
+## History retention
+
+Pending project invitations expire after 30 days; accepted memberships remain active. Notifications are retained for 180 days and MCP/activity history for 90 days, processed by daily cleanup after migration 0025. See [data retention](data-retention.md) for rollout and limits.
+
+## Registration documents
+
+Signup links to the exact published terms and privacy version, requires an unchecked terms acceptance checkbox, and records the version with a server timestamp. Documents are public and downloadable. With no final release, the new form disables signup; migration 0026 also rejects ordinary unconfirmed signup without a valid current acceptance. Migration 0027 publishes the Polish release 2026-09-30.1 from application-owned Markdown at deployment time. See [registration and legal documents](legal-registration.md) for publication and email-confirmation requirements.
+
+Optional Cloudflare Web Analytics, including signed-in views, starts only after consent. Refusal preserves feature access. Privacy settings allow changing the choice; withdrawal reloads to stop measurement. The choice lasts 180 days and is checked when the application opens. Operational Worker logs remain separate.
+
+Google Analytics 4 is separate and optional: its tag loads only after explicit Google consent and publication of privacy release 2026-09-30.2. It sends fixed route templates, sign_up for successful new registrations, and app_open once per page lifetime; no account, task or project IDs, content, query strings or fragments are included. Referrers retain only allowlisted search/social origins. Existing Cloudflare consent never enables Google. Advertising consent is denied and automatic enhanced measurement is disabled. Google consent and non-renewing analytics cookies expire after 180 days; withdrawal disables collection, deletes the host cookies and reloads. Google remains disabled in environments without NG_APP_GA4_MEASUREMENT_ID.

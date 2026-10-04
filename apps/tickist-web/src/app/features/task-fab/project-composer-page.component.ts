@@ -8,10 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ProjectDataService } from '../../data/project-data.service';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
-import {
-  ProjectComposerPreset,
-  ProjectComposerMode,
-} from './composer-modal.service';
+import { ProjectComposerPreset } from './composer-modal.service';
 import { ProjectComposerComponent } from './project-composer.component';
 
 @Component({
@@ -29,15 +26,18 @@ export class ProjectComposerPageComponent {
 
   readonly preset = computed<ProjectComposerPreset | null>(() => {
     const projectId = this.route.snapshot.paramMap.get('projectId');
+
     if (projectId) {
       const project =
         this.projects.list().find((item) => item.id === projectId) ?? null;
+
       return project ? { mode: 'edit', project } : null;
     }
 
     const queryMap = this.route.snapshot.queryParamMap;
+
     return {
-      mode: 'create' as ProjectComposerMode,
+      mode: 'create' as const,
       defaults: {
         projectType: queryMap.get('projectType') ?? undefined,
         ancestorId: queryMap.get('ancestorId'),

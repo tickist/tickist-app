@@ -18,6 +18,7 @@ export function buildProjectTaskScope(
   const projectIds = collectDescendantIds(hierarchy, selectedProjectId);
   projectIds.add(selectedProjectId);
   excludedProjectIds.forEach((projectId) => projectIds.delete(projectId));
+
   return projectIds;
 }
 

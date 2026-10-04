@@ -47,5 +47,6 @@ export class PasswordRecoveryFlowService {
 
 function normalizeUrlPath(url: string): string {
   const [path] = url.split('?');
+
   return path || '/';
 }

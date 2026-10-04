@@ -24,6 +24,44 @@ describe('ExportImportService helpers', () => {
     expect(validation.summary.taskTags).toBe(1);
   });
 
+  it('parses complete version 1 and version 2 backups', () => {
+    const oldBackup = createPayload();
+    const currentBackup = { ...oldBackup, formatVersion: 2, workspaces: [] };
+
+    expect(parseTickistExportDocument(JSON.stringify(oldBackup))).toEqual({
+      ok: true,
+      payload: oldBackup,
+    });
+    expect(parseTickistExportDocument(JSON.stringify(currentBackup))).toEqual({
+      ok: true,
+      payload: currentBackup,
+    });
+  });
+
+  it.each([
+    { name: 42 },
+    { isDone: 'false' },
+    { repeatInterval: {} },
+    { stableId: null },
+  ])('rejects incorrectly typed task fields before import: %j', (fields) => {
+    const payload = createPayload();
+
+    const malformed = {
+      ...payload,
+      tasks: [{ ...payload.tasks[0], ...fields }],
+    };
+
+    const result = parseTickistExportDocument(JSON.stringify(malformed));
+
+    expect(result.ok).toBe(false);
+  });
+
+  it('rejects a null entity before validation accesses its fields', () => {
+    const payload = { ...createPayload(), projects: [null] };
+
+    expect(parseTickistExportDocument(JSON.stringify(payload)).ok).toBe(false);
+  });
+
   it('reports duplicate stable IDs as errors', () => {
     const payload = createPayload();
     payload.tasks.push({

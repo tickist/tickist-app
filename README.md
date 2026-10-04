@@ -40,6 +40,8 @@ The `tickist-app` Cloudflare Worker serves the production SPA and runtime config
 
 ## Repository map
 
+This public repository owns the application code, tests, migrations, CI, technical and product documentation, and published blog sources. Strategy, funding plans, budgets, and unpublished social media drafts belong in the separate [Tickist management repository](https://github.com/tickist/management) (access required). Management is not a build or deployment dependency.
+
 ```text
 apps/
   tickist-web/          Angular application and SPA Cloudflare Worker
@@ -86,6 +88,8 @@ cp .env.example .local_env.e2e
 
 Environment files are ignored by Git. Never put real secrets in committed files.
 
+Optional analytics use `NG_APP_CLOUDFLARE_ANALYTICS_TOKEN` and `NG_APP_GA4_MEASUREMENT_ID`. Leave both empty locally unless testing measurement. The production measurement ID is public runtime configuration in `wrangler.toml`. Google Analytics requires its own explicit consent and the published privacy release described in [registration and privacy](doc/legal-registration.md); Cloudflare consent does not authorize Google.
+
 ### 3. Start local Supabase
 
 ```bash
@@ -129,6 +133,7 @@ The app is available at [http://localhost:4200](http://localhost:4200). The star
 npm run start
 
 # Static checks, unit tests, and production build
+npm exec nx run-many -t oxlint --all
 npm exec nx lint tickist-web
 npm exec nx test tickist-web
 npm exec nx build tickist-web --configuration production
@@ -197,7 +202,15 @@ npm run db:backup:remote
 
 The demo dry run makes no connection. Applying it requires an administrative Supabase secret and explicit remote-project confirmation; replacement additionally requires the exact marked demo email. Backups include Postgres, Auth, migration history, Storage metadata, and physical Storage objects, then authenticate and verify the encrypted archive.
 
+Preview local backup retention with `npm run db:backup:prune -- --project=PROJECT_REF --dir=/absolute/backup/directory`. Deletion is a separate explicit apply command; see the backup guide for confirmations and scheduling.
+
 Read [demo data seeding](doc/demo-data-seeding.md) and [encrypted database backups](doc/encrypted-database-backups.md) before applying either operator workflow.
+
+Signup requires a published legal release after migration 0026. The migration contains no final text, so deploying it without an approved current release closes ordinary signup. Prepare publication and verify email confirmation using [registration and legal documents](doc/legal-registration.md).
+
+Account deletion requests are handled through `remove-account@tickist.com`. The guarded operator workflow, preview/apply commands, migration requirement, and backup limitations are described in [account deletion](doc/account-deletion.md). Run its safety tests with `npm run account:delete:test`.
+
+History retention and rollout order are documented in [data retention](doc/data-retention.md). Run invitation regressions with `npm run retention:test`; database retention checks use local rollback transactions.
 
 ## Environment and secrets
 
@@ -249,7 +262,7 @@ Deployment configuration and required GitHub secrets are defined in [`.github/wo
 
 ## Contributing
 
-1. Branch from `develop` using a focused name such as `rewrite/<feature>` or `supabase/<area>`.
+1. Work directly on `develop`. Create a feature branch only when the owner explicitly asks for one.
 2. Keep Angular components standalone and prefer signals. Use built-in Angular template control flow (`@if`, `@for`, `@switch`).
 3. Add or update Vitest and Playwright coverage when a user journey, routing rule, or data contract changes.
 4. Verify the changed behaviour with the relevant Nx targets. Instruction/documentation-only changes need formatting and configuration/link checks, not an app build or database reset.

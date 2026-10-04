@@ -1,38 +1,40 @@
-import {
-  McpServer,
-  type CallToolResult,
-  type StandardSchemaWithJSON,
-} from '@modelcontextprotocol/server';
+import { McpServer, type CallToolResult } from '@modelcontextprotocol/server';
 import { z } from 'zod';
+
 import {
   TickistDataAccess,
   type TickistConnection,
 } from '@tickist/data-access-tickist';
 import { toolError, toolResult } from './result';
 
+type ToolFields = NonNullable<Parameters<typeof z.object>[0]>;
+
 const Empty = z.object({});
+
 const Uuid = z.string().uuid();
+
 const Priority = z.enum(['A', 'B', 'C', 'normal']);
+
 const Repeat = z.object({
   interval_days: z.number().int().positive(),
   from: z.enum(['completion_date', 'due_date']),
 });
 
-function operation<T extends z.ZodRawShape>(
+function operation<T extends ToolFields, Result>(
   server: McpServer,
   name: string,
   description: string,
   schema: z.ZodObject<T>,
   requiredScope: string | readonly string[],
   grantedScopes: readonly string[],
-  handler: (input: z.output<z.ZodObject<T>>) => Promise<unknown>,
+  handler: (input: z.output<z.ZodObject<T>>) => Promise<Result>,
   readOnly = true
 ): void {
   server.registerTool(
     name,
     {
       description,
-      inputSchema: schema as StandardSchemaWithJSON,
+      inputSchema: schema,
       annotations: {
         readOnlyHint: readOnly,
         destructiveHint: name === 'delete_task' || name === 'delete_project',
@@ -41,14 +43,16 @@ function operation<T extends z.ZodRawShape>(
         openWorldHint: false,
       },
     },
-    async (input: unknown): Promise<CallToolResult> => {
+    async (input): Promise<CallToolResult> => {
       try {
         const requiredScopes = Array.isArray(requiredScope)
           ? requiredScope
           : [requiredScope];
+
         const missingScopes = requiredScopes.filter(
           (scope) => !grantedScopes.includes(scope)
         );
+
         if (missingScopes.length > 0) {
           throw new Error(
             `Missing required scope${
@@ -56,6 +60,7 @@ function operation<T extends z.ZodRawShape>(
             }: ${missingScopes.join(', ')}.`
           );
         }
+
         return toolResult(await handler(schema.parse(input)));
       } catch (error) {
         return toolError(error);
@@ -68,6 +73,7 @@ export function createTickistMcpServer(
   connection: TickistConnection
 ): McpServer {
   const access = new TickistDataAccess(connection);
+
   const server = new McpServer(
     { name: 'tickist-mcp', version: '2.0.0' },
     {

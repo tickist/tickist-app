@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SupabaseClient, User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../../config/supabase.provider';
 import { SupabaseAuthService } from './supabase-auth.service';
 import { SupabaseSessionService } from './supabase-session.service';
@@ -34,7 +34,7 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
               signInWithPassword: signInWithPasswordMock,
               updateUser: updateUserMock,
             },
-          } as unknown as SupabaseClient,
+          },
         },
         {
           provide: SupabaseSessionService,
@@ -69,12 +69,20 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
       email: 'user@tickist.dev',
       password: 'Password123!',
       timezone: 'Europe/Warsaw',
+      legalVersion: 'test-v1',
+      termsAccepted: true,
     });
 
     expect(signUpMock).toHaveBeenCalledWith({
       email: 'user@tickist.dev',
       password: 'Password123!',
-      options: { data: { timezone: 'Europe/Warsaw' } },
+      options: {
+        data: {
+          timezone: 'Europe/Warsaw',
+          legal_version: 'test-v1',
+          terms_accepted: true,
+        },
+      },
     });
   });
 
@@ -85,13 +93,34 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
       email: 'user@tickist.dev',
       password: 'Password123!',
       timezone: 'invalid/timezone',
+      legalVersion: 'test-v1',
+      termsAccepted: true,
     });
 
     expect(signUpMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        options: { data: { timezone: 'Europe/Warsaw' } },
+        options: {
+          data: {
+            timezone: 'Europe/Warsaw',
+            legal_version: 'test-v1',
+            terms_accepted: true,
+          },
+        },
       })
     );
+  });
+
+  it('does not register without accepting a version of the terms', async () => {
+    await expect(
+      service.signUpWithPassword({
+        email: 'user@tickist.dev',
+        password: 'Password123!',
+        timezone: 'Europe/Warsaw',
+        legalVersion: 'test-v1',
+        termsAccepted: false,
+      })
+    ).rejects.toThrow('Accept the Terms');
+    expect(signUpMock).not.toHaveBeenCalled();
   });
 
   it('verifies current password before updating to a new one', async () => {
@@ -140,5 +169,5 @@ function createUser(): User {
     aud: 'authenticated',
     created_at: '2026-03-09T00:00:00.000Z',
     email: 'user@tickist.dev',
-  } as User;
+  };
 }

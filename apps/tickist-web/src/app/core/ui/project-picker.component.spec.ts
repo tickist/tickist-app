@@ -1,3 +1,8 @@
+import {
+  fixtureHost,
+  requiredElement,
+  elementsOfType,
+} from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -36,26 +41,27 @@ describe('ProjectPickerComponent', () => {
       options[0]?.style.paddingInlineStart
     );
     expect(
-      fixture.nativeElement.querySelector('.project-picker__dot')
+      fixtureHost(fixture).querySelector('.project-picker__dot')
     ).toBeNull();
     expect(
-      fixture.nativeElement
+      fixtureHost(fixture)
         .querySelector('.project-picker__trigger .project-picker__icon')
         ?.getAttribute('style')
     ).toMatch(/14,\s*165,\s*233/);
     expect(
-      fixture.nativeElement.querySelector(
-        '.project-picker__trigger ng-icon svg'
-      )
+      fixtureHost(fixture).querySelector('.project-picker__trigger ng-icon svg')
     ).not.toBeNull();
   });
 
   it('filters results while keeping the parent-child context visible', () => {
     openPicker(fixture);
 
-    const searchInput = fixture.nativeElement.querySelector(
-      '.project-picker__search-input'
-    ) as HTMLInputElement;
+    const searchInput = requiredElement(
+      fixtureHost(fixture),
+      '.project-picker__search-input',
+      HTMLInputElement
+    );
+
     searchInput.value = 'child';
     searchInput.dispatchEvent(new Event('input'));
     fixture.detectChanges();
@@ -86,7 +92,7 @@ describe('ProjectPickerComponent', () => {
     fixture.detectChanges();
 
     expect(
-      fixture.nativeElement.querySelector('.project-picker__shared')
+      fixtureHost(fixture).querySelector('.project-picker__shared')
     ).toBeNull();
 
     openPicker(fixture);
@@ -97,9 +103,12 @@ describe('ProjectPickerComponent', () => {
 });
 
 function openPicker(fixture: ComponentFixture<ProjectPickerComponent>): void {
-  const trigger = fixture.nativeElement.querySelector(
-    '.project-picker__trigger'
-  ) as HTMLButtonElement;
+  const trigger = requiredElement(
+    fixtureHost(fixture),
+    '.project-picker__trigger',
+    HTMLButtonElement
+  );
+
   trigger.click();
   fixture.detectChanges();
 }
@@ -107,9 +116,11 @@ function openPicker(fixture: ComponentFixture<ProjectPickerComponent>): void {
 function getOptionButtons(
   fixture: ComponentFixture<ProjectPickerComponent>
 ): HTMLButtonElement[] {
-  return Array.from(
-    fixture.nativeElement.querySelectorAll('.project-picker__option')
-  ) as HTMLButtonElement[];
+  return elementsOfType(
+    fixtureHost(fixture),
+    '.project-picker__option',
+    HTMLButtonElement
+  );
 }
 
 function optionLabels(options: HTMLButtonElement[]): string[] {

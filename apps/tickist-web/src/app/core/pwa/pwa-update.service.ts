@@ -1,11 +1,17 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 import { registerSW } from 'virtual:pwa-register';
 
 import { ToastService } from '../ui/toast.service';
 
+export const REGISTER_SERVICE_WORKER = new InjectionToken<typeof registerSW>(
+  'REGISTER_SERVICE_WORKER',
+  { providedIn: 'root', factory: () => registerSW }
+);
+
 @Injectable({ providedIn: 'root' })
 export class PwaUpdateService {
   private readonly toasts = inject(ToastService);
+  private readonly registerServiceWorker = inject(REGISTER_SERVICE_WORKER);
   private updateServiceWorker: (() => Promise<void>) | null = null;
   private started = false;
 
@@ -15,7 +21,7 @@ export class PwaUpdateService {
     }
 
     this.started = true;
-    this.updateServiceWorker = registerSW({
+    this.updateServiceWorker = this.registerServiceWorker({
       immediate: true,
       onNeedRefresh: () => {
         this.toasts.infoWithAction(
@@ -24,8 +30,8 @@ export class PwaUpdateService {
           () => this.applyUpdate()
         );
       },
-      onRegisterError: (error: unknown) => {
-        console.error('[PWA] Service worker registration failed', error);
+      onRegisterError: (cause: unknown) => {
+        console.error('[PWA] Service worker registration failed', cause);
       },
     });
   }

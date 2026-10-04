@@ -1,8 +1,8 @@
 <section class="app-shell bg-base-100 text-base-content">
   <nav
-    class="app-navbar sticky top-0 z-40 flex w-full flex-wrap items-center gap-3 gap-y-2 border-b border-white/10 px-4 py-3 shadow-lg shadow-black/20 lg:px-8 md:flex-nowrap relative"
+    class="app-navbar sticky top-0 z-40 flex w-full flex-wrap items-center gap-3 gap-y-2 border-b border-white/10 px-3 sm:px-4 py-3 shadow-lg shadow-black/20 lg:px-8 md:flex-nowrap relative"
   >
-    <div class="flex items-center gap-4 shrink-0">
+    <div class="flex items-center gap-2 sm:gap-4 shrink-0">
       <button
         type="button"
         class="btn btn-sm btn-ghost lg:hidden"
@@ -20,48 +20,9 @@
           width="230"
           height="90"
           priority
-          class="h-8 w-auto"
+          class="h-7 sm:h-8 w-auto"
         />
       </a>
-    </div>
-    <div class="workspace-switcher">
-      <button
-        type="button"
-        class="btn btn-sm btn-ghost border border-white/10"
-        aria-label="Select workspace"
-        aria-controls="workspace-menu"
-        [attr.aria-expanded]="workspaceMenuOpen()"
-        (click)="workspaceMenuOpen.set(!workspaceMenuOpen())"
-      >
-        {{ workspaceLabel() }} <span aria-hidden="true">⌄</span>
-      </button>
-      @if (workspaceMenuOpen()) {
-      <div
-        id="workspace-menu"
-        class="workspace-switcher__menu"
-        role="group"
-        aria-label="Workspaces"
-      >
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm"
-          [attr.aria-pressed]="selectedWorkspaceId() === null"
-          (click)="selectWorkspace(null)"
-        >
-          All
-        </button>
-        @for (workspace of workspaceList(); track workspace.id) {
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm"
-          [attr.aria-pressed]="selectedWorkspaceId() === workspace.id"
-          (click)="selectWorkspace(workspace.id)"
-        >
-          {{ workspace.name }}
-        </button>
-        }
-      </div>
-      }
     </div>
     <div
       class="order-3 flex w-full items-center md:order-none md:flex-1 md:w-auto"
@@ -112,7 +73,9 @@
         }
       </div>
     </div>
-    <div class="ml-auto flex items-center gap-3 shrink-0">
+    <div
+      class="app-navbar__actions ml-auto flex items-center gap-1 sm:gap-3 shrink-0"
+    >
       <button
         type="button"
         class="theme-toggle-btn"
@@ -150,9 +113,71 @@
           }
         </div>
       </button>
+      <div class="workspace-switcher">
+        <button
+          #workspaceTrigger
+          type="button"
+          class="workspace-switcher__trigger"
+          aria-label="Select workspace"
+          aria-controls="workspace-menu"
+          [attr.aria-expanded]="workspaceMenuOpen()"
+          [attr.title]="'Workspace: ' + workspaceLabel()"
+          (click)="toggleWorkspaceMenu()"
+          (keydown.arrowdown)="openWorkspaceMenu($event)"
+        >
+          <app-project-icon
+            [icon]="workspaceIcon()"
+            [size]="18"
+          ></app-project-icon>
+          <span class="workspace-switcher__label">{{ workspaceLabel() }}</span>
+          <span class="workspace-switcher__chevron" aria-hidden="true">⌄</span>
+        </button>
+        @if (workspaceMenuOpen()) {
+        <div
+          id="workspace-menu"
+          class="workspace-switcher__menu"
+          role="group"
+          aria-label="Workspaces"
+        >
+          <p class="workspace-switcher__heading">Workspace</p>
+          <button
+            type="button"
+            class="workspace-switcher__option"
+            [attr.aria-pressed]="selectedWorkspaceId() === null"
+            (click)="selectWorkspace(null)"
+          >
+            <app-project-icon icon="folder-open" [size]="18"></app-project-icon>
+            <span class="workspace-switcher__option-label">All</span>
+            <span class="workspace-switcher__check" aria-hidden="true">{{
+              selectedWorkspaceId() === null ? '✓' : ''
+            }}</span>
+          </button>
+          @for (workspace of workspaceList(); track workspace.id) {
+          <button
+            type="button"
+            class="workspace-switcher__option"
+            [attr.aria-pressed]="selectedWorkspaceId() === workspace.id"
+            (click)="selectWorkspace(workspace.id)"
+          >
+            <app-project-icon
+              [icon]="iconForWorkspace(workspace.kind)"
+              [size]="18"
+            ></app-project-icon>
+            <span class="workspace-switcher__option-label">{{
+              workspace.name
+            }}</span>
+            <span class="workspace-switcher__check" aria-hidden="true">{{
+              selectedWorkspaceId() === workspace.id ? '✓' : ''
+            }}</span>
+          </button>
+          }
+        </div>
+        }
+      </div>
       <button
         type="button"
         class="btn btn-circle border border-white/10 bg-base-100/70 p-0 shadow-inner"
+        aria-label="Open profile menu"
         (click)="toggleProfileMenu()"
       >
         @if (avatarUrl(); as avatar) {

@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { createTickistMcpServer } from './server';
 import { describe, expect, it } from 'vitest';
 
@@ -11,6 +12,7 @@ describe('createTickistMcpServer', () => {
       clientId: 'test-client',
       scopes: ['projects:read'],
     });
+
     expect(server).toBeInstanceOf(Object);
   });
 
@@ -30,14 +32,17 @@ describe('createTickistMcpServer', () => {
         'tags:write',
       ],
     });
-    const tools = (
-      server as unknown as {
-        _registeredTools: Record<
-          string,
-          { annotations?: Record<string, boolean> }
-        >;
-      }
-    )._registeredTools;
+
+    const tools = z
+      .object({
+        _registeredTools: z.record(
+          z.string(),
+          z.object({
+            annotations: z.record(z.string(), z.boolean()).optional(),
+          })
+        ),
+      })
+      .parse(server)._registeredTools;
 
     expect(Object.keys(tools)).toHaveLength(17);
     expect(Object.keys(tools)).toEqual(

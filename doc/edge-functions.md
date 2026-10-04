@@ -61,3 +61,7 @@ history in `cron.job_run_details` and 24 hours of `pg_net` HTTP responses in
 application tasks, reminders, notifications, email-outbox records, or scheduler
 definitions. Keeping this history bounded prevents scheduler diagnostics from
 consuming database storage indefinitely.
+
+## Application and email retention
+
+Migration 0025 adds daily history cleanup and private account-linked deduplication receipts. Deploy it before the updated project-invite function. Current pending invitations are not resent; renewed invitations use a fresh database-generated key. See [data retention](data-retention.md) for periods, unresolved-recipient review and tests.

@@ -17,9 +17,11 @@ describe('ConnectedAppsComponent', () => {
         },
       ],
     }).overrideComponent(ConnectedAppsComponent, { set: { template: '' } });
+
     const component = TestBed.createComponent(
       ConnectedAppsComponent
     ).componentInstance;
+
     component.grants.set([
       {
         client: {

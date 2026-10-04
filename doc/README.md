@@ -2,6 +2,8 @@
 
 This directory is the English, repository-native knowledge base for coding agents and other LLM-assisted tools. It describes the product and its operating constraints; it is not a replacement for source code, tests, or database migrations.
 
+Business strategy, funding plans, budgets, and unpublished social media drafts live in the separate [Tickist management repository](https://github.com/tickist/management) (access required). Technical documentation and repository-owned blog sources remain in this application repository. The former `docs/MOBILE_STRATEGY.md` is preserved as historical material at `archive/MOBILE_STRATEGY.md` in management.
+
 ## Choose by task
 
 - [Product features](product-features.md) — user-facing behaviour and vocabulary.
@@ -14,6 +16,8 @@ This directory is the English, repository-native knowledge base for coding agent
 - [Public blog](blog.md) — repository-authored multilingual blog, taxonomy, and SEO rules.
 
 Read the page that governs the change; no sequential tour is required. For repository instructions, skills, and hooks, use [Agent tooling](agent-tooling.md).
+
+- [Account deletion](account-deletion.md) — verified mail requests, operator preview/apply, and deletion limits.
 
 ## Maintenance contract
 
@@ -28,3 +32,7 @@ When a public, indexable route is added, changed, or removed, update:
 - `apps/tickist-web/public/robots.txt`
 
 Do not add authenticated workspace routes, account flows, MCP endpoints, runtime configuration, or user-generated routes to the sitemap.
+
+- [Application history retention](data-retention.md) — periods, invitation expiry, migration and local tests.
+
+- [Registration and legal documents](legal-registration.md) — versioned public documents, server acceptance records and the publication gate.

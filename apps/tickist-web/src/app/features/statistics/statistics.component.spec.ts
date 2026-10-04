@@ -1,3 +1,4 @@
+import { fixtureHost, requiredElement } from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -51,9 +52,11 @@ describe('StatisticsComponent', () => {
     loadingState.set(true);
     fixture.detectChanges();
 
-    const loading = fixture.nativeElement.querySelector(
-      '[data-testid="statistics-loading"]'
-    ) as HTMLElement | null;
+    const loading = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="statistics-loading"]',
+      HTMLElement
+    );
 
     expect(loading?.textContent).toContain('Loading');
   });
@@ -108,13 +111,19 @@ describe('StatisticsComponent', () => {
 
     fixture.detectChanges();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const completedCard = compiled.querySelector(
-      '[data-testid="statistics-card-completed"]'
-    ) as HTMLElement | null;
-    const link = compiled.querySelector(
-      '[data-testid="statistics-group-active"] a'
-    ) as HTMLAnchorElement | null;
+    const compiled = fixtureHost(fixture);
+
+    const completedCard = requiredElement(
+      compiled,
+      '[data-testid="statistics-card-completed"]',
+      HTMLElement
+    );
+
+    const link = requiredElement(
+      compiled,
+      '[data-testid="statistics-group-active"] a',
+      HTMLAnchorElement
+    );
 
     expect(completedCard?.textContent).toContain('8');
     expect(compiled.textContent).toContain('Dormant roadmap');
@@ -125,9 +134,11 @@ describe('StatisticsComponent', () => {
   it('shows empty states for groups without inactive projects', () => {
     fixture.detectChanges();
 
-    const empty = fixture.nativeElement.querySelector(
-      '[data-testid="statistics-empty-someday"]'
-    ) as HTMLElement | null;
+    const empty = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="statistics-empty-someday"]',
+      HTMLElement
+    );
 
     expect(empty?.textContent).toContain('No inactive projects in this group.');
   });

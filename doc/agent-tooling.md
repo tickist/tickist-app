@@ -6,6 +6,10 @@ Tickist's instruction layout follows [OpenAI's guidance on skills and prompts fo
 
 `AGENTS.md` contains shared repository facts, access boundaries, and delivery expectations. `CLAUDE.md` imports it instead of maintaining another copy. The knowledge-base index routes by task. Product contracts remain in their domain documents and source code.
 
+Business strategy, budgets, funding plans, and social media drafts are maintained in [tickist/management](https://github.com/tickist/management), with its own agent instructions. Keep implementation guidance and blog publication sources in this repository; builds and deployments must not require management access.
+
+The root `AGENTS.md` also records the owner's free-access and voluntary-funding constraints and points planning tasks to the current management documents. Keep changing budgets, weekly progress, and draft publication status in management rather than duplicating them in application instructions.
+
 ## Skills
 
 Canonical maintained entrypoints live under `.agents/skills/`. The existing Claude skill symlinks use those files. GitHub and OpenCode entrypoints forward to the corresponding canonical skill with concise discovery metadata; their older bundled reference/script copies are not the active workflow.
@@ -13,6 +17,10 @@ Canonical maintained entrypoints live under `.agents/skills/`. The existing Clau
 Use a skill when it adds needed knowledge or the user names it. Ordinary code search, a known command, and a request for brevity do not require loading a general tutorial. References are conditional: blog publication, Nx repository imports, and Cloud self-healing have different needs.
 
 The checked-in `skills-lock.json` records upstream installation provenance. Local adaptations are intentional; review diffs before using an installer to refresh them. Upstream READMEs describe their original packages and may assume integrations not installed here. Git history records Tickist's overrides.
+
+### GitHub CLI
+
+GitHub CLI (`gh`) is installed in the current environment. Check authentication separately with `gh auth status`; do not print tokens. Use `gh run list` and `gh run view` for Actions checks and pass `--repo tickist/tickist-app` when running from the parent workspace. The parent workspace guide also describes targeting the separate management repository.
 
 ### CI routing
 
@@ -34,7 +42,9 @@ Keep hooks for concrete, repeatable automation that improves a workflow. Before 
 - run only the relevant deterministic check, not a whole build or destructive E2E reset after every edit;
 - preserve task authorization and surface actionable failures without credentials.
 
-Use ESLint, Prettier, and existing Nx targets for code standards. This update does not change runtime permissions, enable plugins, install global hooks, or alter production/authentication hooks.
+Use Oxlint and ESLint through Nx, plus Prettier, for code standards. ESLint still checks Angular templates and rules outside Oxlint's coverage. This tooling does not change runtime permissions, install global hooks, or alter production/authentication hooks.
+
+The locally maintained anti-slop rules live in [`tools/oxlint/anti-slop/`](../tools/oxlint/anti-slop/UPSTREAM.md). Their provenance and upstream revision are recorded beside the copied source. Review local policy and its existing findings before updating that copy.
 
 ## Maintenance and verification
 

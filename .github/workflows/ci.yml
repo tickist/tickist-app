@@ -27,8 +27,12 @@ jobs:
 
       - run: npm ci
 
+      - name: Verify legal release sources
+        run: node tools/legal/release.mjs --check
+
       - name: Lint
         run: |
+          npx nx run-many -t oxlint --all
           npx nx lint tickist-web
           npx nx lint mcp
           npx nx lint data-access-tickist
@@ -38,6 +42,9 @@ jobs:
           npx nx test tickist-web
           npx nx test mcp
           npx nx test data-access-tickist
+          npm run account:delete:test
+          npm run retention:test
+          npm run db:backup:test
 
       - name: MCP typecheck, build, and Worker dry-run
         run: |

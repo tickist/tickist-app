@@ -20,6 +20,7 @@ describe('TaskReminderDataService', () => {
         remind_at: '2026-05-12T07:30:00.000Z',
       }),
     ]);
+
     TestBed.configureTestingModule({
       providers: [
         TaskReminderDataService,
@@ -46,6 +47,7 @@ describe('TaskReminderDataService', () => {
       createReminderRow({ id: 'keep-reminder' }),
       createReminderRow({ id: 'remove-reminder' }),
     ]);
+
     TestBed.configureTestingModule({
       providers: [
         TaskReminderDataService,
@@ -94,8 +96,33 @@ describe('TaskReminderDataService', () => {
 
 function createSupabaseMock(rows: ReturnType<typeof createReminderRow>[]) {
   const cancelledIds: string[] = [];
-  const upsertRows: Record<string, unknown>[] = [];
-  const insertRows: Record<string, unknown>[] = [];
+
+  const upsertRows: {
+    id?: string | null;
+    task_id: string;
+    owner_id: string;
+    channel: 'email';
+    remind_at: string;
+    timezone: string;
+    status: string;
+    cancelled_at: null;
+    sent_at: null;
+    last_error: null;
+  }[] = [];
+
+  const insertRows: {
+    id?: string | null;
+    task_id: string;
+    owner_id: string;
+    channel: 'email';
+    remind_at: string;
+    timezone: string;
+    status: string;
+    cancelled_at: null;
+    sent_at: null;
+    last_error: null;
+  }[] = [];
+
   return {
     cancelledIds,
     upsertRows,
@@ -104,6 +131,7 @@ function createSupabaseMock(rows: ReturnType<typeof createReminderRow>[]) {
       if (table !== 'task_reminders') {
         throw new Error(`Unexpected table: ${table}`);
       }
+
       return {
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
@@ -116,26 +144,58 @@ function createSupabaseMock(rows: ReturnType<typeof createReminderRow>[]) {
           eq: vi.fn(() => ({
             in: vi.fn(async (_column: string, ids: string[]) => {
               cancelledIds.push(...ids);
+
               return { error: null };
             }),
           })),
           in: vi.fn((_column: string, ids: string[]) => ({
             in: vi.fn(async () => {
               cancelledIds.push(...ids);
+
               return { error: null };
             }),
           })),
         })),
         upsert: vi.fn(
-          async (payload: Record<string, unknown>[]) => {
+          async (
+            payload: {
+              id?: string | null;
+              task_id: string;
+              owner_id: string;
+              channel: 'email';
+              remind_at: string;
+              timezone: string;
+              status: string;
+              cancelled_at: null;
+              sent_at: null;
+              last_error: null;
+            }[]
+          ) => {
             upsertRows.push(...payload);
+
             return { error: null };
           }
         ),
-        insert: vi.fn(async (payload: Record<string, unknown>[]) => {
-          insertRows.push(...payload);
-          return { error: null };
-        }),
+        insert: vi.fn(
+          async (
+            payload: {
+              id?: string | null;
+              task_id: string;
+              owner_id: string;
+              channel: 'email';
+              remind_at: string;
+              timezone: string;
+              status: string;
+              cancelled_at: null;
+              sent_at: null;
+              last_error: null;
+            }[]
+          ) => {
+            insertRows.push(...payload);
+
+            return { error: null };
+          }
+        ),
       };
     }),
   };

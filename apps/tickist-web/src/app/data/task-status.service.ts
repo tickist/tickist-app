@@ -3,6 +3,7 @@ import { DestroyRef, Injectable, inject, signal } from '@angular/core';
 import { Task } from './task-data.service';
 
 const STATUS_CLOCK_INTERVAL_MS = 30_000;
+
 export type TaskStatusFilter = 'all' | 'done' | 'not-done' | 'suspended';
 
 @Injectable({ providedIn: 'root' })
@@ -14,6 +15,7 @@ export class TaskStatusService {
     const timer = setInterval(() => {
       this.nowMs.set(Date.now());
     }, STATUS_CLOCK_INTERVAL_MS);
+
     this.destroyRef.onDestroy(() => clearInterval(timer));
   }
 
@@ -34,11 +36,13 @@ export function isTaskSuspended(task: Task, nowMs = Date.now()): boolean {
   if (task.isActive) {
     return false;
   }
+
   if (!task.suspendUntil) {
     return true;
   }
 
   const suspendUntilMs = Date.parse(task.suspendUntil);
+
   return Number.isNaN(suspendUntilMs) || suspendUntilMs > nowMs;
 }
 

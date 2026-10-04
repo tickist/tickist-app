@@ -46,11 +46,13 @@ export class DashboardComponent {
     this.projectList().forEach((project) => {
       map.set(project.id, project.name);
     });
+
     return map;
   });
   readonly projectLookup = computed(() => {
     const map = new Map<string, Project>();
     this.projectList().forEach((project) => map.set(project.id, project));
+
     return map;
   });
   readonly inboxProject = computed(
@@ -58,6 +60,7 @@ export class DashboardComponent {
   );
   readonly taskList = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
+
     return this.tasks.list().filter((task) => {
       if (
         task.ownerId !== this.user()?.id ||
@@ -67,9 +70,11 @@ export class DashboardComponent {
       ) {
         return false;
       }
+
       if (!normalizedSearch) {
         return true;
       }
+
       return (
         task.name.toLowerCase().includes(normalizedSearch) ||
         (task.description ?? '').toLowerCase().includes(normalizedSearch)
@@ -78,21 +83,27 @@ export class DashboardComponent {
   });
   readonly todayTasks = computed(() => {
     const today = new Date();
+
     return this.taskList().filter((task) => {
       if (!task.finishDate) {
         return false;
       }
+
       const finishDate = new Date(task.finishDate);
+
       return finishDate.toDateString() === today.toDateString() && !task.isDone;
     });
   });
   readonly overdueTasks = computed(() => {
     const today = new Date();
+
     return this.taskList().filter((task) => {
       if (!task.finishDate) {
         return false;
       }
+
       const finishDate = new Date(task.finishDate);
+
       return finishDate < today && !task.isDone;
     });
   });
@@ -116,16 +127,16 @@ export class DashboardComponent {
         counts.set(task.projectId, (counts.get(task.projectId) ?? 0) + 1);
       }
     });
+
     return counts;
   });
   readonly projectsMissingNextAction = computed(() => {
     const nextActionProjects = new Set(
-      this.taskList()
-        .filter(
-          (task) =>
-            task.taskType === 'next_action' && !task.isDone && task.projectId
-        )
-        .map((task) => task.projectId as string)
+      this.taskList().flatMap((task) =>
+        task.taskType === 'next_action' && !task.isDone && task.projectId
+          ? [task.projectId]
+          : []
+      )
     );
 
     return this.projectList()
@@ -137,6 +148,7 @@ export class DashboardComponent {
     [...this.todayTasks()].sort((a, b) => {
       const timeA = a.finishTime ?? '';
       const timeB = b.finishTime ?? '';
+
       return timeA.localeCompare(timeB);
     })
   );
@@ -144,6 +156,7 @@ export class DashboardComponent {
     [...this.overdueTasks()].sort((a, b) => {
       const dateA = a.finishDate ?? '';
       const dateB = b.finishDate ?? '';
+
       return dateB.localeCompare(dateA);
     })
   );
@@ -156,11 +169,13 @@ export class DashboardComponent {
 
   projectName(projectId: string | null): string {
     if (!projectId) return 'Inbox';
+
     return this.projectNameMap().get(projectId) ?? 'Inbox';
   }
 
   projectOf(projectId: string | null): Project | null {
     if (!projectId) return this.inboxProject();
+
     return this.projectLookup().get(projectId) ?? this.inboxProject();
   }
 

@@ -73,14 +73,15 @@
             <div>
               <p class="danger-card__title">Delete account</p>
               <p class="sheet-field__hint">
-                Deleting your account is permanent. All data will be wiped
-                immediately.
+                To request permanent account deletion, email remove-account@tickist.com
+                from your account email address. We will verify the request and
+                review any shared projects before deleting the account.
               </p>
             </div>
-            <button type="button" class="sheet-shell__button sheet-shell__button--ghost danger-card__button"
-              (click)="deleteAccount()">
-              Delete
-            </button>
+            <a class="sheet-shell__button sheet-shell__button--ghost danger-card__button"
+              href="mailto:remove-account@tickist.com?subject=Tickist%20account%20deletion">
+              Request account deletion
+            </a>
           </section>
         </section>
         } @if (activeTab() === 'workspaces') {

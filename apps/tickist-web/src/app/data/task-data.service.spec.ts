@@ -91,9 +91,9 @@ describe('TaskDataService recurring completion', () => {
 
 async function setupRecurringTaskService(row: TaskRow): Promise<{
   service: TaskDataService;
-  updatePayloads: Record<string, unknown>[];
+  updatePayloads: Partial<TaskRow>[];
 }> {
-  const updatePayloads: Record<string, unknown>[] = [];
+  const updatePayloads: Partial<TaskRow>[] = [];
   const supabase = createSupabaseMock(row, updatePayloads);
 
   TestBed.configureTestingModule({
@@ -120,24 +120,25 @@ async function setupRecurringTaskService(row: TaskRow): Promise<{
 
   const service = TestBed.inject(TaskDataService);
   await service.refresh();
+
   return { service, updatePayloads };
 }
 
-function createSupabaseMock(
-  row: TaskRow,
-  updatePayloads: Record<string, unknown>[]
-) {
+function createSupabaseMock(row: TaskRow, updatePayloads: Partial<TaskRow>[]) {
   return {
     from: vi.fn((table: string) => {
       if (table === 'tasks') {
         return createTasksTableMock(row, updatePayloads);
       }
+
       if (table === 'task_steps') {
         return createTaskStepsTableMock();
       }
+
       if (table === 'task_tags') {
         return createTaskTagsTableMock();
       }
+
       throw new Error(`Unexpected table: ${table}`);
     }),
   };
@@ -145,12 +146,13 @@ function createSupabaseMock(
 
 function createTasksTableMock(
   row: TaskRow,
-  updatePayloads: Record<string, unknown>[]
+  updatePayloads: Partial<TaskRow>[]
 ) {
   return {
     select: vi.fn(() => createTasksSelectMock(row, updatePayloads)),
-    update: vi.fn((payload: Record<string, unknown>) => {
+    update: vi.fn((payload: Partial<TaskRow>) => {
       updatePayloads.push(payload);
+
       return {
         eq: vi.fn(async () => ({ error: null })),
       };
@@ -160,7 +162,7 @@ function createTasksTableMock(
 
 function createTasksSelectMock(
   row: TaskRow,
-  updatePayloads: Record<string, unknown>[]
+  updatePayloads: Partial<TaskRow>[]
 ) {
   return {
     eq: vi.fn(() => ({
@@ -168,18 +170,16 @@ function createTasksSelectMock(
         data: {
           ...row,
           finish_date:
-            (updatePayloads.at(-1)?.['finish_date'] as string | null) ??
-            row.finish_date,
-          is_done:
-            (updatePayloads.at(-1)?.['is_done'] as boolean | undefined) ??
-            row.is_done,
+            updatePayloads.at(-1)?.['finish_date'] ?? row.finish_date,
+          is_done: updatePayloads.at(-1)?.['is_done'] ?? row.is_done,
         },
         error: null,
       })),
     })),
+    // oxlint-disable-next-line unicorn/no-thenable -- Supabase query mocks are intentionally thenable.
     then: (
-      resolve: (value: { data: TaskRow[]; error: null }) => unknown,
-      reject: (reason?: unknown) => unknown
+      resolve: (value: { data: TaskRow[]; error: null }) => void,
+      reject: (cause?: unknown) => void
     ) => Promise.resolve({ data: [row], error: null }).then(resolve, reject),
   };
 }
@@ -234,16 +234,20 @@ function createTaskRow(overrides: Partial<TaskRow> = {}): TaskRow {
   };
 }
 
-function formatLocalDate(value: unknown): string | null {
-  if (typeof value !== 'string') {
+function formatLocalDate(value: string | null | undefined): string | null {
+  if (value == null) {
     return null;
   }
+
   const date = new Date(value);
+
   if (Number.isNaN(date.getTime())) {
     return null;
   }
+
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
+
   return `${year}-${month}-${day}`;
 }

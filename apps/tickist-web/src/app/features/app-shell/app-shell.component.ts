@@ -78,9 +78,11 @@ export class AppShellComponent {
   readonly dueDateFilter = this.viewState.dueDateFilter;
   readonly activeProject = computed(() => {
     const projectId = this.selectedProjectId();
+
     if (!projectId) {
       return null;
     }
+
     return (
       this.projectList().find((project) => project.id === projectId) ?? null
     );
@@ -88,15 +90,19 @@ export class AppShellComponent {
   readonly projectLookup = computed(() => {
     const map = new Map<string, Project>();
     this.projectList().forEach((project) => map.set(project.id, project));
+
     return map;
   });
   readonly dueDateLabel = computed(() => {
     const filter = this.dueDateFilter();
+
     if (!filter) {
       return null;
     }
+
     if (filter.mode === 'day') {
       const date = this.parseDateKey(filter.dateKey);
+
       return date
         ? date.toLocaleDateString('en-US', {
             weekday: 'long',
@@ -105,7 +111,9 @@ export class AppShellComponent {
           })
         : filter.dateKey;
     }
+
     const date = this.parseMonthKey(filter.monthKey);
+
     return date
       ? date.toLocaleDateString('en-US', {
           month: 'long',
@@ -123,6 +131,7 @@ export class AppShellComponent {
     const projectId = this.selectedProjectId();
     const inboxId = this.inboxProjectId();
     const includedProjectIds = this.includedProjectIds();
+
     return this.taskList().filter(
       (task) =>
         taskMatchesProjectScope(task, projectId, inboxId, includedProjectIds) &&
@@ -139,39 +148,51 @@ export class AppShellComponent {
     const tasks = this.projectScopedTasks();
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
     const dueFilter = this.dueDateFilter();
+
     const filtered = tasks.filter((task) => {
       const matchesSearch = normalizedSearch
         ? task.name.toLowerCase().includes(normalizedSearch) ||
           (task.description ?? '').toLowerCase().includes(normalizedSearch)
         : true;
+
       const matchesFilter = this.taskStatus.matchesFilter(
         task,
         this.filterOption()
       );
+
       const matchesDueDate = (() => {
         if (!dueFilter) {
           return true;
         }
+
         if (!task.finishDate) {
           return false;
         }
+
         const finishDate = new Date(task.finishDate);
+
         if (Number.isNaN(finishDate.getTime())) {
           return false;
         }
+
         finishDate.setHours(0, 0, 0, 0);
+
         if (dueFilter.mode === 'day') {
           return this.dateKey(finishDate) === dueFilter.dateKey;
         }
+
         return this.monthKey(finishDate) === dueFilter.monthKey;
       })();
+
       return matchesSearch && matchesFilter && matchesDueDate;
     });
+
     return this.sortTasks(filtered);
   });
   readonly filteredStats = computed(() => {
     const tasks = this.filteredTasks();
     const now = new Date();
+
     return {
       open: tasks.filter((task) => !task.isDone).length,
       done: tasks.filter((task) => task.isDone).length,
@@ -214,6 +235,7 @@ export class AppShellComponent {
     effect(() => {
       const ready = this.session.isReady();
       const user = this.user();
+
       if (ready && !user && !this.redirectScheduled) {
         this.redirectScheduled = true;
         setTimeout(() => this.router.navigateByUrl('/auth'), 1500);
@@ -228,22 +250,33 @@ export class AppShellComponent {
     effect(() => {
       const projectId = this.selectedProjectId();
       const project = this.projectList().find((item) => item.id === projectId);
-      if (project && !this.workspaces.includesProject(project, this.projectList())) {
-        this.workspaces.select(this.workspaces.workspaceFor(project, this.projectList()));
+
+      if (
+        project &&
+        !this.workspaces.includesProject(project, this.projectList())
+      ) {
+        this.workspaces.select(
+          this.workspaces.workspaceFor(project, this.projectList())
+        );
       }
     });
 
     this.route.queryParamMap.subscribe((params) => {
       const due = params.get('due');
       const month = params.get('month');
+
       if (due) {
         this.viewState.setDayFilter(due);
+
         return;
       }
+
       if (month) {
         this.viewState.setMonthFilter(month);
+
         return;
       }
+
       this.viewState.clearDateFilter();
     });
   }
@@ -251,12 +284,16 @@ export class AppShellComponent {
   async createTask(): Promise<void> {
     if (this.form.invalid || !this.user()) {
       this.form.markAllAsTouched();
+
       return;
     }
+
     const currentUser = this.user();
+
     if (!currentUser) {
       return;
     }
+
     const payload: TaskCreateInput = {
       ownerId: currentUser.id,
       name: this.form.value.name ?? '',
@@ -270,6 +307,7 @@ export class AppShellComponent {
         currentUser.id
       ),
     };
+
     await this.tasksService.createTask(payload);
     this.form.reset({ name: '', estimateMinutes: 15, projectId: '' });
   }
@@ -286,6 +324,7 @@ export class AppShellComponent {
     this.viewState.selectProject(projectId);
     this.selectedTaskId.set(null);
     this.populateTaskEditForm();
+
     if (projectId) {
       void this.router.navigate(['/app/tasks', projectId]);
     } else {
@@ -302,9 +341,11 @@ export class AppShellComponent {
         id: project.id,
         taskView: mode,
       });
+
       if (!updated) {
         throw new Error('Update returned null');
       }
+
       this.toasts.success(
         mode === 'simple'
           ? 'Simple list enabled.'
@@ -350,6 +391,7 @@ export class AppShellComponent {
   private sortTasks(tasks: ReturnType<typeof this.taskList>) {
     const option = this.sortOption();
     const byString = (a: string, b: string) => a.localeCompare(b);
+
     const priorityRank = (priority: string): number => {
       switch (priority.trim().toUpperCase()) {
         case 'A':
@@ -362,6 +404,7 @@ export class AppShellComponent {
           return 0;
       }
     };
+
     return [...tasks].sort((a, b) => {
       switch (option) {
         case 'priority-asc':
@@ -412,22 +455,27 @@ export class AppShellComponent {
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
+
     return `${year}-${month}-${day}`;
   }
 
   private monthKey(date: Date): string {
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
+
     return `${year}-${month}`;
   }
 
   async addTaskToProject(): Promise<void> {
     const projectId = this.selectedProjectId();
     const currentUser = this.user();
+
     if (!projectId || !currentUser || this.projectTaskForm.invalid) {
       this.projectTaskForm.markAllAsTouched();
+
       return;
     }
+
     const payload: TaskCreateInput = {
       ownerId: currentUser.id,
       name: this.projectTaskForm.value.name ?? '',
@@ -437,6 +485,7 @@ export class AppShellComponent {
         currentUser.id
       ),
     };
+
     await this.tasksService.createTask(payload);
     this.projectTaskForm.reset({ name: '' });
   }
@@ -448,14 +497,17 @@ export class AppShellComponent {
 
   activeTask() {
     const selected = this.selectedTaskId();
+
     if (!selected) {
       return this.filteredTasks()[0] ?? null;
     }
+
     return this.taskList().find((task) => task.id === selected) ?? null;
   }
 
   private populateTaskEditForm() {
     const task = this.activeTask();
+
     if (!task) {
       this.taskEditForm.reset({
         name: '',
@@ -463,8 +515,10 @@ export class AppShellComponent {
         projectId: '',
         isDone: false,
       });
+
       return;
     }
+
     this.taskEditForm.reset({
       name: task.name,
       estimateMinutes: task.estimateMinutes ?? 0,
@@ -475,10 +529,13 @@ export class AppShellComponent {
 
   async updateSelectedTask(): Promise<void> {
     const task = this.activeTask();
+
     if (!task || this.taskEditForm.invalid) {
       this.taskEditForm.markAllAsTouched();
+
       return;
     }
+
     await this.tasksService.updateTask({
       id: task.id,
       name: this.taskEditForm.value.name ?? task.name,
@@ -503,9 +560,11 @@ export class AppShellComponent {
 
   projectForTask(task: Task): Project | null {
     const projectId = task.projectId ?? null;
+
     if (!projectId) {
       return null;
     }
+
     return this.projectLookup().get(projectId) ?? null;
   }
 
@@ -519,17 +578,21 @@ export class AppShellComponent {
 
   private parseDateKey(key: string): Date | null {
     const [year, month, day] = key.split('-').map(Number);
+
     if (!year || !month || !day) {
       return null;
     }
+
     return new Date(year, month - 1, day);
   }
 
   private parseMonthKey(key: string): Date | null {
     const [year, month] = key.split('-').map(Number);
+
     if (!year || !month) {
       return null;
     }
+
     return new Date(year, month - 1, 1);
   }
 }

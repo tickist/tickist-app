@@ -1,3 +1,8 @@
+import {
+  fixtureHost,
+  requiredElement,
+  elementsOfType,
+} from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectDataService } from '../../data/project-data.service';
@@ -56,14 +61,18 @@ describe('TaskListComponent task menus', () => {
   });
 
   it('keeps only the most recently selected task menu open', () => {
-    const cards = Array.from(
-      fixture.nativeElement.querySelectorAll('app-task-card')
-    ) as HTMLElement[];
-    const menuButtons = cards.map(
-      (card) =>
-        card.querySelector(
-          'button[aria-label="More actions"]'
-        ) as HTMLButtonElement
+    const cards = elementsOfType(
+      fixtureHost(fixture),
+      'app-task-card',
+      HTMLElement
+    );
+
+    const menuButtons = cards.map((card) =>
+      requiredElement(
+        card,
+        'button[aria-label="More actions"]',
+        HTMLButtonElement
+      )
     );
 
     menuButtons[0].click();
@@ -77,9 +86,7 @@ describe('TaskListComponent task menus', () => {
 
     expect(cards[0].querySelector('.task-menu')).toBeNull();
     expect(cards[1].querySelector('.task-menu')).not.toBeNull();
-    expect(fixture.nativeElement.querySelectorAll('.task-menu')).toHaveLength(
-      1
-    );
+    expect(fixtureHost(fixture).querySelectorAll('.task-menu')).toHaveLength(1);
   });
 });
 

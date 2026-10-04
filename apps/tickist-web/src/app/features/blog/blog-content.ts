@@ -1,6 +1,7 @@
 import { GENERATED_BLOG_CONTENT } from './blog-content.generated';
 
 export const BLOG_LOCALES = ['en', 'pl'] as const;
+
 export const BLOG_PAGE_SIZE = 12;
 
 export type BlogLocale = (typeof BLOG_LOCALES)[number];

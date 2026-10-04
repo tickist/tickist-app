@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
 import {
   OAuthError,
   OAuthErrorCode,
@@ -14,16 +15,32 @@ interface TokenClaims {
   iss?: string;
   sub?: string;
   tickist_mcp?: boolean;
-  tickist_mcp_scopes?: string[];
+  tickist_mcp_scopes?: readonly string[];
 }
 
-export class SupabaseTokenVerifier implements OAuthTokenVerifier {
-  constructor(private readonly env: McpEnvironment) {}
+export interface ClaimsVerifier {
+  getClaims(token: string): Promise<{
+    data: { claims: TokenClaims } | null;
+    error: Error | null;
+  }>;
+}
 
-  async verifyAccessToken(token: string): Promise<AuthInfo> {
-    const supabase = createClient(
-      this.env.SUPABASE_URL,
-      this.env.SUPABASE_PUBLISHABLE_KEY,
+const TokenClaimsSchema = z.object({
+  aud: z.union([z.string(), z.array(z.string())]).optional(),
+  client_id: z.string().optional(),
+  exp: z.number().optional(),
+  iss: z.string().optional(),
+  sub: z.string().optional(),
+  tickist_mcp: z.boolean().optional(),
+  tickist_mcp_scopes: z.array(z.string()).optional(),
+});
+
+export class SupabaseTokenVerifier implements OAuthTokenVerifier {
+  constructor(
+    private readonly env: McpEnvironment,
+    private readonly claimsVerifier: ClaimsVerifier = createClient(
+      env.SUPABASE_URL,
+      env.SUPABASE_PUBLISHABLE_KEY,
       {
         auth: {
           autoRefreshToken: false,
@@ -31,8 +48,12 @@ export class SupabaseTokenVerifier implements OAuthTokenVerifier {
           persistSession: false,
         },
       }
-    );
-    const { data, error } = await supabase.auth.getClaims(token);
+    ).auth
+  ) {}
+
+  async verifyAccessToken(token: string): Promise<AuthInfo> {
+    const { data, error } = await this.claimsVerifier.getClaims(token);
+
     if (error || !data) {
       throw new OAuthError(
         OAuthErrorCode.InvalidToken,
@@ -40,20 +61,32 @@ export class SupabaseTokenVerifier implements OAuthTokenVerifier {
       );
     }
 
-    const claims = data.claims as TokenClaims;
+    const parsedClaims = TokenClaimsSchema.safeParse(data.claims);
+
+    if (!parsedClaims.success) {
+      throw new OAuthError(
+        OAuthErrorCode.InvalidToken,
+        'Invalid token claims.'
+      );
+    }
+
+    const claims = parsedClaims.data;
     const audience = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
+
     if (!claims.exp || claims.exp <= Math.floor(Date.now() / 1000)) {
       throw new OAuthError(
         OAuthErrorCode.InvalidToken,
         'Expired access token.'
       );
     }
+
     if (claims.iss !== `${this.env.SUPABASE_URL.replace(/\/$/u, '')}/auth/v1`) {
       throw new OAuthError(
         OAuthErrorCode.InvalidToken,
         'Unexpected token issuer.'
       );
     }
+
     if (
       !claims.tickist_mcp ||
       !claims.sub ||
@@ -64,6 +97,7 @@ export class SupabaseTokenVerifier implements OAuthTokenVerifier {
         'Token was not issued for Tickist MCP.'
       );
     }
+
     if (
       !Array.isArray(claims.tickist_mcp_scopes) ||
       !MCP_TOOL_SCOPES.every((scope) =>

@@ -23,13 +23,16 @@ export function buildHierarchy<T extends HierarchicalItem>(
   items.forEach((item) => nodeMap.set(item.id, { item, children: [] }));
 
   const roots: HierarchyNode<T>[] = [];
+
   for (const node of nodeMap.values()) {
     const parentId = node.item.ancestorId;
     const parentNode = parentId ? nodeMap.get(parentId) : undefined;
+
     if (parentNode && parentNode.item.id !== node.item.id) {
       parentNode.children.push(node);
       continue;
     }
+
     roots.push(node);
   }
 
@@ -39,6 +42,7 @@ export function buildHierarchy<T extends HierarchicalItem>(
   };
 
   sortNodes(roots);
+
   return roots;
 }
 
@@ -49,13 +53,18 @@ export function filterHierarchy<T>(
 ): HierarchyNode<T>[] {
   return nodes.flatMap((node) => {
     const matches = predicate(node.item);
+
     if (matches) {
       return [
         {
           item: node.item,
           children: includeDescendantsOfMatch
             ? cloneHierarchy(node.children)
-            : filterHierarchy(node.children, predicate, includeDescendantsOfMatch),
+            : filterHierarchy(
+                node.children,
+                predicate,
+                includeDescendantsOfMatch
+              ),
         },
       ];
     }
@@ -65,6 +74,7 @@ export function filterHierarchy<T>(
       predicate,
       includeDescendantsOfMatch
     );
+
     if (!filteredChildren.length) {
       return [];
     }
@@ -78,7 +88,7 @@ export function filterHierarchy<T>(
   });
 }
 
-export function flattenHierarchy<T>(
+export function flattenHierarchy<T extends { id: string }>(
   nodes: ReadonlyArray<HierarchyNode<T>>,
   level = 0,
   parentIds: readonly string[] = []
@@ -92,11 +102,10 @@ export function flattenHierarchy<T>(
 
     return [
       flattenedNode,
-      ...flattenHierarchy(
-        node.children,
-        level + 1,
-        [...parentIds, getItemId(node.item)]
-      ),
+      ...flattenHierarchy(node.children, level + 1, [
+        ...parentIds,
+        node.item.id,
+      ]),
     ];
   });
 }
@@ -119,6 +128,7 @@ export function collectDescendantIds<T extends { id: string }>(
   };
 
   nodes.forEach((node) => visit(node, false));
+
   return descendants;
 }
 
@@ -129,8 +139,4 @@ function cloneHierarchy<T>(
     item: node.item,
     children: cloneHierarchy(node.children),
   }));
-}
-
-function getItemId<T>(item: T): string {
-  return (item as { id: string }).id;
 }

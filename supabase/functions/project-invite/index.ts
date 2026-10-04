@@ -5,7 +5,6 @@ import {
   getBearerToken,
   requireEnv,
   requireSupabaseSecretKey,
-  toSha256Hex,
 } from "../_shared/common.ts";
 
 interface ProjectInvitePayload {
@@ -21,6 +20,7 @@ interface ProjectRow {
 
 interface MemberRow {
   status: "pending" | "accepted" | "declined";
+  invited_at: string | null;
 }
 
 const MAX_EMAIL_LENGTH = 254;
@@ -129,7 +129,7 @@ serve(async (req) => {
 
   const { data: existing, error: existingError } = await supabase
     .from("project_members")
-    .select("status")
+    .select("status, invited_at")
     .eq("project_id", typedProject.id)
     .eq("user_id", invitedUser.id)
     .maybeSingle();
@@ -151,7 +151,18 @@ serve(async (req) => {
     });
   }
 
-  const { error: upsertError } = await supabase.from("project_members").upsert(
+  const invitedAt = (existing as MemberRow | null)?.invited_at;
+  if (existingStatus === "pending" && invitedAt &&
+      Date.parse(invitedAt) > Date.now() - 30 * 24 * 60 * 60 * 1000) {
+    return jsonResponse(200, {
+      ok: true,
+      code: "already_pending",
+      member: { userId: invitedUser.id, email, status: "pending" },
+      request_id: requestId,
+    });
+  }
+
+  const { data: invitation, error: upsertError } = await supabase.from("project_members").upsert(
     {
       project_id: typedProject.id,
       user_id: invitedUser.id,
@@ -166,8 +177,8 @@ serve(async (req) => {
       declined_at: null,
     },
     { onConflict: "project_id,user_id" },
-  );
-  if (upsertError) {
+  ).select("invitation_id").single();
+  if (upsertError || !invitation) {
     console.error("[project-invite] Failed to upsert member invite", {
       requestId,
       error: upsertError,
@@ -185,7 +196,6 @@ serve(async (req) => {
     icon: "team",
   });
 
-  const dedupeDigest = await toSha256Hex(`${typedProject.id}:${invitedUser.id}:project-invite`);
   const { error: emailError } = await supabase.rpc("enqueue_email", {
     p_to_email: email,
     p_subject: `Tickist invitation: ${typedProject.name}`,
@@ -196,7 +206,7 @@ serve(async (req) => {
       `You were invited to share "${typedProject.name}" in Tickist.\n\n` +
       "Open Tickist and go to Team to accept or decline this invitation.",
     p_type: "project-invite",
-    p_dedupe_key: `project-invite:${typedProject.id}:${invitedUser.id}:${dedupeDigest}`,
+    p_dedupe_key: `project-invite:${typedProject.id}:${invitedUser.id}:${invitation.invitation_id}`,
   });
   if (emailError) {
     console.error("[project-invite] Failed to queue invite email", {
@@ -207,7 +217,7 @@ serve(async (req) => {
 
   return jsonResponse(200, {
     ok: true,
-    code: existingStatus === "pending" ? "already_pending" : "invited",
+    code: "invited",
     member: { userId: invitedUser.id, email, status: "pending" },
     request_id: requestId,
   });

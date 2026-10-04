@@ -6,6 +6,7 @@ Allow: /pl/blog
 
 Disallow: /app/
 Disallow: /auth/
+Disallow: /legal/
 Disallow: /env.js
 
 Sitemap: https://tickist.com/sitemap.xml

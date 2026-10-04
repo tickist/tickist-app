@@ -43,17 +43,24 @@ export class TagDataService {
       this.tags.set([]);
       this.loading.set(false);
       console.warn('[Tags] Supabase client missing; skipping fetch.');
+
       return;
     }
+
     this.loading.set(true);
+
     const { data, error } = await this.supabase
       .from('tags')
       .select('id, owner_id, name, created_at, updated_at');
+
     this.loading.set(false);
+
     if (error || !data) {
       console.warn('[Tags] Unable to fetch from Supabase', error);
+
       return;
     }
+
     this.tags.set(
       data.map((row) => ({
         id: row.id,
@@ -72,6 +79,7 @@ export class TagDataService {
 
     if (!this.supabase) {
       console.warn('[Tags] Supabase client missing; cannot create tag.');
+
       return null;
     }
 
@@ -86,6 +94,7 @@ export class TagDataService {
 
     if (error || !data) {
       console.error('[Tags] Failed to create tag', error);
+
       return null;
     }
 
@@ -96,17 +105,21 @@ export class TagDataService {
       createdAt: data.created_at ?? undefined,
       updatedAt: data.updated_at ?? undefined,
     };
+
     this.tags.set([...this.tags(), created]);
+
     return created;
   }
 
   async updateTag(input: TagUpdateInput): Promise<Tag | null> {
     if (!this.supabase) {
       console.warn('[Tags] Supabase client missing; cannot update tag.');
+
       return null;
     }
 
-    const payload: Record<string, unknown> = {};
+    const payload: TagUpdateRow = {};
+
     if (input.name !== undefined) payload.name = input.name;
 
     if (Object.keys(payload).length) {
@@ -114,27 +127,40 @@ export class TagDataService {
         .from('tags')
         .update(payload)
         .eq('id', input.id);
+
       if (error) {
         console.error('[Tags] Failed to update tag', error);
+
         return null;
       }
     }
 
     await this.refresh();
+
     return this.tags().find((tag) => tag.id === input.id) ?? null;
   }
 
   async deleteTag(tagId: string): Promise<boolean> {
     if (!this.supabase) {
       console.warn('[Tags] Supabase client missing; cannot delete tag.');
+
       return false;
     }
+
     const { error } = await this.supabase.from('tags').delete().eq('id', tagId);
+
     if (error) {
       console.error('[Tags] Failed to delete tag', error);
+
       return false;
     }
+
     this.tags.set(this.tags().filter((tag) => tag.id !== tagId));
+
     return true;
   }
+}
+
+interface TagUpdateRow {
+  name?: string;
 }

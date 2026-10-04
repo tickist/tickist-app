@@ -6,6 +6,12 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { z } from 'zod';
+import {
+  JsonRecordSchema,
+  JsonValueSchema,
+  type JsonValue,
+} from '../core/json';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 import { WorkspaceDataService } from './workspace-data.service';
@@ -78,14 +84,17 @@ export class StatisticsDataService {
   constructor() {
     effect(() => {
       const workspaceId = this.workspaces.selectedWorkspaceId();
+
       if (workspaceId === this.lastWorkspaceId) return;
       this.lastWorkspaceId = workspaceId;
       this.markDirty();
     });
     effect(() => {
       const user = this.session.user();
+
       if (!user) {
         this.reset();
+
         return;
       }
 
@@ -120,6 +129,7 @@ export class StatisticsDataService {
 
     if (this.loadingState()) {
       this.pendingRefreshAfterLoad = true;
+
       return;
     }
 
@@ -140,6 +150,7 @@ export class StatisticsDataService {
       this.loadingState.set(false);
       this.dirtyState.set(true);
       console.warn('[Statistics] Supabase client missing; skipping fetch.');
+
       return;
     }
 
@@ -165,10 +176,16 @@ export class StatisticsDataService {
       this.dirtyState.set(true);
       console.error('[Statistics] Failed to fetch overview', error);
       await this.flushPendingRefresh(windowDays);
+
       return;
     }
 
-    this.overviewState.set(normalizeStatsOverview(data, windowDays));
+    this.overviewState.set(
+      normalizeStatsOverview(
+        JsonValueSchema.safeParse(data).data ?? null,
+        windowDays
+      )
+    );
     this.dirtyState.set(false);
     this.errorState.set(null);
     this.loadingState.set(false);
@@ -189,6 +206,7 @@ export class StatisticsDataService {
   ): Promise<void> {
     if (this.loadingState()) {
       this.pendingRefreshAfterLoad = true;
+
       return;
     }
 
@@ -208,6 +226,7 @@ export class StatisticsDataService {
 
     if (!this.activeState() || !this.session.user()) {
       this.dirtyState.set(true);
+
       return;
     }
 
@@ -235,7 +254,7 @@ export function createEmptyStatsOverview(
 }
 
 function normalizeStatsOverview(
-  value: unknown,
+  value: JsonValue | undefined,
   fallbackWindowDays: number
 ): StatsOverview {
   const record = asRecord(value);
@@ -244,8 +263,10 @@ function normalizeStatsOverview(
   const groupsArray = Array.isArray(record?.groups) ? record.groups : [];
 
   const groupsByKey = new Map<StatsProjectGroupKey, StatsProjectGroup>();
+
   for (const item of groupsArray) {
     const group = parseGroup(item);
+
     if (group) {
       groupsByKey.set(group.key, group);
     }
@@ -273,9 +294,10 @@ function normalizeStatsOverview(
   };
 }
 
-function parseGroup(value: unknown): StatsProjectGroup | null {
+function parseGroup(value: JsonValue | undefined): StatsProjectGroup | null {
   const record = asRecord(value);
   const key = normalizeGroupKey(record?.key);
+
   if (!key) {
     return null;
   }
@@ -294,11 +316,12 @@ function parseGroup(value: unknown): StatsProjectGroup | null {
 }
 
 function parseInactiveProject(
-  value: unknown,
+  value: JsonValue | undefined,
   groupKey: StatsProjectGroupKey
 ): InactiveProjectStat | null {
   const record = asRecord(value);
   const projectId = readString(record?.projectId, '');
+
   if (!projectId) {
     return null;
   }
@@ -316,39 +339,54 @@ function parseInactiveProject(
   };
 }
 
-function normalizeGroupKey(value: unknown): StatsProjectGroupKey | null {
+function normalizeGroupKey(
+  value: JsonValue | undefined
+): StatsProjectGroupKey | null {
   if (value === 'active' || value === 'someday' || value === 'routine') {
     return value;
   }
+
   return null;
 }
 
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    return null;
+function asRecord(value: JsonValue | undefined) {
+  return JsonRecordSchema.safeParse(value).data ?? null;
+}
+
+function readString(value: JsonValue | undefined, fallback: string): string {
+  return (
+    z
+      .string()
+      .refine((text) => text.trim().length > 0)
+      .safeParse(value).data ?? fallback
+  );
+}
+
+function readNullableString(value: JsonValue | undefined): string | null {
+  return (
+    z
+      .string()
+      .refine((text) => text.trim().length > 0)
+      .safeParse(value).data ?? null
+  );
+}
+
+function readInteger(value: JsonValue | undefined, fallback: number): number {
+  const number = z.number().safeParse(value);
+
+  if (number.success && Number.isFinite(number.data)) {
+    return Math.max(0, Math.trunc(number.data));
   }
-  return value as Record<string, unknown>;
-}
 
-function readString(value: unknown, fallback: string): string {
-  return typeof value === 'string' && value.trim().length > 0
-    ? value
-    : fallback;
-}
+  const text = z.string().safeParse(value);
 
-function readNullableString(value: unknown): string | null {
-  return typeof value === 'string' && value.trim().length > 0 ? value : null;
-}
+  if (text.success) {
+    const parsed = Number.parseInt(text.data, 10);
 
-function readInteger(value: unknown, fallback: number): number {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return Math.max(0, Math.trunc(value));
-  }
-  if (typeof value === 'string') {
-    const parsed = Number.parseInt(value, 10);
     if (Number.isFinite(parsed)) {
       return Math.max(0, parsed);
     }
   }
+
   return fallback;
 }

@@ -2,7 +2,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 
 export type NotificationChannel = 'email';
+
 export type NotificationKey = 'weekly_summary' | 'daily_summary';
+
 export type NotificationScheduleType = 'daily' | 'weekly';
 
 export interface NotificationPreference {
@@ -42,16 +44,19 @@ export class NotificationPreferencesService {
     if (!this.supabase || !userId) {
       this.items.set(buildDefaultPreferences());
       this.loading.set(false);
+
       return;
     }
 
     this.loading.set(true);
+
     const { data, error } = await this.supabase
       .from('notification_preferences')
       .select(
         'notification_key, channel, enabled, schedule_type, day_of_week, time_of_day, timezone'
       )
       .eq('user_id', userId);
+
     this.loading.set(false);
 
     if (error) {
@@ -60,9 +65,11 @@ export class NotificationPreferencesService {
         error
       );
       this.items.set(buildDefaultPreferences());
+
       return;
     }
 
+    // SAFETY: The notification preferences projection matches NotificationPreferenceRow; defaults cover missing rows.
     this.items.set(
       mergeWithDefaults((data as NotificationPreferenceRow[] | null) ?? [])
     );
@@ -117,12 +124,14 @@ function mergeWithDefaults(
   rows: NotificationPreferenceRow[]
 ): NotificationPreference[] {
   const defaults = buildDefaultPreferences();
+
   const rowMap = new Map(
     rows.map((row) => [`${row.notification_key}:${row.channel}`, row] as const)
   );
 
   return defaults.map((item) => {
     const row = rowMap.get(`${item.key}:${item.channel}`);
+
     if (!row) {
       return item;
     }
@@ -141,6 +150,7 @@ function mergeWithDefaults(
 
 function buildDefaultPreferences(): NotificationPreference[] {
   const timezone = resolveBrowserTimezone();
+
   return [
     {
       key: 'weekly_summary',
@@ -165,14 +175,18 @@ function buildDefaultPreferences(): NotificationPreference[] {
 
 function normalizeTimeOfDay(value: string): string {
   const match = value.match(/^(\d{2}):(\d{2})/);
+
   if (!match) {
     return DEFAULT_TIME;
   }
+
   const hours = Number.parseInt(match[1], 10);
   const minutes = Number.parseInt(match[2], 10);
+
   if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
     return DEFAULT_TIME;
   }
+
   return `${match[1]}:${match[2]}`;
 }
 

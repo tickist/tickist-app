@@ -11,10 +11,10 @@ The product is not a public content site or a generic file store. It is an authe
 ### Projects
 
 - Each user has one Inbox project for uncategorised tasks.
-- Users start with Work and Private workspaces, can create and rename others in Settings, and can select All or one workspace in the navigation bar. Existing projects begin in Private. The choice filters project and task views, dashboard, tags, tree, and statistics; Inbox and notifications stay available. Subprojects share their parent's workspace. Recipients place shared projects in their own workspace independently of the owner.
+- Users start with Work and Private workspaces, can create and rename others in Settings, and can select All or one workspace in the navigation bar beside the avatar; the switcher displays an icon on mobile. Existing projects begin in Private. The choice filters project and task views, dashboard, tags, tree, and statistics; Inbox and notifications stay available. Subprojects share their parent's workspace. Recipients place shared projects in their own workspace independently of the owner.
 - Projects can be active, nested under another project, or organised into special sidebar groups such as Someday/Maybe, routine reminders, weekdays, and future work. A selected project task list includes that project's tasks and every nested descendant by default. If descendants exist, independent checkboxes beside the selected project and each descendant temporarily include or exclude that project's own tasks; changing the selected project resets all of them to included.
 - Projects have a name, description, colour, icon, task-view preference, and defaults for task creation. Branding provides a searchable catalogue of 151 Lucide icons.
-- A project owner can invite collaborators. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
+- A project owner can invite collaborators with existing Tickist accounts; an address without an account receives no invitation email or stored membership. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
 
 ### Tasks
 
@@ -152,3 +152,15 @@ The codebase is an Nx workspace. `apps/tickist-web` is the Angular app, `apps/mc
 - `llm.txt` is the concise LLM discovery file; this file is its complete reference.
 - Repository knowledge for coding agents lives in the root `doc/` directory. Read `doc/README.md` before changing a documented area.
 - When a feature changes, update the relevant `doc/` page, `llm.txt`, and `llm-full.txt`. When a public route changes, update `sitemap.xml` and `robots.txt` in the same change.
+
+Account deletion: Settings provides a request link to remove-account@tickist.com. Requests require identity verification and operator processing. Shared work is reviewed before deletion; backup retention is separate. This is not immediate self-service erasure.
+
+History retention (migration 0025): pending invitations expire after 30 days; notifications are kept for 180 days and MCP/activity history for 90 days. Daily cleanup preserves tasks, projects and accepted memberships.
+
+Terminal email history is cleaned after 30 days; minimal deduplication hashes linked to the account remain until account deletion. Unresolved legacy records require operator review.
+
+Registration documents (migration 0026): signup links to the exact published terms/privacy version and requires an unchecked terms checkbox. A database trigger validates the current version and records a server timestamp. Legal documents are public, downloadable and excluded from indexing. Migration 0027 publishes the Polish release 2026-09-30.1 from repository-owned Markdown with its actual deployment timestamp. Ordinary unconfirmed signup requires the current published version. Existing login is unaffected. See [publication procedure](https://github.com/tickist/tickist-app/blob/develop/doc/legal-registration.md).
+
+Cloudflare Web Analytics is optional, including on signed-in pages: it loads after consent, with a persistent Privacy settings control and withdrawal by reload. Workers operational logs are separate.
+
+Google Analytics 4 is separate and optional: its tag loads only after explicit Google consent and publication of privacy release 2026-09-30.2. It sends fixed route templates, sign_up for successful new registrations, and app_open once per page lifetime; no account, task or project IDs, content, query strings or fragments are included. Referrers retain only allowlisted search/social origins. Existing Cloudflare consent never enables Google. Advertising consent is denied and automatic enhanced measurement is disabled. Google consent and non-renewing analytics cookies expire after 180 days; withdrawal disables collection, deletes the host cookies and reloads. Google remains disabled in environments without NG_APP_GA4_MEASUREMENT_ID.

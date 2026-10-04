@@ -53,8 +53,10 @@ async function ensureAuthenticated(
   await page.goto('/auth');
 
   const pathname = new URL(page.url()).pathname;
+
   if (pathname.startsWith('/app')) {
     await expect(page.getByPlaceholder(/Search tasks/)).toBeVisible();
+
     return;
   }
 

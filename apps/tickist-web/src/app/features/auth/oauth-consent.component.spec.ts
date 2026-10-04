@@ -10,6 +10,7 @@ describe('OAuthConsentComponent', () => {
       data: null,
       error: { message: 'Authorization denied.' },
     }));
+
     TestBed.configureTestingModule({
       imports: [OAuthConsentComponent],
       providers: [
@@ -36,6 +37,7 @@ describe('OAuthConsentComponent', () => {
         },
       ],
     }).overrideComponent(OAuthConsentComponent, { set: { template: '' } });
+
     const component = TestBed.createComponent(
       OAuthConsentComponent
     ).componentInstance;

@@ -620,27 +620,33 @@ const ICONS_BY_KEY: Record<ProjectIconKey, string> = {
   wine: Wine,
 };
 
-const ICON_KEYS = new Set<ProjectIconKey>(
-  Object.keys(ICONS_BY_KEY) as ProjectIconKey[]
-);
+const ICON_KEYS = new Set(Object.keys(ICONS_BY_KEY));
+
+function isProjectIconKey(value: string): value is ProjectIconKey {
+  return ICON_KEYS.has(value);
+}
 
 export function resolveProjectIconKey(
   raw: string | null | undefined
 ): ProjectIconKey {
   const normalized = raw?.trim().toLowerCase() ?? '';
-  if (ICON_KEYS.has(normalized as ProjectIconKey)) {
-    return normalized as ProjectIconKey;
+
+  if (isProjectIconKey(normalized)) {
+    return normalized;
   }
+
   return DEFAULT_PROJECT_ICON;
 }
 
 export function resolveProjectIconData(raw: string | null | undefined): string {
   const key = resolveProjectIconKey(raw);
+
   return ICONS_BY_KEY[key];
 }
 
 export function projectIconLabel(raw: string | null | undefined): string {
   const key = resolveProjectIconKey(raw);
+
   return (
     PROJECT_ICON_OPTIONS.find((option) => option.key === key)?.label ??
     PROJECT_ICON_OPTIONS[0].label

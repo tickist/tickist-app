@@ -29,6 +29,7 @@ import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 import { TaskStatusService } from '../../data/task-status.service';
 
 type TaskViewMode = 'extended' | 'simple';
+
 type RepeatMode =
   | 'never'
   | 'daily'
@@ -37,7 +38,9 @@ type RepeatMode =
   | 'monthly'
   | 'yearly'
   | 'custom';
+
 type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+
 type RepeatFromMode = 'completion_date' | 'due_date';
 
 let nextTaskCardId = 0;
@@ -75,9 +78,11 @@ export class TaskCardComponent implements OnChanges {
 
   readonly tagLookup = computed(() => {
     const map = new Map<string, Tag>();
+
     for (const tag of this.tagsService.list()) {
       map.set(tag.id, tag);
     }
+
     return map;
   });
   readonly projects = computed(() => this.projectsService.list());
@@ -110,15 +115,17 @@ export class TaskCardComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['task']) {
-      const previous = changes['task'].previousValue as Task | undefined;
-      const current = changes['task'].currentValue as Task | undefined;
+      const previous: Task | undefined = changes['task'].previousValue;
+      const current: Task | undefined = changes['task'].currentValue;
       this.descriptionDraft.set(current?.description ?? '');
       this.descriptionEditing.set(false);
       this.newStepDraft.set('');
       this.repeatDraftMode.set(null);
+
       if (current) {
         this.syncCustomRepeatDraft(current.repeatInterval);
       }
+
       if (previous?.id && current?.id && previous.id !== current.id) {
         this.menuOpen.set(false);
         this.closeAllPanels();
@@ -129,6 +136,7 @@ export class TaskCardComponent implements OnChanges {
   taskTimeLabel(): string | null {
     const estimateMinutes = this.task.estimateMinutes;
     const spentMinutes = this.task.spentMinutes;
+
     if (
       estimateMinutes == null ||
       estimateMinutes <= 0 ||
@@ -137,11 +145,14 @@ export class TaskCardComponent implements OnChanges {
     ) {
       return null;
     }
+
     const estimate = this.formatDuration(estimateMinutes);
     const spent = this.formatDuration(spentMinutes);
+
     if (!estimate || !spent) {
       return null;
     }
+
     return `${estimate} / ${spent}`;
   }
 
@@ -153,7 +164,9 @@ export class TaskCardComponent implements OnChanges {
     ) {
       return null;
     }
+
     const percent = (this.task.spentMinutes / this.task.estimateMinutes) * 100;
+
     return Math.min(100, Math.max(0, Math.round(percent)));
   }
 
@@ -169,13 +182,17 @@ export class TaskCardComponent implements OnChanges {
     if (!value) {
       return null;
     }
+
     const date = new Date(value);
+
     if (Number.isNaN(date.getTime())) {
       return null;
     }
+
     const day = `${date.getDate()}`.padStart(2, '0');
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const year = date.getFullYear();
+
     return `${day}-${month}-${year}`;
   }
 
@@ -198,12 +215,15 @@ export class TaskCardComponent implements OnChanges {
 
   taskTypeLabel(): string | null {
     const taskType = this.normalizedTaskType();
+
     if (taskType === 'next_action') {
       return 'Next action';
     }
+
     if (taskType === 'need_info') {
       return 'Need info';
     }
+
     return null;
   }
 
@@ -253,6 +273,7 @@ export class TaskCardComponent implements OnChanges {
     }
 
     const nextReminder = this.task.reminders[0];
+
     if (!nextReminder) {
       return `Reminders: ${this.task.reminderCount}`;
     }
@@ -294,10 +315,13 @@ export class TaskCardComponent implements OnChanges {
     if (!this.task.suspendUntil) {
       return 'Suspended indefinitely';
     }
+
     const date = new Date(this.task.suspendUntil);
+
     if (Number.isNaN(date.getTime())) {
       return 'Suspended indefinitely';
     }
+
     return `Suspended until ${date.toLocaleString('en-US', {
       dateStyle: 'medium',
       timeStyle: 'short',
@@ -319,9 +343,11 @@ export class TaskCardComponent implements OnChanges {
 
   async deleteTask(): Promise<void> {
     const confirmed = confirm(`Delete "${this.task.name}"?`);
+
     if (!confirmed) {
       return;
     }
+
     await this.runTaskAction(
       () => this.tasks.deleteTask(this.task.id),
       'Task deleted.',
@@ -363,6 +389,7 @@ export class TaskCardComponent implements OnChanges {
     const base = this.task.finishDate
       ? new Date(this.task.finishDate)
       : new Date();
+
     base.setDate(base.getDate() + days);
     await this.mutateTask(
       { id: this.task.id, finishDate: base.toISOString() },
@@ -384,6 +411,7 @@ export class TaskCardComponent implements OnChanges {
   toggleProjectPicker(): void {
     const next = !this.projectPickerOpen();
     this.closeAllPanels();
+
     if (next) {
       this.projectPickerOpen.set(true);
     }
@@ -402,6 +430,7 @@ export class TaskCardComponent implements OnChanges {
     const next = !this.descriptionOpen();
     this.closeAllPanels();
     this.descriptionOpen.set(next);
+
     if (next) {
       this.descriptionDraft.set(this.task.description ?? '');
       this.descriptionEditing.set(false);
@@ -424,6 +453,7 @@ export class TaskCardComponent implements OnChanges {
       'Description saved.',
       'Failed to save description.'
     );
+
     if (saved) {
       this.descriptionEditing.set(false);
     }
@@ -437,7 +467,9 @@ export class TaskCardComponent implements OnChanges {
     if (!tagId || this.task.tags.includes(tagId)) {
       return false;
     }
+
     const next = Array.from(new Set([...this.task.tags, tagId]));
+
     return this.mutateTask(
       { id: this.task.id, tags: next },
       successMessage,
@@ -449,32 +481,41 @@ export class TaskCardComponent implements OnChanges {
     if (!tagId) {
       return;
     }
+
     void this.addTag(tagId);
     this.closeTagMenu();
   }
 
   async addOrCreateTag(): Promise<void> {
     const trimmed = this.tagSearch().trim();
+
     if (!trimmed) {
       return;
     }
 
     const existing = this.findTagByName(trimmed);
+
     if (existing) {
       if (this.task.tags.includes(existing.id)) {
         this.toasts.info('This tag is already attached to the task.');
+
         return;
       }
+
       const added = await this.addTag(existing.id);
+
       if (added) {
         this.tagSearch.set('');
       }
+
       return;
     }
 
     const ownerId = this.task.ownerId?.trim();
+
     if (!ownerId) {
       this.toasts.error('Unable to create tag without an owner.');
+
       return;
     }
 
@@ -483,10 +524,13 @@ export class TaskCardComponent implements OnChanges {
         ownerId,
         name: trimmed,
       });
+
       if (!created) {
         throw new Error('Tag creation returned null');
       }
+
       const added = await this.addTag(created.id, 'Tag created and added.');
+
       if (added) {
         this.tagSearch.set('');
       }
@@ -507,11 +551,13 @@ export class TaskCardComponent implements OnChanges {
 
   availableTagsToAdd(): Tag[] {
     const taken = new Set(this.task.tags);
+
     return this.tagsService.list().filter((tag) => !taken.has(tag.id));
   }
 
   filteredAvailableTags(): Tag[] {
     const query = this.tagSearch().trim().toLowerCase();
+
     return this.availableTagsToAdd().filter((tag) =>
       query ? tag.name.toLowerCase().includes(query) : true
     );
@@ -519,22 +565,29 @@ export class TaskCardComponent implements OnChanges {
 
   canSubmitTagSearch(): boolean {
     const trimmed = this.tagSearch().trim();
+
     if (!trimmed) {
       return false;
     }
+
     const existing = this.findTagByName(trimmed);
+
     return !existing || !this.task.tags.includes(existing.id);
   }
 
   tagSearchActionLabel(): string {
     const trimmed = this.tagSearch().trim();
+
     if (!trimmed) {
       return 'Create tag';
     }
+
     const existing = this.findTagByName(trimmed);
+
     if (!existing) {
       return 'Create tag';
     }
+
     return this.task.tags.includes(existing.id)
       ? 'Already added'
       : 'Add existing';
@@ -542,14 +595,17 @@ export class TaskCardComponent implements OnChanges {
 
   handleTagSearchEnter(event: Event): void {
     event.preventDefault();
+
     if (!this.canSubmitTagSearch()) {
       return;
     }
+
     void this.addOrCreateTag();
   }
 
   updateTagSearch(value: string): void {
     this.tagSearch.set(value);
+
     if (this.tagMenuOpen() && !this.filteredAvailableTags().length) {
       this.closeTagMenu();
     }
@@ -558,8 +614,10 @@ export class TaskCardComponent implements OnChanges {
   toggleTagMenu(): void {
     if (this.tagMenuOpen()) {
       this.closeTagMenu(true);
+
       return;
     }
+
     this.openTagMenu();
   }
 
@@ -571,8 +629,10 @@ export class TaskCardComponent implements OnChanges {
     ) {
       event.preventDefault();
       this.openTagMenu();
+
       return;
     }
+
     if (event.key === 'Escape') {
       event.preventDefault();
       this.closeTagMenu(true);
@@ -581,29 +641,39 @@ export class TaskCardComponent implements OnChanges {
 
   onTagMenuOptionKeydown(event: KeyboardEvent, index: number): void {
     const total = this.filteredAvailableTags().length;
+
     if (!total) {
       return;
     }
+
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       this.focusTagOption((index + 1) % total);
+
       return;
     }
+
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.focusTagOption((index - 1 + total) % total);
+
       return;
     }
+
     if (event.key === 'Home') {
       event.preventDefault();
       this.focusTagOption(0);
+
       return;
     }
+
     if (event.key === 'End') {
       event.preventDefault();
       this.focusTagOption(total - 1);
+
       return;
     }
+
     if (event.key === 'Escape') {
       event.preventDefault();
       this.closeTagMenu(true);
@@ -624,10 +694,13 @@ export class TaskCardComponent implements OnChanges {
     if (!this.tagMenuOpen()) {
       return;
     }
+
     const target = event.target;
+
     if (!(target instanceof Node)) {
       return;
     }
+
     if (!this.host.nativeElement.contains(target)) {
       this.closeTagMenu();
     }
@@ -642,6 +715,7 @@ export class TaskCardComponent implements OnChanges {
     this.closeAllPanels();
     this.repeatOpen.set(next);
     this.repeatDraftMode.set(null);
+
     if (next) {
       this.syncCustomRepeatDraft(this.task.repeatInterval);
     }
@@ -650,8 +724,10 @@ export class TaskCardComponent implements OnChanges {
   async setRepeatInterval(mode: RepeatMode): Promise<void> {
     if (mode === 'custom') {
       this.repeatDraftMode.set('custom');
+
       return;
     }
+
     this.repeatDraftMode.set(null);
     const interval = this.getRepeatInterval(mode);
     const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
@@ -669,6 +745,7 @@ export class TaskCardComponent implements OnChanges {
         this.repeatDraftMode() === 'custom'
       );
     }
+
     return (
       this.currentRepeatMode() === mode && this.repeatDraftMode() !== 'custom'
     );
@@ -705,6 +782,7 @@ export class TaskCardComponent implements OnChanges {
       this.customRepeatEvery(),
       this.customRepeatUnit()
     );
+
     const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
     await this.mutateTask(
       { id: this.task.id, repeatInterval: interval, fromRepeating },
@@ -718,12 +796,15 @@ export class TaskCardComponent implements OnChanges {
     if ((this.task.repeatInterval ?? 0) <= 0) {
       return;
     }
+
     const hasDueDate = !!this.task.finishDate;
     const fromRepeating = mode === 'due_date' && hasDueDate ? 1 : 0;
+
     const successMessage =
       mode === 'due_date' && !hasDueDate
         ? 'No due date set. Repeat will use completion date.'
         : 'Repeat anchor updated.';
+
     await this.mutateTask(
       { id: this.task.id, fromRepeating },
       successMessage,
@@ -741,6 +822,7 @@ export class TaskCardComponent implements OnChanges {
     const next = this.task.steps.map((existing) =>
       existing === step ? { ...existing, isDone: done } : existing
     );
+
     void this.persistSteps(next, 'Step updated.');
   }
 
@@ -753,18 +835,22 @@ export class TaskCardComponent implements OnChanges {
     const current = [...this.task.steps];
     const index = current.indexOf(step);
     const target = direction === 'up' ? index - 1 : index + 1;
+
     if (target < 0 || target >= current.length) {
       return;
     }
+
     [current[index], current[target]] = [current[target], current[index]];
     void this.persistSteps(current, 'Steps reordered.');
   }
 
   addStep(): void {
     const content = this.newStepDraft().trim();
+
     if (!content) {
       return;
     }
+
     const next: TaskStep[] = [
       ...this.task.steps,
       {
@@ -775,6 +861,7 @@ export class TaskCardComponent implements OnChanges {
         position: this.task.steps.length,
       },
     ];
+
     void this.persistSteps(next, 'Step added.');
     this.newStepDraft.set('');
   }
@@ -804,14 +891,18 @@ export class TaskCardComponent implements OnChanges {
   ): Promise<boolean> {
     try {
       const updated = await this.tasks.updateTask(payload);
+
       if (!updated) {
         throw new Error('Update returned null');
       }
+
       this.toasts.success(successMessage);
+
       return true;
     } catch (error) {
       console.error('[TaskCard] Task update failed', error);
       this.toasts.error(errorMessage);
+
       return false;
     }
   }
@@ -823,14 +914,18 @@ export class TaskCardComponent implements OnChanges {
   ): Promise<boolean> {
     try {
       const result = await action();
+
       if (!result) {
         throw new Error('Action returned false');
       }
+
       this.toasts.success(successMessage);
+
       return true;
     } catch (error) {
       console.error('[TaskCard] Task action failed', error);
       this.toasts.error(errorMessage);
+
       return false;
     }
   }
@@ -839,20 +934,25 @@ export class TaskCardComponent implements OnChanges {
     if (minutes == null) {
       return null;
     }
+
     if (minutes >= 60) {
       const hours = minutes / 60;
+
       return hours % 1 === 0 ? `${hours}h` : `${hours.toFixed(1)}h`;
     }
+
     return `${minutes}m`;
   }
 
   private formatReminderDate(value: string, timezone: string): string {
     const date = new Date(value);
+
     if (Number.isNaN(date.getTime())) {
       return value;
     }
 
     const normalizedTimezone = timezone.trim() || undefined;
+
     try {
       return new Intl.DateTimeFormat(undefined, {
         dateStyle: 'medium',
@@ -904,14 +1004,11 @@ export class TaskCardComponent implements OnChanges {
     return !!this.task.finishDate;
   }
 
-  private deriveRepeatMode(interval: number | null | undefined): {
-    mode: RepeatMode;
-    every: number;
-    unit: RepeatUnit;
-  } {
+  private deriveRepeatMode(interval: number | null | undefined): RepeatState {
     if (!interval || interval <= 0) {
       return { mode: 'never', every: 1, unit: 'day' };
     }
+
     switch (interval) {
       case 1:
         return { mode: 'daily', every: 1, unit: 'day' };
@@ -922,11 +1019,14 @@ export class TaskCardComponent implements OnChanges {
       case 365:
         return { mode: 'yearly', every: 1, unit: 'year' };
     }
+
     const unit = this.repeatUnitFromInterval(interval);
+
     const every = Math.max(
       1,
       Math.round(interval / this.repeatUnitMultiplier(unit))
     );
+
     return { mode: 'custom', every, unit };
   }
 
@@ -947,22 +1047,28 @@ export class TaskCardComponent implements OnChanges {
     if (interval % 365 === 0) {
       return 'year';
     }
+
     if (interval % 30 === 0) {
       return 'month';
     }
+
     if (interval % 7 === 0) {
       return 'week';
     }
+
     return 'day';
   }
 
   private syncCustomRepeatDraft(interval: number | null | undefined): void {
     const { mode, every, unit } = this.deriveRepeatMode(interval);
+
     if (mode === 'custom') {
       this.customRepeatEvery.set(every);
       this.customRepeatUnit.set(unit);
+
       return;
     }
+
     switch (mode) {
       case 'weekly':
         this.customRepeatUnit.set('week');
@@ -977,14 +1083,17 @@ export class TaskCardComponent implements OnChanges {
         this.customRepeatUnit.set('day');
         break;
     }
+
     this.customRepeatEvery.set(1);
   }
 
   private generateStepId(): string {
     const cryptoRef = globalThis.crypto;
+
     if (cryptoRef?.randomUUID) {
       return cryptoRef.randomUUID();
     }
+
     return `step-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
@@ -994,9 +1103,11 @@ export class TaskCardComponent implements OnChanges {
 
   private findTagByName(name: string): Tag | undefined {
     const normalizedName = name.trim().toLowerCase();
+
     if (!normalizedName) {
       return undefined;
     }
+
     return this.tagsService
       .list()
       .find((tag) => tag.name.trim().toLowerCase() === normalizedName);
@@ -1017,6 +1128,7 @@ export class TaskCardComponent implements OnChanges {
     if (!this.filteredAvailableTags().length) {
       return;
     }
+
     this.tagMenuOpen.set(true);
     queueMicrotask(() => this.focusTagOption(0));
   }
@@ -1025,7 +1137,9 @@ export class TaskCardComponent implements OnChanges {
     if (!this.tagMenuOpen()) {
       return;
     }
+
     this.tagMenuOpen.set(false);
+
     if (restoreFocus) {
       queueMicrotask(() => this.tagMenuTrigger?.nativeElement.focus());
     }
@@ -1035,4 +1149,10 @@ export class TaskCardComponent implements OnChanges {
     const options = this.tagMenuOptions?.toArray() ?? [];
     options[index]?.nativeElement.focus();
   }
+}
+
+interface RepeatState {
+  mode: RepeatMode;
+  every: number;
+  unit: RepeatUnit;
 }

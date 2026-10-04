@@ -4,7 +4,7 @@
 
 ## Product summary
 
-Each account starts with Work and Private workspaces, and existing projects belong to Private. Users can create and rename workspaces in Settings and choose All or one workspace in the navigation bar. Workspace selection filters projects, tasks, dashboard, tags, tree, and statistics; Inbox and notifications remain available. Shared-project recipients choose their own workspace.
+Each account starts with Work and Private workspaces, and existing projects belong to Private. Users can create and rename workspaces in Settings and choose All or one workspace in the navigation bar beside the avatar; the switcher displays an icon on mobile. Workspace selection filters projects, tasks, dashboard, tags, tree, and statistics; Inbox and notifications remain available. Shared-project recipients choose their own workspace.
 
 Tickist provides an Inbox, nested projects, tasks, tags, subtasks, recurring work, reminders, collaboration, dashboards, statistics, notifications, backup/restore, and API tokens. Project branding includes a searchable catalogue of 151 Lucide icons, and placeholders use a consistent muted slate colour throughout forms. Tasks may be suspended indefinitely or until a selected date and time; the time defaults to `00:00` when only the date is chosen. Suspended work has its own project filter, the project-header suspended count opens that filter, and suspended tasks are excluded from active-work summaries until they resume. When an incomplete task changes from suspended to active, its owner receives an in-app notification and a queued email for both automatic and manual resumes. Selecting a project includes tasks from all of its nested subprojects by default, with per-project checkboxes for temporarily narrowing that hierarchy. Each account stores an IANA timezone captured at registration; existing accounts and invalid browser values fall back to `Europe/Warsaw`. Task editing shows creation and latest modification timestamps, and only one task-card actions menu remains open within a list. Shared-project assignees are shown by display label, and new shared tasks default to the person creating them. It is a private workspace application: project, task, tag, team, settings, and API routes require an authenticated user.
 
@@ -44,3 +44,17 @@ Authenticated integrations use the exclusive `https://mcp.tickist.com/mcp` endpo
 ## Maintenance rule
 
 When a product capability changes, update the matching document in `doc/`, this concise file, and `llm-full.txt`. When a new public route is added, also update `sitemap.xml` and `robots.txt`.
+
+Account deletion: Settings provides a request link to remove-account@tickist.com. Requests require identity verification and operator processing. Shared work is reviewed before deletion; backup retention is separate. This is not immediate self-service erasure.
+
+History retention (migration 0025): pending invitations expire after 30 days; notifications are kept for 180 days and MCP/activity history for 90 days. Daily cleanup preserves tasks, projects and accepted memberships.
+
+Terminal email history is cleaned after 30 days; minimal deduplication hashes linked to the account remain until account deletion. Unresolved legacy records require operator review.
+
+Registration documents (migration 0026): signup links to the exact published terms/privacy version and requires an unchecked terms checkbox. A database trigger validates the current version and records a server timestamp. Legal documents are public, downloadable and excluded from indexing. Migration 0027 publishes the Polish release 2026-09-30.1 from repository-owned Markdown with its actual deployment timestamp. Ordinary unconfirmed signup requires the current published version. Existing login is unaffected. See [publication procedure](https://github.com/tickist/tickist-app/blob/develop/doc/legal-registration.md).
+
+Email invitations to shared projects require an existing Tickist account; addresses without an account are not emailed or saved as project members.
+
+Cloudflare Web Analytics is optional, including on signed-in pages: it loads after consent, with a persistent Privacy settings control and withdrawal by reload. Workers operational logs are separate.
+
+Google Analytics 4 is separate and optional: its tag loads only after explicit Google consent and publication of privacy release 2026-09-30.2. It sends fixed route templates, sign_up for successful new registrations, and app_open once per page lifetime; no account, task or project IDs, content, query strings or fragments are included. Referrers retain only allowlisted search/social origins. Existing Cloudflare consent never enables Google. Advertising consent is denied and automatic enhanced measurement is disabled. Google consent and non-renewing analytics cookies expire after 180 days; withdrawal disables collection, deletes the host cookies and reloads. Google remains disabled in environments without NG_APP_GA4_MEASUREMENT_ID.

@@ -39,6 +39,7 @@ export class AuthUpdatePasswordComponent {
   );
   readonly recoveryIssue = computed(() => {
     const hashIssue = this.hashRecoveryIssue();
+
     if (hashIssue) {
       return hashIssue;
     }
@@ -47,10 +48,7 @@ export class AuthUpdatePasswordComponent {
       return null;
     }
 
-    if (
-      !this.session.passwordRecoveryPending() ||
-      !this.session.user()
-    ) {
+    if (!this.session.passwordRecoveryPending() || !this.session.user()) {
       return 'This password reset link is no longer active.';
     }
 
@@ -75,6 +73,7 @@ export class AuthUpdatePasswordComponent {
 
   get passwordsMismatch(): boolean {
     const { password, confirmPassword } = this.form.getRawValue();
+
     return Boolean(password && confirmPassword && password !== confirmPassword);
   }
 
@@ -90,6 +89,7 @@ export class AuthUpdatePasswordComponent {
         type: 'error',
         text: 'Passwords must match.',
       });
+
       return;
     }
 

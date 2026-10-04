@@ -10,6 +10,7 @@ import { Task } from '../../data/task-data.service';
 import { TaskCardComponent } from './task-card.component';
 
 type TaskViewMode = 'extended' | 'simple';
+
 type TaskProjectResolver = (task: Task) => Project | null;
 
 @Component({
@@ -29,6 +30,7 @@ export class TaskListComponent {
 
   projectFor(task: Task): Project | null {
     const resolver = this.projectResolver();
+
     return resolver ? resolver(task) : this.project();
   }
 
@@ -39,8 +41,10 @@ export class TaskListComponent {
   setTaskMenuOpen(taskId: string, open: boolean): void {
     if (open) {
       this.openMenuTaskId.set(taskId);
+
       return;
     }
+
     if (this.openMenuTaskId() === taskId) {
       this.openMenuTaskId.set(null);
     }

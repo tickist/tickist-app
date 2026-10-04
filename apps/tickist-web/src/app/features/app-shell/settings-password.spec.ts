@@ -1,3 +1,4 @@
+import { fixtureHost, requiredElement } from '../../../testing/dom';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
@@ -233,19 +234,25 @@ describe('SettingsComponent password form', () => {
   });
 
   function getSubmitButton(): HTMLButtonElement {
-    const button = fixture.nativeElement.querySelector(
-      '[data-testid="settings-password-submit"]'
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="settings-password-submit"]',
+      HTMLButtonElement
+    );
+
     if (!button) {
       throw new Error('Missing settings password submit button');
     }
+
     return button;
   }
 
   function getInlineError(): HTMLParagraphElement | null {
-    return fixture.nativeElement.querySelector(
-      '[data-testid="settings-password-error"]'
-    ) as HTMLParagraphElement | null;
+    return requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="settings-password-error"]',
+      HTMLParagraphElement
+    );
   }
 });
 

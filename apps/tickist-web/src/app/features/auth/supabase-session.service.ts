@@ -24,6 +24,7 @@ export class SupabaseSessionService {
 
     if (!this.supabase || !this.isBrowser) {
       this.markReady();
+
       return;
     }
 
@@ -76,6 +77,7 @@ export class SupabaseSessionService {
     if (this.supabase) {
       await this.supabase.auth.signOut();
     }
+
     this.clearSession();
     this.clearPasswordRecoveryPending();
   }
@@ -84,10 +86,13 @@ export class SupabaseSessionService {
     if (!this.supabase || !this.isBrowser) {
       return;
     }
+
     const { data, error } = await this.supabase.auth.getUser();
+
     if (error) {
       throw error;
     }
+
     this.currentUser.set(data.user ?? null);
     this.markReady();
   }
@@ -99,6 +104,7 @@ export class SupabaseSessionService {
   private syncPasswordRecoveryState(event: AuthChangeEvent): void {
     if (event === 'PASSWORD_RECOVERY') {
       this.markPasswordRecoveryPending();
+
       return;
     }
 
@@ -125,11 +131,13 @@ export class SupabaseSessionService {
     }
 
     const location = window.location;
+
     if (location.pathname !== '/auth/update-password') {
       return false;
     }
 
     const queryParams = new URLSearchParams(location.search);
+
     const hashParams = new URLSearchParams(
       location.hash.startsWith('#') ? location.hash.slice(1) : location.hash
     );

@@ -28,6 +28,7 @@ export class ProjectIconComponent {
     if (this.decorative) {
       return null;
     }
+
     return projectIconLabel(this.icon);
   }
 }

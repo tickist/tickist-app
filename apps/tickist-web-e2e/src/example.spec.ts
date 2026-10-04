@@ -1,11 +1,13 @@
 /* eslint-disable playwright/no-conditional-in-test */
 import { expect, type Page, test } from '@playwright/test';
+import { E2E_LEGAL_VERSION } from './legal-fixture';
 
 async function waitForAuthOrApp(page: Page): Promise<'auth' | 'app'> {
   await expect
     .poll(
       () => {
         const { pathname } = new URL(page.url());
+
         return pathname;
       },
       { timeout: 15000 }
@@ -13,6 +15,7 @@ async function waitForAuthOrApp(page: Page): Promise<'auth' | 'app'> {
     .toMatch(/^\/(?:app(?:\/|$)|auth\/?$)/);
 
   const { pathname } = new URL(page.url());
+
   return pathname.startsWith('/app') ? 'app' : 'auth';
 }
 
@@ -38,9 +41,17 @@ test('signup flow leads to app dashboard', async ({ page }, testInfo) => {
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByLabel('Confirm password', { exact: true }).fill(password);
-  await page.getByRole('button', { name: 'Create account' }).click();
+  const createAccount = page.getByRole('button', { name: 'Create account' });
+  await expect(createAccount).toBeDisabled();
+  await expect(
+    page.getByRole('link', { name: 'Terms of Service' })
+  ).toHaveAttribute('href', `/legal/terms/${E2E_LEGAL_VERSION}`);
+  await page.getByRole('checkbox', { name: /I accept the/ }).check();
+  await expect(createAccount).toBeEnabled();
+  await createAccount.click();
 
   const postSignupLocation = await waitForAuthOrApp(page);
+
   if (postSignupLocation === 'auth') {
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password', { exact: true }).fill(password);

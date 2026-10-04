@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
   Injectable,
   Injector,
@@ -12,6 +13,7 @@ import { StatisticsDataService } from './statistics-data.service';
 
 const PROJECT_SELECT =
   'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, workspace_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished';
+
 const LEGACY_MEMBERSHIP_SELECT =
   'project_id, user_id, role, invited_at, projects(id, name, owner_id, color, icon)';
 
@@ -224,11 +226,14 @@ export class ProjectDataService {
 
     effect(() => {
       const user = this.session.user();
+
       if (!user) {
         this.projects.set([]);
         this.memberships.set([]);
+
         return;
       }
+
       void this.ensureInboxProject(user.id);
     });
   }
@@ -251,10 +256,12 @@ export class ProjectDataService {
       this.memberships.set([]);
       this.loading.set(false);
       console.warn('[Projects] Supabase client missing; skipping fetch.');
+
       return;
     }
 
     this.loading.set(true);
+
     const { data, error } = await this.supabase
       .from('projects')
       .select(PROJECT_SELECT);
@@ -262,9 +269,11 @@ export class ProjectDataService {
     if (error || !data) {
       console.warn('[Projects] Unable to fetch from Supabase yet.', error);
       this.loading.set(false);
+
       return;
     }
 
+    // SAFETY: The preceding project query or RPC selects the columns of this row contract; joined projects may be a row, row array, or null.
     this.projects.set(
       (data as ProjectRow[]).map((row) => this.mapProjectRow(row))
     );
@@ -275,19 +284,26 @@ export class ProjectDataService {
   async refreshMemberships(): Promise<void> {
     if (!this.supabase) {
       this.memberships.set([]);
+
       return;
     }
+
     const { data, error } = await this.supabase
       .from('project_members')
       .select(LEGACY_MEMBERSHIP_SELECT)
       .order('invited_at', { ascending: false });
+
     if (error || !data) {
       console.warn('[Projects] Unable to fetch memberships.', error);
+
       return;
     }
-    const memberships = (data as unknown as ProjectMemberRow[]).map((row) =>
+
+    // SAFETY: The preceding project query or RPC selects the columns of this row contract; joined projects may be a row, row array, or null.
+    const memberships = (data as ProjectMemberRow[]).map((row) =>
       this.mapMemberRow(row)
     );
+
     this.memberships.set(memberships);
     this.attachMembershipsToProjects(memberships);
     await this.refreshAssigneeOptions();
@@ -301,13 +317,17 @@ export class ProjectDataService {
     const { data, error } = await this.supabase.rpc(
       'list_accessible_project_assignees'
     );
+
     if (error || !data) {
       console.warn('[Projects] Unable to fetch assignee labels.', error);
       this.attachFallbackAssigneeOptions();
+
       return;
     }
 
     const optionsByProject = new Map<string, ProjectAssigneeOption[]>();
+
+    // SAFETY: The preceding project query or RPC selects the columns of this row contract; joined projects may be a row, row array, or null.
     for (const row of data as ProjectAssigneeRow[]) {
       const options = optionsByProject.get(row.project_id) ?? [];
       options.push({ userId: row.user_id, label: row.label });
@@ -337,12 +357,15 @@ export class ProjectDataService {
     const options = new Map<string, string>([
       [project.ownerId, 'Project owner'],
     ]);
+
     for (const member of project.members) {
       if (member.status !== 'accepted' || options.has(member.userId)) {
         continue;
       }
+
       options.set(member.userId, member.invitedEmail ?? 'Project member');
     }
+
     return Array.from(options, ([userId, label]) => ({ userId, label }));
   }
 
@@ -351,25 +374,57 @@ export class ProjectDataService {
     email: string
   ): Promise<ProjectInviteResult | null> {
     const functionsUrl = this.supabaseConfig?.functionsUrl;
+
     if (!functionsUrl || !this.supabase) {
       return null;
     }
+
     const headers = await this.getFunctionAuthHeaders();
+
     if (!headers) {
       return null;
     }
+
     const response = await fetch(`${functionsUrl}/project-invite`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ projectId, email }),
     });
-    const body = (await response.json().catch(() => null)) as unknown;
+
+    const body = await response.json().catch(() => null);
+
     if (!response.ok) {
-      const errorBody = asErrorBody(body);
+      const errorBody =
+        z
+          .object({
+            error: z.string().optional().catch(undefined),
+            message: z.string().optional().catch(undefined),
+          })
+          .safeParse(body).data ?? {};
+
       throw new Error(errorBody.message ?? errorBody.error ?? 'Invite failed.');
     }
+
     await this.refresh();
-    return body as ProjectInviteResult;
+
+    return z
+      .discriminatedUnion('ok', [
+        z.object({
+          ok: z.literal(true),
+          code: z.enum(['invited', 'already_pending', 'already_member']),
+          member: z.object({
+            userId: z.string(),
+            email: z.string(),
+            status: z.enum(['pending', 'accepted', 'declined']),
+          }),
+        }),
+        z.object({
+          ok: z.literal(false),
+          code: z.literal('user_not_found'),
+          message: z.string(),
+        }),
+      ])
+      .parse(body);
   }
 
   async respondToInvite(
@@ -377,9 +432,11 @@ export class ProjectDataService {
     status: 'accepted' | 'declined'
   ): Promise<boolean> {
     const userId = this.session.user()?.id;
+
     if (!this.supabase || !userId) {
       return false;
     }
+
     const patch =
       status === 'accepted'
         ? {
@@ -391,34 +448,45 @@ export class ProjectDataService {
             status,
             declined_at: new Date().toISOString(),
           };
+
     const { error } = await this.supabase
       .from('project_members')
       .update(patch)
       .eq('project_id', projectId)
       .eq('user_id', userId);
+
     if (error) {
       console.error('[Projects] Failed to respond to invite', error);
+
       return false;
     }
+
     await this.refresh();
+
     return true;
   }
 
   async leaveSharedProject(projectId: string): Promise<boolean> {
     const userId = this.session.user()?.id;
+
     if (!this.supabase || !userId) {
       return false;
     }
+
     const { error } = await this.supabase
       .from('project_members')
       .delete()
       .eq('project_id', projectId)
       .eq('user_id', userId);
+
     if (error) {
       console.error('[Projects] Failed to leave shared project', error);
+
       return false;
     }
+
     await this.refresh();
+
     return true;
   }
 
@@ -426,16 +494,21 @@ export class ProjectDataService {
     if (!this.supabase) {
       return false;
     }
+
     const { error } = await this.supabase
       .from('project_members')
       .delete()
       .eq('project_id', projectId)
       .eq('user_id', userId);
+
     if (error) {
       console.error('[Projects] Failed to remove project member', error);
+
       return false;
     }
+
     await this.refresh();
+
     return true;
   }
 
@@ -443,14 +516,17 @@ export class ProjectDataService {
     if (!input.ownerId) {
       throw new Error('ownerId is required to create a project');
     }
+
     if (!this.supabase) {
       console.warn(
         '[Projects] Supabase client missing; cannot create project.'
       );
+
       return null;
     }
 
     const { shareWithIds = [], shareInvites = [], ...rest } = input;
+
     const { data, error } = await this.supabase
       .from('projects')
       .insert({
@@ -476,17 +552,22 @@ export class ProjectDataService {
 
     if (error || !data) {
       await this.handleOwnerConstraintError(error, input.ownerId);
+
       if (rest.isInbox && isDuplicateInboxError(error)) {
         const existingInbox = await this.fetchInboxProjectByOwner(
           input.ownerId
         );
+
         if (existingInbox) {
           this.upsertCachedProject(existingInbox);
           await this.refreshMemberships();
+
           return existingInbox;
         }
       }
+
       console.error('[Projects] Failed to create project', error);
+
       return null;
     }
 
@@ -503,16 +584,20 @@ export class ProjectDataService {
         )
         .throwOnError();
     }
+
     for (const email of shareInvites) {
       await this.inviteByEmail(data.id, email);
     }
 
     this.markStatisticsDirty();
     const created = await this.fetchProjectById(data.id);
+
     if (created) {
       this.upsertCachedProject(created);
     }
+
     await this.refreshMemberships();
+
     return created;
   }
 
@@ -523,27 +608,42 @@ export class ProjectDataService {
       console.warn(
         '[Projects] Supabase client missing; cannot update project.'
       );
+
       return null;
     }
 
     const { shareWithIds, ...rest } = input;
-    const payload: Record<string, unknown> = {};
+    const payload: Partial<ProjectRow> = {};
+
     if (rest.name !== undefined) payload.name = rest.name;
+
     if (rest.description !== undefined) payload.description = rest.description;
+
     if (rest.color !== undefined) payload.color = rest.color;
+
     if (rest.icon !== undefined) payload.icon = rest.icon;
+
     if (rest.isActive !== undefined) payload.is_active = rest.isActive;
+
     if (rest.isInbox !== undefined) payload.is_inbox = rest.isInbox;
+
     if (rest.projectType !== undefined) payload.project_type = rest.projectType;
+
     if (rest.ancestorId !== undefined) payload.ancestor_id = rest.ancestorId;
+
     if (rest.workspaceId !== undefined) payload.workspace_id = rest.workspaceId;
+
     if (rest.taskView !== undefined) payload.task_view = rest.taskView;
+
     if (rest.defaultPriority !== undefined)
       payload.default_priority = rest.defaultPriority;
+
     if (rest.defaultFinishDate !== undefined)
       payload.default_finish_date = rest.defaultFinishDate;
+
     if (rest.defaultTypeFinishDate !== undefined)
       payload.default_type_finish_date = rest.defaultTypeFinishDate;
+
     if (rest.dialogTimeWhenTaskFinished !== undefined)
       payload.dialog_time_when_task_finished = rest.dialogTimeWhenTaskFinished;
 
@@ -552,17 +652,21 @@ export class ProjectDataService {
         .from('projects')
         .update(payload)
         .eq('id', input.id);
+
       if (error) {
         console.error('[Projects] Failed to update project', error);
+
         return null;
       }
     }
 
     if (shareWithIds) {
       const previousShareWithIds = previous?.shareWithIds ?? [];
+
       const removed = previousShareWithIds.filter(
         (id) => !shareWithIds.includes(id)
       );
+
       const added = shareWithIds.filter(
         (id) => !previousShareWithIds.includes(id)
       );
@@ -583,6 +687,7 @@ export class ProjectDataService {
           .eq('project_id', input.id)
           .in('user_id', removed);
       }
+
       if (added.length) {
         await this.supabase.from('project_members').insert(
           added.map((userId) => ({
@@ -606,6 +711,7 @@ export class ProjectDataService {
 
     this.markStatisticsDirty();
     const updated = await this.fetchProjectById(input.id);
+
     if (updated) {
       this.projects.set(
         this.projects().map((project) =>
@@ -613,21 +719,27 @@ export class ProjectDataService {
         )
       );
     }
+
     if (rest.workspaceId !== undefined || rest.ancestorId !== undefined) {
       await this.refresh();
     }
+
     await this.refreshMemberships();
+
     return updated;
   }
 
   private upsertCachedProject(project: Project): void {
     const projects = this.projects();
+
     if (projects.some((item) => item.id === project.id)) {
       this.projects.set(
         projects.map((item) => (item.id === project.id ? project : item))
       );
+
       return;
     }
+
     this.projects.set([...projects, project]);
   }
 
@@ -635,9 +747,11 @@ export class ProjectDataService {
     memberships: readonly ProjectMember[]
   ): void {
     const membershipsByProject = new Map<string, ProjectMember[]>();
+
     for (const membership of memberships) {
       const projectMembers =
         membershipsByProject.get(membership.projectId) ?? [];
+
       projectMembers.push(membership);
       membershipsByProject.set(membership.projectId, projectMembers);
     }
@@ -645,6 +759,7 @@ export class ProjectDataService {
     this.projects.update((projects) =>
       projects.map((project) => {
         const members = membershipsByProject.get(project.id) ?? [];
+
         return {
           ...project,
           members,
@@ -661,11 +776,13 @@ export class ProjectDataService {
       console.warn(
         '[Projects] Supabase client missing; cannot delete project.'
       );
+
       return false;
     }
 
     const cachedProject =
       this.projects().find((project) => project.id === projectId) ?? null;
+
     let ownerId = cachedProject?.ownerId ?? null;
     let isInbox = cachedProject?.isInbox ?? false;
 
@@ -676,19 +793,25 @@ export class ProjectDataService {
           .select('owner_id, is_inbox')
           .eq('id', projectId)
           .maybeSingle();
+
       if (projectFetchError) {
         console.error(
           '[Projects] Failed to inspect project before delete',
           projectFetchError
         );
+
         return false;
       }
+
       if (!projectData) {
         console.warn('[Projects] Project not found before delete', {
           projectId,
         });
+
         return false;
       }
+
+      // SAFETY: The preceding project query or RPC selects the columns of this row contract; joined projects may be a row, row array, or null.
       const row = projectData as { owner_id: string; is_inbox: boolean };
       ownerId = row.owner_id;
       isInbox = row.is_inbox;
@@ -699,6 +822,7 @@ export class ProjectDataService {
         projectId,
         ownerId,
       });
+
       return false;
     }
 
@@ -706,18 +830,24 @@ export class ProjectDataService {
       .from('projects')
       .delete()
       .eq('id', projectId);
+
     if (error) {
       console.error('[Projects] Failed to delete project', error);
+
       return false;
     }
+
     this.projects.set(
       this.projects().filter((project) => project.id !== projectId)
     );
     this.markStatisticsDirty();
+
     if (ownerId && isInbox) {
       this.ensuredInboxOwners.delete(ownerId);
     }
+
     await this.refreshMemberships();
+
     return true;
   }
 
@@ -728,13 +858,16 @@ export class ProjectDataService {
     if (this.recoveringInvalidOwner) {
       return;
     }
+
     const isInvalidOwner =
       error?.code === '23503' && (error?.message ?? '').includes('owner_id');
+
     if (!isInvalidOwner) {
       return;
     }
 
     this.recoveringInvalidOwner = true;
+
     try {
       console.warn(
         '[Projects] Session owner does not exist in database anymore. Signing out to recover.',
@@ -753,6 +886,7 @@ export class ProjectDataService {
     if (!this.supabase) {
       return this.projects().find((project) => project.id === id) ?? null;
     }
+
     const { data, error } = await this.supabase
       .from('projects')
       .select(PROJECT_SELECT)
@@ -761,8 +895,11 @@ export class ProjectDataService {
 
     if (error || !data) {
       console.error('[Projects] Failed to fetch project', error);
+
       return null;
     }
+
+    // SAFETY: The preceding project query or RPC selects the columns of this row contract; joined projects may be a row, row array, or null.
     return this.mapProjectRow(data as ProjectRow);
   }
 
@@ -783,13 +920,17 @@ export class ProjectDataService {
       .eq('owner_id', ownerId)
       .eq('is_inbox', true)
       .maybeSingle();
+
     const data: unknown = initialResult.data;
     const error = initialResult.error;
 
     if (error || !data) {
       console.error('[Projects] Failed to fetch existing inbox project', error);
+
       return null;
     }
+
+    // SAFETY: The preceding project query or RPC selects the columns of this row contract; joined projects may be a row, row array, or null.
     return this.mapProjectRow(data as ProjectRow);
   }
 
@@ -804,6 +945,7 @@ export class ProjectDataService {
           icon: row.icon,
         })
       ) ?? [];
+
     return {
       id: row.id,
       ownerId: row.owner_id,
@@ -834,6 +976,7 @@ export class ProjectDataService {
     project?: ProjectMemberRow['projects']
   ): ProjectMember {
     const resolvedProject = normalizeProjectRelation(project ?? row.projects);
+
     return {
       projectId: row.project_id,
       userId: row.user_id,
@@ -856,6 +999,7 @@ export class ProjectDataService {
     if (!this.supabase) {
       return;
     }
+
     if (
       this.ensureInboxInFlight.has(ownerId) ||
       this.ensuredInboxOwners.has(ownerId)
@@ -864,14 +1008,18 @@ export class ProjectDataService {
     }
 
     this.ensureInboxInFlight.add(ownerId);
+
     try {
       await this.refresh();
       const projects = this.projects();
+
       const existingInbox = projects.find(
         (project) => project.ownerId === ownerId && project.isInbox
       );
+
       if (existingInbox) {
         this.ensuredInboxOwners.add(ownerId);
+
         return;
       }
 
@@ -881,9 +1029,11 @@ export class ProjectDataService {
           (project.projectType?.toLowerCase() === 'inbox' ||
             project.name.trim().toLowerCase() === 'inbox')
       );
+
       if (candidate) {
         await this.updateProject({ id: candidate.id, isInbox: true });
         this.ensuredInboxOwners.add(ownerId);
+
         return;
       }
 
@@ -896,6 +1046,7 @@ export class ProjectDataService {
         color: '#394264',
         isActive: true,
       });
+
       if (created) {
         this.ensuredInboxOwners.add(ownerId);
       }
@@ -911,13 +1062,17 @@ export class ProjectDataService {
     projectName: string;
   }) {
     const functionsUrl = this.supabaseConfig?.functionsUrl;
+
     if (!functionsUrl || !this.supabase) {
       return;
     }
+
     const headers = await this.getFunctionAuthHeaders();
+
     if (!headers) {
       return;
     }
+
     if (!input.recipients.length) {
       return;
     }
@@ -939,6 +1094,7 @@ export class ProjectDataService {
         recipients: input.recipients,
       }),
     });
+
     if (!response.ok) {
       console.warn(
         '[Projects] Project update function returned error',
@@ -954,26 +1110,33 @@ export class ProjectDataService {
     if (!this.supabase) {
       return null;
     }
+
     const { data, error } = await this.supabase.auth.getSession();
     const accessToken = data.session?.access_token;
+
     if (error || !accessToken) {
       console.warn(
         '[Projects] Missing active Supabase session; skipping edge function call.',
         error
       );
+
       return null;
     }
+
     const publishableKey = (
       this.supabaseConfig?.publishableKey ??
       this.supabaseConfig?.anonKey ??
       ''
     ).trim();
+
     if (!publishableKey) {
       console.warn(
         '[Projects] Missing Supabase publishable key; skipping edge function call.'
       );
+
       return null;
     }
+
     return {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
@@ -993,19 +1156,8 @@ function normalizeProjectRelation(
   if (Array.isArray(value)) {
     return value[0] ?? null;
   }
-  return value ?? null;
-}
 
-function asErrorBody(value: unknown): { error?: string; message?: string } {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return {};
-  }
-  const record = value as Record<string, unknown>;
-  return {
-    error: typeof record['error'] === 'string' ? record['error'] : undefined,
-    message:
-      typeof record['message'] === 'string' ? record['message'] : undefined,
-  };
+  return value ?? null;
 }
 
 function isDuplicateInboxError(

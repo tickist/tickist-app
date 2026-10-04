@@ -18,6 +18,7 @@ Default local endpoints:
 ## Quality checks
 
 ```bash
+npm exec nx run-many -t oxlint --all
 npm exec nx lint tickist-web
 npm exec nx test tickist-web
 npm exec nx build tickist-web --configuration production
@@ -26,6 +27,8 @@ npx nx e2e tickist-web-e2e -- --project=chromium
 ```
 
 Choose checks that exercise the change; the commands above are available targets, not a mandatory sequence for every edit. Instruction/documentation-only work uses explicit-file formatting and configuration/link checks plus `git diff --check`. See [Agent tooling](agent-tooling.md).
+
+Oxlint runs through the official `@nx/oxlint` plugin on all four code projects. The vendored [anti-slop rules](../tools/oxlint/anti-slop/UPSTREAM.md) are configured in the root `.oxlintrc.json`. ESLint remains in place for Angular templates and rules that Oxlint does not cover.
 
 Add focused Vitest coverage for services and components. Add Playwright coverage for critical user journeys, especially when changing authentication, routes, data contracts, task/project interactions, or public metadata.
 
@@ -39,6 +42,7 @@ Repository-managed operator tools also provide a deterministic English demo acco
 
 - [Demo data seeding](demo-data-seeding.md)
 - [Encrypted database backups](encrypted-database-backups.md)
+- [Account deletion](account-deletion.md) — guarded operator workflow after verifying an email request
 
 ## E2E isolation
 
@@ -48,9 +52,29 @@ CI creates its E2E environment from a local Supabase stack, runs Chromium on pus
 
 ## Release flow
 
-- Develop on branches from `develop`.
+- Develop directly on `develop`; create a feature branch only with the owner's explicit approval.
 - CI runs lint and unit tests for pushes and pull requests.
 - The production workflow runs from `master`.
 - Production deployment validates the app, pushes migrations, syncs Edge Function secrets and scheduler Vault values, deploys Edge Functions, and deploys the Cloudflare Worker.
 
 Read `DEPLOY.md` and `docs/EMAIL.md` before changing production email, scheduler, or secret configuration.
+
+Application history cleanup is documented in [data retention](data-retention.md); apply migration 0025 before updating the project-invite function.
+
+- [Registration and legal documents](legal-registration.md) — versioned public documents, server acceptance records and the publication gate.
+
+## Worker logs
+
+Both `wrangler.toml` and `wrangler.mcp.toml` enable Workers Logs and invocation
+logs through `[observability.logs]`. Each Worker's next deployment applies its
+configuration; editing these files does not enable logs on the deployed Worker.
+Invocation logs include request/response metadata such as the request URL,
+alongside application console messages and errors. Keep credentials and user
+content out of custom log messages.
+
+Cloudflare's [Workers Logs documentation](https://developers.cloudflare.com/workers/observability/logs/workers-logs/)
+specifies retention of 3 days on Workers Free and 7 days on Workers Paid. The
+Workers plan is separate from the domain's plan. These files do not configure
+external log destinations.
+
+The app uses `assets.run_worker_first = ["/*", "!/assets/*", "!/images/*"]` so SPA HTML, `/env.js`, legal noindex and consent/security headers actually execute the Worker. Bundles and images retain direct asset delivery. Check navigation responses as well as direct requests; SPA asset fallback can otherwise bypass the Worker.

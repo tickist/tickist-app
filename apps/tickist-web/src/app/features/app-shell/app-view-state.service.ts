@@ -34,17 +34,20 @@ export class AppViewStateService {
     if (this.selectedProjectIdSignal() !== projectId) {
       this.excludedProjectIdsSignal.set(new Set());
     }
+
     this.selectedProjectIdSignal.set(projectId);
   }
 
   setProjectTasksIncluded(projectId: string, included: boolean) {
     this.excludedProjectIdsSignal.update((current) => {
       const next = new Set(current);
+
       if (included) {
         next.delete(projectId);
       } else {
         next.add(projectId);
       }
+
       return next;
     });
   }

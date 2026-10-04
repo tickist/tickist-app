@@ -1,3 +1,8 @@
+import {
+  fixtureHost,
+  requiredElement,
+  elementsOfType,
+} from '../../../testing/dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Task, TaskDataService, TaskStep } from '../../data/task-data.service';
@@ -12,6 +17,7 @@ describe('TaskCardComponent toolbar status icons', () => {
   let component: TaskCardComponent;
   let updateTaskMock: ReturnType<typeof vi.fn>;
   let createTagMock: ReturnType<typeof vi.fn>;
+
   const availableTags = [
     {
       id: 'tag-existing',
@@ -144,9 +150,11 @@ describe('TaskCardComponent toolbar status icons', () => {
     });
     fixture.detectChanges();
 
-    const badge = fixture.nativeElement.querySelector(
-      '[data-testid="task-completed-date"]'
-    ) as HTMLElement | null;
+    const badge = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="task-completed-date"]',
+      HTMLElement
+    );
 
     expect(badge?.textContent).toContain('Completed 20-07-2026');
   });
@@ -158,12 +166,15 @@ describe('TaskCardComponent toolbar status icons', () => {
     });
     fixture.detectChanges();
 
-    const pause = fixture.nativeElement.querySelector(
-      '[data-testid="task-suspended-icon"]'
-    ) as HTMLElement | null;
+    const pause = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="task-suspended-icon"]',
+      HTMLElement
+    );
+
     expect(pause?.getAttribute('aria-label')).toBe('Suspended');
     expect(pause?.getAttribute('title')).toContain('Suspended until');
-    expect(fixture.nativeElement.querySelector('.task-card__check')).toBeNull();
+    expect(fixtureHost(fixture).querySelector('.task-card__check')).toBeNull();
   });
 
   it('restores the completion checkbox after the suspension expires', () => {
@@ -174,10 +185,10 @@ describe('TaskCardComponent toolbar status icons', () => {
     fixture.detectChanges();
 
     expect(
-      fixture.nativeElement.querySelector('[data-testid="task-suspended-icon"]')
+      fixtureHost(fixture).querySelector('[data-testid="task-suspended-icon"]')
     ).toBeNull();
     expect(
-      fixture.nativeElement.querySelector('.task-card__check')
+      fixtureHost(fixture).querySelector('.task-card__check')
     ).not.toBeNull();
   });
 
@@ -221,27 +232,38 @@ describe('TaskCardComponent toolbar status icons', () => {
     getRepeatButton('Custom').click();
     fixture.detectChanges();
 
-    const customEveryInput = fixture.nativeElement.querySelector(
-      '.repeat-custom__input'
-    ) as HTMLInputElement | null;
+    const customEveryInput = requiredElement(
+      fixtureHost(fixture),
+      '.repeat-custom__input',
+      HTMLInputElement
+    );
+
     if (!customEveryInput) {
       throw new Error('Missing custom repeat input');
     }
+
     customEveryInput.value = '3';
     customEveryInput.dispatchEvent(new Event('input'));
 
-    const customUnitSelect = fixture.nativeElement.querySelector(
-      '.repeat-custom__select'
-    ) as HTMLSelectElement | null;
+    const customUnitSelect = requiredElement(
+      fixtureHost(fixture),
+      '.repeat-custom__select',
+      HTMLSelectElement
+    );
+
     if (!customUnitSelect) {
       throw new Error('Missing custom repeat unit select');
     }
+
     customUnitSelect.value = 'month';
     customUnitSelect.dispatchEvent(new Event('change'));
 
-    const applyButton = fixture.nativeElement.querySelector(
-      '.repeat-custom__apply'
-    ) as HTMLButtonElement | null;
+    const applyButton = requiredElement(
+      fixtureHost(fixture),
+      '.repeat-custom__apply',
+      HTMLButtonElement
+    );
+
     if (!applyButton) {
       throw new Error('Missing custom repeat apply button');
     }
@@ -264,9 +286,12 @@ describe('TaskCardComponent toolbar status icons', () => {
     getToolbarButton('tags').click();
     fixture.detectChanges();
 
-    const input = fixture.nativeElement.querySelector(
-      '.tag-add__input'
-    ) as HTMLInputElement | null;
+    const input = requiredElement(
+      fixtureHost(fixture),
+      '.tag-add__input',
+      HTMLInputElement
+    );
+
     if (!input) {
       throw new Error('Missing tag search input');
     }
@@ -275,9 +300,12 @@ describe('TaskCardComponent toolbar status icons', () => {
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    const button = fixture.nativeElement.querySelector(
-      '.tag-add__button'
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      '.tag-add__button',
+      HTMLButtonElement
+    );
+
     if (!button) {
       throw new Error('Missing tag action button');
     }
@@ -304,9 +332,12 @@ describe('TaskCardComponent toolbar status icons', () => {
     getToolbarButton('tags').click();
     fixture.detectChanges();
 
-    const trigger = fixture.nativeElement.querySelector(
-      '.tag-add__trigger'
-    ) as HTMLButtonElement | null;
+    const trigger = requiredElement(
+      fixtureHost(fixture),
+      '.tag-add__trigger',
+      HTMLButtonElement
+    );
+
     if (!trigger) {
       throw new Error('Missing tag menu trigger');
     }
@@ -314,9 +345,12 @@ describe('TaskCardComponent toolbar status icons', () => {
     trigger.click();
     fixture.detectChanges();
 
-    const option = fixture.nativeElement.querySelector(
-      '.tag-add__option'
-    ) as HTMLButtonElement | null;
+    const option = requiredElement(
+      fixtureHost(fixture),
+      '.tag-add__option',
+      HTMLButtonElement
+    );
+
     if (!option) {
       throw new Error('Missing tag menu option');
     }
@@ -340,9 +374,12 @@ describe('TaskCardComponent toolbar status icons', () => {
     getToolbarButton('tags').click();
     fixture.detectChanges();
 
-    const input = fixture.nativeElement.querySelector(
-      '.tag-add__input'
-    ) as HTMLInputElement | null;
+    const input = requiredElement(
+      fixtureHost(fixture),
+      '.tag-add__input',
+      HTMLInputElement
+    );
+
     if (!input) {
       throw new Error('Missing tag search input');
     }
@@ -351,9 +388,12 @@ describe('TaskCardComponent toolbar status icons', () => {
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    const button = fixture.nativeElement.querySelector(
-      '.tag-add__button'
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      '.tag-add__button',
+      HTMLButtonElement
+    );
+
     if (!button) {
       throw new Error('Missing tag action button');
     }
@@ -393,25 +433,34 @@ describe('TaskCardComponent toolbar status icons', () => {
   function getToolbarButton(
     key: 'description' | 'tags' | 'repeat' | 'reminders' | 'steps'
   ): HTMLButtonElement {
-    const button = fixture.nativeElement.querySelector(
-      `[data-testid="task-toolbar-${key}"]`
-    ) as HTMLButtonElement | null;
+    const button = requiredElement(
+      fixtureHost(fixture),
+      `[data-testid="task-toolbar-${key}"]`,
+      HTMLButtonElement
+    );
+
     if (!button) {
       throw new Error(`Missing toolbar button: ${key}`);
     }
+
     return button;
   }
 
   function getRepeatButton(label: string): HTMLButtonElement {
-    const buttons = Array.from(
-      fixture.nativeElement.querySelectorAll('.repeat-grid button')
-    ) as HTMLButtonElement[];
+    const buttons = elementsOfType(
+      fixtureHost(fixture),
+      '.repeat-grid button',
+      HTMLButtonElement
+    );
+
     const button = buttons.find((entry) =>
       entry.textContent?.trim().includes(label)
     );
+
     if (!button) {
       throw new Error(`Missing repeat button: ${label}`);
     }
+
     return button;
   }
 
@@ -421,6 +470,7 @@ describe('TaskCardComponent toolbar status icons', () => {
     renderedFixture.componentInstance.project = createProject();
     renderedFixture.componentInstance.viewMode = 'extended';
     renderedFixture.detectChanges();
+
     return renderedFixture;
   }
 
@@ -457,6 +507,7 @@ function createTask(overrides: Partial<Task> = {}): Task {
     reminderCount: 0,
     reminders: [],
     tags: [],
+    assigneeIds: [],
     steps: [],
     createdAt: null,
     updatedAt: null,

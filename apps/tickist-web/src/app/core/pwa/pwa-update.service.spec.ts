@@ -1,28 +1,28 @@
 import { TestBed } from '@angular/core/testing';
-import { type RegisterSWOptions } from 'vite-plugin-pwa/types';
+import type { registerSW } from 'virtual:pwa-register';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ToastService } from '../ui/toast.service';
-import { PwaUpdateService } from './pwa-update.service';
+import {
+  PwaUpdateService,
+  REGISTER_SERVICE_WORKER,
+} from './pwa-update.service';
 
-const pwaMocks = vi.hoisted(() => ({
-  registerSW: vi.fn(),
-}));
-
-vi.mock('virtual:pwa-register', () => ({
-  registerSW: pwaMocks.registerSW,
-}));
+const registerServiceWorker = vi.fn<typeof registerSW>();
 
 describe('PwaUpdateService', () => {
   let service: PwaUpdateService;
-  let infoWithAction: ReturnType<typeof vi.fn>;
-  let updateServiceWorker: ReturnType<typeof vi.fn>;
+  let infoWithAction: ReturnType<typeof vi.fn<ToastService['infoWithAction']>>;
+
+  let updateServiceWorker: ReturnType<
+    typeof vi.fn<ReturnType<typeof registerSW>>
+  >;
 
   beforeEach(() => {
-    infoWithAction = vi.fn();
+    infoWithAction = vi.fn<ToastService['infoWithAction']>();
     updateServiceWorker = vi.fn(async () => undefined);
-    pwaMocks.registerSW.mockReset();
-    pwaMocks.registerSW.mockReturnValue(updateServiceWorker);
+    registerServiceWorker.mockReset();
+    registerServiceWorker.mockReturnValue(updateServiceWorker);
     Object.defineProperty(navigator, 'serviceWorker', {
       configurable: true,
       value: {},
@@ -31,6 +31,7 @@ describe('PwaUpdateService', () => {
     TestBed.configureTestingModule({
       providers: [
         PwaUpdateService,
+        { provide: REGISTER_SERVICE_WORKER, useValue: registerServiceWorker },
         {
           provide: ToastService,
           useValue: { infoWithAction },
@@ -42,9 +43,8 @@ describe('PwaUpdateService', () => {
 
   it('shows a refresh action when a new version is available', async () => {
     service.start();
-    const options = pwaMocks.registerSW.mock.calls[0]?.[0] as
-      | RegisterSWOptions
-      | undefined;
+
+    const options = registerServiceWorker.mock.calls[0]?.[0];
 
     options?.onNeedRefresh?.();
 
@@ -54,9 +54,8 @@ describe('PwaUpdateService', () => {
       expect.any(Function)
     );
 
-    const refresh = infoWithAction.mock.calls[0]?.[2] as
-      | (() => Promise<void>)
-      | undefined;
+    const refresh = infoWithAction.mock.calls[0]?.[2];
+
     await refresh?.();
     expect(updateServiceWorker).toHaveBeenCalledTimes(1);
   });

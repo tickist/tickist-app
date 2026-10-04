@@ -99,5 +99,5 @@ function createUser(): User {
     aud: 'authenticated',
     created_at: '2026-03-10T00:00:00.000Z',
     email: 'user@tickist.dev',
-  } as User;
+  };
 }

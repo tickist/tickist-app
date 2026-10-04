@@ -25,16 +25,19 @@ export function provideSupabase(config: SupabaseConfig): Provider[] {
       provide: SUPABASE_CLIENT,
       useFactory: () => {
         const platformId = inject(PLATFORM_ID);
+
         if (!isPlatformBrowser(platformId)) {
           return null;
         }
 
         const url = config.url?.trim();
+
         const publishableKey = (
           config.publishableKey ??
           config.anonKey ??
           ''
         ).trim();
+
         const isPlaceholder =
           !url ||
           !publishableKey ||
@@ -46,6 +49,7 @@ export function provideSupabase(config: SupabaseConfig): Provider[] {
           console.warn(
             '[Supabase] Client not initialized. Configure NG_APP_SUPABASE_URL / NG_APP_SUPABASE_PUBLISHABLE_KEY.'
           );
+
           return null;
         }
 

@@ -1,9 +1,12 @@
+import { z } from 'zod';
 import { Injectable, inject } from '@angular/core';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { SupabaseSessionService } from '../features/auth/supabase-session.service';
 
 const EXPORT_FORMAT = 'tickist-json';
+
 const EXPORT_FORMAT_VERSION = 2;
+
 const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
 
 export interface TickistExportOptions {
@@ -245,9 +248,12 @@ export class ExportImportService {
       .from('workspaces')
       .select('id, stable_id, name, kind')
       .eq('owner_id', userId);
+
     if (workspaceError)
       throw new Error(`Could not export workspaces: ${workspaceError.message}`);
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const workspaceRows = (workspaceData ?? []) as ExportWorkspaceRow[];
+
     const workspaceStableById = new Map(
       workspaceRows.map((row) => [row.id, row.stable_id])
     );
@@ -262,16 +268,20 @@ export class ExportImportService {
     if (normalized.onlyActive) {
       projectQuery = projectQuery.eq('is_active', true);
     }
+
     if (normalized.projectIds.length) {
       projectQuery = projectQuery.in('id', normalized.projectIds);
     }
 
     const { data: projectData, error: projectError } = await projectQuery;
+
     if (projectError) {
       throw new Error(`Could not export projects: ${projectError.message}`);
     }
 
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const projectRows = (projectData ?? []) as ExportProjectRow[];
+
     const projectStableById = new Map(
       projectRows.map((project) => [project.id, project.stable_id])
     );
@@ -286,17 +296,21 @@ export class ExportImportService {
     if (normalized.onlyActive) {
       taskQuery = taskQuery.eq('is_active', true);
     }
+
     if (normalized.projectIds.length) {
       taskQuery = taskQuery.in('project_id', normalized.projectIds);
     }
 
     const { data: taskData, error: taskError } = await taskQuery;
+
     if (taskError) {
       throw new Error(`Could not export tasks: ${taskError.message}`);
     }
 
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const taskRows = (taskData ?? []) as ExportTaskRow[];
     const taskIds = taskRows.map((task) => task.id);
+
     const taskStableById = new Map(
       taskRows.map((task) => [task.id, task.stable_id])
     );
@@ -304,17 +318,22 @@ export class ExportImportService {
     const { taskStepRows, taskTagRows } = await this.fetchTaskRelations(
       taskIds
     );
+
     const usedTagIds = [...new Set(taskTagRows.map((link) => link.tag_id))];
 
     let tagRows: ExportTagRow[] = [];
+
     if (!normalized.onlyActive && normalized.projectIds.length === 0) {
       const { data: allTagData, error: allTagError } = await client
         .from('tags')
         .select('id, stable_id, name, created_at, updated_at')
         .eq('owner_id', userId);
+
       if (allTagError) {
         throw new Error(`Could not export tags: ${allTagError.message}`);
       }
+
+      // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
       tagRows = (allTagData ?? []) as ExportTagRow[];
     } else if (usedTagIds.length > 0) {
       const { data: usedTagData, error: usedTagError } = await client
@@ -322,9 +341,12 @@ export class ExportImportService {
         .select('id, stable_id, name, created_at, updated_at')
         .eq('owner_id', userId)
         .in('id', usedTagIds);
+
       if (usedTagError) {
         throw new Error(`Could not export tags: ${usedTagError.message}`);
       }
+
+      // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
       tagRows = (usedTagData ?? []) as ExportTagRow[];
     }
 
@@ -411,9 +433,11 @@ export class ExportImportService {
       taskSteps: taskStepRows
         .map((step) => {
           const taskStableId = taskStableById.get(step.task_id);
+
           if (!taskStableId) {
             return null;
           }
+
           return {
             stableId: step.stable_id,
             taskStableId,
@@ -428,9 +452,11 @@ export class ExportImportService {
         .map((link) => {
           const taskStableId = taskStableById.get(link.task_id);
           const tagStableId = tagStableById.get(link.tag_id);
+
           if (!taskStableId || !tagStableId) {
             return null;
           }
+
           return { taskStableId, tagStableId };
         })
         .filter(isNonNullable),
@@ -457,8 +483,10 @@ export class ExportImportService {
 
     const text = await file.text();
     const parsed = parseTickistExportDocument(text);
+
     if (isParseFailure(parsed)) {
       const { errors } = parsed;
+
       return {
         ok: false,
         errors,
@@ -496,10 +524,12 @@ export class ExportImportService {
 
     const raw = await file.text();
     const parsed = parseTickistExportDocument(raw);
+
     if (isParseFailure(parsed)) {
       const { errors } = parsed;
       result.ok = false;
       result.errors.push(...errors);
+
       return result;
     }
 
@@ -570,6 +600,7 @@ export class ExportImportService {
       .from('task_steps')
       .select('id, stable_id, task_id, content, is_done, position, created_at')
       .in('task_id', taskIds);
+
     if (stepError) {
       throw new Error(`Could not export task steps: ${stepError.message}`);
     }
@@ -578,10 +609,12 @@ export class ExportImportService {
       .from('task_tags')
       .select('task_id, tag_id')
       .in('task_id', taskIds);
+
     if (taskTagError) {
       throw new Error(`Could not export task tags: ${taskTagError.message}`);
     }
 
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     return {
       taskStepRows: (stepData ?? []) as ExportTaskStepRow[],
       taskTagRows: (taskTagData ?? []) as ExportTaskTagRow[],
@@ -599,15 +632,21 @@ export class ExportImportService {
       .from('workspaces')
       .select('id, stable_id, name, kind')
       .eq('owner_id', userId);
+
     if (error) {
       result.ok = false;
       result.errors.push(`Could not inspect workspaces: ${error.message}`);
+
       return new Map();
     }
+
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const existing = (data ?? []) as ExportWorkspaceRow[];
     const privateId = existing.find((row) => row.kind === 'private')?.id;
     const map = new Map<string, string>();
+
     if (privateId) map.set('__private__', privateId);
+
     for (const workspace of payload.workspaces ?? []) {
       const match = existing.find((row) =>
         workspace.kind
@@ -615,14 +654,17 @@ export class ExportImportService {
           : row.stable_id === workspace.stableId ||
             row.name.toLowerCase() === workspace.name.toLowerCase()
       );
+
       if (match) {
         map.set(workspace.stableId, match.id);
         continue;
       }
+
       if (dryRun) {
         map.set(workspace.stableId, `dry-run:${workspace.stableId}`);
         continue;
       }
+
       const { data: created, error: createError } = await client
         .from('workspaces')
         .insert({
@@ -632,6 +674,7 @@ export class ExportImportService {
         })
         .select('id')
         .single();
+
       if (createError || !created) {
         result.ok = false;
         result.errors.push(
@@ -639,8 +682,12 @@ export class ExportImportService {
             createError?.message ?? 'unknown error'
           }`
         );
-      } else map.set(workspace.stableId, created.id as string);
+      } else {
+        // SAFETY: The insert returned the workspace primary key selected above.
+        map.set(workspace.stableId, created.id as string);
+      }
     }
+
     return map;
   }
 
@@ -653,6 +700,7 @@ export class ExportImportService {
     result: ImportResult
   ): Promise<Map<string, string>> {
     const stableIds = payload.projects.map((project) => project.stableId);
+
     if (stableIds.length === 0) {
       return new Map<string, string>();
     }
@@ -668,9 +716,11 @@ export class ExportImportService {
       result.errors.push(
         `Could not inspect existing projects: ${existingError.message}`
       );
+
       return new Map<string, string>();
     }
 
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const existingByStableId = new Map(
       ((existingData ?? []) as ExistingEntityRow[]).map((row) => [
         row.stable_id,
@@ -693,13 +743,16 @@ export class ExportImportService {
       result.errors.push(
         `Could not inspect existing inbox project: ${existingInboxError.message}`
       );
+
       return new Map<string, string>();
     }
 
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const existingInbox =
       (existingInboxData as ExistingEntityRow | null) ?? null;
 
     const projectIdsByStableId = new Map<string, string>();
+
     const ancestorPatchCandidates: Array<{
       stableId: string;
       ancestorStableId: string;
@@ -708,6 +761,7 @@ export class ExportImportService {
     for (const project of payload.projects) {
       const stableMatch = existingByStableId.get(project.stableId);
       let existing = stableMatch;
+
       if (
         project.isInbox &&
         existingInbox &&
@@ -751,19 +805,24 @@ export class ExportImportService {
             `dry-run:${project.stableId}`
           );
         }
+
         continue;
       }
 
       const shouldSetInboxFlag =
         project.isInbox &&
         (!existingInbox || existing?.id === existingInbox.id);
+
       const inboxStableIdTakenByOtherProject =
         project.isInbox &&
         !!existingInbox &&
         !!stableMatch &&
         stableMatch.id !== existingInbox.id;
 
-      const basePayload: Record<string, unknown> = {
+      const basePayload: Omit<Partial<ExportProjectRow>, 'ancestor_id'> & {
+        ancestor_id: string | null;
+        owner_id: string;
+      } = {
         owner_id: userId,
         name: project.name,
         description: project.description,
@@ -784,6 +843,7 @@ export class ExportImportService {
         default_type_finish_date: project.defaultTypeFinishDate,
         dialog_time_when_task_finished: project.dialogTimeWhenTaskFinished,
       };
+
       if (!inboxStableIdTakenByOtherProject || !existing) {
         basePayload.stable_id = project.stableId;
       }
@@ -793,7 +853,7 @@ export class ExportImportService {
           .from('projects')
           .update({
             ...basePayload,
-            ...(project.updatedAt ? { updated_at: project.updatedAt } : {}),
+            ...importDates(null, project.updatedAt),
           })
           .eq('id', existing.id);
 
@@ -812,8 +872,8 @@ export class ExportImportService {
           .from('projects')
           .insert({
             ...basePayload,
-            ...(project.createdAt ? { created_at: project.createdAt } : {}),
-            ...(project.updatedAt ? { updated_at: project.updatedAt } : {}),
+            ...importDates(project.createdAt, null),
+            ...importDates(null, project.updatedAt),
           })
           .select('id')
           .single();
@@ -829,6 +889,7 @@ export class ExportImportService {
         }
 
         result.counts.projects.created += 1;
+        // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
         projectIdsByStableId.set(project.stableId, created.id as string);
       }
     }
@@ -836,19 +897,24 @@ export class ExportImportService {
     if (!options.dryRun) {
       if (ancestorPatchCandidates.length > 0) {
         const ancestorMap = new Map(projectIdsByStableId);
+
         for (const candidate of ancestorPatchCandidates) {
           const projectId = ancestorMap.get(candidate.stableId);
           const ancestorId = ancestorMap.get(candidate.ancestorStableId);
+
           if (!projectId || !ancestorId || projectId.startsWith('dry-run:')) {
             continue;
           }
+
           if (ancestorId.startsWith('dry-run:')) {
             continue;
           }
+
           const { error: patchError } = await client
             .from('projects')
             .update({ ancestor_id: ancestorId })
             .eq('id', projectId);
+
           if (patchError) {
             result.ok = false;
             result.errors.push(
@@ -870,6 +936,7 @@ export class ExportImportService {
     result: ImportResult
   ): Promise<Map<string, string>> {
     const stableIds = payload.tags.map((tag) => tag.stableId);
+
     if (stableIds.length === 0) {
       return new Map<string, string>();
     }
@@ -885,9 +952,11 @@ export class ExportImportService {
       result.errors.push(
         `Could not inspect existing tags: ${existingError.message}`
       );
+
       return new Map<string, string>();
     }
 
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const existingByStableId = new Map(
       ((existingData ?? []) as ExistingEntityRow[]).map((row) => [
         row.stable_id,
@@ -902,6 +971,7 @@ export class ExportImportService {
 
     for (const tag of payload.tags) {
       const existing = existingByStableId.get(tag.stableId);
+
       const shouldSkip =
         !!existing &&
         shouldSkipImport(existing.updatedAt, tag.updatedAt, options.skipOlder);
@@ -920,6 +990,7 @@ export class ExportImportService {
           result.counts.tags.created += 1;
           tagIdsByStableId.set(tag.stableId, `dry-run:${tag.stableId}`);
         }
+
         continue;
       }
 
@@ -928,7 +999,7 @@ export class ExportImportService {
           .from('tags')
           .update({
             name: tag.name,
-            ...(tag.updatedAt ? { updated_at: tag.updatedAt } : {}),
+            ...importDates(null, tag.updatedAt),
           })
           .eq('id', existing.id);
 
@@ -949,8 +1020,8 @@ export class ExportImportService {
             owner_id: userId,
             stable_id: tag.stableId,
             name: tag.name,
-            ...(tag.createdAt ? { created_at: tag.createdAt } : {}),
-            ...(tag.updatedAt ? { updated_at: tag.updatedAt } : {}),
+            ...importDates(tag.createdAt, null),
+            ...importDates(null, tag.updatedAt),
           })
           .select('id')
           .single();
@@ -966,6 +1037,7 @@ export class ExportImportService {
         }
 
         result.counts.tags.created += 1;
+        // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
         tagIdsByStableId.set(tag.stableId, created.id as string);
       }
     }
@@ -988,6 +1060,7 @@ export class ExportImportService {
             `Could not refresh tag mapping: ${fallbackError.message}`
           );
         } else {
+          // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
           for (const row of (fallbackTags ?? []) as Array<{
             id: string;
             stable_id: string;
@@ -1031,9 +1104,11 @@ export class ExportImportService {
       result.errors.push(
         `Could not inspect existing tasks: ${existingError.message}`
       );
+
       return { taskIdsByStableId, syncedTasks };
     }
 
+    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
     const existingByStableId = new Map(
       ((existingData ?? []) as ExistingEntityRow[]).map((row) => [
         row.stable_id,
@@ -1046,6 +1121,7 @@ export class ExportImportService {
 
     for (const task of payload.tasks) {
       const existing = existingByStableId.get(task.stableId);
+
       const shouldSkip =
         !!existing &&
         shouldSkipImport(existing.updatedAt, task.updatedAt, options.skipOlder);
@@ -1057,8 +1133,10 @@ export class ExportImportService {
       }
 
       let resolvedProjectId: string | null = null;
+
       if (task.projectStableId) {
         const mappedProject = projectIdsByStableId.get(task.projectStableId);
+
         if (mappedProject && !mappedProject.startsWith('dry-run:')) {
           resolvedProjectId = mappedProject;
         } else if (!mappedProject) {
@@ -1076,6 +1154,7 @@ export class ExportImportService {
           result.counts.tasks.created += 1;
           taskIdsByStableId.set(task.stableId, `dry-run:${task.stableId}`);
         }
+
         syncedTasks.add(task.stableId);
         continue;
       }
@@ -1109,7 +1188,7 @@ export class ExportImportService {
           .from('tasks')
           .update({
             ...basePayload,
-            ...(task.updatedAt ? { modification_date: task.updatedAt } : {}),
+            ...importDates(null, task.updatedAt, true),
           })
           .eq('id', existing.id);
 
@@ -1128,8 +1207,8 @@ export class ExportImportService {
           .from('tasks')
           .insert({
             ...basePayload,
-            ...(task.createdAt ? { creation_date: task.createdAt } : {}),
-            ...(task.updatedAt ? { modification_date: task.updatedAt } : {}),
+            ...importDates(task.createdAt, null, true),
+            ...importDates(null, task.updatedAt, true),
           })
           .select('id')
           .single();
@@ -1145,6 +1224,7 @@ export class ExportImportService {
         }
 
         result.counts.tasks.created += 1;
+        // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
         taskIdsByStableId.set(task.stableId, created.id as string);
       }
 
@@ -1169,6 +1249,7 @@ export class ExportImportService {
             `Could not refresh task mapping: ${fallbackError.message}`
           );
         } else {
+          // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
           for (const row of (fallbackTasks ?? []) as Array<{
             id: string;
             stable_id: string;
@@ -1196,6 +1277,7 @@ export class ExportImportService {
 
     for (const taskStableId of syncedTasks) {
       const taskId = taskIdsByStableId.get(taskStableId);
+
       if (!taskId || taskId.startsWith('dry-run:')) {
         continue;
       }
@@ -1203,6 +1285,7 @@ export class ExportImportService {
       const steps = [...(stepsByTask.get(taskStableId) ?? [])].sort(
         (a, b) => a.position - b.position
       );
+
       const tagLinks = tagsByTask.get(taskStableId) ?? [];
 
       result.counts.taskSteps.replacedTasks += 1;
@@ -1213,15 +1296,19 @@ export class ExportImportService {
         tagLinks
           .map((link) => {
             const tagId = tagIdsByStableId.get(link.tagStableId);
+
             if (!tagId) {
               result.warnings.push(
                 `Task link references missing tag ${link.tagStableId}; relation skipped.`
               );
+
               return null;
             }
+
             if (tagId.startsWith('dry-run:')) {
               return null;
             }
+
             return tagId;
           })
           .filter(isNonNullable)
@@ -1253,7 +1340,7 @@ export class ExportImportService {
           content: step.content,
           is_done: step.isDone,
           position: step.position,
-          ...(step.createdAt ? { created_at: step.createdAt } : {}),
+          ...importDates(step.createdAt, null),
         }));
 
         const { error: insertStepsError } = await client
@@ -1286,6 +1373,7 @@ export class ExportImportService {
           task_id: taskId,
           tag_id: tagId,
         }));
+
         const { error: insertTaskTagsError } = await client
           .from('task_tags')
           .insert(linkPayload);
@@ -1306,14 +1394,17 @@ export class ExportImportService {
         'Supabase is not configured. Provide NG_APP_SUPABASE_URL and NG_APP_SUPABASE_PUBLISHABLE_KEY.'
       );
     }
+
     return this.supabase;
   }
 
   private ensureUserId(): string {
     const userId = this.session.user()?.id?.trim();
+
     if (!userId) {
       throw new Error('You must be signed in to export or import data.');
     }
+
     return userId;
   }
 }
@@ -1322,20 +1413,30 @@ export function parseTickistExportDocument(
   raw: string
 ): ParsedTickistExportDocumentResult {
   let parsed: unknown;
+
   try {
     parsed = JSON.parse(raw);
   } catch {
     return { ok: false as const, errors: ['Invalid JSON file.'] };
   }
 
-  if (!isRecord(parsed)) {
+  if (!z.record(z.string(), z.json()).safeParse(parsed).success) {
     return { ok: false as const, errors: ['File must contain a JSON object.'] };
   }
 
-  return {
-    ok: true as const,
-    payload: parsed as unknown as TickistExportDocument,
-  };
+  const document = TickistExportDocumentSchema.safeParse(parsed);
+
+  if (!document.success) {
+    return {
+      ok: false as const,
+      errors: document.error.issues.map(
+        (issue) => `${issue.path.join('.')}: ${issue.message}`
+      ),
+    };
+  }
+
+  // SAFETY: TickistExportDocumentSchema validated every required field; non-strict null checking widens nullable schema fields to optional fields.
+  return { ok: true as const, payload: document.data as TickistExportDocument };
 }
 
 export function validateTickistExportDocument(
@@ -1347,6 +1448,7 @@ export function validateTickistExportDocument(
   if (payload.format !== EXPORT_FORMAT) {
     errors.push(`Unsupported export format: ${String(payload.format)}.`);
   }
+
   if (
     payload.formatVersion !== 1 &&
     payload.formatVersion !== EXPORT_FORMAT_VERSION
@@ -1357,21 +1459,27 @@ export function validateTickistExportDocument(
       )}. Expected 1 or ${EXPORT_FORMAT_VERSION}.`
     );
   }
+
   if (payload.formatVersion === 2 && !Array.isArray(payload.workspaces)) {
     errors.push('Missing workspaces list.');
   }
+
   if (!Array.isArray(payload.projects)) {
     errors.push('Missing projects list.');
   }
+
   if (!Array.isArray(payload.tags)) {
     errors.push('Missing tags list.');
   }
+
   if (!Array.isArray(payload.tasks)) {
     errors.push('Missing tasks list.');
   }
+
   if (!Array.isArray(payload.taskSteps)) {
     errors.push('Missing taskSteps list.');
   }
+
   if (!Array.isArray(payload.taskTags)) {
     errors.push('Missing taskTags list.');
   }
@@ -1391,9 +1499,11 @@ export function validateTickistExportDocument(
         payload.workspaces.map((workspace) => workspace.stableId),
         errors
       );
+
       const workspaceIds = new Set(
         payload.workspaces.map((workspace) => workspace.stableId)
       );
+
       for (const project of payload.projects) {
         if (
           project.workspaceStableId &&
@@ -1405,6 +1515,7 @@ export function validateTickistExportDocument(
         }
       }
     }
+
     collectStableIdErrors(
       'project',
       payload.projects.map((project) => project.stableId),
@@ -1429,6 +1540,7 @@ export function validateTickistExportDocument(
     const projectSet = new Set(
       payload.projects.map((project) => project.stableId)
     );
+
     const tagSet = new Set(payload.tags.map((tag) => tag.stableId));
     const taskSet = new Set(payload.tasks.map((task) => task.stableId));
 
@@ -1454,6 +1566,7 @@ export function validateTickistExportDocument(
           `Task-tag relation references missing task ${link.taskStableId}.`
         );
       }
+
       if (!tagSet.has(link.tagStableId)) {
         warnings.push(
           `Task-tag relation references missing tag ${link.tagStableId}.`
@@ -1517,15 +1630,19 @@ function groupBy<T>(
   keyResolver: (item: T) => string
 ): Map<string, T[]> {
   const map = new Map<string, T[]>();
+
   for (const item of items) {
     const key = keyResolver(item);
     const list = map.get(key);
+
     if (list) {
       list.push(item);
       continue;
     }
+
     map.set(key, [item]);
   }
+
   return map;
 }
 
@@ -1539,21 +1656,20 @@ function collectStableIdErrors(
   errors: string[]
 ): void {
   const seen = new Set<string>();
+
   for (const stableId of stableIds) {
     if (!isNonEmptyString(stableId)) {
       errors.push(`Every ${label} must include a non-empty stableId.`);
       continue;
     }
+
     if (seen.has(stableId)) {
       errors.push(`Duplicate ${label} stableId detected: ${stableId}.`);
       continue;
     }
+
     seen.add(stableId);
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function isParseFailure(
@@ -1563,9 +1679,128 @@ function isParseFailure(
 }
 
 function isNonEmptyString(value: unknown): value is string {
-  return typeof value === 'string' && value.trim().length > 0;
+  return z
+    .string()
+    .refine((text) => text.trim().length > 0)
+    .safeParse(value).success;
 }
 
 function isNonNullable<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
 }
+
+interface ImportDates {
+  created_at?: string;
+  updated_at?: string;
+  creation_date?: string;
+  modification_date?: string;
+}
+
+function importDates(
+  createdAt: string | null,
+  updatedAt: string | null,
+  task = false
+): ImportDates {
+  const dates: ImportDates = {};
+
+  if (createdAt) {
+    if (task) dates.creation_date = createdAt;
+    else dates.created_at = createdAt;
+  }
+
+  if (updatedAt) {
+    if (task) dates.modification_date = updatedAt;
+    else dates.updated_at = updatedAt;
+  }
+
+  return dates;
+}
+
+const TickistExportWorkspaceSchema = z.object({
+  stableId: z.string(),
+  name: z.string(),
+  kind: z.union([z.literal('work'), z.literal('private'), z.null()]),
+});
+
+const TickistExportProjectSchema = z.object({
+  stableId: z.string(),
+  name: z.string(),
+  description: z.string(),
+  color: z.string(),
+  icon: z.string(),
+  isActive: z.boolean(),
+  isInbox: z.boolean(),
+  projectType: z.string(),
+  workspaceStableId: z.union([z.string(), z.null()]).optional(),
+  ancestorStableId: z.union([z.string(), z.null()]),
+  taskView: z.string(),
+  defaultPriority: z.union([z.string(), z.null()]),
+  defaultFinishDate: z.union([z.number(), z.null()]),
+  defaultTypeFinishDate: z.union([z.number(), z.null()]),
+  dialogTimeWhenTaskFinished: z.boolean(),
+  createdAt: z.union([z.string(), z.null()]),
+  updatedAt: z.union([z.string(), z.null()]),
+});
+
+const TickistExportTagSchema = z.object({
+  stableId: z.string(),
+  name: z.string(),
+  createdAt: z.union([z.string(), z.null()]),
+  updatedAt: z.union([z.string(), z.null()]),
+});
+
+const TickistExportTaskSchema = z.object({
+  stableId: z.string(),
+  projectStableId: z.union([z.string(), z.null()]),
+  name: z.string(),
+  description: z.string(),
+  finishDate: z.union([z.string(), z.null()]),
+  finishTime: z.union([z.string(), z.null()]),
+  suspendUntil: z.union([z.string(), z.null()]),
+  pinned: z.boolean(),
+  isActive: z.boolean(),
+  isDone: z.boolean(),
+  onHold: z.boolean(),
+  typeFinishDate: z.union([z.number(), z.null()]),
+  priority: z.union([z.string(), z.null()]),
+  repeatInterval: z.union([z.number(), z.null()]),
+  repeatDelta: z.union([z.number(), z.null()]),
+  fromRepeating: z.union([z.number(), z.null()]),
+  estimateMinutes: z.union([z.number(), z.null()]),
+  spentMinutes: z.union([z.number(), z.null()]),
+  taskType: z.union([z.string(), z.null()]),
+  whenComplete: z.union([z.string(), z.null()]),
+  createdAt: z.union([z.string(), z.null()]),
+  updatedAt: z.union([z.string(), z.null()]),
+});
+
+const TickistExportTaskStepSchema = z.object({
+  stableId: z.string(),
+  taskStableId: z.string(),
+  content: z.string(),
+  isDone: z.boolean(),
+  position: z.number(),
+  createdAt: z.union([z.string(), z.null()]),
+});
+
+const TickistExportTaskTagSchema = z.object({
+  taskStableId: z.string(),
+  tagStableId: z.string(),
+});
+
+const TickistExportDocumentSchema = z.object({
+  format: z.literal(EXPORT_FORMAT),
+  formatVersion: z.number(),
+  exportedAt: z.string(),
+  sourceInstance: z.string(),
+  filters: z.object({
+    onlyActive: z.boolean(),
+    projectIds: z.array(z.string()),
+  }),
+  workspaces: z.array(TickistExportWorkspaceSchema).optional(),
+  projects: z.array(TickistExportProjectSchema),
+  tags: z.array(TickistExportTagSchema),
+  tasks: z.array(TickistExportTaskSchema),
+  taskSteps: z.array(TickistExportTaskStepSchema),
+  taskTags: z.array(TickistExportTaskTagSchema),
+});
