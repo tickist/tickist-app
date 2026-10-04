@@ -16,6 +16,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export type ThemedSelectValue = string | number | boolean;
+
 export type ThemedSelectOption = {
   value: ThemedSelectValue;
   label: string;
@@ -53,7 +54,12 @@ export class ThemedSelectComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
   private readonly instanceId = nextSelectId++;
   private readonly onScroll = (event: Event) => {
-    if (!this.host.nativeElement.contains(event.target as Node)) this.close();
+    if (
+      event.target instanceof Node &&
+      !this.host.nativeElement.contains(event.target)
+    ) {
+      this.close();
+    }
   };
   private onChange: (value: ThemedSelectValue) => void = () => undefined;
   private onTouched: () => void = () => undefined;
@@ -117,11 +123,13 @@ export class ThemedSelectComponent implements ControlValueAccessor {
 
   setDisabledState(disabled: boolean): void {
     this.formDisabled.set(disabled);
+
     if (disabled) this.close();
   }
 
   toggle(): void {
     if (this.isDisabled()) return;
+
     if (this.open()) {
       this.close();
     } else {
@@ -132,17 +140,21 @@ export class ThemedSelectComponent implements ControlValueAccessor {
   show(focusLast = false): void {
     if (this.isDisabled() || !this.options.length) return;
     const rect = this.trigger?.nativeElement.getBoundingClientRect();
+
     if (!rect) return;
 
     const spaceBelow = window.innerHeight - rect.bottom - 12;
     const spaceAbove = rect.top - 12;
     const menuHeight = Math.min(240, this.options.length * 42 + 12);
+
     const above =
       spaceBelow < Math.min(menuHeight, 160) && spaceAbove > spaceBelow;
+
     const maxHeight = Math.max(
       80,
       Math.min(240, above ? spaceAbove : spaceBelow)
     );
+
     this.layout.set({
       top: above
         ? Math.max(8, rect.top - Math.min(menuHeight, maxHeight) - 4)
@@ -151,9 +163,11 @@ export class ThemedSelectComponent implements ControlValueAccessor {
       width: rect.width,
       maxHeight,
     });
+
     const selectedIndex = this.options.findIndex(
       (option) => option.value === this.selectedValue()
     );
+
     this.activeIndex.set(
       focusLast ? this.options.length - 1 : Math.max(0, selectedIndex)
     );
@@ -166,6 +180,7 @@ export class ThemedSelectComponent implements ControlValueAccessor {
     if (!this.open()) return;
     this.open.set(false);
     document.removeEventListener('scroll', this.onScroll, true);
+
     if (restoreFocus) this.trigger?.nativeElement.focus();
   }
 
@@ -179,6 +194,7 @@ export class ThemedSelectComponent implements ControlValueAccessor {
 
   onTriggerKeydown(event: KeyboardEvent): void {
     if (this.isDisabled()) return;
+
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
       this.show(event.key === 'ArrowUp');
@@ -187,6 +203,7 @@ export class ThemedSelectComponent implements ControlValueAccessor {
 
   onOptionKeydown(event: KeyboardEvent, index: number): void {
     let next = index;
+
     switch (event.key) {
       case 'ArrowDown':
         next = (index + 1) % this.options.length;
@@ -203,26 +220,36 @@ export class ThemedSelectComponent implements ControlValueAccessor {
       case 'Escape':
         event.preventDefault();
         this.close(true);
+
         return;
       default:
         return;
     }
+
     event.preventDefault();
     this.activeIndex.set(next);
     this.focusActiveOption();
   }
 
   onFocusOut(event: FocusEvent): void {
-    if (!this.host.nativeElement.contains(event.relatedTarget as Node | null)) {
+    const nextTarget = event.relatedTarget;
+
+    if (
+      !(nextTarget instanceof Node) ||
+      !this.host.nativeElement.contains(nextTarget)
+    ) {
       this.onTouched();
       this.close();
     }
   }
 
   onDocumentMouseDown(event: MouseEvent): void {
+    const target = event.target;
+
     if (
       this.open() &&
-      !this.host.nativeElement.contains(event.target as Node)
+      target instanceof Node &&
+      !this.host.nativeElement.contains(target)
     ) {
       this.close();
     }

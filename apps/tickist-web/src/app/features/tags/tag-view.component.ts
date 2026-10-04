@@ -199,9 +199,11 @@ export class TagViewComponent {
   }
 
   onSortChange(value: ThemedSelectValue): void {
-    if (this.sortOptions.some((option) => option.value === value)) {
-      this.setSort(value as Parameters<typeof this.setSort>[0]);
-    }
+    const option = this.sortOptions.find(
+      (candidate) => candidate.value === value
+    );
+
+    if (option) this.setSort(option.value);
   }
 
   trackTask(_index: number, task: Task): string {

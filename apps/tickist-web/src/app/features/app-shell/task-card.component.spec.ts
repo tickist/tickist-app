@@ -250,13 +250,16 @@ describe('TaskCardComponent toolbar status icons', () => {
       '.repeat-custom__select .themed-select__trigger',
       HTMLButtonElement
     );
+
     customUnitTrigger.click();
     fixture.detectChanges();
+
     const monthOption = Array.from(
       fixtureHost(fixture).querySelectorAll<HTMLButtonElement>(
         '.repeat-custom__select .themed-select__option'
       )
     ).find((option) => option.textContent?.trim() === 'months');
+
     if (!monthOption) throw new Error('Missing months option');
     monthOption.click();
 

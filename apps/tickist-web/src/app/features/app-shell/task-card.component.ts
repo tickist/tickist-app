@@ -787,7 +787,11 @@ export class TaskCardComponent implements OnChanges {
   }
 
   onRepeatUnitChange(value: ThemedSelectValue): void {
-    if (typeof value === 'string') this.setCustomRepeatUnit(value);
+    const option = this.repeatUnitOptions.find(
+      (candidate) => candidate.value === value
+    );
+
+    if (option) this.setCustomRepeatUnit(option.value);
   }
 
   async applyCustomRepeat(): Promise<void> {

@@ -63,8 +63,10 @@ describe('ThemedSelectComponent', () => {
     const button = fixture.nativeElement.querySelector(
       '.themed-select__trigger'
     );
+
     if (!(button instanceof HTMLButtonElement))
       throw new Error('Missing trigger');
+
     return button;
   }
 
