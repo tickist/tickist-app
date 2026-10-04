@@ -624,16 +624,14 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
 }
 
-.repeat-custom__input,
-.repeat-custom__select {
+.repeat-custom__input {
   @apply rounded-xl px-3 py-2 text-sm;
   color: rgb(var(--bc) / 0.96);
   border: 1px solid rgb(var(--bc) / 0.16);
   background: rgb(var(--b1) / 0.24);
 }
 
-.repeat-custom__input:focus-visible,
-.repeat-custom__select:focus-visible {
+.repeat-custom__input:focus-visible {
   outline: none;
   border-color: rgb(var(--bc) / 0.45);
   box-shadow: 0 0 0 1px rgb(var(--bc) / 0.2);

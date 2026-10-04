@@ -196,12 +196,11 @@
               placeholder="Every"
               aria-label="Repeat every"
             />
-            <select class="sheet-select" formControlName="repeatUnit">
-              <option value="day">days</option>
-              <option value="week">weeks</option>
-              <option value="month">months</option>
-              <option value="year">years</option>
-            </select>
+            <app-themed-select
+              formControlName="repeatUnit"
+              ariaLabel="Repeat unit"
+              [options]="repeatUnitOptions"
+            ></app-themed-select>
           </div>
           <p class="sheet-field__hint">Choose how often this task repeats.</p>
         </div>
@@ -457,15 +456,14 @@
         </label>
 
         @if (assigneeOptions().length) {
-        <label class="sheet-field">
+        <div class="sheet-field">
           <span class="sheet-field__label">Assigned</span>
-          <select class="sheet-select" formControlName="assigneeId">
-            <option value="">Unassigned</option>
-            @for (assignee of assigneeOptions(); track assignee.userId) {
-            <option [value]="assignee.userId">{{ assignee.label }}</option>
-            }
-          </select>
-        </label>
+          <app-themed-select
+            formControlName="assigneeId"
+            ariaLabel="Assigned"
+            [options]="assigneeSelectOptions()"
+          ></app-themed-select>
+        </div>
         }
 
         <div class="sheet-grid-two">

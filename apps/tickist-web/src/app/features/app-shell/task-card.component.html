@@ -388,16 +388,15 @@
           [value]="customRepeatEvery()"
           (input)="setCustomRepeatEvery($any($event.target).value)"
         />
-        <select
+        <app-themed-select
           class="repeat-custom__select"
           [value]="customRepeatUnit()"
-          (change)="setCustomRepeatUnit($any($event.target).value)"
+          (valueChange)="onRepeatUnitChange($event)"
+          [options]="repeatUnitOptions"
+          ariaLabel="Repeat unit"
+          [compact]="true"
         >
-          <option value="day">days</option>
-          <option value="week">weeks</option>
-          <option value="month">months</option>
-          <option value="year">years</option>
-        </select>
+        </app-themed-select>
         <button
           type="button"
           class="repeat-custom__apply"

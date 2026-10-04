@@ -43,6 +43,7 @@ import { TagDataService } from '../../data/tag-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
+import { ThemedSelectComponent } from '../../core/ui/themed-select.component';
 import {
   SheetScaffoldComponent,
   SheetScaffoldTab,
@@ -95,6 +96,7 @@ type TaskFormDefaults = {
     DatePipe,
     ReactiveFormsModule,
     ProjectPickerComponent,
+    ThemedSelectComponent,
     SheetScaffoldComponent,
   ],
   templateUrl: './task-composer.component.html',
@@ -102,6 +104,12 @@ type TaskFormDefaults = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskComposerComponent {
+  readonly repeatUnitOptions = [
+    { value: 'day', label: 'days' },
+    { value: 'week', label: 'weeks' },
+    { value: 'month', label: 'months' },
+    { value: 'year', label: 'years' },
+  ];
   private readonly fb = inject(FormBuilder);
   private readonly taskService = inject(TaskDataService);
   private readonly projectService = inject(ProjectDataService);
@@ -177,6 +185,16 @@ export class TaskComposerComponent {
     }
 
     return Array.from(options, ([userId, label]) => ({ userId, label }));
+  }
+
+  assigneeSelectOptions() {
+    return [
+      { value: '', label: 'Unassigned' },
+      ...this.assigneeOptions().map((assignee) => ({
+        value: assignee.userId,
+        label: assignee.label,
+      })),
+    ];
   }
 
   @Output() dismiss = new EventEmitter<void>();

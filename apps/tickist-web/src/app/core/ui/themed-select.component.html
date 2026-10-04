@@ -1,0 +1,46 @@
+<button
+  #trigger
+  [id]="controlId || null"
+  type="button"
+  class="themed-select__trigger"
+  [class.themed-select__trigger--compact]="compact"
+  [disabled]="isDisabled()"
+  [attr.aria-label]="ariaLabel"
+  aria-haspopup="listbox"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="open() ? listboxId : null"
+  (click)="toggle()"
+  (keydown)="onTriggerKeydown($event)"
+  (focusout)="onFocusOut($event)"
+>
+  <span class="themed-select__value">{{ selectedLabel() }}</span>
+  <span class="themed-select__chevron" aria-hidden="true">⌄</span>
+</button>
+@if (open()) {
+<div
+  class="themed-select__menu"
+  role="listbox"
+  [id]="listboxId"
+  [attr.aria-label]="ariaLabel"
+  [style.top.px]="layout().top"
+  [style.left.px]="layout().left"
+  [style.width.px]="layout().width"
+  [style.max-height.px]="layout().maxHeight"
+  (focusout)="onFocusOut($event)"
+>
+  @for (option of options; track option.value) {
+  <button
+    #optionButton
+    type="button"
+    role="option"
+    class="themed-select__option"
+    [class.themed-select__option--selected]="option.value === selectedValue()"
+    [attr.aria-selected]="option.value === selectedValue()"
+    (click)="choose(option)"
+    (keydown)="onOptionKeydown($event, $index)"
+  >
+    {{ option.label }}
+  </button>
+  }
+</div>
+}

@@ -54,25 +54,17 @@
           AND
         </button>
       </div>
-      <label class="controls__sort">
+      <div class="controls__sort">
         <span>Sort</span>
-        <select
-          class="select select-sm select-bordered"
+        <app-themed-select
           [value]="sortOption()"
-          (change)="setSort($any($event.target).value)"
+          (valueChange)="onSortChange($event)"
+          [options]="sortOptions"
+          ariaLabel="Sort"
+          [compact]="true"
         >
-          <option value="priority-desc">Priority ↓</option>
-          <option value="priority-asc">Priority ↑</option>
-          <option value="due-asc">Due date ↑</option>
-          <option value="due-desc">Due date ↓</option>
-          <option value="created-asc">Created ↑</option>
-          <option value="created-desc">Created ↓</option>
-          <option value="modified-asc">Modified ↑</option>
-          <option value="modified-desc">Modified ↓</option>
-          <option value="alpha-asc">A-Z ↑</option>
-          <option value="alpha-desc">A-Z ↓</option>
-        </select>
-      </label>
+        </app-themed-select>
+      </div>
     </div>
   </header>
 

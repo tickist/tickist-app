@@ -26,6 +26,10 @@ import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
+import {
+  ThemedSelectComponent,
+  ThemedSelectValue,
+} from '../../core/ui/themed-select.component';
 import { TaskStatusService } from '../../data/task-status.service';
 
 type TaskViewMode = 'extended' | 'simple';
@@ -48,7 +52,7 @@ let nextTaskCardId = 0;
 @Component({
   selector: 'app-task-card',
   standalone: true,
-  imports: [LinkifyPipe, ProjectPickerComponent],
+  imports: [LinkifyPipe, ProjectPickerComponent, ThemedSelectComponent],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +62,12 @@ let nextTaskCardId = 0;
   },
 })
 export class TaskCardComponent implements OnChanges {
+  readonly repeatUnitOptions = [
+    { value: 'day', label: 'days' },
+    { value: 'week', label: 'weeks' },
+    { value: 'month', label: 'months' },
+    { value: 'year', label: 'years' },
+  ];
   @Input({ required: true }) task!: Task;
   @Input() project: Project | null = null;
   @Input() viewMode: TaskViewMode = 'extended';
@@ -774,6 +784,10 @@ export class TaskCardComponent implements OnChanges {
     ) {
       this.customRepeatUnit.set(rawValue);
     }
+  }
+
+  onRepeatUnitChange(value: ThemedSelectValue): void {
+    if (typeof value === 'string') this.setCustomRepeatUnit(value);
   }
 
   async applyCustomRepeat(): Promise<void> {

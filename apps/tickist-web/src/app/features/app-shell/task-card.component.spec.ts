@@ -245,18 +245,20 @@ describe('TaskCardComponent toolbar status icons', () => {
     customEveryInput.value = '3';
     customEveryInput.dispatchEvent(new Event('input'));
 
-    const customUnitSelect = requiredElement(
+    const customUnitTrigger = requiredElement(
       fixtureHost(fixture),
-      '.repeat-custom__select',
-      HTMLSelectElement
+      '.repeat-custom__select .themed-select__trigger',
+      HTMLButtonElement
     );
-
-    if (!customUnitSelect) {
-      throw new Error('Missing custom repeat unit select');
-    }
-
-    customUnitSelect.value = 'month';
-    customUnitSelect.dispatchEvent(new Event('change'));
+    customUnitTrigger.click();
+    fixture.detectChanges();
+    const monthOption = Array.from(
+      fixtureHost(fixture).querySelectorAll<HTMLButtonElement>(
+        '.repeat-custom__select .themed-select__option'
+      )
+    ).find((option) => option.textContent?.trim() === 'months');
+    if (!monthOption) throw new Error('Missing months option');
+    monthOption.click();
 
     const applyButton = requiredElement(
       fixtureHost(fixture),
