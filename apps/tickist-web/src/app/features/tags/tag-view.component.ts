@@ -12,16 +12,32 @@ import { TaskListComponent } from '../app-shell/task-list.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
+import {
+  ThemedSelectComponent,
+  ThemedSelectValue,
+} from '../../core/ui/themed-select.component';
 
 @Component({
   selector: 'app-tag-view',
   standalone: true,
-  imports: [UpperCasePipe, TaskListComponent],
+  imports: [UpperCasePipe, TaskListComponent, ThemedSelectComponent],
   templateUrl: './tag-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tag-view.component.css',
 })
 export class TagViewComponent {
+  readonly sortOptions = [
+    { value: 'priority-desc', label: 'Priority ↓' },
+    { value: 'priority-asc', label: 'Priority ↑' },
+    { value: 'due-asc', label: 'Due date ↑' },
+    { value: 'due-desc', label: 'Due date ↓' },
+    { value: 'created-asc', label: 'Created ↑' },
+    { value: 'created-desc', label: 'Created ↓' },
+    { value: 'modified-asc', label: 'Modified ↑' },
+    { value: 'modified-desc', label: 'Modified ↓' },
+    { value: 'alpha-asc', label: 'A-Z ↑' },
+    { value: 'alpha-desc', label: 'A-Z ↓' },
+  ] as const;
   private readonly tagsService = inject(TagDataService);
   private readonly tasksService = inject(TaskDataService);
   private readonly viewState = inject(AppViewStateService);
@@ -180,6 +196,14 @@ export class TagViewComponent {
   ): void {
     this.sortOption.set(option);
     this.visibleCount.set(this.pageSize);
+  }
+
+  onSortChange(value: ThemedSelectValue): void {
+    const option = this.sortOptions.find(
+      (candidate) => candidate.value === value
+    );
+
+    if (option) this.setSort(option.value);
   }
 
   trackTask(_index: number, task: Task): string {

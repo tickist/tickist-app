@@ -232,13 +232,8 @@
                 <div class="sheet-grid-two">
                   <label class="sheet-field" for="weekly-email-day">
                     <span class="sheet-field__label">Day</span>
-                    <select id="weekly-email-day" class="sheet-select" formControlName="weeklyEmailDayOfWeek">
-                      @for (option of weekdayOptions; track option.value) {
-                      <option [ngValue]="option.value">
-                        {{ option.label }}
-                      </option>
-                      }
-                    </select>
+                    <app-themed-select controlId="weekly-email-day" ariaLabel="Day"
+                      formControlName="weeklyEmailDayOfWeek" [options]="weekdayOptions"></app-themed-select>
                   </label>
 
                   <label class="sheet-field" for="weekly-email-time">

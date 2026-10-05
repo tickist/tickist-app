@@ -6,7 +6,7 @@
   testId="task-composer-sheet"
   closeAriaLabel="Close task panel"
   (tabChange)="selectTab($event)"
-  (panelClose)="dismiss.emit()"
+  (panelClose)="requestClose()"
 >
   <div sheet-body>
     @switch (activeTab()) { @case ('general') {
@@ -196,12 +196,11 @@
               placeholder="Every"
               aria-label="Repeat every"
             />
-            <select class="sheet-select" formControlName="repeatUnit">
-              <option value="day">days</option>
-              <option value="week">weeks</option>
-              <option value="month">months</option>
-              <option value="year">years</option>
-            </select>
+            <app-themed-select
+              formControlName="repeatUnit"
+              ariaLabel="Repeat unit"
+              [options]="repeatUnitOptions"
+            ></app-themed-select>
           </div>
           <p class="sheet-field__hint">Choose how often this task repeats.</p>
         </div>
@@ -211,7 +210,13 @@
     } @case ('reminders') {
     <section class="sheet-form">
       <section class="sheet-section">
-        @if (reminders.length) {
+        @if (editingTask() && remindersLoading()) {
+        <p class="sheet-field__hint" role="status">Loading reminders…</p>
+        } @else if (editingTask() && !remindersReady()) {
+        <p class="sheet-field__error" role="alert">
+          Could not load reminders. Retry from the footer.
+        </p>
+        } @else { @if (reminders.length) {
         <div class="reminders">
           @for (reminder of reminders.controls; track reminder; let i = $index)
           {
@@ -264,6 +269,7 @@
         >
           Add reminder
         </button>
+        }
       </section>
     </section>
     } @case ('tags') {
@@ -457,15 +463,14 @@
         </label>
 
         @if (assigneeOptions().length) {
-        <label class="sheet-field">
+        <div class="sheet-field">
           <span class="sheet-field__label">Assigned</span>
-          <select class="sheet-select" formControlName="assigneeId">
-            <option value="">Unassigned</option>
-            @for (assignee of assigneeOptions(); track assignee.userId) {
-            <option [value]="assignee.userId">{{ assignee.label }}</option>
-            }
-          </select>
-        </label>
+          <app-themed-select
+            formControlName="assigneeId"
+            ariaLabel="Assigned"
+            [options]="assigneeSelectOptions()"
+          ></app-themed-select>
+        </div>
         }
 
         <div class="sheet-grid-two">
@@ -539,7 +544,23 @@
 
   <div sheet-footer class="sheet-footer-actions">
     <div class="sheet-footer-actions__group">
-      @if (!editingTask()) {
+      @if (editingTask()) {
+      <span
+        class="task-auto-save-status"
+        [class.task-auto-save-status--error]="autoSaveStatus() === 'error'"
+        [attr.role]="autoSaveStatus() === 'error' ? 'alert' : 'status'"
+      >
+        {{ autoSaveMessage() }}
+      </span>
+      @if (autoSaveStatus() === 'error') {
+      <button
+        type="button"
+        class="sheet-shell__button sheet-shell__button--secondary"
+        (click)="retryAutoSave()"
+      >
+        Retry
+      </button>
+      } } @else {
       <button
         type="button"
         class="sheet-shell__button sheet-shell__button--secondary"
@@ -548,15 +569,15 @@
       >
         Create and add more
       </button>
-      }
       <button
         type="button"
         class="sheet-shell__button sheet-shell__button--primary"
         [disabled]="submitting()"
         (click)="submit(false)"
       >
-        {{ editingTask() ? 'Update task' : 'Save' }}
+        Save
       </button>
+      }
     </div>
   </div>
 </app-sheet-scaffold>

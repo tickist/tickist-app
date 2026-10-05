@@ -28,7 +28,7 @@ Posts, categories, and tags are published from the repository rather than an adm
 
 ### Capture and structure
 
-Tasks hold a title, description, project, priority, type, due date/time, estimated and spent time, tags, assignees, subtasks, and reminders. Quick entry is available within task lists; full create/edit flows expose the wider task model. While editing, the Extra tab shows a compact history with the task creation and latest modification timestamps. Shared-project assignee controls display member names instead of internal IDs, and a new task in an accepted shared project is assigned to its creator by default in both quick and full creation flows.
+Tasks hold a title, description, project, priority, type, due date/time, estimated and spent time, tags, assignees, subtasks, and reminders. Quick entry is available within task lists; full create/edit flows expose the wider task model. Editing an existing task saves valid changes automatically after a short pause, including choices across tabs; reminders save separately once loaded and complete. Closing the editor waits for pending writes, and a failed or incomplete write keeps the editor open with a retry message. Creating a task still requires Save. While editing, the Extra tab shows a compact history with the task creation and latest modification timestamps. Shared-project assignee controls display member names instead of internal IDs, and a new task in an accepted shared project is assigned to its creator by default in both quick and full creation flows.
 
 Task-card overflow actions are exclusive within a task list: opening the menu on another task closes the previously open menu.
 

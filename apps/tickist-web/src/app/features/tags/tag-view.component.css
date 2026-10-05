@@ -42,7 +42,7 @@
   color: rgb(var(--bc) / 60%);
 }
 
-.controls__sort .select {
+.controls__sort app-themed-select {
   @apply w-full normal-case tracking-normal;
 }
 
@@ -85,15 +85,13 @@
   @apply pt-2;
 }
 
-.controls .btn,
-.controls .select {
+.controls .btn {
   @apply min-h-10 border border-white/10;
   background-color: rgb(var(--b1) / 45%);
   color: rgb(var(--bc) / 96%);
 }
 
-.controls .btn:hover,
-.controls .select:hover {
+.controls .btn:hover {
   background-color: rgb(var(--b1) / 72%);
   color: rgb(var(--bc));
 }

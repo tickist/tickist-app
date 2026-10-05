@@ -92,9 +92,33 @@ describe('TaskReminderDataService', () => {
     ]);
     expect(supabase.insertRows[0]).not.toHaveProperty('id');
   });
+
+  it('does not replace reminders when the existing list cannot be loaded', async () => {
+    const supabase = createSupabaseMock(
+      [createReminderRow()],
+      new Error('Read failed')
+    );
+
+    TestBed.configureTestingModule({
+      providers: [
+        TaskReminderDataService,
+        { provide: SUPABASE_CLIENT, useValue: supabase },
+      ],
+    });
+
+    const service = TestBed.inject(TaskReminderDataService);
+
+    await expect(service.saveForTask('task-1', 'owner-1', [])).rejects.toThrow(
+      'Read failed'
+    );
+    expect(supabase.cancelledIds).toEqual([]);
+  });
 });
 
-function createSupabaseMock(rows: ReturnType<typeof createReminderRow>[]) {
+function createSupabaseMock(
+  rows: ReturnType<typeof createReminderRow>[],
+  readError: Error | null = null
+) {
   const cancelledIds: string[] = [];
 
   const upsertRows: {
@@ -136,7 +160,10 @@ function createSupabaseMock(rows: ReturnType<typeof createReminderRow>[]) {
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             in: vi.fn(() => ({
-              order: vi.fn(async () => ({ data: rows, error: null })),
+              order: vi.fn(async () => ({
+                data: readError ? null : rows,
+                error: readError,
+              })),
             })),
           })),
         })),

@@ -32,6 +32,7 @@ import {
   SheetScaffoldComponent,
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
+import { ThemedSelectComponent } from '../../core/ui/themed-select.component';
 
 type SettingsTab =
   | 'account'
@@ -59,7 +60,13 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
 
 @Component({
   selector: 'app-settings',
-  imports: [ReactiveFormsModule, SheetScaffoldComponent, DatePipe, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    SheetScaffoldComponent,
+    ThemedSelectComponent,
+    DatePipe,
+    RouterLink,
+  ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

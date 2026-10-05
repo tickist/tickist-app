@@ -48,13 +48,14 @@
             </div>
           </div>
 
-          <label class="sheet-field">
+          <div class="sheet-field">
             <span class="sheet-field__label">Status</span>
-            <select class="sheet-select" formControlName="isActive">
-              <option [value]="true">Active</option>
-              <option [value]="false">Archived</option>
-            </select>
-          </label>
+            <app-themed-select
+              formControlName="isActive"
+              ariaLabel="Status"
+              [options]="statusOptions"
+            ></app-themed-select>
+          </div>
         </div>
 
         <div class="sheet-field project-composer-field--placeholder">
@@ -72,24 +73,21 @@
           ></app-project-picker>
         </div>
 
-        <label class="sheet-field">
+        <div class="sheet-field">
           <span class="sheet-field__label">Workspace</span>
-          <select
-            class="sheet-select"
+          <app-themed-select
             formControlName="workspaceId"
-            [attr.aria-disabled]="!!form.controls.ancestorId.value"
             [disabled]="!!form.controls.ancestorId.value || submitting()"
+            ariaLabel="Workspace"
+            [options]="workspaceSelectOptions()"
           >
-            @for (workspace of workspaceList(); track workspace.id) {
-            <option [value]="workspace.id">{{ workspace.name }}</option>
-            }
-          </select>
+          </app-themed-select>
           @if (form.controls.ancestorId.value) {
           <span class="sheet-field__hint"
             >Subprojects use their parent’s workspace.</span
           >
           }
-        </label>
+        </div>
 
         <label class="sheet-field project-composer-field--placeholder">
           <span class="sheet-field__label project-composer-sr-only"

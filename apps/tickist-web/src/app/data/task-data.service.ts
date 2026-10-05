@@ -299,43 +299,89 @@ export class TaskDataService {
     }
 
     if (tags) {
-      await this.supabase.from('task_tags').delete().eq('task_id', input.id);
+      const { error: deleteError } = await this.supabase
+        .from('task_tags')
+        .delete()
+        .eq('task_id', input.id);
+
+      if (deleteError) {
+        console.error('[Tasks] Failed to replace task tags', deleteError);
+
+        return null;
+      }
 
       if (tags.length) {
-        await this.supabase
+        const { error: insertError } = await this.supabase
           .from('task_tags')
           .insert(tags.map((tagId) => ({ task_id: input.id, tag_id: tagId })));
+
+        if (insertError) {
+          console.error('[Tasks] Failed to save task tags', insertError);
+
+          return null;
+        }
       }
     }
 
     if (assigneeIds) {
-      await this.supabase
+      const { error: deleteError } = await this.supabase
         .from('task_assignees')
         .delete()
         .eq('task_id', input.id);
 
+      if (deleteError) {
+        console.error('[Tasks] Failed to replace task assignees', deleteError);
+
+        return null;
+      }
+
       if (assigneeIds.length) {
-        await this.supabase.from('task_assignees').insert(
-          Array.from(new Set(assigneeIds)).map((userId) => ({
-            task_id: input.id,
-            user_id: userId,
-          }))
-        );
+        const { error: insertError } = await this.supabase
+          .from('task_assignees')
+          .insert(
+            Array.from(new Set(assigneeIds)).map((userId) => ({
+              task_id: input.id,
+              user_id: userId,
+            }))
+          );
+
+        if (insertError) {
+          console.error('[Tasks] Failed to save task assignees', insertError);
+
+          return null;
+        }
       }
     }
 
     if (steps) {
-      await this.supabase.from('task_steps').delete().eq('task_id', input.id);
+      const { error: deleteError } = await this.supabase
+        .from('task_steps')
+        .delete()
+        .eq('task_id', input.id);
+
+      if (deleteError) {
+        console.error('[Tasks] Failed to replace task steps', deleteError);
+
+        return null;
+      }
 
       if (steps.length) {
-        await this.supabase.from('task_steps').insert(
-          steps.map((step, index) => ({
-            task_id: input.id,
-            content: step.content,
-            position: step.position ?? index,
-            is_done: recurringCompletion ? false : step.isDone ?? false,
-          }))
-        );
+        const { error: insertError } = await this.supabase
+          .from('task_steps')
+          .insert(
+            steps.map((step, index) => ({
+              task_id: input.id,
+              content: step.content,
+              position: step.position ?? index,
+              is_done: recurringCompletion ? false : step.isDone ?? false,
+            }))
+          );
+
+        if (insertError) {
+          console.error('[Tasks] Failed to save task steps', insertError);
+
+          return null;
+        }
       }
     } else if (recurringCompletion) {
       const { error: deleteError } = await this.supabase

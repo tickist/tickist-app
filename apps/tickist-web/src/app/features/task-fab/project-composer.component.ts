@@ -24,6 +24,7 @@ import {
   collectDescendantIds,
 } from '../../core/projects/project-tree';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
+import { ThemedSelectComponent } from '../../core/ui/themed-select.component';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
 import {
@@ -38,6 +39,7 @@ type ProjectTab = 'general' | 'extra' | 'sharing' | 'branding';
   imports: [
     ReactiveFormsModule,
     ProjectPickerComponent,
+    ThemedSelectComponent,
     ProjectIconComponent,
     SheetScaffoldComponent,
   ],
@@ -46,11 +48,21 @@ type ProjectTab = 'general' | 'extra' | 'sharing' | 'branding';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectComposerComponent {
+  readonly statusOptions = [
+    { value: true, label: 'Active' },
+    { value: false, label: 'Archived' },
+  ];
   private readonly fb = inject(FormBuilder);
   private readonly projects = inject(ProjectDataService);
   private readonly session = inject(SupabaseSessionService);
   private readonly workspaces = inject(WorkspaceDataService);
   readonly workspaceList = this.workspaces.list;
+  readonly workspaceSelectOptions = computed(() =>
+    this.workspaceList().map((workspace) => ({
+      value: workspace.id,
+      label: workspace.name,
+    }))
+  );
   private currentPreset: ProjectComposerPreset | null = null;
 
   readonly user = computed(() => this.session.user());
