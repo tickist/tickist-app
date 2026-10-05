@@ -475,7 +475,9 @@ test('suspends a task with a resume time and separates it from active work', asy
   await composer.getByLabel('At a date and time').check();
   await composer.getByLabel('Resume date').fill(futureDateInput(1));
   await expect(composer.getByLabel('Resume time')).toHaveValue('00:00');
-  await composer.getByRole('button', { name: 'Update task' }).click();
+  await expect(composer.getByRole('status')).toHaveText('All changes saved.');
+  await composer.getByRole('button', { name: 'Close task panel' }).click();
+  await expect(composer).toHaveCount(0);
 
   await expect(card).toHaveCount(0);
   await expect(page.getByTestId('project-suspended-count')).toContainText(
@@ -495,7 +497,9 @@ test('suspends a task with a resume time and separates it from active work', asy
   await card.getByRole('button', { name: 'Edit task' }).click();
   await composer.getByRole('button', { name: 'Extra' }).click();
   await composer.getByLabel('Active').check();
-  await composer.getByRole('button', { name: 'Update task' }).click();
+  await expect(composer.getByRole('status')).toHaveText('All changes saved.');
+  await composer.getByRole('button', { name: 'Close task panel' }).click();
+  await expect(composer).toHaveCount(0);
 
   await expect(page.getByTestId('project-suspended-count')).toContainText(
     'Suspended: 0'
@@ -634,7 +638,8 @@ test('adds task reminder and shows reminder status icon on the task card', async
   await composer.getByRole('button', { name: 'Add reminder' }).click();
   await composer.getByLabel('Reminder date').fill(futureDateInput(1));
   await composer.getByLabel('Reminder time').fill('09:30');
-  await composer.getByRole('button', { name: 'Update task' }).click();
+  await expect(composer.getByRole('status')).toHaveText('All changes saved.');
+  await composer.getByRole('button', { name: 'Close task panel' }).click();
   await expect(page.locator('app-task-composer')).toHaveCount(0);
 
   await expect(card.getByTestId('task-toolbar-reminders')).toHaveClass(
