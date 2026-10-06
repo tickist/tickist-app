@@ -278,3 +278,7 @@ The working agreement is in [AGENTS.md](AGENTS.md); [agent tooling](doc/agent-to
 - [LLM discovery file](apps/tickist-web/public/llm.txt) and [full LLM reference](apps/tickist-web/public/llm-full.txt)
 - [Repository knowledge base](doc/README.md)
 - [Repository guidelines](AGENTS.md)
+
+### Operator email alerts
+
+The internal administrator panel and background SES/SNS alerts require explicit administrator provisioning and AWS setup. See [email monitoring](doc/email-monitoring.md) for the access boundary, configuration and local verification.

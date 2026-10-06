@@ -65,3 +65,7 @@ consuming database storage indefinitely.
 ## Application and email retention
 
 Migration 0025 adds daily history cleanup and private account-linked deduplication receipts. Deploy it before the updated project-invite function. Current pending invitations are not resent; renewed invitations use a fresh database-generated key. See [data retention](data-retention.md) for periods, unresolved-recipient review and tests.
+
+## Email delivery monitor
+
+`email-delivery-monitor` is an internal POST worker protected by `x-internal-function-secret`. Migration 0030 schedules it every five minutes using existing Vault entries. It reads regional SES account quotas, records aggregate health and durable incident alerts, and publishes to a fixed server-configured SNS topic. Browser callers cannot invoke its database write/claim RPCs. See [administrator email monitoring](email-monitoring.md) for access, thresholds, retry semantics and deployment preparation.

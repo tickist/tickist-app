@@ -44,6 +44,7 @@ jobs:
           npx nx test data-access-tickist
           npm run account:delete:test
           npm run retention:test
+          npm run email-monitor:test
           npm run db:backup:test
 
       - name: Check browser artifacts for private credentials

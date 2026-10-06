@@ -387,6 +387,8 @@ jobs:
           EMAIL_RATE_LIMIT_PER_MINUTE: ${{ secrets.EMAIL_RATE_LIMIT_PER_MINUTE }}
           EMAIL_RATE_LIMIT_PER_HOUR: ${{ secrets.EMAIL_RATE_LIMIT_PER_HOUR }}
           EMAIL_RATE_LIMIT_PER_DAY: ${{ secrets.EMAIL_RATE_LIMIT_PER_DAY }}
+          EMAIL_MONITOR_TARGET_LIMIT: ${{ secrets.EMAIL_MONITOR_TARGET_LIMIT }}
+          EMAIL_MONITOR_SNS_TOPIC_ARN: ${{ secrets.EMAIL_MONITOR_SNS_TOPIC_ARN }}
         run: |
           supabase_secret_key="${SUPABASE_SECRET_KEY:-${SUPABASE_SERVICE_ROLE_KEY:-}}"
           supabase_publishable_key="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-${NG_APP_SUPABASE_PUBLISHABLE_KEY:-}}}"
@@ -435,6 +437,8 @@ jobs:
             "EMAIL_RATE_LIMIT_PER_MINUTE=${rate_limit_minute}"
             "EMAIL_RATE_LIMIT_PER_HOUR=${rate_limit_hour}"
             "EMAIL_RATE_LIMIT_PER_DAY=${rate_limit_day}"
+            "EMAIL_MONITOR_TARGET_LIMIT=${EMAIL_MONITOR_TARGET_LIMIT:-100}"
+            "EMAIL_MONITOR_SNS_TOPIC_ARN=${EMAIL_MONITOR_SNS_TOPIC_ARN:-}"
           )
 
           if [ -n "${AWS_SESSION_TOKEN:-}" ]; then
@@ -452,7 +456,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          for fn in task-reminder task-reminder-runner project-update routine-runner notification-digest-runner enqueue-notification send-emails tickist-mcp; do
+          for fn in task-reminder task-reminder-runner project-update routine-runner notification-digest-runner enqueue-notification send-emails email-delivery-monitor tickist-mcp; do
             supabase functions deploy "$fn" --project-ref "$SUPABASE_PROJECT_REF"
           done
 
