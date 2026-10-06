@@ -130,3 +130,7 @@ Tymczasowy rollout fallback:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `ROUTINE_RUNNER_SECRET`
 - `SUPABASE_ANON_KEY`
+
+## Monitoring maili administratora
+
+Migracje 0029/0030 i funkcja `email-delivery-monitor` dodają monitoring SES co 5 minut. Konfiguracja wymaga wskazania administratora, osobnej polityki odczytu SES/publikacji SNS, standardowego tematu SNS i potwierdzonej subskrypcji e-mail. Sekrety `EMAIL_MONITOR_TARGET_LIMIT` (domyślnie 100) i `EMAIL_MONITOR_SNS_TOPIC_ARN` są synchronizowane przez workflow; pusty ARN wyłącza publikację zewnętrzną. Szczegóły i kontrole: [email monitoring](doc/email-monitoring.md). Sam kod nie konfiguruje AWS ani nie zmienia rzeczywistego limitu SES.

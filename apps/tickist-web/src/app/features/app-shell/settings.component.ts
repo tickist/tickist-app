@@ -1,3 +1,4 @@
+import { EmailMonitoringService } from '../../data/email-monitoring.service';
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
   ChangeDetectionStrategy,
@@ -88,6 +89,8 @@ export class SettingsComponent {
   private readonly toasts = inject(ToastService);
   private readonly router = inject(Router);
   private readonly viewState = inject(AppViewStateService);
+
+  readonly emailMonitoring = inject(EmailMonitoringService);
 
   readonly user = computed(() => this.session.user());
   readonly activeTab = signal<SettingsTab>('account');

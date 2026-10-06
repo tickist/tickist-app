@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { administratorGuard } from './features/admin/admin.guard';
 import { LandingComponent } from './features/landing/landing.component';
 import { supabaseAuthGuard } from './features/auth/auth.guard';
 import { redirectIfAuthenticatedGuard } from './features/auth/redirect-if-authenticated.guard';
@@ -54,6 +55,14 @@ export const appRoutes: Route[] = [
         path: 'team',
         loadComponent: () =>
           import('./features/team/team.component').then((m) => m.TeamComponent),
+      },
+      {
+        path: 'admin/email',
+        canActivate: [administratorGuard],
+        loadComponent: () =>
+          import('./features/admin/email-monitoring.component').then(
+            (m) => m.EmailMonitoringComponent
+          ),
       },
       {
         path: 'settings',

@@ -1,0 +1,143 @@
+<section
+  class="mx-auto max-w-5xl space-y-6 p-4 sm:p-6"
+  aria-labelledby="email-monitor-title"
+>
+  <header class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <p class="text-sm text-base-content/60">Administrator</p>
+      <h1 id="email-monitor-title" class="text-2xl font-semibold">
+        Email monitoring
+      </h1>
+      <p class="text-sm text-base-content/70">
+        Notifications, sign-in emails and password resets in the monitored AWS
+        region.
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <a routerLink="/app/settings" class="btn btn-ghost">Settings</a>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="monitor.loading()"
+        (click)="monitor.refresh()"
+      >
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  @if (monitor.loading()) {
+  <p role="status">Loading email monitoring…</p>
+  } @if (monitor.error(); as error) {
+  <p role="alert" class="alert alert-error">{{ error }}</p>
+  } @if (monitor.overview(); as overview) { @if (overview.health; as health) {
+  @if (stale()) {
+  <p role="alert" class="alert alert-warning">
+    The SES reading is missing or out of date. These numbers do not confirm
+    current usage.
+  </p>
+  } @if (!health.sns_configured) {
+  <p role="alert" class="alert alert-warning">
+    Email alerts have no destination configured. Warnings are currently recorded
+    only in this panel.
+  </p>
+  } @if (health.sample; as sample) {
+  <div class="grid gap-4 sm:grid-cols-3">
+    <article class="rounded-xl border border-base-content/15 bg-base-200 p-5">
+      <h2 class="text-sm text-base-content/70">
+        Recipients in the last 24 hours
+      </h2>
+      <p class="mt-2 text-3xl font-semibold">{{ sample.sent_last_24h }}</p>
+      <p class="text-sm">Combined SMTP and API usage</p>
+    </article>
+    <article class="rounded-xl border border-base-content/15 bg-base-200 p-5">
+      <h2 class="text-sm text-base-content/70">Actual AWS sending quota</h2>
+      <p class="mt-2 text-3xl font-semibold">{{ sample.max_24h_send }}</p>
+      <p class="text-sm">{{ sample.max_send_rate }} recipients per second</p>
+    </article>
+    <article class="rounded-xl border border-base-content/15 bg-base-200 p-5">
+      <h2 class="text-sm text-base-content/70">Expected limit</h2>
+      <p class="mt-2 text-3xl font-semibold">{{ health.target_limit }}</p>
+      <p class="text-sm">
+        Alerts at 80% and 95% of {{ warningLimit() }} recipients
+      </p>
+    </article>
+  </div>
+  @if (sample.max_24h_send !== health.target_limit) {
+  <p role="alert" class="alert alert-warning">
+    AWS currently allows {{ sample.max_24h_send }} recipients. The expected
+    limit of {{ health.target_limit }} is an alert setting and does not block
+    sending.
+  </p>
+  } @if (!sample.sending_enabled) {
+  <p role="alert" class="alert alert-error">AWS SES sending is disabled.</p>
+  }
+  <p class="text-sm text-base-content/70">
+    Region: {{ sample.region }} · Last successful reading:
+    {{ health.checked_at | date : 'medium' }}
+  </p>
+  } @else {
+  <p role="status">No successful SES reading yet.</p>
+  }
+  <p class="text-sm text-base-content/70">
+    Checked every 5 minutes. Refresh loads the latest stored reading. SNS sends
+    alerts independently of the SES quota; its email subscription must be
+    confirmed.
+  </p>
+  } @else {
+  <p role="status" class="alert alert-warning">
+    Monitoring has not run yet. No current SES usage is available.
+  </p>
+  }
+
+  <section
+    class="rounded-xl border border-base-content/15 p-5"
+    aria-labelledby="email-queue-title"
+  >
+    <h2 id="email-queue-title" class="text-lg font-semibold">
+      Application notification queue
+    </h2>
+    <dl class="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div>
+        <dt>Waiting</dt>
+        <dd class="text-2xl">{{ overview.outbox.queued }}</dd>
+      </div>
+      <div>
+        <dt>Sending</dt>
+        <dd class="text-2xl">{{ overview.outbox.sending }}</dd>
+      </div>
+      <div>
+        <dt>Failed</dt>
+        <dd class="text-2xl">{{ overview.outbox.failed }}</dd>
+      </div>
+      <div>
+        <dt>Sent in 24h</dt>
+        <dd class="text-2xl">{{ overview.outbox.sent_last_24h }}</dd>
+      </div>
+    </dl>
+    <p class="mt-3 text-sm text-base-content/70">
+      These queue counts exclude Supabase Auth emails. Failed counts cover
+      retained queue history.
+    </p>
+  </section>
+
+  <section aria-labelledby="email-alerts-title">
+    <h2 id="email-alerts-title" class="text-lg font-semibold">Recent alerts</h2>
+    <ul class="mt-3 space-y-3">
+      @for (alert of overview.alerts; track alert.id) {
+      <li class="rounded-xl border border-base-content/15 p-4">
+        <p class="font-medium">
+          {{ labels[alert.kind] || 'Email delivery warning' }}
+        </p>
+        <p class="text-sm">
+          {{ alert.observed_at | date : 'medium' }} ·
+          {{ statuses[alert.status] }}
+        </p>
+      </li>
+      } @empty {
+      <li>No alerts recorded.</li>
+      }
+    </ul>
+  </section>
+  }
+</section>

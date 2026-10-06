@@ -82,3 +82,7 @@ Workers plan is separate from the domain's plan. These files do not configure
 external log destinations.
 
 The app uses `assets.run_worker_first = ["/*", "!/assets/*", "!/images/*"]` so SPA HTML, `/env.js`, legal noindex and consent/security headers actually execute the Worker. Bundles and images retain direct asset delivery. Check navigation responses as well as direct requests; SPA asset fallback can otherwise bypass the Worker.
+
+## Administrator email monitoring
+
+Prepare administrator membership, the SNS topic and confirmed email subscription, and the narrowly scoped `ses:GetAccount`/`sns:Publish` permissions before enabling external alerts. See [email monitoring](email-monitoring.md) for migrations 0029/0030, server-side settings, isolated database tests and deployment verification. The monitor never changes the SES sending quota.

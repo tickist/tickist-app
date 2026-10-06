@@ -245,3 +245,7 @@ Opcjonalne:
 ## 7) Koszty
 
 Orientacyjnie AWS SES: około **$0.10 / 1000 emaili** (bez dodatkowych opłat transferowych/usług towarzyszących). Sprawdź aktualny cennik dla regionu.
+
+## 8) Monitoring maili administratora
+
+Panel `/app/admin/email` pokazuje łączne wykorzystanie SES dla SMTP i API w skonfigurowanym regionie. Osobny worker sprawdza stan co 5 minut i publikuje alerty do SNS, więc wyczerpanie limitu SES nie blokuje kanału ostrzeżeń. Progi 80%/95% odnoszą się do mniejszej z wartości: oczekiwany limit (domyślnie 100) i rzeczywisty limit SES. To monitoring, nie zmiana ani egzekwowanie limitu AWS. Instrukcja konfiguracji, RLS, retry i weryfikacji: [email monitoring](../doc/email-monitoring.md).
