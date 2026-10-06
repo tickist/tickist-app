@@ -57,6 +57,10 @@ CI creates its E2E environment from a local Supabase stack, runs Chromium on pus
 - The production workflow runs from `master`.
 - Production deployment validates the app, pushes migrations, syncs Edge Function secrets and scheduler Vault values, deploys Edge Functions, and deploys the Cloudflare Worker.
 
+The browser build accepts only the explicitly listed public `NG_APP_*` values in `apps/tickist-web/vite.config.mts`. Database connection strings, service keys, AWS credentials, and internal function secrets belong only in server-side deployment steps. CI runs `npm run security:browser-artifacts`, which builds with unique fake secrets and scans every generated browser file, including lazy chunks and source maps, for raw and encoded values. The production workflow also scans the final frontend files against its actual private values before deployment without printing those values.
+
+If a production database password is found in a public artifact, treat it as compromised. Prepare all dependent connection strings, then reset the password in the Supabase Dashboard as soon as the replacement can be propagated. Update `SUPABASE_REMOTE_DB_URL` in GitHub Actions and every local or backup configuration that uses it; check other consumers before closing the incident. Deploy the clean build, inspect current and historical public asset URLs, and purge relevant CDN and service-worker caches. Removing the password from source or deleting one asset does not revoke the exposed password; rotation is required. Do not paste credentials into logs or issue reports.
+
 Read `DEPLOY.md` and `docs/EMAIL.md` before changing production email, scheduler, or secret configuration.
 
 Application history cleanup is documented in [data retention](data-retention.md); apply migration 0025 before updating the project-invite function.

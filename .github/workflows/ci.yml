@@ -46,6 +46,9 @@ jobs:
           npm run retention:test
           npm run db:backup:test
 
+      - name: Check browser artifacts for private credentials
+        run: npm run security:browser-artifacts
+
       - name: MCP typecheck, build, and Worker dry-run
         run: |
           npx nx run mcp:typecheck
