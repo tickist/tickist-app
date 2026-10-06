@@ -16,34 +16,11 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-      SUPABASE_REMOTE_DB_URL: ${{ secrets.SUPABASE_REMOTE_DB_URL }}
-      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      INTERNAL_FUNCTION_SECRET: ${{ secrets.INTERNAL_FUNCTION_SECRET }}
-      ROUTINE_RUNNER_SECRET: ${{ secrets.ROUTINE_RUNNER_SECRET }}
-      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-      SES_CONFIGURATION_SET: ${{ secrets.SES_CONFIGURATION_SET }}
-      EMAIL_RATE_LIMIT_PER_MINUTE: ${{ secrets.EMAIL_RATE_LIMIT_PER_MINUTE }}
-      EMAIL_RATE_LIMIT_PER_HOUR: ${{ secrets.EMAIL_RATE_LIMIT_PER_HOUR }}
-      EMAIL_RATE_LIMIT_PER_DAY: ${{ secrets.EMAIL_RATE_LIMIT_PER_DAY }}
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
-      NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
-      NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
@@ -62,6 +39,7 @@ jobs:
           npx nx lint tickist-web
           npx nx test tickist-web
           npx nx build tickist-web --configuration production
+          npm run security:browser-artifacts
           npx nx lint mcp
           npx nx test mcp
           npx nx run mcp:typecheck
@@ -76,9 +54,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes postgresql-client
 
       - name: Prepare Supabase psql connection
+        env:
+          SUPABASE_REMOTE_DB_URL: ${{ secrets.SUPABASE_REMOTE_DB_URL }}
         run: |
           node <<'NODE'
-          const { appendFileSync } = require('node:fs');
+          const { writeFileSync } = require('node:fs');
+          const { join } = require('node:path');
 
           const value = process.env.SUPABASE_REMOTE_DB_URL || '';
           if (!value.trim()) {
@@ -159,11 +140,20 @@ jobs:
 
           maskSecret(password);
           maskSecret(connection);
-          appendFileSync(process.env.GITHUB_ENV, `SUPABASE_PSQL_DB_URL=${connection}\n`);
+          writeFileSync(
+            join(process.env.RUNNER_TEMP, 'tickist-psql-connection'),
+            connection,
+            { mode: 0o600, flag: 'wx' }
+          );
           console.log(`SUPABASE_REMOTE_DB_URL parsed for host ${parsed.hostname}.`);
           NODE
 
       - name: Sync scheduler Vault secrets
+        env:
+          INTERNAL_FUNCTION_SECRET: ${{ secrets.INTERNAL_FUNCTION_SECRET }}
+          ROUTINE_RUNNER_SECRET: ${{ secrets.ROUTINE_RUNNER_SECRET }}
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
+          NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
         run: |
           internal_function_secret="${INTERNAL_FUNCTION_SECRET:-${ROUTINE_RUNNER_SECRET:-}}"
 
@@ -185,7 +175,7 @@ jobs:
           fi
           functions_url="${functions_url%/}"
 
-          psql "$SUPABASE_PSQL_DB_URL" \
+          psql "$(cat "$RUNNER_TEMP/tickist-psql-connection")" \
             -v ON_ERROR_STOP=1 \
             -v functions_base_url="$functions_url" \
             -v internal_function_secret="$internal_function_secret" <<'SQL'
@@ -241,9 +231,16 @@ jobs:
           SQL
 
       - name: Push production DB migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_REMOTE_DB_URL: ${{ secrets.SUPABASE_REMOTE_DB_URL }}
         run: supabase db push --db-url "$SUPABASE_REMOTE_DB_URL"
 
       - name: Configure Supabase MCP access token hook
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
         run: |
           if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
             echo "::error::Missing required GitHub secret: SUPABASE_ACCESS_TOKEN"
@@ -329,7 +326,7 @@ jobs:
 
       - name: Verify MCP access token hook claims
         run: |
-          psql "$SUPABASE_PSQL_DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          psql "$(cat "$RUNNER_TEMP/tickist-psql-connection")" -v ON_ERROR_STOP=1 <<'SQL'
           do $$
           declare
             ordinary_event jsonb :=
@@ -366,7 +363,30 @@ jobs:
           $$;
           SQL
 
+      - name: Remove temporary DB connection
+        if: always()
+        run: rm -f "$RUNNER_TEMP/tickist-psql-connection"
+
       - name: Sync Supabase Edge Function secrets
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
+          INTERNAL_FUNCTION_SECRET: ${{ secrets.INTERNAL_FUNCTION_SECRET }}
+          ROUTINE_RUNNER_SECRET: ${{ secrets.ROUTINE_RUNNER_SECRET }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          SES_CONFIGURATION_SET: ${{ secrets.SES_CONFIGURATION_SET }}
+          EMAIL_RATE_LIMIT_PER_MINUTE: ${{ secrets.EMAIL_RATE_LIMIT_PER_MINUTE }}
+          EMAIL_RATE_LIMIT_PER_HOUR: ${{ secrets.EMAIL_RATE_LIMIT_PER_HOUR }}
+          EMAIL_RATE_LIMIT_PER_DAY: ${{ secrets.EMAIL_RATE_LIMIT_PER_DAY }}
         run: |
           supabase_secret_key="${SUPABASE_SECRET_KEY:-${SUPABASE_SERVICE_ROLE_KEY:-}}"
           supabase_publishable_key="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-${NG_APP_SUPABASE_PUBLISHABLE_KEY:-}}}"
@@ -428,12 +448,19 @@ jobs:
           supabase secrets set "${secret_args[@]}" --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Deploy Edge Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
           for fn in task-reminder task-reminder-runner project-update routine-runner notification-digest-runner enqueue-notification send-emails tickist-mcp; do
             supabase functions deploy "$fn" --project-ref "$SUPABASE_PROJECT_REF"
           done
 
       - name: Write production runtime env
+        env:
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
+          NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
+          NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
         run: |
           for key in NG_APP_SUPABASE_URL NG_APP_SUPABASE_PUBLISHABLE_KEY; do
             if [ -z "${!key}" ]; then
@@ -463,12 +490,39 @@ jobs:
           printf 'globalThis.__env = %s;\n' "$env_payload" > apps/tickist-web/public/env.js
 
       - name: Build Cloudflare Worker assets
-        run: npm run build:worker
+        env:
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
+          NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
+          NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
+        run: npm run build:worker -- --skip-nx-cache
+
+      - name: Audit production browser artifacts
+        env:
+          SUPABASE_REMOTE_DB_URL: ${{ secrets.SUPABASE_REMOTE_DB_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          INTERNAL_FUNCTION_SECRET: ${{ secrets.INTERNAL_FUNCTION_SECRET }}
+          ROUTINE_RUNNER_SECRET: ${{ secrets.ROUTINE_RUNNER_SECRET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node tools/security/scan-production-browser-artifacts.mjs
 
       - name: Deploy Cloudflare Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npm run deploy:worker
 
       - name: Sync Cloudflare Worker Secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
+          NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
+          NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
         run: |
           if [ -z "$NG_APP_SUPABASE_FUNCTIONS_URL" ]; then
             functions_url="${NG_APP_SUPABASE_URL%/}/functions/v1"
@@ -492,6 +546,14 @@ jobs:
           rm -f "$secrets_file"
 
       - name: Deploy MCP Cloudflare Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
+          NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
+          NG_APP_SUPABASE_FUNCTIONS_URL: ${{ secrets.NG_APP_SUPABASE_FUNCTIONS_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           publishable_key="${NG_APP_SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-}}}"
 
@@ -528,6 +590,8 @@ jobs:
         env:
           MCP_SMOKE_EMAIL: ${{ secrets.MCP_SMOKE_EMAIL }}
           MCP_SMOKE_PASSWORD: ${{ secrets.MCP_SMOKE_PASSWORD }}
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
+          NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           for key in MCP_SMOKE_EMAIL MCP_SMOKE_PASSWORD NG_APP_SUPABASE_URL NG_APP_SUPABASE_PUBLISHABLE_KEY; do
             if [ -z "${!key}" ]; then
@@ -674,6 +738,7 @@ jobs:
         if: ${{ vars.ENABLE_MCP_OAUTH_SMOKE == 'true' }}
         env:
           MCP_PERSONAL_SMOKE_TOKEN: ${{ secrets.MCP_PERSONAL_SMOKE_TOKEN }}
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
         run: |
           mcp_origin="https://mcp.tickist.com"
           health_payload=""
@@ -859,6 +924,8 @@ jobs:
         env:
           MCP_SMOKE_EMAIL: ${{ secrets.MCP_SMOKE_EMAIL }}
           MCP_SMOKE_PASSWORD: ${{ secrets.MCP_SMOKE_PASSWORD }}
+          NG_APP_SUPABASE_URL: ${{ secrets.NG_APP_SUPABASE_URL }}
+          NG_APP_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NG_APP_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           if [ -z "${MCP_SMOKE_CLIENT_ID:-}" ]; then
             echo "No MCP smoke grant was created."

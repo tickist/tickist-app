@@ -10,6 +10,7 @@
     "start": "dotenv -e .local_env -- nx serve tickist-web --host 0.0.0.0",
     "build": "nx build",
     "build:worker": "nx build tickist-web --configuration production",
+    "security:browser-artifacts": "node --test tools/security/*.test.mjs && node tools/security/check-browser-artifacts.mjs",
     "blog:generate": "node tools/scripts/generate-blog-content.mjs",
     "blog:check": "node tools/scripts/generate-blog-content.mjs --check",
     "demo:seed": "node tools/demo-seed/cli.mjs",

@@ -33,39 +33,35 @@ const resolveBuildCommit = (loaded: Record<string, string>): string => {
 
 export default defineConfig(({ mode }) => {
   const isTestMode = mode === 'test';
-  const loaded = loadEnv(mode, __dirname, '');
+  const loaded = loadEnv(mode, __dirname, 'NG_APP_');
 
   const mergedEnv = {
     NG_APP_SUPABASE_URL:
-      loaded.NG_APP_SUPABASE_URL ?? process.env.NG_APP_SUPABASE_URL ?? '',
+      process.env.NG_APP_SUPABASE_URL ?? loaded.NG_APP_SUPABASE_URL ?? '',
     NG_APP_SUPABASE_PUBLISHABLE_KEY:
-      loaded.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
       process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
-      loaded.NG_APP_SUPABASE_ANON_KEY ??
+      loaded.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
       process.env.NG_APP_SUPABASE_ANON_KEY ??
+      loaded.NG_APP_SUPABASE_ANON_KEY ??
       '',
     // Backward compatibility for local scripts still relying on legacy variable name.
     NG_APP_SUPABASE_ANON_KEY:
-      loaded.NG_APP_SUPABASE_ANON_KEY ??
       process.env.NG_APP_SUPABASE_ANON_KEY ??
-      loaded.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
+      loaded.NG_APP_SUPABASE_ANON_KEY ??
       process.env.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
+      loaded.NG_APP_SUPABASE_PUBLISHABLE_KEY ??
       '',
     NG_APP_SUPABASE_FUNCTIONS_URL:
-      loaded.NG_APP_SUPABASE_FUNCTIONS_URL ??
       process.env.NG_APP_SUPABASE_FUNCTIONS_URL ??
+      loaded.NG_APP_SUPABASE_FUNCTIONS_URL ??
       '',
-    SUPABASE_DB_URL:
-      loaded.SUPABASE_DB_URL ?? process.env.SUPABASE_DB_URL ?? '',
-    SUPABASE_REMOTE_DB_URL:
-      loaded.SUPABASE_REMOTE_DB_URL ?? process.env.SUPABASE_REMOTE_DB_URL ?? '',
     NG_APP_GA4_MEASUREMENT_ID:
-      loaded.NG_APP_GA4_MEASUREMENT_ID ??
       process.env.NG_APP_GA4_MEASUREMENT_ID ??
+      loaded.NG_APP_GA4_MEASUREMENT_ID ??
       '',
     NG_APP_CLOUDFLARE_ANALYTICS_TOKEN:
-      loaded.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ??
       process.env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ??
+      loaded.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ??
       '',
     NG_APP_BUILD_COMMIT: resolveBuildCommit(loaded),
   };
@@ -73,6 +69,8 @@ export default defineConfig(({ mode }) => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/tickist-web',
+    // Public values are injected only through the explicit define entries below.
+    envPrefix: '__TICKIST_NO_AUTOMATIC_BROWSER_ENV__',
     plugins: [
       angular({
         tsconfig: resolve(
@@ -202,12 +200,6 @@ export default defineConfig(({ mode }) => {
       ),
       'import.meta.env.NG_APP_SUPABASE_FUNCTIONS_URL': JSON.stringify(
         mergedEnv.NG_APP_SUPABASE_FUNCTIONS_URL
-      ),
-      'import.meta.env.SUPABASE_DB_URL': JSON.stringify(
-        mergedEnv.SUPABASE_DB_URL
-      ),
-      'import.meta.env.SUPABASE_REMOTE_DB_URL': JSON.stringify(
-        mergedEnv.SUPABASE_REMOTE_DB_URL
       ),
       'import.meta.env.NG_APP_GA4_MEASUREMENT_ID': JSON.stringify(
         mergedEnv.NG_APP_GA4_MEASUREMENT_ID

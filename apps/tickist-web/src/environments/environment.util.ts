@@ -1,10 +1,19 @@
 import { z } from 'zod';
 
+type PublicEnvKey =
+  | 'NG_APP_SUPABASE_URL'
+  | 'NG_APP_SUPABASE_PUBLISHABLE_KEY'
+  | 'NG_APP_SUPABASE_ANON_KEY'
+  | 'NG_APP_SUPABASE_FUNCTIONS_URL'
+  | 'NG_APP_GA4_MEASUREMENT_ID'
+  | 'NG_APP_CLOUDFLARE_ANALYTICS_TOKEN'
+  | 'NG_APP_BUILD_COMMIT';
+
 declare global {
   var __env: Record<string, string | undefined> | undefined;
 }
 
-const getFromGlobal = (key: string): string | undefined => {
+const getFromGlobal = (key: PublicEnvKey): string | undefined => {
   const values = z
     .record(z.string(), z.string().optional())
     .safeParse(globalThis.__env);
@@ -12,15 +21,26 @@ const getFromGlobal = (key: string): string | undefined => {
   return values.success ? values.data[key] : undefined;
 };
 
-const getFromImportMeta = (key: string): string | undefined => {
-  try {
-    return import.meta.env?.[key];
-  } catch {
-    return undefined;
+const getFromImportMeta = (key: PublicEnvKey): string | undefined => {
+  switch (key) {
+    case 'NG_APP_SUPABASE_URL':
+      return import.meta.env.NG_APP_SUPABASE_URL;
+    case 'NG_APP_SUPABASE_PUBLISHABLE_KEY':
+      return import.meta.env.NG_APP_SUPABASE_PUBLISHABLE_KEY;
+    case 'NG_APP_SUPABASE_ANON_KEY':
+      return import.meta.env.NG_APP_SUPABASE_ANON_KEY;
+    case 'NG_APP_SUPABASE_FUNCTIONS_URL':
+      return import.meta.env.NG_APP_SUPABASE_FUNCTIONS_URL;
+    case 'NG_APP_GA4_MEASUREMENT_ID':
+      return import.meta.env.NG_APP_GA4_MEASUREMENT_ID;
+    case 'NG_APP_CLOUDFLARE_ANALYTICS_TOKEN':
+      return import.meta.env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN;
+    case 'NG_APP_BUILD_COMMIT':
+      return import.meta.env.NG_APP_BUILD_COMMIT;
   }
 };
 
-const getFromProcess = (key: string): string | undefined => {
+const getFromProcess = (key: PublicEnvKey): string | undefined => {
   // Available during SSR/build time
   if (typeof process !== 'undefined' && process?.env) {
     return process.env[key];
@@ -29,7 +49,7 @@ const getFromProcess = (key: string): string | undefined => {
   return undefined;
 };
 
-export const readSupabaseEnv = (key: string, fallback = ''): string => {
+export const readSupabaseEnv = (key: PublicEnvKey, fallback = ''): string => {
   return (
     getFromGlobal(key) ??
     getFromImportMeta(key) ??
@@ -38,7 +58,10 @@ export const readSupabaseEnv = (key: string, fallback = ''): string => {
   );
 };
 
-export const readSupabaseEnvAny = (keys: string[], fallback = ''): string => {
+export const readSupabaseEnvAny = (
+  keys: PublicEnvKey[],
+  fallback = ''
+): string => {
   for (const key of keys) {
     const value = readSupabaseEnv(key);
 
