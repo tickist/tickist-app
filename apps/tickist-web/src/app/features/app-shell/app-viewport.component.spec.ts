@@ -11,6 +11,7 @@ import { provideRouter, RouterLink, RouterOutlet } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
+import { EmailMonitoringService } from '../../data/email-monitoring.service';
 import {
   NotificationDataService,
   type NotificationItem,
@@ -39,6 +40,8 @@ class MockToastContainerComponent {}
 describe('AppViewportComponent theme toggle', () => {
   let notifications: ReturnType<typeof signal<NotificationItem[]>>;
   let markAllAsRead: ReturnType<typeof vi.fn>;
+  const adminAllowed = signal(false);
+  const checkAdminAccess = vi.fn(async () => adminAllowed());
   const workspaceItems = signal<Workspace[]>([]);
 
   const selectedWorkspaceId = signal<string | null>(null);
@@ -51,6 +54,8 @@ describe('AppViewportComponent theme toggle', () => {
     localStorage.clear();
     notifications = signal<NotificationItem[]>([]);
     markAllAsRead = vi.fn(async () => undefined);
+    adminAllowed.set(false);
+    checkAdminAccess.mockClear();
     selectedWorkspaceId.set(null);
     selectWorkspace.mockClear();
     workspaceItems.set([{ id: 'work-id', name: 'Work', kind: 'work' }]);
@@ -79,6 +84,13 @@ describe('AppViewportComponent theme toggle', () => {
             refresh: vi.fn(async () => undefined),
             markAsRead: vi.fn(async () => undefined),
             markAllAsRead,
+          },
+        },
+        {
+          provide: EmailMonitoringService,
+          useValue: {
+            allowed: adminAllowed.asReadonly(),
+            checkAccess: checkAdminAccess,
           },
         },
         {
@@ -187,6 +199,29 @@ describe('AppViewportComponent theme toggle', () => {
       'Open profile menu'
     );
     expect(switcher.querySelector('app-project-icon')).not.toBeNull();
+  });
+
+  it('shows the admin panel in the profile menu only after administrator verification', () => {
+    const fixture = TestBed.createComponent(AppViewportComponent);
+    fixture.detectChanges();
+    const profileButton = requiredElement(
+      fixtureHost(fixture),
+      '[aria-label="Open profile menu"]',
+      HTMLButtonElement
+    );
+
+    profileButton.click();
+    fixture.detectChanges();
+    expect(checkAdminAccess).toHaveBeenCalledOnce();
+    expect(
+      fixtureHost(fixture).querySelector('[routerLink="/app/admin/email"]')
+    ).toBeNull();
+
+    adminAllowed.set(true);
+    fixture.detectChanges();
+    expect(
+      fixtureHost(fixture).querySelector('[routerLink="/app/admin/email"]')
+    ).not.toBeNull();
   });
 
   it('keeps long workspace names available in the trigger tooltip', () => {

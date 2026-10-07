@@ -80,6 +80,8 @@ export class EmailMonitoringService {
   async checkAccess(): Promise<boolean> {
     const userId = this.session.user()?.id;
 
+    this.allowed.set(false);
+
     if (!this.supabase || !userId) return false;
 
     try {

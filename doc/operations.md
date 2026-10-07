@@ -85,4 +85,4 @@ The app uses `assets.run_worker_first = ["/*", "!/assets/*", "!/images/*"]` so S
 
 ## Administrator email monitoring
 
-Prepare administrator membership, the SNS topic and confirmed email subscription, and the narrowly scoped `ses:GetAccount`/`sns:Publish` permissions before enabling external alerts. See [email monitoring](email-monitoring.md) for migrations 0029/0030, server-side settings, isolated database tests and deployment verification. The monitor never changes the SES sending quota.
+After migration 0031, grant panel access by setting `public.profiles.is_admin` for a verified existing Auth user in Supabase Table Editor. The database rejects browser writes to this flag. See [email monitoring](email-monitoring.md) for migrations 0029–0031, server-side settings, isolated database tests and deployment verification. The monitor never changes the SES sending quota.

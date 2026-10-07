@@ -53,4 +53,4 @@ SPA fallback remains enabled for application routes. For public blog indexes, th
 
 ## Operator email monitoring
 
-The internal `/app/admin/email` route uses database-managed administrator membership, RLS-protected aggregate snapshots and an authorization-checking overview RPC. SES usage includes SMTP and API in the configured region. Credentials remain in the scheduled Edge Function, and operational alerts use SNS independently of the SES quota. See [administrator email monitoring](email-monitoring.md).
+The internal `/app/admin/email` route uses the operator-managed `public.profiles.is_admin` flag, RLS-protected aggregate snapshots and an authorization-checking overview RPC. Browser roles cannot change the flag. The link appears in Settings and the avatar menu after a server check. SES usage includes SMTP and API in the configured region. Credentials remain in the scheduled Edge Function, and operational alerts use SNS independently of the SES quota. See [administrator email monitoring](email-monitoring.md).

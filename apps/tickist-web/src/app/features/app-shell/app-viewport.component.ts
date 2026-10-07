@@ -21,6 +21,7 @@ import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { NotificationDataService } from '../../data/notification-data.service';
+import { EmailMonitoringService } from '../../data/email-monitoring.service';
 import { AppViewStateService } from './app-view-state.service';
 import { AppSidebarComponent } from './app-sidebar.component';
 import { TaskFabComponent } from '../task-fab/task-fab.component';
@@ -53,6 +54,7 @@ export class AppViewportComponent implements OnDestroy {
   private readonly session = inject(SupabaseSessionService);
   private readonly auth = inject(SupabaseAuthService);
   private readonly notificationsService = inject(NotificationDataService);
+  readonly emailMonitoring = inject(EmailMonitoringService);
   private readonly viewState = inject(AppViewStateService);
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
@@ -263,6 +265,7 @@ export class AppViewportComponent implements OnDestroy {
     if (this.profileMenuOpen()) {
       this.notificationsOpen.set(false);
       this.workspaceMenuOpen.set(false);
+      void this.emailMonitoring.checkAccess();
     }
   }
 
