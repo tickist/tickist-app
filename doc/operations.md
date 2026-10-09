@@ -83,6 +83,8 @@ external log destinations.
 
 The app uses `assets.run_worker_first = ["/*", "!/assets/*", "!/images/*"]` so SPA HTML, `/env.js`, legal noindex and consent/security headers actually execute the Worker. Bundles and images retain direct asset delivery. Check navigation responses as well as direct requests; SPA asset fallback can otherwise bypass the Worker.
 
+The Worker builds the Content-Security-Policy per request in `apps/tickist-web/worker.ts`. `connect-src` and `img-src` allow only `'self'`, the configured Supabase origin (plus its `wss://` Realtime origin and the functions origin), Cloudflare Web Analytics and the Google Analytics endpoints; local Supabase hosts are not allowed in production. The inline theme scripts in `apps/tickist-web/index.html` are allowed by SHA-256 hash; changing them requires updating `INLINE_SCRIPT_HASHES`, and `tests/worker.spec.ts` fails until the hashes match. Paths that bypass the Worker (`/assets/*`, `/images/*`) get `X-Content-Type-Options: nosniff` from `apps/tickist-web/public/_headers`, which Workers Static Assets applies to directly served assets. The build no longer copies repository Markdown files (such as `AGENTS.md` or `README.md`) into the public site.
+
 ## Administrator email monitoring
 
 After migration 0031, grant panel access by setting `public.profiles.is_admin` for a verified existing Auth user in Supabase Table Editor. The database rejects browser writes to this flag. See [email monitoring](email-monitoring.md) for migrations 0029–0031, server-side settings, isolated database tests and deployment verification. The monitor never changes the SES sending quota.

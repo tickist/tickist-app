@@ -16,23 +16,91 @@ interface Env {
   NG_APP_GA4_MEASUREMENT_ID?: string;
 }
 
-const CONTENT_SECURITY_POLICY = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  "frame-ancestors 'none'",
-  "script-src 'self' https://static.cloudflareinsights.com/beacon.min.js https://www.googletagmanager.com/gtag/js",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https:",
-  "font-src 'self' data: https:",
-  "connect-src 'self' https: http://127.0.0.1:54321 http://localhost:54321",
-  "frame-src 'none'",
-  "form-action 'self'",
-  'upgrade-insecure-requests',
-].join('; ');
+/**
+ * Hashes of the inline theme scripts in apps/tickist-web/index.html.
+ * tests/worker.spec.ts recomputes them from the source so they cannot drift.
+ */
+export const INLINE_SCRIPT_HASHES = [
+  "'sha256-ada53GbR6E+SdRJOU0hPVYAzdgO/xisqs5zQKBC1nh0='",
+  "'sha256-9FNxu5w/uQ8pyBInk1U9x+vwyg4NMmjMFIh+5hJ5I9I='",
+] as const;
+
+// Google tag (GA4) endpoints, loaded only after explicit Google Analytics consent.
+const GOOGLE_ANALYTICS_CONNECT = [
+  'https://*.google-analytics.com',
+  'https://*.analytics.google.com',
+  'https://*.googletagmanager.com',
+];
+
+const GOOGLE_ANALYTICS_IMG = [
+  'https://*.google-analytics.com',
+  'https://*.googletagmanager.com',
+];
+
+// Cloudflare Web Analytics beacon reports to cloudflareinsights.com.
+const CLOUDFLARE_INSIGHTS_CONNECT = ['https://cloudflareinsights.com'];
+
+const originOf = (value: string | undefined): string | undefined => {
+  if (!value) return undefined;
+
+  try {
+    const url = new URL(value);
+
+    return url.protocol === 'https:' || url.protocol === 'http:'
+      ? url.origin
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const unique = (values: readonly (string | undefined)[]): string[] => [
+  ...new Set(values.filter((value): value is string => !!value)),
+];
+
+export const buildContentSecurityPolicy = (
+  env: Pick<Env, 'NG_APP_SUPABASE_URL' | 'NG_APP_SUPABASE_FUNCTIONS_URL'>
+): string => {
+  const supabaseOrigin = originOf(env.NG_APP_SUPABASE_URL);
+  const functionsOrigin = originOf(env.NG_APP_SUPABASE_FUNCTIONS_URL);
+
+  // Supabase Realtime uses the WebSocket form of the project origin.
+  const supabaseRealtime = supabaseOrigin?.replace(/^http/, 'ws');
+
+  return [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    [
+      "script-src 'self'",
+      ...INLINE_SCRIPT_HASHES,
+      'https://static.cloudflareinsights.com/beacon.min.js',
+      'https://www.googletagmanager.com/gtag/js',
+    ].join(' '),
+    "style-src 'self' 'unsafe-inline'",
+    unique([
+      "img-src 'self' data: blob:",
+      // Avatars are public objects in Supabase Storage.
+      supabaseOrigin,
+      ...GOOGLE_ANALYTICS_IMG,
+    ]).join(' '),
+    "font-src 'self' data: https:",
+    unique([
+      "connect-src 'self'",
+      supabaseOrigin,
+      supabaseRealtime,
+      functionsOrigin,
+      ...CLOUDFLARE_INSIGHTS_CONNECT,
+      ...GOOGLE_ANALYTICS_CONNECT,
+    ]).join(' '),
+    "frame-src 'none'",
+    "form-action 'self'",
+    'upgrade-insecure-requests',
+  ].join('; ');
+};
 
 const SECURITY_HEADERS = {
-  'Content-Security-Policy': CONTENT_SECURITY_POLICY,
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   'X-Content-Type-Options': 'nosniff',
@@ -338,7 +406,7 @@ const envResponse = (env: Env): Response => {
     },
   });
 
-  return withSecurityHeaders(response);
+  return withSecurityHeaders(response, env);
 };
 
 const shouldServeHtmlFallback = (request: Request): boolean => {
@@ -366,7 +434,7 @@ const fallbackToIndex = async (
   return env.ASSETS.fetch(fallbackRequest);
 };
 
-const withSecurityHeaders = (response: Response): Response => {
+const withSecurityHeaders = (response: Response, env: Env): Response => {
   const headers = new Headers(response.headers);
 
   if (headers.get('content-type')?.includes('text/html')) {
@@ -378,6 +446,8 @@ const withSecurityHeaders = (response: Response): Response => {
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
     headers.set(name, value);
   }
+
+  headers.set('Content-Security-Policy', buildContentSecurityPolicy(env));
 
   return new Response(response.body, {
     status: response.status,
@@ -400,13 +470,13 @@ export default {
       const fallbackResponse = await fallbackToIndex(request, env);
 
       return withRouteIndexPolicy(
-        withSecurityHeaders(withBlogMetadata(fallbackResponse, url)),
+        withSecurityHeaders(withBlogMetadata(fallbackResponse, url), env),
         url
       );
     }
 
     return withRouteIndexPolicy(
-      withSecurityHeaders(withBlogMetadata(assetResponse, url)),
+      withSecurityHeaders(withBlogMetadata(assetResponse, url), env),
       url
     );
   },

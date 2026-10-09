@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import worker, { blogSeoForUrl } from '../worker';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import worker, {
+  INLINE_SCRIPT_HASHES,
+  blogSeoForUrl,
+  buildContentSecurityPolicy,
+} from '../worker';
 
 type WorkerEnv = Parameters<typeof worker.fetch>[1];
 
@@ -153,5 +160,75 @@ describe('Worker route boundaries', () => {
     expect(await res.text()).toBe('asset');
 
     expect(stubAssets.fetch).toHaveBeenCalledWith(req);
+  });
+});
+
+describe('Worker Content-Security-Policy', () => {
+  const directive = (policy: string, name: string): string[] =>
+    policy
+      .split('; ')
+      .find((entry) => entry.startsWith(`${name} `))
+      ?.split(' ')
+      .slice(1) ?? [];
+
+  it('allows exactly the inline scripts in index.html by hash', () => {
+    const html = readFileSync(resolve(__dirname, '../index.html'), 'utf8');
+
+    const hashes = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(
+      (match) =>
+        `'sha256-${createHash('sha256')
+          .update(match[1] ?? '', 'utf8')
+          .digest('base64')}'`
+    );
+
+    expect(hashes.length).toBeGreaterThan(0);
+    expect([...INLINE_SCRIPT_HASHES].sort()).toEqual(hashes.sort());
+
+    const scriptSrc = directive(buildContentSecurityPolicy({}), 'script-src');
+
+    for (const hash of hashes) expect(scriptSrc).toContain(hash);
+    expect(scriptSrc).not.toContain("'unsafe-inline'");
+  });
+
+  it('limits connections and images to configured origins', async () => {
+    const response = await worker.fetch(
+      new Request('https://tickist.com/app'),
+      buildEnv({
+        NG_APP_SUPABASE_FUNCTIONS_URL: 'https://functions.example.com/v1',
+      })
+    );
+
+    const policy = response.headers.get('Content-Security-Policy') ?? '';
+    const connectSrc = directive(policy, 'connect-src');
+    const imgSrc = directive(policy, 'img-src');
+
+    expect(connectSrc).toEqual(
+      expect.arrayContaining([
+        "'self'",
+        'https://test.supabase.co',
+        'wss://test.supabase.co',
+        'https://functions.example.com',
+        'https://cloudflareinsights.com',
+        'https://*.google-analytics.com',
+      ])
+    );
+    expect(imgSrc).toEqual(
+      expect.arrayContaining(["'self'", 'data:', 'https://test.supabase.co'])
+    );
+
+    for (const sources of [connectSrc, imgSrc]) {
+      expect(sources).not.toContain('https:');
+      expect(sources.join(' ')).not.toMatch(/127\.0\.0\.1|localhost/);
+    }
+  });
+
+  it('ignores malformed Supabase configuration', () => {
+    const policy = buildContentSecurityPolicy({
+      NG_APP_SUPABASE_URL: 'not a url',
+      NG_APP_SUPABASE_FUNCTIONS_URL: 'javascript:alert(1)',
+    });
+
+    expect(directive(policy, 'connect-src')).not.toContain('not');
+    expect(policy).not.toContain('javascript:');
   });
 });
