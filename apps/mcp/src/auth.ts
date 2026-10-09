@@ -52,7 +52,21 @@ export class SupabaseTokenVerifier implements OAuthTokenVerifier {
   ) {}
 
   async verifyAccessToken(token: string): Promise<AuthInfo> {
-    const { data, error } = await this.claimsVerifier.getClaims(token);
+    let verified: Awaited<ReturnType<ClaimsVerifier['getClaims']>>;
+
+    try {
+      // auth-js throws plain errors for expired tokens, missing `exp`, and
+      // unsupported algorithms. Every verification failure must still become
+      // an RFC 6750 invalid_token challenge rather than a 500.
+      verified = await this.claimsVerifier.getClaims(token);
+    } catch {
+      throw new OAuthError(
+        OAuthErrorCode.InvalidToken,
+        'Access token could not be verified.'
+      );
+    }
+
+    const { data, error } = verified;
 
     if (error || !data) {
       throw new OAuthError(

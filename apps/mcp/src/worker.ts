@@ -5,9 +5,9 @@ import {
   getOAuthProtectedResourceMetadataUrl,
   hostHeaderValidationResponse,
   oauthMetadataResponse,
-  originValidationResponse,
   preloadSchemas,
   requireBearerAuth,
+  type AuthInfo,
   type AuthMetadataOptions,
   type McpHttpHandler,
 } from '@modelcontextprotocol/server';
@@ -26,6 +26,12 @@ const app = new Hono<{ Bindings: McpEnvironment }>();
 
 const handlers = new WeakMap<McpEnvironment, McpHttpHandler>();
 
+type BearerGate = (request: Request) => Promise<AuthInfo | Response>;
+
+// One verifier per environment keeps the Supabase client's JWKS cache warm
+// across requests served by the same isolate.
+const bearerGates = new WeakMap<McpEnvironment, BearerGate>();
+
 const MODERN_PROTOCOL_VERSION = '2026-07-28';
 
 const MAX_BODY_BYTES = 64 * 1024;
@@ -41,6 +47,10 @@ const CORS_REQUEST_HEADERS = new Set([
   'mcp-resume-from',
   'mcp-session-id',
 ]);
+
+function tooLarge(): Response {
+  return Response.json({ error: 'Request body too large.' }, { status: 413 });
+}
 
 function oauthMetadata(env: McpEnvironment) {
   const issuer = env.MCP_OAUTH_ISSUER.replace(/\/$/u, '');
@@ -82,6 +92,59 @@ function allowedHosts(env: McpEnvironment): string[] {
   return [...hosts];
 }
 
+function allowedOrigins(env: McpEnvironment): Set<string> {
+  const origins = new Set<string>();
+
+  for (const host of allowedHosts(env)) {
+    try {
+      origins.add(new URL(`https://${host}`).origin);
+    } catch {
+      // An unparsable configured host never matches an Origin.
+    }
+  }
+
+  return origins;
+}
+
+function isAllowedOrigin(origin: string, env: McpEnvironment): boolean {
+  let parsed: URL;
+
+  try {
+    parsed = new URL(origin);
+  } catch {
+    return false;
+  }
+
+  // Compare the serialized origin (scheme, host, and port) rather than only
+  // the hostname, so http:// or non-default-port origins on an allowed host
+  // are rejected.
+  return (
+    parsed.protocol === 'https:' &&
+    parsed.origin === origin &&
+    allowedOrigins(env).has(parsed.origin)
+  );
+}
+
+function originRejection(
+  request: Request,
+  env: McpEnvironment
+): Response | undefined {
+  const origin = request.headers.get('Origin');
+
+  if (origin === null || origin === '' || isAllowedOrigin(origin, env)) {
+    return undefined;
+  }
+
+  return Response.json(
+    {
+      jsonrpc: '2.0',
+      error: { code: -32_000, message: 'Invalid Origin.' },
+      id: null,
+    },
+    { status: 403 }
+  );
+}
+
 function requestedCorsHeaders(request: Request): string[] | Response {
   const requested = (
     request.headers.get('Access-Control-Request-Headers') ?? ''
@@ -111,7 +174,7 @@ function withResponseHeaders(
 
   const origin = request.headers.get('Origin');
 
-  if (env && origin && !originValidationResponse(request, allowedHosts(env))) {
+  if (env && origin && isAllowedOrigin(origin, env)) {
     headers.set('Access-Control-Allow-Origin', origin);
     headers.append('Vary', 'Origin');
     headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -165,6 +228,23 @@ function handlerFor(env: McpEnvironment): McpHttpHandler {
   return handler;
 }
 
+function bearerGateFor(env: McpEnvironment): BearerGate {
+  const current = bearerGates.get(env);
+
+  if (current) return current;
+
+  const gate = requireBearerAuth({
+    verifier: new SupabaseTokenVerifier(env),
+    resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(
+      new URL(env.MCP_RESOURCE_URL)
+    ),
+  });
+
+  bearerGates.set(env, gate);
+
+  return gate;
+}
+
 function metadataDocumentResponse(
   request: Request,
   metadata: ReturnType<typeof buildOAuthProtectedResourceMetadata>
@@ -201,12 +281,52 @@ function bearerToken(request: Request): string | undefined {
   return match?.[1];
 }
 
-async function rateLimitKey(request: Request): Promise<string> {
-  // Authentication happens after this coarse limiter, so an unverified Bearer
-  // value must never select its own bucket. Otherwise arbitrary token rotation
-  // would bypass the limit.
-  const source = `ip:${request.headers.get('CF-Connecting-IP') ?? 'unknown'}`;
+function expandIpv6(address: string): string[] | undefined {
+  const halves = address.toLowerCase().split('::');
 
+  if (halves.length > 2) return undefined;
+
+  const parse = (part: string | undefined): string[] =>
+    part ? part.split(':') : [];
+
+  const head = parse(halves[0]);
+  const tail = parse(halves[1]);
+  const missing = 8 - head.length - tail.length;
+
+  if (halves.length === 1 ? missing !== 0 : missing < 1) return undefined;
+
+  const groups = [
+    ...head,
+    ...Array<string>(Math.max(missing, 0)).fill('0'),
+    ...tail,
+  ];
+
+  return groups.every((group) => /^[0-9a-f]{1,4}$/u.test(group))
+    ? groups.map((group) => group.padStart(4, '0'))
+    : undefined;
+}
+
+/**
+ * Selects the per-address rate-limit source. IPv6 clients usually control a
+ * whole /64, so they share one bucket per /64 prefix.
+ */
+export function clientAddressBucket(address: string | null): string {
+  const value = address?.trim() ?? '';
+
+  if (!value) return 'ip:unknown';
+
+  const mapped = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/iu.exec(value);
+
+  if (mapped) return `ip:${mapped[1]}`;
+
+  if (!value.includes(':')) return `ip:${value}`;
+
+  const groups = expandIpv6(value.replace(/%.*$/u, ''));
+
+  return groups ? `ip6:${groups.slice(0, 4).join(':')}::/64` : `ip:${value}`;
+}
+
+async function hashedRateLimitKey(source: string): Promise<string> {
   const digest = await crypto.subtle.digest(
     'SHA-256',
     new TextEncoder().encode(source)
@@ -215,6 +335,58 @@ async function rateLimitKey(request: Request): Promise<string> {
   return Array.from(new Uint8Array(digest), (byte) =>
     byte.toString(16).padStart(2, '0')
   ).join('');
+}
+
+async function rateLimited(
+  env: McpEnvironment,
+  source: string
+): Promise<Response | undefined> {
+  const result = await env.MCP_RATE_LIMITER.limit({
+    key: await hashedRateLimitKey(source),
+  });
+
+  return result.success
+    ? undefined
+    : Response.json(
+        { error: 'rate_limit_exceeded' },
+        { status: 429, headers: { 'Retry-After': '60' } }
+      );
+}
+
+async function readLimitedBody(
+  body: ReadableStream<Uint8Array> | null
+): Promise<ArrayBuffer | Response> {
+  if (!body) return new ArrayBuffer(0);
+
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+
+  for (;;) {
+    const { done, value } = await reader.read();
+
+    if (done) break;
+
+    total += value.byteLength;
+
+    if (total > MAX_BODY_BYTES) {
+      await reader.cancel().catch(() => undefined);
+
+      return tooLarge();
+    }
+
+    chunks.push(value);
+  }
+
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  return bytes.buffer;
 }
 
 async function validatedRequest(request: Request): Promise<Request | Response> {
@@ -237,17 +409,24 @@ async function validatedRequest(request: Request): Promise<Request | Response> {
     );
   }
 
-  const declared = Number(request.headers.get('Content-Length') ?? '0');
+  const declared = request.headers.get('Content-Length');
 
-  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
-    return Response.json({ error: 'Request body too large.' }, { status: 413 });
+  if (declared !== null) {
+    if (!/^\d+$/u.test(declared.trim())) {
+      return Response.json(
+        { error: 'Invalid Content-Length header.' },
+        { status: 400 }
+      );
+    }
+
+    if (Number(declared.trim()) > MAX_BODY_BYTES) return tooLarge();
   }
 
-  const body = await request.arrayBuffer();
+  // The declared length is advisory (it may be absent or wrong), so the body
+  // is always counted while streaming and abandoned once it exceeds the limit.
+  const body = await readLimitedBody(request.body);
 
-  if (body.byteLength > MAX_BODY_BYTES) {
-    return Response.json({ error: 'Request body too large.' }, { status: 413 });
-  }
+  if (body instanceof Response) return body;
 
   try {
     JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(body));
@@ -262,24 +441,76 @@ async function validatedRequest(request: Request): Promise<Request | Response> {
   return new Request(request, { body });
 }
 
+function legacyBackendUrl(env: McpEnvironment): URL | undefined {
+  if (!env.LEGACY_MCP_URL) return undefined;
+
+  try {
+    const url = new URL(env.LEGACY_MCP_URL);
+
+    return url.protocol === 'https:' ? url : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function forwardPersonalToken(
   request: Request,
   env: McpEnvironment
 ): Promise<Response> {
-  if (!env.LEGACY_MCP_URL) {
+  const target = legacyBackendUrl(env);
+
+  // Fail closed: personal tokens are never sent to a missing, malformed, or
+  // plaintext backend.
+  if (!target) {
     return Response.json(
       { error: 'Personal-token compatibility backend is not configured.' },
       { status: 503 }
     );
   }
 
-  const headers = new Headers(request.headers);
+  const headers = new Headers();
+
+  for (const [name, value] of request.headers) {
+    const lower = name.toLowerCase();
+
+    // Forward only the MCP request headers clients may send. Everything else
+    // (cookies, Cloudflare and proxy metadata, Origin) stays at the edge.
+    if (
+      CORS_REQUEST_HEADERS.has(lower) ||
+      /^mcp-param-[a-z0-9-]+$/u.test(lower)
+    ) {
+      headers.set(name, value);
+    }
+  }
+
   headers.set('apikey', env.SUPABASE_PUBLISHABLE_KEY);
 
-  return fetch(env.LEGACY_MCP_URL, {
+  const upstream = await fetch(target, {
     method: request.method,
     headers,
-    body: request.body,
+    body: await request.arrayBuffer(),
+  });
+
+  // The Worker's own CORS policy decides cross-origin access; never relay
+  // the legacy backend's CORS or cookie headers. The runtime has already
+  // decoded the body, so its original encoding and length no longer apply.
+  const responseHeaders = new Headers();
+
+  for (const [name, value] of upstream.headers) {
+    const lower = name.toLowerCase();
+
+    if (
+      !lower.startsWith('access-control-') &&
+      !['set-cookie', 'content-encoding', 'content-length'].includes(lower)
+    ) {
+      responseHeaders.append(name, value);
+    }
+  }
+
+  return new Response(upstream.body, {
+    status: upstream.status,
+    statusText: upstream.statusText,
+    headers: responseHeaders,
   });
 }
 
@@ -325,21 +556,20 @@ app.all('/mcp', async (context) => {
 
   const rejected =
     hostHeaderValidationResponse(context.req.raw, hosts) ??
-    originValidationResponse(context.req.raw, hosts);
+    originRejection(context.req.raw, env);
 
   if (rejected) return rejected;
 
   if (context.req.raw.method === 'POST') {
-    const rateLimit = await env.MCP_RATE_LIMITER.limit({
-      key: await rateLimitKey(context.req.raw),
-    });
+    // Authentication happens after this coarse limiter, so an unverified
+    // Bearer value must never select its own bucket. Otherwise arbitrary
+    // token rotation would bypass the limit.
+    const limited = await rateLimited(
+      env,
+      clientAddressBucket(context.req.raw.headers.get('CF-Connecting-IP'))
+    );
 
-    if (!rateLimit.success) {
-      return Response.json(
-        { error: 'rate_limit_exceeded' },
-        { status: 429, headers: { 'Retry-After': '60' } }
-      );
-    }
+    if (limited) return limited;
   }
 
   const checked = await validatedRequest(context.req.raw);
@@ -358,16 +588,19 @@ app.all('/mcp', async (context) => {
 
   if (token?.startsWith('tk_')) return forwardPersonalToken(checked, env);
 
-  const gate = requireBearerAuth({
-    verifier: new SupabaseTokenVerifier(env),
-    resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(
-      new URL(env.MCP_RESOURCE_URL)
-    ),
-  });
-
-  const auth = await gate(checked);
+  const auth = await bearerGateFor(env)(checked);
 
   if (auth instanceof Response) return auth;
+
+  const userId = z.string().safeParse(auth.extra?.['userId']).data;
+
+  // A verified subject also gets its own bucket so one account cannot spread
+  // load across many addresses.
+  if (userId !== undefined) {
+    const limited = await rateLimited(env, `user:${userId}`);
+
+    if (limited) return limited;
+  }
 
   return handlerFor(env).fetch(checked, { authInfo: auth });
 });

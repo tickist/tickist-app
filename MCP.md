@@ -177,8 +177,10 @@ http_headers = { Authorization = "Bearer <your-api-token>" }
 
 ## Security
 
-- **CORS**: Restricted to `tickist.com` and `localhost:4200` origins
-- **Body size limit**: 64 KB maximum per request
+- **Origin and CORS**: A browser `Origin` must exactly match `https://` plus a configured MCP host on the default port; other origins are rejected before authentication
+- **Body size limit**: 64 KB maximum per request, enforced while the body streams even without a valid `Content-Length`
+- **Rate limits**: 120 POST requests per minute per connecting address (IPv6 grouped by /64) and, after OAuth verification, per user
+- **Personal-token bridge**: Forwards only MCP request headers to an `https://` `LEGACY_MCP_URL` and never relays its CORS or cookie headers
 - **Token storage**: SHA-256 hashed, raw value never stored
 - **Ownership checks**: Every query filters by authenticated `owner_id`
 - **Service role**: Not available to the MCP Worker

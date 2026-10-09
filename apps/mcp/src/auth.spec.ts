@@ -1,7 +1,8 @@
-import { OAuthError } from '@modelcontextprotocol/server';
+import { OAuthError, OAuthErrorCode } from '@modelcontextprotocol/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseTokenVerifier } from './auth';
 import { MCP_TOOL_SCOPES } from './config';
+import { signEs256Jwt } from './testing/jwt';
 
 const getClaims = vi.fn();
 
@@ -17,7 +18,10 @@ describe('SupabaseTokenVerifier', () => {
     MCP_RATE_LIMITER: { limit: async () => ({ success: true }) },
   };
 
-  afterEach(() => vi.clearAllMocks());
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.restoreAllMocks();
+  });
 
   it('accepts a signed MCP OAuth token with tool permissions', async () => {
     getClaims.mockResolvedValue({
@@ -92,5 +96,39 @@ describe('SupabaseTokenVerifier', () => {
     await expect(
       verifier.verifyAccessToken('forged.jwt.token')
     ).rejects.toThrow('signature could not be verified');
+  });
+
+  it.each(['JWT has expired', 'Missing exp claim', 'Unsupported algorithm'])(
+    'maps a thrown verification error to invalid_token: %s',
+    async (message) => {
+      getClaims.mockRejectedValue(new Error(message));
+      const verifier = new SupabaseTokenVerifier(environment, { getClaims });
+      const result = verifier.verifyAccessToken('expired.jwt.token');
+
+      await expect(result).rejects.toBeInstanceOf(OAuthError);
+      await expect(result).rejects.toMatchObject({
+        code: OAuthErrorCode.InvalidToken,
+      });
+    }
+  );
+
+  it('rejects a real expired ES256 token through the Supabase client', async () => {
+    const fetchRequest = vi.spyOn(globalThis, 'fetch');
+
+    const token = await signEs256Jwt({
+      aud: environment.MCP_ALLOWED_AUDIENCE,
+      exp: Math.floor(Date.now() / 1000) - 60,
+      iss: environment.MCP_OAUTH_ISSUER,
+      sub: userId,
+      tickist_mcp: true,
+      tickist_mcp_scopes: MCP_TOOL_SCOPES,
+    });
+
+    const verifier = new SupabaseTokenVerifier(environment);
+
+    await expect(verifier.verifyAccessToken(token)).rejects.toMatchObject({
+      code: OAuthErrorCode.InvalidToken,
+    });
+    expect(fetchRequest).not.toHaveBeenCalled();
   });
 });
