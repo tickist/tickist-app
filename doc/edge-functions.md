@@ -55,12 +55,24 @@ The outbox makes sending idempotent and observable. Failed delivery is retried o
 ## Scheduler observability retention
 
 `supabase/migrations/0020_retain_scheduler_observability.sql` schedules a daily
-03:17 UTC maintenance job. It retains seven days of completed `pg_cron` run
-history in `cron.job_run_details` and 24 hours of `pg_net` HTTP responses in
-`net._http_response`. These are diagnostic records only; the job never deletes
-application tasks, reminders, notifications, email-outbox records, or scheduler
-definitions. Keeping this history bounded prevents scheduler diagnostics from
-consuming database storage indefinitely.
+03:17 UTC maintenance job; migration 0032 shortens its run-history window. It
+retains one day of completed `pg_cron` run history in `cron.job_run_details`
+and 24 hours of `pg_net` HTTP responses in `net._http_response`. These are
+diagnostic records only; the job never deletes application tasks, reminders,
+notifications, email-outbox records, or scheduler definitions. Keeping this
+history bounded prevents scheduler diagnostics from consuming database storage
+indefinitely.
+
+Migration 0032 also gates the per-minute `task-reminder-runner` and
+`send-emails` jobs: `pg_net` calls the function only when a reminder or email is
+claimable or holds a lock that may need stale recovery. Idle minutes therefore
+write no HTTP responses, which keeps the project within its Disk IO budget.
+
+If `net._http_response` grows far beyond its live rows (the pg_net cleanup
+then dominates `pg_stat_statements`), reclaim it once with
+`vacuum (full, analyze) net._http_response;` against the remote database. This
+holds a short exclusive lock on the diagnostic table only; queued requests wait
+and no application data changes.
 
 ## Application and email retention
 
