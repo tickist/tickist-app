@@ -63,6 +63,21 @@ If a production database password is found in a public artifact, treat it as com
 
 Read `DEPLOY.md` and `docs/EMAIL.md` before changing production email, scheduler, or secret configuration.
 
+### Workflow supply chain
+
+Every action in `.github/workflows/*.yml` is pinned to a full commit SHA with the release tag in a trailing comment. Dependabot (`.github/dependabot.yml`) proposes weekly updates against `develop`; review the upstream release before merging. `supabase/setup-cli` installs an exact Supabase CLI version, and Wrangler runs from the lockfile devDependency (`npx wrangler`), so CI never fetches an unpinned `latest` release.
+
+### Recommended manual step: production Environment
+
+Production secrets are currently repository-level Actions secrets, readable by any workflow on any branch. The owner should move them into a GitHub Environment named `production`:
+
+1. In repository Settings → Environments, create `production` and restrict deployment branches to `master` (optionally add required reviewers).
+2. Recreate every secret used by `.github/workflows/production.yml` as an Environment secret, verifying names against the workflow.
+3. Add `environment: production` to the deploy job in `production.yml` and run a deployment from `master`.
+4. Only after a successful run, delete the repository-level copies.
+
+Do not add `environment: production` to the workflow before the Environment and its secrets exist; the job would lose access to its secrets.
+
 Application history cleanup is documented in [data retention](data-retention.md); apply migration 0025 before updating the project-invite function.
 
 - [Registration and legal documents](legal-registration.md) — versioned public documents, server acceptance records and the publication gate.
