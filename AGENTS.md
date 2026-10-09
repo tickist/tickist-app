@@ -17,7 +17,7 @@ Read the relevant document when changing its contract: [product behaviour](doc/p
 ## Sustainability and management context
 
 - Tickist should remain free to use, with public application code. The owner does not want access subscriptions, premium features, or premium services. Financial support must be voluntary and must not change access to features.
-- The first financial goal is to cover service costs, followed by development tools and eventually the creator's time. Keep infrastructure costs separate from development tools such as Codex. Do not invent costs, revenue, audience size, or funding profiles.
+- The first financial goal is to cover service costs, followed by development tools and eventually the creator's time. Keep infrastructure costs separate from development tools such as Codex or Claude Code. Do not invent costs, revenue, audience size, or funding profiles.
 - [tickist/management](https://github.com/tickist/management) owns strategy, budgets, outreach plans, and unpublished social media drafts. Its local checkout may be available at `../management`; application work must not depend on that checkout or access to the repository.
 - For strategy, funding, or weekly planning tasks, read management's `AGENTS.md`, `strategy/strategy.md`, `strategy/90-days.md`, and `content/calendar.md` as relevant. Use `finance/costs.md` and `finance/monthly.csv` for budgeting. Check current progress there instead of treating the original plan as completed work or assuming its start date.
 - Preparing drafts does not authorize posting, contacting people, opening a funding profile, or spending money. Preserve the owner's distinction between a proposed action and its actual execution.
@@ -62,4 +62,4 @@ Keep strategy, funding plans, budgets, and unpublished social media drafts in [t
 
 Product behaviour changes update the relevant English `doc/` page and both public LLM files (`llm.txt`, `llm-full.txt`). Update README for changed setup, commands, architecture, or positioning. Blog content/schema changes also update `doc/blog.md` and the LLM editorial/SEO contract. Indexable-route changes also update sitemap, robots, and `doc/public-content.md`; use the generator for generated artifacts.
 
-For internal tooling or instruction-only changes, update the affected developer guidance; do not describe them as product capabilities in the public LLM files. Agent configuration and hook maintenance are documented in [agent tooling](doc/agent-tooling.md).
+For internal tooling or instruction-only changes, update the affected developer guidance; do not describe them as product capabilities in the public LLM files. Agent configuration, supported tools, and hook maintenance are documented in [agent tooling](doc/agent-tooling.md). These instructions are shared by every agent tool; tool-specific files only point here.
