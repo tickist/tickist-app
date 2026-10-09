@@ -39,6 +39,8 @@ Each project owner's workspace is stored on the project and constrained to the s
 
 The `list_accessible_project_assignees` security-definer function exposes only user IDs and display labels for owners and accepted members of projects available to the current user. It does not expose Auth records or profile preferences to the browser.
 
+Migration 0033 adds write guards that RLS policies alone could not express. A membership row cannot be moved to another project or user, an owner cannot add themselves as a member, and only the invited person can accept. Members can only answer a pending invitation. Direct sharing without an invitation is limited to existing collaborators; other inserts become pending invitations. Browser and MCP writers cannot change a task's `owner_id`. Only the author or the source project's owner can move a task, and the target project must be accessible. Personal API tokens are generated server-side by `create_api_token`, which rejects delegated OAuth/MCP sessions. MCP audit rows can be opened and completed once, but not rewritten. Avatar files stay publicly readable by URL, but the bucket can no longer be listed. `tools/security/sharing-access.integration.sql` covers these rules. Run it like the other local-only integration scripts, inside a rolled-back transaction with `ON_ERROR_STOP=1`.
+
 ## Server-side automation
 
 Edge Functions handle reminders, shared-project updates, invitations, notification digests, outbox enqueueing, email delivery, and routines. The old `tickist-mcp` function remains only as a temporary bridge for hashed personal tokens. Sensitive functions use `INTERNAL_FUNCTION_SECRET`, a validated user JWT, or a hashed personal API token as appropriate. AWS SES credentials remain in Edge Function secrets.

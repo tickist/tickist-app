@@ -44,25 +44,14 @@ export class ApiTokenService {
       return;
     }
 
-    this.tokens.set(
-      data.map((row) => ({
-        id: row.id,
-        name: row.name,
-        tokenPrefix: row.token_prefix,
-        scopes: row.scopes ?? [],
-        lastUsedAt: row.last_used_at ?? null,
-        expiresAt: row.expires_at ?? null,
-        createdAt: row.created_at,
-      }))
-    );
+    this.tokens.set(data.map(toApiToken));
   }
 
   /**
-   * Generates a new API token.
+   * Generates a new API token on the server.
    * Returns the raw token value (shown once) plus the created record.
    */
   async createToken(
-    ownerId: string,
     name: string
   ): Promise<{ rawToken: string; token: ApiToken } | null> {
     if (!this.supabase) {
@@ -71,42 +60,21 @@ export class ApiTokenService {
       return null;
     }
 
-    const rawToken = generateToken();
-    const tokenHash = await sha256Hex(rawToken);
-    const tokenPrefix = rawToken.slice(0, 8);
-
     const { data, error } = await this.supabase
-      .from('api_tokens')
-      .insert({
-        owner_id: ownerId,
-        name,
-        token_hash: tokenHash,
-        token_prefix: tokenPrefix,
-      })
-      .select(
-        'id, name, token_prefix, scopes, last_used_at, expires_at, created_at'
-      )
-      .single();
+      .rpc('create_api_token', { p_name: name })
+      .single<ApiTokenRow & { raw_token: string }>();
 
-    if (error || !data) {
+    if (error || !data?.raw_token) {
       console.error('[ApiTokens] Failed to create token', error);
 
       return null;
     }
 
-    const created: ApiToken = {
-      id: data.id,
-      name: data.name,
-      tokenPrefix: data.token_prefix,
-      scopes: data.scopes ?? [],
-      lastUsedAt: data.last_used_at ?? null,
-      expiresAt: data.expires_at ?? null,
-      createdAt: data.created_at,
-    };
+    const created = toApiToken(data);
 
     this.tokens.set([created, ...this.tokens()]);
 
-    return { rawToken, token: created };
+    return { rawToken: data.raw_token, token: created };
   }
 
   async deleteToken(tokenId: string): Promise<boolean> {
@@ -133,25 +101,24 @@ export class ApiTokenService {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function generateToken(): string {
-  const bytes = new Uint8Array(32);
-  crypto.getRandomValues(bytes);
-
-  return (
-    'tk_' +
-    Array.from(bytes)
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('')
-  );
+interface ApiTokenRow {
+  id: string;
+  name: string;
+  token_prefix: string;
+  scopes: string[] | null;
+  last_used_at: string | null;
+  expires_at: string | null;
+  created_at: string;
 }
 
-async function sha256Hex(value: string): Promise<string> {
-  const digest = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(value)
-  );
-
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+function toApiToken(row: ApiTokenRow): ApiToken {
+  return {
+    id: row.id,
+    name: row.name,
+    tokenPrefix: row.token_prefix,
+    scopes: row.scopes ?? [],
+    lastUsedAt: row.last_used_at ?? null,
+    expiresAt: row.expires_at ?? null,
+    createdAt: row.created_at,
+  };
 }

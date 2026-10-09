@@ -706,7 +706,7 @@ export class SettingsComponent {
     this.tokenCopied.set(false);
 
     try {
-      const result = await this.apiTokenService.createToken(user.id, name);
+      const result = await this.apiTokenService.createToken(name);
 
       if (result) {
         this.revealedToken.set(result.rawToken);
