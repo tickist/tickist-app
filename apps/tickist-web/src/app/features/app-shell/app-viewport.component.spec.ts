@@ -204,6 +204,7 @@ describe('AppViewportComponent theme toggle', () => {
   it('shows the admin panel in the profile menu only after administrator verification', () => {
     const fixture = TestBed.createComponent(AppViewportComponent);
     fixture.detectChanges();
+
     const profileButton = requiredElement(
       fixtureHost(fixture),
       '[aria-label="Open profile menu"]',
