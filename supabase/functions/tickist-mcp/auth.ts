@@ -1,47 +1,30 @@
-// Dual-mode authentication: Supabase JWT (OAuth) or API token (Codex/CLI)
+// Personal API token authentication for the MCP compatibility bridge.
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { AuthError, parsePersonalApiToken } from './auth-token.ts';
+
+export { AuthError } from './auth-token.ts';
 
 export interface AuthResult {
   userId: string;
-  /** null means an authenticated Supabase session with the full user grant. */
-  scopes: readonly string[] | null;
+  /** Scopes selected for the personal API token. */
+  scopes: readonly string[];
 }
 
 /**
- * Authenticate a request using either:
- * 1. Supabase JWT (from OAuth flow / ChatGPT)
- * 2. Personal API token (from Codex / CLI)
+ * Authenticate a request with a hashed personal API token (`tk_` prefix).
+ * Supabase JWTs are rejected; OAuth clients use the dedicated MCP Worker.
  */
 export const authenticateRequest = async (
   req: Request,
   supabaseUrl: string,
   supabaseServiceKey: string
 ): Promise<AuthResult> => {
-  const authorization = req.headers.get('Authorization')?.trim() ?? '';
-  if (!authorization) {
-    throw new AuthError('Missing Authorization header');
-  }
+  const token = parsePersonalApiToken(req.headers.get('Authorization'));
 
-  const [scheme, token] = authorization.split(/\s+/, 2);
-  if (scheme?.toLowerCase() !== 'bearer' || !token) {
-    throw new AuthError(
-      'Invalid Authorization header format. Expected: Bearer <token>'
-    );
-  }
-
-  // Strategy 1: Try Supabase JWT
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
-  const {
-    data: { user },
-    error: jwtError,
-  } = await supabase.auth.getUser(token);
-
-  if (!jwtError && user) {
-    return { userId: user.id, scopes: null };
-  }
-
-  // Strategy 2: Try API token lookup
+  const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
   const tokenHash = await sha256Hex(token);
   const { data: apiToken, error: tokenError } = await supabase
     .from('api_tokens')
@@ -73,13 +56,6 @@ export const authenticateRequest = async (
 
   return { userId: apiToken.owner_id, scopes };
 };
-
-export class AuthError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'AuthError';
-  }
-}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

@@ -8,6 +8,7 @@ import {
   defaultTaskAssigneeIds,
   isProjectSharedByMultipleMembers,
   isProjectSharedWithOthers,
+  parseProjectInviteResponse,
 } from './project-data.service';
 import { StatisticsDataService } from './statistics-data.service';
 
@@ -150,6 +151,44 @@ describe('ProjectDataService schema compatibility', () => {
         isInbox: true,
       }),
     ]);
+  });
+});
+
+describe('parseProjectInviteResponse', () => {
+  it('accepts the neutral invite result without member details', () => {
+    expect(
+      parseProjectInviteResponse({
+        ok: true,
+        code: 'invite_processed',
+        request_id: 'request-1',
+      })
+    ).toEqual({ ok: true, code: 'invite_processed' });
+    expect(
+      parseProjectInviteResponse({ ok: true, code: 'already_member' })
+    ).toEqual({ ok: true, code: 'already_member' });
+  });
+
+  it('maps legacy invited and user_not_found results to the neutral result', () => {
+    expect(
+      parseProjectInviteResponse({
+        ok: true,
+        code: 'invited',
+        member: { userId: 'user-2', email: 'a@example.com', status: 'pending' },
+      })
+    ).toEqual({ ok: true, code: 'invite_processed' });
+    expect(
+      parseProjectInviteResponse({
+        ok: false,
+        code: 'user_not_found',
+        message: 'This person needs to create a Tickist account first.',
+      })
+    ).toEqual({ ok: true, code: 'invite_processed' });
+  });
+
+  it('rejects unknown result codes', () => {
+    expect(() =>
+      parseProjectInviteResponse({ ok: true, code: 'surprise' })
+    ).toThrow();
   });
 });
 

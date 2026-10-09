@@ -1,3 +1,5 @@
+import { internalSecretMatches } from './timing-safe.ts';
+
 export interface EmailQuotaSample {
   region: string;
   sent_last_24h: number;
@@ -93,7 +95,6 @@ export function alertMessage(
 export function internalRequestAllowed(req: Request, secret: string): boolean {
   return (
     req.method === 'POST' &&
-    secret.length > 0 &&
-    req.headers.get('x-internal-function-secret') === secret
+    internalSecretMatches(req.headers.get('x-internal-function-secret'), secret)
   );
 }

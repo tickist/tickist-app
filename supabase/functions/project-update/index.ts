@@ -1,17 +1,23 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { requireEnv, requireSupabaseSecretKey } from "../_shared/common.ts";
+import {
+  asOptionalString,
+  isRecord,
+  requireEnv,
+  requireSupabaseSecretKey,
+} from "../_shared/common.ts";
 
 interface ProjectEventPayload {
-  projectId: string;
-  recipients: string[];
-  title: string;
-  description: string;
-  event: "shared" | "removed";
+  projectId?: unknown;
+  recipients?: unknown;
+  title?: unknown;
+  description?: unknown;
+  event?: unknown;
 }
 
 interface ProjectMemberRow {
   user_id: string;
+  status: "pending" | "accepted" | "declined" | null;
 }
 
 const MAX_RECIPIENTS = 100;
@@ -46,23 +52,46 @@ serve(async (req) => {
   const requestId = crypto.randomUUID();
   let payload: ProjectEventPayload;
   try {
-    payload = (await req.json()) as ProjectEventPayload;
+    const parsed: unknown = await req.json();
+    if (!isRecord(parsed)) {
+      return jsonResponse(400, { error: "Invalid JSON payload", request_id: requestId });
+    }
+    payload = parsed;
   } catch {
-    return jsonResponse(400, { error: "Invalid JSON payload" });
+    return jsonResponse(400, { error: "Invalid JSON payload", request_id: requestId });
   }
 
-  const projectId = payload.projectId?.trim() ?? "";
+  if (
+    !Array.isArray(payload.recipients) ||
+    !payload.recipients.every((id) => typeof id === "string")
+  ) {
+    return jsonResponse(400, {
+      error: "recipients must be an array of strings",
+      request_id: requestId,
+    });
+  }
+  if (
+    (payload.projectId !== undefined && typeof payload.projectId !== "string") ||
+    (payload.title !== undefined && typeof payload.title !== "string") ||
+    (payload.description !== undefined && typeof payload.description !== "string")
+  ) {
+    return jsonResponse(400, { error: "Invalid payload field types", request_id: requestId });
+  }
+
+  const projectId = asOptionalString(payload.projectId) ?? "";
   const event = payload.event;
-  const title = payload.title?.trim() ?? "";
-  const description = payload.description?.trim() ?? "";
-  const recipients = Array.isArray(payload.recipients)
-    ? Array.from(new Set(payload.recipients.map((id) => id.trim()).filter(Boolean)))
-    : [];
+  const title = asOptionalString(payload.title) ?? "";
+  const description = asOptionalString(payload.description) ?? "";
+  const recipients = Array.from(
+    new Set(
+      (payload.recipients as string[]).map((id) => id.trim()).filter(Boolean),
+    ),
+  );
 
   if (!projectId || recipients.length === 0) {
     return jsonResponse(400, { error: "Missing projectId or recipients", request_id: requestId });
   }
-  if (!["shared", "removed"].includes(event)) {
+  if (event !== "shared" && event !== "removed") {
     return jsonResponse(400, { error: "Invalid event", request_id: requestId });
   }
   if (!title || title.length > MAX_TITLE_LENGTH) {
@@ -104,7 +133,7 @@ serve(async (req) => {
 
   const { data: memberRows, error: membersError } = await supabase
     .from("project_members")
-    .select("user_id")
+    .select("user_id, status")
     .eq("project_id", projectId)
     .in("user_id", recipients);
   if (membersError) {
@@ -114,7 +143,8 @@ serve(async (req) => {
     });
     return jsonResponse(500, { error: "Internal server error", request_id: requestId });
   }
-  const memberIds = new Set((memberRows as ProjectMemberRow[] | null)?.map((row) => row.user_id));
+  const rows = (memberRows as ProjectMemberRow[] | null) ?? [];
+  const memberIds = new Set(rows.map((row) => row.user_id));
   const invalidRecipients = recipients.filter((recipientId) => !memberIds.has(recipientId));
   if (invalidRecipients.length) {
     return jsonResponse(403, {
@@ -123,7 +153,17 @@ serve(async (req) => {
     });
   }
 
-  const inserts = recipients.map((recipientId) => ({
+  // Only collaborators who accepted the project are notified. Pending or
+  // declined invitees must not receive project details through this channel.
+  const acceptedIds = new Set(
+    rows.filter((row) => row.status === "accepted").map((row) => row.user_id),
+  );
+  const acceptedRecipients = recipients.filter((recipientId) => acceptedIds.has(recipientId));
+  if (!acceptedRecipients.length) {
+    return jsonResponse(200, { ok: true, inserted: 0 });
+  }
+
+  const inserts = acceptedRecipients.map((recipientId) => ({
     recipient_id: recipientId,
     title,
     description,

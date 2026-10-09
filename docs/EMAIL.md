@@ -3,7 +3,7 @@
 Ten dokument opisuje produkcyjne ustawienie wysyłki emaili w Tickist:
 
 - **Supabase Auth** (reset hasła, magic link, potwierdzenie email): przez **SMTP AWS SES** skonfigurowany w Supabase Dashboard.
-- **Notyfikacje aplikacyjne**: kolejka `public.email_outbox` + Edge Functions `notification-digest-runner`, `task-reminder-runner`, `enqueue-notification` i `send-emails` wysyłające przez **AWS SES API (SigV4)**.
+- **Notyfikacje aplikacyjne**: kolejka `public.email_outbox` + Edge Functions `notification-digest-runner`, `task-reminder-runner` i `send-emails` wysyłające przez **AWS SES API (SigV4)**.
 
 `From` jest zawsze ustawiany przez secret `EMAIL_FROM`, np. `no-reply@tickist.com`.
 
@@ -33,7 +33,7 @@ Uwagi:
 - Supabase Auth SMTP jest niezależne od workerów outbox.
 - Dla produkcji nie używaj domyślnego SMTP Supabase.
 
-## 2) Notyfikacje aplikacyjne (digest/enqueue + batch sender)
+## 2) Notyfikacje aplikacyjne (digest + batch sender)
 
 Architektura:
 
@@ -41,18 +41,12 @@ Architektura:
 2. Harmonogram wywołuje `notification-digest-runner` co 5-15 minut.
 3. Runner sprawdza preferencje daily/weekly, buduje digest i zapisuje rekord do `public.email_outbox` przez `public.enqueue_email(...)`.
 4. Harmonogram wywołuje `task-reminder-runner` co 1 minutę i enqueue'uje przypomnienia z `public.task_reminders`.
-5. Opcjonalnie klient/user może wywołać `enqueue-notification`, żeby dodać pojedynczy email do outbox.
-6. Harmonogram wywołuje `send-emails` co 1 minutę.
-7. Worker pobiera batch, wysyła przez SES API, aktualizuje statusy i retry.
+5. Harmonogram wywołuje `send-emails` co 1 minutę.
+6. Worker pobiera batch, wysyła przez SES API, aktualizuje statusy i retry.
 
 Zasady bezpieczeństwa:
 
-- `enqueue-notification`:
-  - wymaga JWT użytkownika,
-  - nie akceptuje `to_email` w body (400),
-  - bierze odbiorcę wyłącznie z `auth user` (JWT/`auth.admin.getUserById`),
-  - wymaga potwierdzonego emaila (`email_confirmed_at`),
-  - wymusza, aby `dedupe_key` zawierał `userId`.
+- Przeglądarka nie może bezpośrednio kolejkować emaili; outbox zapisują wyłącznie funkcje serwerowe i triggery bazy.
 - `send-emails`:
   - działa tylko z `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`.
 - `notification-digest-runner`:

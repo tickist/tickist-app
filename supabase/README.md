@@ -61,7 +61,6 @@ Reports are written to `reports/firebase-migration/<timestamp>/`.
 - `functions/project-update/index.ts`: notifies collaborators when they are added/removed from a shared project.
 - `functions/routine-runner/index.ts`: cron-friendly endpoint that processes `routine_reminders` entries and writes notifications (placeholder for real automation).
 - `functions/notification-digest-runner/index.ts`: cron-friendly endpoint that enqueues daily and weekly email summaries based on `notification_preferences`.
-- `functions/enqueue-notification/index.ts`: authenticated enqueue endpoint that writes to `public.email_outbox`.
 - `functions/send-emails/index.ts`: internal-secret protected batch worker that sends queued emails through AWS SES API.
 
 Run locally (requires Supabase CLI):
@@ -72,7 +71,6 @@ supabase functions serve task-reminder --env-file .env
 supabase functions serve project-update --env-file .env
 supabase functions serve routine-runner --env-file .env
 supabase functions serve notification-digest-runner --env-file .env
-supabase functions serve enqueue-notification --env-file .env
 supabase functions serve send-emails --env-file .env
 ```
 
@@ -116,12 +114,6 @@ curl -X POST http://localhost:54321/functions/v1/routine-runner \
 
 curl -X POST http://localhost:54321/functions/v1/notification-digest-runner \
   -H 'x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>'
-
-curl -X POST http://localhost:54321/functions/v1/enqueue-notification \
-  -H 'Authorization: Bearer <USER_ACCESS_TOKEN>' \
-  -H 'apikey: <SUPABASE_PUBLISHABLE_KEY>' \
-  -H 'Content-Type: application/json' \
-  -d '{"subject":"Test","text":"Hello from outbox","type":"notification"}'
 
 curl -X POST http://localhost:54321/functions/v1/send-emails \
   -H 'x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>' \
