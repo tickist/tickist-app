@@ -8,7 +8,7 @@ import {
   defaultTaskAssigneeIds,
   isProjectSharedByMultipleMembers,
   isProjectSharedWithOthers,
-  parseProjectInviteResponse,
+  projectInviteResponseSchema,
 } from './project-data.service';
 import { StatisticsDataService } from './statistics-data.service';
 
@@ -154,30 +154,30 @@ describe('ProjectDataService schema compatibility', () => {
   });
 });
 
-describe('parseProjectInviteResponse', () => {
+describe('projectInviteResponseSchema', () => {
   it('accepts the neutral invite result without member details', () => {
     expect(
-      parseProjectInviteResponse({
+      projectInviteResponseSchema.parse({
         ok: true,
         code: 'invite_processed',
         request_id: 'request-1',
       })
     ).toEqual({ ok: true, code: 'invite_processed' });
     expect(
-      parseProjectInviteResponse({ ok: true, code: 'already_member' })
+      projectInviteResponseSchema.parse({ ok: true, code: 'already_member' })
     ).toEqual({ ok: true, code: 'already_member' });
   });
 
   it('maps legacy invited and user_not_found results to the neutral result', () => {
     expect(
-      parseProjectInviteResponse({
+      projectInviteResponseSchema.parse({
         ok: true,
         code: 'invited',
         member: { userId: 'user-2', email: 'a@example.com', status: 'pending' },
       })
     ).toEqual({ ok: true, code: 'invite_processed' });
     expect(
-      parseProjectInviteResponse({
+      projectInviteResponseSchema.parse({
         ok: false,
         code: 'user_not_found',
         message: 'This person needs to create a Tickist account first.',
@@ -187,7 +187,7 @@ describe('parseProjectInviteResponse', () => {
 
   it('rejects unknown result codes', () => {
     expect(() =>
-      parseProjectInviteResponse({ ok: true, code: 'surprise' })
+      projectInviteResponseSchema.parse({ ok: true, code: 'surprise' })
     ).toThrow();
   });
 });

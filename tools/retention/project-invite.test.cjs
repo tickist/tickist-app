@@ -14,21 +14,16 @@ const code = ts.transpileModule(source, {
   },
 }).outputText;
 
-async function requestInvitation(existing, recipientExists = true) {
+async function requestInvitation(
+  existing,
+  recipientExists = true,
+  recentInvites = 0
+) {
   let handler;
   const calls = { upserts: 0, notifications: 0, emails: [] };
   const client = {
     auth: {
       getUser: async () => ({ data: { user: { id: 'owner' } } }),
-      admin: {
-        listUsers: async () => ({
-          data: {
-            users: recipientExists
-              ? [{ id: 'recipient', email: 'recipient@example.invalid' }]
-              : [],
-          },
-        }),
-      },
     },
     from(table) {
       const chain = {
@@ -38,6 +33,7 @@ async function requestInvitation(existing, recipientExists = true) {
         eq() {
           return chain;
         },
+        gt: async () => ({ count: recentInvites, error: null }),
         maybeSingle: async () => ({
           data:
             table === 'projects'
@@ -56,7 +52,10 @@ async function requestInvitation(existing, recipientExists = true) {
       };
       return chain;
     },
-    rpc: async (_name, args) => {
+    rpc: async (name, args) => {
+      if (name === 'find_auth_user_id_by_email') {
+        return { data: recipientExists ? 'recipient' : null, error: null };
+      }
       calls.emails.push(args);
       return {};
     },
@@ -115,7 +114,7 @@ test('expired invitation uses the new database generation for deduplication', as
     invited_at: new Date(Date.now() - 31 * 86400000).toISOString(),
   });
   assert.equal(r.status, 200);
-  assert.equal(r.body.code, 'invited');
+  assert.equal(r.body.code, 'invite_processed');
   assert.equal(r.calls.upserts, 1);
   assert.equal(
     r.calls.emails[0].p_dedupe_key,
@@ -132,8 +131,37 @@ test('accepted membership is not replaced or emailed again', async () => {
 test('an email without a Tickist account receives no invitation or stored membership', async () => {
   const r = await requestInvitation(null, false);
   assert.equal(r.status, 200);
-  assert.equal(r.body.code, 'user_not_found');
+  assert.equal(r.body.code, 'invite_processed');
   assert.equal(r.calls.upserts, 0);
   assert.equal(r.calls.notifications, 0);
+  assert.equal(r.calls.emails.length, 0);
+});
+
+test('an unknown and a known address get the same response', async () => {
+  const unknown = await requestInvitation(null, false);
+  const known = await requestInvitation(null, true);
+  assert.equal(unknown.status, known.status);
+  assert.deepEqual(
+    { ...unknown.body, request_id: undefined },
+    { ...known.body, request_id: undefined }
+  );
+  assert.equal(known.calls.upserts, 1);
+});
+
+test('owners are limited to 20 invitations per hour', async () => {
+  const r = await requestInvitation(null, true, 20);
+  assert.equal(r.status, 429);
+  assert.equal(r.body.code, 'rate_limited');
+  assert.equal(r.calls.upserts, 0);
+});
+
+test('a recently declined invitation is not sent again', async () => {
+  const r = await requestInvitation({
+    status: 'declined',
+    invited_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    declined_at: new Date().toISOString(),
+  });
+  assert.equal(r.status, 429);
+  assert.equal(r.calls.upserts, 0);
   assert.equal(r.calls.emails.length, 0);
 });

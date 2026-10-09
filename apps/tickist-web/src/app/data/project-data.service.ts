@@ -141,27 +141,24 @@ export type ProjectInviteResult = {
   code: 'invite_processed' | 'already_pending' | 'already_member';
 };
 
-const projectInviteResponseSchema = z.union([
-  z.object({
-    ok: z.literal(true),
-    code: z.enum(['invite_processed', 'already_pending', 'already_member']),
-  }),
-  // Responses from a project-invite deployment that predates neutral results.
-  z.object({
-    ok: z.boolean(),
-    code: z.enum(['invited', 'user_not_found']),
-  }),
-]);
-
-export function parseProjectInviteResponse(body: unknown): ProjectInviteResult {
-  const parsed = projectInviteResponseSchema.parse(body);
-
-  if (parsed.code === 'invited' || parsed.code === 'user_not_found') {
-    return { ok: true, code: 'invite_processed' };
-  }
-
-  return { ok: true, code: parsed.code };
-}
+export const projectInviteResponseSchema = z
+  .union([
+    z.object({
+      ok: z.literal(true),
+      code: z.enum(['invite_processed', 'already_pending', 'already_member']),
+    }),
+    // Responses from a project-invite deployment that predates neutral results.
+    z.object({
+      ok: z.boolean(),
+      code: z.enum(['invited', 'user_not_found']),
+    }),
+  ])
+  .transform(
+    (parsed): ProjectInviteResult =>
+      parsed.code === 'invited' || parsed.code === 'user_not_found'
+        ? { ok: true, code: 'invite_processed' }
+        : { ok: true, code: parsed.code }
+  );
 
 type ProjectMemberRow = {
   project_id: string;
@@ -426,7 +423,7 @@ export class ProjectDataService {
 
     await this.refresh();
 
-    return parseProjectInviteResponse(body);
+    return projectInviteResponseSchema.parse(body);
   }
 
   async respondToInvite(
