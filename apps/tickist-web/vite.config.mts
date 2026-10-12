@@ -4,7 +4,6 @@ import { resolve } from 'path';
 import { execSync } from 'child_process';
 import angular from '@analogjs/vite-plugin-angular';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { VitePWA } from 'vite-plugin-pwa';
 
 const resolveBuildCommit = (loaded: Record<string, string>): string => {
@@ -79,7 +78,6 @@ export default defineConfig(({ mode }) => {
         ),
       }),
       nxViteTsPaths(),
-      nxCopyAssetsPlugin(['../../*.md']),
       VitePWA({
         disable: isTestMode,
         registerType: 'prompt',

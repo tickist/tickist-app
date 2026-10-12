@@ -8,3 +8,6 @@
 .nx/self-healing
 # Preserve the vendored upstream plugin source.
 /tools/oxlint/anti-slop
+# Preserve vendored upstream skills tracked in skills-lock.json.
+/.agents/skills/supabase
+/.agents/skills/supabase-postgres-best-practices

@@ -34,6 +34,9 @@ import {
 
 type ProjectTab = 'general' | 'extra' | 'sharing' | 'branding';
 
+export const INVITE_PROCESSED_MESSAGE =
+  'If this person has a Tickist account, they will receive an invitation.';
+
 @Component({
   selector: 'app-project-composer',
   imports: [
@@ -243,21 +246,12 @@ export class ProjectComposerComponent {
         return;
       }
 
-      if (result.ok === false) {
-        this.inviteFeedback.set({
-          type: 'error',
-          message: result.message,
-        });
-
-        return;
-      }
-
       this.inviteFeedback.set({
         type: result.code === 'already_member' ? 'info' : 'success',
         message:
           result.code === 'already_member'
             ? 'This person already has access.'
-            : 'Invite sent.',
+            : INVITE_PROCESSED_MESSAGE,
       });
       this.editingProject.set(
         this.projects.list().find((project) => project.id === editing.id) ??

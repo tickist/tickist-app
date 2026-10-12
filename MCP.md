@@ -5,7 +5,7 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that 
 ## Features
 
 - **13 tools**: Full CRUD for tasks, projects, and tags
-- **Dual authentication**: OAuth 2.1 (ChatGPT) + Bearer API tokens (Codex/CLI)
+- **Dual authentication**: OAuth 2.1 (ChatGPT) + Bearer API tokens (Codex, Claude Code, other CLI clients)
 - **Deployed as**: Dedicated Cloudflare Worker at `mcp.tickist.com`
 - **Protocol**: MCP 2026-07-28 with 2025-06-18 compatibility
 
@@ -37,7 +37,7 @@ Authorization: Bearer <supabase-access-token>
 
 ChatGPT and similar AI clients authenticate users through Supabase Auth's OAuth server. The user logs in via the Tickist login page, and the resulting JWT is used to authenticate MCP requests.
 
-### Option B: Personal API Token (Codex / CLI)
+### Option B: Personal API Token (Codex, Claude Code, CLI)
 
 Generate a personal API token from **Settings → API Tokens** in the Tickist app, then use it as a Bearer token:
 
@@ -141,9 +141,9 @@ curl -X POST https://mcp.tickist.com/mcp \
    - **Auth type**: OAuth 2.0
 3. Users log in via Tickist's Supabase auth page
 
-## Connecting to Codex
+## Connecting to Codex, Claude Code, and other MCP clients
 
-Add to your MCP client config:
+Any client that supports streamable HTTP MCP with a custom header works. Generic client config:
 
 ```json
 {
@@ -158,12 +158,29 @@ Add to your MCP client config:
 }
 ```
 
+Claude Code:
+
+```bash
+claude mcp add --transport http tickist https://mcp.tickist.com/mcp \
+  --header "Authorization: Bearer <your-api-token>"
+```
+
+Codex (`~/.codex/config.toml`):
+
+```toml
+[mcp_servers.tickist]
+url = "https://mcp.tickist.com/mcp"
+http_headers = { Authorization = "Bearer <your-api-token>" }
+```
+
 ---
 
 ## Security
 
-- **CORS**: Restricted to `tickist.com` and `localhost:4200` origins
-- **Body size limit**: 64 KB maximum per request
+- **Origin and CORS**: A browser `Origin` must exactly match `https://` plus a configured MCP host on the default port; other origins are rejected before authentication
+- **Body size limit**: 64 KB maximum per request, enforced while the body streams even without a valid `Content-Length`
+- **Rate limits**: 120 POST requests per minute per connecting address (IPv6 grouped by /64) and, after OAuth verification, per user
+- **Personal-token bridge**: Forwards only MCP request headers to an `https://` `LEGACY_MCP_URL` and never relays its CORS or cookie headers
 - **Token storage**: SHA-256 hashed, raw value never stored
 - **Ownership checks**: Every query filters by authenticated `owner_id`
 - **Service role**: Not available to the MCP Worker

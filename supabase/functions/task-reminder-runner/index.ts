@@ -8,6 +8,7 @@ import {
   requireInternalFunctionSecret,
   requireSupabaseSecretKey,
 } from "../_shared/common.ts";
+import { internalSecretMatches } from "../_shared/timing-safe.ts";
 
 interface RunnerPayload {
   limit?: number;
@@ -47,7 +48,7 @@ serve(async (req) => {
   const requestId = crypto.randomUUID();
   const providedSecret = getInternalFunctionSecret(req);
   const internalFunctionSecret = requireInternalFunctionSecret();
-  if (!providedSecret || providedSecret !== internalFunctionSecret) {
+  if (!internalSecretMatches(providedSecret, internalFunctionSecret)) {
     return jsonResponse(403, { error: "Forbidden", request_id: requestId });
   }
 

@@ -63,6 +63,21 @@ If a production database password is found in a public artifact, treat it as com
 
 Read `DEPLOY.md` and `docs/EMAIL.md` before changing production email, scheduler, or secret configuration.
 
+### Workflow supply chain
+
+Every action in `.github/workflows/*.yml` is pinned to a full commit SHA with the release tag in a trailing comment. Dependabot (`.github/dependabot.yml`) proposes weekly updates against `develop`; review the upstream release before merging. `supabase/setup-cli` installs an exact Supabase CLI version, and Wrangler runs from the lockfile devDependency (`npx wrangler`), so CI never fetches an unpinned `latest` release.
+
+### Recommended manual step: production Environment
+
+Production secrets are currently repository-level Actions secrets, readable by any workflow on any branch. The owner should move them into a GitHub Environment named `production`:
+
+1. In repository Settings → Environments, create `production` and restrict deployment branches to `master` (optionally add required reviewers).
+2. Recreate every secret used by `.github/workflows/production.yml` as an Environment secret, verifying names against the workflow.
+3. Add `environment: production` to the deploy job in `production.yml` and run a deployment from `master`.
+4. Only after a successful run, delete the repository-level copies.
+
+Do not add `environment: production` to the workflow before the Environment and its secrets exist; the job would lose access to its secrets.
+
 Application history cleanup is documented in [data retention](data-retention.md); apply migration 0025 before updating the project-invite function.
 
 - [Registration and legal documents](legal-registration.md) — versioned public documents, server acceptance records and the publication gate.
@@ -83,6 +98,8 @@ external log destinations.
 
 The app uses `assets.run_worker_first = ["/*", "!/assets/*", "!/images/*"]` so SPA HTML, `/env.js`, legal noindex and consent/security headers actually execute the Worker. Bundles and images retain direct asset delivery. Check navigation responses as well as direct requests; SPA asset fallback can otherwise bypass the Worker.
 
+The Worker builds the Content-Security-Policy per request in `apps/tickist-web/worker.ts`. `connect-src` and `img-src` allow only `'self'`, the configured Supabase origin (plus its `wss://` Realtime origin and the functions origin), Cloudflare Web Analytics and the Google Analytics endpoints; local Supabase hosts are not allowed in production. The inline theme scripts in `apps/tickist-web/index.html` are allowed by SHA-256 hash; changing them requires updating `INLINE_SCRIPT_HASHES`, and `tests/worker.spec.ts` fails until the hashes match. Paths that bypass the Worker (`/assets/*`, `/images/*`) get `X-Content-Type-Options: nosniff` from `apps/tickist-web/public/_headers`, which Workers Static Assets applies to directly served assets. The build no longer copies repository Markdown files (such as `AGENTS.md` or `README.md`) into the public site.
+
 ## Administrator email monitoring
 
-Prepare administrator membership, the SNS topic and confirmed email subscription, and the narrowly scoped `ses:GetAccount`/`sns:Publish` permissions before enabling external alerts. See [email monitoring](email-monitoring.md) for migrations 0029/0030, server-side settings, isolated database tests and deployment verification. The monitor never changes the SES sending quota.
+After migration 0031, grant panel access by setting `public.profiles.is_admin` for a verified existing Auth user in Supabase Table Editor. The database rejects browser writes to this flag. See [email monitoring](email-monitoring.md) for migrations 0029–0031, server-side settings, isolated database tests and deployment verification. The monitor never changes the SES sending quota.

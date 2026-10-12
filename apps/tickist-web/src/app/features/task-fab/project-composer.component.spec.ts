@@ -3,13 +3,22 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
-import { ProjectComposerComponent } from './project-composer.component';
+import {
+  INVITE_PROCESSED_MESSAGE,
+  ProjectComposerComponent,
+} from './project-composer.component';
 
 describe('ProjectComposerComponent sheet header', () => {
   let fixture: ComponentFixture<ProjectComposerComponent>;
   let component: ProjectComposerComponent;
+  let inviteByEmail: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
+    inviteByEmail = vi.fn(async () => ({
+      ok: true,
+      code: 'invite_processed',
+    }));
+
     await TestBed.configureTestingModule({
       imports: [ProjectComposerComponent],
       providers: [
@@ -19,6 +28,7 @@ describe('ProjectComposerComponent sheet header', () => {
             list: () => [],
             createProject: vi.fn(async () => null),
             updateProject: vi.fn(async () => null),
+            inviteByEmail,
           },
         },
         {
@@ -56,6 +66,46 @@ describe('ProjectComposerComponent sheet header', () => {
 
     expect(fixtureHost(fixture).textContent).toContain('Edit project');
     expect(fixtureHost(fixture).textContent).toContain('Trip planning');
+  });
+
+  it('shows a neutral result that does not reveal whether an account exists', async () => {
+    component.preset = {
+      mode: 'edit',
+      project: createProject(),
+    };
+    fixture.detectChanges();
+
+    component.inviteInput.set('someone@example.com');
+    await component.addInvite();
+
+    expect(inviteByEmail).toHaveBeenCalledWith(
+      'project-1',
+      'someone@example.com'
+    );
+    expect(component.inviteFeedback()).toEqual({
+      type: 'success',
+      message: INVITE_PROCESSED_MESSAGE,
+    });
+    expect(INVITE_PROCESSED_MESSAGE).toBe(
+      'If this person has a Tickist account, they will receive an invitation.'
+    );
+  });
+
+  it('reports an existing member as already having access', async () => {
+    inviteByEmail.mockResolvedValueOnce({ ok: true, code: 'already_member' });
+    component.preset = {
+      mode: 'edit',
+      project: createProject(),
+    };
+    fixture.detectChanges();
+
+    component.inviteInput.set('member@example.com');
+    await component.addInvite();
+
+    expect(component.inviteFeedback()).toEqual({
+      type: 'info',
+      message: 'This person already has access.',
+    });
   });
 
   it('uses themed buttons instead of a native project type dropdown', () => {

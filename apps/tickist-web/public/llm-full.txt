@@ -14,7 +14,7 @@ The product is not a public content site or a generic file store. It is an authe
 - Users start with Work and Private workspaces, can create and rename others in Settings, and can select All or one workspace in the navigation bar beside the avatar; the switcher displays an icon on mobile. Existing projects begin in Private. The choice filters project and task views, dashboard, tags, tree, and statistics; Inbox and notifications stay available. Subprojects share their parent's workspace. Recipients place shared projects in their own workspace independently of the owner.
 - Projects can be active, nested under another project, or organised into special sidebar groups such as Someday/Maybe, routine reminders, weekdays, and future work. A selected project task list includes that project's tasks and every nested descendant by default. If descendants exist, independent checkboxes beside the selected project and each descendant temporarily include or exclude that project's own tasks; changing the selected project resets all of them to included.
 - Projects have a name, description, colour, icon, task-view preference, and defaults for task creation. Branding provides a searchable catalogue of 151 Lucide icons.
-- A project owner can invite collaborators with existing Tickist accounts; an address without an account receives no invitation email or stored membership. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
+- A project owner can invite collaborators with existing Tickist accounts; an address without an account receives no invitation email or stored membership. The inviter sees the same neutral confirmation whether or not the address has an account. Owners can send or renew at most 20 invitations per hour, and an address invited or declined within the last 24 hours is not re-invited to the same project. Members can accept or decline invitations; accepted members can work in the shared project according to their role.
 
 ### Tasks
 
@@ -56,7 +56,7 @@ The product is not a public content site or a generic file store. It is an authe
 - OAuth 2.1 uses authorization code with PKCE through Supabase Auth. Its access-token hook preserves the standard `authenticated` audience and adds the exact MCP resource audience. The Worker publishes RFC 9728 metadata, supports dynamic client registration for compatibility, cryptographically verifies access-token signatures against Supabase Auth signing keys, and then checks issuer, MCP audience, expiry, subject, `tickist_mcp = true`, and the signed `tickist_mcp_scopes` claim. Supabase PostgREST enforces user-scoped RLS for data access. Consent is handled at `/auth/oauth/consent`; users list and revoke grants at `/app/settings/connected-apps`.
 - Tickist's Supabase OAuth server is reserved for MCP clients. Supabase accepts the standard `openid` scope; the access-token hook supplies all six project, task, and tag tool permissions in `tickist_mcp_scopes`. Personal tokens retain their independently selected `projects:*`, `tasks:*`, and `tags:*` scopes.
 - OAuth tools use the public Supabase publishable key and the user's Bearer token, so RLS authorizes owners and accepted project members. The MCP Worker has no service-role credential. Tool permissions are enforced before handlers, and mutations write payload-free user audit records.
-- Existing hashed `tk_` personal tokens retain their scopes and are temporarily forwarded to the old Edge Function. That function is a compatibility backend, not a second independently maintained MCP catalogue, and is retired after a separately approved token transition.
+- Existing hashed `tk_` personal tokens retain their scopes and are temporarily forwarded to the old Edge Function, which accepts only `tk_` personal tokens and rejects Supabase JWTs. That function is a compatibility backend, not a second independently maintained MCP catalogue, and is retired after a separately approved token transition.
 - The authenticated production MCP smoke sequence is temporarily disabled by default. It can be enabled with the GitHub Actions repository variable `ENABLE_MCP_OAUTH_SMOKE=true`, and its credentials are scoped only to the conditional smoke steps.
 - Host, Origin, CORS request headers, strict UTF-8 JSON, actual body size, request identifiers, arguments, and tool names are validated before data access. A dedicated Cloudflare binding limits MCP POST requests per hashed connecting address and does not trust unverified Bearer values as limiter keys. Credentials and user payloads are not logged; client-visible failures omit database diagnostics, and all MCP Worker responses are noindex.
 
@@ -104,7 +104,7 @@ The bottom of the public landing page introduces Spendist, a related open-source
 
 ## 5. Notifications and automation
 
-Tickist uses an outbox pattern for application email. The browser or a scheduled worker queues an email; a protected worker sends it through AWS SES and records its status.
+Tickist uses an outbox pattern for application email. A server-side function, database trigger, or scheduled worker queues an email; a protected worker sends it through AWS SES and records its status.
 
 Important Edge Functions:
 
@@ -112,7 +112,6 @@ Important Edge Functions:
 - `routine-runner`: processes routine-reminder work.
 - `project-update` and `project-invite`: support shared-project changes and invitations.
 - `notification-digest-runner`: queues daily and weekly digests from notification preferences.
-- `enqueue-notification`: authenticated endpoint for adding an application email to the outbox.
 - `send-emails`: internal-secret-protected batch sender using AWS SES.
 - `tickist-mcp`: temporary compatibility backend for existing hashed personal API tokens.
 

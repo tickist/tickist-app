@@ -21,7 +21,7 @@
     "db:backup:test": "node --test tools/backup/backup.test.mjs tools/backup/prune.test.mjs",
     "test": "nx test",
     "update:nx": "npm exec nx migrate latest",
-    "deploy:worker": "npx --yes wrangler@4 deploy --config wrangler.toml",
+    "deploy:worker": "npx wrangler deploy --config wrangler.toml",
     "mcp:worker:check": "nx run mcp:worker:dry-run",
     "mcp:worker:deploy": "wrangler deploy --config wrangler.mcp.toml",
     "db:reset": "npm run db:reset:local",

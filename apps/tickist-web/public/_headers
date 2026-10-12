@@ -1,0 +1,7 @@
+# Workers Static Assets headers for paths served without running the Worker
+# (see run_worker_first in wrangler.toml). The Worker sets headers elsewhere.
+/assets/*
+  X-Content-Type-Options: nosniff
+
+/images/*
+  X-Content-Type-Options: nosniff

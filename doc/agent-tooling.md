@@ -6,6 +6,22 @@ Tickist's instruction layout follows [OpenAI's guidance on skills and prompts fo
 
 `AGENTS.md` contains shared repository facts, access boundaries, and delivery expectations. `CLAUDE.md` imports it instead of maintaining another copy. The knowledge-base index routes by task. Product contracts remain in their domain documents and source code.
 
+## Supported agent tools
+
+`AGENTS.md` is the single instruction source. Tool-specific files point to it or configure the tool; they never carry their own copy of the rules.
+
+| Tool           | Instructions                                            | Configuration in this repository                                                          |
+| -------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Codex          | `AGENTS.md` natively                                    | `.codex/config.toml` (Nx MCP, multi-agent), `.codex/agents/`, `.agents/skills/`           |
+| Claude Code    | `CLAUDE.md` imports `AGENTS.md`                         | `.claude/settings.json` (Nx plugin), `.claude/skills/` symlinks to `.agents/skills/`      |
+| Gemini CLI     | `.gemini/settings.json` sets `contextFileName`          | Nx MCP server, `.gemini/commands/`                                                        |
+| OpenCode       | `AGENTS.md` natively                                    | `opencode.json` (Nx MCP), `.opencode/agents/`, `.opencode/commands/`, `.opencode/skills/` |
+| GitHub Copilot | `AGENTS.md` natively; `.github/copilot-instructions.md` | `.github/agents/`, `.github/prompts/`, `.github/skills/`                                  |
+| Cursor         | `AGENTS.md` natively                                    | Nx may generate ignored `.cursor/rules/nx-rules.mdc`                                      |
+| Antigravity    | `AGENTS.md` natively                                    | `.agent/skills/`                                                                          |
+
+The parent workspace and the management repository use the same pattern with `CLAUDE.md` and `.gemini/settings.json` beside their `AGENTS.md`. When adding a tool, add a pointer file and its configuration, extend this table, and add its directory to the Oxlint ignore list in `.oxlintrc.json`.
+
 Business strategy, budgets, funding plans, and social media drafts are maintained in [tickist/management](https://github.com/tickist/management), with its own agent instructions. Keep implementation guidance and blog publication sources in this repository; builds and deployments must not require management access.
 
 The root `AGENTS.md` also records the owner's free-access and voluntary-funding constraints and points planning tasks to the current management documents. Keep changing budgets, weekly progress, and draft publication status in management rather than duplicating them in application instructions.
@@ -30,7 +46,7 @@ The Cloud decision/state scripts and configured CI helper remain available for a
 
 ## Hooks and configuration
 
-The repository currently defines no agent event hooks in `.codex/config.toml` or `.claude/settings.json`. The checkout has no configured Git hooks path and only sample Git hooks. Claude settings register the Nx plugin; hooks from a separately installed plugin or global user configuration are outside this repository's controls.
+The repository currently defines no agent event hooks in `.codex/config.toml`, `.claude/settings.json`, `.gemini/settings.json`, or `opencode.json`. The checkout has no configured Git hooks path and only sample Git hooks. Claude settings register the Nx plugin; hooks from a separately installed plugin or global user configuration are outside this repository's controls.
 
 Caveman startup, mode-tracker, and statistics hooks are not bundled. The stats skill reports available runtime measurements or explains that they are unavailable. A short response style does not imply measured token savings.
 

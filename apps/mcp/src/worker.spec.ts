@@ -1,9 +1,14 @@
 import type { JsonRecord } from '@tickist/data-access-tickist';
-import type { AuthInfo } from '@modelcontextprotocol/server';
+import {
+  OAuthError,
+  OAuthErrorCode,
+  type AuthInfo,
+} from '@modelcontextprotocol/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseTokenVerifier } from './auth';
-import type { McpEnvironment } from './config';
-import app from './worker';
+import { MCP_TOOL_SCOPES, type McpEnvironment } from './config';
+import { signEs256Jwt } from './testing/jwt';
+import app, { clientAddressBucket } from './worker';
 
 const env: McpEnvironment = {
   SUPABASE_URL: 'https://tickist-test.supabase.co',
@@ -350,5 +355,294 @@ describe('Tickist MCP Worker', () => {
       },
     });
     expect(fetchRequest).not.toHaveBeenCalled();
+  });
+
+  it('challenges an expired signed JWT with 401 and resource metadata', async () => {
+    const fetchRequest = vi.spyOn(globalThis, 'fetch');
+
+    const token = await signEs256Jwt({
+      aud: env.MCP_ALLOWED_AUDIENCE,
+      exp: Math.floor(Date.now() / 1000) - 60,
+      iss: env.MCP_OAUTH_ISSUER,
+      sub: '00000000-0000-4000-8000-000000000001',
+      tickist_mcp: true,
+      tickist_mcp_scopes: MCP_TOOL_SCOPES,
+    });
+
+    const response = await app.request(
+      request(
+        { jsonrpc: '2.0', id: 1, method: 'server/discover' },
+        { Authorization: `Bearer ${token}` }
+      ),
+      undefined,
+      env
+    );
+
+    expect(response.status).toBe(401);
+    expect(response.headers.get('www-authenticate')).toContain(
+      'error="invalid_token"'
+    );
+    expect(response.headers.get('www-authenticate')).toContain(
+      'resource_metadata="https://mcp.tickist.com/.well-known/oauth-protected-resource/mcp"'
+    );
+    expect(fetchRequest).not.toHaveBeenCalled();
+  });
+
+  it('reuses one token verifier per Worker environment', async () => {
+    const verifiers: unknown[] = [];
+
+    vi.spyOn(
+      SupabaseTokenVerifier.prototype,
+      'verifyAccessToken'
+    ).mockImplementation(async function (this: SupabaseTokenVerifier) {
+      verifiers.push(this);
+      throw new OAuthError(OAuthErrorCode.InvalidToken, 'test');
+    });
+
+    const otherEnv: McpEnvironment = { ...env };
+
+    for (const target of [env, env, otherEnv]) {
+      const response = await app.request(
+        request({ jsonrpc: '2.0', id: 1, method: 'server/discover' }),
+        undefined,
+        target
+      );
+
+      expect(response.status).toBe(401);
+    }
+
+    expect(verifiers).toHaveLength(3);
+    expect(verifiers[0]).toBe(verifiers[1]);
+    expect(verifiers[2]).not.toBe(verifiers[0]);
+  });
+
+  it('stops reading an undeclared streamed body once it exceeds 64 KB', async () => {
+    let pulls = 0;
+    const chunk = new Uint8Array(16 * 1024).fill(0x20);
+
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulls += 1;
+        controller.enqueue(chunk);
+      },
+    });
+
+    const verify = vi.spyOn(
+      SupabaseTokenVerifier.prototype,
+      'verifyAccessToken'
+    );
+
+    // Node's fetch requires `duplex` for stream bodies; the DOM RequestInit
+    // type used by this project does not declare it yet.
+    const streamedInit: RequestInit & { duplex: 'half' } = {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer test-token',
+        'Content-Type': 'application/json',
+        Host: 'mcp.tickist.com',
+      },
+      body,
+      duplex: 'half',
+    };
+
+    const response = await app.request(
+      new Request(env.MCP_RESOURCE_URL, streamedInit),
+      undefined,
+      env
+    );
+
+    expect(response.status).toBe(413);
+    expect(pulls).toBeLessThanOrEqual(8);
+    expect(verify).not.toHaveBeenCalled();
+  });
+
+  it.each(['abc', '12abc', '-1', '1e3'])(
+    'rejects a non-numeric Content-Length: %s',
+    async (contentLength) => {
+      const response = await app.request(
+        request(
+          { jsonrpc: '2.0', id: 1, method: 'server/discover' },
+          { 'Content-Length': contentLength }
+        ),
+        undefined,
+        env
+      );
+
+      expect(response.status).toBe(400);
+    }
+  );
+
+  it('rejects a declared Content-Length above the limit', async () => {
+    const response = await app.request(
+      request(
+        { jsonrpc: '2.0', id: 1, method: 'server/discover' },
+        { 'Content-Length': String(64 * 1024 + 1) }
+      ),
+      undefined,
+      env
+    );
+
+    expect(response.status).toBe(413);
+  });
+
+  it.each([
+    'http://mcp.tickist.com',
+    'https://mcp.tickist.com:8443',
+    'null',
+    'https://mcp.tickist.com.attacker.example',
+  ])(
+    'rejects an Origin that is not an allowed https origin: %s',
+    async (origin) => {
+      const verify = vi.spyOn(
+        SupabaseTokenVerifier.prototype,
+        'verifyAccessToken'
+      );
+
+      const response = await app.request(
+        request(
+          { jsonrpc: '2.0', id: 1, method: 'server/discover' },
+          { Origin: origin }
+        ),
+        undefined,
+        env
+      );
+
+      expect(response.status).toBe(403);
+      expect(response.headers.get('access-control-allow-origin')).toBeNull();
+      expect(verify).not.toHaveBeenCalled();
+    }
+  );
+
+  it('accepts the exact allowed https origin', async () => {
+    const response = await app.request(
+      request(
+        { jsonrpc: '2.0', id: 1, method: 'server/discover' },
+        { Origin: 'https://mcp.tickist.com', Authorization: '' }
+      ),
+      undefined,
+      env
+    );
+
+    expect(response.status).toBe(401);
+    expect(response.headers.get('access-control-allow-origin')).toBe(
+      'https://mcp.tickist.com'
+    );
+  });
+
+  it('forwards only allowlisted headers to the legacy personal-token backend', async () => {
+    const fetchRequest = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('{"jsonrpc":"2.0","id":1,"result":{}}', {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'x-anything',
+          'Set-Cookie': 'session=legacy',
+        },
+      })
+    );
+
+    const response = await app.request(
+      request(
+        { jsonrpc: '2.0', id: 1, method: 'tools/list' },
+        {
+          Authorization: 'Bearer tk_personal',
+          Cookie: 'session=browser',
+          'CF-Connecting-IP': '192.0.2.10',
+          'CF-Ray': 'ray-id',
+          'X-Forwarded-For': '192.0.2.10',
+          'MCP-Protocol-Version': '2025-06-18',
+          'Mcp-Param-Task': 'value',
+        }
+      ),
+      undefined,
+      { ...env, LEGACY_MCP_URL: 'https://legacy.example/functions/v1/mcp' }
+    );
+
+    expect(response.status).toBe(200);
+    expect(fetchRequest).toHaveBeenCalledOnce();
+    const [target, init] = fetchRequest.mock.calls[0] ?? [];
+    expect(String(target)).toBe('https://legacy.example/functions/v1/mcp');
+    const forwarded = new Headers(init?.headers);
+    expect([...forwarded.keys()].sort()).toEqual([
+      'accept',
+      'apikey',
+      'authorization',
+      'content-type',
+      'mcp-param-task',
+      'mcp-protocol-version',
+    ]);
+    expect(forwarded.get('authorization')).toBe('Bearer tk_personal');
+    expect(response.headers.get('access-control-allow-origin')).toBeNull();
+    expect(response.headers.get('access-control-allow-headers')).toBeNull();
+    expect(response.headers.get('set-cookie')).toBeNull();
+    await expect(response.json()).resolves.toMatchObject({ id: 1 });
+  });
+
+  it.each(['http://legacy.example/mcp', 'not a url'])(
+    'fails closed for a non-https legacy backend URL: %s',
+    async (legacyUrl) => {
+      const fetchRequest = vi.spyOn(globalThis, 'fetch');
+
+      const response = await app.request(
+        request(
+          { jsonrpc: '2.0', id: 1, method: 'tools/list' },
+          { Authorization: 'Bearer tk_personal' }
+        ),
+        undefined,
+        { ...env, LEGACY_MCP_URL: legacyUrl }
+      );
+
+      expect(response.status).toBe(503);
+      expect(fetchRequest).not.toHaveBeenCalled();
+    }
+  );
+
+  it('applies a per-user rate-limit bucket after authentication', async () => {
+    vi.spyOn(
+      SupabaseTokenVerifier.prototype,
+      'verifyAccessToken'
+    ).mockResolvedValue(authInfo);
+    const keys: string[] = [];
+
+    const limitedEnv: McpEnvironment = {
+      ...env,
+      MCP_RATE_LIMITER: {
+        limit: async ({ key }) => {
+          keys.push(key);
+
+          return { success: keys.length < 2 };
+        },
+      },
+    };
+
+    const response = await app.request(
+      request(
+        { jsonrpc: '2.0', id: 1, method: 'server/discover' },
+        { 'CF-Connecting-IP': '192.0.2.10' }
+      ),
+      undefined,
+      limitedEnv
+    );
+
+    expect(response.status).toBe(429);
+    expect(keys).toHaveLength(2);
+    expect(keys[0]).not.toBe(keys[1]);
+  });
+
+  it('groups IPv6 clients by /64 prefix for rate limiting', () => {
+    expect(clientAddressBucket('2001:db8:1:2::1')).toBe(
+      clientAddressBucket('2001:0db8:0001:0002:ffff:ffff:ffff:ffff')
+    );
+    expect(clientAddressBucket('2001:db8:1:2::1')).toBe(
+      'ip6:2001:0db8:0001:0002::/64'
+    );
+    expect(clientAddressBucket('2001:db8:1:3::1')).not.toBe(
+      clientAddressBucket('2001:db8:1:2::1')
+    );
+    expect(clientAddressBucket('::1')).toBe('ip6:0000:0000:0000:0000::/64');
+    expect(clientAddressBucket('::ffff:192.0.2.10')).toBe('ip:192.0.2.10');
+    expect(clientAddressBucket('192.0.2.10')).toBe('ip:192.0.2.10');
+    expect(clientAddressBucket(null)).toBe('ip:unknown');
   });
 });

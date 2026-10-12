@@ -35,7 +35,6 @@ supabase secrets set \
 
 ```bash
 supabase functions deploy notification-digest-runner
-supabase functions deploy enqueue-notification
 supabase functions deploy send-emails
 ```
 
@@ -67,8 +66,7 @@ Workflow produkcyjny (`.github/workflows/production.yml`) automatycznie:
 
 - pushuje migracje,
 - synchronizuje sekrety funkcji przez `supabase secrets set`,
-- deployuje funkcje edge (w tym `notification-digest-runner`,
-  `enqueue-notification` i `send-emails`).
+- deployuje funkcje edge (w tym `notification-digest-runner` i `send-emails`).
 
 Workflow nie tworzy harmonogramów Scheduled Functions. Po pierwszym deployu
 upewnij się w Supabase Dashboard albo w `pg_cron`, że oba harmonogramy z kroku
@@ -103,8 +101,7 @@ Uruchom:
 ./scripts/email-smoke-test.sh
 ```
 
-Smoke test sprawdza bezpośrednie kolejkowanie przez `enqueue-notification` i
-dry-run `send-emails`. Dodatkowo sprawdź digest runner ręcznie dla użytkownika,
+Smoke test sprawdza dry-run `send-emails` z sekretem wewnętrznym. Dodatkowo sprawdź digest runner ręcznie dla użytkownika,
 który ma włączony `Weekly summary` albo `Daily summary`:
 
 ```bash
@@ -122,8 +119,6 @@ Wymagane zmienne dla skryptu:
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
 - `INTERNAL_FUNCTION_SECRET`
-- `TEST_USER_EMAIL`
-- `TEST_USER_PASSWORD`
 
 Tymczasowy rollout fallback:
 

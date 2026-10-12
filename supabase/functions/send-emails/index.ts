@@ -8,6 +8,7 @@ import {
   requireInternalFunctionSecret,
   requireSupabaseSecretKey,
 } from "../_shared/common.ts";
+import { internalSecretMatches } from "../_shared/timing-safe.ts";
 import { sendWithSes } from "../_shared/ses.ts";
 
 interface SendEmailsPayload {
@@ -66,7 +67,7 @@ serve(async (req) => {
   try {
     const providedSecret = getInternalFunctionSecret(req);
     const internalFunctionSecret = requireInternalFunctionSecret();
-    if (!providedSecret || providedSecret !== internalFunctionSecret) {
+    if (!internalSecretMatches(providedSecret, internalFunctionSecret)) {
       return jsonResponse(403, { error: "Forbidden", request_id: requestId });
     }
 

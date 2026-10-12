@@ -214,6 +214,16 @@
       >
         Settings
       </button>
+      @if (emailMonitoring.allowed()) {
+      <button
+        class="btn btn-ghost btn-sm w-full justify-start rounded-xl px-4 text-left"
+        type="button"
+        routerLink="/app/admin/email"
+        (click)="closeProfileMenu()"
+      >
+        Admin
+      </button>
+      }
       <button
         class="btn btn-ghost btn-sm w-full justify-start rounded-xl px-4 text-left"
         type="button"

@@ -59,7 +59,9 @@ vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
 ignore/*
-.gemini
+.gemini/*
+!.gemini/settings.json
+!.gemini/commands/
 supabase/.branches/
 supabase/.temp/
 

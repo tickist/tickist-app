@@ -146,7 +146,7 @@ serve(async (req) => {
   const supabaseServiceKey = requireSupabaseSecretKey();
 
   let userId: string;
-  let grantedScopes: readonly string[] | null;
+  let grantedScopes: readonly string[];
   try {
     const auth = await authenticateRequest(
       req,

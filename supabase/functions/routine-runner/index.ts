@@ -6,6 +6,7 @@ import {
   requireInternalFunctionSecret,
   requireSupabaseSecretKey,
 } from "../_shared/common.ts";
+import { internalSecretMatches } from "../_shared/timing-safe.ts";
 
 interface RoutineReminderRow {
   id: string;
@@ -34,7 +35,7 @@ serve(async (req) => {
   const requestId = crypto.randomUUID();
   const configuredSecret = requireInternalFunctionSecret();
   const providedSecret = getInternalFunctionSecret(req);
-  if (!configuredSecret || !providedSecret || providedSecret !== configuredSecret) {
+  if (!internalSecretMatches(providedSecret, configuredSecret)) {
     return jsonResponse(403, { error: "Forbidden", request_id: requestId });
   }
 

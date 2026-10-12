@@ -132,17 +132,33 @@ export interface ProjectUpdateInput {
   dialogTimeWhenTaskFinished?: boolean;
 }
 
-export type ProjectInviteResult =
-  | {
-      ok: true;
-      code: 'invited' | 'already_pending' | 'already_member';
-      member: { userId: string; email: string; status: ProjectMemberStatus };
-    }
-  | {
-      ok: false;
-      code: 'user_not_found';
-      message: string;
-    };
+/**
+ * The project-invite function answers with the same neutral result whether or
+ * not the address belongs to a Tickist account, so the browser cannot tell.
+ */
+export type ProjectInviteResult = {
+  ok: true;
+  code: 'invite_processed' | 'already_pending' | 'already_member';
+};
+
+export const projectInviteResponseSchema = z
+  .union([
+    z.object({
+      ok: z.literal(true),
+      code: z.enum(['invite_processed', 'already_pending', 'already_member']),
+    }),
+    // Responses from a project-invite deployment that predates neutral results.
+    z.object({
+      ok: z.boolean(),
+      code: z.enum(['invited', 'user_not_found']),
+    }),
+  ])
+  .transform(
+    (parsed): ProjectInviteResult =>
+      parsed.code === 'invited' || parsed.code === 'user_not_found'
+        ? { ok: true, code: 'invite_processed' }
+        : { ok: true, code: parsed.code }
+  );
 
 type ProjectMemberRow = {
   project_id: string;
@@ -407,24 +423,7 @@ export class ProjectDataService {
 
     await this.refresh();
 
-    return z
-      .discriminatedUnion('ok', [
-        z.object({
-          ok: z.literal(true),
-          code: z.enum(['invited', 'already_pending', 'already_member']),
-          member: z.object({
-            userId: z.string(),
-            email: z.string(),
-            status: z.enum(['pending', 'accepted', 'declined']),
-          }),
-        }),
-        z.object({
-          ok: z.literal(false),
-          code: z.literal('user_not_found'),
-          message: z.string(),
-        }),
-      ])
-      .parse(body);
+    return projectInviteResponseSchema.parse(body);
   }
 
   async respondToInvite(

@@ -1,6 +1,10 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { requireEnv, requireSupabaseSecretKey } from "../_shared/common.ts";
+import {
+  requireEnv,
+  requireSupabaseSecretKey,
+  toSha256Hex,
+} from "../_shared/common.ts";
 
 interface ReminderPayload {
   taskId: string;
@@ -14,6 +18,8 @@ interface ProjectMemberRow {
 
 const MAX_MESSAGE_LENGTH = 1000;
 const DEDUPE_WINDOW_SECONDS = 60;
+const CUSTOM_MESSAGE_WINDOW_SECONDS = 10 * 60;
+const CUSTOM_MESSAGE_MARKER_PREFIX = "task-message:";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -50,7 +56,10 @@ serve(async (req) => {
 
   const taskId = payload.taskId?.trim() ?? "";
   const event = payload.event;
-  const messageInput = payload.message?.trim();
+  if (payload.message !== undefined && typeof payload.message !== "string") {
+    return jsonResponse(400, { error: "Invalid message", request_id: requestId });
+  }
+  const messageInput = payload.message?.trim() || undefined;
   if (!taskId || !event) {
     return jsonResponse(400, { error: "Missing taskId or event", request_id: requestId });
   }
@@ -140,12 +149,47 @@ serve(async (req) => {
     return jsonResponse(200, { ok: true, deduplicated: true });
   }
 
+  // A caller-supplied message is limited per sender and task regardless of
+  // its text. The marker is an opaque hash, so it reveals no identifiers.
+  const customMessageMarker = messageInput
+    ? CUSTOM_MESSAGE_MARKER_PREFIX +
+      (await toSha256Hex(`${task.id}:${user.id}`)).slice(0, 32)
+    : null;
+  if (customMessageMarker) {
+    const { data: recentCustomRows, error: recentCustomError } = await supabase
+      .from("notifications")
+      .select("id")
+      .in("recipient_id", recipientIds)
+      .eq("type", "task-event")
+      .eq("icon", customMessageMarker)
+      .gte(
+        "created_at",
+        new Date(Date.now() - CUSTOM_MESSAGE_WINDOW_SECONDS * 1000).toISOString(),
+      )
+      .limit(1);
+    if (recentCustomError) {
+      console.error("[task-reminder] Failed custom message rate lookup", {
+        requestId,
+        error: recentCustomError,
+      });
+      return jsonResponse(500, { error: "Internal server error", request_id: requestId });
+    }
+    if (recentCustomRows && recentCustomRows.length > 0) {
+      return jsonResponse(429, {
+        error: "Too many custom messages for this task",
+        code: "rate_limited",
+        request_id: requestId,
+      });
+    }
+  }
+
   const { error: insertError } = await supabase.from("notifications").insert(
     recipientIds.map((recipientId) => ({
       recipient_id: recipientId,
       title,
       description: message,
       type: "task-event",
+      ...(customMessageMarker ? { icon: customMessageMarker } : {}),
     })),
   );
 
