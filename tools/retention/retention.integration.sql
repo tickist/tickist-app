@@ -4,9 +4,10 @@ create function pg_temp.check_retention(ok boolean, label text) returns void lan
 begin if ok is distinct from true then raise exception 'Retention assertion failed: %', label; end if; end; $$;
 select pg_temp.check_retention(not has_function_privilege('authenticated', 'public.purge_application_history()', 'execute'), 'no authenticated purge');
 select pg_temp.check_retention(not has_function_privilege('anon', 'public.purge_application_history()', 'execute'), 'no anonymous purge');
-insert into auth.users(id,email,raw_user_meta_data,raw_app_meta_data) values
- ('ae000000-0000-4000-8000-000000000001','retention-one@example.invalid','{}','{}'),
- ('ae000000-0000-4000-8000-000000000002','retention-two@example.invalid','{}','{}');
+-- Operator-provisioned fixtures skip registration consent capture.
+insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data,raw_app_meta_data) values
+ ('ae000000-0000-4000-8000-000000000001','retention-one@example.invalid',now(),'{}','{}'),
+ ('ae000000-0000-4000-8000-000000000002','retention-two@example.invalid',now(),'{}','{}');
 insert into public.projects(id,owner_id,name,is_inbox)
 select ('ae100000-0000-4000-8000-' || lpad(i::text,12,'0'))::uuid,
  'ae000000-0000-4000-8000-000000000001','Retention fixture',false from generate_series(1,4) i;
@@ -69,8 +70,8 @@ end $$;
 -- Email retention and receipt lifecycle.
 select pg_temp.check_retention(not has_table_privilege('authenticated','public.email_dedupe_receipts','select'), 'receipt registry private');
 select pg_temp.check_retention(not has_function_privilege('anon','public.purge_email_history()','execute'), 'email purge private');
-insert into auth.users(id,email,raw_user_meta_data,raw_app_meta_data)
-values ('ae000000-0000-4000-8000-000000000003','retention-email@example.invalid','{}','{}');
+insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data,raw_app_meta_data)
+values ('ae000000-0000-4000-8000-000000000003','retention-email@example.invalid',now(),'{}','{}');
 insert into public.email_outbox(to_email,subject,text,dedupe_key,status,sent_at,retry_at)
 select 'retention-email@example.invalid','fixture','private body','retention-test:' || kind,
  case kind when 'queued' then 'queued' when 'sending' then 'sending' when 'dead' then 'dead' when 'failed' then 'failed' else 'sent' end,
