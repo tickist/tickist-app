@@ -36,7 +36,7 @@ Add focused Vitest coverage for services and components. Add Playwright coverage
 
 Use `npm run db:push:local`, `db:pull:local`, `db:types:local`, and `db:reset:local` for the local environment. Remote commands deliberately use `.env` and `SUPABASE_REMOTE_DB_URL`.
 
-Treat remote resets as destructive. Production schema changes belong in a new, numbered, backward-compatible migration. Never reuse an existing migration number and do not edit a migration that has already been shared.
+Treat remote resets as destructive. Production schema changes belong in a new, numbered, backward-compatible migration. Never reuse an existing migration number and do not edit a migration that has already been shared. Supabase does not grant Data API roles access to new `public` tables, so the migration that creates a table must also grant the roles that need it, normally `authenticated` for RLS-guarded browser access and `all` to `service_role`. Grant `anon` only for intentionally public data.
 
 Repository-managed operator tools also provide a deterministic English demo account and encrypted disaster-recovery backups:
 

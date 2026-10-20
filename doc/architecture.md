@@ -33,7 +33,7 @@ Task activity is managed at the database level. A trigger updates `modification_
 
 ## Authorization
 
-Row Level Security is mandatory. Browser requests use the authenticated Supabase role; policies decide whether a user may read or mutate a row. SQL grants allow the API role to reach the tables, but RLS remains the row-level decision point. Do not bypass these boundaries by adding broad client-side secrets or service-role credentials to the app.
+Row Level Security is mandatory. Browser requests use the authenticated Supabase role; policies decide whether a user may read or mutate a row. SQL grants allow the API role to reach the tables, but RLS remains the row-level decision point. Migration 0035 removes legacy default grants: the `anon` role may only read published legal releases, and `authenticated` has no table-level `TRUNCATE`, `REFERENCES`, `TRIGGER`, or `MAINTAIN` privileges. Do not bypass these boundaries by adding broad client-side secrets or service-role credentials to the app.
 
 Each project owner's workspace is stored on the project and constrained to the same owner. Accepted members may store their own workspace choice for a shared project. Workspace selection filters views but does not grant or revoke project access. The single Inbox has no workspace. A database trigger supplies Private for older project writers that omit a workspace.
 
