@@ -3,6 +3,7 @@ import {
   computed,
   inject,
   signal,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -10,11 +11,15 @@ import { SupabaseAuthService } from './supabase-auth.service';
 import { NgClass } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
+import {
+  CaptchaState,
+  TurnstileWidgetComponent,
+} from './captcha/turnstile-widget.component';
 
 @Component({
   selector: 'app-auth-shell',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink, TurnstileWidgetComponent],
   templateUrl: './auth-shell.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-shell.component.css',
@@ -31,6 +36,8 @@ export class AuthShellComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
+  readonly captcha = new CaptchaState();
+  private readonly captchaWidget = viewChild(TurnstileWidgetComponent);
   readonly isSubmitting = signal(false);
   readonly message = signal<{ type: 'success' | 'error'; text: string } | null>(
     null
@@ -59,7 +66,7 @@ export class AuthShellComponent {
   }
 
   get isDisabled(): boolean {
-    return this.form.invalid || this.isSubmitting();
+    return this.form.invalid || this.isSubmitting() || !this.captcha.ready();
   }
 
   async handleSubmit(): Promise<void> {
@@ -72,7 +79,12 @@ export class AuthShellComponent {
 
     try {
       const { email, password } = this.form.getRawValue();
-      const response = await this.auth.signInWithPassword({ email, password });
+
+      const response = await this.auth.signInWithPassword({
+        email,
+        password,
+        captchaToken: this.captcha.token(),
+      });
 
       if (response.error) {
         throw response.error;
@@ -97,6 +109,7 @@ export class AuthShellComponent {
             : 'Unexpected error during sign in.',
       });
     } finally {
+      this.captchaWidget()?.reset();
       this.isSubmitting.set(false);
     }
   }

@@ -33,6 +33,14 @@ jobs:
       - name: Verify legal release sources
         run: node tools/legal/release.mjs --check
 
+      # Supabase Auth requires a captcha token once captcha is enabled there.
+      - name: Verify Turnstile site key
+        run: |
+          if ! grep -Eq '^NG_APP_TURNSTILE_SITE_KEY[[:space:]]*=[[:space:]]*"[^"]+"' wrangler.toml; then
+            echo "::error::wrangler.toml is missing NG_APP_TURNSTILE_SITE_KEY."
+            exit 1
+          fi
+
       - name: Verify app and MCP
         run: |
           npx nx run-many -t oxlint --all
@@ -982,5 +990,10 @@ jobs:
 
           if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
             echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_PUBLISHABLE_KEY."
+            exit 1
+          fi
+
+          if ! echo "$runtime_env" | grep -Eq '"NG_APP_TURNSTILE_SITE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
+            echo "::error::Cloudflare runtime env is missing NG_APP_TURNSTILE_SITE_KEY."
             exit 1
           fi

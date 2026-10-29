@@ -95,11 +95,12 @@
                     class="sheet-input"
                     placeholder="Display name"
                     formControlName="displayName"
+                    maxlength="80"
                   />
                   @if (accountForm.controls.displayName.touched &&
                   accountForm.controls.displayName.invalid) {
                   <small class="sheet-field__error">
-                    Name must be at least 2 characters.
+                    Name must be 2–80 characters.
                   </small>
                   }
                 </label>
@@ -255,6 +256,12 @@
                 <small class="sheet-field__error">Passwords must match.</small>
                 }
               </label>
+
+              @if (passwordCaptcha.required) {
+              <app-turnstile-widget
+                (token)="passwordCaptcha.token.set($event)"
+              />
+              }
 
               @if (passwordError(); as errorMessage) {
               <p

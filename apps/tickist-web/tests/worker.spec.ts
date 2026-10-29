@@ -92,6 +92,17 @@ describe('Worker /env.js runtime config', () => {
     );
   });
 
+  it('exposes the public Turnstile site key at runtime', async () => {
+    const response = await worker.fetch(
+      new Request('https://tickist.com/env.js'),
+      buildEnv({ NG_APP_TURNSTILE_SITE_KEY: 'test-turnstile-site-key' })
+    );
+
+    expect(await response.text()).toContain(
+      '"NG_APP_TURNSTILE_SITE_KEY":"test-turnstile-site-key"'
+    );
+  });
+
   it('falls back to the legacy anon key for deployments not migrated yet', async () => {
     const req = new Request('https://tickist.com/env.js', { method: 'GET' });
 
@@ -220,6 +231,21 @@ describe('Worker Content-Security-Policy', () => {
       expect(sources).not.toContain('https:');
       expect(sources.join(' ')).not.toMatch(/127\.0\.0\.1|localhost/);
     }
+  });
+
+  it('allows only the Turnstile origin to frame challenges', () => {
+    const policy = buildContentSecurityPolicy({});
+
+    expect(directive(policy, 'frame-src')).toEqual([
+      'https://challenges.cloudflare.com',
+    ]);
+    expect(directive(policy, 'script-src')).toContain(
+      'https://challenges.cloudflare.com'
+    );
+    expect(directive(policy, 'connect-src')).toContain(
+      'https://challenges.cloudflare.com'
+    );
+    expect(directive(policy, 'frame-ancestors')).toEqual(["'none'"]);
   });
 
   it('ignores malformed Supabase configuration', () => {

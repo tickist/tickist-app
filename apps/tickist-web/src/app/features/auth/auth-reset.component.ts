@@ -3,6 +3,7 @@ import {
   computed,
   inject,
   signal,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -10,11 +11,15 @@ import { SupabaseAuthService } from './supabase-auth.service';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/ui/theme.service';
+import {
+  CaptchaState,
+  TurnstileWidgetComponent,
+} from './captcha/turnstile-widget.component';
 
 @Component({
   selector: 'app-auth-reset',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink, TurnstileWidgetComponent],
   templateUrl: './auth-reset.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-reset.component.css',
@@ -28,6 +33,8 @@ export class AuthResetComponent {
     email: ['', [Validators.required, Validators.email]],
   });
 
+  readonly captcha = new CaptchaState();
+  private readonly captchaWidget = viewChild(TurnstileWidgetComponent);
   readonly isSubmitting = signal(false);
   readonly message = signal<{ type: 'success' | 'error'; text: string } | null>(
     null
@@ -38,7 +45,7 @@ export class AuthResetComponent {
   );
 
   get isDisabled(): boolean {
-    return this.form.invalid || this.isSubmitting();
+    return this.form.invalid || this.isSubmitting() || !this.captcha.ready();
   }
 
   async handleSubmit(): Promise<void> {
@@ -51,7 +58,7 @@ export class AuthResetComponent {
 
     try {
       const { email } = this.form.getRawValue();
-      await this.auth.sendPasswordReset(email);
+      await this.auth.sendPasswordReset(email, this.captcha.token());
       this.message.set({
         type: 'success',
         text: 'Password reset link sent. Check your inbox.',
@@ -65,6 +72,7 @@ export class AuthResetComponent {
             : 'Unexpected error during password reset.',
       });
     } finally {
+      this.captchaWidget()?.reset();
       this.isSubmitting.set(false);
     }
   }

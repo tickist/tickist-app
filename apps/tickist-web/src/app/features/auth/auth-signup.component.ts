@@ -3,6 +3,7 @@ import {
   computed,
   inject,
   signal,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,11 +19,15 @@ import {
 } from '../legal/legal-document.service';
 import { ThemeService } from '../../core/ui/theme.service';
 import { GoogleAnalyticsService } from '../../core/privacy/google-analytics.service';
+import {
+  CaptchaState,
+  TurnstileWidgetComponent,
+} from './captcha/turnstile-widget.component';
 
 @Component({
   selector: 'app-auth-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink, TurnstileWidgetComponent],
   templateUrl: './auth-signup.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-signup.component.css',
@@ -45,6 +50,8 @@ export class AuthSignupComponent {
     termsAccepted: [false, [Validators.requiredTrue]],
   });
 
+  readonly captcha = new CaptchaState();
+  private readonly captchaWidget = viewChild(TurnstileWidgetComponent);
   readonly isSubmitting = signal(false);
   readonly message = signal<{ type: 'success' | 'error'; text: string } | null>(
     null
@@ -59,7 +66,8 @@ export class AuthSignupComponent {
       this.form.invalid ||
       this.isSubmitting() ||
       this.legalLoading() ||
-      !this.legalRelease()
+      !this.legalRelease() ||
+      !this.captcha.ready()
     );
   }
 
@@ -116,6 +124,7 @@ export class AuthSignupComponent {
         timezone: resolveBrowserTimezone(),
         legalVersion: legalRelease.version,
         termsAccepted: true,
+        captchaToken: this.captcha.token(),
       });
 
       if (response.error) {
@@ -138,6 +147,7 @@ export class AuthSignupComponent {
             : 'Unexpected error during sign up.',
       });
     } finally {
+      this.captchaWidget()?.reset();
       this.isSubmitting.set(false);
     }
   }

@@ -7,6 +7,7 @@ type PublicEnvKey =
   | 'NG_APP_SUPABASE_FUNCTIONS_URL'
   | 'NG_APP_GA4_MEASUREMENT_ID'
   | 'NG_APP_CLOUDFLARE_ANALYTICS_TOKEN'
+  | 'NG_APP_TURNSTILE_SITE_KEY'
   | 'NG_APP_BUILD_COMMIT';
 
 declare global {
@@ -35,6 +36,8 @@ const getFromImportMeta = (key: PublicEnvKey): string | undefined => {
       return import.meta.env.NG_APP_GA4_MEASUREMENT_ID;
     case 'NG_APP_CLOUDFLARE_ANALYTICS_TOKEN':
       return import.meta.env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN;
+    case 'NG_APP_TURNSTILE_SITE_KEY':
+      return import.meta.env.NG_APP_TURNSTILE_SITE_KEY;
     case 'NG_APP_BUILD_COMMIT':
       return import.meta.env.NG_APP_BUILD_COMMIT;
   }

@@ -43,6 +43,9 @@
         placeholder="team@tickist.app"
       />
     </label>
+    @if (captcha.required) {
+    <app-turnstile-widget (token)="captcha.token.set($event)" />
+    }
     <button
       class="btn btn-primary auth-reset-submit"
       type="submit"

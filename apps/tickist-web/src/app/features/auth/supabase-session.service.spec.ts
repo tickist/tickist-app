@@ -73,13 +73,13 @@ describe('SupabaseSessionService password recovery state', () => {
     );
   });
 
-  it('marks password recovery as pending from an update-password callback URL', async () => {
+  it('does not enter password recovery from a callback URL alone', async () => {
     TestBed.resetTestingModule();
     authStateChangeHandler = null;
     window.history.replaceState(
       {},
       '',
-      '/auth/update-password?code=recovery-code'
+      '/auth/update-password?type=recovery#type=recovery'
     );
 
     await TestBed.configureTestingModule({
@@ -92,24 +92,9 @@ describe('SupabaseSessionService password recovery state', () => {
               getSession: vi.fn(async () => ({
                 data: { session: null },
               })),
-              onAuthStateChange: vi.fn(
-                (
-                  callback: (
-                    event: AuthChangeEvent,
-                    session: Session | null
-                  ) => void
-                ) => {
-                  authStateChangeHandler = callback;
-
-                  return {
-                    data: {
-                      subscription: {
-                        unsubscribe: vi.fn(),
-                      },
-                    },
-                  };
-                }
-              ),
+              onAuthStateChange: vi.fn(() => ({
+                data: { subscription: { unsubscribe: vi.fn() } },
+              })),
               signOut: signOutMock,
             },
           },
@@ -120,7 +105,7 @@ describe('SupabaseSessionService password recovery state', () => {
     service = TestBed.inject(SupabaseSessionService);
     await service.waitUntilReady();
 
-    expect(service.passwordRecoveryPending()).toBe(true);
+    expect(service.passwordRecoveryPending()).toBe(false);
   });
 
   it('clears the password recovery marker on sign out', async () => {

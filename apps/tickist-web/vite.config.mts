@@ -62,6 +62,10 @@ export default defineConfig(({ mode }) => {
       process.env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ??
       loaded.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ??
       '',
+    NG_APP_TURNSTILE_SITE_KEY:
+      process.env.NG_APP_TURNSTILE_SITE_KEY ??
+      loaded.NG_APP_TURNSTILE_SITE_KEY ??
+      '',
     NG_APP_BUILD_COMMIT: resolveBuildCommit(loaded),
   };
 
@@ -204,6 +208,9 @@ export default defineConfig(({ mode }) => {
       ),
       'import.meta.env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN': JSON.stringify(
         mergedEnv.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN
+      ),
+      'import.meta.env.NG_APP_TURNSTILE_SITE_KEY': JSON.stringify(
+        mergedEnv.NG_APP_TURNSTILE_SITE_KEY
       ),
       'import.meta.env.NG_APP_BUILD_COMMIT': JSON.stringify(
         mergedEnv.NG_APP_BUILD_COMMIT

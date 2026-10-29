@@ -99,6 +99,9 @@
     } @if (legalLoading()) {
     <p role="status">Loading registration documents…</p>
     }
+    @if (captcha.required) {
+    <app-turnstile-widget (token)="captcha.token.set($event)" />
+    }
     <button
       class="btn btn-primary text-primary-content"
       type="submit"

@@ -14,6 +14,7 @@ interface Env {
   NG_APP_SUPABASE_FUNCTIONS_URL?: string;
   NG_APP_CLOUDFLARE_ANALYTICS_TOKEN?: string;
   NG_APP_GA4_MEASUREMENT_ID?: string;
+  NG_APP_TURNSTILE_SITE_KEY?: string;
 }
 
 /**
@@ -39,6 +40,11 @@ const GOOGLE_ANALYTICS_IMG = [
 
 // Cloudflare Web Analytics beacon reports to cloudflareinsights.com.
 const CLOUDFLARE_INSIGHTS_CONNECT = ['https://cloudflareinsights.com'];
+
+// Cloudflare Turnstile on the sign-in, sign-up and recovery forms loads its
+// script and challenge frame from this origin. A service worker that fetches
+// the script itself is governed by connect-src.
+const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
 
 const originOf = (value: string | undefined): string | undefined => {
   if (!value) return undefined;
@@ -77,6 +83,7 @@ export const buildContentSecurityPolicy = (
       ...INLINE_SCRIPT_HASHES,
       'https://static.cloudflareinsights.com/beacon.min.js',
       'https://www.googletagmanager.com/gtag/js',
+      TURNSTILE_ORIGIN,
     ].join(' '),
     "style-src 'self' 'unsafe-inline'",
     unique([
@@ -93,8 +100,9 @@ export const buildContentSecurityPolicy = (
       functionsOrigin,
       ...CLOUDFLARE_INSIGHTS_CONNECT,
       ...GOOGLE_ANALYTICS_CONNECT,
+      TURNSTILE_ORIGIN,
     ]).join(' '),
-    "frame-src 'none'",
+    `frame-src ${TURNSTILE_ORIGIN}`,
     "form-action 'self'",
     'upgrade-insecure-requests',
   ].join('; ');
@@ -394,6 +402,7 @@ const buildEnvPayload = (env: Env) => ({
   NG_APP_CLOUDFLARE_ANALYTICS_TOKEN:
     env.NG_APP_CLOUDFLARE_ANALYTICS_TOKEN ?? '',
   NG_APP_GA4_MEASUREMENT_ID: env.NG_APP_GA4_MEASUREMENT_ID ?? '',
+  NG_APP_TURNSTILE_SITE_KEY: env.NG_APP_TURNSTILE_SITE_KEY ?? '',
 });
 
 const envResponse = (env: Env): Response => {

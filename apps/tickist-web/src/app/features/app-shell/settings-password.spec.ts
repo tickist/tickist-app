@@ -226,6 +226,7 @@ describe('SettingsComponent password form', () => {
     expect(changePasswordMock).toHaveBeenCalledWith({
       currentPassword: 'Current123!',
       newPassword: 'Updated123!',
+      captchaToken: null,
     });
     expect(signOutMock).toHaveBeenCalledOnce();
     expect(navigateMock).toHaveBeenCalledWith(['/auth'], {

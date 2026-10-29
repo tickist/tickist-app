@@ -7,6 +7,7 @@ import { SupabaseSessionService } from './supabase-session.service';
 export interface SignInPayload {
   email: string;
   password: string;
+  captchaToken?: string | null;
 }
 
 export interface SignUpPayload {
@@ -15,11 +16,13 @@ export interface SignUpPayload {
   timezone: string;
   legalVersion: string;
   termsAccepted: boolean;
+  captchaToken?: string | null;
 }
 
 export interface ChangePasswordPayload {
   currentPassword: string;
   newPassword: string;
+  captchaToken?: string | null;
 }
 
 @Injectable({
@@ -41,7 +44,12 @@ export class SupabaseAuthService {
 
   async signInWithPassword(payload: SignInPayload): Promise<AuthResponse> {
     const client = this.ensureClient();
-    const response = await client.auth.signInWithPassword(payload);
+
+    const response = await client.auth.signInWithPassword({
+      email: payload.email,
+      password: payload.password,
+      options: { captchaToken: payload.captchaToken ?? undefined },
+    });
 
     if (response.error) {
       this.session.clearSession();
@@ -63,6 +71,7 @@ export class SupabaseAuthService {
       email: payload.email,
       password: payload.password,
       options: {
+        captchaToken: payload.captchaToken ?? undefined,
         data: {
           timezone: normalizeBrowserTimezone(payload.timezone),
           legal_version: payload.legalVersion,
@@ -72,12 +81,16 @@ export class SupabaseAuthService {
     });
   }
 
-  async sendPasswordReset(email: string): Promise<void> {
+  async sendPasswordReset(
+    email: string,
+    captchaToken?: string | null
+  ): Promise<void> {
     const client = this.ensureClient();
     const redirectTo = this.getPasswordResetRedirectTo();
 
     const { error } = await client.auth.resetPasswordForEmail(email, {
       redirectTo,
+      captchaToken: captchaToken ?? undefined,
     });
 
     if (error) {
@@ -107,6 +120,7 @@ export class SupabaseAuthService {
     const verification = await client.auth.signInWithPassword({
       email,
       password: payload.currentPassword,
+      options: { captchaToken: payload.captchaToken ?? undefined },
     });
 
     if (verification.error) {

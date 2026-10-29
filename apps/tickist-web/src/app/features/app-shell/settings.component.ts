@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,6 +17,10 @@ import { startWith } from 'rxjs';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
+import {
+  CaptchaState,
+  TurnstileWidgetComponent,
+} from '../auth/captcha/turnstile-widget.component';
 import { AvatarService } from '../../data/avatar.service';
 import {
   ExportImportService,
@@ -67,6 +72,7 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
     ThemedSelectComponent,
     DatePipe,
     RouterLink,
+    TurnstileWidgetComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
@@ -180,8 +186,15 @@ export class SettingsComponent {
   readonly revealedToken = signal<string | null>(null);
   readonly tokenCopied = signal(false);
   readonly accountForm = this.fb.nonNullable.group({
-    displayName: ['', [Validators.required, Validators.minLength(2)]],
+    displayName: [
+      '',
+      [Validators.required, Validators.minLength(2), Validators.maxLength(80)],
+    ],
   });
+  // The current-password check signs in again, which Supabase Auth guards
+  // with captcha.
+  readonly passwordCaptcha = new CaptchaState();
+  private readonly passwordCaptchaWidget = viewChild(TurnstileWidgetComponent);
   readonly passwordForm = this.fb.nonNullable.group({
     currentPassword: ['', [Validators.required, Validators.minLength(6)]],
     newPassword: ['', [Validators.required, Validators.minLength(6)]],
@@ -304,7 +317,8 @@ export class SettingsComponent {
       this.passwordForm.invalid ||
       this.passwordUpdating() ||
       this.passwordsMismatch() ||
-      this.passwordMatchesCurrent()
+      this.passwordMatchesCurrent() ||
+      !this.passwordCaptcha.ready()
     );
   });
   readonly notificationsSubmitDisabled = computed(() => {
@@ -456,6 +470,10 @@ export class SettingsComponent {
       return;
     }
 
+    if (!this.passwordCaptcha.ready()) {
+      return;
+    }
+
     this.passwordUpdating.set(true);
 
     try {
@@ -463,6 +481,7 @@ export class SettingsComponent {
       await this.auth.changePasswordWithCurrentPassword({
         currentPassword,
         newPassword,
+        captchaToken: this.passwordCaptcha.token(),
       });
       this.passwordForm.reset();
       await this.auth.signOut();
@@ -475,6 +494,7 @@ export class SettingsComponent {
         error instanceof Error ? error.message : 'Could not change password.'
       );
     } finally {
+      this.passwordCaptchaWidget()?.reset();
       this.passwordUpdating.set(false);
     }
   }

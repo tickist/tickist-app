@@ -62,6 +62,17 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
     });
   });
 
+  it('forwards the captcha token to password reset requests', async () => {
+    resetPasswordForEmailMock.mockResolvedValue({ error: null });
+
+    await service.sendPasswordReset('user@tickist.dev', 'captcha-token');
+
+    expect(resetPasswordForEmailMock).toHaveBeenCalledWith('user@tickist.dev', {
+      redirectTo: `${window.location.origin}/auth/update-password`,
+      captchaToken: 'captcha-token',
+    });
+  });
+
   it('stores the browser timezone in signup metadata', async () => {
     signUpMock.mockResolvedValue({ data: {}, error: null });
 
@@ -130,11 +141,13 @@ describe('SupabaseAuthService changePasswordWithCurrentPassword', () => {
     await service.changePasswordWithCurrentPassword({
       currentPassword: 'Current123!',
       newPassword: 'Updated123!',
+      captchaToken: 'captcha-token',
     });
 
     expect(signInWithPasswordMock).toHaveBeenCalledWith({
       email: 'user@tickist.dev',
       password: 'Current123!',
+      options: { captchaToken: 'captcha-token' },
     });
     expect(updateUserMock).toHaveBeenCalledWith({
       password: 'Updated123!',
