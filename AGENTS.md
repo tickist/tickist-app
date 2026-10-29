@@ -46,6 +46,21 @@ Read the relevant document when changing its contract: [product behaviour](doc/p
 - Add numbered, backward-compatible migrations with unique versions. Do not edit migrations already shared or deployed.
 - Keep `SUPABASE_SECRET_KEY`, `INTERNAL_FUNCTION_SECRET`, AWS credentials, and database passwords out of Angular and `/env.js`.
 
+## Security invariants
+
+These rules come from a security review. Keep them when changing the related code and add a regression test when touching one. Handle vulnerability reports as described in [SECURITY.md](SECURITY.md), never in public issues or commit messages.
+
+- **Auth input:** user metadata is user-writable. Its size is capped in the database; values copied from it are normalised, length-limited, or ignored.
+- **Repeat sign-up:** Supabase Auth keeps the first password when an unconfirmed address signs up again. A repeat sign-up clears that password, so recovery is the only way to claim such an account.
+- **Captcha:** sign-up, sign-in, password recovery, and the current-password check send a Turnstile token when `NG_APP_TURNSTILE_SITE_KEY` is set. Server-side scripts that need password sign-in use the service role.
+- **Session changes:** a link carrying tokens never silently replaces the session of a different signed-in account, and password recovery mode starts only after a recovery token was applied.
+- **Sharing privacy:** project owners never learn whether an invited email has an account or what its user id is before the invitation is accepted.
+- **Connected apps:** changes to relationships between accounts (invitations, memberships) reject OAuth-client tokens (`auth.jwt()->>'client_id'`).
+- **Shared quotas and jobs:** work over all users orders and pages its rows and has per-owner limits, so one account cannot starve others or exhaust the shared email quota.
+- **Values:** user-writable timestamps reject `infinity`; user text columns have database length limits; text from another user is stripped of control and bidirectional characters before it reaches notifications or email, and never forms an email subject on its own.
+- **Privileges:** `anon` and `authenticated` hold no TRIGGER, TRUNCATE, or REFERENCES on application tables and no access to `net` or `supabase_functions`. Storage object names reject `.` and `..` segments.
+- **Dependencies:** a dependency with a published advisory affecting Tickist is upgraded before the next release, including pinned `npm:` imports in Edge Functions.
+
 ## Code and verification
 
 - Match existing Angular standalone components, signals, and built-in `@if` / `@for` / `@switch` control flow. Use RxJS where streams fit.

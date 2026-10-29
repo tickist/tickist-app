@@ -270,6 +270,10 @@ Deployment configuration and required GitHub secrets are defined in [`.github/wo
 
 The working agreement is in [AGENTS.md](AGENTS.md); [agent tooling](doc/agent-tooling.md) explains skills, hooks, and task-specific verification. See [MIGRATION_PLAN.md](MIGRATION_PLAN.md) for migration and architecture decisions.
 
+## Security
+
+Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md): through GitHub private vulnerability reporting or at security@tickist.com, never in a public issue.
+
 ## Useful links
 
 - [Supabase schema and Edge Functions](supabase/README.md)
