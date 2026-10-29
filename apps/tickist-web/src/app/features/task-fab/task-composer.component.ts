@@ -694,7 +694,8 @@ export class TaskComposerComponent {
 
           if (!drafts) {
             this.pendingReminderSave = true;
-            errorMessage = 'Complete each reminder date and time to save.';
+            errorMessage =
+              'Set each reminder to a future date and time to save.';
           } else {
             try {
               await this.reminderService.saveForTask(

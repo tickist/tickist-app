@@ -1,5 +1,5 @@
 -- LOCAL ONLY. Run after migrations with ON_ERROR_STOP. All fixtures roll back.
--- Covers migrations 0036-0038: auth metadata limits, repeat sign-up password
+-- Covers migrations 0036-0039: auth metadata limits, repeat sign-up password
 -- reset, invitation privacy, connected-app limits, finite timestamps, reminder
 -- fairness, text limits, browser-role table privileges and avatar object names.
 begin;
@@ -131,7 +131,7 @@ select pg_temp.act_as('ae000000-0000-4000-8000-000000000001');
 do $$ begin
  begin
   insert into public.task_reminders(task_id,owner_id,remind_at)
-  values ('ae200000-0000-4000-8000-000000000001','ae000000-0000-4000-8000-000000000001','-infinity');
+  values ('ae200000-0000-4000-8000-000000000001','ae000000-0000-4000-8000-000000000001','infinity');
   raise exception 'Infinite reminder accepted';
  exception when check_violation then null;
  end;
@@ -152,22 +152,36 @@ do $$ begin
  end;
 end $$;
 
+-- Users schedule reminders only in the future (migration 0039), including the
+-- past values a date input passes through while the year is typed.
+do $$ begin
+ begin
+  insert into public.task_reminders(task_id,owner_id,remind_at)
+  values ('ae200000-0000-4000-8000-000000000001','ae000000-0000-4000-8000-000000000001','0202-10-31 09:00+00');
+  raise exception 'Past reminder accepted';
+ exception when invalid_parameter_value then null;
+ end;
+end $$;
+
 -- Reminders are capped per task.
 insert into public.task_reminders(task_id,owner_id,remind_at)
-select 'ae200000-0000-4000-8000-000000000001','ae000000-0000-4000-8000-000000000001',now()-make_interval(mins => n)
+select 'ae200000-0000-4000-8000-000000000001','ae000000-0000-4000-8000-000000000001',now()+make_interval(days => n)
 from generate_series(1, 20) n;
 do $$ begin
  begin
   insert into public.task_reminders(task_id,owner_id,remind_at)
-  values ('ae200000-0000-4000-8000-000000000001','ae000000-0000-4000-8000-000000000001',now()-interval '2 days');
+  values ('ae200000-0000-4000-8000-000000000001','ae000000-0000-4000-8000-000000000001',now()+interval '30 days');
   raise exception 'Reminder cap exceeded';
  exception when program_limit_exceeded then null;
  end;
 end $$;
 
 -- A claim takes at most five due reminders per owner, so others are served.
+-- Due reminders are prepared by the service role.
 select pg_temp.reset_actor();
 reset role;
+update public.task_reminders set remind_at = remind_at - interval '60 days'
+where owner_id='ae000000-0000-4000-8000-000000000001';
 insert into public.tasks(id,owner_id,name) values
  ('ae200000-0000-4000-8000-000000000002','ae000000-0000-4000-8000-000000000002','Invitee task');
 insert into public.task_reminders(task_id,owner_id,remind_at) values

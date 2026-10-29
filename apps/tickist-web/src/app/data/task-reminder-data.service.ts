@@ -83,8 +83,10 @@ export class TaskReminderDataService {
 
     const existing = await this.listForTask(taskId);
 
+    const now = new Date();
+
     const normalizedDrafts = drafts.flatMap((draft) => {
-      const normalized = normalizeDraft(draft);
+      const normalized = normalizeDraft(draft, now);
 
       return normalized ? [normalized] : [];
     });
@@ -210,8 +212,12 @@ function mapReminderRow(row: TaskReminderRow): TaskReminder {
   };
 }
 
+// Only future reminders are valid. A date input passes through past values
+// while the year is typed (0002-…, 0020-…, 0202-…), and autosave must never
+// store one: the runner would send it at once.
 function normalizeDraft(
-  draft: TaskReminderDraft
+  draft: TaskReminderDraft,
+  now: Date
 ): NormalizedReminderDraft | null {
   const date = draft.date.trim();
   const time = draft.time.trim();
@@ -226,7 +232,7 @@ function normalizeDraft(
 
   const remindAt = zonedDateTimeToIso(date, time, timezone);
 
-  if (!remindAt) {
+  if (!remindAt || Date.parse(remindAt) <= now.getTime()) {
     return null;
   }
 
@@ -237,8 +243,11 @@ function normalizeDraft(
   };
 }
 
-export function isValidTaskReminderDraft(draft: TaskReminderDraft): boolean {
-  return normalizeDraft(draft) !== null;
+export function isValidTaskReminderDraft(
+  draft: TaskReminderDraft,
+  now = new Date()
+): boolean {
+  return normalizeDraft(draft, now) !== null;
 }
 
 function zonedDateTimeToIso(

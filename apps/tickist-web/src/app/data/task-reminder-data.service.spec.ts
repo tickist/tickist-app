@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
-import { TaskReminderDataService } from './task-reminder-data.service';
+import {
+  TaskReminderDataService,
+  isValidTaskReminderDraft,
+} from './task-reminder-data.service';
 
 describe('TaskReminderDataService', () => {
   beforeEach(() => {
@@ -60,7 +63,7 @@ describe('TaskReminderDataService', () => {
       {
         id: 'keep-reminder',
         date: '2026-05-12',
-        time: '09:30',
+        time: '11:30',
         timezone: 'Europe/Warsaw',
       },
       {
@@ -76,7 +79,7 @@ describe('TaskReminderDataService', () => {
         id: 'keep-reminder',
         task_id: 'task-1',
         owner_id: 'owner-1',
-        remind_at: '2026-05-12T07:30:00.000Z',
+        remind_at: '2026-05-12T09:30:00.000Z',
         timezone: 'Europe/Warsaw',
         status: 'scheduled',
       }),
@@ -91,6 +94,50 @@ describe('TaskReminderDataService', () => {
       }),
     ]);
     expect(supabase.insertRows[0]).not.toHaveProperty('id');
+  });
+
+  it('accepts only reminders in the future', () => {
+    const draft = (date: string, time: string) => ({
+      date,
+      time,
+      timezone: 'Europe/Warsaw',
+    });
+
+    expect(isValidTaskReminderDraft(draft('2026-10-31', '09:00'))).toBe(true);
+    expect(isValidTaskReminderDraft(draft('2026-05-12', '10:01'))).toBe(true);
+    expect(isValidTaskReminderDraft(draft('2026-05-12', '10:00'))).toBe(false);
+    expect(isValidTaskReminderDraft(draft('2026-05-11', '23:59'))).toBe(false);
+  });
+
+  it('rejects the past values a date input passes through while the year is typed', () => {
+    for (const date of ['0002-10-31', '0020-10-31', '0202-10-31']) {
+      expect(
+        isValidTaskReminderDraft({
+          date,
+          time: '09:00',
+          timezone: 'Europe/Warsaw',
+        })
+      ).toBe(false);
+    }
+  });
+
+  it('does not store a reminder dated in the past', async () => {
+    const supabase = createSupabaseMock([]);
+
+    TestBed.configureTestingModule({
+      providers: [
+        TaskReminderDataService,
+        { provide: SUPABASE_CLIENT, useValue: supabase },
+      ],
+    });
+
+    const service = TestBed.inject(TaskReminderDataService);
+    await service.saveForTask('task-1', 'owner-1', [
+      { date: '0202-10-31', time: '09:00', timezone: 'Europe/Warsaw' },
+    ]);
+
+    expect(supabase.insertRows).toEqual([]);
+    expect(supabase.upsertRows).toEqual([]);
   });
 
   it('does not replace reminders when the existing list cannot be loaded', async () => {

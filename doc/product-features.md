@@ -52,7 +52,7 @@ Tag views support tag selection, OR/AND matching, untagged-task mode, completed-
 
 ### Repeating tasks and reminders
 
-Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Completing a recurring task creates the next occurrence rather than leaving an ordinary completed item. Reminders store a date, time, timezone, and delivery state.
+Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Completing a recurring task creates the next occurrence rather than leaving an ordinary completed item. Reminders store a date, time, timezone, and delivery state. A reminder is saved only once its date and time are in the future, so the task editor's automatic saving never stores the intermediate dates a date field passes through while the year is typed; migration 0039 enforces the same rule in the database with five minutes of clock tolerance.
 
 MCP clients use a semantic repeat interval and completion- or due-date anchor. Completing a recurring task through MCP advances the same task and resets its steps. MCP clients can also suspend incomplete tasks indefinitely or until a future timestamp and resume them explicitly.
 
