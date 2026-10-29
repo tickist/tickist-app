@@ -9,6 +9,7 @@ import {
   requireSupabaseSecretKey,
 } from "../_shared/common.ts";
 import { internalSecretMatches } from "../_shared/timing-safe.ts";
+import { APP_URL, emailButton } from "../_shared/email-layout.ts";
 
 interface RunnerPayload {
   limit?: number;
@@ -28,6 +29,7 @@ interface TaskReminderRow {
 interface TaskRow {
   id: string;
   owner_id: string;
+  project_id: string | null;
   name: string;
   description: string | null;
   is_done: boolean;
@@ -105,7 +107,7 @@ serve(async (req) => {
   for (const row of rows) {
     const { data: task, error: taskError } = await supabase
       .from("tasks")
-      .select("id, owner_id, name, description, is_done, is_active, finish_date, finish_time")
+      .select("id, owner_id, project_id, name, description, is_done, is_active, finish_date, finish_time")
       .eq("id", row.task_id)
       .maybeSingle();
 
@@ -190,6 +192,9 @@ function buildEmailPayload(
   const reminderLine = formatReminderLine(reminder);
   const description = task.description?.trim();
   const subject = `Tickist reminder: ${taskName}`;
+  const taskUrl = task.project_id
+    ? `${APP_URL}/app/tasks/${task.project_id}`
+    : `${APP_URL}/app/tasks`;
   const text = [
     `Hi ${displayName},`,
     "",
@@ -197,14 +202,17 @@ function buildEmailPayload(
     reminderLine,
     dueLine,
     description ? `Description: ${description}` : null,
+    "",
+    `Open the task: ${taskUrl}`,
   ].filter((line): line is string => line !== null).join("\n");
   const html = [
     `<p>Hi ${escapeHtml(displayName)},</p>`,
     `<p>This is your reminder for:</p>`,
-    `<h2>${escapeHtml(taskName)}</h2>`,
+    `<h1>${escapeHtml(taskName)}</h1>`,
     `<p>${escapeHtml(reminderLine)}</p>`,
     dueLine ? `<p>${escapeHtml(dueLine)}</p>` : "",
     description ? `<p>${escapeHtml(description).replaceAll("\n", "<br>")}</p>` : "",
+    emailButton("Open task", taskUrl),
   ].join("\n");
   return { subject, html, text };
 }

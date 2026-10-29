@@ -33,6 +33,9 @@ jobs:
       - name: Verify legal release sources
         run: node tools/legal/release.mjs --check
 
+      - name: Verify Auth email templates
+        run: npm run -s email:templates -- --check
+
       # Supabase Auth requires a captcha token once captcha is enabled there.
       - name: Verify Turnstile site key
         run: |
@@ -244,7 +247,7 @@ jobs:
           SUPABASE_REMOTE_DB_URL: ${{ secrets.SUPABASE_REMOTE_DB_URL }}
         run: supabase db push --db-url "$SUPABASE_REMOTE_DB_URL"
 
-      - name: Configure Supabase MCP access token hook
+      - name: Configure Supabase Auth hook and email templates
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
@@ -267,14 +270,35 @@ jobs:
           discovery_file="$(mktemp)"
           trap 'rm -f "$payload_file" "$response_file" "$discovery_file"' EXIT
 
+          # Auth email templates come from supabase/templates (npm run email:templates).
+          templates="supabase/templates"
           jq -n \
             --arg hookUri "$hook_uri" \
+            --slurpfile subjects "$templates/subjects.json" \
+            --rawfile confirmation "$templates/confirmation.html" \
+            --rawfile recovery "$templates/recovery.html" \
+            --rawfile magicLink "$templates/magic_link.html" \
+            --rawfile emailChange "$templates/email_change.html" \
+            --rawfile invite "$templates/invite.html" \
+            --rawfile reauthentication "$templates/reauthentication.html" \
             '{
               hook_custom_access_token_enabled: true,
               hook_custom_access_token_uri: $hookUri,
               oauth_server_enabled: true,
               oauth_server_allow_dynamic_registration: true,
-              oauth_server_authorization_path: "/auth/oauth/consent"
+              oauth_server_authorization_path: "/auth/oauth/consent",
+              mailer_subjects_confirmation: $subjects[0].confirmation,
+              mailer_templates_confirmation_content: $confirmation,
+              mailer_subjects_recovery: $subjects[0].recovery,
+              mailer_templates_recovery_content: $recovery,
+              mailer_subjects_magic_link: $subjects[0].magic_link,
+              mailer_templates_magic_link_content: $magicLink,
+              mailer_subjects_email_change: $subjects[0].email_change,
+              mailer_templates_email_change_content: $emailChange,
+              mailer_subjects_invite: $subjects[0].invite,
+              mailer_templates_invite_content: $invite,
+              mailer_subjects_reauthentication: $subjects[0].reauthentication,
+              mailer_templates_reauthentication_content: $reauthentication
             }' > "$payload_file"
 
           curl --fail --silent --show-error \

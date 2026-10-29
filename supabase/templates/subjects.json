@@ -1,0 +1,8 @@
+{
+  "confirmation": "Confirm your Tickist account",
+  "recovery": "Reset your Tickist password",
+  "magic_link": "Your Tickist sign-in link",
+  "email_change": "Confirm your new Tickist email address",
+  "invite": "You have been invited to Tickist",
+  "reauthentication": "Your Tickist verification code"
+}

@@ -87,6 +87,11 @@ async function requestInvitation(
           },
         };
       if (name.includes('supabase-js')) return { createClient: () => client };
+      if (name.includes('email-layout'))
+        return {
+          APP_URL: 'https://tickist.com',
+          emailButton: (label, url) => `<a href="${url}">${label}</a>`,
+        };
       if (name.includes('common'))
         return {
           asOptionalString: (s) =>

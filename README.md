@@ -212,6 +212,8 @@ Account deletion requests are handled through `remove-account@tickist.com`. The 
 
 History retention and rollout order are documented in [data retention](doc/data-retention.md). Run invitation regressions with `npm run retention:test`; database retention checks use local rollback transactions.
 
+All Tickist emails share one layout (`supabase/functions/_shared/email-layout.ts`). After changing it or the Supabase Auth email texts in `tools/email/auth-templates.mjs`, run `npm run email:templates`; see [email delivery](docs/EMAIL.md).
+
 ## Environment and secrets
 
 `.env.example` documents the supported variables. The important groups are:

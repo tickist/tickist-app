@@ -49,6 +49,8 @@
     "account:delete": "node tools/account-deletion/delete-account.mjs",
     "account:delete:test": "node --test tools/account-deletion/delete-account.test.mjs",
     "retention:test": "node --test tools/retention/project-invite.test.cjs",
+    "email:templates": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/email/auth-templates.mjs",
+    "email:templates:test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tools/email/email-layout.test.mjs",
     "db:backup:prune": "node tools/backup/prune.mjs",
     "email-monitor:test": "node --test tools/email-monitor/*.test.mjs",
     "email-monitor:test:db": "bash tools/email-monitor/test-db.sh"

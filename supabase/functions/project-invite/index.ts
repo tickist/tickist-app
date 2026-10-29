@@ -8,6 +8,7 @@ import {
   requireEnv,
   requireSupabaseSecretKey,
 } from "../_shared/common.ts";
+import { APP_URL, emailButton } from "../_shared/email-layout.ts";
 
 interface ProjectInvitePayload {
   projectId: string;
@@ -316,11 +317,13 @@ serve(async (req) => {
     p_to_email: email,
     p_subject: INVITE_EMAIL_SUBJECT,
     p_html:
+      "<h1>You have a project invitation</h1>" +
       `<p>You were invited to share <strong>${escapeHtml(projectName)}</strong> in Tickist.</p>` +
-      "<p>Open Tickist and go to Team to accept or decline this invitation.</p>",
+      "<p>Accept or decline it in Team.</p>" +
+      emailButton("Review invitation", `${APP_URL}/app/team`),
     p_text:
       `You were invited to share "${projectName}" in Tickist.\n\n` +
-      "Open Tickist and go to Team to accept or decline this invitation.",
+      `Accept or decline it in Team: ${APP_URL}/app/team`,
     p_type: "project-invite",
     p_dedupe_key: `project-invite:${typedProject.id}:${knownUserId}:${invitation.invitation_id}`,
   });

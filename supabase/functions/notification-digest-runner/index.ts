@@ -8,6 +8,7 @@ import {
   requireSupabaseSecretKey,
 } from '../_shared/common.ts';
 import { internalSecretMatches } from '../_shared/timing-safe.ts';
+import { APP_URL, emailButton } from '../_shared/email-layout.ts';
 
 type NotificationKey = 'weekly_summary' | 'daily_summary';
 type ScheduleType = 'daily' | 'weekly';
@@ -425,6 +426,7 @@ function buildWeeklyEmail(
     completedListHtml,
     `<p><strong>Coming up next week</strong></p>`,
     upcomingListHtml,
+    emailButton('Open Tickist', `${APP_URL}/app`),
   ].join('');
 
   const text = [
@@ -489,6 +491,7 @@ function buildDailyEmail(
       tomorrowKey
     )}</p>`,
     upcomingListHtml,
+    emailButton('Open Tickist', `${APP_URL}/app`),
   ].join('');
 
   const text = [
