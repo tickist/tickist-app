@@ -1,6 +1,6 @@
 # Application history retention
 
-Migration `0025_application_retention.sql` schedules daily cleanup at 03:37 UTC. It removes notifications older than 180 days (including unread), pending invitations older than 30 days, declined invitations 30 days after rejection, and MCP/activity history older than 90 days. The first successful scheduled run also processes existing expired history. It does not remove accounts, tasks, projects, accepted memberships, active reminders, or migration_audit.
+Migration `0025_application_retention.sql` schedules daily cleanup at 03:37 UTC. It removes notifications older than 180 days (including unread), pending invitations older than 30 days, declined invitations 30 days after rejection, and MCP/activity history older than 90 days. Since migration 0037 it also removes owner-visible invitation records (`project_invitations`) older than 30 days. The first successful scheduled run also processes existing expired history. It does not remove accounts, tasks, projects, accepted memberships, active reminders, or migration_audit.
 
 Pending invitations cannot be accepted after 30 days, even before the scheduled cleanup. Legacy missing timestamps start their window at rollout. New invitations after expiry/rejection get a new invitation identifier for email deduplication. Repeating a current pending invitation does not extend its lifetime or enqueue another notification/email. Deploy the migration before the updated project-invite Edge Function.
 

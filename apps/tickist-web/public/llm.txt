@@ -45,6 +45,8 @@ Authenticated integrations use the exclusive `https://mcp.tickist.com/mcp` endpo
 
 When a product capability changes, update the matching document in `doc/`, this concise file, and `llm-full.txt`. When a new public route is added, also update `sitemap.xml` and `robots.txt`.
 
+Sign-in security: sign-up, sign-in, password reset and password change show a Cloudflare Turnstile check when a site key is configured. An email link never silently replaces a different signed-in account; the user is asked first. A repeat sign-up for an unconfirmed address clears its first password, so the owner sets one through password recovery.
+
 Account deletion: Settings provides a request link to remove-account@tickist.com. Requests require identity verification and operator processing. Shared work is reviewed before deletion; backup retention is separate. This is not immediate self-service erasure.
 
 History retention (migration 0025): pending invitations expire after 30 days; notifications are kept for 180 days and MCP/activity history for 90 days. Daily cleanup preserves tasks, projects and accepted memberships.
@@ -53,7 +55,7 @@ Terminal email history is cleaned after 30 days; minimal deduplication hashes li
 
 Registration documents (migration 0026): signup links to the exact published terms/privacy version and requires an unchecked terms checkbox. A database trigger validates the current version and records a server timestamp. Legal documents are public, downloadable and excluded from indexing. Migration 0027 publishes the Polish release 2026-09-30.1 from repository-owned Markdown with its actual deployment timestamp. Ordinary unconfirmed signup requires the current published version. Existing login is unaffected. See [publication procedure](https://github.com/tickist/tickist-app/blob/develop/doc/legal-registration.md).
 
-Email invitations to shared projects require an existing Tickist account; addresses without an account are not emailed or saved as project members. The inviter sees the same neutral confirmation whether or not the address has an account. Owners can send or renew at most 20 invitations per hour, and an address invited or declined within the last 24 hours is not re-invited to the same project.
+Email invitations to shared projects reach only confirmed Tickist accounts. The owner sees every invitation as "Invited" until it is accepted, cancelled or expires, and cannot tell whether the address has an account or whether the person declined. Owners can send or renew at most 20 invitations per hour, and an address invited within the last 24 hours is not re-invited to the same project. Connected apps cannot send, accept or cancel invitations.
 
 Cloudflare Web Analytics is optional, including on signed-in pages: it loads after consent, with a persistent Privacy settings control and withdrawal by reload. Workers operational logs are separate.
 

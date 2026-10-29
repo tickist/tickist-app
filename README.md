@@ -219,6 +219,7 @@ History retention and rollout order are documented in [data retention](doc/data-
 | Purpose                    | Variables                                                                                          |
 | -------------------------- | -------------------------------------------------------------------------------------------------- |
 | Browser app                | `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, optional `NG_APP_SUPABASE_FUNCTIONS_URL` |
+| Captcha (optional)         | `NG_APP_TURNSTILE_SITE_KEY`; set only when Supabase Auth has Turnstile captcha with the secret key |
 | Local database tooling     | `SUPABASE_DB_URL`                                                                                  |
 | E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                   |
 | Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                   |
