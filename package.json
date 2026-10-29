@@ -72,7 +72,7 @@
     "@ng-icons/simple-icons": "^34.0.0",
     "@supabase/supabase-js": "^2.89.0",
     "express": "^4.22.2",
-    "hono": "^4.13.7",
+    "hono": "^4.13.14",
     "rxjs": "~7.8.0",
     "zod": "^4.6.7",
     "zone.js": "0.16.2"
