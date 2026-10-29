@@ -92,3 +92,35 @@ export const toSha256Hex = async (value: string): Promise<string> => {
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
 };
+
+// Text written by one user and shown to another (notifications, email) loses
+// control and bidirectional-override characters and is cut to a fixed length.
+export const cleanDisplayText = (value: string, maxLength: number): string => {
+  const cleaned = value
+    .replace(/\p{Cc}/gu, " ")
+    .replace(/[؜‎‏‪-‮⁦-⁩]/g, "")
+    .trim();
+  const characters = Array.from(cleaned);
+  return characters.length > maxLength
+    ? `${characters.slice(0, maxLength - 1).join("")}…`
+    : cleaned;
+};
+
+// OAuth access tokens issued to connected apps (MCP clients) carry client_id.
+// The token must already be verified, for example with auth.getUser().
+export const isConnectedAppToken = (token: string): boolean => {
+  const payload = token.split(".")[1];
+  if (!payload) {
+    return false;
+  }
+  try {
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const claims: unknown = JSON.parse(
+      atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")),
+    );
+    return isRecord(claims) && typeof claims.client_id === "string" &&
+      claims.client_id.length > 0;
+  } catch {
+    return false;
+  }
+};

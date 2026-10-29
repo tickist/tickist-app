@@ -294,6 +294,30 @@ export class ProjectComposerComponent {
     }
   }
 
+  async cancelInvitation(invitationId: string): Promise<void> {
+    const editing = this.editingProject();
+
+    if (!editing) {
+      return;
+    }
+
+    this.inviteSubmitting.set(true);
+
+    try {
+      await this.projects.cancelInvitation(invitationId);
+      this.editingProject.set(
+        this.projects.list().find((project) => project.id === editing.id) ??
+          editing
+      );
+      this.inviteFeedback.set({
+        type: 'success',
+        message: 'Invitation cancelled.',
+      });
+    } finally {
+      this.inviteSubmitting.set(false);
+    }
+  }
+
   memberLabel(userId: string): string {
     const project = this.editingProject();
     const member = project?.members.find((item) => item.userId === userId);

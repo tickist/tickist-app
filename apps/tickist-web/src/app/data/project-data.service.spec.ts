@@ -87,6 +87,14 @@ describe('ProjectDataService schema compatibility', () => {
             role: 'viewer',
           }),
         ],
+        invitations: [
+          {
+            id: 'invitation-1',
+            projectId: 'project-1',
+            email: 'invitee@example.invalid',
+            invitedAt: '2026-10-29T10:00:00.000Z',
+          },
+        ],
       }),
     ]);
     expect(service.membershipsList()).toEqual([
@@ -100,7 +108,8 @@ describe('ProjectDataService schema compatibility', () => {
     expect(supabase.projectSelects[0]).not.toContain('status');
     expect(supabase.projectSelects[0]).not.toContain('project_members');
     expect(supabase.membershipSelects).toHaveLength(1);
-    expect(supabase.membershipSelects[0]).not.toContain('status');
+    // Membership status is needed to show invitations to the invitee.
+    expect(supabase.membershipSelects[0]).toContain('status');
   });
 
   it('returns the existing inbox when create races the unique inbox constraint', async () => {
@@ -166,6 +175,12 @@ describe('projectInviteResponseSchema', () => {
     expect(
       projectInviteResponseSchema.parse({ ok: true, code: 'already_member' })
     ).toEqual({ ok: true, code: 'already_member' });
+  });
+
+  it('maps a pending result from an older deployment to the neutral result', () => {
+    expect(
+      projectInviteResponseSchema.parse({ ok: true, code: 'already_pending' })
+    ).toEqual({ ok: true, code: 'invite_processed' });
   });
 
   it('maps legacy invited and user_not_found results to the neutral result', () => {
@@ -327,6 +342,24 @@ function createSupabaseMock() {
         };
       }
 
+      if (table === 'project_invitations') {
+        return {
+          select: vi.fn(() => ({
+            order: vi.fn(async () => ({
+              data: [
+                {
+                  id: 'invitation-1',
+                  project_id: 'project-1',
+                  invited_email: 'invitee@example.invalid',
+                  invited_at: '2026-10-29T10:00:00.000Z',
+                },
+              ],
+              error: null,
+            })),
+          })),
+        };
+      }
+
       throw new Error(`Unexpected table: ${table}`);
     }),
   };
@@ -387,7 +420,7 @@ function createInboxConflictSupabaseMock() {
         };
       }
 
-      if (table === 'project_members') {
+      if (table === 'project_members' || table === 'project_invitations') {
         return {
           select: vi.fn(() => ({
             order: vi.fn(async () => ({ data: [], error: null })),

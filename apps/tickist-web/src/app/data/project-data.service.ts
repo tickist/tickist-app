@@ -14,8 +14,12 @@ import { StatisticsDataService } from './statistics-data.service';
 const PROJECT_SELECT =
   'id, owner_id, name, description, color, icon, is_active, is_inbox, project_type, ancestor_id, workspace_id, task_view, default_priority, default_finish_date, default_type_finish_date, dialog_time_when_task_finished';
 
-const LEGACY_MEMBERSHIP_SELECT =
-  'project_id, user_id, role, invited_at, projects(id, name, owner_id, color, icon)';
+// Owners see accepted members only; pending and declined rows are visible to
+// the invitee alone (migration 0037). Owners see invitations separately.
+const MEMBERSHIP_SELECT =
+  'project_id, user_id, status, role, invited_email, invited_project_name, invited_by, invited_at, accepted_at, declined_at, projects(id, name, owner_id, color, icon)';
+
+const INVITATION_SELECT = 'id, project_id, invited_email, invited_at';
 
 export type ProjectMemberStatus = 'pending' | 'accepted' | 'declined';
 
@@ -34,6 +38,14 @@ export interface ProjectMember {
   projectOwnerId?: string | null;
   projectColor?: string | null;
   projectIcon?: string | null;
+}
+
+/** An invitation as its owner sees it, whether or not the address has an account. */
+export interface ProjectInvitation {
+  id: string;
+  projectId: string;
+  email: string;
+  invitedAt: string;
 }
 
 export interface ProjectAssigneeOption {
@@ -56,6 +68,7 @@ export interface Project {
   taskView: string;
   shareWithIds: string[];
   members: ProjectMember[];
+  invitations?: ProjectInvitation[];
   assignees?: ProjectAssigneeOption[];
   defaultPriority?: string;
   defaultFinishDate?: number | null;
@@ -138,7 +151,7 @@ export interface ProjectUpdateInput {
  */
 export type ProjectInviteResult = {
   ok: true;
-  code: 'invite_processed' | 'already_pending' | 'already_member';
+  code: 'invite_processed' | 'already_member';
 };
 
 export const projectInviteResponseSchema = z
@@ -155,9 +168,9 @@ export const projectInviteResponseSchema = z
   ])
   .transform(
     (parsed): ProjectInviteResult =>
-      parsed.code === 'invited' || parsed.code === 'user_not_found'
-        ? { ok: true, code: 'invite_processed' }
-        : { ok: true, code: parsed.code }
+      parsed.code === 'already_member'
+        ? { ok: true, code: 'already_member' }
+        : { ok: true, code: 'invite_processed' }
   );
 
 type ProjectMemberRow = {
@@ -187,6 +200,13 @@ type ProjectMemberRow = {
         icon: string | null;
       }[]
     | null;
+};
+
+type ProjectInvitationRow = {
+  id: string;
+  project_id: string;
+  invited_email: string;
+  invited_at: string;
 };
 
 type ProjectAssigneeRow = {
@@ -306,7 +326,7 @@ export class ProjectDataService {
 
     const { data, error } = await this.supabase
       .from('project_members')
-      .select(LEGACY_MEMBERSHIP_SELECT)
+      .select(MEMBERSHIP_SELECT)
       .order('invited_at', { ascending: false });
 
     if (error || !data) {
@@ -322,7 +342,49 @@ export class ProjectDataService {
 
     this.memberships.set(memberships);
     this.attachMembershipsToProjects(memberships);
+    await this.refreshInvitations();
     await this.refreshAssigneeOptions();
+  }
+
+  private async refreshInvitations(): Promise<void> {
+    if (!this.supabase) {
+      return;
+    }
+
+    const { data, error } = await this.supabase
+      .from('project_invitations')
+      .select(INVITATION_SELECT)
+      .order('invited_at', { ascending: false });
+
+    if (error || !data) {
+      console.warn('[Projects] Unable to fetch invitations.', error);
+
+      return;
+    }
+
+    // SAFETY: The preceding query selects the columns of this row contract.
+    const invitations = (data as ProjectInvitationRow[]).map((row) => ({
+      id: row.id,
+      projectId: row.project_id,
+      email: row.invited_email,
+      invitedAt: row.invited_at,
+    }));
+
+    const invitationsByProject = new Map<string, ProjectInvitation[]>();
+
+    for (const invitation of invitations) {
+      invitationsByProject.set(invitation.projectId, [
+        ...(invitationsByProject.get(invitation.projectId) ?? []),
+        invitation,
+      ]);
+    }
+
+    this.projects.update((projects) =>
+      projects.map((project) => ({
+        ...project,
+        invitations: invitationsByProject.get(project.id) ?? [],
+      }))
+    );
   }
 
   private async refreshAssigneeOptions(): Promise<void> {
@@ -480,6 +542,27 @@ export class ProjectDataService {
 
     if (error) {
       console.error('[Projects] Failed to leave shared project', error);
+
+      return false;
+    }
+
+    await this.refresh();
+
+    return true;
+  }
+
+  async cancelInvitation(invitationId: string): Promise<boolean> {
+    if (!this.supabase) {
+      return false;
+    }
+
+    const { error } = await this.supabase
+      .from('project_invitations')
+      .delete()
+      .eq('id', invitationId);
+
+    if (error) {
+      console.error('[Projects] Failed to cancel invitation', error);
 
       return false;
     }
