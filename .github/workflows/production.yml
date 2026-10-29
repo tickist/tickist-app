@@ -17,12 +17,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.15.0
           cache: npm
@@ -57,7 +57,7 @@ jobs:
           npx nx build mcp
           npm run mcp:worker:check
 
-      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb # v1.7.3
+      - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
         with:
           version: 2.120.0
 
@@ -1000,24 +1000,44 @@ jobs:
 
       - name: Verify Cloudflare runtime env
         run: |
-          runtime_env="$(curl -fsS https://tickist.com/env.js)"
+          # A new Worker version reaches every Cloudflare location within a
+          # minute or two; until then /env.js may come from the previous one.
+          check_runtime_env() {
+            runtime_env="$(curl -fsS https://tickist.com/env.js)" || {
+              problem="Cloudflare runtime env could not be fetched."
+              return 1
+            }
 
-          if echo "$runtime_env" | grep -q 'globalThis.__env = globalThis.__env || {}'; then
-            echo "::error::Cloudflare runtime env is still serving the static placeholder."
-            exit 1
-          fi
+            if echo "$runtime_env" | grep -q 'globalThis.__env = globalThis.__env || {}'; then
+              problem="Cloudflare runtime env is still serving the static placeholder."
+              return 1
+            fi
 
-          if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_URL"[[:space:]]*:[[:space:]]*"https://'; then
-            echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_URL."
-            exit 1
-          fi
+            if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_URL"[[:space:]]*:[[:space:]]*"https://'; then
+              problem="Cloudflare runtime env is missing NG_APP_SUPABASE_URL."
+              return 1
+            fi
 
-          if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
-            echo "::error::Cloudflare runtime env is missing NG_APP_SUPABASE_PUBLISHABLE_KEY."
-            exit 1
-          fi
+            if ! echo "$runtime_env" | grep -Eq '"NG_APP_SUPABASE_PUBLISHABLE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
+              problem="Cloudflare runtime env is missing NG_APP_SUPABASE_PUBLISHABLE_KEY."
+              return 1
+            fi
 
-          if ! echo "$runtime_env" | grep -Eq '"NG_APP_TURNSTILE_SITE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
-            echo "::error::Cloudflare runtime env is missing NG_APP_TURNSTILE_SITE_KEY."
-            exit 1
-          fi
+            if ! echo "$runtime_env" | grep -Eq '"NG_APP_TURNSTILE_SITE_KEY"[[:space:]]*:[[:space:]]*"[^"]+"'; then
+              problem="Cloudflare runtime env is missing NG_APP_TURNSTILE_SITE_KEY."
+              return 1
+            fi
+          }
+
+          for attempt in $(seq 1 18); do
+            if check_runtime_env; then
+              echo "Cloudflare runtime env is complete."
+              exit 0
+            fi
+
+            echo "Attempt ${attempt}: ${problem} Retrying in 10 seconds."
+            sleep 10
+          done
+
+          echo "::error::${problem}"
+          exit 1
