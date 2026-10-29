@@ -84,7 +84,7 @@
     "@angular-devkit/core": "22.0.8",
     "@angular-devkit/schematics": "22.0.8",
     "@angular/build": "22.0.8",
-    "@angular/cli": "22.0.8",
+    "@angular/cli": "22.2.5",
     "@angular/compiler-cli": "22.0.8",
     "@angular/language-service": "22.0.8",
     "@cloudflare/workers-types": "^5.20260904.1",
