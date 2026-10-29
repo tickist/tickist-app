@@ -56,7 +56,9 @@ export function provideSupabase(config: SupabaseConfig): Provider[] {
         return createClient(url, publishableKey, {
           auth: {
             persistSession: true,
-            detectSessionInUrl: true,
+            // AuthCallbackService applies email-link sessions after checking
+            // that they do not replace a different signed-in account.
+            detectSessionInUrl: false,
           },
           global: {
             headers: config.functionsUrl

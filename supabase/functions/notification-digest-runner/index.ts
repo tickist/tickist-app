@@ -8,6 +8,7 @@ import {
   requireSupabaseSecretKey,
 } from '../_shared/common.ts';
 import { internalSecretMatches } from '../_shared/timing-safe.ts';
+import { APP_URL, emailButton } from '../_shared/email-layout.ts';
 
 type NotificationKey = 'weekly_summary' | 'daily_summary';
 type ScheduleType = 'daily' | 'weekly';
@@ -61,7 +62,10 @@ type DateTimePartType =
   | 'hour'
   | 'minute';
 
-const MAX_PREFERENCES_PER_RUN = 500;
+// Preferences are read in stable pages so every account is visited; the due
+// check below is cheap, and only due preferences cost a lookup and an email.
+const PREFERENCE_PAGE_SIZE = 500;
+const MAX_PREFERENCE_PAGES = 40;
 const WEEKDAY_INDEX: Record<string, number> = {
   Sun: 0,
   Mon: 1,
@@ -93,24 +97,34 @@ serve(async (req) => {
     },
   });
 
-  const { data, error } = await supabase
-    .from('notification_preferences')
-    .select(
-      'id, user_id, notification_key, channel, enabled, schedule_type, day_of_week, time_of_day, timezone, last_sent_at'
-    )
-    .eq('channel', 'email')
-    .eq('enabled', true)
-    .limit(MAX_PREFERENCES_PER_RUN);
+  const data: NotificationPreferenceRow[] = [];
+  for (let page = 0; page < MAX_PREFERENCE_PAGES; page += 1) {
+    const from = page * PREFERENCE_PAGE_SIZE;
+    const { data: rows, error } = await supabase
+      .from('notification_preferences')
+      .select(
+        'id, user_id, notification_key, channel, enabled, schedule_type, day_of_week, time_of_day, timezone, last_sent_at'
+      )
+      .eq('channel', 'email')
+      .eq('enabled', true)
+      .order('id', { ascending: true })
+      .range(from, from + PREFERENCE_PAGE_SIZE - 1);
 
-  if (error || !data) {
-    console.error('[notification-digest-runner] Failed to fetch preferences', {
-      requestId,
-      error,
-    });
-    return jsonResponse(500, {
-      error: 'Internal server error',
-      request_id: requestId,
-    });
+    if (error || !rows) {
+      console.error('[notification-digest-runner] Failed to fetch preferences', {
+        requestId,
+        error,
+      });
+      return jsonResponse(500, {
+        error: 'Internal server error',
+        request_id: requestId,
+      });
+    }
+
+    data.push(...(rows as NotificationPreferenceRow[]));
+    if (rows.length < PREFERENCE_PAGE_SIZE) {
+      break;
+    }
   }
 
   const now = new Date();
@@ -118,7 +132,7 @@ serve(async (req) => {
   let enqueued = 0;
   let skipped = 0;
 
-  for (const preference of data as NotificationPreferenceRow[]) {
+  for (const preference of data) {
     processed += 1;
 
     if (!isPreferenceDue(preference, now)) {
@@ -412,6 +426,7 @@ function buildWeeklyEmail(
     completedListHtml,
     `<p><strong>Coming up next week</strong></p>`,
     upcomingListHtml,
+    emailButton('Open Tickist', `${APP_URL}/app`),
   ].join('');
 
   const text = [
@@ -476,6 +491,7 @@ function buildDailyEmail(
       tomorrowKey
     )}</p>`,
     upcomingListHtml,
+    emailButton('Open Tickist', `${APP_URL}/app`),
   ].join('');
 
   const text = [

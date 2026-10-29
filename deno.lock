@@ -88,7 +88,7 @@
         "npm:vite@8.1.5",
         "npm:vitest@^4.0.16",
         "npm:wrangler@^4.129.0",
-        "npm:zod@^4.5.4",
+        "npm:zod@^4.6.7",
         "npm:zone.js@0.16.2"
       ],
       "overrides": {

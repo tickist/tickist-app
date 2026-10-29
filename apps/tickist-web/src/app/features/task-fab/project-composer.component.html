@@ -196,7 +196,8 @@
         >
           {{ feedback.message }}
         </p>
-        } @if (editingProject()?.members?.length) {
+        } @if (editingProject()?.members?.length ||
+        editingProject()?.invitations?.length) {
         <div class="sheet-muted-card">
           <p class="sheet-field__label">People with access</p>
           <div class="sheet-chip-list">
@@ -210,6 +211,19 @@
                 [disabled]="inviteSubmitting()"
                 (click)="removeMember(member.userId)"
                 [attr.aria-label]="'Remove ' + memberLabel(member.userId)"
+              >
+                ×
+              </button>
+            </span>
+            } @for (invitation of editingProject()?.invitations ?? []; track
+            invitation.id) {
+            <span class="sheet-chip" data-testid="project-invitation">
+              {{ invitation.email }} · Invited
+              <button
+                type="button"
+                [disabled]="inviteSubmitting()"
+                (click)="cancelInvitation(invitation.id)"
+                [attr.aria-label]="'Cancel invitation for ' + invitation.email"
               >
                 ×
               </button>

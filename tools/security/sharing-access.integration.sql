@@ -1,5 +1,5 @@
 -- LOCAL ONLY. Run after migrations with ON_ERROR_STOP. All fixtures roll back.
--- Covers migration 0033: membership retargeting, task ownership/moves,
+-- Covers migrations 0033 and 0037: membership retargeting, task ownership/moves,
 -- consent for direct sharing, API token creation, and MCP audit integrity.
 begin;
 create function pg_temp.check_access(ok boolean, label text) returns void language plpgsql as $$
@@ -85,29 +85,40 @@ end $$;
 update public.tasks set name='Edited by collaborator' where id='af200000-0000-4000-8000-000000000003';
 select pg_temp.check_access((select name from public.tasks where id='af200000-0000-4000-8000-000000000003')='Edited by collaborator', 'collaborator edit');
 
--- Direct sharing with a stranger becomes a pending invitation.
-insert into public.project_members(project_id,user_id,status) values
- ('af100000-0000-4000-8000-000000000002','af000000-0000-4000-8000-000000000003','accepted');
+-- Direct sharing with a stranger or an unknown user id fails the same way, so
+-- guessing ids reveals nothing (migration 0037); strangers are invited by email.
+do $$ begin
+ begin
+  insert into public.project_members(project_id,user_id,status) values
+   ('af100000-0000-4000-8000-000000000002','af000000-0000-4000-8000-000000000003','accepted');
+  raise exception 'Stranger shared directly';
+ exception when insufficient_privilege then null;
+ end;
+ begin
+  insert into public.project_members(project_id,user_id,status) values
+   ('af100000-0000-4000-8000-000000000002','af0000ff-0000-4000-8000-000000000099','accepted');
+  raise exception 'Unknown user id accepted';
+ exception when insufficient_privilege then null;
+ end;
+end $$;
 -- Direct sharing with an existing collaborator stays accepted.
 insert into public.project_members(project_id,user_id,status) values
  ('af100000-0000-4000-8000-000000000002','af000000-0000-4000-8000-000000000001','accepted');
 select pg_temp.reset_actor();
 reset role;
-select pg_temp.check_access((select status from public.project_members where project_id='af100000-0000-4000-8000-000000000002' and user_id='af000000-0000-4000-8000-000000000003')='pending', 'stranger needs consent');
 select pg_temp.check_access((select status from public.project_members where project_id='af100000-0000-4000-8000-000000000002' and user_id='af000000-0000-4000-8000-000000000001')='accepted', 'collaborator shared directly');
+-- The project-invite function (service role) stores the invitation.
+insert into public.project_members(project_id,user_id,status,invited_email,invited_by) values
+ ('af100000-0000-4000-8000-000000000002','af000000-0000-4000-8000-000000000003','pending','access-stranger@example.invalid','af000000-0000-4000-8000-000000000002');
 set local role authenticated;
 
--- The owner cannot accept on the invitee's behalf; the invitee can.
+-- The owner cannot see or accept the hidden invitation; the invitee can.
 select pg_temp.act_as('af000000-0000-4000-8000-000000000002');
-do $$ begin
- begin
-  update public.project_members set status='accepted'
-  where project_id='af100000-0000-4000-8000-000000000002' and user_id='af000000-0000-4000-8000-000000000003';
-  raise exception 'Owner accepted for invitee';
- exception when insufficient_privilege then null;
- end;
-end $$;
+select pg_temp.check_access(not exists (select 1 from public.project_members where user_id='af000000-0000-4000-8000-000000000003'), 'owner cannot see pending invitee');
+update public.project_members set status='accepted'
+where project_id='af100000-0000-4000-8000-000000000002' and user_id='af000000-0000-4000-8000-000000000003';
 select pg_temp.act_as('af000000-0000-4000-8000-000000000003');
+select pg_temp.check_access((select status from public.project_members where project_id='af100000-0000-4000-8000-000000000002' and user_id='af000000-0000-4000-8000-000000000003')='pending', 'owner did not accept for invitee');
 do $$ begin
  begin
   update public.project_members set role='owner'

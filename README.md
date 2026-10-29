@@ -212,6 +212,8 @@ Account deletion requests are handled through `remove-account@tickist.com`. The 
 
 History retention and rollout order are documented in [data retention](doc/data-retention.md). Run invitation regressions with `npm run retention:test`; database retention checks use local rollback transactions.
 
+All Tickist emails share one layout (`supabase/functions/_shared/email-layout.ts`). After changing it or the Supabase Auth email texts in `tools/email/auth-templates.mjs`, run `npm run email:templates`; see [email delivery](docs/EMAIL.md).
+
 ## Environment and secrets
 
 `.env.example` documents the supported variables. The important groups are:
@@ -219,6 +221,7 @@ History retention and rollout order are documented in [data retention](doc/data-
 | Purpose                    | Variables                                                                                          |
 | -------------------------- | -------------------------------------------------------------------------------------------------- |
 | Browser app                | `NG_APP_SUPABASE_URL`, `NG_APP_SUPABASE_PUBLISHABLE_KEY`, optional `NG_APP_SUPABASE_FUNCTIONS_URL` |
+| Captcha (optional)         | `NG_APP_TURNSTILE_SITE_KEY`; set only when Supabase Auth has Turnstile captcha with the secret key |
 | Local database tooling     | `SUPABASE_DB_URL`                                                                                  |
 | E2E                        | `SUPABASE_E2E_DB_URL` plus browser app variables                                                   |
 | Remote tooling             | `SUPABASE_REMOTE_DB_URL`, `SUPABASE_PROJECT_REF`                                                   |
@@ -269,6 +272,10 @@ Deployment configuration and required GitHub secrets are defined in [`.github/wo
 5. Use imperative, scoped commits, for example `feat(tasks): add completion badge`.
 
 The working agreement is in [AGENTS.md](AGENTS.md); [agent tooling](doc/agent-tooling.md) explains skills, hooks, and task-specific verification. See [MIGRATION_PLAN.md](MIGRATION_PLAN.md) for migration and architecture decisions.
+
+## Security
+
+Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md): through GitHub private vulnerability reporting or at security@tickist.com, never in a public issue.
 
 ## Useful links
 

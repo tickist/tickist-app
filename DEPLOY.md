@@ -60,6 +60,20 @@ Wymagane są dwa osobne harmonogramy:
   - header `x-internal-function-secret: <INTERNAL_FUNCTION_SECRET>`
   - body: `{"limit":25,"dry_run":false}`
 
+## Captcha (Cloudflare Turnstile)
+
+Formularze rejestracji, logowania, resetu hasła i zmiany hasła wysyłają token Turnstile do Supabase Auth. Publiczny klucz witryny jest w `wrangler.toml` (`NG_APP_TURNSTILE_SITE_KEY`); deploy produkcyjny kończy się błędem, gdy go brakuje.
+
+Kolejność włączania:
+
+1. Wdróż aplikację z kluczem witryny i sprawdź, że widget pojawia się na `https://tickist.com/auth`.
+2. Dopiero potem w Supabase Dashboard: `Authentication -> Attack Protection -> Enable Captcha protection`, provider Turnstile, wpisz klucz tajny z Cloudflare.
+3. Sprawdź logowanie, rejestrację i reset hasła. Włączenie captchy przed wdrożeniem frontendu blokuje logowanie wszystkim.
+
+Opcjonalny smoke test MCP OAuth (`ENABLE_MCP_OAUTH_SMOKE=true`) loguje się hasłem z kluczem publicznym, więc po włączeniu captchy przestanie działać. Przed włączeniem obu trzeba przełączyć jego logowanie na klucz tajny.
+
+Klucz tajny jest tylko w Supabase. Lokalny stack i E2E działają bez captchy (`[auth.captcha]` w `supabase/config.toml` pozostaje wyłączone). Produkcja musi mieć włączone `Confirm email`.
+
 ## Automatyzacja w GitHub Actions
 
 Workflow produkcyjny (`.github/workflows/production.yml`) automatycznie:

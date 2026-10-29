@@ -10,6 +10,7 @@ import {
 } from "../_shared/common.ts";
 import { internalSecretMatches } from "../_shared/timing-safe.ts";
 import { sendWithSes } from "../_shared/ses.ts";
+import { renderOutboxEmail } from "../_shared/email-layout.ts";
 
 interface SendEmailsPayload {
   limit?: number;
@@ -220,6 +221,14 @@ serve(async (req) => {
         break;
       }
 
+      // Producers queue the message content; every email gets the shared layout.
+      const rendered = renderOutboxEmail({
+        subject: row.subject,
+        html: row.html,
+        text: row.text,
+        type: row.type,
+      });
+
       const sendResult = await sendWithSes({
         accessKeyId: awsAccessKeyId,
         secretAccessKey: awsSecretAccessKey,
@@ -228,8 +237,8 @@ serve(async (req) => {
         fromEmail: emailFrom,
         toEmail: row.to_email,
         subject: row.subject,
-        html: row.html,
-        text: row.text,
+        html: rendered.html,
+        text: rendered.text,
         dedupeKey: row.dedupe_key,
         type: row.type,
         configurationSet: sesConfigurationSet,

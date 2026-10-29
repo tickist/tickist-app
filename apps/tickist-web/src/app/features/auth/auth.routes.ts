@@ -29,6 +29,13 @@ export const AUTH_ROUTES: Route[] = [
       ),
   },
   {
+    path: 'switch-account',
+    loadComponent: () =>
+      import('./account-switch.component').then(
+        (m) => m.AccountSwitchComponent
+      ),
+  },
+  {
     path: 'oauth/consent',
     canActivate: [supabaseAuthGuard],
     loadComponent: () =>

@@ -28,10 +28,9 @@ export class SupabaseSessionService {
       return;
     }
 
-    this.passwordRecoveryState.set(
-      this.readPasswordRecoveryPending() ||
-        this.hasPasswordRecoveryCallbackUrl()
-    );
+    // Recovery mode starts only after AuthCallbackService applied a recovery
+    // token; a URL alone never unlocks the password form.
+    this.passwordRecoveryState.set(this.readPasswordRecoveryPending());
 
     this.supabase.auth
       .getSession()
@@ -123,32 +122,6 @@ export class SupabaseSessionService {
     } catch {
       return false;
     }
-  }
-
-  private hasPasswordRecoveryCallbackUrl(): boolean {
-    if (!this.isBrowser) {
-      return false;
-    }
-
-    const location = window.location;
-
-    if (location.pathname !== '/auth/update-password') {
-      return false;
-    }
-
-    const queryParams = new URLSearchParams(location.search);
-
-    const hashParams = new URLSearchParams(
-      location.hash.startsWith('#') ? location.hash.slice(1) : location.hash
-    );
-
-    return (
-      queryParams.has('code') ||
-      queryParams.get('type') === 'recovery' ||
-      hashParams.get('type') === 'recovery' ||
-      hashParams.has('access_token') ||
-      hashParams.has('refresh_token')
-    );
   }
 
   private setPasswordRecoveryPending(value: boolean): void {

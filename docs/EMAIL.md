@@ -33,6 +33,13 @@ Uwagi:
 - Supabase Auth SMTP jest niezależne od workerów outbox.
 - Dla produkcji nie używaj domyślnego SMTP Supabase.
 
+## Wygląd maili
+
+Wszystkie maile Tickist mają wspólny layout z `supabase/functions/_shared/email-layout.ts` (logo, karta, przycisk, stopka z linkiem do ustawień):
+
+- maile aplikacji (przypomnienia, podsumowania, zaproszenia, wznowione zadania): producenci zapisują w outboxie treść, a `send-emails` przy wysyłce owija ją w layout; wiadomości tylko tekstowe zamienia na akapity;
+- maile Supabase Auth (potwierdzenie konta, reset hasła, link logowania, zmiana adresu, zaproszenie, kod weryfikacyjny): `npm run email:templates` generuje `supabase/templates/*.html` i `subjects.json` z tego samego layoutu. Lokalny Auth czyta je przez `supabase/config.toml`, a deploy produkcyjny wysyła je do hostowanego Auth przez Management API, więc zmiany w Dashboardzie są nadpisywane przy każdym deployu. CI i deploy sprawdzają, że wygenerowane pliki są aktualne (`npm run email:templates:test`).
+
 ## 2) Notyfikacje aplikacyjne (digest + batch sender)
 
 Architektura:

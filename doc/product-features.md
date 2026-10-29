@@ -21,7 +21,7 @@ Posts, categories, and tags are published from the repository rather than an adm
 - Selecting a project shows tasks from that project and all nested subprojects. When the selected project has descendants, independent checkboxes beside the selected project and each descendant can include or exclude that project's own tasks. All projects in the hierarchy are included by default, and the selection resets when the user moves to another project.
 - Projects have names, descriptions, colours, icons, defaults, and a simple or extended task-card view. Branding offers a searchable catalogue of 151 tree-shaken Lucide icons.
 - The sidebar groups active work and special planning buckets such as Someday/Maybe, routine reminders, weekdays, and future work.
-- Project owners can share a project by invitation. Email invitations require an existing Tickist account; an address without an account receives no invitation email or stored membership. The inviter sees the same neutral confirmation whether or not the address has an account. Owners can send or renew at most 20 invitations per hour, and an address invited or declined within the last 24 hours is not re-invited to the same project. Recipients accept or decline from the Team view; accepted members can leave shared projects.
+- Project owners can share a project by invitation. Email invitations reach only confirmed Tickist accounts; an address without an account receives no email. The owner sees every invitation as "Invited" until it is accepted, cancelled, or expires after 30 days, and cannot tell whether the address has an account or whether the person declined. Owners can cancel an invitation from the project's sharing tab, send or renew at most 20 invitations per hour, and an address invited within the last 24 hours is not re-invited to the same project. Recipients accept or decline from the Team view; accepted members can leave shared projects. Direct sharing without an invitation is limited to people the owner already collaborates with. Connected apps (MCP clients) cannot send, accept, or cancel invitations.
 - MCP clients can create and move nested projects, recursively list a selected project's tasks, and delete owned non-Inbox projects. Deleting a project leaves its tasks unattached and promotes its direct children to root projects.
 
 ## Tasks
@@ -52,7 +52,7 @@ Tag views support tag selection, OR/AND matching, untagged-task mode, completed-
 
 ### Repeating tasks and reminders
 
-Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Completing a recurring task creates the next occurrence rather than leaving an ordinary completed item. Reminders store a date, time, timezone, and delivery state.
+Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Completing a recurring task creates the next occurrence rather than leaving an ordinary completed item. Reminders store a date, time, timezone, and delivery state. A reminder is saved only once its date and time are in the future, so the task editor's automatic saving never stores the intermediate dates a date field passes through while the year is typed; migration 0039 enforces the same rule in the database with five minutes of clock tolerance.
 
 MCP clients use a semantic repeat interval and completion- or due-date anchor. Completing a recurring task through MCP advances the same task and resets its steps. MCP clients can also suspend incomplete tasks indefinitely or until a future timestamp and resume them explicitly.
 
@@ -64,6 +64,12 @@ Each account stores an IANA timezone. New registrations capture the browser time
 - **Task tree:** project-oriented task grouping for scanning a wider workspace.
 - **Statistics:** completed work, late completions, overdue open work, and inactive projects over a time window.
 - **Tags:** cross-project filtering and ordering.
+
+## Sign-in and account security
+
+- Sign-up, sign-in, password-reset requests, and the current-password check before a password change show a Cloudflare Turnstile check when the public `NG_APP_TURNSTILE_SITE_KEY` is configured (production sets it in `wrangler.toml`). The token is sent to Supabase Auth, which verifies it when captcha is enabled in the hosted project. Each token is used once and the check resets after every request. Without the key (local development and E2E) no check is shown. If the Turnstile script cannot load, the form explains this and offers a retry.
+- Email links (sign-up confirmation, password recovery) carry a session that the application applies itself. When a different account is already signed in, `/auth/switch-account` asks whether to stay signed in or sign out and continue; a link never silently replaces the current account. Password recovery mode starts only after a recovery link was applied.
+- Supabase Auth keeps the first password when an unconfirmed address signs up again. A repeat sign-up or resent confirmation more than two minutes after the first one clears that password, so the address owner confirms the account and sets a password with "Forgot password".
 
 ## Settings and portability
 

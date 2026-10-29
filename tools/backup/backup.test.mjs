@@ -76,7 +76,10 @@ test('storage backup downloads nested objects without trusting paths', async () 
                 error: null,
               }
             : {
-                data: [{ id: 'nested-id', name: 'avatar.png', metadata: {} }],
+                data: [
+                  { id: 'nested-id', name: 'avatar.png', metadata: {} },
+                  { id: 'unsafe-id', name: '../other/avatar.png', metadata: {} },
+                ],
                 error: null,
               },
         download: async (name) => ({
@@ -95,6 +98,13 @@ test('storage backup downloads nested objects without trusting paths', async () 
     assert.deepEqual(manifest.objects.map((item) => item.name).sort(), [
       'root.png',
       'users/avatar.png',
+    ]);
+    assert.deepEqual(manifest.skippedObjects, [
+      {
+        bucketId: 'avatars',
+        name: 'users/../other/avatar.png',
+        reason: 'unsafe_name',
+      },
     ]);
     for (const object of manifest.objects) {
       assert.deepEqual(

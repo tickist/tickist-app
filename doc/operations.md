@@ -36,7 +36,7 @@ Add focused Vitest coverage for services and components. Add Playwright coverage
 
 Use `npm run db:push:local`, `db:pull:local`, `db:types:local`, and `db:reset:local` for the local environment. Remote commands deliberately use `.env` and `SUPABASE_REMOTE_DB_URL`.
 
-Treat remote resets as destructive. Production schema changes belong in a new, numbered, backward-compatible migration. Never reuse an existing migration number and do not edit a migration that has already been shared.
+Treat remote resets as destructive. Production schema changes belong in a new, numbered, backward-compatible migration. Never reuse an existing migration number and do not edit a migration that has already been shared. Supabase does not grant Data API roles access to new `public` tables, so the migration that creates a table must also grant the roles that need it, normally `authenticated` for RLS-guarded browser access and `all` to `service_role`. Grant `anon` only for intentionally public data.
 
 Repository-managed operator tools also provide a deterministic English demo account and encrypted disaster-recovery backups:
 
@@ -98,7 +98,7 @@ external log destinations.
 
 The app uses `assets.run_worker_first = ["/*", "!/assets/*", "!/images/*"]` so SPA HTML, `/env.js`, legal noindex and consent/security headers actually execute the Worker. Bundles and images retain direct asset delivery. Check navigation responses as well as direct requests; SPA asset fallback can otherwise bypass the Worker.
 
-The Worker builds the Content-Security-Policy per request in `apps/tickist-web/worker.ts`. `connect-src` and `img-src` allow only `'self'`, the configured Supabase origin (plus its `wss://` Realtime origin and the functions origin), Cloudflare Web Analytics and the Google Analytics endpoints; local Supabase hosts are not allowed in production. The inline theme scripts in `apps/tickist-web/index.html` are allowed by SHA-256 hash; changing them requires updating `INLINE_SCRIPT_HASHES`, and `tests/worker.spec.ts` fails until the hashes match. Paths that bypass the Worker (`/assets/*`, `/images/*`) get `X-Content-Type-Options: nosniff` from `apps/tickist-web/public/_headers`, which Workers Static Assets applies to directly served assets. The build no longer copies repository Markdown files (such as `AGENTS.md` or `README.md`) into the public site.
+The Worker builds the Content-Security-Policy per request in `apps/tickist-web/worker.ts`. `connect-src` and `img-src` allow only `'self'`, the configured Supabase origin (plus its `wss://` Realtime origin and the functions origin), Cloudflare Web Analytics, the Google Analytics endpoints and Cloudflare Turnstile (`https://challenges.cloudflare.com`, also the only `frame-src`); local Supabase hosts are not allowed in production. The inline theme scripts in `apps/tickist-web/index.html` are allowed by SHA-256 hash; changing them requires updating `INLINE_SCRIPT_HASHES`, and `tests/worker.spec.ts` fails until the hashes match. Paths that bypass the Worker (`/assets/*`, `/images/*`) get `X-Content-Type-Options: nosniff` from `apps/tickist-web/public/_headers`, which Workers Static Assets applies to directly served assets. The build no longer copies repository Markdown files (such as `AGENTS.md` or `README.md`) into the public site.
 
 ## Administrator email monitoring
 

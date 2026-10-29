@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {
   asOptionalString,
+  cleanDisplayText,
   isRecord,
   requireEnv,
   requireSupabaseSecretKey,
@@ -163,10 +164,11 @@ serve(async (req) => {
     return jsonResponse(200, { ok: true, inserted: 0 });
   }
 
+  // Other project members receive this text.
   const inserts = acceptedRecipients.map((recipientId) => ({
     recipient_id: recipientId,
-    title,
-    description,
+    title: cleanDisplayText(title, MAX_TITLE_LENGTH),
+    description: cleanDisplayText(description, MAX_DESCRIPTION_LENGTH),
     type: `project-${event}`,
   }));
 

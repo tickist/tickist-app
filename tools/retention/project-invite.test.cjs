@@ -17,10 +17,16 @@ const code = ts.transpileModule(source, {
 async function requestInvitation(
   existing,
   recipientExists = true,
-  recentInvites = 0
+  recentInvites = 0,
+  { record = null, connectedApp = false } = {}
 ) {
   let handler;
-  const calls = { upserts: 0, notifications: 0, emails: [] };
+  const calls = {
+    upserts: 0,
+    recordUpserts: 0,
+    notifications: 0,
+    emails: [],
+  };
   const client = {
     auth: {
       getUser: async () => ({ data: { user: { id: 'owner' } } }),
@@ -38,9 +44,15 @@ async function requestInvitation(
           data:
             table === 'projects'
               ? { id: 'project', owner_id: 'owner', name: 'Fixture' }
-              : existing,
+              : table === 'project_invitations'
+                ? record
+                : existing,
         }),
         upsert() {
+          if (table === 'project_invitations') {
+            calls.recordUpserts++;
+            return Promise.resolve({ error: null });
+          }
           calls.upserts++;
           return chain;
         },
@@ -75,11 +87,18 @@ async function requestInvitation(
           },
         };
       if (name.includes('supabase-js')) return { createClient: () => client };
+      if (name.includes('email-layout'))
+        return {
+          APP_URL: 'https://tickist.com',
+          emailButton: (label, url) => `<a href="${url}">${label}</a>`,
+        };
       if (name.includes('common'))
         return {
           asOptionalString: (s) =>
             typeof s === 'string' && s.trim() ? s.trim() : null,
+          cleanDisplayText: (value) => value,
           getBearerToken: () => 'fixture-token',
+          isConnectedAppToken: () => connectedApp,
           requireEnv: () => 'fixture',
           requireSupabaseSecretKey: () => 'fixture',
         };
@@ -103,7 +122,7 @@ test('current pending invitation does not resend or extend its lifetime', async 
     status: 'pending',
     invited_at: new Date().toISOString(),
   });
-  assert.equal(r.body.code, 'already_pending');
+  assert.equal(r.body.code, 'invite_processed');
   assert.equal(r.calls.upserts, 0);
   assert.equal(r.calls.notifications, 0);
   assert.equal(r.calls.emails.length, 0);
@@ -125,19 +144,21 @@ test('accepted membership is not replaced or emailed again', async () => {
   const r = await requestInvitation({ status: 'accepted' });
   assert.equal(r.body.code, 'already_member');
   assert.equal(r.calls.upserts, 0);
+  assert.equal(r.calls.recordUpserts, 0);
   assert.equal(r.calls.emails.length, 0);
 });
 
-test('an email without a Tickist account receives no invitation or stored membership', async () => {
+test('an email without a Tickist account gets an invitation record but no membership or email', async () => {
   const r = await requestInvitation(null, false);
   assert.equal(r.status, 200);
   assert.equal(r.body.code, 'invite_processed');
+  assert.equal(r.calls.recordUpserts, 1);
   assert.equal(r.calls.upserts, 0);
   assert.equal(r.calls.notifications, 0);
   assert.equal(r.calls.emails.length, 0);
 });
 
-test('an unknown and a known address get the same response', async () => {
+test('an unknown and a known address get the same response and record', async () => {
   const unknown = await requestInvitation(null, false);
   const known = await requestInvitation(null, true);
   assert.equal(unknown.status, known.status);
@@ -145,7 +166,22 @@ test('an unknown and a known address get the same response', async () => {
     { ...unknown.body, request_id: undefined },
     { ...known.body, request_id: undefined }
   );
+  assert.equal(unknown.calls.recordUpserts, known.calls.recordUpserts);
   assert.equal(known.calls.upserts, 1);
+});
+
+test('a recent invitation record is not refreshed for known or unknown addresses', async () => {
+  const record = { invited_at: new Date().toISOString() };
+  const unknown = await requestInvitation(null, false, 0, { record });
+  const known = await requestInvitation(
+    { status: 'pending', invited_at: record.invited_at },
+    true,
+    0,
+    { record }
+  );
+  assert.equal(unknown.calls.recordUpserts, 0);
+  assert.equal(known.calls.recordUpserts, 0);
+  assert.equal(unknown.body.code, known.body.code);
 });
 
 test('owners are limited to 20 invitations per hour', async () => {
@@ -153,15 +189,25 @@ test('owners are limited to 20 invitations per hour', async () => {
   assert.equal(r.status, 429);
   assert.equal(r.body.code, 'rate_limited');
   assert.equal(r.calls.upserts, 0);
+  assert.equal(r.calls.recordUpserts, 0);
 });
 
-test('a recently declined invitation is not sent again', async () => {
+test('a recently declined invitation is not sent again and answers neutrally', async () => {
   const r = await requestInvitation({
     status: 'declined',
     invited_at: new Date(Date.now() - 2 * 86400000).toISOString(),
     declined_at: new Date().toISOString(),
   });
-  assert.equal(r.status, 429);
+  assert.equal(r.status, 200);
+  assert.equal(r.body.code, 'invite_processed');
   assert.equal(r.calls.upserts, 0);
   assert.equal(r.calls.emails.length, 0);
+});
+
+test('connected apps cannot send invitations', async () => {
+  const r = await requestInvitation(null, true, 0, { connectedApp: true });
+  assert.equal(r.status, 403);
+  assert.equal(r.body.code, 'connected_app');
+  assert.equal(r.calls.upserts, 0);
+  assert.equal(r.calls.recordUpserts, 0);
 });

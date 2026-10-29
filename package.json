@@ -49,6 +49,8 @@
     "account:delete": "node tools/account-deletion/delete-account.mjs",
     "account:delete:test": "node --test tools/account-deletion/delete-account.test.mjs",
     "retention:test": "node --test tools/retention/project-invite.test.cjs",
+    "email:templates": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/email/auth-templates.mjs",
+    "email:templates:test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tools/email/email-layout.test.mjs",
     "db:backup:prune": "node tools/backup/prune.mjs",
     "email-monitor:test": "node --test tools/email-monitor/*.test.mjs",
     "email-monitor:test:db": "bash tools/email-monitor/test-db.sh"
@@ -72,7 +74,7 @@
     "express": "^4.22.2",
     "hono": "^4.13.7",
     "rxjs": "~7.8.0",
-    "zod": "^4.5.4",
+    "zod": "^4.6.7",
     "zone.js": "0.16.2"
   },
   "devDependencies": {

@@ -8,9 +8,10 @@ select pg_temp.assert_true(not has_function_privilege('anon', 'public.account_de
 select pg_temp.assert_true(has_function_privilege('service_role', 'public.account_deletion_preview(uuid)', 'execute'), 'service role can inspect');
 
 select pg_temp.assert_true(not exists(select 1 from public.migration_audit), 'test requires an empty legacy audit store; do not delete real audit data');
-insert into auth.users (id, email, raw_user_meta_data, raw_app_meta_data)
-values ('ad000000-0000-4000-8000-000000000001', 'delete-test@example.invalid', '{}', '{}'),
-       ('ad000000-0000-4000-8000-000000000002', 'keep-test@example.invalid', '{}', '{}');
+-- Operator-provisioned fixtures skip registration consent capture.
+insert into auth.users (id, email, email_confirmed_at, raw_user_meta_data, raw_app_meta_data)
+values ('ad000000-0000-4000-8000-000000000001', 'delete-test@example.invalid', now(), '{}', '{}'),
+       ('ad000000-0000-4000-8000-000000000002', 'keep-test@example.invalid', now(), '{}', '{}');
 insert into public.projects(id, owner_id, name, is_inbox)
 values ('ad100000-0000-4000-8000-000000000001', 'ad000000-0000-4000-8000-000000000001', 'Deletion fixture', false),
        ('ad100000-0000-4000-8000-000000000002', 'ad000000-0000-4000-8000-000000000002', 'Surviving fixture', false);
