@@ -13,6 +13,15 @@ const Empty = z.object({});
 
 const Uuid = z.string().uuid();
 
+// Database limits from migration 0038.
+const ProjectName = z.string().trim().min(1).max(200);
+
+const TaskName = z.string().trim().min(1).max(2000);
+
+const Description = z.string().max(100000);
+
+const TagName = z.string().trim().min(1).max(100);
+
 const Priority = z.enum(['A', 'B', 'C', 'normal']);
 
 const Repeat = z.object({
@@ -118,8 +127,8 @@ export function createTickistMcpServer(
     'create_project',
     'Create a new project.',
     z.object({
-      name: z.string().trim().min(1),
-      description: z.string().optional(),
+      name: ProjectName,
+      description: Description.optional(),
       color: z.string().optional(),
       icon: z.string().optional(),
       workspace_id: Uuid.optional(),
@@ -137,8 +146,8 @@ export function createTickistMcpServer(
     z
       .object({
         project_id: Uuid,
-        name: z.string().trim().min(1).optional(),
-        description: z.string().optional(),
+        name: ProjectName.optional(),
+        description: Description.optional(),
         color: z.string().optional(),
         icon: z.string().optional(),
         workspace_id: Uuid.optional(),
@@ -196,9 +205,9 @@ export function createTickistMcpServer(
     'create_task',
     'Create a new task; when project_id is omitted the inbox is used.',
     z.object({
-      name: z.string().trim().min(1),
+      name: TaskName,
       project_id: Uuid.optional(),
-      description: z.string().optional(),
+      description: Description.optional(),
       priority: Priority.optional(),
       finish_date: z.iso.date().optional(),
       pinned: z.boolean().optional(),
@@ -216,8 +225,8 @@ export function createTickistMcpServer(
     z
       .object({
         task_id: Uuid,
-        name: z.string().trim().min(1).optional(),
-        description: z.string().optional(),
+        name: TaskName.optional(),
+        description: Description.optional(),
         project_id: Uuid.optional(),
         priority: Priority.optional(),
         finish_date: z.iso.date().nullable().optional(),
@@ -292,7 +301,7 @@ export function createTickistMcpServer(
     server,
     'create_tag',
     'Create a new tag.',
-    z.object({ name: z.string().trim().min(1) }),
+    z.object({ name: TagName }),
     'tags:write',
     connection.scopes,
     ({ name }) => access.createTag(name),

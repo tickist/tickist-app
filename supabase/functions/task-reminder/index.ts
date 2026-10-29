@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {
+  cleanDisplayText,
   requireEnv,
   requireSupabaseSecretKey,
   toSha256Hex,
@@ -17,6 +18,7 @@ interface ProjectMemberRow {
 }
 
 const MAX_MESSAGE_LENGTH = 1000;
+const MAX_TASK_NAME_IN_MESSAGE = 200;
 const DEDUPE_WINDOW_SECONDS = 60;
 const CUSTOM_MESSAGE_WINDOW_SECONDS = 10 * 60;
 const CUSTOM_MESSAGE_MARKER_PREFIX = "task-message:";
@@ -110,11 +112,13 @@ serve(async (req) => {
     return jsonResponse(403, { error: "Forbidden", request_id: requestId });
   }
 
-  const message =
-    messageInput ??
-    (event === "completed"
-      ? `Task "${task.name}" was completed`
-      : `Update on task "${task.name}".`);
+  // Other project members receive this text.
+  const taskName = cleanDisplayText(task.name ?? "", MAX_TASK_NAME_IN_MESSAGE);
+  const message = messageInput
+    ? cleanDisplayText(messageInput, MAX_MESSAGE_LENGTH)
+    : event === "completed"
+      ? `Task "${taskName}" was completed`
+      : `Update on task "${taskName}".`;
   const title = `Task ${event}`;
   const duplicateSince = new Date(
     Date.now() - DEDUPE_WINDOW_SECONDS * 1000

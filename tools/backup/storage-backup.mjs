@@ -59,6 +59,10 @@ async function listBucketObjects(client, bucketId) {
   return objects;
 }
 
+// URL handling normalises `.` and `..` segments away, so such a name could
+// download a different object; it is recorded as skipped instead.
+const UNSAFE_OBJECT_NAME = /(^|\/)\.\.?(\/|$)/;
+
 export async function backupStorageObjects({
   supabaseUrl,
   serviceRoleKey,
@@ -84,6 +88,7 @@ export async function backupStorageObjects({
     version: 1,
     buckets: [],
     objects: [],
+    skippedObjects: [],
     totalBytes: 0,
   };
   for (const bucket of buckets ?? []) {
@@ -98,6 +103,14 @@ export async function backupStorageObjects({
     });
     const objects = await listBucketObjects(client, bucket.id);
     for (const object of objects) {
+      if (UNSAFE_OBJECT_NAME.test(object.name)) {
+        manifest.skippedObjects.push({
+          bucketId: bucket.id,
+          name: object.name,
+          reason: 'unsafe_name',
+        });
+        continue;
+      }
       const archiveId = createHash('sha256')
         .update(`${bucket.id}\0${object.name}`)
         .digest('hex');
@@ -133,6 +146,11 @@ export async function backupStorageObjects({
       });
     }
     log(`Storage ${bucket.id}: ${objects.length} object(s).`);
+  }
+  if (manifest.skippedObjects.length) {
+    log(
+      `Storage: skipped ${manifest.skippedObjects.length} object(s) with unsafe names; see manifest.`
+    );
   }
   await writeFile(
     path.join(outputRoot, 'manifest.json'),
