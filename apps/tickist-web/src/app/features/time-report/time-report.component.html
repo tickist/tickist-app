@@ -1,0 +1,114 @@
+<section class="time-shell">
+  <header class="time-hero">
+    <h1 class="time-title">⏱ Time</h1>
+    <div class="time-controls">
+      <div class="time-day">
+        <button
+          type="button"
+          class="btn btn-sm btn-ghost"
+          aria-label="Previous day"
+          data-testid="time-report-previous"
+          (click)="previousDay()"
+        >
+          ‹
+        </button>
+        <input
+          type="date"
+          class="sheet-input time-day__input"
+          aria-label="Report day"
+          data-testid="time-report-day"
+          [value]="day()"
+          (change)="onDateInput($event)"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-ghost"
+          aria-label="Next day"
+          [disabled]="isToday()"
+          (click)="nextDay()"
+        >
+          ›
+        </button>
+        @if (!isToday()) {
+        <button type="button" class="btn btn-sm btn-ghost" (click)="today()">
+          Today
+        </button>
+        }
+      </div>
+      <div class="time-grouping" role="group" aria-label="Group by">
+        <button
+          type="button"
+          class="btn btn-sm"
+          [class.btn-primary]="grouping() === 'project'"
+          [class.btn-ghost]="grouping() !== 'project'"
+          [attr.aria-pressed]="grouping() === 'project'"
+          (click)="setGrouping('project')"
+        >
+          Projects
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm"
+          [class.btn-primary]="grouping() === 'tag'"
+          [class.btn-ghost]="grouping() !== 'tag'"
+          [attr.aria-pressed]="grouping() === 'tag'"
+          data-testid="time-report-group-tags"
+          (click)="setGrouping('tag')"
+        >
+          Tags
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <article class="time-panel" data-testid="time-report">
+    @if (report().groups.length) {
+    <table class="time-table">
+      <thead>
+        <tr>
+          <th scope="col">Task</th>
+          <th scope="col" class="time-table__num">Me</th>
+          <th scope="col" class="time-table__num">Everyone</th>
+        </tr>
+      </thead>
+      @for (group of report().groups; track group.key) {
+      <tbody>
+        <tr class="time-table__group">
+          <th scope="rowgroup">{{ group.label }}</th>
+          <td class="time-table__num">{{ format(group.mySeconds) }}</td>
+          <td class="time-table__num">{{ format(group.everyoneSeconds) }}</td>
+        </tr>
+        @for (line of group.tasks; track line.taskId) {
+        <tr>
+          <td class="time-table__task">
+            {{ line.name }} @if (line.context) {
+            <span class="time-table__context">{{ line.context }}</span>
+            }
+          </td>
+          <td class="time-table__num">{{ format(line.mySeconds) }}</td>
+          <td class="time-table__num">{{ format(line.everyoneSeconds) }}</td>
+        </tr>
+        }
+      </tbody>
+      }
+      <tfoot>
+        <tr>
+          <th scope="row">Total</th>
+          <td class="time-table__num" data-testid="time-report-total-me">
+            {{ format(report().mySeconds) }}
+          </td>
+          <td class="time-table__num">
+            {{ format(report().everyoneSeconds) }}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    @if (grouping() === 'tag') {
+    <p class="time-note">A task with several tags is counted under each tag.</p>
+    } } @else if (!loading()) {
+    <p class="time-empty" data-testid="time-report-empty">
+      No time recorded on this day.
+    </p>
+    }
+  </article>
+</section>

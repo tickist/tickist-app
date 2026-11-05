@@ -50,6 +50,7 @@ import {
   SheetScaffoldComponent,
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
+import { TaskTimeEntriesComponent } from './task-time-entries.component';
 
 type TabKey = 'general' | 'repeat' | 'reminders' | 'tags' | 'steps' | 'extra';
 
@@ -89,12 +90,12 @@ type TaskFormDefaults = {
   suspendUntilTime: string;
   pinned: boolean;
   estimateMinutes: number;
-  spentMinutes: number;
 };
 
 @Component({
   selector: 'app-task-composer',
   imports: [
+    TaskTimeEntriesComponent,
     DatePipe,
     ReactiveFormsModule,
     ProjectPickerComponent,
@@ -229,7 +230,6 @@ export class TaskComposerComponent {
     suspendUntilTime: '00:00',
     pinned: false,
     estimateMinutes: 15,
-    spentMinutes: 0,
   };
   @Input() set preset(value: TaskComposerPreset | null) {
     this.applyPreset(value);
@@ -258,7 +258,6 @@ export class TaskComposerComponent {
       suspendUntilTime: ['00:00'],
       pinned: [false],
       estimateMinutes: [15],
-      spentMinutes: [0],
     },
     { validators: suspensionValidator }
   );
@@ -397,7 +396,6 @@ export class TaskComposerComponent {
         suspendUntilTime: normalizeDateTimeTimeValue(task.suspendUntil),
         pinned: task.pinned,
         estimateMinutes: task.estimateMinutes ?? 15,
-        spentMinutes: task.spentMinutes ?? 0,
       });
       this.clearSteps();
       task.steps.forEach((step) => this.addStep(step.content, step.isDone));
@@ -818,7 +816,6 @@ export class TaskComposerComponent {
         !!value.finishDate
       ),
       estimateMinutes: value.estimateMinutes ?? null,
-      spentMinutes: value.spentMinutes ?? null,
       isActive: value.isActive,
       suspendUntil: this.resolveSuspendUntil(
         value.isActive,
@@ -920,7 +917,6 @@ export class TaskComposerComponent {
           repeatInterval,
           fromRepeating: repeatFrom,
           estimateMinutes: value.estimateMinutes ?? null,
-          spentMinutes: value.spentMinutes ?? null,
           tags: value.tags,
           assigneeIds: value.assigneeId ? [value.assigneeId] : [],
           isActive: value.isActive,
@@ -957,7 +953,6 @@ export class TaskComposerComponent {
         repeatInterval,
         fromRepeating: repeatFrom,
         estimateMinutes: value.estimateMinutes ?? null,
-        spentMinutes: value.spentMinutes ?? null,
         tags: value.tags,
         assigneeIds: value.assigneeId ? [value.assigneeId] : [],
         isActive: value.isActive,
@@ -1022,7 +1017,6 @@ export class TaskComposerComponent {
       suspendUntilTime: next.suspendUntilTime,
       pinned: next.pinned,
       estimateMinutes: next.estimateMinutes,
-      spentMinutes: next.spentMinutes,
     });
     this.clearSteps();
   }

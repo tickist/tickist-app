@@ -76,6 +76,19 @@
     <div
       class="app-navbar__actions ml-auto flex items-center gap-1 sm:gap-3 shrink-0"
     >
+      @if (timer.running(); as runningEntry) {
+      <a
+        class="focus-chip"
+        [class.focus-chip--over]="timer.limitReached()"
+        [routerLink]="['/app/focus', runningEntry.taskId]"
+        [attr.aria-label]="'Timer running: ' + runningClock()"
+        [attr.title]="runningTaskName()"
+        data-testid="focus-chip"
+      >
+        <span aria-hidden="true">⏱</span>
+        <span class="focus-chip__clock">{{ runningClock() }}</span>
+      </a>
+      }
       <button
         type="button"
         class="theme-toggle-btn"

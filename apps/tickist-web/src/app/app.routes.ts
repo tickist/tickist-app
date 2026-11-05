@@ -15,6 +15,13 @@ export const appRoutes: Route[] = [
     canActivate: [redirectIfAuthenticatedGuard],
   },
   {
+    // Outside the app shell: focus mode shows only the task and its clock.
+    path: 'app/focus/:taskId',
+    canActivate: [supabaseAuthGuard],
+    loadComponent: () =>
+      import('./features/focus/focus.component').then((m) => m.FocusComponent),
+  },
+  {
     path: 'app',
     canActivate: [supabaseAuthGuard],
     component: AppViewportComponent,
@@ -49,6 +56,13 @@ export const appRoutes: Route[] = [
         loadComponent: () =>
           import('./features/statistics/statistics.component').then(
             (m) => m.StatisticsComponent
+          ),
+      },
+      {
+        path: 'time',
+        loadComponent: () =>
+          import('./features/time-report/time-report.component').then(
+            (m) => m.TimeReportComponent
           ),
       },
       {

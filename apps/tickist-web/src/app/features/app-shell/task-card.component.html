@@ -51,6 +51,20 @@
       }
     </div>
     <div class="task-card__actions">
+      @if (!task.isDone) {
+      <button
+        type="button"
+        class="icon-btn"
+        [class.active]="isTimerRunning()"
+        [title]="isTimerRunning() ? 'Open focus mode' : 'Start focus'"
+        [attr.aria-label]="isTimerRunning() ? 'Open focus mode' : 'Start focus'"
+        [disabled]="timer.busy()"
+        data-testid="task-focus-start"
+        (click)="startFocus()"
+      >
+        {{ isTimerRunning() ? '⏱' : '▶' }}
+      </button>
+      }
       <button
         type="button"
         class="icon-btn"
@@ -126,6 +140,14 @@
             <button type="button" (click)="shiftDue(7)">+1 week</button>
             <button type="button" (click)="clearDue()">Clear date</button>
           </div>
+          <button
+            type="button"
+            data-testid="task-duplicate"
+            [disabled]="duplicating()"
+            (click)="duplicateTask()"
+          >
+            Duplicate
+          </button>
           <button type="button" class="menu__danger" (click)="deleteTask()">
             Delete
           </button>

@@ -253,3 +253,20 @@ input[type='search']::-webkit-search-results-decoration {
     overscroll-behavior: contain;
   }
 }
+
+.focus-chip {
+  @apply inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-semibold tabular-nums text-primary transition;
+  border-color: rgb(var(--p) / 0.4);
+  background: rgb(var(--p) / 0.1);
+}
+
+.focus-chip:hover,
+.focus-chip:focus-visible {
+  background: rgb(var(--p) / 0.2);
+}
+
+.focus-chip--over {
+  color: rgb(234 88 12);
+  border-color: rgb(234 88 12 / 0.45);
+  background: rgb(234 88 12 / 0.12);
+}

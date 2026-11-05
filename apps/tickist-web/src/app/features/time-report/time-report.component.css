@@ -1,0 +1,87 @@
+:host {
+  display: block;
+}
+
+.time-shell {
+  @apply mx-auto flex w-full max-w-3xl flex-col gap-6;
+}
+
+.time-hero {
+  @apply flex flex-col gap-4 rounded-[1.75rem] border border-white/10 px-6 py-5 shadow-xl shadow-black/10;
+  background-image: linear-gradient(
+    to bottom right,
+    rgb(var(--b3) / 70%),
+    rgb(var(--b2) / 70%),
+    rgb(var(--b2) / 40%)
+  );
+}
+
+.time-title {
+  @apply text-2xl font-semibold text-base-content;
+}
+
+.time-controls {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.time-day,
+.time-grouping {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.time-day__input {
+  @apply w-40;
+}
+
+.time-panel {
+  @apply overflow-x-auto rounded-[1.5rem] border border-white/10 p-5 shadow-lg shadow-black/5;
+  background-color: rgb(var(--b2) / 60%);
+}
+
+.time-table {
+  @apply w-full border-collapse text-sm text-base-content;
+}
+
+.time-table th,
+.time-table td {
+  @apply px-2 py-1.5 text-left align-top;
+}
+
+.time-table thead th {
+  @apply text-xs font-semibold uppercase tracking-wide;
+  color: rgb(var(--bc) / 0.6);
+}
+
+.time-table__num {
+  @apply whitespace-nowrap text-right tabular-nums;
+}
+
+.time-table thead .time-table__num,
+.time-table td.time-table__num {
+  text-align: right;
+}
+
+.time-table__group th,
+.time-table__group td {
+  @apply border-t border-white/10 pt-3 font-semibold;
+}
+
+.time-table__task {
+  @apply pl-5;
+}
+
+.time-table__context {
+  @apply ml-2 text-xs;
+  color: rgb(var(--bc) / 0.6);
+}
+
+.time-table tfoot th,
+.time-table tfoot td {
+  @apply border-t-2 border-white/20 pt-3 font-semibold;
+}
+
+.time-note,
+.time-empty {
+  @apply mt-3 text-sm;
+  color: rgb(var(--bc) / 0.7);
+}

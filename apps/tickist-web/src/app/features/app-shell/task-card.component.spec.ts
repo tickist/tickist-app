@@ -11,6 +11,11 @@ import { TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { TaskCardComponent } from './task-card.component';
+import { Router } from '@angular/router';
+import { signal } from '@angular/core';
+import { TimeTrackingService } from '../../data/time-tracking.service';
+import { SupabaseSessionService } from '../auth/supabase-session.service';
+import type { User } from '@supabase/supabase-js';
 
 describe('TaskCardComponent toolbar status icons', () => {
   let fixture: ComponentFixture<TaskCardComponent>;
@@ -484,6 +489,176 @@ describe('TaskCardComponent toolbar status icons', () => {
   ): HTMLElement | null {
     return renderedFixture.nativeElement.querySelector('.task-card__shared');
   }
+});
+
+describe('TaskCardComponent focus button', () => {
+  const runningTaskId = signal<string | null>(null);
+  const start = vi.fn();
+  const navigate = vi.fn();
+
+  async function render(
+    task: Task
+  ): Promise<ComponentFixture<TaskCardComponent>> {
+    await TestBed.configureTestingModule({
+      imports: [TaskCardComponent],
+      providers: [
+        { provide: TaskDataService, useValue: { updateTask: vi.fn() } },
+        { provide: TagDataService, useValue: { list: () => [] } },
+        { provide: ProjectDataService, useValue: { list: () => [] } },
+        { provide: ComposerModalService, useValue: { openTaskModal: vi.fn() } },
+        {
+          provide: ToastService,
+          useValue: { success: vi.fn(), info: vi.fn(), error: vi.fn() },
+        },
+        { provide: Router, useValue: { navigate } },
+        {
+          provide: TimeTrackingService,
+          useValue: {
+            busy: () => false,
+            start,
+            isRunningTask: (id: string) => runningTaskId() === id,
+          },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(TaskCardComponent);
+
+    fixture.componentInstance.task = task;
+    fixture.detectChanges();
+
+    return fixture;
+  }
+
+  function focusButton(fixture: ComponentFixture<TaskCardComponent>) {
+    return fixtureHost(fixture).querySelector<HTMLButtonElement>(
+      '[data-testid="task-focus-start"]'
+    );
+  }
+
+  beforeEach(() => {
+    runningTaskId.set(null);
+    start.mockReset().mockResolvedValue(true);
+    navigate.mockReset().mockResolvedValue(true);
+  });
+
+  it('starts the timer and opens focus mode for the task', async () => {
+    const fixture = await render(createTask());
+    const button = focusButton(fixture);
+
+    expect(button?.getAttribute('aria-label')).toBe('Start focus');
+    button?.click();
+    await fixture.whenStable();
+
+    expect(start).toHaveBeenCalledWith('task-1');
+    expect(navigate).toHaveBeenCalledWith(['/app/focus', 'task-1']);
+  });
+
+  it('stays on the list when the timer cannot start', async () => {
+    start.mockResolvedValue(false);
+    const fixture = await render(createTask());
+
+    focusButton(fixture)?.click();
+    await fixture.whenStable();
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('marks the task whose timer is running', async () => {
+    runningTaskId.set('task-1');
+    const fixture = await render(createTask());
+
+    expect(focusButton(fixture)?.getAttribute('aria-label')).toBe(
+      'Open focus mode'
+    );
+  });
+
+  it('hides the button on completed tasks', async () => {
+    const fixture = await render(createTask({ isDone: true }));
+
+    expect(focusButton(fixture)).toBeNull();
+  });
+});
+
+describe('TaskCardComponent duplicate action', () => {
+  const duplicateTask = vi.fn();
+  const toast = { success: vi.fn(), info: vi.fn(), error: vi.fn() };
+  const sessionUser = signal<User | null>(null);
+
+  async function render(): Promise<ComponentFixture<TaskCardComponent>> {
+    await TestBed.configureTestingModule({
+      imports: [TaskCardComponent],
+      providers: [
+        {
+          provide: TaskDataService,
+          useValue: { updateTask: vi.fn(), duplicateTask },
+        },
+        { provide: TagDataService, useValue: { list: () => [] } },
+        { provide: ProjectDataService, useValue: { list: () => [] } },
+        { provide: ComposerModalService, useValue: { openTaskModal: vi.fn() } },
+        { provide: ToastService, useValue: toast },
+        {
+          provide: SupabaseSessionService,
+          useValue: { user: sessionUser.asReadonly() },
+        },
+        {
+          provide: TimeTrackingService,
+          useValue: { busy: () => false, isRunningTask: () => false },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(TaskCardComponent);
+
+    fixture.componentInstance.task = createTask({ ownerId: 'someone-else' });
+    fixture.componentInstance.menuOpen.set(true);
+    fixture.detectChanges();
+
+    return fixture;
+  }
+
+  function duplicateButton(fixture: ComponentFixture<TaskCardComponent>) {
+    return fixtureHost(fixture).querySelector<HTMLButtonElement>(
+      '[data-testid="task-duplicate"]'
+    );
+  }
+
+  beforeEach(() => {
+    duplicateTask.mockReset();
+    Object.values(toast).forEach((mock) => mock.mockReset());
+    sessionUser.set({
+      id: 'me',
+      app_metadata: {},
+      user_metadata: {},
+      aud: 'authenticated',
+      created_at: '2026-11-01T00:00:00Z',
+    } satisfies User);
+  });
+
+  it('copies the task as the signed-in user and closes the menu', async () => {
+    duplicateTask.mockResolvedValue(createTask({ id: 'task-2' }));
+    const fixture = await render();
+
+    duplicateButton(fixture)?.click();
+    await fixture.whenStable();
+
+    expect(duplicateTask).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'task-1' }),
+      'me'
+    );
+    expect(toast.success).toHaveBeenCalledWith('Task duplicated.');
+    expect(fixture.componentInstance.menuOpen()).toBe(false);
+  });
+
+  it('reports a failed copy', async () => {
+    duplicateTask.mockResolvedValue(null);
+    const fixture = await render();
+
+    duplicateButton(fixture)?.click();
+    await fixture.whenStable();
+
+    expect(toast.error).toHaveBeenCalledWith('Failed to duplicate task.');
+  });
 });
 
 function createTask(overrides: Partial<Task> = {}): Task {

@@ -31,6 +31,9 @@ import {
   ThemedSelectValue,
 } from '../../core/ui/themed-select.component';
 import { TaskStatusService } from '../../data/task-status.service';
+import { TimeTrackingService } from '../../data/time-tracking.service';
+import { Router } from '@angular/router';
+import { SupabaseSessionService } from '../auth/supabase-session.service';
 
 type TaskViewMode = 'extended' | 'simple';
 
@@ -80,6 +83,9 @@ export class TaskCardComponent implements OnChanges {
   private readonly composer = inject(ComposerModalService);
   private readonly toasts = inject(ToastService);
   private readonly taskStatus = inject(TaskStatusService);
+  private readonly router = inject(Router);
+  private readonly session = inject(SupabaseSessionService);
+  readonly timer = inject(TimeTrackingService);
 
   @ViewChild('tagMenuTrigger')
   private tagMenuTrigger?: ElementRef<HTMLButtonElement>;
@@ -103,6 +109,7 @@ export class TaskCardComponent implements OnChanges {
   readonly projectPickerOpen = signal(false);
   readonly descriptionEditing = signal(false);
   readonly menuOpen = model(false);
+  readonly duplicating = signal(false);
   readonly tagMenuOpen = signal(false);
   readonly descriptionDraft = signal('');
   readonly tagSearch = signal('');
@@ -164,6 +171,18 @@ export class TaskCardComponent implements OnChanges {
     }
 
     return `${estimate} / ${spent}`;
+  }
+
+  isTimerRunning(): boolean {
+    return this.timer.isRunningTask(this.task.id);
+  }
+
+  async startFocus(): Promise<void> {
+    if (!(await this.timer.start(this.task.id))) {
+      return;
+    }
+
+    await this.router.navigate(['/app/focus', this.task.id]);
   }
 
   progressPercent(): number | null {
@@ -364,6 +383,28 @@ export class TaskCardComponent implements OnChanges {
       'Failed to delete task.'
     );
     this.menuOpen.set(false);
+  }
+
+  async duplicateTask(): Promise<void> {
+    const ownerId = this.session.user()?.id;
+
+    if (!ownerId || this.duplicating()) {
+      return;
+    }
+
+    this.duplicating.set(true);
+
+    try {
+      await this.runTaskAction(
+        async () =>
+          (await this.tasks.duplicateTask(this.task, ownerId)) !== null,
+        'Task duplicated.',
+        'Failed to duplicate task.'
+      );
+    } finally {
+      this.duplicating.set(false);
+      this.menuOpen.set(false);
+    }
   }
 
   async setPriority(level: string): Promise<void> {

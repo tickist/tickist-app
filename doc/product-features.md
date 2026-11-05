@@ -32,6 +32,8 @@ Tasks hold a title, description, project, priority, type, due date/time, estimat
 
 Task-card overflow actions are exclusive within a task list: opening the menu on another task closes the previously open menu.
 
+The task-card overflow menu also duplicates a task. The copy belongs to the user who made it and keeps the project, name, description, due date and time, repeat settings, priority, type, estimate, tags, assignees and subtasks. It starts open, active and unpinned, with all subtasks unchecked, no reminders and no recorded time.
+
 ### Status and completion
 
 Tasks can be active or suspended. A suspension can remain in place until the user resumes the task or end automatically at a chosen date and time. The resume time defaults to `00:00` when the user selects a date without changing the time. Suspended tasks show a pause indicator instead of a completion checkbox, are excluded from active-work summaries, and are counted in the selected project's header across the currently included project hierarchy. The header count is a shortcut that selects the suspended-task filter. A database scheduler resumes due tasks every minute, while an in-app status clock updates an open view without requiring a reload. Every incomplete-task transition from suspended to active creates an in-app notification for the task owner and immediately queues an owner email through the transactional outbox; this covers both scheduled and manual resumes.
@@ -56,6 +58,8 @@ Tasks support daily, workday, weekly, monthly, yearly, and custom recurrence. Co
 
 MCP clients use a semantic repeat interval and completion- or due-date anchor. Completing a recurring task through MCP advances the same task and resets its steps. MCP clients can also suspend incomplete tasks indefinitely or until a future timestamp and resume them explicitly.
 
+MCP clients can read a time report for up to 367 days, grouped by root project, tag, or task, with the caller's minutes and everyone's minutes per group, task, and day in the account timezone. They can list, add, edit, and delete the caller's own time entries; entries follow the database rules (end after start, at most 24 hours, not in the future, no overlap). A task's spent minutes are a database-maintained total, so MCP `update_task` no longer changes them.
+
 Each account stores an IANA timezone. New registrations capture the browser timezone, falling back to `Europe/Warsaw`; existing accounts are initialised to `Europe/Warsaw`. Server-side recurrence uses this timezone to determine the user's local completion date.
 
 ## Focus views
@@ -64,6 +68,20 @@ Each account stores an IANA timezone. New registrations capture the browser time
 - **Task tree:** project-oriented task grouping for scanning a wider workspace.
 - **Statistics:** completed work, late completions, overdue open work, and inactive projects over a time window.
 - **Tags:** cross-project filtering and ordering.
+- **Time:** a day report of time worked; see [Time tracking](#time-tracking).
+
+## Time tracking
+
+Work on a task is recorded as time entries, each with a start and an end. Durations are computed when read. A day is the calendar date of the entry's start in the account timezone, so the app, the daily email and MCP show the same numbers.
+
+- **Focus mode:** the ▶ button on an incomplete task card starts a timer and opens `/app/focus/:taskId`, a screen outside the app shell that shows only the task, its project and the clock. Pause closes the current entry and Resume starts a new one; Stop closes it and returns to the previous view. A person has at most one running timer; starting on another task stops the first, and a navbar chip links back to the running timer. Focus always belongs to a task.
+- **Limit:** Settings → Focus sets an optional limit (default 50 minutes, 1–600) or none. When a running timer reaches its limit, the browser plays a chime, shows a notification if permitted, and the clock changes colour; the timer keeps running until Stop. A timer left running is closed at 24 hours.
+- **Manual entries:** the task editor lists the user's own entries and lets them add, edit or delete one with a date, a start and an end time in the account timezone. An end earlier than the start means work past midnight. Entries cannot overlap, be in the future, or last longer than 24 hours.
+- **Spent time:** a task's spent time is the total of all people's closed entries plus undated legacy minutes from before time tracking. It is maintained by the database and cannot be edited directly.
+- **Day report:** `/app/time` shows one day (previous/next and a date picker) grouped by root project, with subproject tasks rolled up, or by tag. Each row shows "Me" and "Everyone". A task with several tags is counted under each tag. The table can be copied into a spreadsheet.
+- **Sharing:** collaborators on a shared project log their own time on its tasks. Each person sees only their own entries; other people's work appears only in "Everyone" totals.
+
+Entries are written through table policies or the `time_entry_start` / `time_entry_stop` RPCs, which use the database clock. `npm run time-tracking:test:db` applies every migration to a disposable Postgres container with stubbed `auth` and `storage` schemas and runs `tools/time-tracking/time-tracking.integration.sql` in a rolled-back transaction. It never uses an application database URL.
 
 ## Sign-in and account security
 
@@ -81,7 +99,7 @@ Form placeholders use one muted slate colour across light and dark application s
 
 ## Notifications
 
-Users can receive daily or weekly email summaries according to timezone-aware preferences. Task reminders and notification digests use a database-backed email outbox and server-side workers; the browser does not send SES email directly.
+Users can receive daily or weekly email summaries according to timezone-aware preferences. The daily summary also shows the time worked that day, for the user and for everyone, grouped by root project; it is left out when no time was logged. Task reminders and notification digests use a database-backed email outbox and server-side workers; the browser does not send SES email directly.
 
 ## Account deletion
 

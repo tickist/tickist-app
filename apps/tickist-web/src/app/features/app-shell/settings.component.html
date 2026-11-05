@@ -412,6 +412,45 @@
             </section>
           </form>
         </section>
+        } @if (activeTab() === 'focus') {
+        <section class="sheet-form settings-panel">
+          <form
+            class="sheet-form"
+            data-testid="settings-focus-form"
+            (submit)="$event.preventDefault(); saveFocus()"
+          >
+            <section class="sheet-section">
+              <label class="field-inline" for="focus-limit-enabled">
+                <input
+                  id="focus-limit-enabled"
+                  type="checkbox"
+                  class="checkbox checkbox-sm"
+                  [checked]="focusLimitEnabled()"
+                  (change)="onFocusLimitEnabledChange($event)"
+                  data-testid="settings-focus-limit-enabled"
+                />
+                <span>Chime after a time limit</span>
+              </label>
+              @if (focusLimitEnabled()) {
+              <label class="sheet-field" for="focus-limit-minutes">
+                <span class="sheet-field__label">Limit (min)</span>
+                <input
+                  id="focus-limit-minutes"
+                  type="number"
+                  class="sheet-input"
+                  step="1"
+                  [min]="focusLimitMinMinutes"
+                  [max]="focusLimitMaxMinutes"
+                  [value]="focusLimitMinutes()"
+                  (input)="onFocusLimitMinutesInput($event)"
+                  data-testid="settings-focus-limit-minutes"
+                />
+              </label>
+              }
+              <button type="submit" class="sr-only">Save focus settings</button>
+            </section>
+          </form>
+        </section>
         } @if (activeTab() === 'backup') {
         <section class="sheet-form settings-panel">
           <section class="sheet-section">

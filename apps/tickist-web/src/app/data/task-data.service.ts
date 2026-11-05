@@ -262,6 +262,11 @@ export class TaskDataService {
     return created;
   }
 
+  /** Creates an open copy of a task owned by the current user. */
+  async duplicateTask(task: Task, ownerId: string): Promise<Task | null> {
+    return this.createTask(buildDuplicateTaskInput(task, ownerId));
+  }
+
   async updateTask(input: TaskUpdateInput): Promise<Task | null> {
     const previous = this.tasks().find((task) => task.id === input.id);
 
@@ -660,6 +665,40 @@ function mapTaskRowToTask(row: TaskRow): Task {
         .sort((a, b) => a.position - b.position) ?? [],
     createdAt: row.creation_date,
     updatedAt: row.modification_date,
+  };
+}
+
+/**
+ * The copy keeps what describes the work (project, text, schedule, repeat,
+ * priority, estimate, type, tags, assignees and steps) and starts fresh:
+ * open, active, not pinned, unchecked steps, no reminders and no time spent.
+ */
+export function buildDuplicateTaskInput(
+  task: Task,
+  ownerId: string
+): TaskCreateInput {
+  return {
+    ownerId,
+    name: task.name,
+    projectId: task.projectId,
+    description: task.description,
+    finishDate: task.finishDate ?? null,
+    finishTime: task.finishTime ?? null,
+    typeFinishDate: task.typeFinishDate ?? null,
+    priority: task.priority,
+    repeatInterval: task.repeatInterval,
+    fromRepeating: task.fromRepeating ?? null,
+    estimateMinutes: task.estimateMinutes ?? null,
+    taskType: task.taskType,
+    tags: [...task.tags],
+    assigneeIds: [...task.assigneeIds],
+    steps: [...task.steps]
+      .sort((a, b) => a.position - b.position)
+      .map((step, index) => ({
+        content: step.content,
+        position: index,
+        isDone: false,
+      })),
   };
 }
 
