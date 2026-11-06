@@ -622,7 +622,7 @@ describe('TaskCardComponent time chip', () => {
     const element = chip(fixture);
 
     expect(element?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-      '⏱ 5m / 15m'
+      '⏱️ 5m / 15m'
     );
     expect(element?.getAttribute('title')).toBe(
       'Time spent: 5m of 15m estimated (33%)'

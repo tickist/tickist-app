@@ -52,7 +52,7 @@
         [attr.aria-label]="taskTimeTitle()"
         data-testid="task-time-chip"
       >
-        <span aria-hidden="true">⏱</span>
+        <span aria-hidden="true">⏱️</span>
         {{ summary }} @if (progressPercent(); as percent) {
         <span
           class="task-card__time-bar"
@@ -77,7 +77,7 @@
         data-testid="task-focus-start"
         (click)="startFocus()"
       >
-        {{ isTimerRunning() ? '⏱' : '▶' }}
+        {{ isTimerRunning() ? '⏱️' : '▶' }}
       </button>
       }
       <button
