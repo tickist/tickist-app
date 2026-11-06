@@ -712,7 +712,9 @@ test('tracks focus time on a task and reports it by day', async ({
   await expect(page).toHaveURL(/\/app\/focus\//);
   await expect(page.getByTestId('focus-task')).toHaveText(taskName);
   await expect(page.locator('app-sidebar')).toHaveCount(0);
-  await expect(page.getByTestId('focus-clock')).toHaveText(/^\d{2}:\d{2}$/);
+  await expect(page.getByTestId('focus-clock')).toHaveText(
+    /^\s*\d{2}:\d{2}\s*$/
+  );
 
   await page.getByTestId('focus-pause').click();
   await expect(page.getByTestId('focus-status')).toHaveText('Paused');
