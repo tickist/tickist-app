@@ -16,7 +16,18 @@ import {
   TimeTrackingService,
   formatDuration,
 } from '../../data/time-tracking.service';
-import { shiftDateKey } from '../../core/time/zoned-time';
+import {
+  ReportPeriod,
+  periodLabel,
+  periodRange,
+  shiftPeriod,
+} from '../../core/time/zoned-time';
+
+const PERIOD_NOUN: Record<ReportPeriod, string> = {
+  day: 'day',
+  week: 'week',
+  month: 'month',
+};
 
 @Component({
   selector: 'app-time-report',
@@ -31,7 +42,9 @@ export class TimeReportComponent {
   private readonly projects = inject(ProjectDataService);
   private readonly tags = inject(TagDataService);
 
+  /** Any date inside the shown period; the date picker edits it. */
   readonly day = signal(this.timer.todayKey());
+  readonly period = signal<ReportPeriod>('day');
   readonly grouping = signal<TimeReportGrouping>('project');
   readonly loading = signal(false);
   private readonly rows = signal<TimeReportRow[]>([]);
@@ -46,28 +59,56 @@ export class TimeReportComponent {
       this.grouping()
     )
   );
-  readonly isToday = computed(() => this.day() === this.timer.todayKey());
+  readonly range = computed(() => periodRange(this.day(), this.period()));
+  readonly rangeLabel = computed(() =>
+    this.period() === 'day' ? null : periodLabel(this.range(), this.period())
+  );
+  /** The shown period already contains today, so there is nothing later. */
+  readonly isCurrent = computed(() => this.range().to >= this.timer.todayKey());
+  readonly periodNoun = computed(() => PERIOD_NOUN[this.period()]);
+  readonly emptyLabel = computed(() =>
+    this.period() === 'day'
+      ? 'No time recorded on this day.'
+      : `No time recorded in this ${this.periodNoun()}.`
+  );
+  readonly currentLabel = computed(() =>
+    this.period() === 'day' ? 'Today' : `This ${this.periodNoun()}`
+  );
 
   readonly format = formatDuration;
+  readonly periods: readonly { value: ReportPeriod; label: string }[] = [
+    { value: 'day', label: 'Day' },
+    { value: 'week', label: 'Week' },
+    { value: 'month', label: 'Month' },
+  ];
 
   constructor() {
     effect(() => {
-      const day = this.day();
+      const { from, to } = this.range();
 
       // The running timer stops or starts: refresh so today's numbers move.
       this.timer.running();
       untracked(() => {
-        void this.load(day);
+        void this.load(from, to);
       });
     });
   }
 
-  previousDay(): void {
-    this.day.set(shiftDateKey(this.day(), -1));
+  previous(): void {
+    this.day.set(shiftPeriod(this.day(), this.period(), -1));
   }
 
-  nextDay(): void {
-    if (!this.isToday()) this.day.set(shiftDateKey(this.day(), 1));
+  next(): void {
+    if (this.isCurrent()) return;
+
+    const today = this.timer.todayKey();
+    const next = shiftPeriod(this.day(), this.period(), 1);
+
+    this.day.set(next > today ? today : next);
+  }
+
+  setPeriod(period: ReportPeriod): void {
+    this.period.set(period);
   }
 
   today(): void {
@@ -89,11 +130,11 @@ export class TimeReportComponent {
     this.grouping.set(grouping);
   }
 
-  private async load(day: string): Promise<void> {
+  private async load(from: string, to: string): Promise<void> {
     const sequence = ++this.requestSequence;
 
     this.loading.set(true);
-    const rows = await this.timer.report(day);
+    const rows = await this.timer.report(from, to);
 
     if (sequence !== this.requestSequence) return;
     this.rows.set(rows);

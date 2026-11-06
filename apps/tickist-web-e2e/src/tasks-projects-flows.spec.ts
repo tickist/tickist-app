@@ -758,6 +758,14 @@ test('tracks focus time on a task and reports it by day', async ({
   await expect(page.getByTestId('time-report')).toContainText(projectName);
   await expect(page.getByTestId('time-report')).toContainText(taskName);
   await expect(page.getByTestId('time-report-total-me')).toHaveText('40 min');
+
+  // Week and month views contain the chosen day, so the entry stays listed.
+  await page.getByTestId('time-report-period-week').click();
+  await expect(page.getByTestId('time-report-range')).toBeVisible();
+  await expect(page.getByTestId('time-report')).toContainText(taskName);
+  await page.getByTestId('time-report-period-month').click();
+  await expect(page.getByTestId('time-report-range')).toBeVisible();
+  await expect(page.getByTestId('time-report')).toContainText(taskName);
 });
 
 test('creates project, edits it from project menu and persists changes', async ({
