@@ -45,7 +45,22 @@
         Completed {{ completionDate }}
       </span>
       } @if (taskTimeLabel(); as summary) {
-      <span class="task-card__time">({{ summary }})</span>
+      <span
+        class="task-card__time"
+        [class.task-card__time--over]="isOverEstimate()"
+        [attr.title]="taskTimeTitle()"
+        [attr.aria-label]="taskTimeTitle()"
+        data-testid="task-time-chip"
+      >
+        <span aria-hidden="true">⏱️</span>
+        {{ summary }} @if (progressPercent(); as percent) {
+        <span
+          class="task-card__time-bar"
+          aria-hidden="true"
+          [style.width.%]="percent"
+        ></span>
+        }
+      </span>
       } @if (isSharedTask()) {
       <span class="task-card__shared" title="Shared list">Shared</span>
       }
@@ -62,7 +77,7 @@
         data-testid="task-focus-start"
         (click)="startFocus()"
       >
-        {{ isTimerRunning() ? '⏱' : '▶' }}
+        {{ isTimerRunning() ? '⏱️' : '▶' }}
       </button>
       }
       <button
@@ -161,12 +176,6 @@
   <div class="task-card__date">
     <span class="task-card__date-icon">{{ finishDateModeIcon() }}</span>
     <span>{{ finishDateLabel }}</span>
-  </div>
-  } @if (viewMode === 'extended' && progressPercent(); as percent) {
-  <div class="task-card__progress">
-    <div class="progress">
-      <div class="progress__fill" [style.width.%]="percent"></div>
-    </div>
   </div>
   } @if (viewMode === 'extended') {
   <div class="task-card__toolbar">

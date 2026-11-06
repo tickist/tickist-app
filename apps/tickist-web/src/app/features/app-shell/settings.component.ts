@@ -113,7 +113,7 @@ export class SettingsComponent {
     { key: 'workspaces', label: 'Workspaces', icon: '🗂️' },
     { key: 'password', label: 'Password', icon: '🔒' },
     { key: 'notifications', label: 'Notifications', icon: '🔔' },
-    { key: 'focus', label: 'Focus', icon: '⏱' },
+    { key: 'focus', label: 'Focus', icon: '⏱️' },
     { key: 'backup', label: 'Backup & Restore', icon: '🗂️' },
     { key: 'api-tokens', label: 'API Tokens', icon: '🔑' },
   ];

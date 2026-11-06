@@ -1,4 +1,12 @@
 <main class="focus-shell" [class.focus-shell--over]="overLimit()">
+  <button
+    type="button"
+    class="focus-back"
+    data-testid="focus-back"
+    (click)="leave()"
+  >
+    <span aria-hidden="true">←</span> Back to tasks
+  </button>
   <section class="focus-card" data-testid="focus-mode">
     @if (task(); as current) {
     <p class="focus-project">{{ projectName() }}</p>
@@ -37,7 +45,7 @@
       @if (isRunning()) {
       <button
         type="button"
-        class="btn btn-outline"
+        class="focus-btn focus-btn--main"
         [disabled]="timer.busy()"
         data-testid="focus-pause"
         (click)="pause()"
@@ -47,7 +55,7 @@
       } @else {
       <button
         type="button"
-        class="btn btn-outline"
+        class="focus-btn focus-btn--main"
         [disabled]="timer.busy() || current.isDone"
         data-testid="focus-resume"
         (click)="resume()"
@@ -57,7 +65,7 @@
       }
       <button
         type="button"
-        class="btn btn-primary"
+        class="focus-btn focus-btn--quiet"
         [disabled]="timer.busy()"
         data-testid="focus-stop"
         (click)="finish()"
@@ -72,7 +80,7 @@
     } @else {
     <p class="focus-task">Task unavailable</p>
     <div class="focus-actions">
-      <button type="button" class="btn btn-primary" (click)="leave()">
+      <button type="button" class="focus-btn focus-btn--main" (click)="leave()">
         Back
       </button>
     </div>

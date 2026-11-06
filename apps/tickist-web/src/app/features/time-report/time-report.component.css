@@ -20,17 +20,38 @@
   @apply text-2xl font-semibold text-base-content;
 }
 
+.time-range {
+  @apply mt-1 text-sm font-semibold;
+  color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
+}
+
 .time-controls {
   @apply flex flex-wrap items-center justify-between gap-3;
 }
 
-.time-day,
-.time-grouping {
+.time-day {
   @apply flex flex-wrap items-center gap-2;
 }
 
+.time-grouping {
+  @apply flex items-center gap-2;
+}
+
+.time-toggles {
+  @apply flex flex-wrap items-center gap-x-4 gap-y-3;
+}
+
+/* A thin rule keeps "Period" and "Group by" apart when they share a row. */
+@media (min-width: 640px) {
+  .time-toggles > .time-grouping + .time-grouping {
+    @apply pl-4;
+    border-left: 1px solid
+      color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  }
+}
+
 .time-day__input {
-  @apply w-40;
+  @apply w-44 min-w-0;
 }
 
 .time-panel {
@@ -49,7 +70,7 @@
 
 .time-table thead th {
   @apply text-xs font-semibold uppercase tracking-wide;
-  color: rgb(var(--bc) / 0.6);
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
 }
 
 .time-table__num {
@@ -72,7 +93,7 @@
 
 .time-table__context {
   @apply ml-2 text-xs;
-  color: rgb(var(--bc) / 0.6);
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
 }
 
 .time-table tfoot th,
@@ -83,5 +104,39 @@
 .time-note,
 .time-empty {
   @apply mt-3 text-sm;
-  color: rgb(var(--bc) / 0.7);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+}
+
+/* Shared sheet controls read daisyUI 4 variables that daisyUI 5 no longer
+   defines, so the report sets its own colours from the daisyUI 5 tokens. */
+.time-nav,
+.time-pill {
+  min-height: 2.5rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid
+    color-mix(in oklab, var(--color-base-content) 18%, transparent);
+  background: transparent;
+  color: var(--color-base-content);
+}
+
+.time-nav {
+  /* The shared sheet button stretches to full width on phones. */
+  width: auto;
+  min-width: 2.5rem;
+  flex-shrink: 0;
+}
+
+.time-nav:hover,
+.time-nav:focus-visible,
+.time-pill:hover,
+.time-pill:focus-visible {
+  border-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+}
+
+.time-pill.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+  box-shadow: none;
 }

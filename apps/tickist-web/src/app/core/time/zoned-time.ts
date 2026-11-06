@@ -116,3 +116,88 @@ export function shiftDateKey(dateKey: string, days: number): string {
 function pad(value: number): string {
   return String(value).padStart(2, '0');
 }
+
+export type ReportPeriod = 'day' | 'week' | 'month';
+
+export interface DateKeyRange {
+  from: string;
+  to: string;
+}
+
+/** The day, Monday-to-Sunday week or calendar month containing a date key. */
+export function periodRange(
+  anchor: string,
+  period: ReportPeriod
+): DateKeyRange {
+  if (period === 'day') {
+    return { from: anchor, to: anchor };
+  }
+
+  const date = dateKeyToUtc(anchor);
+
+  if (period === 'week') {
+    const daysSinceMonday = (date.getUTCDay() + 6) % 7;
+    const from = shiftDateKey(anchor, -daysSinceMonday);
+
+    return { from, to: shiftDateKey(from, 6) };
+  }
+
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+
+  return {
+    from: utcToDateKey(new Date(Date.UTC(year, month, 1))),
+    to: utcToDateKey(new Date(Date.UTC(year, month + 1, 0))),
+  };
+}
+
+/** Moves a date key by whole periods; months land on the first day. */
+export function shiftPeriod(
+  anchor: string,
+  period: ReportPeriod,
+  steps: number
+): string {
+  if (period === 'day') return shiftDateKey(anchor, steps);
+
+  if (period === 'week') return shiftDateKey(anchor, steps * 7);
+
+  const date = dateKeyToUtc(anchor);
+
+  return utcToDateKey(
+    new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + steps, 1))
+  );
+}
+
+/** "2–8 Nov 2026" for a week, "November 2026" for a month. */
+export function periodLabel(range: DateKeyRange, period: ReportPeriod): string {
+  const from = dateKeyToUtc(range.from);
+
+  if (period === 'month') {
+    return new Intl.DateTimeFormat('en-GB', {
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(from);
+  }
+
+  const format = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+
+  return period === 'day'
+    ? format.format(from)
+    : format.formatRange(from, dateKeyToUtc(range.to));
+}
+
+function dateKeyToUtc(key: string): Date {
+  const [year = 1970, month = 1, day = 1] = key.split('-').map(Number);
+
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function utcToDateKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}

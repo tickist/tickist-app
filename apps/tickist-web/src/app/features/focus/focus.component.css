@@ -3,7 +3,27 @@
 }
 
 .focus-shell {
-  @apply flex min-h-screen items-center justify-center bg-base-100 px-4 py-10 text-base-content;
+  @apply relative flex min-h-screen items-center justify-center bg-base-100 px-4 py-10 text-base-content;
+}
+
+/* Leaves focus mode without stopping the timer; the navbar chip returns. */
+.focus-back {
+  @apply absolute left-4 top-4 inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold sm:left-6 sm:top-6;
+  border: 1px solid
+    color-mix(in oklab, var(--color-base-content) 16%, transparent);
+  background: transparent;
+  color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.focus-back:hover {
+  background: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  color: var(--color-base-content);
+}
+
+.focus-back:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
 }
 
 .focus-card {
@@ -12,7 +32,7 @@
 
 .focus-project {
   @apply text-sm font-semibold uppercase tracking-wide;
-  color: rgb(var(--bc) / 0.6);
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
 }
 
 .focus-task {
@@ -34,7 +54,7 @@
 
 .focus-status {
   @apply text-sm font-semibold uppercase tracking-wide;
-  color: rgb(var(--bc) / 0.7);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }
 
 .focus-shell--over .focus-status {
@@ -57,11 +77,60 @@
   @apply mt-4 flex flex-wrap justify-center gap-3;
 }
 
-.focus-actions .btn {
-  @apply min-w-28;
+/* Explicit styles: daisyUI 5 variants are unreliable on Tailwind 3 here. */
+.focus-btn {
+  @apply inline-flex h-12 min-w-36 cursor-pointer items-center justify-center rounded-full px-8 text-base font-semibold;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.focus-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.focus-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.focus-btn:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
+.focus-btn--main {
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+  box-shadow: 0 8px 24px
+    color-mix(in oklab, var(--color-primary) 35%, transparent);
+}
+
+.focus-btn--main:hover:not(:disabled) {
+  background-color: color-mix(in oklab, var(--color-primary) 88%, white);
+}
+
+.focus-btn--quiet {
+  background-color: transparent;
+  border-color: color-mix(in oklab, var(--color-base-content) 25%, transparent);
+  color: var(--color-base-content);
+}
+
+.focus-btn--quiet:hover:not(:disabled) {
+  background-color: color-mix(
+    in oklab,
+    var(--color-base-content) 8%,
+    transparent
+  );
+  border-color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+}
+
+.focus-shell--over .focus-btn--main {
+  background-color: rgb(234 88 12);
+  box-shadow: 0 8px 24px rgb(234 88 12 / 0.35);
+  color: #fff;
 }
 
 .focus-today {
   @apply mt-2 text-sm;
-  color: rgb(var(--bc) / 0.7);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }

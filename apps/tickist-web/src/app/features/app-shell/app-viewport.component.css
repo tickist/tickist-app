@@ -256,13 +256,13 @@ input[type='search']::-webkit-search-results-decoration {
 
 .focus-chip {
   @apply inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-semibold tabular-nums text-primary transition;
-  border-color: rgb(var(--p) / 0.4);
-  background: rgb(var(--p) / 0.1);
+  border-color: color-mix(in oklab, var(--color-primary) 40%, transparent);
+  background: color-mix(in oklab, var(--color-primary) 10%, transparent);
 }
 
 .focus-chip:hover,
 .focus-chip:focus-visible {
-  background: rgb(var(--p) / 0.2);
+  background: color-mix(in oklab, var(--color-primary) 20%, transparent);
 }
 
 .focus-chip--over {
