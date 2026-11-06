@@ -732,6 +732,7 @@ test('tracks focus time on a task and reports it by day', async ({
     .click();
   const composer = page.locator('app-task-composer');
   await expect(composer).toBeVisible();
+  await composer.getByRole('button', { name: 'Extra' }).click();
   await composer.getByTestId('task-time-add').click();
   const yesterday = futureDateInput(-1);
   await composer.getByLabel('Time entry date').fill(yesterday);
@@ -744,8 +745,9 @@ test('tracks focus time on a task and reports it by day', async ({
   await composer.getByRole('button', { name: 'Close task panel' }).click();
 
   await page.goto('/app/time');
-  await page.getByTestId('time-report-previous').click();
-  await expect(page.getByTestId('time-report-day')).toHaveValue(yesterday);
+  // The entry form and the report both use the account timezone, so pick
+  // the same calendar day instead of relying on the runner's "yesterday".
+  await page.getByTestId('time-report-day').fill(yesterday);
   await expect(page.getByTestId('time-report')).toContainText(projectName);
   await expect(page.getByTestId('time-report')).toContainText(taskName);
   await expect(page.getByTestId('time-report-total-me')).toHaveText('40 min');
