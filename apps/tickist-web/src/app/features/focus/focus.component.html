@@ -1,0 +1,81 @@
+<main class="focus-shell" [class.focus-shell--over]="overLimit()">
+  <section class="focus-card" data-testid="focus-mode">
+    @if (task(); as current) {
+    <p class="focus-project">{{ projectName() }}</p>
+    <h1 class="focus-task" data-testid="focus-task">{{ current.name }}</h1>
+
+    <p
+      class="focus-clock"
+      [class.focus-clock--over]="overLimit()"
+      [class.focus-clock--paused]="!isRunning()"
+      data-testid="focus-clock"
+    >
+      {{ clock() }}
+    </p>
+    <p class="focus-status" aria-live="polite" data-testid="focus-status">
+      @if (overLimit()) { Limit reached } @else if (isRunning()) {
+      {{ limitLabel() }} } @else { Paused }
+    </p>
+
+    @if (progressPercent() !== null) {
+    <div
+      class="focus-progress"
+      role="progressbar"
+      aria-label="Focus limit progress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-valuenow]="progressPercent()"
+    >
+      <span
+        class="focus-progress__bar"
+        [style.width.%]="progressPercent()"
+      ></span>
+    </div>
+    }
+
+    <div class="focus-actions">
+      @if (isRunning()) {
+      <button
+        type="button"
+        class="btn btn-outline"
+        [disabled]="timer.busy()"
+        data-testid="focus-pause"
+        (click)="pause()"
+      >
+        Pause
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="btn btn-outline"
+        [disabled]="timer.busy() || current.isDone"
+        data-testid="focus-resume"
+        (click)="resume()"
+      >
+        Resume
+      </button>
+      }
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="timer.busy()"
+        data-testid="focus-stop"
+        (click)="finish()"
+      >
+        Stop
+      </button>
+    </div>
+
+    <p class="focus-today" data-testid="focus-today">
+      Today on this task: {{ todayLabel() }}
+    </p>
+    } @else {
+    <p class="focus-task">Task unavailable</p>
+    <div class="focus-actions">
+      <button type="button" class="btn btn-primary" (click)="leave()">
+        Back
+      </button>
+    </div>
+    }
+  </section>
+</main>

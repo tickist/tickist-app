@@ -1,6 +1,14 @@
 {
   "version": 1,
   "skills": {
+    "brainstorming": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/brainstorming/SKILL.md",
+      "sourceRef": "b739a8af570e10a95898f2bdf6cec97467fa6c12",
+      "upstreamSkillSha256": "6ee10d1481b8a2580d5336ff66c5c08acc9d4b251b13bbc3bfd31be99c261d43",
+      "localAdaptations": ".agents/skills/brainstorming/UPSTREAM.md"
+    },
     "cavecrew": {
       "source": "JuliusBrussee/caveman",
       "sourceType": "github",

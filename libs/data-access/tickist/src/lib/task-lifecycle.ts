@@ -26,7 +26,7 @@ function dateKeyInTimezone(date: Date, timezone: string): string {
   return `${parts.year}-${pad(parts.month)}-${pad(parts.day)}`;
 }
 
-function addCalendarDays(dateKey: string, days: number): string {
+export function addCalendarDays(dateKey: string, days: number): string {
   const [year, month, day] = dateKey.split('-').map(Number);
   const next = new Date(Date.UTC(year, month - 1, day + days));
 
@@ -35,7 +35,7 @@ function addCalendarDays(dateKey: string, days: number): string {
   )}`;
 }
 
-function startOfZonedDayIso(dateKey: string, timezone: string): string {
+export function startOfZonedDayIso(dateKey: string, timezone: string): string {
   const [year, month, day] = dateKey.split('-').map(Number);
   const target = Date.UTC(year, month - 1, day);
   let candidate = target;

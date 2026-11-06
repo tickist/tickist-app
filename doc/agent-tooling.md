@@ -34,6 +34,30 @@ Use a skill when it adds needed knowledge or the user names it. Ordinary code se
 
 The checked-in `skills-lock.json` records upstream installation provenance. Local adaptations are intentional; review diffs before using an installer to refresh them. Upstream READMEs describe their original packages and may assume integrations not installed here. Git history records Tickist's overrides.
 
+### Brainstorming
+
+The [project-local brainstorming skill](../.agents/skills/brainstorming/SKILL.md)
+is adapted from obra/superpowers for unresolved feature goals, scope and
+substantial behaviour changes. See its [pinned upstream revision and local
+changes](../.agents/skills/brainstorming/UPSTREAM.md). It is not a mandatory
+prelude to routine fixes or a request to repeat an already approved design.
+
+Codex discovers `.agents/skills/brainstorming/`; Claude Code uses the relative
+symlink `.claude/skills/brainstorming`. When working from the parent Tickist
+workspace, a small `.agents/skills/brainstorming/SKILL.md` entrypoint forwards to
+this canonical copy, and a parent Claude symlink exposes the same copy. The
+parent configuration is local and is not included in an application clone.
+
+Invoke it explicitly with `$brainstorming` in Codex or `/brainstorming` in Claude
+Code. Project discovery is available on the next turn; reopen the session if an
+existing skill menu does not refresh. Installation does not run the workflow or
+start a visual server. No other Superpowers skill, plugin or hook is required.
+
+Implementation designs go in `doc/designs/`; business planning stays in management.
+Repository rules and actual task authorization still govern commits, publication,
+spend and browser access. The optional builder check runs without a subagent unless
+the owner separately asks for delegation.
+
 ### GitHub CLI
 
 GitHub CLI (`gh`) is installed in the current environment. Check authentication separately with `gh auth status`; do not print tokens. Use `gh run list` and `gh run view` for Actions checks and pass `--repo tickist/tickist-app` when running from the parent workspace. The parent workspace guide also describes targeting the separate management repository.

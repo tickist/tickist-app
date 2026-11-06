@@ -1,7 +1,21 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { JsonRecordSchema, type JsonRecord, type JsonValue } from './json';
-import { nextRecurringFinishDate } from './task-lifecycle';
+import {
+  addCalendarDays,
+  nextRecurringFinishDate,
+  startOfZonedDayIso,
+} from './task-lifecycle';
+import {
+  assertEntryInterval,
+  assertTimeRange,
+  buildTimeReport,
+  entryMinutes,
+  timeEntryErrorMessage,
+  TimeReportRowSchema,
+  type ReportTag,
+  type TimeReportGroupBy,
+} from './time-tracking';
 
 export interface TickistConnection {
   supabaseUrl: string;
@@ -29,6 +43,83 @@ export interface ListProjectsInput {
 export interface RepeatInput {
   interval_days: number;
   from: 'completion_date' | 'due_date';
+}
+
+export interface TimeReportInput {
+  from: string;
+  to: string;
+  group_by?: TimeReportGroupBy;
+}
+
+export interface ListTimeEntriesInput {
+  from: string;
+  to: string;
+  task_id?: string;
+  limit?: number;
+}
+
+export interface CreateTimeEntryInput {
+  task_id: string;
+  started_at: string;
+  ended_at: string;
+  note?: string | null;
+}
+
+export interface UpdateTimeEntryChanges {
+  task_id?: string;
+  started_at?: string;
+  ended_at?: string;
+  note?: string | null;
+}
+
+const TIME_ENTRY_COLUMNS =
+  'id, task_id, started_at, ended_at, source, note, created_at, updated_at';
+
+/** Row limit for each `in` filter so PostgREST URLs stay short. */
+const ID_CHUNK = 150;
+
+const TimeEntryRowSchema = z.object({
+  id: z.string(),
+  task_id: z.string(),
+  started_at: z.string(),
+  ended_at: z.string().nullable(),
+  source: z.string(),
+  note: z.string().nullable(),
+  tasks: z.object({ name: z.string() }).nullable().optional(),
+});
+
+function chunks<T>(values: readonly T[], size = ID_CHUNK): T[][] {
+  const result: T[][] = [];
+
+  for (let index = 0; index < values.length; index += size) {
+    result.push(values.slice(index, index + size));
+  }
+
+  return result;
+}
+
+function normalizedNote(note: string | null | undefined) {
+  if (note === undefined) return undefined;
+
+  const trimmed = note?.trim() ?? '';
+
+  return trimmed === '' ? null : trimmed;
+}
+
+function normalizedTimeEntry(
+  entry: z.infer<typeof TimeEntryRowSchema>,
+  now = Date.now()
+) {
+  return {
+    id: entry.id,
+    task_id: entry.task_id,
+    task_name: entry.tasks?.name ?? null,
+    started_at: entry.started_at,
+    ended_at: entry.ended_at,
+    minutes: entryMinutes(entry.started_at, entry.ended_at, now),
+    source: entry.source,
+    note: entry.note,
+  };
 }
 
 function compact(values: Record<string, JsonValue | undefined>) {
@@ -599,6 +690,239 @@ export class TickistDataAccess {
 
       return { added: true, task_id: taskId, tag_id: tagId };
     });
+  }
+
+  async getTimeReport(input: TimeReportInput) {
+    assertTimeRange(input.from, input.to);
+
+    const [{ data, error }, timezone] = await Promise.all([
+      this.client.rpc('time_report', { p_from: input.from, p_to: input.to }),
+      this.userTimezone(),
+    ]);
+
+    if (error?.code === '22023') {
+      throw new Error('The date range can cover at most 367 days.');
+    }
+
+    if (error) throw new Error('Failed to load the time report.');
+
+    const rows = z.array(TimeReportRowSchema).parse(data ?? []);
+    const taskIds = [...new Set(rows.map((row) => row.task_id))];
+    const groupBy = input.group_by ?? 'project';
+
+    const [tasks, projects, tagsByTask] = await Promise.all([
+      this.reportTasks(taskIds),
+      taskIds.length === 0 ? Promise.resolve([]) : this.reportProjects(),
+      groupBy === 'tag'
+        ? this.reportTags(taskIds)
+        : Promise.resolve(new Map<string, ReportTag[]>()),
+    ]);
+
+    return buildTimeReport({
+      from: input.from,
+      to: input.to,
+      timezone,
+      groupBy,
+      rows,
+      tasks,
+      projects,
+      tagsByTask,
+    });
+  }
+
+  async listTimeEntries(input: ListTimeEntriesInput) {
+    assertTimeRange(input.from, input.to);
+
+    const timezone = await this.userTimezone();
+    const limit = input.limit ?? 100;
+
+    let query = this.client
+      .from('task_time_entries')
+      .select(`${TIME_ENTRY_COLUMNS}, tasks:task_id(name)`)
+      .eq('owner_id', this.connection.userId)
+      .gte('started_at', startOfZonedDayIso(input.from, timezone))
+      .lt(
+        'started_at',
+        startOfZonedDayIso(addCalendarDays(input.to, 1), timezone)
+      )
+      .order('started_at', { ascending: false })
+      .limit(limit + 1);
+
+    if (input.task_id) query = query.eq('task_id', input.task_id);
+
+    const { data, error } = await query;
+
+    if (error) throw new Error('Failed to list time entries.');
+
+    const now = Date.now();
+    const rows = data ?? [];
+
+    return {
+      timezone,
+      entries: z
+        .array(TimeEntryRowSchema)
+        .parse(rows.slice(0, limit))
+        .map((entry) => normalizedTimeEntry(entry, now)),
+      has_more: rows.length > limit,
+    };
+  }
+
+  async createTimeEntry(input: CreateTimeEntryInput) {
+    assertEntryInterval(input.started_at, input.ended_at);
+
+    return this.mutate(
+      'create_time_entry',
+      'time_entry',
+      undefined,
+      async () => {
+        // owner_id defaults to auth.uid(); the column is not client-writable.
+        const { data, error } = await this.client
+          .from('task_time_entries')
+          .insert(
+            compact({
+              task_id: input.task_id,
+              started_at: input.started_at,
+              ended_at: input.ended_at,
+              note: normalizedNote(input.note),
+            })
+          )
+          .select(`${TIME_ENTRY_COLUMNS}, tasks:task_id(name)`)
+          .single();
+
+        if (error || !data) {
+          throw new Error(
+            timeEntryErrorMessage(error, 'Failed to create time entry.')
+          );
+        }
+
+        return normalizedTimeEntry(TimeEntryRowSchema.parse(data));
+      }
+    );
+  }
+
+  async updateTimeEntry(entryId: string, changes: UpdateTimeEntryChanges) {
+    assertEntryInterval(changes.started_at, changes.ended_at);
+
+    return this.mutate('update_time_entry', 'time_entry', entryId, async () => {
+      const { data, error } = await this.client
+        .from('task_time_entries')
+        .update(
+          compact({
+            task_id: changes.task_id,
+            started_at: changes.started_at,
+            ended_at: changes.ended_at,
+            note: normalizedNote(changes.note),
+          })
+        )
+        .eq('id', entryId)
+        .eq('owner_id', this.connection.userId)
+        .select(`${TIME_ENTRY_COLUMNS}, tasks:task_id(name)`)
+        .maybeSingle();
+
+      if (error) {
+        throw new Error(
+          timeEntryErrorMessage(error, 'Failed to update time entry.')
+        );
+      }
+
+      if (!data) throw new Error('Time entry not found.');
+
+      return normalizedTimeEntry(TimeEntryRowSchema.parse(data));
+    });
+  }
+
+  async deleteTimeEntry(entryId: string) {
+    return this.mutate('delete_time_entry', 'time_entry', entryId, async () => {
+      const { data, error } = await this.client
+        .from('task_time_entries')
+        .delete()
+        .eq('id', entryId)
+        .eq('owner_id', this.connection.userId)
+        .select('id')
+        .maybeSingle();
+
+      if (error) throw new Error('Failed to delete time entry.');
+
+      if (!data) throw new Error('Time entry not found.');
+
+      return { deleted: true, time_entry_id: entryId };
+    });
+  }
+
+  private async reportTasks(taskIds: readonly string[]) {
+    const results = await Promise.all(
+      chunks(taskIds).map((ids) =>
+        this.client.from('tasks').select('id, name, project_id').in('id', ids)
+      )
+    );
+
+    if (results.some(({ error }) => error)) {
+      throw new Error('Failed to load report tasks.');
+    }
+
+    return z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          project_id: z.string().nullable(),
+        })
+      )
+      .parse(results.flatMap(({ data }) => data ?? []));
+  }
+
+  private async reportProjects() {
+    const { data, error } = await this.client
+      .from('projects')
+      .select('id, name, ancestor_id');
+
+    if (error) throw new Error('Failed to load report projects.');
+
+    return z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          ancestor_id: z.string().nullable(),
+        })
+      )
+      .parse(data ?? []);
+  }
+
+  private async reportTags(taskIds: readonly string[]) {
+    const results = await Promise.all(
+      chunks(taskIds).map((ids) =>
+        this.client
+          .from('task_tags')
+          .select('task_id, tags:tag_id(id, name)')
+          .in('task_id', ids)
+      )
+    );
+
+    if (results.some(({ error }) => error)) {
+      throw new Error('Failed to load report tags.');
+    }
+
+    const rows = z
+      .array(
+        z.object({
+          task_id: z.string(),
+          tags: z.object({ id: z.string(), name: z.string() }).nullable(),
+        })
+      )
+      .parse(results.flatMap(({ data }) => data ?? []));
+
+    const tagsByTask = new Map<string, ReportTag[]>();
+
+    for (const row of rows) {
+      if (!row.tags) continue;
+      tagsByTask.set(row.task_id, [
+        ...(tagsByTask.get(row.task_id) ?? []),
+        row.tags,
+      ]);
+    }
+
+    return tagsByTask;
   }
 
   private async assertValidProjectParent(

@@ -1,0 +1,115 @@
+<section class="time-entries" aria-label="Time entries">
+  <div class="time-entries__header">
+    <p class="sheet-field__label">
+      Time spent:
+      <strong data-testid="task-time-total">{{ totalLabel() }}</strong>
+    </p>
+    @if (!adding()) {
+    <button
+      type="button"
+      class="btn btn-sm btn-ghost"
+      data-testid="task-time-add"
+      (click)="startAdding()"
+    >
+      + Add time
+    </button>
+    }
+  </div>
+
+  @if (adding() || editingId()) {
+  <form
+    class="time-entries__form"
+    data-testid="task-time-form"
+    (submit)="$event.preventDefault(); save()"
+  >
+    <label class="sheet-field">
+      <span class="sheet-field__label">Date</span>
+      <input
+        type="date"
+        class="sheet-input"
+        aria-label="Time entry date"
+        [value]="draft().date"
+        (input)="updateDraft('date', $event)"
+      />
+    </label>
+    <label class="sheet-field">
+      <span class="sheet-field__label">From</span>
+      <input
+        type="time"
+        class="sheet-input"
+        aria-label="Time entry start"
+        [value]="draft().from"
+        (input)="updateDraft('from', $event)"
+      />
+    </label>
+    <label class="sheet-field">
+      <span class="sheet-field__label">To</span>
+      <input
+        type="time"
+        class="sheet-input"
+        aria-label="Time entry end"
+        [value]="draft().to"
+        (input)="updateDraft('to', $event)"
+      />
+    </label>
+    <label class="sheet-field time-entries__note">
+      <span class="sheet-field__label">Note</span>
+      <input
+        type="text"
+        class="sheet-input"
+        maxlength="500"
+        aria-label="Time entry note"
+        [value]="draft().note"
+        (input)="updateDraft('note', $event)"
+      />
+    </label>
+    <div class="time-entries__actions">
+      <button
+        type="submit"
+        class="btn btn-sm btn-primary"
+        [disabled]="saving() || !draftValid()"
+        data-testid="task-time-save"
+      >
+        Save
+      </button>
+      <button type="button" class="btn btn-sm btn-ghost" (click)="cancel()">
+        Cancel
+      </button>
+    </div>
+  </form>
+  } @if (entries().length) {
+  <ul class="time-entries__list" data-testid="task-time-entries">
+    @for (entry of entries(); track entry.id) {
+    <li class="time-entries__item">
+      <span class="time-entries__date">{{ dateLabel(entry) }}</span>
+      <span class="time-entries__range">{{ rangeLabel(entry) }}</span>
+      <span class="time-entries__duration">{{ durationLabel(entry) }}</span>
+      @if (entry.note) {
+      <span class="time-entries__item-note">{{ entry.note }}</span>
+      } @if (entry.endedAt) {
+      <span class="time-entries__item-actions">
+        <button
+          type="button"
+          class="icon-btn"
+          title="Edit time entry"
+          aria-label="Edit time entry"
+          (click)="startEditing(entry)"
+        >
+          ✏️
+        </button>
+        <button
+          type="button"
+          class="icon-btn"
+          title="Delete time entry"
+          aria-label="Delete time entry"
+          (click)="remove(entry)"
+        >
+          🗑️
+        </button>
+      </span>
+      }
+    </li>
+    }
+  </ul>
+  }
+</section>

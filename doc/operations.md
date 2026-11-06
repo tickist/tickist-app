@@ -2,7 +2,7 @@
 
 ## Local development
 
-Install dependencies with `npm ci`. Copy `.env.example` to `.local_env`, then start the local Supabase stack with `npm run supabase:start`. `npx supabase status -o env` reports the local API URL, publishable key, and database URL needed in `.local_env`.
+Install dependencies with `npm ci`. Copy `.env.example` to `.local_env`, then start the local Supabase stack with `npm run supabase:start`. `npx supabase status -o env` reports the local API URL, publishable key, and database URL needed in `.local_env`. The Supabase CLI is an exact dev dependency matching the `supabase/setup-cli` version in CI, so `npx supabase` never fetches a newer major release; change both together.
 
 `npm run start` checks that the local Tickist stack is running and serves the app at port 4200. The guard is intentionally non-destructive: it will not stop another local Supabase project if the required ports are in use.
 

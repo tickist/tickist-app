@@ -34,6 +34,15 @@ export interface TickistExportDocument {
   tasks: TickistExportTask[];
   taskSteps: TickistExportTaskStep[];
   taskTags: TickistExportTaskTag[];
+  /** The exporter's closed time entries. Absent in older backups. */
+  timeEntries?: TickistExportTimeEntry[];
+}
+
+export interface TickistExportTimeEntry {
+  taskStableId: string;
+  startedAt: string;
+  endedAt: string;
+  note: string | null;
 }
 
 export interface TickistExportWorkspace {
@@ -200,7 +209,7 @@ interface ExportTaskRow {
   repeat_delta: number | null;
   from_repeating: number | null;
   estimate_minutes: number | null;
-  spent_minutes: number | null;
+  spent_minutes_legacy: number | null;
   task_type: string | null;
   when_complete: string | null;
   creation_date: string | null;
@@ -215,6 +224,13 @@ interface ExportTaskStepRow {
   is_done: boolean;
   position: number;
   created_at: string | null;
+}
+
+interface ExportTimeEntryRow {
+  task_id: string;
+  started_at: string;
+  ended_at: string;
+  note: string | null;
 }
 
 interface ExportTaskTagRow {
@@ -289,7 +305,7 @@ export class ExportImportService {
     let taskQuery = client
       .from('tasks')
       .select(
-        'id, stable_id, project_id, name, description, finish_date, finish_time, suspend_until, pinned, is_active, is_done, on_hold, type_finish_date, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date'
+        'id, stable_id, project_id, name, description, finish_date, finish_time, suspend_until, pinned, is_active, is_done, on_hold, type_finish_date, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes_legacy, task_type, when_complete, creation_date, modification_date'
       )
       .eq('owner_id', userId);
 
@@ -315,7 +331,7 @@ export class ExportImportService {
       taskRows.map((task) => [task.id, task.stable_id])
     );
 
-    const { taskStepRows, taskTagRows } = await this.fetchTaskRelations(
+    const { taskStepRows, taskTagRows, timeEntryRows } = await this.fetchTaskRelations(
       taskIds
     );
 
@@ -424,7 +440,8 @@ export class ExportImportService {
         repeatDelta: task.repeat_delta,
         fromRepeating: task.from_repeating,
         estimateMinutes: task.estimate_minutes,
-        spentMinutes: task.spent_minutes,
+        // Undated time only; dated time travels in timeEntries.
+        spentMinutes: task.spent_minutes_legacy,
         taskType: task.task_type,
         whenComplete: task.when_complete,
         createdAt: task.creation_date,
@@ -458,6 +475,22 @@ export class ExportImportService {
           }
 
           return { taskStableId, tagStableId };
+        })
+        .filter(isNonNullable),
+      timeEntries: timeEntryRows
+        .map((entry) => {
+          const taskStableId = taskStableById.get(entry.task_id);
+
+          if (!taskStableId) {
+            return null;
+          }
+
+          return {
+            taskStableId,
+            startedAt: entry.started_at,
+            endedAt: entry.ended_at,
+            note: entry.note,
+          };
         })
         .filter(isNonNullable),
     };
@@ -586,11 +619,13 @@ export class ExportImportService {
   private async fetchTaskRelations(taskIds: string[]): Promise<{
     taskStepRows: ExportTaskStepRow[];
     taskTagRows: ExportTaskTagRow[];
+    timeEntryRows: ExportTimeEntryRow[];
   }> {
     if (taskIds.length === 0) {
       return {
         taskStepRows: [],
         taskTagRows: [],
+        timeEntryRows: [],
       };
     }
 
@@ -614,10 +649,24 @@ export class ExportImportService {
       throw new Error(`Could not export task tags: ${taskTagError.message}`);
     }
 
-    // SAFETY: The preceding Supabase projection selects the database columns defined by this export row contract.
+    const { data: timeEntryData, error: timeEntryError } = await client
+      .from('task_time_entries')
+      .select('task_id, started_at, ended_at, note')
+      .in('task_id', taskIds)
+      .not('ended_at', 'is', null)
+      .order('started_at', { ascending: true });
+
+    if (timeEntryError) {
+      throw new Error(
+        `Could not export time entries: ${timeEntryError.message}`
+      );
+    }
+
+    // SAFETY: The preceding Supabase projections select the database columns defined by these export row contracts; ended_at is filtered to non-null.
     return {
       taskStepRows: (stepData ?? []) as ExportTaskStepRow[],
       taskTagRows: (taskTagData ?? []) as ExportTaskTagRow[],
+      timeEntryRows: (timeEntryData ?? []) as ExportTimeEntryRow[],
     };
   }
 
@@ -1275,6 +1324,10 @@ export class ExportImportService {
     const stepsByTask = groupBy(payload.taskSteps, (step) => step.taskStableId);
     const tagsByTask = groupBy(payload.taskTags, (link) => link.taskStableId);
 
+    const entriesByTask = payload.timeEntries
+      ? groupBy(payload.timeEntries, (entry) => entry.taskStableId)
+      : null;
+
     for (const taskStableId of syncedTasks) {
       const taskId = taskIdsByStableId.get(taskStableId);
 
@@ -1384,6 +1437,55 @@ export class ExportImportService {
             `Could not insert tag links for task ${taskStableId}: ${insertTaskTagsError.message}`
           );
         }
+      }
+
+      if (entriesByTask) {
+        await this.replaceTimeEntries(
+          client,
+          taskId,
+          taskStableId,
+          entriesByTask.get(taskStableId) ?? [],
+          result
+        );
+      }
+    }
+  }
+
+  /** Replaces the importer's closed entries on a task; running timers stay. */
+  private async replaceTimeEntries(
+    client: NonNullable<typeof this.supabase>,
+    taskId: string,
+    taskStableId: string,
+    entries: TickistExportTimeEntry[],
+    result: ImportResult
+  ): Promise<void> {
+    const { error: deleteError } = await client
+      .from('task_time_entries')
+      .delete()
+      .eq('task_id', taskId)
+      .not('ended_at', 'is', null);
+
+    if (deleteError) {
+      result.ok = false;
+      result.errors.push(
+        `Could not replace time entries for task ${taskStableId}: ${deleteError.message}`
+      );
+
+      return;
+    }
+
+    for (const entry of entries) {
+      const { error } = await client.from('task_time_entries').insert({
+        task_id: taskId,
+        started_at: entry.startedAt,
+        ended_at: entry.endedAt,
+        note: entry.note,
+      });
+
+      if (error) {
+        result.warnings.push(
+          `Time entry ${entry.startedAt} on task ${taskStableId} was skipped: ${error.message}`
+        );
       }
     }
   }
@@ -1788,6 +1890,13 @@ const TickistExportTaskTagSchema = z.object({
   tagStableId: z.string(),
 });
 
+const TickistExportTimeEntrySchema = z.object({
+  taskStableId: z.string(),
+  startedAt: z.string(),
+  endedAt: z.string(),
+  note: z.string().max(500).nullable(),
+});
+
 const TickistExportDocumentSchema = z.object({
   format: z.literal(EXPORT_FORMAT),
   formatVersion: z.number(),
@@ -1803,4 +1912,5 @@ const TickistExportDocumentSchema = z.object({
   tasks: z.array(TickistExportTaskSchema),
   taskSteps: z.array(TickistExportTaskStepSchema),
   taskTags: z.array(TickistExportTaskTagSchema),
+  timeEntries: z.array(TickistExportTimeEntrySchema).optional(),
 });

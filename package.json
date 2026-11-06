@@ -50,10 +50,11 @@
     "account:delete:test": "node --test tools/account-deletion/delete-account.test.mjs",
     "retention:test": "node --test tools/retention/project-invite.test.cjs",
     "email:templates": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/email/auth-templates.mjs",
-    "email:templates:test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tools/email/email-layout.test.mjs",
+    "email:templates:test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tools/email/email-layout.test.mjs tools/email/daily-time-summary.test.mjs",
     "db:backup:prune": "node tools/backup/prune.mjs",
     "email-monitor:test": "node --test tools/email-monitor/*.test.mjs",
-    "email-monitor:test:db": "bash tools/email-monitor/test-db.sh"
+    "email-monitor:test:db": "bash tools/email-monitor/test-db.sh",
+    "time-tracking:test:db": "bash tools/time-tracking/test-db.sh"
   },
   "private": true,
   "dependencies": {
@@ -131,6 +132,7 @@
     "postcss-nesting": "^13.0.2",
     "prettier": "^2.8.8",
     "sanitize-html": "^2.17.6",
+    "supabase": "2.120.0",
     "tailwindcss": "^3.4.19",
     "ts-node": "10.9.2",
     "tslib": "^2.3.0",

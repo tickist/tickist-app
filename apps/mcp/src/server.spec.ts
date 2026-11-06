@@ -44,12 +44,53 @@ describe('createTickistMcpServer', () => {
       })
       .parse(server)._registeredTools;
 
-    expect(Object.keys(tools)).toHaveLength(17);
+    expect(Object.keys(tools)).toHaveLength(22);
     expect(Object.keys(tools)).toEqual(
       expect.arrayContaining(['delete_project', 'suspend_task', 'resume_task'])
     );
     expect(tools['delete_project'].annotations?.['destructiveHint']).toBe(true);
     expect(tools['complete_task'].annotations?.['idempotentHint']).toBe(false);
     expect(tools['resume_task'].annotations?.['idempotentHint']).toBe(true);
+  });
+
+  it('registers time tracking tools with read-only and destructive hints', () => {
+    const server = createTickistMcpServer({
+      supabaseUrl: 'https://example.supabase.co',
+      publishableKey: 'publishable-test-key',
+      accessToken: 'user-token',
+      userId: '00000000-0000-4000-8000-000000000001',
+      clientId: 'test-client',
+      scopes: ['tasks:read', 'tasks:write'],
+    });
+
+    const tools = z
+      .object({
+        _registeredTools: z.record(
+          z.string(),
+          z.object({
+            annotations: z.record(z.string(), z.boolean()).optional(),
+          })
+        ),
+      })
+      .parse(server)._registeredTools;
+
+    for (const name of ['get_time_report', 'list_time_entries']) {
+      expect(tools[name].annotations).toMatchObject({
+        readOnlyHint: true,
+        destructiveHint: false,
+      });
+    }
+
+    for (const name of ['create_time_entry', 'update_time_entry']) {
+      expect(tools[name].annotations).toMatchObject({
+        readOnlyHint: false,
+        destructiveHint: false,
+      });
+    }
+
+    expect(tools['delete_time_entry'].annotations).toMatchObject({
+      readOnlyHint: false,
+      destructiveHint: true,
+    });
   });
 });

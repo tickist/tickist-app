@@ -1,0 +1,67 @@
+:host {
+  display: block;
+}
+
+.focus-shell {
+  @apply flex min-h-screen items-center justify-center bg-base-100 px-4 py-10 text-base-content;
+}
+
+.focus-card {
+  @apply flex w-full max-w-xl flex-col items-center gap-4 text-center;
+}
+
+.focus-project {
+  @apply text-sm font-semibold uppercase tracking-wide;
+  color: rgb(var(--bc) / 0.6);
+}
+
+.focus-task {
+  @apply max-w-full break-words text-2xl font-semibold sm:text-3xl;
+}
+
+.focus-clock {
+  @apply text-7xl font-semibold tabular-nums tracking-tight sm:text-8xl;
+  transition: color 0.3s ease;
+}
+
+.focus-clock--paused {
+  @apply opacity-50;
+}
+
+.focus-clock--over {
+  color: rgb(234 88 12);
+}
+
+.focus-status {
+  @apply text-sm font-semibold uppercase tracking-wide;
+  color: rgb(var(--bc) / 0.7);
+}
+
+.focus-shell--over .focus-status {
+  color: rgb(234 88 12);
+}
+
+.focus-progress {
+  @apply h-2 w-full max-w-sm overflow-hidden rounded-full bg-base-300;
+}
+
+.focus-progress__bar {
+  @apply block h-full rounded-full bg-primary transition-[width] duration-500;
+}
+
+.focus-shell--over .focus-progress__bar {
+  background-color: rgb(234 88 12);
+}
+
+.focus-actions {
+  @apply mt-4 flex flex-wrap justify-center gap-3;
+}
+
+.focus-actions .btn {
+  @apply min-w-28;
+}
+
+.focus-today {
+  @apply mt-2 text-sm;
+  color: rgb(var(--bc) / 0.7);
+}

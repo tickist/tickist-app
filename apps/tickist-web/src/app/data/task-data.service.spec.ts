@@ -2,7 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SUPABASE_CLIENT } from '../config/supabase.provider';
 import { StatisticsDataService } from './statistics-data.service';
-import { TaskDataService } from './task-data.service';
+import {
+  TaskDataService,
+  buildDuplicateTaskInput,
+  type Task,
+} from './task-data.service';
 import { TaskReminderDataService } from './task-reminder-data.service';
 
 type TaskRow = {
@@ -251,3 +255,88 @@ function formatLocalDate(value: string | null | undefined): string | null {
 
   return `${year}-${month}-${day}`;
 }
+
+describe('buildDuplicateTaskInput', () => {
+  const source: Task = {
+    id: 'task-1',
+    ownerId: 'owner-1',
+    projectId: 'project-1',
+    name: 'Write report',
+    description: 'Quarterly numbers',
+    finishDate: '2026-11-10',
+    finishTime: '10:00',
+    typeFinishDate: 0,
+    suspendUntil: '2026-11-08T08:00:00.000Z',
+    pinned: true,
+    isActive: false,
+    isDone: true,
+    onHold: true,
+    priority: 'A',
+    repeatInterval: 7,
+    repeatDelta: 1,
+    fromRepeating: 1,
+    estimateMinutes: 90,
+    spentMinutes: 45,
+    taskType: 'next_action',
+    whenComplete: '2026-11-05T10:00:00.000Z',
+    reminderCount: 1,
+    reminders: [
+      {
+        id: 'reminder-1',
+        remindAt: '2026-11-10T08:00:00.000Z',
+        timezone: 'Europe/Warsaw',
+        status: 'pending',
+      },
+    ],
+    tags: ['tag-1'],
+    assigneeIds: ['user-2'],
+    steps: [
+      {
+        id: 's2',
+        taskId: 'task-1',
+        content: 'Send',
+        isDone: false,
+        position: 5,
+      },
+      {
+        id: 's1',
+        taskId: 'task-1',
+        content: 'Draft',
+        isDone: true,
+        position: 2,
+      },
+    ],
+  };
+
+  it('keeps the work description and starts the copy fresh', () => {
+    const input = buildDuplicateTaskInput(source, 'me');
+
+    expect(input).toEqual({
+      ownerId: 'me',
+      name: 'Write report',
+      projectId: 'project-1',
+      description: 'Quarterly numbers',
+      finishDate: '2026-11-10',
+      finishTime: '10:00',
+      typeFinishDate: 0,
+      priority: 'A',
+      repeatInterval: 7,
+      fromRepeating: 1,
+      estimateMinutes: 90,
+      taskType: 'next_action',
+      tags: ['tag-1'],
+      assigneeIds: ['user-2'],
+      steps: [
+        { content: 'Draft', position: 0, isDone: false },
+        { content: 'Send', position: 1, isDone: false },
+      ],
+    });
+  });
+
+  it('does not share arrays with the source task', () => {
+    const input = buildDuplicateTaskInput(source, 'me');
+
+    expect(input.tags).not.toBe(source.tags);
+    expect(input.assigneeIds).not.toBe(source.assigneeIds);
+  });
+});

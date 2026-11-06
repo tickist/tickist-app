@@ -484,17 +484,10 @@
               placeholder="0"
             />
           </label>
-          <label class="sheet-field">
-            <span class="sheet-field__label">Time spent (min)</span>
-            <input
-              type="number"
-              min="0"
-              class="sheet-input"
-              formControlName="spentMinutes"
-              placeholder="0"
-            />
-          </label>
         </div>
+        @if (editingTask(); as task) {
+        <app-task-time-entries [taskId]="task.id"></app-task-time-entries>
+        }
       </section>
 
       @if (editingTask(); as task) {

@@ -39,12 +39,19 @@ import {
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
 import { ThemedSelectComponent } from '../../core/ui/themed-select.component';
+import {
+  FOCUS_LIMIT_DEFAULT_MINUTES,
+  FOCUS_LIMIT_MAX_MINUTES,
+  FOCUS_LIMIT_MIN_MINUTES,
+  TimeTrackingService,
+} from '../../data/time-tracking.service';
 
 type SettingsTab =
   | 'account'
   | 'workspaces'
   | 'password'
   | 'notifications'
+  | 'focus'
   | 'backup'
   | 'api-tokens';
 
@@ -95,6 +102,7 @@ export class SettingsComponent {
   private readonly toasts = inject(ToastService);
   private readonly router = inject(Router);
   private readonly viewState = inject(AppViewStateService);
+  private readonly timeTracking = inject(TimeTrackingService);
 
   readonly emailMonitoring = inject(EmailMonitoringService);
 
@@ -105,10 +113,37 @@ export class SettingsComponent {
     { key: 'workspaces', label: 'Workspaces', icon: '🗂️' },
     { key: 'password', label: 'Password', icon: '🔒' },
     { key: 'notifications', label: 'Notifications', icon: '🔔' },
+    { key: 'focus', label: 'Focus', icon: '⏱' },
     { key: 'backup', label: 'Backup & Restore', icon: '🗂️' },
     { key: 'api-tokens', label: 'API Tokens', icon: '🔑' },
   ];
   readonly updating = signal(false);
+  readonly focusLimitMinMinutes = FOCUS_LIMIT_MIN_MINUTES;
+  readonly focusLimitMaxMinutes = FOCUS_LIMIT_MAX_MINUTES;
+  readonly focusSaving = signal(false);
+  private readonly focusLimitEnabledDraft = signal<boolean | null>(null);
+  private readonly focusLimitMinutesDraft = signal<number | null>(null);
+  readonly focusLimitEnabled = computed(
+    () =>
+      this.focusLimitEnabledDraft() ??
+      this.timeTracking.focusLimitMinutes() !== null
+  );
+  readonly focusLimitMinutes = computed(
+    () =>
+      this.focusLimitMinutesDraft() ??
+      this.timeTracking.focusLimitMinutes() ??
+      FOCUS_LIMIT_DEFAULT_MINUTES
+  );
+  readonly focusLimitValid = computed(() => {
+    const minutes = this.focusLimitMinutes();
+
+    return (
+      !this.focusLimitEnabled() ||
+      (Number.isInteger(minutes) &&
+        minutes >= FOCUS_LIMIT_MIN_MINUTES &&
+        minutes <= FOCUS_LIMIT_MAX_MINUTES)
+    );
+  });
   readonly workspaceList = this.workspaces.list;
   readonly newWorkspaceName = signal('');
   readonly editingWorkspaceId = signal<string | null>(null);
@@ -273,6 +308,8 @@ export class SettingsComponent {
         return this.notificationsSaving()
           ? 'Saving...'
           : 'Save notification settings';
+      case 'focus':
+        return this.focusSaving() ? 'Saving...' : 'Save focus settings';
       default:
         return null;
     }
@@ -285,6 +322,8 @@ export class SettingsComponent {
         return this.passwordSubmitDisabled();
       case 'notifications':
         return this.notificationsSubmitDisabled();
+      case 'focus':
+        return this.focusSaving() || !this.focusLimitValid();
       default:
         return true;
     }
@@ -413,8 +452,56 @@ export class SettingsComponent {
         await this.saveNotifications();
 
         return;
+      case 'focus':
+        await this.saveFocus();
+
+        return;
       default:
         return;
+    }
+  }
+
+  onFocusLimitEnabledChange(event: Event): void {
+    const target = event.target;
+
+    if (target instanceof HTMLInputElement) {
+      this.focusLimitEnabledDraft.set(target.checked);
+    }
+  }
+
+  onFocusLimitMinutesInput(event: Event): void {
+    const target = event.target;
+
+    if (target instanceof HTMLInputElement) {
+      this.focusLimitMinutesDraft.set(Number(target.value));
+    }
+  }
+
+  async saveFocus(): Promise<void> {
+    if (!this.focusLimitValid()) {
+      this.toasts.error(
+        `Choose between ${FOCUS_LIMIT_MIN_MINUTES} and ${FOCUS_LIMIT_MAX_MINUTES} minutes.`
+      );
+
+      return;
+    }
+
+    this.focusSaving.set(true);
+
+    try {
+      const saved = await this.timeTracking.saveFocusLimit(
+        this.focusLimitEnabled() ? this.focusLimitMinutes() : null
+      );
+
+      if (saved) {
+        this.focusLimitEnabledDraft.set(null);
+        this.focusLimitMinutesDraft.set(null);
+        this.toasts.success('Focus settings saved.');
+      } else {
+        this.toasts.error('Focus settings could not be saved.');
+      }
+    } finally {
+      this.focusSaving.set(false);
     }
   }
 

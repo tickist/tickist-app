@@ -611,6 +611,37 @@ test('creates task, edits it via task menu and marks done', async ({
   await expect(taskCardByName(page, taskName)).toBeVisible();
 });
 
+test('duplicates a task into the same project and keeps the copy after reload', async ({
+  page,
+}, testInfo) => {
+  const projectName = `Project ${uniqueSuffix(testInfo)}`;
+  const taskName = `Copied task ${uniqueSuffix(testInfo)}`;
+  const cards = page.locator('article.task-card').filter({ hasText: taskName });
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, `Project for ${taskName}`);
+  await selectProjectByName(page, projectName);
+
+  await page.getByPlaceholder('What needs doing?').fill(taskName);
+  await page.getByRole('button', { name: 'Add task' }).click();
+
+  const card = taskCardByName(page, taskName);
+  let menu = await openTaskMenu(card);
+  await menu.getByRole('button', { name: /Next action/ }).click();
+  await expectTaskMenuClosed(card);
+
+  menu = await openTaskMenu(card);
+  await menu.getByTestId('task-duplicate').click();
+  await expectTaskMenuClosed(card);
+
+  await expect(cards).toHaveCount(2);
+  await expect(cards.locator('.task-card__task-type')).toHaveCount(2);
+
+  await page.reload();
+  await selectProjectByName(page, projectName);
+  await expect(cards).toHaveCount(2);
+});
+
 test('adds task reminder and shows reminder status icon on the task card', async ({
   page,
 }, testInfo) => {
@@ -659,6 +690,67 @@ test('adds task reminder and shows reminder status icon on the task card', async
   await expect(
     reloadedCard.getByTestId('task-toolbar-reminders')
   ).toHaveAttribute('aria-label', /Reminders: 1\. Next:/);
+});
+
+test('tracks focus time on a task and reports it by day', async ({
+  page,
+}, testInfo) => {
+  const projectName = `Time project ${uniqueSuffix(testInfo)}`;
+  const taskName = `Time task ${uniqueSuffix(testInfo)}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, `Project for ${taskName}`);
+  await selectProjectByName(page, projectName);
+
+  await page.getByPlaceholder('What needs doing?').fill(taskName);
+  await page.getByRole('button', { name: 'Add task' }).click();
+
+  const card = taskCardByName(page, taskName);
+  await expect(card).toBeVisible();
+
+  await card.getByRole('button', { name: 'Start focus' }).click();
+  await expect(page).toHaveURL(/\/app\/focus\//);
+  await expect(page.getByTestId('focus-task')).toHaveText(taskName);
+  await expect(page.locator('app-sidebar')).toHaveCount(0);
+  await expect(page.getByTestId('focus-clock')).toHaveText(
+    /^\s*\d{2}:\d{2}\s*$/
+  );
+
+  await page.getByTestId('focus-pause').click();
+  await expect(page.getByTestId('focus-status')).toHaveText('Paused');
+  await page.getByTestId('focus-resume').click();
+  await expect(page.getByTestId('focus-pause')).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId('focus-pause')).toBeVisible();
+  await page.getByTestId('focus-stop').click();
+  await expect(page).not.toHaveURL(/\/app\/focus\//);
+  await expect(page.getByTestId('focus-chip')).toHaveCount(0);
+
+  await selectProjectByName(page, projectName);
+  await taskCardByName(page, taskName)
+    .getByRole('button', { name: 'Edit task' })
+    .click();
+  const composer = page.locator('app-task-composer');
+  await expect(composer).toBeVisible();
+  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByTestId('task-time-add').click();
+  const yesterday = futureDateInput(-1);
+  await composer.getByLabel('Time entry date').fill(yesterday);
+  await composer.getByLabel('Time entry start').fill('10:00');
+  await composer.getByLabel('Time entry end').fill('10:40');
+  await composer.getByTestId('task-time-save').click();
+  await expect(composer.getByTestId('task-time-entries')).toContainText(
+    '40 min'
+  );
+  await composer.getByRole('button', { name: 'Close task panel' }).click();
+
+  await page.goto('/app/time');
+  // The entry form and the report both use the account timezone, so pick
+  // the same calendar day instead of relying on the runner's "yesterday".
+  await page.getByTestId('time-report-day').fill(yesterday);
+  await expect(page.getByTestId('time-report')).toContainText(projectName);
+  await expect(page.getByTestId('time-report')).toContainText(taskName);
+  await expect(page.getByTestId('time-report-total-me')).toHaveText('40 min');
 });
 
 test('creates project, edits it from project menu and persists changes', async ({

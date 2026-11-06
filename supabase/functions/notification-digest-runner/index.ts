@@ -9,6 +9,15 @@ import {
 } from '../_shared/common.ts';
 import { internalSecretMatches } from '../_shared/timing-safe.ts';
 import { APP_URL, emailButton } from '../_shared/email-layout.ts';
+import {
+  loadTimeSummary,
+  MAX_TIME_REPORT_ROWS,
+  renderTimeSummaryHtml,
+  renderTimeSummaryText,
+  type TimeProjectRow,
+  type TimeReportRow,
+  type TimeTaskRow,
+} from './time-summary.ts';
 
 type NotificationKey = 'weekly_summary' | 'daily_summary';
 type ScheduleType = 'daily' | 'weekly';
@@ -48,6 +57,11 @@ interface EmailPayload {
   dedupeKey: string;
 }
 
+interface TimeSection {
+  html: string;
+  text: string;
+}
+
 interface ZonedParts {
   dateKey: string;
   weekday: number;
@@ -66,6 +80,8 @@ type DateTimePartType =
 // check below is cheap, and only due preferences cost a lookup and an email.
 const PREFERENCE_PAGE_SIZE = 500;
 const MAX_PREFERENCE_PAGES = 40;
+// Same fallback as public.time_report_for_user when app_users has no row.
+const DEFAULT_ACCOUNT_TIMEZONE = 'Europe/Warsaw';
 const WEEKDAY_INDEX: Record<string, number> = {
   Sun: 0,
   Mon: 1,
@@ -90,12 +106,7 @@ serve(async (req) => {
 
   const supabaseUrl = requireEnv('SUPABASE_URL');
   const supabaseSecretKey = requireSupabaseSecretKey();
-  const supabase = createClient(supabaseUrl, supabaseSecretKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  });
+  const supabase = createServiceClient(supabaseUrl, supabaseSecretKey);
 
   const data: NotificationPreferenceRow[] = [];
   for (let page = 0; page < MAX_PREFERENCE_PAGES; page += 1) {
@@ -222,8 +233,22 @@ serve(async (req) => {
   });
 });
 
+// The schema-less client as created here; helper parameters use this type
+// because ReturnType<typeof createClient> resolves to a client whose rpc and
+// table methods accept no arguments.
+type ServiceClient = ReturnType<typeof createServiceClient>;
+
+function createServiceClient(url: string, secretKey: string) {
+  return createClient(url, secretKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
+
 async function buildEmailPayload(
-  supabase: ReturnType<typeof createClient>,
+  supabase: ServiceClient,
   preference: NotificationPreferenceRow,
   user: User,
   now: Date
@@ -273,6 +298,7 @@ async function buildEmailPayload(
   const completedTasks = filterByExactDate(completed, todayKey, timezone);
   const upcomingTasks = filterByExactDate(upcoming, tomorrowKey, timezone);
   const dedupeKey = `daily_summary:${preference.user_id}:${todayKey}`;
+  const timeSection = await buildTimeSection(supabase, preference.user_id, now);
   return buildDailyEmail(
     greetingName,
     timezone,
@@ -280,12 +306,104 @@ async function buildEmailPayload(
     upcomingTasks,
     todayKey,
     tomorrowKey,
-    dedupeKey
+    dedupeKey,
+    timeSection
   );
 }
 
+// "Time worked today". The report RPC buckets entries by the account timezone
+// (app_users.timezone), so "today" is taken in that timezone too; the app, MCP
+// and this email then show the same numbers for the date. The section is left
+// out when nothing was logged or when loading fails, so the digest still goes.
+async function buildTimeSection(
+  supabase: ServiceClient,
+  userId: string,
+  now: Date
+): Promise<TimeSection | null> {
+  try {
+    const { data: account, error: accountError } = await supabase
+      .from('app_users')
+      .select('timezone')
+      .eq('auth_user_id', userId)
+      .maybeSingle();
+    if (accountError) {
+      throw accountError;
+    }
+    const accountTimezone = normalizeTimezone(
+      (account as { timezone: string | null } | null)?.timezone ??
+        DEFAULT_ACCOUNT_TIMEZONE
+    );
+    const dateKey = getZonedParts(now, accountTimezone).dateKey;
+
+    const summary = await loadTimeSummary(userId, dateKey, {
+      fetchReport: async () => {
+        const { data, error } = await supabase
+          .rpc('time_report_for_user', {
+            p_user: userId,
+            p_from: dateKey,
+            p_to: dateKey,
+          })
+          .order('everyone_seconds', { ascending: false })
+          .order('task_id', { ascending: true })
+          .limit(MAX_TIME_REPORT_ROWS);
+        if (error) {
+          throw error;
+        }
+        return (data ?? []) as TimeReportRow[];
+      },
+      fetchTasks: async (taskIds) => {
+        const { data, error } = await supabase
+          .from('tasks')
+          .select('id, name, project_id')
+          .in('id', taskIds);
+        if (error) {
+          throw error;
+        }
+        return (data ?? []) as TimeTaskRow[];
+      },
+      fetchProjects: async (projectIds) => {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('id, name, ancestor_id, owner_id')
+          .in('id', projectIds);
+        if (error) {
+          throw error;
+        }
+        return (data ?? []) as TimeProjectRow[];
+      },
+      fetchAcceptedMemberships: async (projectIds) => {
+        const { data, error } = await supabase
+          .from('project_members')
+          .select('project_id')
+          .eq('user_id', userId)
+          .eq('status', 'accepted')
+          .in('project_id', projectIds);
+        if (error) {
+          throw error;
+        }
+        return ((data ?? []) as { project_id: string }[]).map(
+          (row) => row.project_id
+        );
+      },
+    });
+
+    return summary
+      ? {
+          html: renderTimeSummaryHtml(summary),
+          text: renderTimeSummaryText(summary),
+        }
+      : null;
+  } catch (error) {
+    console.error('[notification-digest-runner] Failed to build time section', {
+      userId,
+      error,
+    });
+    return null;
+  }
+}
+
 async function fetchRecentCompletedTasks(
-  supabase: ReturnType<typeof createClient>,
+  supabase: ServiceClient,
   userId: string
 ): Promise<DigestTaskRow[]> {
   const lowerBound = new Date(
@@ -316,7 +434,7 @@ async function fetchRecentCompletedTasks(
 }
 
 async function fetchUpcomingTasks(
-  supabase: ReturnType<typeof createClient>,
+  supabase: ServiceClient,
   userId: string
 ): Promise<DigestTaskRow[]> {
   const lowerBound = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -451,7 +569,8 @@ function buildDailyEmail(
   upcomingTasks: DigestTaskItem[],
   todayKey: string,
   tomorrowKey: string,
-  dedupeKey: string
+  dedupeKey: string,
+  timeSection: TimeSection | null
 ): EmailPayload {
   const subject = 'Your Tickist daily summary';
   const completedListHtml = buildTaskListHtml(
@@ -487,6 +606,7 @@ function buildDailyEmail(
     `<p>${escapeHtml(summary)}</p>`,
     `<p><strong>Completed today</strong><br>${escapeHtml(todayKey)}</p>`,
     completedListHtml,
+    timeSection?.html ?? '',
     `<p><strong>Scheduled for tomorrow</strong><br>${escapeHtml(
       tomorrowKey
     )}</p>`,
@@ -501,6 +621,7 @@ function buildDailyEmail(
     summary,
     `Completed today (${todayKey}):`,
     completedListText,
+    ...(timeSection ? [``, timeSection.text] : []),
     ``,
     `Scheduled for tomorrow (${tomorrowKey}):`,
     upcomingListText,

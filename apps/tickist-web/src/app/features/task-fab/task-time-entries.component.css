@@ -1,0 +1,56 @@
+:host {
+  display: block;
+}
+
+.time-entries {
+  @apply flex flex-col gap-3;
+}
+
+.time-entries__header {
+  @apply flex flex-wrap items-center justify-between gap-2;
+}
+
+.time-entries__form {
+  @apply grid gap-3;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+}
+
+.time-entries__note {
+  grid-column: 1 / -1;
+}
+
+.time-entries__actions {
+  @apply flex gap-2;
+  grid-column: 1 / -1;
+}
+
+.time-entries__list {
+  @apply flex flex-col divide-y divide-white/5 text-sm;
+}
+
+.time-entries__item {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-1 py-2;
+}
+
+.time-entries__date,
+.time-entries__range {
+  @apply tabular-nums;
+  color: rgb(var(--bc) / 0.7);
+}
+
+.time-entries__duration {
+  @apply font-semibold tabular-nums;
+}
+
+.time-entries__item-note {
+  @apply min-w-0 flex-1 truncate;
+}
+
+.time-entries__item-actions {
+  @apply ml-auto flex gap-1;
+}
+
+.icon-btn {
+  @apply rounded-full px-2 py-1 text-sm transition hover:bg-base-100 hover:bg-opacity-50;
+  color: inherit;
+}

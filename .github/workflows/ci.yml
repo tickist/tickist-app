@@ -62,7 +62,9 @@ jobs:
 
   e2e:
     if: github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'develop')
-    runs-on: ubuntu-latest
+    # Playwright 1.59 cannot install browsers on Ubuntu 26.04, which
+    # ubuntu-latest now resolves to. Move back after upgrading Playwright.
+    runs-on: ubuntu-24.04
     env:
       E2E_ENV_FILE: .local_env.e2e
       E2E_DB_RESET_ATTEMPTS: '5'

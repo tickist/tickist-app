@@ -357,6 +357,55 @@ describe('Tickist MCP Worker', () => {
     expect(fetchRequest).not.toHaveBeenCalled();
   });
 
+  it('requires the task write scope before deleting a time entry', async () => {
+    vi.spyOn(
+      SupabaseTokenVerifier.prototype,
+      'verifyAccessToken'
+    ).mockResolvedValue({ ...authInfo, scopes: ['tasks:read'] });
+    const fetchRequest = vi.spyOn(globalThis, 'fetch');
+
+    const response = await app.request(
+      request(
+        {
+          jsonrpc: '2.0',
+          id: 4,
+          method: 'tools/call',
+          params: {
+            name: 'delete_time_entry',
+            arguments: {
+              time_entry_id: '00000000-0000-4000-8000-000000000004',
+            },
+            _meta: {
+              'io.modelcontextprotocol/protocolVersion': '2026-07-28',
+              'io.modelcontextprotocol/clientCapabilities': {},
+            },
+          },
+        },
+        {
+          'MCP-Protocol-Version': '2026-07-28',
+          'Mcp-Method': 'tools/call',
+          'Mcp-Name': 'delete_time_entry',
+        }
+      ),
+      undefined,
+      env
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      result: {
+        isError: true,
+        content: [
+          {
+            type: 'text',
+            text: expect.stringContaining('tasks:write'),
+          },
+        ],
+      },
+    });
+    expect(fetchRequest).not.toHaveBeenCalled();
+  });
+
   it('challenges an expired signed JWT with 401 and resource metadata', async () => {
     const fetchRequest = vi.spyOn(globalThis, 'fetch');
 

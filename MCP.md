@@ -1,10 +1,10 @@
 # Tickist MCP Server
 
-An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that lets AI assistants manage your Tickist tasks, projects, and tags.
+An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that lets AI assistants manage your Tickist tasks, projects, tags, and task time tracking.
 
 ## Features
 
-- **13 tools**: Full CRUD for tasks, projects, and tags
+- **22 tools**: Tasks, projects, tags, and task time tracking
 - **Dual authentication**: OAuth 2.1 (ChatGPT) + Bearer API tokens (Codex, Claude Code, other CLI clients)
 - **Deployed as**: Dedicated Cloudflare Worker at `mcp.tickist.com`
 - **Protocol**: MCP 2026-07-28 with 2025-06-18 compatibility
@@ -53,31 +53,51 @@ Tokens are hashed (SHA-256) before storage. The raw value is shown once at creat
 
 ### Projects
 
-| Tool             | Description                                     |
-| ---------------- | ----------------------------------------------- |
-| `list_projects`  | List all projects (filter: `is_active`)         |
-| `get_project`    | Get project by ID                               |
-| `create_project` | Create project (name, description, color, icon) |
-| `update_project` | Update project fields                           |
+| Tool              | Scope            | Description                                                       |
+| ----------------- | ---------------- | ----------------------------------------------------------------- |
+| `list_projects`   | `projects:read`  | List projects (filters: `is_active`, `ancestor_id`)               |
+| `list_workspaces` | `projects:read`  | List workspaces                                                   |
+| `get_project`     | `projects:read`  | Get project by ID                                                 |
+| `create_project`  | `projects:write` | Create project, optionally nested                                 |
+| `update_project`  | `projects:write` | Update project fields, including its parent                       |
+| `delete_project`  | `projects:write` | Delete a non-Inbox project; tasks become unattached (destructive) |
 
 ### Tasks
 
-| Tool            | Description                                           |
-| --------------- | ----------------------------------------------------- |
-| `list_tasks`    | List tasks (filter: project, status, priority; limit) |
-| `get_task`      | Get task with steps and tags                          |
-| `create_task`   | Create task (auto-assigns to inbox if no project)     |
-| `update_task`   | Update task fields                                    |
-| `complete_task` | Mark done or reopen                                   |
-| `delete_task`   | Permanently delete                                    |
+| Tool            | Scope         | Description                                                            |
+| --------------- | ------------- | ---------------------------------------------------------------------- |
+| `list_tasks`    | `tasks:read`  | List tasks (filters: project with descendants, state, priority; limit) |
+| `get_task`      | `tasks:read`  | Get task with steps and tags; `spent_minutes` is the total time        |
+| `create_task`   | `tasks:write` | Create task (inbox when no project), optional recurrence               |
+| `update_task`   | `tasks:write` | Update task fields; spent time is changed only through time entries    |
+| `complete_task` | `tasks:write` | Mark done or reopen; recurring tasks advance                           |
+| `suspend_task`  | `tasks:write` | Suspend indefinitely or until a future time                            |
+| `resume_task`   | `tasks:write` | Resume a suspended task                                                |
+| `delete_task`   | `tasks:write` | Permanently delete (destructive)                                       |
+
+### Time tracking
+
+Time tools reuse the task scopes. Dates are `YYYY-MM-DD` in the account timezone; ranges are inclusive and cover at most 367 days. Timestamps are ISO 8601 with an offset, for example `2026-11-05T09:30:00+01:00`.
+
+| Tool                | Scope         | Description                                                                                                                 |
+| ------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `get_time_report`   | `tasks:read`  | Minutes for `me` and `everyone` per group, task, and day; `group_by` is `project` (root project, default), `tag`, or `task` |
+| `list_time_entries` | `tasks:read`  | Your own entries starting in a date range, newest first (optional `task_id`, `limit` up to 500, `has_more`)                 |
+| `create_time_entry` | `tasks:write` | Add a finished entry: `task_id`, `started_at`, `ended_at`, optional `note` (500 characters)                                 |
+| `update_time_entry` | `tasks:write` | Change an entry's task, start, end, or note (`time_entry_id`; `note: null` clears it)                                       |
+| `delete_time_entry` | `tasks:write` | Delete one of your entries (destructive)                                                                                    |
+
+Entries must end after they start, last at most 24 hours, not be in the future, and not overlap your other entries. In the tag report, a task with several of your tags appears under each tag and untagged tasks appear under "No tag", so group sums can exceed the overall total. A running timer counts up to now in the report and has `ended_at: null` in the entry list. A task's `spent_minutes` is maintained by the database from undated legacy minutes and finished entries.
 
 ### Tags
 
-| Tool              | Description                 |
-| ----------------- | --------------------------- |
-| `list_tags`       | List all tags               |
-| `create_tag`      | Create a new tag            |
-| `add_tag_to_task` | Associate a tag with a task |
+| Tool              | Scope                       | Description                 |
+| ----------------- | --------------------------- | --------------------------- |
+| `list_tags`       | `tags:read`                 | List all tags               |
+| `create_tag`      | `tags:write`                | Create a new tag            |
+| `add_tag_to_task` | `tasks:write`, `tags:write` | Associate a tag with a task |
+
+Personal API tokens are currently served by a compatibility backend with the earlier project, task, and tag catalogue; time-tracking tools require OAuth.
 
 ---
 

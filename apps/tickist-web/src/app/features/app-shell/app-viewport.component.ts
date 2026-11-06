@@ -33,6 +33,11 @@ import {
   type Workspace,
 } from '../../data/workspace-data.service';
 import { environment } from '../../../environments/environment';
+import {
+  TimeTrackingService,
+  formatClock,
+} from '../../data/time-tracking.service';
+import { TaskDataService } from '../../data/task-data.service';
 
 @Component({
   selector: 'app-viewport',
@@ -58,6 +63,18 @@ export class AppViewportComponent implements OnDestroy {
   private readonly viewState = inject(AppViewStateService);
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
+  private readonly taskData = inject(TaskDataService);
+  readonly timer = inject(TimeTrackingService);
+  readonly runningClock = computed(() =>
+    formatClock(this.timer.elapsedSeconds())
+  );
+  readonly runningTaskName = computed(() => {
+    const taskId = this.timer.running()?.taskId;
+
+    return (
+      this.taskData.list().find((task) => task.id === taskId)?.name ?? ''
+    );
+  });
   private readonly workspaces = inject(WorkspaceDataService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private routerSub: Subscription | null = null;
