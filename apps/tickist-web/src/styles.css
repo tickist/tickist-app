@@ -31,6 +31,17 @@
   --color-warning-content: #332606;
   --color-error: #fb7185;
   --color-error-content: #3f0b15;
+  /* RGB triplets for rgb(var(--x) / alpha) in component styles; daisyUI 5
+     no longer defines its daisyUI 4 variables. Keep in sync with the colours above. */
+  --b1: 15 23 42;
+  --b2: 30 41 59;
+  --b3: 2 6 23;
+  --bc: 248 250 252;
+  --p: 99 102 241;
+  --pc: 255 255 255;
+  --su: 74 222 128;
+  --wa: 250 204 21;
+  --er: 251 113 133;
   background-color: #0f172a;
   color-scheme: dark;
 }
@@ -56,6 +67,15 @@
   --color-warning-content: #fff9ec;
   --color-error: #be123c;
   --color-error-content: #fff1f4;
+  --b1: 248 250 252;
+  --b2: 255 255 255;
+  --b3: 241 245 249;
+  --bc: 15 23 42;
+  --p: 79 70 229;
+  --pc: 255 255 255;
+  --su: 21 128 61;
+  --wa: 202 138 4;
+  --er: 190 18 60;
   background-color: #f8fafc;
   color-scheme: light;
 }
