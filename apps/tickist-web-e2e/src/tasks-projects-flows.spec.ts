@@ -763,6 +763,11 @@ test('tracks focus time on a task and reports it by day', async ({
   await page.getByTestId('time-report-period-week').click();
   await expect(page.getByTestId('time-report-range')).toBeVisible();
   await expect(page.getByTestId('time-report')).toContainText(taskName);
+  // The week adds a column per day (Monday first) holding that day's time.
+  const weekdayIndex = (new Date(`${yesterday}T12:00:00Z`).getUTCDay() + 6) % 7;
+  await expect(
+    page.getByTestId(`time-report-day-total-${weekdayIndex}`)
+  ).toHaveText(/40 min/);
   await page.getByTestId('time-report-period-month').click();
   await expect(page.getByTestId('time-report-range')).toBeVisible();
   await expect(page.getByTestId('time-report')).toContainText(taskName);

@@ -18,9 +18,11 @@ import {
 } from '../../data/time-tracking.service';
 import {
   ReportPeriod,
+  dateKeysInRange,
   periodLabel,
   periodRange,
   shiftPeriod,
+  weekdayLabel,
 } from '../../core/time/zoned-time';
 
 const PERIOD_NOUN: Record<ReportPeriod, string> = {
@@ -50,16 +52,26 @@ export class TimeReportComponent {
   private readonly rows = signal<TimeReportRow[]>([]);
   private requestSequence = 0;
 
+  readonly range = computed(() => periodRange(this.day(), this.period()));
+  /** The week view adds one column per day. */
+  readonly days = computed(() =>
+    this.period() === 'week'
+      ? dateKeysInRange(this.range()).map((key) => ({
+          key,
+          label: weekdayLabel(key),
+        }))
+      : []
+  );
   readonly report = computed(() =>
     buildTimeReport(
       this.rows(),
       this.tasks.list(),
       this.projects.list(),
       this.tags.list(),
-      this.grouping()
+      this.grouping(),
+      this.days().map((day) => day.key)
     )
   );
-  readonly range = computed(() => periodRange(this.day(), this.period()));
   readonly rangeLabel = computed(() =>
     this.period() === 'day' ? null : periodLabel(this.range(), this.period())
   );
@@ -76,6 +88,12 @@ export class TimeReportComponent {
   );
 
   readonly format = formatDuration;
+
+  /** Day cells stay quiet when nothing was logged. */
+  formatDay(seconds: number): string {
+    return seconds > 0 ? formatDuration(seconds) : '–';
+  }
+
   readonly periods: readonly { value: ReportPeriod; label: string }[] = [
     { value: 'day', label: 'Day' },
     { value: 'week', label: 'Week' },
