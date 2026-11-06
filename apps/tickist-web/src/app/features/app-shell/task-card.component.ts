@@ -150,27 +150,37 @@ export class TaskCardComponent implements OnChanges {
     }
   }
 
+  /** "spent / estimate", or only the spent time when nothing is estimated. */
   taskTimeLabel(): string | null {
-    const estimateMinutes = this.task.estimateMinutes;
-    const spentMinutes = this.task.spentMinutes;
+    const spent = this.task.spentMinutes ?? 0;
+    const estimate = this.task.estimateMinutes ?? 0;
 
-    if (
-      estimateMinutes == null ||
-      estimateMinutes <= 0 ||
-      spentMinutes == null ||
-      spentMinutes <= 0
-    ) {
+    if (spent <= 0) {
       return null;
     }
 
-    const estimate = this.formatDuration(estimateMinutes);
-    const spent = this.formatDuration(spentMinutes);
+    return estimate > 0
+      ? `${this.formatDuration(spent)} / ${this.formatDuration(estimate)}`
+      : this.formatDuration(spent);
+  }
 
-    if (!estimate || !spent) {
-      return null;
+  taskTimeTitle(): string {
+    const spent = this.formatDuration(this.task.spentMinutes ?? 0);
+    const estimate = this.task.estimateMinutes ?? 0;
+
+    if (estimate <= 0) {
+      return `Time spent: ${spent}`;
     }
 
-    return `${estimate} / ${spent}`;
+    const percent = this.progressPercentUncapped();
+
+    return `Time spent: ${spent} of ${this.formatDuration(
+      estimate
+    )} estimated (${percent}%)`;
+  }
+
+  isOverEstimate(): boolean {
+    return this.progressPercentUncapped() > 100;
   }
 
   isTimerRunning(): boolean {
@@ -185,18 +195,15 @@ export class TaskCardComponent implements OnChanges {
     await this.router.navigate(['/app/focus', this.task.id]);
   }
 
+  /** Share of the estimate already spent, capped for the bar width. */
   progressPercent(): number | null {
-    if (
-      this.task.estimateMinutes == null ||
-      this.task.estimateMinutes <= 0 ||
-      this.task.spentMinutes == null
-    ) {
+    const estimate = this.task.estimateMinutes ?? 0;
+
+    if (estimate <= 0 || (this.task.spentMinutes ?? 0) <= 0) {
       return null;
     }
 
-    const percent = (this.task.spentMinutes / this.task.estimateMinutes) * 100;
-
-    return Math.min(100, Math.max(0, Math.round(percent)));
+    return Math.min(100, this.progressPercentUncapped());
   }
 
   finishDateLabel(): string | null {
@@ -989,18 +996,26 @@ export class TaskCardComponent implements OnChanges {
     }
   }
 
-  private formatDuration(minutes?: number | null): string | null {
-    if (minutes == null) {
-      return null;
+  private progressPercentUncapped(): number {
+    const estimate = this.task.estimateMinutes ?? 0;
+
+    if (estimate <= 0) {
+      return 0;
     }
 
-    if (minutes >= 60) {
-      const hours = minutes / 60;
+    return Math.round(((this.task.spentMinutes ?? 0) / estimate) * 100);
+  }
 
-      return hours % 1 === 0 ? `${hours}h` : `${hours.toFixed(1)}h`;
+  private formatDuration(minutes: number): string {
+    const rounded = Math.max(0, Math.round(minutes));
+    const hours = Math.floor(rounded / 60);
+    const rest = rounded % 60;
+
+    if (hours === 0) {
+      return `${rest}m`;
     }
 
-    return `${minutes}m`;
+    return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
   }
 
   private formatReminderDate(value: string, timezone: string): string {

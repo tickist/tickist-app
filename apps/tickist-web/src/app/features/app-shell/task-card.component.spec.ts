@@ -580,6 +580,80 @@ describe('TaskCardComponent focus button', () => {
   });
 });
 
+describe('TaskCardComponent time chip', () => {
+  async function render(
+    overrides: Partial<Task>
+  ): Promise<ComponentFixture<TaskCardComponent>> {
+    await TestBed.configureTestingModule({
+      imports: [TaskCardComponent],
+      providers: [
+        { provide: TaskDataService, useValue: { updateTask: vi.fn() } },
+        { provide: TagDataService, useValue: { list: () => [] } },
+        { provide: ProjectDataService, useValue: { list: () => [] } },
+        { provide: ComposerModalService, useValue: { openTaskModal: vi.fn() } },
+        {
+          provide: ToastService,
+          useValue: { success: vi.fn(), info: vi.fn(), error: vi.fn() },
+        },
+        {
+          provide: TimeTrackingService,
+          useValue: { busy: () => false, isRunningTask: () => false },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(TaskCardComponent);
+
+    fixture.componentInstance.task = createTask(overrides);
+    fixture.componentInstance.viewMode = 'extended';
+    fixture.detectChanges();
+
+    return fixture;
+  }
+
+  function chip(fixture: ComponentFixture<TaskCardComponent>) {
+    return fixtureHost(fixture).querySelector<HTMLElement>(
+      '[data-testid="task-time-chip"]'
+    );
+  }
+
+  it('shows spent before the estimate with a labelled progress bar', async () => {
+    const fixture = await render({ estimateMinutes: 15, spentMinutes: 5 });
+    const element = chip(fixture);
+
+    expect(element?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      '⏱ 5m / 15m'
+    );
+    expect(element?.getAttribute('title')).toBe(
+      'Time spent: 5m of 15m estimated (33%)'
+    );
+    expect(
+      element?.querySelector<HTMLElement>('.task-card__time-bar')?.style.width
+    ).toBe('33%');
+    expect(element?.classList).not.toContain('task-card__time--over');
+  });
+
+  it('marks time over the estimate', async () => {
+    const fixture = await render({ estimateMinutes: 60, spentMinutes: 85 });
+    const element = chip(fixture);
+
+    expect(element?.textContent).toContain('1h 25m / 1h');
+    expect(element?.classList).toContain('task-card__time--over');
+  });
+
+  it('shows spent time without an estimate and hides an empty chip', async () => {
+    const spentOnly = await render({ estimateMinutes: null, spentMinutes: 40 });
+
+    expect(chip(spentOnly)?.textContent).toContain('40m');
+    expect(chip(spentOnly)?.querySelector('.task-card__time-bar')).toBeNull();
+
+    TestBed.resetTestingModule();
+    const empty = await render({ estimateMinutes: 30, spentMinutes: 0 });
+
+    expect(chip(empty)).toBeNull();
+  });
+});
+
 describe('TaskCardComponent duplicate action', () => {
   const duplicateTask = vi.fn();
   const toast = { success: vi.fn(), info: vi.fn(), error: vi.fn() };
