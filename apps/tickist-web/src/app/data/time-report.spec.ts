@@ -132,4 +132,25 @@ describe('buildTimeReport', () => {
     expect(report.groups[0]?.label).toBe('Website');
     expect(report.groups[0]?.tasks[0]?.context).toBeNull();
   });
+
+  it('flags whether anyone else logged time', () => {
+    const solo = buildTimeReport(
+      [row('t3', 300, 300)],
+      tasks,
+      projects,
+      tags,
+      'project'
+    );
+
+    const shared = buildTimeReport(
+      [row('t3', 300, 300), row('t1', 0, 600)],
+      tasks,
+      projects,
+      tags,
+      'project'
+    );
+
+    expect(solo.hasOthers).toBe(false);
+    expect(shared.hasOthers).toBe(true);
+  });
 });

@@ -26,6 +26,8 @@ export interface TimeReport {
   groups: TimeReportGroup[];
   mySeconds: number;
   everyoneSeconds: number;
+  /** True when someone else logged time, so "Everyone" adds information. */
+  hasOthers: boolean;
 }
 
 const NO_PROJECT = 'No project';
@@ -104,7 +106,12 @@ export function buildTimeReport(
         b.everyoneSeconds - a.everyoneSeconds || a.label.localeCompare(b.label)
     );
 
-  return { groups: sortedGroups, mySeconds, everyoneSeconds };
+  return {
+    groups: sortedGroups,
+    mySeconds,
+    everyoneSeconds,
+    hasOthers: everyoneSeconds > mySeconds,
+  };
 }
 
 /** The top-level project of a project, guarding against broken cycles. */

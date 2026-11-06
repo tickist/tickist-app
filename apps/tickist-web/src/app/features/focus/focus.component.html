@@ -1,4 +1,12 @@
 <main class="focus-shell" [class.focus-shell--over]="overLimit()">
+  <button
+    type="button"
+    class="focus-back"
+    data-testid="focus-back"
+    (click)="leave()"
+  >
+    <span aria-hidden="true">←</span> Back to tasks
+  </button>
   <section class="focus-card" data-testid="focus-mode">
     @if (task(); as current) {
     <p class="focus-project">{{ projectName() }}</p>

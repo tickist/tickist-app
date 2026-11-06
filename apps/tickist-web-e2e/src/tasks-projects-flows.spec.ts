@@ -722,6 +722,13 @@ test('tracks focus time on a task and reports it by day', async ({
   await expect(page.getByTestId('focus-pause')).toBeVisible();
   await page.reload();
   await expect(page.getByTestId('focus-pause')).toBeVisible();
+
+  // Leaving focus mode keeps the timer; the navbar chip leads back.
+  await page.getByTestId('focus-back').click();
+  await expect(page).not.toHaveURL(/\/app\/focus\//);
+  await page.getByTestId('focus-chip').click();
+  await expect(page).toHaveURL(/\/app\/focus\//);
+  await expect(page.getByTestId('focus-pause')).toBeVisible();
   await page.getByTestId('focus-stop').click();
   await expect(page).not.toHaveURL(/\/app\/focus\//);
   await expect(page.getByTestId('focus-chip')).toHaveCount(0);

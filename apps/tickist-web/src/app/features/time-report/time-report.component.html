@@ -69,8 +69,12 @@
       <thead>
         <tr>
           <th scope="col">Task</th>
+          @if (report().hasOthers) {
           <th scope="col" class="time-table__num">Me</th>
           <th scope="col" class="time-table__num">Everyone</th>
+          } @else {
+          <th scope="col" class="time-table__num">Time</th>
+          }
         </tr>
       </thead>
       @for (group of report().groups; track group.key) {
@@ -78,7 +82,9 @@
         <tr class="time-table__group">
           <th scope="rowgroup">{{ group.label }}</th>
           <td class="time-table__num">{{ format(group.mySeconds) }}</td>
+          @if (report().hasOthers) {
           <td class="time-table__num">{{ format(group.everyoneSeconds) }}</td>
+          }
         </tr>
         @for (line of group.tasks; track line.taskId) {
         <tr>
@@ -88,7 +94,9 @@
             }
           </td>
           <td class="time-table__num">{{ format(line.mySeconds) }}</td>
+          @if (report().hasOthers) {
           <td class="time-table__num">{{ format(line.everyoneSeconds) }}</td>
+          }
         </tr>
         }
       </tbody>
@@ -99,9 +107,11 @@
           <td class="time-table__num" data-testid="time-report-total-me">
             {{ format(report().mySeconds) }}
           </td>
-          <td class="time-table__num">
+          @if (report().hasOthers) {
+          <td class="time-table__num" data-testid="time-report-total-everyone">
             {{ format(report().everyoneSeconds) }}
           </td>
+          }
         </tr>
       </tfoot>
     </table>

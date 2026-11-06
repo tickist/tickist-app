@@ -3,7 +3,27 @@
 }
 
 .focus-shell {
-  @apply flex min-h-screen items-center justify-center bg-base-100 px-4 py-10 text-base-content;
+  @apply relative flex min-h-screen items-center justify-center bg-base-100 px-4 py-10 text-base-content;
+}
+
+/* Leaves focus mode without stopping the timer; the navbar chip returns. */
+.focus-back {
+  @apply absolute left-4 top-4 inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold sm:left-6 sm:top-6;
+  border: 1px solid
+    color-mix(in oklab, var(--color-base-content) 16%, transparent);
+  background: transparent;
+  color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.focus-back:hover {
+  background: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  color: var(--color-base-content);
+}
+
+.focus-back:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
 }
 
 .focus-card {
