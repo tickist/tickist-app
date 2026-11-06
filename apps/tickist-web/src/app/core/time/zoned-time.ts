@@ -192,6 +192,26 @@ export function periodLabel(range: DateKeyRange, period: ReportPeriod): string {
     : format.formatRange(from, dateKeyToUtc(range.to));
 }
 
+/** Every date key from `from` to `to`, both included. */
+export function dateKeysInRange(range: DateKeyRange): string[] {
+  const keys: string[] = [];
+
+  for (let key = range.from; key <= range.to; key = shiftDateKey(key, 1)) {
+    keys.push(key);
+  }
+
+  return keys;
+}
+
+/** "Mon 2" for a column header. */
+export function weekdayLabel(key: string): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(dateKeyToUtc(key));
+}
+
 function dateKeyToUtc(key: string): Date {
   const [year = 1970, month = 1, day = 1] = key.split('-').map(Number);
 

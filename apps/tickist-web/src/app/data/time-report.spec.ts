@@ -153,4 +153,38 @@ describe('buildTimeReport', () => {
     expect(solo.hasOthers).toBe(false);
     expect(shared.hasOthers).toBe(true);
   });
+
+  it('splits my time per requested day', () => {
+    const report = buildTimeReport(
+      [
+        row('t1', 60, 120),
+        { ...row('t1', 300, 300), workDate: '2026-11-06' },
+        { ...row('t3', 30, 30), workDate: '2026-11-06' },
+        { ...row('t3', 999, 999), workDate: '2026-12-01' },
+      ],
+      tasks,
+      projects,
+      tags,
+      'project',
+      ['2026-11-04', '2026-11-05', '2026-11-06']
+    );
+
+    expect(report.myByDay).toEqual([60, 0, 330]);
+    expect(report.groups[0]?.myByDay).toEqual([0, 0, 30]);
+    expect(report.groups[1]?.myByDay).toEqual([60, 0, 300]);
+    expect(report.groups[1]?.tasks[0]?.myByDay).toEqual([60, 0, 300]);
+  });
+
+  it('returns no day columns unless days are requested', () => {
+    const report = buildTimeReport(
+      [row('t1', 60, 60)],
+      tasks,
+      projects,
+      tags,
+      'project'
+    );
+
+    expect(report.myByDay).toEqual([]);
+    expect(report.groups[0]?.tasks[0]?.myByDay).toEqual([]);
+  });
 });

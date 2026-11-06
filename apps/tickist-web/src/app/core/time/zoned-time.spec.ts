@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { draftToRange } from '../../features/task-fab/task-time-entries.component';
 import {
+  dateKeysInRange,
   periodLabel,
   periodRange,
   shiftDateKey,
   shiftPeriod,
   zonedDateKey,
   zonedDateTimeToIso,
+  weekdayLabel,
   zonedTimeLabel,
 } from './zoned-time';
 
@@ -65,6 +67,25 @@ describe('report periods', () => {
     expect(periodLabel(periodRange('2026-11-04', 'month'), 'month')).toBe(
       'November 2026'
     );
+  });
+
+  it('lists the days of a week for column headers', () => {
+    const days = dateKeysInRange(periodRange('2026-11-04', 'week'));
+
+    expect(days).toEqual([
+      '2026-11-02',
+      '2026-11-03',
+      '2026-11-04',
+      '2026-11-05',
+      '2026-11-06',
+      '2026-11-07',
+      '2026-11-08',
+    ]);
+    expect(weekdayLabel(days[0] ?? '')).toBe('Mon 2');
+    expect(dateKeysInRange({ from: '2026-12-31', to: '2027-01-01' })).toEqual([
+      '2026-12-31',
+      '2027-01-01',
+    ]);
   });
 });
 

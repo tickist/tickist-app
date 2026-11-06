@@ -84,7 +84,12 @@
 
 .time-table__group th,
 .time-table__group td {
-  @apply border-t border-white/10 pt-3 font-semibold;
+  @apply border-t pt-3 font-semibold;
+  border-top-color: color-mix(
+    in oklab,
+    var(--color-base-content) 12%,
+    transparent
+  );
 }
 
 .time-table__task {
@@ -98,7 +103,12 @@
 
 .time-table tfoot th,
 .time-table tfoot td {
-  @apply border-t-2 border-white/20 pt-3 font-semibold;
+  @apply border-t-2 pt-3 font-semibold;
+  border-top-color: color-mix(
+    in oklab,
+    var(--color-base-content) 25%,
+    transparent
+  );
 }
 
 .time-note,
@@ -139,4 +149,11 @@
   background: var(--color-primary);
   color: var(--color-primary-content);
   box-shadow: none;
+}
+.time-table__day {
+  @apply text-xs;
+  color: color-mix(in oklab, var(--color-base-content) 75%, transparent);
+}
+.time-table thead .time-table__day {
+  @apply normal-case;
 }

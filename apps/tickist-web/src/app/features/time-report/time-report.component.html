@@ -90,11 +90,17 @@
       <thead>
         <tr>
           <th scope="col">Task</th>
-          @if (report().hasOthers) {
+          @for (day of days(); track day.key) {
+          <th scope="col" class="time-table__num time-table__day">
+            {{ day.label }}
+          </th>
+          } @if (report().hasOthers) {
           <th scope="col" class="time-table__num">Me</th>
           <th scope="col" class="time-table__num">Everyone</th>
           } @else {
-          <th scope="col" class="time-table__num">Time</th>
+          <th scope="col" class="time-table__num">
+            {{ days().length ? 'Total' : 'Time' }}
+          </th>
           }
         </tr>
       </thead>
@@ -102,6 +108,11 @@
       <tbody>
         <tr class="time-table__group">
           <th scope="rowgroup">{{ group.label }}</th>
+          @for (seconds of group.myByDay; track $index) {
+          <td class="time-table__num time-table__day">
+            {{ formatDay(seconds) }}
+          </td>
+          }
           <td class="time-table__num">{{ format(group.mySeconds) }}</td>
           @if (report().hasOthers) {
           <td class="time-table__num">{{ format(group.everyoneSeconds) }}</td>
@@ -114,6 +125,11 @@
             <span class="time-table__context">{{ line.context }}</span>
             }
           </td>
+          @for (seconds of line.myByDay; track $index) {
+          <td class="time-table__num time-table__day">
+            {{ formatDay(seconds) }}
+          </td>
+          }
           <td class="time-table__num">{{ format(line.mySeconds) }}</td>
           @if (report().hasOthers) {
           <td class="time-table__num">{{ format(line.everyoneSeconds) }}</td>
@@ -125,6 +141,14 @@
       <tfoot>
         <tr>
           <th scope="row">Total</th>
+          @for (seconds of report().myByDay; track $index) {
+          <td
+            class="time-table__num time-table__day"
+            [attr.data-testid]="'time-report-day-total-' + $index"
+          >
+            {{ formatDay(seconds) }}
+          </td>
+          }
           <td class="time-table__num" data-testid="time-report-total-me">
             {{ format(report().mySeconds) }}
           </td>
@@ -136,7 +160,9 @@
         </tr>
       </tfoot>
     </table>
-    @if (grouping() === 'tag') {
+    @if (days().length && report().hasOthers) {
+    <p class="time-note">Day columns show your time.</p>
+    } @if (grouping() === 'tag') {
     <p class="time-note">A task with several tags is counted under each tag.</p>
     } } @else if (!loading()) {
     <p class="time-empty" data-testid="time-report-empty">
