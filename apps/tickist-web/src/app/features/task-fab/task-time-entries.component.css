@@ -35,7 +35,7 @@
 .time-entries__date,
 .time-entries__range {
   @apply tabular-nums;
-  color: rgb(var(--bc) / 0.7);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }
 
 .time-entries__duration {
@@ -53,4 +53,22 @@
 .icon-btn {
   @apply rounded-full px-2 py-1 text-sm transition hover:bg-base-100 hover:bg-opacity-50;
   color: inherit;
+}
+
+.time-entries__button {
+  min-height: 2.4rem;
+  padding: 0.45rem 1rem;
+}
+
+/* The shared ghost button reads daisyUI 4 variables that are not defined. */
+.time-entries__button.sheet-shell__button--ghost {
+  border: 1px solid
+    color-mix(in oklab, var(--color-base-content) 18%, transparent);
+  color: var(--color-base-content);
+}
+
+.time-entries__button.sheet-shell__button--ghost:hover,
+.time-entries__button.sheet-shell__button--ghost:focus-visible {
+  border-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 8%, transparent);
 }

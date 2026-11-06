@@ -50,7 +50,9 @@ async function setup(
 
 function clickButton(root: HTMLElement, name: string): void {
   const button = Array.from(root.querySelectorAll('button')).find(
-    (element) => element.textContent?.trim() === name
+    (element) =>
+      (element.getAttribute('aria-label') ?? element.textContent?.trim()) ===
+      name
   );
 
   if (!button) throw new Error(`Missing button: ${name}`);
@@ -97,5 +99,28 @@ describe('Separate analytics choices', () => {
     expect(
       root.querySelector('[data-testid="google-analytics-consent"]')
     ).not.toBeNull();
+  });
+  it('marks saved choices and closes both sections at once', async () => {
+    const { fixture, root, google, cloudflare } = await setup(true);
+    google.choice.set(false);
+    cloudflare.expanded.set(true);
+    google.expanded.set(true);
+    fixture.detectChanges();
+
+    const pressed = Array.from(
+      root.querySelectorAll('button[aria-pressed="true"]')
+    ).map((button) => button.getAttribute('aria-label'));
+
+    expect(pressed).toEqual(['Allow analytics', 'Refuse Google Analytics']);
+    clickButton(root, 'Close privacy settings');
+    expect(cloudflare.expanded()).toBe(false);
+    expect(google.expanded()).toBe(false);
+  });
+  it('keeps a first decision open without a close button', async () => {
+    const { root } = await setup();
+
+    expect(
+      root.querySelector('button[aria-label="Close privacy settings"]')
+    ).toBeNull();
   });
 });

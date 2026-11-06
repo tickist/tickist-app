@@ -5,7 +5,7 @@
       <div class="time-day">
         <button
           type="button"
-          class="btn btn-sm btn-ghost"
+          class="sheet-shell__button sheet-shell__button--ghost time-nav"
           aria-label="Previous day"
           data-testid="time-report-previous"
           (click)="previousDay()"
@@ -22,7 +22,7 @@
         />
         <button
           type="button"
-          class="btn btn-sm btn-ghost"
+          class="sheet-shell__button sheet-shell__button--ghost time-nav"
           aria-label="Next day"
           [disabled]="isToday()"
           (click)="nextDay()"
@@ -30,7 +30,11 @@
           ›
         </button>
         @if (!isToday()) {
-        <button type="button" class="btn btn-sm btn-ghost" (click)="today()">
+        <button
+          type="button"
+          class="sheet-shell__button sheet-shell__button--ghost time-nav"
+          (click)="today()"
+        >
           Today
         </button>
         }
@@ -38,9 +42,8 @@
       <div class="time-grouping" role="group" aria-label="Group by">
         <button
           type="button"
-          class="btn btn-sm"
-          [class.btn-primary]="grouping() === 'project'"
-          [class.btn-ghost]="grouping() !== 'project'"
+          class="sheet-pill time-pill"
+          [class.active]="grouping() === 'project'"
           [attr.aria-pressed]="grouping() === 'project'"
           (click)="setGrouping('project')"
         >
@@ -48,9 +51,8 @@
         </button>
         <button
           type="button"
-          class="btn btn-sm"
-          [class.btn-primary]="grouping() === 'tag'"
-          [class.btn-ghost]="grouping() !== 'tag'"
+          class="sheet-pill time-pill"
+          [class.active]="grouping() === 'tag'"
           [attr.aria-pressed]="grouping() === 'tag'"
           data-testid="time-report-group-tags"
           (click)="setGrouping('tag')"

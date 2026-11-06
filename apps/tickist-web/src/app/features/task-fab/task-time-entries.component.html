@@ -7,7 +7,7 @@
     @if (!adding()) {
     <button
       type="button"
-      class="btn btn-sm btn-ghost"
+      class="sheet-shell__button sheet-shell__button--ghost time-entries__button"
       data-testid="task-time-add"
       (click)="startAdding()"
     >
@@ -66,13 +66,17 @@
     <div class="time-entries__actions">
       <button
         type="submit"
-        class="btn btn-sm btn-primary"
+        class="sheet-shell__button sheet-shell__button--primary time-entries__button"
         [disabled]="saving() || !draftValid()"
         data-testid="task-time-save"
       >
         Save
       </button>
-      <button type="button" class="btn btn-sm btn-ghost" (click)="cancel()">
+      <button
+        type="button"
+        class="sheet-shell__button sheet-shell__button--ghost time-entries__button"
+        (click)="cancel()"
+      >
         Cancel
       </button>
     </div>

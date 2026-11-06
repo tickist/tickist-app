@@ -49,7 +49,7 @@
 
 .time-table thead th {
   @apply text-xs font-semibold uppercase tracking-wide;
-  color: rgb(var(--bc) / 0.6);
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
 }
 
 .time-table__num {
@@ -72,7 +72,7 @@
 
 .time-table__context {
   @apply ml-2 text-xs;
-  color: rgb(var(--bc) / 0.6);
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
 }
 
 .time-table tfoot th,
@@ -83,5 +83,36 @@
 .time-note,
 .time-empty {
   @apply mt-3 text-sm;
-  color: rgb(var(--bc) / 0.7);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+}
+
+/* Shared sheet controls read daisyUI 4 variables that daisyUI 5 no longer
+   defines, so the report sets its own colours from the daisyUI 5 tokens. */
+.time-nav,
+.time-pill {
+  min-height: 2.5rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid
+    color-mix(in oklab, var(--color-base-content) 18%, transparent);
+  background: transparent;
+  color: var(--color-base-content);
+}
+
+.time-nav {
+  min-width: 2.5rem;
+}
+
+.time-nav:hover,
+.time-nav:focus-visible,
+.time-pill:hover,
+.time-pill:focus-visible {
+  border-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+}
+
+.time-pill.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+  box-shadow: none;
 }

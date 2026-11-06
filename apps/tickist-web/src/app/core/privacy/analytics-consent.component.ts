@@ -10,12 +10,69 @@ import {
   selector: 'app-analytics-consent',
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Explicit styles: daisyUI 5 button variants are unreliable on Tailwind 3.
+  styles: `
+    .consent-choice {
+      height: 2.25rem;
+      border-radius: 0.5rem;
+      border: 1px solid
+        color-mix(in oklab, var(--color-base-content) 22%, transparent);
+      background: transparent;
+      color: var(--color-base-content);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .consent-choice:hover {
+      background: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+      border-color: color-mix(
+        in oklab,
+        var(--color-base-content) 40%,
+        transparent
+      );
+    }
+    .consent-choice[aria-pressed='true'] {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-primary-content);
+    }
+    .consent-choice:focus-visible,
+    .consent-close:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+    .consent-close {
+      float: right;
+      display: grid;
+      place-items: center;
+      width: 2rem;
+      height: 2rem;
+      margin: -0.5rem -0.5rem 0 0.5rem;
+      border-radius: 9999px;
+      color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+      cursor: pointer;
+    }
+    .consent-close:hover {
+      background: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+      color: var(--color-base-content);
+    }
+  `,
   template: `
     @if (showCloudflare() || showGoogle()) {
     <div
       class="fixed bottom-4 left-4 right-4 z-[70] mx-auto max-h-[calc(100dvh-2rem)] max-w-xl overflow-y-auto rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
     >
-      @if (showCloudflare()) {
+      @if (canClose()) {
+      <button
+        class="consent-close"
+        type="button"
+        aria-label="Close privacy settings"
+        (click)="closeSettings()"
+      >
+        ✕
+      </button>
+      } @if (showCloudflare()) {
       <section
         aria-label="Cloudflare privacy settings"
         data-testid="analytics-consent"
@@ -38,30 +95,25 @@ import {
           unfinished edits first.
         </p>
         }
-        <div class="mt-3 flex flex-wrap gap-2">
+        <div class="mt-3 grid grid-cols-2 gap-2 sm:max-w-xs">
           <button
-            class="btn btn-sm"
+            class="consent-choice"
             type="button"
+            aria-label="Refuse analytics"
+            [attr.aria-pressed]="consent.choice() === false"
             (click)="consent.choose(false)"
           >
-            Refuse analytics
+            Refuse
           </button>
           <button
-            class="btn btn-sm"
+            class="consent-choice"
             type="button"
+            aria-label="Allow analytics"
+            [attr.aria-pressed]="consent.choice() === true"
             (click)="consent.choose(true)"
           >
-            Allow analytics
+            Allow
           </button>
-          @if (consent.choice() !== null) {
-          <button
-            class="btn btn-ghost btn-sm"
-            type="button"
-            (click)="consent.expanded.set(false)"
-          >
-            Close
-          </button>
-          }
         </div>
       </section>
       } @if (showGoogle()) {
@@ -89,30 +141,25 @@ import {
           unfinished edits first.
         </p>
         }
-        <div class="mt-3 flex flex-wrap gap-2">
+        <div class="mt-3 grid grid-cols-2 gap-2 sm:max-w-xs">
           <button
-            class="btn btn-sm"
+            class="consent-choice"
             type="button"
+            aria-label="Refuse Google Analytics"
+            [attr.aria-pressed]="google.choice() === false"
             (click)="google.choose(false)"
           >
-            Refuse Google Analytics
+            Refuse
           </button>
           <button
-            class="btn btn-sm"
+            class="consent-choice"
             type="button"
+            aria-label="Allow Google Analytics"
+            [attr.aria-pressed]="google.choice() === true"
             (click)="google.choose(true)"
           >
-            Allow Google Analytics
+            Allow
           </button>
-          @if (google.choice() !== null) {
-          <button
-            class="btn btn-ghost btn-sm"
-            type="button"
-            (click)="google.expanded.set(false)"
-          >
-            Close Google Analytics settings
-          </button>
-          }
         </div>
       </section>
       }
@@ -143,6 +190,17 @@ export class AnalyticsConsentComponent {
       this.google.configured() &&
       (this.google.choice() === null || this.google.expanded())
     );
+  }
+  /** A first decision stays on screen until it is made. */
+  canClose(): boolean {
+    return (
+      (this.showCloudflare() && this.consent.choice() !== null) ||
+      (this.showGoogle() && this.google.choice() !== null)
+    );
+  }
+  closeSettings(): void {
+    this.consent.expanded.set(false);
+    this.google.expanded.set(false);
   }
   openSettings(): void {
     this.consent.expanded.set(true);
