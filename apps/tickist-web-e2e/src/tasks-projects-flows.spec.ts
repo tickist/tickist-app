@@ -759,6 +759,25 @@ test('tracks focus time on a task and reports it by day', async ({
   await expect(page.getByTestId('time-report')).toContainText(taskName);
   await expect(page.getByTestId('time-report-total-me')).toHaveText('40 min');
 
+  // Entries can be added from the report; it starts on the shown day.
+  await page
+    .getByTestId('time-report-task')
+    .filter({ hasText: taskName })
+    .click();
+
+  const reportEditor = page
+    .getByTestId('time-report')
+    .locator('app-task-time-entries');
+
+  await reportEditor.getByTestId('task-time-add').click();
+  await expect(reportEditor.getByLabel('Time entry date')).toHaveValue(
+    yesterday
+  );
+  await reportEditor.getByLabel('Time entry start').fill('11:00');
+  await reportEditor.getByLabel('Time entry end').fill('11:20');
+  await reportEditor.getByTestId('task-time-save').click();
+  await expect(page.getByTestId('time-report-total-me')).toHaveText('1 h');
+
   // Week and month views contain the chosen day, so the entry stays listed.
   await page.getByTestId('time-report-period-week').click();
   await expect(page.getByTestId('time-report-range')).toBeVisible();
@@ -767,7 +786,7 @@ test('tracks focus time on a task and reports it by day', async ({
   const weekdayIndex = (new Date(`${yesterday}T12:00:00Z`).getUTCDay() + 6) % 7;
   await expect(
     page.getByTestId(`time-report-day-total-${weekdayIndex}`)
-  ).toHaveText(/40 min/);
+  ).toHaveText(/1 h/);
   await page.getByTestId('time-report-period-month').click();
   await expect(page.getByTestId('time-report-range')).toBeVisible();
   await expect(page.getByTestId('time-report')).toContainText(taskName);

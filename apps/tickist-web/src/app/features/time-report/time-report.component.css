@@ -157,3 +157,23 @@
 .time-table thead .time-table__day {
   @apply normal-case;
 }
+.time-table__toggle {
+  @apply -ml-5 flex w-full cursor-pointer items-baseline gap-1 rounded-md text-left;
+}
+.time-table__toggle:hover {
+  color: var(--color-primary);
+}
+.time-table__toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.time-table__chevron {
+  @apply inline-block w-4 shrink-0 text-center text-base font-semibold leading-none transition-transform;
+  color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
+}
+.time-table__toggle[aria-expanded='true'] .time-table__chevron {
+  transform: rotate(90deg);
+}
+.time-table__editor td {
+  @apply pb-4 pl-5;
+}

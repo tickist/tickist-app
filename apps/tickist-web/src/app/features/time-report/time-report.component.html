@@ -118,12 +118,24 @@
           <td class="time-table__num">{{ format(group.everyoneSeconds) }}</td>
           }
         </tr>
-        @for (line of group.tasks; track line.taskId) {
+        @for (line of group.tasks; track line.taskId) { @let key =
+        rowKey(group.key, line.taskId);
         <tr>
           <td class="time-table__task">
-            {{ line.name }} @if (line.context) {
-            <span class="time-table__context">{{ line.context }}</span>
-            }
+            <button
+              type="button"
+              class="time-table__toggle"
+              [attr.aria-expanded]="expanded() === key"
+              title="Edit time entries"
+              data-testid="time-report-task"
+              (click)="toggle(key)"
+            >
+              <span class="time-table__chevron" aria-hidden="true">▸</span>
+              <span>{{ line.name }}</span>
+              @if (line.context) {
+              <span class="time-table__context">{{ line.context }}</span>
+              }
+            </button>
           </td>
           @for (seconds of line.myByDay; track $index) {
           <td class="time-table__num time-table__day">
@@ -135,7 +147,17 @@
           <td class="time-table__num">{{ format(line.everyoneSeconds) }}</td>
           }
         </tr>
-        }
+        @if (expanded() === key) {
+        <tr class="time-table__editor">
+          <td [attr.colspan]="columnCount()">
+            <app-task-time-entries
+              [taskId]="line.taskId"
+              [defaultDate]="entryDate()"
+              (changed)="entriesChanged()"
+            ></app-task-time-entries>
+          </td>
+        </tr>
+        } }
       </tbody>
       }
       <tfoot>
