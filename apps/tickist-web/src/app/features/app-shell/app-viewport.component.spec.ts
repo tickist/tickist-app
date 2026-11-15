@@ -228,9 +228,11 @@ describe('AppViewportComponent theme toggle', () => {
   it('opens About as a native modal dialog and returns focus to the profile button on close', () => {
     // jsdom does not implement modal dialogs; emulate the open state only.
     const prototype = HTMLDialogElement.prototype;
+
     const showModal = vi.fn(function (this: HTMLDialogElement) {
       this.setAttribute('open', '');
     });
+
     const close = vi.fn(function (this: HTMLDialogElement) {
       this.removeAttribute('open');
       this.dispatchEvent(new Event('close'));
