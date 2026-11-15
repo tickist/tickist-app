@@ -101,6 +101,7 @@
       </button>
       <div class="task-card__menu">
         <button
+          #moreActionsTrigger
           type="button"
           class="icon-btn"
           title="More actions"
@@ -108,10 +109,16 @@
           [attr.aria-expanded]="menuOpen()"
           (click)="menuOpen.set(!menuOpen())"
         >
-          ⋮
+          <span aria-hidden="true">⋮</span>
         </button>
         @if (menuOpen()) {
-        <div class="task-menu">
+        <div
+          class="task-menu"
+          role="group"
+          aria-label="Task actions"
+          [appAnchoredPopover]="moreActionsTrigger"
+          (popoverClosed)="menuOpen.set(false)"
+        >
           <div class="menu__section">
             <p>Priority</p>
             @for (level of ['A','B','C']; track level) {
@@ -350,6 +357,11 @@
           [id]="tagMenuId"
           role="listbox"
           aria-label="Add existing tag"
+          [appAnchoredPopover]="tagMenuTrigger"
+          popoverAlign="start"
+          [popoverMatchWidth]="true"
+          (popoverOpened)="onTagMenuShown()"
+          (popoverClosed)="closeTagMenu()"
         >
           @for (option of filteredAvailableTags(); track option.id; let index =
           $index) {

@@ -34,6 +34,7 @@ import { TaskStatusService } from '../../data/task-status.service';
 import { TimeTrackingService } from '../../data/time-tracking.service';
 import { Router } from '@angular/router';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
+import { AnchoredPopoverDirective } from '../../core/ui/anchored-popover.directive';
 
 type TaskViewMode = 'extended' | 'simple';
 
@@ -55,14 +56,15 @@ let nextTaskCardId = 0;
 @Component({
   selector: 'app-task-card',
   standalone: true,
-  imports: [LinkifyPipe, ProjectPickerComponent, ThemedSelectComponent],
+  imports: [
+    LinkifyPipe,
+    ProjectPickerComponent,
+    ThemedSelectComponent,
+    AnchoredPopoverDirective,
+  ],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '(document:mousedown)': 'handleDocumentMouseDown($event)',
-    '(document:keydown.escape)': 'handleEscapeKey()',
-  },
 })
 export class TaskCardComponent implements OnChanges {
   readonly repeatUnitOptions = [
@@ -75,7 +77,6 @@ export class TaskCardComponent implements OnChanges {
   @Input() project: Project | null = null;
   @Input() viewMode: TaskViewMode = 'extended';
 
-  private readonly host = inject(ElementRef<HTMLElement>);
   private readonly instanceId = nextTaskCardId++;
   private readonly tasks = inject(TaskDataService);
   private readonly tagsService = inject(TagDataService);
@@ -748,26 +749,6 @@ export class TaskCardComponent implements OnChanges {
     this.tagsOpen.set(next);
   }
 
-  handleDocumentMouseDown(event: MouseEvent): void {
-    if (!this.tagMenuOpen()) {
-      return;
-    }
-
-    const target = event.target;
-
-    if (!(target instanceof Node)) {
-      return;
-    }
-
-    if (!this.host.nativeElement.contains(target)) {
-      this.closeTagMenu();
-    }
-  }
-
-  handleEscapeKey(): void {
-    this.closeTagMenu(true);
-  }
-
   toggleRepeat(): void {
     const next = !this.repeatOpen();
     this.closeAllPanels();
@@ -1204,10 +1185,15 @@ export class TaskCardComponent implements OnChanges {
     }
 
     this.tagMenuOpen.set(true);
-    queueMicrotask(() => this.focusTagOption(0));
   }
 
-  private closeTagMenu(restoreFocus = false): void {
+  // The menu is a popover that is hidden until shown, so focus moves after it
+  // opens rather than when the open state changes.
+  onTagMenuShown(): void {
+    this.focusTagOption(0);
+  }
+
+  closeTagMenu(restoreFocus = false): void {
     if (!this.tagMenuOpen()) {
       return;
     }

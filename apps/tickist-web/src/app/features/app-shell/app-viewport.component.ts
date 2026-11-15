@@ -10,7 +10,8 @@ import {
   HostListener,
   ElementRef,
   ViewChild,
-  afterRenderEffect,
+  DestroyRef,
+  afterNextRender,
   viewChild,
 } from '@angular/core';
 import {
@@ -29,6 +30,8 @@ import { AppSidebarComponent } from './app-sidebar.component';
 import { TaskFabComponent } from '../task-fab/task-fab.component';
 import { filter, Subscription } from 'rxjs';
 import { ThemeService } from '../../core/ui/theme.service';
+import { ModalDialogDirective } from '../../core/ui/modal-dialog.directive';
+import { AnchoredPopoverDirective } from '../../core/ui/anchored-popover.directive';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 import {
   WorkspaceDataService,
@@ -52,6 +55,8 @@ import { TaskDataService } from '../../data/task-data.service';
     AppSidebarComponent,
     TaskFabComponent,
     ProjectIconComponent,
+    ModalDialogDirective,
+    AnchoredPopoverDirective,
   ],
   templateUrl: './app-viewport.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,6 +81,7 @@ export class AppViewportComponent implements OnDestroy {
     return this.taskData.list().find((task) => task.id === taskId)?.name ?? '';
   });
   private readonly workspaces = inject(WorkspaceDataService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private routerSub: Subscription | null = null;
 
@@ -125,11 +131,11 @@ export class AppViewportComponent implements OnDestroy {
       )?.name ?? 'All'
   );
   readonly aboutModalOpen = signal(false);
-  private readonly aboutDialog =
-    viewChild.required<ElementRef<HTMLDialogElement>>('aboutDialog');
   private readonly profileTrigger =
     viewChild<ElementRef<HTMLButtonElement>>('profileTrigger');
-  private aboutPressStartedOutside = false;
+  private readonly notificationsTrigger = viewChild<
+    ElementRef<HTMLButtonElement>
+  >('notificationsTrigger');
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
   readonly currentUrl = signal(this.router.url);
@@ -145,15 +151,21 @@ export class AppViewportComponent implements OnDestroy {
   readonly buildCommitShort = shortCommit(environment.buildCommit);
 
   constructor() {
-    afterRenderEffect(() => {
-      const dialog = this.aboutDialog().nativeElement;
-      const open = this.aboutModalOpen();
+    // The mobile drawer is a modal dialog hidden at the lg breakpoint; close it
+    // when the layout widens so a hidden modal never leaves the page inert.
+    afterNextRender(() => {
+      if (typeof window.matchMedia === 'undefined') return;
 
-      if (open && !dialog.open) {
-        dialog.showModal();
-      } else if (!open && dialog.open) {
-        dialog.close();
-      }
+      const wide = window.matchMedia('(min-width: 1024px)');
+
+      const closeOnWide = (event: MediaQueryListEvent) => {
+        if (event.matches) this.sidebarOpen.set(false);
+      };
+
+      wide.addEventListener('change', closeOnWide);
+      this.destroyRef.onDestroy(() =>
+        wide.removeEventListener('change', closeOnWide)
+      );
     });
 
     const initialUrl = this.router.url;
@@ -306,6 +318,15 @@ export class AppViewportComponent implements OnDestroy {
     this.profileMenuOpen.set(false);
   }
 
+  closeNotifications(): void {
+    this.notificationsOpen.set(false);
+  }
+
+  dismissNotifications(): void {
+    this.closeNotifications();
+    this.notificationsTrigger()?.nativeElement.focus();
+  }
+
   openAboutModal(): void {
     this.profileMenuOpen.set(false);
     this.notificationsOpen.set(false);
@@ -321,36 +342,6 @@ export class AppViewportComponent implements OnDestroy {
     // The About button lives in the profile menu, which closes when the dialog
     // opens, so the browser cannot return focus to the invoker.
     this.profileTrigger()?.nativeElement.focus();
-  }
-
-  // Light-dismiss fallback for browsers without <dialog closedby>. Compare the
-  // pointer position with the dialog box: the dialog element is also the event
-  // target for its own padding, so a target check would close on those clicks.
-  onAboutDialogPointerDown(event: PointerEvent): void {
-    this.aboutPressStartedOutside = this.isOutsideAboutDialog(event);
-  }
-
-  onAboutDialogPointerUp(event: PointerEvent): void {
-    if (
-      !supportsDialogClosedBy() &&
-      this.aboutPressStartedOutside &&
-      this.isOutsideAboutDialog(event)
-    ) {
-      this.closeAboutModal();
-    }
-
-    this.aboutPressStartedOutside = false;
-  }
-
-  private isOutsideAboutDialog(event: PointerEvent): boolean {
-    const rect = this.aboutDialog().nativeElement.getBoundingClientRect();
-
-    return (
-      event.clientX < rect.left ||
-      event.clientX > rect.right ||
-      event.clientY < rect.top ||
-      event.clientY > rect.bottom
-    );
   }
 
   async markNotificationAsRead(notificationId: string): Promise<void> {
@@ -397,10 +388,6 @@ function appendCacheVersion(url: string, version: string | null): string {
   const separator = url.includes('?') ? '&' : '?';
 
   return `${url}${separator}v=${encodeURIComponent(version)}`;
-}
-
-function supportsDialogClosedBy(): boolean {
-  return 'closedBy' in HTMLDialogElement.prototype;
 }
 
 function shortCommit(commit: string): string {

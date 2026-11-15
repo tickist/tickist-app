@@ -91,4 +91,39 @@ describe('SheetScaffoldComponent', () => {
       fixtureHost(fixture).querySelectorAll('.sheet-shell__footer')
     ).toHaveLength(1);
   });
+
+  it('exposes tabs with arrow-key navigation and a labelled panel', () => {
+    const tabs = elementsOfType(
+      fixtureHost(fixture),
+      '[role="tab"]',
+      HTMLButtonElement
+    );
+
+    expect(
+      fixtureHost(fixture).querySelector('[role="tablist"]')
+    ).not.toBeNull();
+    expect(tabs.map((tab) => tab.getAttribute('aria-selected'))).toEqual([
+      'true',
+      'false',
+    ]);
+    expect(tabs.map((tab) => tab.tabIndex)).toEqual([0, -1]);
+
+    const panel = requiredElement(
+      fixtureHost(fixture),
+      '[role="tabpanel"]',
+      HTMLElement
+    );
+
+    expect(panel.getAttribute('aria-labelledby')).toBe(tabs[0]?.id);
+
+    tabs[0]?.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })
+    );
+    expect(host.onTabChange).toHaveBeenCalledWith('extra');
+
+    tabs[0]?.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'End', bubbles: true })
+    );
+    expect(host.onTabChange).toHaveBeenLastCalledWith('extra');
+  });
 });

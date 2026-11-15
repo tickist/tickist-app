@@ -178,6 +178,10 @@
   @apply w-full rounded-xl px-3 py-2 text-left text-sm text-base-content opacity-80 transition hover:bg-base-100 hover:bg-opacity-50;
 }
 
+.project-menu button.project-menu__danger {
+  @apply text-error;
+}
+
 .sidebar-create {
   @apply flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-primary transition;
   background: transparent;

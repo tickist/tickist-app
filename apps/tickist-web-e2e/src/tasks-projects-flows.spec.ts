@@ -352,6 +352,33 @@ test('creates project and adds a task into that project', async ({
   await expect(taskCardByName(page, taskName)).toBeVisible();
 });
 
+test('opens the project options menu with the keyboard', async ({
+  page,
+}, testInfo) => {
+  const projectName = `Keyboard project ${uniqueSuffix(testInfo)}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, 'Keyboard access');
+
+  const trigger = page.getByRole('button', {
+    name: `Options for ${projectName}`,
+  });
+
+  await trigger.focus();
+  await expect(trigger).toBeVisible();
+  await page.keyboard.press('Enter');
+
+  const menu = page.getByRole('group', { name: `Options for ${projectName}` });
+
+  await expect(menu).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(menu.getByRole('button', { name: 'Edit' })).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
 test('filters parent and subproject tasks with independent checkboxes', async ({
   page,
 }, testInfo) => {
@@ -470,7 +497,7 @@ test('suspends a task with a resume time and separates it from active work', asy
   let card = taskCardByName(page, taskName);
   await card.getByRole('button', { name: 'Edit task' }).click();
   const composer = page.locator('app-task-composer');
-  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByRole('tab', { name: 'Extra' }).click();
   await composer.getByLabel('Suspended').check();
   await composer.getByLabel('At a date and time').check();
   await composer.getByLabel('Resume date').fill(futureDateInput(1));
@@ -495,7 +522,7 @@ test('suspends a task with a resume time and separates it from active work', asy
   await expect(card.locator('.task-card__check')).toHaveCount(0);
 
   await card.getByRole('button', { name: 'Edit task' }).click();
-  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByRole('tab', { name: 'Extra' }).click();
   await composer.getByLabel('Active').check();
   await expect(composer.getByRole('status')).toHaveText('All changes saved.');
   await composer.getByRole('button', { name: 'Close task panel' }).click();
@@ -739,7 +766,7 @@ test('tracks focus time on a task and reports it by day', async ({
     .click();
   const composer = page.locator('app-task-composer');
   await expect(composer).toBeVisible();
-  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByRole('tab', { name: 'Extra' }).click();
   await composer.getByTestId('task-time-add').click();
   const yesterday = futureDateInput(-1);
   await composer.getByLabel('Time entry date').fill(yesterday);
@@ -866,7 +893,11 @@ test('keeps the project sidebar vertically scrollable on mobile', async ({
   await ensureAuthenticated(page);
   await page.getByRole('button', { name: 'Open sidebar' }).click();
 
-  const sidebar = page.locator('#mobile-project-sidebar');
+  // The drawer is a modal <dialog>; its inner panel is the scroll container.
+  const sidebar = page.locator(
+    '#mobile-project-sidebar .app-layout__mobile-sidebar'
+  );
+
   await expect(sidebar).toBeVisible();
   await expect(sidebar).toHaveCSS('overflow-y', 'auto');
 

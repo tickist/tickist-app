@@ -18,6 +18,8 @@ import {
 } from '../../data/notification-data.service';
 import { AppViewStateService } from './app-view-state.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import { ModalDialogDirective } from '../../core/ui/modal-dialog.directive';
+import { AnchoredPopoverDirective } from '../../core/ui/anchored-popover.directive';
 import {
   WorkspaceDataService,
   type Workspace,
@@ -126,6 +128,8 @@ describe('AppViewportComponent theme toggle', () => {
             MockTaskFabComponent,
             ProjectIconComponent,
             MockToastContainerComponent,
+            ModalDialogDirective,
+            AnchoredPopoverDirective,
           ],
         },
       })

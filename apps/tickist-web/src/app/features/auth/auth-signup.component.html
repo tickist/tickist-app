@@ -109,7 +109,7 @@
     <app-turnstile-widget (token)="captcha.token.set($event)" />
     }
     <button
-      class="btn btn-primary text-primary-content"
+      class="btn btn-primary text-primary-content auth-signup-submit"
       type="submit"
       [disabled]="isDisabled"
     >
@@ -123,17 +123,19 @@
     </button>
   </form>
 
-  @if (message(); as feedback) {
-  <p
-    class="text-sm text-base-content/70"
-    [ngClass]="{
-      'text-success': feedback.type === 'success',
-      'text-error': feedback.type === 'error'
-    }"
-  >
-    {{ feedback.text }}
-  </p>
-  }
+  <div aria-live="polite">
+    @if (message(); as feedback) {
+    <p
+      class="text-sm text-base-content/70"
+      [ngClass]="{
+        'text-success': feedback.type === 'success',
+        'text-error': feedback.type === 'error'
+      }"
+    >
+      {{ feedback.text }}
+    </p>
+    }
+  </div>
 
   <footer class="text-center text-xs text-base-content/60">
     Already have an account?

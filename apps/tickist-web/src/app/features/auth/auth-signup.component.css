@@ -11,3 +11,16 @@
     linear-gradient(180deg, rgb(var(--b1) / 0.88), rgb(var(--b2) / 1));
   color: rgb(var(--bc));
 }
+
+/* Same disabled treatment as the other auth forms: daisyUI's default makes a
+   disabled primary button invisible on the light theme. */
+.auth-signup-submit:disabled,
+.auth-signup-submit[disabled],
+.auth-signup-submit.btn-disabled {
+  background-color: rgb(var(--b3) / 0.9) !important;
+  border-color: rgb(var(--bc) / 0.28) !important;
+  color: rgb(var(--bc) / 0.78) !important;
+  opacity: 1;
+  box-shadow: none;
+  text-shadow: none;
+}

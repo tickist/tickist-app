@@ -302,7 +302,11 @@
     {{ workspace.name }}
   </button>
   } @if (project.ownerId === user()?.id) {
-  <button type="button" class="text-error" (click)="deleteProject(project)">
+  <button
+    type="button"
+    class="project-menu__danger"
+    (click)="deleteProject(project)"
+  >
     Delete
   </button>
   } }
