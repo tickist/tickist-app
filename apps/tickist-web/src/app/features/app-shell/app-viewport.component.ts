@@ -10,6 +10,8 @@ import {
   HostListener,
   ElementRef,
   ViewChild,
+  afterRenderEffect,
+  viewChild,
 } from '@angular/core';
 import {
   RouterOutlet,
@@ -71,9 +73,7 @@ export class AppViewportComponent implements OnDestroy {
   readonly runningTaskName = computed(() => {
     const taskId = this.timer.running()?.taskId;
 
-    return (
-      this.taskData.list().find((task) => task.id === taskId)?.name ?? ''
-    );
+    return this.taskData.list().find((task) => task.id === taskId)?.name ?? '';
   });
   private readonly workspaces = inject(WorkspaceDataService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -125,6 +125,11 @@ export class AppViewportComponent implements OnDestroy {
       )?.name ?? 'All'
   );
   readonly aboutModalOpen = signal(false);
+  private readonly aboutDialog =
+    viewChild.required<ElementRef<HTMLDialogElement>>('aboutDialog');
+  private readonly profileTrigger =
+    viewChild<ElementRef<HTMLButtonElement>>('profileTrigger');
+  private aboutPressStartedOutside = false;
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
   readonly currentUrl = signal(this.router.url);
@@ -140,6 +145,17 @@ export class AppViewportComponent implements OnDestroy {
   readonly buildCommitShort = shortCommit(environment.buildCommit);
 
   constructor() {
+    afterRenderEffect(() => {
+      const dialog = this.aboutDialog().nativeElement;
+      const open = this.aboutModalOpen();
+
+      if (open && !dialog.open) {
+        dialog.showModal();
+      } else if (!open && dialog.open) {
+        dialog.close();
+      }
+    });
+
     const initialUrl = this.router.url;
 
     if (isRememberedAppUrl(initialUrl)) {
@@ -300,6 +316,43 @@ export class AppViewportComponent implements OnDestroy {
     this.aboutModalOpen.set(false);
   }
 
+  onAboutDialogClosed(): void {
+    this.aboutModalOpen.set(false);
+    // The About button lives in the profile menu, which closes when the dialog
+    // opens, so the browser cannot return focus to the invoker.
+    this.profileTrigger()?.nativeElement.focus();
+  }
+
+  // Light-dismiss fallback for browsers without <dialog closedby>. Compare the
+  // pointer position with the dialog box: the dialog element is also the event
+  // target for its own padding, so a target check would close on those clicks.
+  onAboutDialogPointerDown(event: PointerEvent): void {
+    this.aboutPressStartedOutside = this.isOutsideAboutDialog(event);
+  }
+
+  onAboutDialogPointerUp(event: PointerEvent): void {
+    if (
+      !supportsDialogClosedBy() &&
+      this.aboutPressStartedOutside &&
+      this.isOutsideAboutDialog(event)
+    ) {
+      this.closeAboutModal();
+    }
+
+    this.aboutPressStartedOutside = false;
+  }
+
+  private isOutsideAboutDialog(event: PointerEvent): boolean {
+    const rect = this.aboutDialog().nativeElement.getBoundingClientRect();
+
+    return (
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom
+    );
+  }
+
   async markNotificationAsRead(notificationId: string): Promise<void> {
     await this.notificationsService.markAsRead(notificationId);
   }
@@ -344,6 +397,10 @@ function appendCacheVersion(url: string, version: string | null): string {
   const separator = url.includes('?') ? '&' : '?';
 
   return `${url}${separator}v=${encodeURIComponent(version)}`;
+}
+
+function supportsDialogClosedBy(): boolean {
+  return 'closedBy' in HTMLDialogElement.prototype;
 }
 
 function shortCommit(commit: string): string {

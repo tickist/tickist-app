@@ -188,6 +188,7 @@
         }
       </div>
       <button
+        #profileTrigger
         type="button"
         class="btn btn-circle border border-white/10 bg-base-100/70 p-0 shadow-inner"
         aria-label="Open profile menu"
@@ -325,71 +326,59 @@
     }
   </nav>
 
-  @if (aboutModalOpen()) {
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
-    tabindex="-1"
-    (keydown.escape)="closeAboutModal()"
+  <dialog
+    #aboutDialog
+    class="about-dialog w-[calc(100%-2rem)] max-w-md rounded-2xl border border-white/10 bg-base-200 p-6 text-base-content shadow-2xl shadow-black/50"
+    closedby="any"
+    aria-labelledby="about-dialog-title"
+    (close)="onAboutDialogClosed()"
+    (pointerdown)="onAboutDialogPointerDown($event)"
+    (pointerup)="onAboutDialogPointerUp($event)"
   >
-    <button
-      type="button"
-      class="absolute inset-0 bg-black/60"
-      aria-label="Close about dialog"
-      (click)="closeAboutModal()"
-    ></button>
-    <section
-      class="relative w-full max-w-md rounded-2xl border border-white/10 bg-base-200 p-6 shadow-2xl shadow-black/50"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="about-dialog-title"
-      tabindex="-1"
-    >
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <p
-            class="text-xs font-semibold uppercase tracking-[0.3em] text-base-content/50"
-          >
-            Tickist
-          </p>
-          <h2 id="about-dialog-title" class="mt-1 text-xl font-semibold">
-            About
-          </h2>
-        </div>
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm btn-circle"
-          aria-label="Close about dialog"
-          (click)="closeAboutModal()"
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p
+          class="text-xs font-semibold uppercase tracking-[0.3em] text-base-content/50"
         >
-          ✕
-        </button>
+          Tickist
+        </p>
+        <h2 id="about-dialog-title" class="mt-1 text-xl font-semibold">
+          About
+        </h2>
       </div>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-circle"
+        aria-label="Close about dialog"
+        (click)="closeAboutModal()"
+      >
+        ✕
+      </button>
+    </div>
 
-      <dl class="mt-6 space-y-4">
-        <div>
-          <dt
-            class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
-          >
-            Build commit
-          </dt>
-          <dd class="mt-2 font-mono text-sm text-base-content">
-            {{ buildCommitShort }}
-          </dd>
-        </div>
-        <div>
-          <dt
-            class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
-          >
-            Full commit
-          </dt>
-          <dd class="mt-2 break-all font-mono text-xs text-base-content/70">
-            {{ buildCommit }}
-          </dd>
-        </div>
-      </dl>
-    </section>
-  </div>
-  }
+    <dl class="mt-6 space-y-4">
+      <div>
+        <dt
+          class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
+        >
+          Build commit
+        </dt>
+        <dd class="mt-2 font-mono text-sm text-base-content">
+          {{ buildCommitShort }}
+        </dd>
+      </div>
+      <div>
+        <dt
+          class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
+        >
+          Full commit
+        </dt>
+        <dd class="mt-2 break-all font-mono text-xs text-base-content/70">
+          {{ buildCommit }}
+        </dd>
+      </div>
+    </dl>
+  </dialog>
 
   <div class="app-layout relative">
     <aside

@@ -134,6 +134,21 @@
   width: 32px;
   display: flex;
   justify-content: flex-end;
+  opacity: 0;
+}
+
+/* Always in the DOM so keyboard users can reach it; shown on hover, focus,
+   while its menu is open, and permanently on touch screens. */
+.project-row:hover .project-options,
+.project-row:focus-within .project-options,
+.project-options--open {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .project-options {
+    opacity: 1;
+  }
 }
 
 .options-trigger {
@@ -142,8 +157,10 @@
 }
 
 .project-menu {
-  @apply fixed w-56 rounded-2xl border border-white/10 p-2 shadow-lg shadow-black/40;
-  z-index: 2100;
+  @apply fixed w-56 rounded-2xl border border-white/10 p-2 text-base-content shadow-lg shadow-black/40;
+  /* Override popover UA centering (inset: 0; margin: auto); script sets top/left. */
+  inset: auto;
+  margin: 0;
   max-height: min(75vh, 30rem);
   overflow-y: auto;
   background: rgb(var(--b1) / 0.96);
@@ -159,13 +176,6 @@
 
 .project-menu button {
   @apply w-full rounded-xl px-3 py-2 text-left text-sm text-base-content opacity-80 transition hover:bg-base-100 hover:bg-opacity-50;
-}
-
-.project-menu-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  background: rgb(0 0 0 / 0.2);
 }
 
 .sidebar-create {

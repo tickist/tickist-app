@@ -96,6 +96,24 @@ describe('Registration legal documents', () => {
   });
 });
 
+describe('Registration autofill', () => {
+  it('lets password managers save the email and generate a new password', async () => {
+    const { fixture } = await setup(release);
+    const root: HTMLElement = fixture.nativeElement;
+
+    expect(
+      root.querySelector('input[type="email"]')?.getAttribute('autocomplete')
+    ).toBe('username');
+
+    const passwords = Array.from(
+      root.querySelectorAll('input[type="password"]'),
+      (input) => input.getAttribute('autocomplete')
+    );
+
+    expect(passwords).toEqual(['new-password', 'new-password']);
+  });
+});
+
 describe('Consent-gated signup measurement', () => {
   afterEach(() => vi.useRealTimers());
   it.each([false, true])(

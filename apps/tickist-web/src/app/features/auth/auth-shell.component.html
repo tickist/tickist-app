@@ -40,10 +40,12 @@
       </span>
       <input
         formControlName="email"
+        name="email"
         type="email"
         class="input input-bordered w-full auth-input"
         placeholder="team@tickist.app"
-        autocomplete="email"
+        autocomplete="username"
+        spellcheck="false"
       />
       @if (form.controls.email.touched && form.controls.email.invalid) {
       <span class="label-text-alt text-error">
@@ -58,6 +60,7 @@
       </span>
       <input
         formControlName="password"
+        name="password"
         type="password"
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"

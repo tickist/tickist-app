@@ -40,7 +40,10 @@
       </span>
       <input
         formControlName="email"
+        name="email"
         type="email"
+        autocomplete="username"
+        spellcheck="false"
         class="input input-bordered w-full auth-input"
         placeholder="team@tickist.app"
       />
@@ -51,7 +54,9 @@
       </span>
       <input
         formControlName="password"
+        name="new-password"
         type="password"
+        autocomplete="new-password"
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"
       />
@@ -62,7 +67,9 @@
       </span>
       <input
         formControlName="confirm"
+        name="confirm-password"
         type="password"
+        autocomplete="new-password"
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"
       />
@@ -98,8 +105,7 @@
     </p>
     } @if (legalLoading()) {
     <p role="status">Loading registration documents…</p>
-    }
-    @if (captcha.required) {
+    } @if (captcha.required) {
     <app-turnstile-widget (token)="captcha.token.set($event)" />
     }
     <button

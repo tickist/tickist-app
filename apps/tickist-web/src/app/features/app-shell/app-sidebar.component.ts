@@ -1,10 +1,11 @@
 import {
   Component,
-  HostListener,
   ElementRef,
+  afterRenderEffect,
   computed,
   inject,
   signal,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -68,7 +69,6 @@ export class AppSidebarComponent {
   private readonly router = inject(Router);
   private readonly tasksService = inject(TaskDataService);
   private readonly composer = inject(ComposerModalService);
-  private readonly host = inject(ElementRef<HTMLElement>);
   private readonly session = inject(SupabaseSessionService);
   private readonly taskStatus = inject(TaskStatusService);
   readonly workspaces = inject(WorkspaceDataService);
@@ -107,9 +107,13 @@ export class AppSidebarComponent {
     future: false,
     tags: false,
   });
-  readonly hoveredProjectId = signal<string | null>(null);
   readonly menuProjectId = signal<string | null>(null);
   readonly menuPosition = signal<{ top: number; left: number } | null>(null);
+  private readonly projectMenu =
+    viewChild<ElementRef<HTMLElement>>('projectMenu');
+  private menuTrigger: HTMLElement | null = null;
+  private menuOpenedByKeyboard = false;
+
   readonly menuProject = computed(() => {
     const projectId = this.menuProjectId();
 
@@ -121,6 +125,28 @@ export class AppSidebarComponent {
       this.projectList().find((project) => project.id === projectId) ?? null
     );
   });
+
+  // The menu is a popover="auto" in the top layer: the browser provides Esc,
+  // light dismiss and focus return. Positioning stays in script because CSS
+  // anchor positioning is not Baseline yet. Without popover support the menu
+  // still renders at the computed position and closes through its actions.
+  constructor() {
+    afterRenderEffect(() => {
+      const menu = this.projectMenu()?.nativeElement;
+
+      if (!menu || !('showPopover' in menu) || menu.matches(':popover-open')) {
+        return;
+      }
+
+      // `source` ties the popover to its trigger, so clicking the trigger again
+      // toggles it instead of light-dismissing and reopening it.
+      menu.showPopover(this.menuTrigger ? { source: this.menuTrigger } : {});
+
+      if (this.menuOpenedByKeyboard) {
+        menu.querySelector('button')?.focus();
+      }
+    });
+  }
 
   readonly inboxProjects = computed(() =>
     this.projectList().filter((project) => project.isInbox)
@@ -417,19 +443,7 @@ export class AppSidebarComponent {
     return isProjectSharedByMultipleMembers(project);
   }
 
-  onProjectEnter(projectId: string): void {
-    this.hoveredProjectId.set(projectId);
-  }
-
-  onProjectLeave(projectId: string): void {
-    if (this.menuProjectId() !== projectId) {
-      this.hoveredProjectId.set(null);
-    }
-  }
-
   toggleMenu(projectId: string, event: MouseEvent): void {
-    event.stopPropagation();
-
     if (this.menuProjectId() === projectId) {
       this.closeMenu();
 
@@ -455,15 +469,28 @@ export class AppSidebarComponent {
       top = Math.max(rect.top - height - gutter, gutter);
     }
 
+    this.menuTrigger = target;
+    // A click with detail 0 comes from Enter or Space, so focus enters the menu.
+    this.menuOpenedByKeyboard = event.detail === 0;
     this.menuPosition.set({ top, left });
     this.menuProjectId.set(projectId);
-    this.hoveredProjectId.set(projectId);
   }
 
   closeMenu(): void {
     this.menuProjectId.set(null);
     this.menuPosition.set(null);
-    this.hoveredProjectId.set(null);
+    this.menuTrigger = null;
+  }
+
+  onMenuToggle(event: Event): void {
+    // Esc and clicks outside close the popover natively; keep state in sync.
+    if (
+      event instanceof ToggleEvent &&
+      event.newState === 'closed' &&
+      this.menuProjectId()
+    ) {
+      this.closeMenu();
+    }
   }
 
   projectTypeKey(project: Project): 'active' | 'someday' | 'routine' {
@@ -573,24 +600,6 @@ export class AppSidebarComponent {
   createChildProject(project: Project): void {
     this.closeMenu();
     this.openCreateProject(project.projectType ?? 'active', project.id);
-  }
-
-  @HostListener('document:click', ['$event'])
-  closeMenus(event: MouseEvent): void {
-    if (
-      !this.host.nativeElement.contains(
-        event.target instanceof Node ? event.target : null
-      )
-    ) {
-      this.closeMenu();
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  closeMenuOnEscape(): void {
-    if (this.menuProjectId()) {
-      this.closeMenu();
-    }
   }
 
   private buildTree(type: string): ProjectTreeNode[] {

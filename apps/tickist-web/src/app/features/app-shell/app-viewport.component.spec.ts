@@ -225,6 +225,81 @@ describe('AppViewportComponent theme toggle', () => {
     ).not.toBeNull();
   });
 
+  it('opens About as a native modal dialog and returns focus to the profile button on close', () => {
+    // jsdom does not implement modal dialogs; emulate the open state only.
+    const prototype = HTMLDialogElement.prototype;
+    const showModal = vi.fn(function (this: HTMLDialogElement) {
+      this.setAttribute('open', '');
+    });
+    const close = vi.fn(function (this: HTMLDialogElement) {
+      this.removeAttribute('open');
+      this.dispatchEvent(new Event('close'));
+    });
+
+    Object.defineProperty(prototype, 'showModal', {
+      configurable: true,
+      value: showModal,
+    });
+    Object.defineProperty(prototype, 'close', {
+      configurable: true,
+      value: close,
+    });
+
+    try {
+      const fixture = TestBed.createComponent(AppViewportComponent);
+      document.body.append(fixtureHost(fixture));
+      fixture.detectChanges();
+
+      const dialog = requiredElement(
+        fixtureHost(fixture),
+        'dialog[aria-labelledby="about-dialog-title"]',
+        HTMLDialogElement
+      );
+
+      expect(dialog.getAttribute('closedby')).toBe('any');
+      expect(dialog.hasAttribute('role')).toBe(false);
+      expect(dialog.hasAttribute('aria-modal')).toBe(false);
+      expect(dialog.open).toBe(false);
+
+      const profileButton = requiredElement(
+        fixtureHost(fixture),
+        '[aria-label="Open profile menu"]',
+        HTMLButtonElement
+      );
+
+      profileButton.click();
+      fixture.detectChanges();
+
+      const aboutButton = elementsOfType(
+        fixtureHost(fixture),
+        'button',
+        HTMLButtonElement
+      ).find((button) => button.textContent?.trim() === 'About');
+
+      assert.ok(aboutButton);
+      aboutButton.click();
+      fixture.detectChanges();
+
+      expect(showModal).toHaveBeenCalledOnce();
+      expect(dialog.open).toBe(true);
+
+      requiredElement(
+        dialog,
+        '[aria-label="Close about dialog"]',
+        HTMLButtonElement
+      ).click();
+      fixture.detectChanges();
+
+      expect(close).toHaveBeenCalledOnce();
+      expect(dialog.open).toBe(false);
+      expect(document.activeElement).toBe(profileButton);
+      fixtureHost(fixture).remove();
+    } finally {
+      Reflect.deleteProperty(prototype, 'showModal');
+      Reflect.deleteProperty(prototype, 'close');
+    }
+  });
+
   it('keeps long workspace names available in the trigger tooltip', () => {
     const name = 'A workspace with a much longer name';
     workspaceItems.set([{ id: 'work-id', name, kind: 'work' }]);

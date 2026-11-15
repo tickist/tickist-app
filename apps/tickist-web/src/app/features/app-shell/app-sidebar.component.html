@@ -191,11 +191,7 @@
 
 <ng-template #projectTree let-nodes="nodes" let-level="level" let-type="type">
   @for (node of nodes; track node) {
-  <li
-    class="sidebar-project"
-    (mouseenter)="onProjectEnter(node.project.id)"
-    (mouseleave)="onProjectLeave(node.project.id)"
-  >
+  <li class="sidebar-project">
     <div class="project-row" [style.padding-left.px]="level * 12">
       <div class="project-selection">
         @if (shouldShowProjectTaskCheckbox(node.project.id)) {
@@ -235,18 +231,20 @@
           }}</span>
         </button>
       </div>
-      @if (hoveredProjectId() === node.project.id || menuProjectId() ===
-      node.project.id) {
-      <div class="project-options">
+      <div
+        class="project-options"
+        [class.project-options--open]="menuProjectId() === node.project.id"
+      >
         <button
           type="button"
           class="options-trigger"
+          [attr.aria-label]="'Options for ' + node.project.name"
+          [attr.aria-expanded]="menuProjectId() === node.project.id"
           (click)="toggleMenu(node.project.id, $event)"
         >
-          ⋮
+          <span aria-hidden="true">⋮</span>
         </button>
       </div>
-      }
     </div>
     @if (node.children.length) {
     <ul class="sidebar-sublist">
@@ -264,16 +262,14 @@
 
 @if (menuProject(); as project) {
 <div
-  class="project-menu-backdrop"
-  tabindex="0"
-  (click)="closeMenu()"
-  (keydown.enter)="closeMenu()"
-  (keydown.space)="closeMenu(); $event.preventDefault()"
-></div>
-<div
+  #projectMenu
   class="project-menu project-menu--overlay"
+  popover="auto"
+  role="group"
+  [attr.aria-label]="'Options for ' + project.name"
   [style.top.px]="menuPosition()?.top"
   [style.left.px]="menuPosition()?.left"
+  (toggle)="onMenuToggle($event)"
 >
   @if (project.ownerId === user()?.id) {
   <button type="button" (click)="editProject(project)">Edit</button>
@@ -293,8 +289,7 @@
   <button type="button" (click)="createChildProject(project)">
     Create child project
   </button>
-  }
-  @if (!project.isInbox) {
+  } @if (!project.isInbox) {
   <div class="project-menu__section-label">Move to workspace</div>
   @for (workspace of workspaceList(); track workspace.id) {
   <button
@@ -306,12 +301,10 @@
   >
     {{ workspace.name }}
   </button>
-  }
-  @if (project.ownerId === user()?.id) {
+  } @if (project.ownerId === user()?.id) {
   <button type="button" class="text-error" (click)="deleteProject(project)">
     Delete
   </button>
-  }
-  }
+  } }
 </div>
 }
