@@ -58,6 +58,25 @@ Repository rules and actual task authorization still govern commits, publication
 spend and browser access. The optional builder check runs without a subagent unless
 the owner separately asks for delegation.
 
+### Modern Web Guidance
+
+The [project-local modern-web-guidance skill](../.agents/skills/modern-web-guidance/SKILL.md)
+is adapted from GoogleChrome/modern-web-guidance. It searches and retrieves
+curated guides (Chrome, Edge, Firefox and MDN teams) for browser UI, CSS, forms,
+accessibility, client-side performance and web APIs, and offers a `legacy-scan`
+audit. See its [pinned upstream revision and local changes](../.agents/skills/modern-web-guidance/UPSTREAM.md).
+
+The guides are fetched by the npm CLI pinned at `modern-web-guidance@1.0.0`, so
+the first use needs network access. Fallback decisions follow the browser support
+policy in `AGENTS.md`. The skill does not apply to Supabase, Edge Functions, the
+MCP Worker, CI or tooling work.
+
+Codex discovers `.agents/skills/modern-web-guidance/`; Claude Code uses the
+relative symlink `.claude/skills/modern-web-guidance`. The parent workspace has
+the same forwarding entrypoint and Claude symlink as brainstorming. To avoid a
+prompt on every CLI call in Claude Code, allow exactly
+`Bash(npx -y modern-web-guidance@1.0.0 *)`, never bare `npx`.
+
 ### GitHub CLI
 
 GitHub CLI (`gh`) is installed in the current environment. Check authentication separately with `gh auth status`; do not print tokens. Use `gh run list` and `gh run view` for Actions checks and pass `--repo tickist/tickist-app` when running from the parent workspace. The parent workspace guide also describes targeting the separate management repository.

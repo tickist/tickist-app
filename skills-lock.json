@@ -56,6 +56,14 @@
       "sourceType": "github",
       "computedHash": "28a62513af1293c1ca064203a3d6e4dcdbd08f5be6e5ce9a16acc6176bef2ca4"
     },
+    "modern-web-guidance": {
+      "source": "GoogleChrome/modern-web-guidance",
+      "sourceType": "github",
+      "skillPath": "skills/modern-web-guidance/SKILL.md",
+      "sourceRef": "4dd968349e54ca45a05dd5c818fb035c9054b022",
+      "upstreamSkillSha256": "37d68a514c25066840299356e5857b750bec3cc27c0cf57dbe88369b051b573e",
+      "localAdaptations": ".agents/skills/modern-web-guidance/UPSTREAM.md"
+    },
     "monitor-ci": {
       "source": "nrwl/nx-ai-agents-config",
       "sourceType": "github",
