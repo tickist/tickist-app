@@ -97,6 +97,12 @@ Version 2 backups include workspace definitions and project assignments. Version
 
 Form placeholders use one muted slate colour across light and dark application surfaces so hints remain visually secondary to entered values.
 
+## Installed app
+
+Tickist can be installed as an app from supported browsers. The installed app opens the workspace at `/app`, or sign-in when no account is signed in, and its launcher offers New task and Time report shortcuts. Icons include a padded maskable variant so platform masks do not cut the logo, and the install prompt shows desktop and phone screenshots.
+
+A service worker caches the application shell, so the installed app still opens without a connection. Task data is not stored offline: while the browser is offline, a notice says that changes will not be saved until the connection returns.
+
 ## Notifications
 
 Users can receive daily or weekly email summaries according to timezone-aware preferences. The daily summary also shows the time worked that day, for the user and for everyone, grouped by root project; it is left out when no time was logged. Task reminders and notification digests use a database-backed email outbox and server-side workers; the browser does not send SES email directly.

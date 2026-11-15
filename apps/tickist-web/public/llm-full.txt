@@ -48,6 +48,7 @@ The product is not a public content site or a generic file store. It is an authe
 - Export/import uses stable IDs and timestamps to support resilient migration and conflict handling.
 - Version 2 backups include workspaces and project assignments; importing an older backup assigns projects to Private.
 - Placeholder text uses one muted slate colour across application forms in both themes, keeping hints visually secondary to entered values.
+- Installed app: supported browsers can install Tickist. It opens the workspace at `/app` (sign-in when signed out) and offers New task and Time report shortcuts. A service worker caches the application shell only; task data is not available offline, and an offline notice says that changes will not be saved until the connection returns.
 
 ### MCP integrations
 

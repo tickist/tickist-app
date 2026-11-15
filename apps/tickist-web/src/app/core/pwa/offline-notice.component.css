@@ -1,0 +1,23 @@
+/* Bottom-left, beside the task FAB and below the toasts, so the notice never
+   covers the navbar or the add-task button. */
+.offline-notice {
+  position: fixed;
+  inset-block-end: calc(2rem + env(safe-area-inset-bottom));
+  inset-inline-start: 1rem;
+  max-width: min(24rem, calc(100vw - 2rem - 56px - 2rem - 0.75rem));
+  z-index: 70;
+  pointer-events: none;
+}
+
+.offline-notice__message {
+  margin: 0;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #92400e;
+  color: #fffbeb;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+}

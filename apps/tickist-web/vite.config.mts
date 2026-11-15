@@ -93,7 +93,10 @@ export default defineConfig(({ mode }) => {
           short_name: 'Tickist',
           description: 'A focused task and project manager.',
           lang: 'en',
-          start_url: '/',
+          // Installed apps open the workspace; the guard sends signed-out
+          // users to sign-in. The id stays '/' so existing installs keep
+          // their identity.
+          start_url: '/app',
           scope: '/',
           display: 'standalone',
           background_color: '#0f172a',
@@ -129,7 +132,15 @@ export default defineConfig(({ mode }) => {
               src: '/icons/icon-192x192.png',
               sizes: '192x192',
               type: 'image/png',
-              purpose: 'any maskable',
+              purpose: 'any',
+            },
+            {
+              // The logo sits inside the maskable safe zone, so platform
+              // masks (circle, squircle) do not cut it.
+              src: '/icons/icon-maskable-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'maskable',
             },
             {
               src: '/icons/icon-384x384.png',
@@ -140,7 +151,55 @@ export default defineConfig(({ mode }) => {
               src: '/icons/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any maskable',
+              purpose: 'any',
+            },
+            {
+              // The logo sits inside the maskable safe zone, so platform
+              // masks (circle, squircle) do not cut it.
+              src: '/icons/icon-maskable-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable',
+            },
+          ],
+          shortcuts: [
+            {
+              name: 'New task',
+              url: '/app/task/new',
+              icons: [
+                {
+                  src: '/icons/icon-96x96.png',
+                  sizes: '96x96',
+                  type: 'image/png',
+                },
+              ],
+            },
+            {
+              name: 'Time report',
+              url: '/app/time',
+              icons: [
+                {
+                  src: '/icons/icon-96x96.png',
+                  sizes: '96x96',
+                  type: 'image/png',
+                },
+              ],
+            },
+          ],
+          screenshots: [
+            {
+              src: '/screenshots/tasks-wide.webp',
+              sizes: '1280x800',
+              type: 'image/webp',
+              form_factor: 'wide',
+              label: 'Projects and tasks on a desktop screen',
+            },
+            {
+              src: '/screenshots/tasks-narrow.webp',
+              sizes: '780x1688',
+              type: 'image/webp',
+              form_factor: 'narrow',
+              label: 'Task list on a phone',
             },
           ],
         },
@@ -153,6 +212,7 @@ export default defineConfig(({ mode }) => {
             '**/env.js',
             'favicon.png',
             'icons/*.png',
+            'screenshots/*',
             'manifest.webmanifest',
           ],
           navigateFallback: '/index.html',
