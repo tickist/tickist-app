@@ -485,7 +485,7 @@ export class AppSidebarComponent {
   onMenuToggle(event: Event): void {
     // Esc and clicks outside close the popover natively; keep state in sync.
     if (
-      event instanceof ToggleEvent &&
+      'newState' in event &&
       event.newState === 'closed' &&
       this.menuProjectId()
     ) {

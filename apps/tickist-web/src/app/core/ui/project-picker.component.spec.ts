@@ -100,6 +100,48 @@ describe('ProjectPickerComponent', () => {
     expect(options[0]?.textContent).not.toContain('Shared');
     expect(options[1]?.textContent).toContain('Shared');
   });
+
+  it('renders the menu as a popover and focuses the search field once open', () => {
+    document.body.append(fixtureHost(fixture));
+    openPicker(fixture);
+
+    const menu = requiredElement(
+      fixtureHost(fixture),
+      '.project-picker__menu',
+      HTMLElement
+    );
+
+    expect(menu.getAttribute('popover')).toBe('auto');
+    expect(document.activeElement).toBe(
+      requiredElement(
+        fixtureHost(fixture),
+        '.project-picker__search-input',
+        HTMLInputElement
+      )
+    );
+    fixtureHost(fixture).remove();
+  });
+
+  it('closes when the popover is dismissed natively', () => {
+    openPicker(fixture);
+
+    const menu = requiredElement(
+      fixtureHost(fixture),
+      '.project-picker__menu',
+      HTMLElement
+    );
+
+    // jsdom has no ToggleEvent; the component only reads newState.
+    menu.dispatchEvent(
+      Object.assign(new Event('toggle'), { newState: 'closed' })
+    );
+    fixture.detectChanges();
+
+    expect(component.isOpen()).toBe(false);
+    expect(
+      fixtureHost(fixture).querySelector('.project-picker__menu')
+    ).toBeNull();
+  });
 });
 
 function openPicker(fixture: ComponentFixture<ProjectPickerComponent>): void {

@@ -8,8 +8,9 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
-  inject,
+  afterRenderEffect,
   signal,
+  viewChild,
 } from '@angular/core';
 import {
   buildHierarchy,
@@ -75,14 +76,11 @@ const PICKER_GROUP_LABELS: Record<PickerGroupKey, string> = {
   styleUrl: './project-picker.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '(document:mousedown)': 'handleOutsideClick($event)',
-    '(document:keydown.escape)': 'handleEscapeKey()',
     '(window:resize)': 'handleViewportChange()',
     '(window:scroll)': 'handleViewportChange()',
   },
 })
 export class ProjectPickerComponent {
-  private readonly host = inject(ElementRef<HTMLElement>);
   private readonly instanceId = nextProjectPickerId++;
 
   @Input() projects: ReadonlyArray<ProjectPickerItem> = [];
@@ -102,6 +100,8 @@ export class ProjectPickerComponent {
   private searchInput?: ElementRef<HTMLInputElement>;
   @ViewChildren('optionButton')
   private optionButtons?: QueryList<ElementRef<HTMLButtonElement>>;
+  private readonly menu = viewChild<ElementRef<HTMLElement>>('menu');
+  private pendingFocus: 'search' | number | null = null;
 
   readonly isOpen = signal(false);
   readonly activeIndex = signal(0);
@@ -112,6 +112,31 @@ export class ProjectPickerComponent {
     width: 0,
     maxHeight: 260,
   });
+
+  constructor() {
+    // The menu is a popover="auto" in the top layer: it escapes clipping
+    // containers, and the browser provides light dismiss. It is hidden until
+    // showPopover(), so initial focus moves after it is shown.
+    afterRenderEffect(() => {
+      const menu = this.menu()?.nativeElement;
+
+      if (!this.isOpen() || !menu) return;
+
+      if ('showPopover' in menu && !menu.matches(':popover-open')) {
+        const trigger = this.triggerButton?.nativeElement;
+        menu.showPopover(trigger ? { source: trigger } : {});
+      }
+
+      const focus = this.pendingFocus;
+      this.pendingFocus = null;
+
+      if (focus === 'search') {
+        this.searchInput?.nativeElement.focus();
+      } else if (focus !== null) {
+        this.optionButtons?.get(focus)?.nativeElement.focus();
+      }
+    });
+  }
 
   options(): PickerOption[] {
     return this.groupedOptions().flatMap((group) => group.options);
@@ -334,24 +359,11 @@ export class ProjectPickerComponent {
     return `project-picker-${this.instanceId}-option-${index}`;
   }
 
-  handleOutsideClick(event: MouseEvent): void {
-    if (!this.isOpen()) {
-      return;
-    }
-
-    const target = event.target;
-
-    if (!(target instanceof Node)) {
-      return;
-    }
-
-    if (!this.host.nativeElement.contains(target)) {
+  onMenuToggle(event: Event): void {
+    // Esc or a click outside closed the popover natively; sync the state.
+    if ('newState' in event && event.newState === 'closed' && this.isOpen()) {
       this.close(false);
     }
-  }
-
-  handleEscapeKey(): void {
-    this.close(true);
   }
 
   handleViewportChange(): void {
@@ -385,21 +397,20 @@ export class ProjectPickerComponent {
 
     if (focusSearch) {
       this.activeIndex.set(selectedIndex >= 0 ? selectedIndex : 0);
-      queueMicrotask(() => {
-        this.positionMenu();
-        this.searchInput?.nativeElement.focus();
-      });
+      this.pendingFocus = 'search';
 
       return;
     }
 
-    if (selectedIndex >= 0) {
-      this.focusIndex(selectedIndex);
+    const index =
+      selectedIndex >= 0
+        ? selectedIndex
+        : preferLast
+        ? this.options().length - 1
+        : 0;
 
-      return;
-    }
-
-    this.focusIndex(preferLast ? this.options().length - 1 : 0);
+    this.activeIndex.set(index);
+    this.pendingFocus = index;
   }
 
   private close(focusTrigger: boolean): void {
