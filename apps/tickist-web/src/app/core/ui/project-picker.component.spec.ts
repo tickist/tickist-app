@@ -4,7 +4,7 @@ import {
   elementsOfType,
 } from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ProjectPickerComponent,
@@ -102,24 +102,30 @@ describe('ProjectPickerComponent', () => {
   });
 
   it('renders the menu as a popover and focuses the search field once open', () => {
-    document.body.append(fixtureHost(fixture));
-    openPicker(fixture);
+    // jsdom hides [popover] content without implementing showPopover(), so
+    // focus cannot land there; assert that focus was requested instead.
+    const focus = vi.spyOn(HTMLInputElement.prototype, 'focus');
 
-    const menu = requiredElement(
-      fixtureHost(fixture),
-      '.project-picker__menu',
-      HTMLElement
-    );
+    try {
+      openPicker(fixture);
 
-    expect(menu.getAttribute('popover')).toBe('auto');
-    expect(document.activeElement).toBe(
-      requiredElement(
+      const menu = requiredElement(
+        fixtureHost(fixture),
+        '.project-picker__menu',
+        HTMLElement
+      );
+
+      const search = requiredElement(
         fixtureHost(fixture),
         '.project-picker__search-input',
         HTMLInputElement
-      )
-    );
-    fixtureHost(fixture).remove();
+      );
+
+      expect(menu.getAttribute('popover')).toBe('auto');
+      expect(focus.mock.contexts).toContain(search);
+    } finally {
+      focus.mockRestore();
+    }
   });
 
   it('closes when the popover is dismissed natively', () => {
