@@ -16,67 +16,59 @@ describe('ThemedSelectComponent', () => {
       { value: true, label: 'Active' },
       { value: false, label: 'Archived' },
     ];
+    component.ariaLabel = 'Status';
     component.writeValue(true);
     fixture.detectChanges();
   });
 
-  it('keeps boolean form values when choosing an option', () => {
-    const changed = vi.fn();
-    component.registerOnChange(changed);
-    trigger().click();
-    fixture.detectChanges();
-
-    expect(menu()).not.toBeNull();
-    options()[1]?.click();
-    fixture.detectChanges();
-
-    expect(changed).toHaveBeenCalledWith(false);
-    expect(component.selectedValue()).toBe(false);
-    expect(trigger().textContent).toContain('Archived');
-    expect(menu()).toBeNull();
+  it('renders a native select with an accessible name and the current value', () => {
+    expect(select().getAttribute('aria-label')).toBe('Status');
+    expect(select().selectedOptions[0]?.textContent?.trim()).toBe('Active');
   });
 
-  it('opens with arrow keys and closes with Escape', () => {
-    trigger().dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true })
-    );
-    fixture.detectChanges();
-    expect(options()).toHaveLength(2);
+  it('keeps boolean form values when choosing an option', () => {
+    const changed = vi.fn();
+    const touched = vi.fn();
+    const emitted = vi.fn();
+    component.registerOnChange(changed);
+    component.registerOnTouched(touched);
+    component.valueChange.subscribe(emitted);
 
-    options()[0]?.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })
-    );
+    choose(1);
+
+    expect(changed).toHaveBeenCalledWith(false);
+    expect(emitted).toHaveBeenCalledWith(false);
+    expect(touched).toHaveBeenCalled();
+    expect(component.selectedValue()).toBe(false);
+    expect(select().selectedOptions[0]?.textContent?.trim()).toBe('Archived');
+  });
+
+  it('reflects values written by the form', () => {
+    component.writeValue(false);
     fixture.detectChanges();
-    expect(menu()).toBeNull();
+
+    expect(select().selectedIndex).toBe(1);
   });
 
   it('respects the disabled form state', () => {
     component.setDisabledState(true);
     fixture.detectChanges();
-    expect(trigger().disabled).toBe(true);
-    trigger().click();
-    fixture.detectChanges();
-    expect(menu()).toBeNull();
+
+    expect(select().disabled).toBe(true);
   });
 
-  function trigger(): HTMLButtonElement {
-    const button = fixture.nativeElement.querySelector(
-      '.themed-select__trigger'
-    );
+  function select(): HTMLSelectElement {
+    const element = fixture.nativeElement.querySelector('select');
 
-    if (!(button instanceof HTMLButtonElement))
-      throw new Error('Missing trigger');
+    if (!(element instanceof HTMLSelectElement))
+      throw new Error('Missing select');
 
-    return button;
+    return element;
   }
 
-  function menu(): HTMLElement | null {
-    return fixture.nativeElement.querySelector('.themed-select__menu');
-  }
-
-  function options(): HTMLButtonElement[] {
-    return Array.from(
-      fixture.nativeElement.querySelectorAll('.themed-select__option')
-    );
+  function choose(index: number): void {
+    select().selectedIndex = index;
+    select().dispatchEvent(new Event('change'));
+    fixture.detectChanges();
   }
 });
