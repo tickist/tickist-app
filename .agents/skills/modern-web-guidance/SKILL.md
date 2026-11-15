@@ -115,6 +115,10 @@ Guides use vanilla HTML/CSS/JS. Keep the modern feature when translating it:
   uses `ViewEncapsulation.ShadowDom`. `::backdrop` and `@starting-style` work in
   component stylesheets; global `:root` tokens and properties registered with
   `@property` belong in `apps/tickist-web/src/styles.css`.
+  Emulated encapsulation also rewrites a compound that starts with `:is()`
+  or `:where()` after a descendant combinator (`.table :is(thead, tbody) tr`)
+  into an extra descendant step that never matches; spell such selectors out
+  without a leading `:is()`, and check computed styles in the browser.
 - **Existing conventions**: keep standalone components, signals, built-in control
   flow, supported themes, responsive sheets, and keyboard access (see `AGENTS.md`).
 
