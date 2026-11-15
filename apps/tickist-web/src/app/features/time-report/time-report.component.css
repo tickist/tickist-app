@@ -59,8 +59,36 @@
   background-color: rgb(var(--b2) / 60%);
 }
 
+.time-table__scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.time-table__scroll:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+
 .time-table {
   @apply w-full border-collapse text-sm text-base-content;
+}
+
+/* Keep the task column visible while the day columns scroll sideways. The
+   solid background hides the cells scrolling underneath it. */
+/* A plain selector on purpose: emulated encapsulation rewrites a leading
+   `:is()` compound into an extra descendant step that never matches. */
+.time-table tr:not(.time-table__editor) > :first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  /* The panel is base-200 at 60% over the base-100 page; mix the same colour
+     so the pinned cells blend in while hiding what scrolls beneath them. */
+  background-color: color-mix(
+    in srgb,
+    rgb(var(--b2)) 60%,
+    var(--color-base-100)
+  );
 }
 
 .time-table th,

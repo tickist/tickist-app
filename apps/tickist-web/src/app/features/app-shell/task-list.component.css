@@ -7,3 +7,12 @@
   flex-direction: column;
   gap: 6px;
 }
+
+/* Cards past the first screenful skip layout and paint until they scroll
+   near the viewport. The intrinsic size placeholder (remembered once a card
+   has rendered) keeps the scrollbar stable. Menus inside cards are top-layer
+   popovers, so the paint containment this implies never clips them. */
+.task-list__item--deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 100px;
+}

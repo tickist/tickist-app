@@ -26,6 +26,8 @@ export class TaskListComponent {
   readonly projectResolver = input<TaskProjectResolver | null>(null);
   readonly viewMode = input<TaskViewMode>('extended');
   readonly emptyText = input('No tasks yet.');
+  /** Cards from this index on render lazily (likely below the first screen). */
+  readonly deferRenderingFrom = 8;
   readonly openMenuTaskId = signal<string | null>(null);
 
   projectFor(task: Task): Project | null {

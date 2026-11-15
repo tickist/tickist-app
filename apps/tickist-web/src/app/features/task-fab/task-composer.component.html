@@ -12,20 +12,33 @@
     @switch (activeTab()) { @case ('general') {
     <form [formGroup]="taskForm" class="sheet-form">
       <section class="sheet-section">
-        <label class="sheet-field task-composer-field--placeholder">
-          <span class="sheet-field__label task-composer-sr-only"
-            >Task name</span
+        <div class="sheet-field task-composer-field--placeholder">
+          <label
+            class="sheet-field__label task-composer-sr-only"
+            for="task-composer-name"
+            >Task name</label
           >
           <input
+            id="task-composer-name"
             class="sheet-input"
             formControlName="name"
             placeholder="Task name, e.g. Podsumować wyjazd"
+            [attr.aria-invalid]="
+              taskForm.controls.name.touched && taskForm.controls.name.invalid
+            "
+            [attr.aria-describedby]="
+              taskForm.controls.name.touched && taskForm.controls.name.invalid
+                ? 'task-composer-name-error'
+                : null
+            "
           />
           @if (taskForm.controls.name.touched && taskForm.controls.name.invalid)
           {
-          <small class="sheet-field__error">A task name is required.</small>
+          <small id="task-composer-name-error" class="sheet-field__error"
+            >A task name is required.</small
+          >
           }
-        </label>
+        </div>
 
         <div class="sheet-field">
           <span class="sheet-field__label">Priority</span>

@@ -153,6 +153,9 @@
           class="workspace-switcher__menu"
           role="group"
           aria-label="Workspaces"
+          [appAnchoredPopover]="workspaceTrigger"
+          (popoverOpened)="onWorkspaceMenuShown()"
+          (popoverClosed)="workspaceMenuOpen.set(false)"
         >
           <p class="workspace-switcher__heading">Workspace</p>
           <button

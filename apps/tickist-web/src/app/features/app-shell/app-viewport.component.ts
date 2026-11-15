@@ -7,7 +7,6 @@ import {
   signal,
   OnDestroy,
   ChangeDetectionStrategy,
-  HostListener,
   ElementRef,
   ViewChild,
   DestroyRef,
@@ -116,6 +115,7 @@ export class AppViewportComponent implements OnDestroy {
   readonly selectedWorkspaceId = this.workspaces.selectedWorkspaceId;
   @ViewChild('workspaceTrigger')
   private workspaceTrigger?: ElementRef<HTMLButtonElement>;
+  private focusWorkspaceSelection = false;
 
   readonly workspaceIcon = computed(() => {
     const selected = this.workspaceList().find(
@@ -242,16 +242,22 @@ export class AppViewportComponent implements OnDestroy {
 
   openWorkspaceMenu(event: Event): void {
     event.preventDefault();
+    this.focusWorkspaceSelection = true;
     this.workspaceMenuOpen.set(true);
     this.profileMenuOpen.set(false);
     this.notificationsOpen.set(false);
-    setTimeout(() =>
-      this.host.nativeElement
-        .querySelector<HTMLButtonElement>(
-          '.workspace-switcher__option[aria-pressed="true"]'
-        )
-        ?.focus()
-    );
+  }
+
+  // ArrowDown on the trigger moves into the list; the popover is hidden until
+  // shown, so focus moves once it is open.
+  onWorkspaceMenuShown(): void {
+    if (!this.focusWorkspaceSelection) return;
+    this.focusWorkspaceSelection = false;
+    this.host.nativeElement
+      .querySelector<HTMLButtonElement>(
+        '.workspace-switcher__option[aria-pressed="true"]'
+      )
+      ?.focus();
   }
 
   selectWorkspace(workspaceId: string | null): void {
@@ -264,27 +270,6 @@ export class AppViewportComponent implements OnDestroy {
       this.viewState.selectProject(null);
       void this.router.navigate(['/app']);
     }
-  }
-
-  @HostListener('document:click', ['$event'])
-  closeWorkspaceMenuOnOutsideClick(event: MouseEvent): void {
-    const switcher = this.host.nativeElement.querySelector(
-      '.workspace-switcher'
-    );
-
-    if (
-      switcher &&
-      !switcher.contains(event.target instanceof Node ? event.target : null)
-    ) {
-      this.workspaceMenuOpen.set(false);
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  closeWorkspaceMenuOnEscape(): void {
-    if (this.workspaceMenuOpen()) this.workspaceTrigger?.nativeElement.focus();
-
-    this.workspaceMenuOpen.set(false);
   }
 
   toggleNotifications(): void {

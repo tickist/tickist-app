@@ -86,102 +86,117 @@
 
   <article class="time-panel" data-testid="time-report">
     @if (report().groups.length) {
-    <table class="time-table">
-      <thead>
-        <tr>
-          <th scope="col">Task</th>
-          @for (day of days(); track day.key) {
-          <th scope="col" class="time-table__num time-table__day">
-            {{ day.label }}
-          </th>
-          } @if (report().hasOthers) {
-          <th scope="col" class="time-table__num">Me</th>
-          <th scope="col" class="time-table__num">Everyone</th>
-          } @else {
-          <th scope="col" class="time-table__num">
-            {{ days().length ? 'Total' : 'Time' }}
-          </th>
-          }
-        </tr>
-      </thead>
-      @for (group of report().groups; track group.key) {
-      <tbody>
-        <tr class="time-table__group">
-          <th scope="rowgroup">{{ group.label }}</th>
-          @for (seconds of group.myByDay; track $index) {
-          <td class="time-table__num time-table__day">
-            {{ formatDay(seconds) }}
-          </td>
-          }
-          <td class="time-table__num">{{ format(group.mySeconds) }}</td>
-          @if (report().hasOthers) {
-          <td class="time-table__num">{{ format(group.everyoneSeconds) }}</td>
-          }
-        </tr>
-        @for (line of group.tasks; track line.taskId) { @let key =
-        rowKey(group.key, line.taskId);
-        <tr>
-          <td class="time-table__task">
-            <button
-              type="button"
-              class="time-table__toggle"
-              [attr.aria-expanded]="expanded() === key"
-              title="Edit time entries"
-              data-testid="time-report-task"
-              (click)="toggle(key)"
+    <!-- Wide weekly tables scroll sideways: the region is keyboard-scrollable
+         and named for screen readers, and the task column stays pinned. -->
+    <div
+      class="time-table__scroll"
+      role="region"
+      tabindex="0"
+      aria-labelledby="time-table-caption"
+    >
+      <table class="time-table">
+        <caption id="time-table-caption" class="sr-only">
+          Tracked time
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Task</th>
+            @for (day of days(); track day.key) {
+            <th scope="col" class="time-table__num time-table__day">
+              {{ day.label }}
+            </th>
+            } @if (report().hasOthers) {
+            <th scope="col" class="time-table__num">Me</th>
+            <th scope="col" class="time-table__num">Everyone</th>
+            } @else {
+            <th scope="col" class="time-table__num">
+              {{ days().length ? 'Total' : 'Time' }}
+            </th>
+            }
+          </tr>
+        </thead>
+        @for (group of report().groups; track group.key) {
+        <tbody>
+          <tr class="time-table__group">
+            <th scope="rowgroup">{{ group.label }}</th>
+            @for (seconds of group.myByDay; track $index) {
+            <td class="time-table__num time-table__day">
+              {{ formatDay(seconds) }}
+            </td>
+            }
+            <td class="time-table__num">{{ format(group.mySeconds) }}</td>
+            @if (report().hasOthers) {
+            <td class="time-table__num">{{ format(group.everyoneSeconds) }}</td>
+            }
+          </tr>
+          @for (line of group.tasks; track line.taskId) { @let key =
+          rowKey(group.key, line.taskId);
+          <tr>
+            <td class="time-table__task">
+              <button
+                type="button"
+                class="time-table__toggle"
+                [attr.aria-expanded]="expanded() === key"
+                title="Edit time entries"
+                data-testid="time-report-task"
+                (click)="toggle(key)"
+              >
+                <span class="time-table__chevron" aria-hidden="true">▸</span>
+                <span>{{ line.name }}</span>
+                @if (line.context) {
+                <span class="time-table__context">{{ line.context }}</span>
+                }
+              </button>
+            </td>
+            @for (seconds of line.myByDay; track $index) {
+            <td class="time-table__num time-table__day">
+              {{ formatDay(seconds) }}
+            </td>
+            }
+            <td class="time-table__num">{{ format(line.mySeconds) }}</td>
+            @if (report().hasOthers) {
+            <td class="time-table__num">{{ format(line.everyoneSeconds) }}</td>
+            }
+          </tr>
+          @if (expanded() === key) {
+          <tr class="time-table__editor">
+            <td [attr.colspan]="columnCount()">
+              <app-task-time-entries
+                [taskId]="line.taskId"
+                [defaultDate]="entryDate()"
+                (changed)="entriesChanged()"
+              ></app-task-time-entries>
+            </td>
+          </tr>
+          } }
+        </tbody>
+        }
+        <tfoot>
+          <tr>
+            <th scope="row">Total</th>
+            @for (seconds of report().myByDay; track $index) {
+            <td
+              class="time-table__num time-table__day"
+              [attr.data-testid]="'time-report-day-total-' + $index"
             >
-              <span class="time-table__chevron" aria-hidden="true">▸</span>
-              <span>{{ line.name }}</span>
-              @if (line.context) {
-              <span class="time-table__context">{{ line.context }}</span>
-              }
-            </button>
-          </td>
-          @for (seconds of line.myByDay; track $index) {
-          <td class="time-table__num time-table__day">
-            {{ formatDay(seconds) }}
-          </td>
-          }
-          <td class="time-table__num">{{ format(line.mySeconds) }}</td>
-          @if (report().hasOthers) {
-          <td class="time-table__num">{{ format(line.everyoneSeconds) }}</td>
-          }
-        </tr>
-        @if (expanded() === key) {
-        <tr class="time-table__editor">
-          <td [attr.colspan]="columnCount()">
-            <app-task-time-entries
-              [taskId]="line.taskId"
-              [defaultDate]="entryDate()"
-              (changed)="entriesChanged()"
-            ></app-task-time-entries>
-          </td>
-        </tr>
-        } }
-      </tbody>
-      }
-      <tfoot>
-        <tr>
-          <th scope="row">Total</th>
-          @for (seconds of report().myByDay; track $index) {
-          <td
-            class="time-table__num time-table__day"
-            [attr.data-testid]="'time-report-day-total-' + $index"
-          >
-            {{ formatDay(seconds) }}
-          </td>
-          }
-          <td class="time-table__num" data-testid="time-report-total-me">
-            {{ format(report().mySeconds) }}
-          </td>
-          @if (report().hasOthers) {
-          <td class="time-table__num" data-testid="time-report-total-everyone">
-            {{ format(report().everyoneSeconds) }}
-          </td>
-          }
-        </tr>
-      </tfoot>
-    </table>
+              {{ formatDay(seconds) }}
+            </td>
+            }
+            <td class="time-table__num" data-testid="time-report-total-me">
+              {{ format(report().mySeconds) }}
+            </td>
+            @if (report().hasOthers) {
+            <td
+              class="time-table__num"
+              data-testid="time-report-total-everyone"
+            >
+              {{ format(report().everyoneSeconds) }}
+            </td>
+            }
+          </tr>
+        </tfoot>
+      </table>
+    </div>
     @if (days().length && report().hasOthers) {
     <p class="time-note">Day columns show your time.</p>
     } @if (grouping() === 'tag') {

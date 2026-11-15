@@ -2,6 +2,7 @@
 <div class="task-list">
   @for (task of tasks(); track trackTask($index, task)) {
   <app-task-card
+    [class.task-list__item--deferred]="$index >= deferRenderingFrom"
     [task]="task"
     [project]="projectFor(task)"
     [viewMode]="viewMode()"

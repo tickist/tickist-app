@@ -325,7 +325,7 @@ describe('AppViewportComponent theme toggle', () => {
     ).toBe(name);
   });
 
-  it('returns keyboard focus to the trigger when Escape closes the workspace list', () => {
+  it('shows the workspace list as a popover that closes natively', () => {
     const fixture = TestBed.createComponent(AppViewportComponent);
     document.body.append(fixtureHost(fixture));
     fixture.detectChanges();
@@ -339,18 +339,24 @@ describe('AppViewportComponent theme toggle', () => {
     trigger.click();
     fixture.detectChanges();
 
-    const option = requiredElement(
+    const menu = requiredElement(
       fixtureHost(fixture),
-      '#workspace-menu button',
-      HTMLButtonElement
+      '#workspace-menu',
+      HTMLElement
     );
 
-    option.focus();
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(menu.getAttribute('popover')).toBe('auto');
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    // Esc and light dismiss are handled by the browser (which also returns
+    // focus to the trigger); jsdom has no ToggleEvent, so emulate its result.
+    menu.dispatchEvent(
+      Object.assign(new Event('toggle'), { newState: 'closed' })
+    );
     fixture.detectChanges();
 
     expect(fixtureHost(fixture).querySelector('#workspace-menu')).toBeNull();
-    expect(document.activeElement).toBe(trigger);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
     fixtureHost(fixture).remove();
   });
 

@@ -89,21 +89,39 @@
               </section>
 
               <div class="account-fields">
-                <label class="sheet-field account-field--placeholder">
-                  <span class="sheet-field__label sr-only">Display name</span>
+                <div class="sheet-field account-field--placeholder">
+                  <label
+                    class="sheet-field__label sr-only"
+                    for="settings-display-name"
+                    >Display name</label
+                  >
                   <input
+                    id="settings-display-name"
                     class="sheet-input"
                     placeholder="Display name"
                     formControlName="displayName"
                     maxlength="80"
+                    [attr.aria-invalid]="
+                      accountForm.controls.displayName.touched &&
+                      accountForm.controls.displayName.invalid
+                    "
+                    [attr.aria-describedby]="
+                      accountForm.controls.displayName.touched &&
+                      accountForm.controls.displayName.invalid
+                        ? 'settings-display-name-error'
+                        : null
+                    "
                   />
                   @if (accountForm.controls.displayName.touched &&
                   accountForm.controls.displayName.invalid) {
-                  <small class="sheet-field__error">
+                  <small
+                    id="settings-display-name-error"
+                    class="sheet-field__error"
+                  >
                     Name must be 2–80 characters.
                   </small>
                   }
-                </label>
+                </div>
               </div>
 
               <button type="submit" class="sr-only">Save changes</button>
@@ -205,65 +223,123 @@
             (ngSubmit)="changePassword()"
           >
             <section class="sheet-section">
-              <label class="sheet-field">
-                <span class="sheet-field__label">Current password</span>
+              <div class="sheet-field">
+                <label
+                  class="sheet-field__label"
+                  for="settings-current-password-field"
+                  >Current password</label
+                >
                 <input
+                  id="settings-current-password-field"
                   class="sheet-input"
                   formControlName="currentPassword"
                   type="password"
                   autocomplete="current-password"
                   data-testid="settings-current-password"
+                  [attr.aria-invalid]="
+                    passwordForm.controls.currentPassword.touched &&
+                    passwordForm.controls.currentPassword.invalid
+                  "
+                  [attr.aria-describedby]="
+                    passwordForm.controls.currentPassword.touched &&
+                    passwordForm.controls.currentPassword.invalid
+                      ? 'settings-current-password-field-error'
+                      : null
+                  "
                 />
                 @if (passwordForm.controls.currentPassword.touched &&
                 passwordForm.controls.currentPassword.invalid) {
-                <small class="sheet-field__error">
+                <small
+                  id="settings-current-password-field-error"
+                  class="sheet-field__error"
+                >
                   Current password must be at least 6 characters.
                 </small>
                 }
-              </label>
+              </div>
 
-              <label class="sheet-field">
-                <span class="sheet-field__label">New password</span>
+              <div class="sheet-field">
+                <label
+                  class="sheet-field__label"
+                  for="settings-new-password-field"
+                  >New password</label
+                >
                 <input
+                  id="settings-new-password-field"
                   class="sheet-input"
                   formControlName="newPassword"
                   type="password"
                   autocomplete="new-password"
                   data-testid="settings-new-password"
+                  [attr.aria-invalid]="
+                    (passwordForm.controls.newPassword.touched &&
+                      passwordForm.controls.newPassword.invalid) ||
+                    passwordMatchesCurrent()
+                  "
+                  [attr.aria-describedby]="
+                    (
+                      (passwordForm.controls.newPassword.touched &&
+                      passwordForm.controls.newPassword.invalid
+                        ? 'settings-new-password-field-error-length '
+                        : '') +
+                      (passwordMatchesCurrent()
+                        ? 'settings-new-password-field-error-same'
+                        : '')
+                    ).trim() || null
+                  "
                 />
                 @if (passwordForm.controls.newPassword.touched &&
                 passwordForm.controls.newPassword.invalid) {
-                <small class="sheet-field__error">
+                <small
+                  id="settings-new-password-field-error-length"
+                  class="sheet-field__error"
+                >
                   New password must be at least 6 characters.
                 </small>
                 } @if (passwordMatchesCurrent()) {
-                <small class="sheet-field__error">
+                <small
+                  id="settings-new-password-field-error-same"
+                  class="sheet-field__error"
+                >
                   New password must be different from the current password.
                 </small>
                 }
-              </label>
+              </div>
 
-              <label class="sheet-field">
-                <span class="sheet-field__label">Confirm new password</span>
+              <div class="sheet-field">
+                <label
+                  class="sheet-field__label"
+                  for="settings-confirm-password-field"
+                  >Confirm new password</label
+                >
                 <input
+                  id="settings-confirm-password-field"
                   class="sheet-input"
                   formControlName="confirmPassword"
                   type="password"
                   autocomplete="new-password"
                   data-testid="settings-confirm-password"
+                  [attr.aria-invalid]="passwordsMismatch()"
+                  [attr.aria-describedby]="
+                    passwordsMismatch()
+                      ? 'settings-confirm-password-field-error'
+                      : null
+                  "
                 />
                 @if (passwordsMismatch()) {
-                <small class="sheet-field__error">Passwords must match.</small>
+                <small
+                  id="settings-confirm-password-field-error"
+                  class="sheet-field__error"
+                  >Passwords must match.</small
+                >
                 }
-              </label>
+              </div>
 
               @if (passwordCaptcha.required) {
               <app-turnstile-widget
                 (token)="passwordCaptcha.token.set($event)"
               />
-              }
-
-              @if (passwordError(); as errorMessage) {
+              } @if (passwordError(); as errorMessage) {
               <p
                 class="password-feedback password-feedback--error"
                 data-testid="settings-password-error"
