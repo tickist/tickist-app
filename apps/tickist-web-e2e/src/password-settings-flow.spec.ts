@@ -82,7 +82,7 @@ async function expectInvalidCurrentPassword(
 ): Promise<void> {
   await page.goto('/app/settings');
   await expectSettingsSheetLayout(page);
-  await page.getByRole('button', { name: 'Password' }).click();
+  await page.getByRole('tab', { name: 'Password' }).click();
   await page.getByTestId('settings-current-password').fill('WrongPassword123!');
   await page.getByTestId('settings-new-password').fill(nextPassword);
   await page.getByTestId('settings-confirm-password').fill(nextPassword);
@@ -101,7 +101,7 @@ async function changePassword(
 ): Promise<void> {
   await page.goto('/app/settings');
   await expectSettingsSheetLayout(page);
-  await page.getByRole('button', { name: 'Password' }).click();
+  await page.getByRole('tab', { name: 'Password' }).click();
   await page.getByTestId('settings-current-password').fill(currentPassword);
   await page.getByTestId('settings-new-password').fill(nextPassword);
   await page.getByTestId('settings-confirm-password').fill(nextPassword);

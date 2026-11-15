@@ -298,7 +298,7 @@ test('uses muted placeholders and supports project icon search', async ({
 
   expect(placeholderColor).toBe('rgb(71, 85, 105)');
 
-  await composer.getByRole('button', { name: /Branding/ }).click();
+  await composer.getByRole('tab', { name: /Branding/ }).click();
 
   const iconSearch = composer.getByRole('searchbox', {
     name: 'Search project icons',
@@ -692,7 +692,7 @@ test('adds task reminder and shows reminder status icon on the task card', async
   await card.getByRole('button', { name: 'Edit task' }).click();
   const composer = page.locator('app-task-composer');
   await expect(composer).toBeVisible();
-  await composer.getByRole('button', { name: 'Reminders' }).click();
+  await composer.getByRole('tab', { name: 'Reminders' }).click();
   await composer.getByRole('button', { name: 'Add reminder' }).click();
   await composer.getByLabel('Reminder date').fill(futureDateInput(1));
   await composer.getByLabel('Reminder time').fill('09:30');
