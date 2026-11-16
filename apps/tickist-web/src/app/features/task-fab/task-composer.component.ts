@@ -22,7 +22,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import {
   Task,
@@ -42,6 +42,7 @@ import {
   isProjectSharedWithOthers,
 } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
@@ -121,6 +122,7 @@ export class TaskComposerComponent {
   private readonly reminderService = inject(TaskReminderDataService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly session = inject(SupabaseSessionService);
+  private readonly workspaces = inject(WorkspaceDataService);
 
   readonly projects = computed(() => this.projectService.list());
   readonly tags = computed(() => this.tagService.list());
@@ -264,6 +266,27 @@ export class TaskComposerComponent {
     },
     { validators: suspensionValidator }
   );
+
+  private readonly selectedProjectId = toSignal(
+    this.taskForm.controls.projectId.valueChanges,
+    { initialValue: this.taskForm.controls.projectId.value }
+  );
+
+  /**
+   * Projects offered in the picker: those in the current workspace (all of
+   * them when no workspace is selected), plus the task's current project so
+   * editing a task from another workspace still shows where it lives.
+   */
+  readonly pickerProjects = computed(() => {
+    const all = this.projects();
+    const selectedId = this.selectedProjectId();
+
+    return all.filter(
+      (project) =>
+        project.id === selectedId ||
+        this.workspaces.includesProject(project, all)
+    );
+  });
 
   readonly stepsArray = this.fb.array<FormGroup>([]);
   readonly remindersArray = this.fb.array<FormGroup>([]);

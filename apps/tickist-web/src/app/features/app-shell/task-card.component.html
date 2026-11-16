@@ -270,7 +270,7 @@
       <span class="panel-label">Project</span>
       <app-project-picker
         ariaLabel="Select project for task"
-        [projects]="projects()"
+        [projects]="pickerProjects()"
         [selectedProjectId]="task.projectId || ''"
         emptyOptionLabel="Inbox"
         emptyOptionIcon="inbox"

@@ -60,7 +60,7 @@
           <span class="sheet-field__label task-composer-sr-only">Project</span>
           <app-project-picker
             ariaLabel="Project"
-            [projects]="projects()"
+            [projects]="pickerProjects()"
             [selectedProjectId]="taskForm.controls.projectId.value"
             [disabled]="taskForm.disabled || submitting()"
             emptyOptionLabel="Inbox"

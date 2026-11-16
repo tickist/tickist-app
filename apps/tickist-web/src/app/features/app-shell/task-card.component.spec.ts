@@ -8,6 +8,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Task, TaskDataService, TaskStep } from '../../data/task-data.service';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { TaskCardComponent } from './task-card.component';
@@ -793,3 +794,43 @@ function createProject(overrides: Partial<Project> = {}): Project {
     ...overrides,
   };
 }
+
+describe('TaskCardComponent move to project', () => {
+  it('offers the current workspace projects and the task project', async () => {
+    await TestBed.configureTestingModule({
+      imports: [TaskCardComponent],
+      providers: [
+        { provide: TaskDataService, useValue: { updateTask: vi.fn() } },
+        { provide: TagDataService, useValue: { list: () => [] } },
+        {
+          provide: ProjectDataService,
+          useValue: {
+            list: () => [
+              createProject({ id: 'work', workspaceId: 'work' }),
+              createProject({ id: 'private', workspaceId: 'private' }),
+              createProject({ id: 'private-2', workspaceId: 'private' }),
+            ],
+          },
+        },
+        {
+          provide: WorkspaceDataService,
+          useValue: {
+            includesProject: (project: Project) =>
+              project.workspaceId === 'work',
+          },
+        },
+        { provide: ComposerModalService, useValue: { openTaskModal: vi.fn() } },
+        { provide: ToastService, useValue: { success: vi.fn() } },
+      ],
+    }).compileComponents();
+
+    const card = TestBed.createComponent(TaskCardComponent).componentInstance;
+
+    card.task = createTask({ projectId: 'private' });
+
+    expect(card.pickerProjects().map((project) => project.id)).toEqual([
+      'work',
+      'private',
+    ]);
+  });
+});

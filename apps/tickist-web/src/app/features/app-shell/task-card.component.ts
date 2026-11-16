@@ -22,6 +22,7 @@ import {
   TaskUpdateInput,
 } from '../../data/task-data.service';
 import { Project, ProjectDataService } from '../../data/project-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
@@ -89,6 +90,7 @@ export class TaskCardComponent implements OnChanges {
   private readonly taskStatus = inject(TaskStatusService);
   private readonly router = inject(Router);
   private readonly session = inject(SupabaseSessionService);
+  private readonly workspaces = inject(WorkspaceDataService);
   readonly timer = inject(TimeTrackingService);
 
   @ViewChild('tagMenuTrigger')
@@ -106,6 +108,17 @@ export class TaskCardComponent implements OnChanges {
     return map;
   });
   readonly projects = computed(() => this.projectsService.list());
+
+  /** Move targets: the current workspace's projects plus the task's own. */
+  pickerProjects(): Project[] {
+    const all = this.projects();
+
+    return all.filter(
+      (project) =>
+        project.id === this.task.projectId ||
+        this.workspaces.includesProject(project, all)
+    );
+  }
   readonly descriptionOpen = signal(false);
   readonly tagsOpen = signal(false);
   readonly repeatOpen = signal(false);

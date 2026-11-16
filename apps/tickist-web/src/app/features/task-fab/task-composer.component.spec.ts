@@ -5,6 +5,7 @@ import { Task, TaskDataService } from '../../data/task-data.service';
 import { TaskReminderDataService } from '../../data/task-reminder-data.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerComponent } from './task-composer.component';
 
@@ -738,3 +739,92 @@ function futureDateInput(days: number): string {
 
   return `${year}-${month}-${day}`;
 }
+
+describe('TaskComposerComponent workspace projects', () => {
+  const project = (
+    id: string,
+    workspaceId: string | null,
+    isInbox = false
+  ) => ({
+    id,
+    ownerId: 'owner-1',
+    name: id,
+    description: '',
+    color: '#394264',
+    icon: 'folder',
+    isActive: true,
+    isInbox,
+    projectType: 'active',
+    ancestorId: null,
+    workspaceId,
+    taskView: 'extended',
+    shareWithIds: [],
+    members: [],
+  });
+
+  let component: TaskComposerComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TaskComposerComponent],
+      providers: [
+        {
+          provide: TaskDataService,
+          useValue: { list: () => [], refresh: vi.fn(async () => undefined) },
+        },
+        {
+          provide: ProjectDataService,
+          useValue: {
+            list: () => [
+              project('inbox', null, true),
+              project('work-project', 'work'),
+              project('private-project', 'private'),
+            ],
+          },
+        },
+        {
+          provide: WorkspaceDataService,
+          useValue: {
+            includesProject: (item: {
+              isInbox: boolean;
+              workspaceId: string;
+            }) => item.isInbox || item.workspaceId === 'work',
+          },
+        },
+        { provide: TagDataService, useValue: { list: () => [] } },
+        {
+          provide: SupabaseSessionService,
+          useValue: { user: () => ({ id: 'owner-1', user_metadata: {} }) },
+        },
+        {
+          provide: TaskReminderDataService,
+          useValue: { listForTask: vi.fn(async () => []) },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(TaskComposerComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('offers only projects from the current workspace', () => {
+    expect(component.pickerProjects().map((item) => item.id)).toEqual([
+      'inbox',
+      'work-project',
+    ]);
+  });
+
+  it('keeps the current project of an edited task from another workspace', () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ projectId: 'private-project' }),
+    };
+
+    expect(component.pickerProjects().map((item) => item.id)).toEqual([
+      'inbox',
+      'work-project',
+      'private-project',
+    ]);
+  });
+});

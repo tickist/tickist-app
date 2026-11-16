@@ -10,6 +10,7 @@ import {
   Input,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -102,8 +103,19 @@ export class ProjectComposerComponent {
       ? collectDescendantIds(projectTree, editingProjectId)
       : new Set<string>();
 
-    return this.projectOptions().filter((project) => {
+    const all = this.projectOptions();
+    const selectedAncestorId = this.selectedAncestorId();
+
+    return all.filter((project) => {
       if (project.isInbox || project.ownerId !== this.user()?.id) {
+        return false;
+      }
+
+      // Only parents from the current workspace, but keep the chosen one.
+      if (
+        project.id !== selectedAncestorId &&
+        !this.workspaces.includesProject(project, all)
+      ) {
         return false;
       }
 
@@ -187,6 +199,11 @@ export class ProjectComposerComponent {
     taskView: [this.defaultFormState.taskView],
     dialogTime: [this.defaultFormState.dialogTime],
   });
+
+  private readonly selectedAncestorId = toSignal(
+    this.form.controls.ancestorId.valueChanges,
+    { initialValue: this.form.controls.ancestorId.value }
+  );
 
   constructor() {
     effect(() => {
