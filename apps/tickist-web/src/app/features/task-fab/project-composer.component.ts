@@ -404,7 +404,7 @@ export class ProjectComposerComponent {
             this.form.value.defaultDueDate
           ),
           defaultTypeFinishDate:
-            this.form.value.defaultDueMode === 'by' ? 0 : 1,
+            this.form.value.defaultDueMode === 'on' ? 0 : 1,
           taskView: this.form.value.taskView ?? 'extended',
           dialogTimeWhenTaskFinished: this.form.value.dialogTime ?? false,
         });
@@ -427,7 +427,7 @@ export class ProjectComposerComponent {
             this.form.value.defaultDueDate
           ),
           defaultTypeFinishDate:
-            this.form.value.defaultDueMode === 'by' ? 0 : 1,
+            this.form.value.defaultDueMode === 'on' ? 0 : 1,
           taskView: this.form.value.taskView ?? 'extended',
           dialogTimeWhenTaskFinished: this.form.value.dialogTime ?? false,
           shareInvites: this.invites(),
@@ -494,7 +494,8 @@ export class ProjectComposerComponent {
         color: project.color ?? '#1D4ED8',
         icon: resolveProjectIconKey(project.icon),
         defaultPriority: project.defaultPriority ?? 'B',
-        defaultDueMode: project.defaultTypeFinishDate === 0 ? 'by' : 'on',
+        // Same mapping as the task editor: Scheduled (on) = 0, Deadline (by) = 1.
+        defaultDueMode: project.defaultTypeFinishDate === 0 ? 'on' : 'by',
         defaultDueDate: '',
         taskView: project.taskView ?? 'extended',
         dialogTime: project.dialogTimeWhenTaskFinished ?? false,

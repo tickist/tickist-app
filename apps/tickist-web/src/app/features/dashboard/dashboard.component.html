@@ -9,6 +9,8 @@
     <app-task-list
       [tasks]="sortedTodayTasks()"
       [projectResolver]="projectForTaskList"
+      [reorderable]="true"
+      (reordered)="reorderToday($event)"
       emptyText="No tasks scheduled for today."
     ></app-task-list>
   </article>

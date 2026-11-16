@@ -32,6 +32,19 @@ import {
 } from './project-task-scope';
 import { TaskStatusService } from '../../data/task-status.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
+import { TimeTrackingService } from '../../data/time-tracking.service';
+import { DayPlanService } from '../../data/day-plan.service';
+import { applyDayOrder } from '../../core/time/day-order';
+import {
+  compareDeadlines,
+  compareScheduled,
+  deadlineHint,
+  deadlinesForDay,
+  scheduledForDay,
+  taskDayKey,
+} from '../../core/time/day-plan';
+import { zonedDateKey } from '../../core/time/zoned-time';
+import { type TaskReorder } from './task-list.component';
 import {
   DEFAULT_PROJECT_SORT,
   type ProjectSortOption,
@@ -61,6 +74,8 @@ export class AppShellComponent {
   private readonly composer = inject(ComposerModalService);
   private readonly taskStatus = inject(TaskStatusService);
   private readonly workspaces = inject(WorkspaceDataService);
+  private readonly timeTracking = inject(TimeTrackingService);
+  private readonly dayPlan = inject(DayPlanService);
 
   readonly user = computed(() => this.session.user());
   readonly taskList = computed(() => this.tasksService.list());
@@ -161,51 +176,94 @@ export class AppShellComponent {
       { spent: 0, estimate: 0 }
     )
   );
-  readonly filteredTasks = computed(() => {
-    const tasks = this.projectScopedTasks();
+  /** Project scope, search and the done/not-done filter, without dates. */
+  private readonly searchedTasks = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
-    const dueFilter = this.dueDateFilter();
 
-    const filtered = tasks.filter((task) => {
+    return this.projectScopedTasks().filter((task) => {
       const matchesSearch = normalizedSearch
         ? task.name.toLowerCase().includes(normalizedSearch) ||
           (task.description ?? '').toLowerCase().includes(normalizedSearch)
         : true;
 
-      const matchesFilter = this.taskStatus.matchesFilter(
-        task,
-        this.filterOption()
+      return (
+        matchesSearch &&
+        this.taskStatus.matchesFilter(task, this.filterOption())
       );
+    });
+  });
+  readonly filteredTasks = computed(() => {
+    const dueFilter = this.dueDateFilter();
+    const timezone = this.timeTracking.timezone();
 
-      const matchesDueDate = (() => {
-        if (!dueFilter) {
-          return true;
-        }
+    // Day and month filters compare calendar days in the account timezone.
+    const filtered = this.searchedTasks().filter((task) => {
+      if (!dueFilter) return true;
 
-        if (!task.finishDate) {
-          return false;
-        }
+      const dayKey = taskDayKey(task, timezone);
 
-        const finishDate = new Date(task.finishDate);
+      if (!dayKey) return false;
 
-        if (Number.isNaN(finishDate.getTime())) {
-          return false;
-        }
-
-        finishDate.setHours(0, 0, 0, 0);
-
-        if (dueFilter.mode === 'day') {
-          return this.dateKey(finishDate) === dueFilter.dateKey;
-        }
-
-        return this.monthKey(finishDate) === dueFilter.monthKey;
-      })();
-
-      return matchesSearch && matchesFilter && matchesDueDate;
+      return dueFilter.mode === 'day'
+        ? dayKey === dueFilter.dateKey
+        : dayKey.startsWith(`${dueFilter.monthKey}-`);
     });
 
     return this.sortTasks(filtered);
   });
+  /** Selected day (YYYY-MM-DD) when the Weekdays day view is open. */
+  readonly selectedDayKey = computed(() => {
+    const filter = this.dueDateFilter();
+
+    return filter?.mode === 'day' ? filter.dateKey : null;
+  });
+  /** Tasks scheduled on the selected day, in the day plan order. */
+  readonly dayScheduledTasks = computed(() => {
+    const dayKey = this.selectedDayKey();
+
+    if (!dayKey) return [];
+
+    return applyDayOrder(
+      scheduledForDay(
+        this.searchedTasks(),
+        dayKey,
+        this.timeTracking.timezone()
+      ),
+      this.dayPlan.orderFor(dayKey),
+      compareScheduled
+    );
+  });
+  /** Deadlines on the selected day or later, from today on. */
+  readonly dayDeadlineTasks = computed(() => {
+    const dayKey = this.selectedDayKey();
+
+    if (!dayKey) return [];
+
+    const timezone = this.timeTracking.timezone();
+
+    return applyDayOrder(
+      deadlinesForDay(
+        this.searchedTasks(),
+        dayKey,
+        zonedDateKey(new Date(), timezone),
+        timezone
+      ),
+      this.dayPlan.orderFor(dayKey),
+      compareDeadlines
+    );
+  });
+  readonly dayHasCustomOrder = computed(() => {
+    const dayKey = this.selectedDayKey();
+
+    return dayKey ? this.dayPlan.hasOrder(dayKey) : false;
+  });
+  readonly dayDeadlineHint = (task: Task): string | null => {
+    const dayKey = this.selectedDayKey();
+
+    return dayKey
+      ? deadlineHint(task, dayKey, this.timeTracking.timezone())
+      : null;
+  };
   readonly filteredStats = computed(() => {
     const tasks = this.filteredTasks();
     const now = new Date();
@@ -470,19 +528,17 @@ export class AppShellComponent {
     });
   }
 
-  private dateKey(date: Date): string {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const day = `${date.getDate()}`.padStart(2, '0');
+  reorderDay(reorder: TaskReorder): void {
+    const dayKey = this.selectedDayKey();
 
-    return `${year}-${month}-${day}`;
+    if (dayKey)
+      this.dayPlan.move(dayKey, reorder.ids, reorder.from, reorder.to);
   }
 
-  private monthKey(date: Date): string {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  resetDayOrder(): void {
+    const dayKey = this.selectedDayKey();
 
-    return `${year}-${month}`;
+    if (dayKey) this.dayPlan.reset(dayKey);
   }
 
   async addTaskToProject(): Promise<void> {

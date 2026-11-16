@@ -19,6 +19,9 @@ import { AppViewStateService } from './app-view-state.service';
 import { TaskDataService } from '../../data/task-data.service';
 import { TaskStatusService } from '../../data/task-status.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
+import { TimeTrackingService } from '../../data/time-tracking.service';
+import { taskDayKey } from '../../core/time/day-plan';
+import { shiftDateKey, zonedDateKey } from '../../core/time/zoned-time';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
@@ -72,6 +75,7 @@ export class AppSidebarComponent {
   private readonly session = inject(SupabaseSessionService);
   private readonly taskStatus = inject(TaskStatusService);
   readonly workspaces = inject(WorkspaceDataService);
+  private readonly timeTracking = inject(TimeTrackingService);
 
   readonly projectList = computed(() =>
     this.projectsService
@@ -178,43 +182,32 @@ export class AppSidebarComponent {
       return [];
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const days = Array.from({ length: 7 }, (_value, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + index);
-
-      return date;
-    });
-
+    // Days and counts use the account timezone, like the day view and the
+    // dashboard. A count is the tasks dated that day (Scheduled or Deadline).
+    const timezone = this.timeTracking.timezone();
+    const todayKey = zonedDateKey(new Date(), timezone);
     const countByDate = new Map<string, number>();
 
     for (const task of this.taskList()) {
-      if (task.isDone || !task.finishDate) {
-        continue;
-      }
+      if (task.isDone) continue;
 
-      const finishDate = new Date(task.finishDate);
+      const key = taskDayKey(task, timezone);
 
-      if (Number.isNaN(finishDate.getTime())) {
-        continue;
-      }
-
-      finishDate.setHours(0, 0, 0, 0);
-      const key = this.dateKey(finishDate);
-      countByDate.set(key, (countByDate.get(key) ?? 0) + 1);
+      if (key) countByDate.set(key, (countByDate.get(key) ?? 0) + 1);
     }
 
-    return days.map((date, index) => {
-      const key = this.dateKey(date);
+    return Array.from({ length: 7 }, (_value, index) => {
+      const key = shiftDateKey(todayKey, index);
 
       const label =
         index === 0
           ? 'Today'
           : index === 1
           ? 'Tomorrow'
-          : date.toLocaleDateString('en-US', { weekday: 'long' });
+          : new Intl.DateTimeFormat('en-US', {
+              weekday: 'long',
+              timeZone: 'UTC',
+            }).format(new Date(`${key}T00:00:00Z`));
 
       return {
         label,
@@ -634,14 +627,6 @@ export class AppSidebarComponent {
     sortNodes(roots);
 
     return roots;
-  }
-
-  private dateKey(date: Date): string {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const day = `${date.getDate()}`.padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
   }
 
   private monthKey(date: Date): string {

@@ -1,0 +1,111 @@
+// Which tasks belong to a calendar day in the Weekdays view and the dashboard.
+// A task date is either Scheduled (typeFinishDate 0: do it on that day) or a
+// Deadline (any other value, the default: finish it by that day).
+import { shiftDateKey, zonedDateKey } from './zoned-time';
+
+export interface DatedTask {
+  id: string;
+  finishDate?: string | null;
+  finishTime?: string | null;
+  typeFinishDate?: number | null;
+  priority?: string | null;
+}
+
+/** typeFinishDate of a Scheduled task; anything else is a Deadline. */
+export const SCHEDULED_TYPE_FINISH_DATE = 0;
+
+export function isScheduled(task: DatedTask): boolean {
+  return task.typeFinishDate === SCHEDULED_TYPE_FINISH_DATE;
+}
+
+/** Calendar day (YYYY-MM-DD) of the task's date in the account timezone. */
+export function taskDayKey(task: DatedTask, timezone: string): string | null {
+  if (!task.finishDate) return null;
+
+  const date = new Date(task.finishDate);
+
+  return Number.isNaN(date.getTime()) ? null : zonedDateKey(date, timezone);
+}
+
+/** Tasks scheduled on exactly this day. */
+export function scheduledForDay<T extends DatedTask>(
+  tasks: readonly T[],
+  dayKey: string,
+  timezone: string
+): T[] {
+  return tasks.filter(
+    (task) => isScheduled(task) && taskDayKey(task, timezone) === dayKey
+  );
+}
+
+/**
+ * Deadlines that still apply on this day: due on it or later. They show from
+ * today until their due day; overdue deadlines belong to the Overdue group.
+ */
+export function deadlinesForDay<T extends DatedTask>(
+  tasks: readonly T[],
+  dayKey: string,
+  todayKey: string,
+  timezone: string
+): T[] {
+  if (dayKey < todayKey) return [];
+
+  return tasks.filter((task) => {
+    if (isScheduled(task)) return false;
+
+    const dueKey = taskDayKey(task, timezone);
+
+    return dueKey !== null && dueKey >= dayKey;
+  });
+}
+
+const PRIORITY_RANK = new Map([
+  ['A', 3],
+  ['B', 2],
+  ['C', 1],
+]);
+
+function priorityRank(task: DatedTask): number {
+  return PRIORITY_RANK.get((task.priority ?? '').toUpperCase()) ?? 0;
+}
+
+/** Default order before a manual plan exists: time of day, then priority. */
+export function compareScheduled(a: DatedTask, b: DatedTask): number {
+  const byTime = (a.finishTime || '99:99').localeCompare(
+    b.finishTime || '99:99'
+  );
+
+  return byTime || priorityRank(b) - priorityRank(a);
+}
+
+/** Default order for deadlines: soonest due first, then priority. */
+export function compareDeadlines(a: DatedTask, b: DatedTask): number {
+  const byDue = (a.finishDate ?? '').localeCompare(b.finishDate ?? '');
+
+  return byDue || priorityRank(b) - priorityRank(a);
+}
+
+/** "due today", "due tomorrow" or "due Fri" for a deadline seen on a day. */
+export function deadlineHint(
+  task: DatedTask,
+  dayKey: string,
+  timezone: string
+): string | null {
+  const dueKey = taskDayKey(task, timezone);
+
+  if (!dueKey || isScheduled(task)) return null;
+
+  if (dueKey === dayKey) return 'due today';
+
+  if (dueKey === shiftDateKey(dayKey, 1)) return 'due tomorrow';
+
+  const due = new Date(`${dueKey}T00:00:00Z`);
+
+  // Within the coming week a weekday is clear; further out, show the date.
+  const options: Intl.DateTimeFormatOptions =
+    dueKey < shiftDateKey(dayKey, 7)
+      ? { weekday: 'short', timeZone: 'UTC' }
+      : { day: 'numeric', month: 'short', timeZone: 'UTC' };
+
+  return `due ${new Intl.DateTimeFormat('en-GB', options).format(due)}`;
+}

@@ -106,15 +106,19 @@
 
       <section class="sheet-section sheet-section--soft">
         <div class="sheet-field">
-          <span class="sheet-field__label">Complete</span>
-          <div class="sheet-choice-row">
-            <label class="sheet-choice">
+          <span class="sheet-field__label" id="task-date-type-label">Date</span>
+          <div
+            class="sheet-choice-row"
+            role="radiogroup"
+            aria-labelledby="task-date-type-label"
+          >
+            <label class="sheet-choice" title="Finish by this day">
               <input type="radio" value="by" formControlName="completeMode" />
-              <span>by</span>
+              <span>Deadline</span>
             </label>
-            <label class="sheet-choice">
+            <label class="sheet-choice" title="Do it on this day">
               <input type="radio" value="on" formControlName="completeMode" />
-              <span>on</span>
+              <span>Scheduled</span>
             </label>
           </div>
           <div class="sheet-grid-two">
@@ -122,13 +126,13 @@
               type="date"
               class="sheet-input"
               formControlName="finishDate"
-              aria-label="Complete date"
+              aria-label="Task date"
             />
             <input
               type="time"
               class="sheet-input"
               formControlName="finishTime"
-              aria-label="Complete time"
+              aria-label="Task time"
             />
           </div>
         </div>

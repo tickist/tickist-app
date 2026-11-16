@@ -1,14 +1,49 @@
 @if (tasks().length) {
-<div class="task-list">
-  @for (task of tasks(); track trackTask($index, task)) {
-  <app-task-card
-    [class.task-list__item--deferred]="$index >= deferRenderingFrom"
-    [task]="task"
-    [project]="projectFor(task)"
-    [viewMode]="viewMode()"
-    [menuOpen]="openMenuTaskId() === task.id"
-    (menuOpenChange)="setTaskMenuOpen(task.id, $event)"
-  ></app-task-card>
+<div
+  class="task-list"
+  cdkDropList
+  cdkDropListLockAxis="y"
+  [cdkDropListDisabled]="!reorderable()"
+  [cdkDropListData]="tasks()"
+  [class.task-list--reorderable]="reorderable()"
+  (cdkDropListDropped)="onDrop($event)"
+>
+  @for (task of tasks(); track trackTask($index, task); let index = $index) {
+  <div
+    class="task-list__item"
+    cdkDrag
+    [cdkDragDisabled]="!reorderable()"
+    [class.task-list__item--deferred]="
+      !dragging() && index >= deferRenderingFrom
+    "
+    [class.task-list__item--grabbed]="grabbedId() === task.id"
+    (cdkDragStarted)="dragging.set(true)"
+    (cdkDragEnded)="dragging.set(false)"
+  >
+    @if (reorderable()) {
+    <button
+      type="button"
+      class="task-list__handle"
+      cdkDragHandle
+      [attr.data-reorder-handle]="task.id"
+      [attr.aria-label]="'Reorder ' + task.name"
+      [attr.aria-pressed]="grabbedId() === task.id"
+      title="Drag to reorder, or press Space and use the arrow keys"
+      (keydown)="onHandleKeydown($event, task, index)"
+      (blur)="onHandleBlur(task, index)"
+    >
+      <span aria-hidden="true">⠿</span>
+    </button>
+    }
+    <app-task-card
+      [task]="task"
+      [project]="projectFor(task)"
+      [viewMode]="viewMode()"
+      [dueHint]="hintFor(task)"
+      [menuOpen]="openMenuTaskId() === task.id"
+      (menuOpenChange)="setTaskMenuOpen(task.id, $event)"
+    ></app-task-card>
+  </div>
   }
 </div>
 } @else {

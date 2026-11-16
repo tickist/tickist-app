@@ -533,6 +533,115 @@ test.describe('dashboard due and done groups', () => {
   });
 });
 
+test.describe('weekday day plan', () => {
+  // Day keys are computed in the account timezone (Europe/Warsaw for the E2E
+  // user), so the browser uses it too and the runner's clock does not matter.
+  test.use({ timezoneId: 'Europe/Warsaw' });
+
+  function warsawDay(offset: number): string {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Warsaw',
+    }).format(new Date(Date.now() + offset * 86_400_000));
+  }
+
+  async function createDatedTask(
+    page: Page,
+    name: string,
+    type: 'Scheduled' | 'Deadline',
+    day: string
+  ): Promise<void> {
+    await openTaskComposer(page);
+    await page.getByLabel('Task name').fill(name);
+    await page.getByRole('radio', { name: type }).check();
+    await page.getByLabel('Task date').fill(day);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.locator('app-task-composer')).toHaveCount(0);
+  }
+
+  test('splits a day into scheduled tasks and upcoming deadlines and keeps a manual order', async ({
+    page,
+  }, testInfo) => {
+    const suffix = uniqueSuffix(testInfo);
+    const first = `Plan first ${suffix}`;
+    const second = `Plan second ${suffix}`;
+    const deadline = `Plan deadline ${suffix}`;
+
+    await ensureAuthenticated(page);
+    await createDatedTask(page, first, 'Scheduled', warsawDay(0));
+    await createDatedTask(page, second, 'Scheduled', warsawDay(0));
+    await createDatedTask(page, deadline, 'Deadline', warsawDay(2));
+
+    const scheduled = page.getByTestId('day-scheduled');
+    const deadlines = page.getByTestId('day-deadlines');
+
+    const names = (section: Locator) =>
+      section.locator('article.task-card .linkified').allTextContents();
+
+    const openDay = async (offset: number) => {
+      await page.goto(`/app/tasks?due=${warsawDay(offset)}`);
+      await page.getByPlaceholder(/Search tasks/).fill(suffix);
+      await expect(page.getByTestId('day-view-title')).toBeVisible();
+    };
+
+    await openDay(0);
+    await expect.poll(() => names(scheduled)).toHaveLength(2);
+    await expect(deadlines.getByText(deadline)).toBeVisible();
+    await expect(scheduled.getByText(deadline)).toHaveCount(0);
+
+    await openDay(1);
+    await expect(deadlines.getByText(deadline)).toBeVisible();
+    await expect(deadlines.getByTestId('task-due-hint')).toHaveText(
+      'due tomorrow'
+    );
+
+    await openDay(2);
+    await expect(deadlines.getByTestId('task-due-hint')).toHaveText(
+      'due today'
+    );
+
+    await openDay(3);
+    await expect(deadlines.getByText(deadline)).toHaveCount(0);
+
+    // Reorder with the keyboard: grab the first scheduled task, move it down.
+    await openDay(0);
+    await expect.poll(() => names(scheduled)).toHaveLength(2);
+
+    const before = await names(scheduled);
+
+    const handle = scheduled.getByRole('button', {
+      name: `Reorder ${before[0]}`,
+    });
+
+    await handle.focus();
+    await page.keyboard.press('Space');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Space');
+
+    const reordered = [before[1], before[0]];
+
+    await expect.poll(() => names(scheduled)).toEqual(reordered);
+    await expect(page.getByTestId('day-order-reset')).toBeVisible();
+
+    await page.reload();
+    await page.getByPlaceholder(/Search tasks/).fill(suffix);
+    await expect.poll(() => names(scheduled)).toEqual(reordered);
+
+    // The dashboard Today group follows the same day plan.
+    await page.goto('/app');
+    await page.getByPlaceholder(/Search tasks/).fill(suffix);
+
+    const today = page.locator('app-dashboard article').filter({
+      has: page.getByRole('heading', { name: 'Today', exact: true }),
+    });
+
+    await expect
+      .poll(() =>
+        today.locator('article.task-card .linkified').allTextContents()
+      )
+      .toEqual(reordered);
+  });
+});
+
 test('suspends a task with a resume time and separates it from active work', async ({
   page,
 }, testInfo) => {

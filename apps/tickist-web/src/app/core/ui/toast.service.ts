@@ -121,6 +121,11 @@ export class ToastService {
     return setTimeout(() => this.dismiss(id), duration);
   }
 
+  /** Announces a status to screen readers without showing a toast. */
+  announceStatus(text: string): void {
+    this.announce(text, false);
+  }
+
   // A live region added together with its text is often not announced, so
   // use ariaNotify() or a live region that is already in the page.
   private announce(text: string, urgent: boolean): void {

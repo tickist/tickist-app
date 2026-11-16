@@ -14,6 +14,10 @@ import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { TaskStatusService } from '../../data/task-status.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { TimeTrackingService } from '../../data/time-tracking.service';
+import { DayPlanService } from '../../data/day-plan.service';
+import { applyDayOrder } from '../../core/time/day-order';
+import { compareScheduled, isScheduled } from '../../core/time/day-plan';
+import { type TaskReorder } from '../app-shell/task-list.component';
 import {
   type DueDayStatus,
   dueDayStatus,
@@ -36,6 +40,7 @@ export class DashboardComponent {
   private readonly taskStatus = inject(TaskStatusService);
   private readonly workspaces = inject(WorkspaceDataService);
   private readonly timeTracking = inject(TimeTrackingService);
+  private readonly dayPlan = inject(DayPlanService);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
@@ -143,13 +148,15 @@ export class DashboardComponent {
       .filter((project) => !nextActionProjects.has(project.id))
       .sort((a, b) => a.name.localeCompare(b.name));
   });
+  /** Today in the day plan order shared with Weekdays → Today. */
   readonly sortedTodayTasks = computed(() =>
-    [...this.todayTasks()].sort((a, b) => {
-      const timeA = a.finishTime ?? '';
-      const timeB = b.finishTime ?? '';
-
-      return timeA.localeCompare(timeB);
-    })
+    applyDayOrder(
+      this.todayTasks(),
+      this.dayPlan.orderFor(this.dayPlan.todayKey()),
+      (a, b) =>
+        Number(isScheduled(b)) - Number(isScheduled(a)) ||
+        compareScheduled(a, b)
+    )
   );
   readonly sortedOverdueTasks = computed(() =>
     [...this.overdueTasks()].sort((a, b) => {
@@ -171,6 +178,15 @@ export class DashboardComponent {
         !task.isDone &&
         !!task.finishDate &&
         dueDayStatus(task.finishDate, now, timezone) === status
+    );
+  }
+
+  reorderToday(reorder: TaskReorder): void {
+    this.dayPlan.move(
+      this.dayPlan.todayKey(),
+      reorder.ids,
+      reorder.from,
+      reorder.to
     );
   }
 

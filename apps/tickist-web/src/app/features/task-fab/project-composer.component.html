@@ -122,22 +122,28 @@
         </div>
 
         <div class="sheet-field">
-          <span class="sheet-field__label">Default due date</span>
-          <div class="sheet-choice-row">
-            <label class="sheet-choice">
+          <span class="sheet-field__label" id="project-date-type-label"
+            >Default task date</span
+          >
+          <div
+            class="sheet-choice-row"
+            role="radiogroup"
+            aria-labelledby="project-date-type-label"
+          >
+            <label class="sheet-choice" title="Finish by this day">
               <input type="radio" value="by" formControlName="defaultDueMode" />
-              <span>by</span>
+              <span>Deadline</span>
             </label>
-            <label class="sheet-choice">
+            <label class="sheet-choice" title="Do it on this day">
               <input type="radio" value="on" formControlName="defaultDueMode" />
-              <span>on</span>
+              <span>Scheduled</span>
             </label>
           </div>
           <input
             type="date"
             class="sheet-input"
             formControlName="defaultDueDate"
-            aria-label="Default due date"
+            aria-label="Default task date"
           />
         </div>
 

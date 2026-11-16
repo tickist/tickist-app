@@ -68,6 +68,24 @@ describe('ProjectComposerComponent sheet header', () => {
     expect(fixtureHost(fixture).textContent).toContain('Trip planning');
   });
 
+  it('maps the default task date like the task editor (Scheduled = 0, Deadline = 1)', () => {
+    component.preset = {
+      mode: 'edit',
+      project: createProject({ defaultTypeFinishDate: 0 }),
+    };
+    fixture.detectChanges();
+
+    expect(component.form.controls.defaultDueMode.value).toBe('on');
+
+    component.preset = {
+      mode: 'edit',
+      project: createProject({ defaultTypeFinishDate: 1 }),
+    };
+    fixture.detectChanges();
+
+    expect(component.form.controls.defaultDueMode.value).toBe('by');
+  });
+
   it('shows a neutral result that does not reveal whether an account exists', async () => {
     component.preset = {
       mode: 'edit',
