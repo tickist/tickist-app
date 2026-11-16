@@ -460,6 +460,12 @@ test('shows completion date and sorts project tasks', async ({
     .poll(() => visibleTaskNames(page))
     .toEqual([secondTask, firstTask]);
 
+  // The chosen sort is remembered for this project after a reload.
+  await page.reload();
+  await expect
+    .poll(() => visibleTaskNames(page))
+    .toEqual([secondTask, firstTask]);
+
   const firstCard = taskCardByName(page, firstTask);
   await firstCard.locator('.task-card__check input[type="checkbox"]').click();
   await setProjectFilter(page, 'all tasks');

@@ -50,6 +50,8 @@ Project task lists support sorting by:
 - modification date, ascending or descending;
 - name, A–Z or Z–A.
 
+The chosen sort is remembered for each project in the browser (`tickist.project-sort.v1` in local storage), so it survives a reload; other devices and browsers keep their own choice, and a project without one uses priority, descending.
+
 Tag views support tag selection, OR/AND matching, untagged-task mode, completed-task inclusion, search, pagination, and the same core ordering choices.
 
 ### Repeating tasks and reminders

@@ -32,6 +32,13 @@ import {
 } from './project-task-scope';
 import { TaskStatusService } from '../../data/task-status.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
+import {
+  DEFAULT_PROJECT_SORT,
+  type ProjectSortOption,
+  type ProjectSorts,
+  readProjectSorts,
+  writeProjectSorts,
+} from './project-sort';
 
 @Component({
   selector: 'app-shell',
@@ -224,18 +231,15 @@ export class AppShellComponent {
     projectId: [''],
     isDone: [false],
   });
-  readonly sortOption = signal<
-    | 'priority-desc'
-    | 'priority-asc'
-    | 'due-asc'
-    | 'due-desc'
-    | 'created-asc'
-    | 'created-desc'
-    | 'modified-asc'
-    | 'modified-desc'
-    | 'alpha-asc'
-    | 'alpha-desc'
-  >('priority-desc');
+  /** Sort chosen per project, remembered in this browser. */
+  private readonly projectSorts = signal<ProjectSorts>(
+    readProjectSorts(this.browserStorage())
+  );
+  readonly sortOption = computed<ProjectSortOption>(
+    () =>
+      this.projectSorts()[this.sortKey(this.selectedProjectId())] ??
+      DEFAULT_PROJECT_SORT
+  );
   readonly filterOption = signal<'all' | 'done' | 'not-done' | 'suspended'>(
     'not-done'
   );
@@ -367,20 +371,25 @@ export class AppShellComponent {
     }
   }
 
-  setSort(
-    option:
-      | 'priority-desc'
-      | 'priority-asc'
-      | 'due-asc'
-      | 'due-desc'
-      | 'created-asc'
-      | 'created-desc'
-      | 'modified-asc'
-      | 'modified-desc'
-      | 'alpha-asc'
-      | 'alpha-desc'
-  ) {
-    this.sortOption.set(option);
+  setSort(option: ProjectSortOption) {
+    const key = this.sortKey(this.selectedProjectId());
+    const next = { ...this.projectSorts(), [key]: option };
+
+    this.projectSorts.set(next);
+    writeProjectSorts(this.browserStorage(), next);
+  }
+
+  /** Inbox and "no project" share one key; projects use their IDs. */
+  private sortKey(projectId: string | null): string {
+    return projectId ?? 'inbox';
+  }
+
+  private browserStorage(): Storage | undefined {
+    try {
+      return typeof localStorage === 'undefined' ? undefined : localStorage;
+    } catch {
+      return undefined;
+    }
   }
 
   setFilter(option: 'all' | 'done' | 'not-done' | 'suspended') {

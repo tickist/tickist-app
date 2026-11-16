@@ -10,18 +10,7 @@ import {
 
 import { Project } from '../../data/project-data.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
-
-type SortOption =
-  | 'priority-desc'
-  | 'priority-asc'
-  | 'due-asc'
-  | 'due-desc'
-  | 'created-asc'
-  | 'created-desc'
-  | 'modified-asc'
-  | 'modified-desc'
-  | 'alpha-asc'
-  | 'alpha-desc';
+import { type ProjectSortOption as SortOption } from './project-sort';
 
 type FilterOption = 'all' | 'done' | 'not-done' | 'suspended';
 
