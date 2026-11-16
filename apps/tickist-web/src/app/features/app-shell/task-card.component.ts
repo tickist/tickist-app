@@ -1,7 +1,10 @@
+import { formatMinutesShort } from '../../core/time/duration';
 import {
   Component,
   ElementRef,
+  Injector,
   Input,
+  afterNextRender,
   OnChanges,
   QueryList,
   SimpleChanges,
@@ -21,6 +24,7 @@ import {
   TaskUpdateInput,
 } from '../../data/task-data.service';
 import { Project, ProjectDataService } from '../../data/project-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
@@ -34,19 +38,18 @@ import { TaskStatusService } from '../../data/task-status.service';
 import { TimeTrackingService } from '../../data/time-tracking.service';
 import { Router } from '@angular/router';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
+import { AnchoredPopoverDirective } from '../../core/ui/anchored-popover.directive';
+import {
+  repeatFieldsForMode,
+  repeatStateFromTask,
+  type CustomRepeatUnit,
+  type RepeatMode,
+  type RepeatState,
+} from '../../core/time/repeat-mode';
 
 type TaskViewMode = 'extended' | 'simple';
 
-type RepeatMode =
-  | 'never'
-  | 'daily'
-  | 'daily_work'
-  | 'weekly'
-  | 'monthly'
-  | 'yearly'
-  | 'custom';
-
-type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+type RepeatUnit = CustomRepeatUnit;
 
 type RepeatFromMode = 'completion_date' | 'due_date';
 
@@ -55,14 +58,15 @@ let nextTaskCardId = 0;
 @Component({
   selector: 'app-task-card',
   standalone: true,
-  imports: [LinkifyPipe, ProjectPickerComponent, ThemedSelectComponent],
+  imports: [
+    LinkifyPipe,
+    ProjectPickerComponent,
+    ThemedSelectComponent,
+    AnchoredPopoverDirective,
+  ],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '(document:mousedown)': 'handleDocumentMouseDown($event)',
-    '(document:keydown.escape)': 'handleEscapeKey()',
-  },
 })
 export class TaskCardComponent implements OnChanges {
   readonly repeatUnitOptions = [
@@ -74,8 +78,9 @@ export class TaskCardComponent implements OnChanges {
   @Input({ required: true }) task!: Task;
   @Input() project: Project | null = null;
   @Input() viewMode: TaskViewMode = 'extended';
+  /** Deadline context in a day view, such as "due Fri" or "due today". */
+  @Input() dueHint: string | null = null;
 
-  private readonly host = inject(ElementRef<HTMLElement>);
   private readonly instanceId = nextTaskCardId++;
   private readonly tasks = inject(TaskDataService);
   private readonly tagsService = inject(TagDataService);
@@ -85,6 +90,9 @@ export class TaskCardComponent implements OnChanges {
   private readonly taskStatus = inject(TaskStatusService);
   private readonly router = inject(Router);
   private readonly session = inject(SupabaseSessionService);
+  private readonly workspaces = inject(WorkspaceDataService);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
   readonly timer = inject(TimeTrackingService);
 
   @ViewChild('tagMenuTrigger')
@@ -102,6 +110,17 @@ export class TaskCardComponent implements OnChanges {
     return map;
   });
   readonly projects = computed(() => this.projectsService.list());
+
+  /** Move targets: the current workspace's projects plus the task's own. */
+  pickerProjects(): Project[] {
+    const all = this.projects();
+
+    return all.filter(
+      (project) =>
+        project.id === this.task.projectId ||
+        this.workspaces.includesProject(project, all)
+    );
+  }
   readonly descriptionOpen = signal(false);
   readonly tagsOpen = signal(false);
   readonly repeatOpen = signal(false);
@@ -114,6 +133,9 @@ export class TaskCardComponent implements OnChanges {
   readonly descriptionDraft = signal('');
   readonly tagSearch = signal('');
   readonly newStepDraft = signal('');
+  /** Step whose text is being edited in place, and its draft text. */
+  readonly editingStepId = signal<string | null>(null);
+  readonly stepDraft = signal('');
   readonly customRepeatEvery = signal(1);
   readonly customRepeatUnit = signal<RepeatUnit>('day');
   readonly repeatDraftMode = signal<RepeatMode | null>(null);
@@ -139,8 +161,10 @@ export class TaskCardComponent implements OnChanges {
       this.newStepDraft.set('');
       this.repeatDraftMode.set(null);
 
+      if (previous?.id !== current?.id) this.editingStepId.set(null);
+
       if (current) {
-        this.syncCustomRepeatDraft(current.repeatInterval);
+        this.syncCustomRepeatDraft(current);
       }
 
       if (previous?.id && current?.id && previous.id !== current.id) {
@@ -160,12 +184,12 @@ export class TaskCardComponent implements OnChanges {
     }
 
     return estimate > 0
-      ? `${this.formatDuration(spent)} / ${this.formatDuration(estimate)}`
-      : this.formatDuration(spent);
+      ? `${formatMinutesShort(spent)} / ${formatMinutesShort(estimate)}`
+      : formatMinutesShort(spent);
   }
 
   taskTimeTitle(): string {
-    const spent = this.formatDuration(this.task.spentMinutes ?? 0);
+    const spent = formatMinutesShort(this.task.spentMinutes ?? 0);
     const estimate = this.task.estimateMinutes ?? 0;
 
     if (estimate <= 0) {
@@ -174,7 +198,7 @@ export class TaskCardComponent implements OnChanges {
 
     const percent = this.progressPercentUncapped();
 
-    return `Time spent: ${spent} of ${this.formatDuration(
+    return `Time spent: ${spent} of ${formatMinutesShort(
       estimate
     )} estimated (${percent}%)`;
   }
@@ -230,6 +254,12 @@ export class TaskCardComponent implements OnChanges {
     const year = date.getFullYear();
 
     return `${day}-${month}-${year}`;
+  }
+
+  finishDateModeLabel(): string {
+    return this.task.typeFinishDate === 0
+      ? 'Scheduled: do it on this day'
+      : 'Deadline: finish by this day';
   }
 
   finishDateModeIcon(): string {
@@ -748,26 +778,6 @@ export class TaskCardComponent implements OnChanges {
     this.tagsOpen.set(next);
   }
 
-  handleDocumentMouseDown(event: MouseEvent): void {
-    if (!this.tagMenuOpen()) {
-      return;
-    }
-
-    const target = event.target;
-
-    if (!(target instanceof Node)) {
-      return;
-    }
-
-    if (!this.host.nativeElement.contains(target)) {
-      this.closeTagMenu();
-    }
-  }
-
-  handleEscapeKey(): void {
-    this.closeTagMenu(true);
-  }
-
   toggleRepeat(): void {
     const next = !this.repeatOpen();
     this.closeAllPanels();
@@ -775,7 +785,7 @@ export class TaskCardComponent implements OnChanges {
     this.repeatDraftMode.set(null);
 
     if (next) {
-      this.syncCustomRepeatDraft(this.task.repeatInterval);
+      this.syncCustomRepeatDraft(this.task);
     }
   }
 
@@ -787,10 +797,18 @@ export class TaskCardComponent implements OnChanges {
     }
 
     this.repeatDraftMode.set(null);
-    const interval = this.getRepeatInterval(mode);
-    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
+
+    const { repeatInterval, repeatUnit } = repeatFieldsForMode(
+      mode,
+      this.customRepeatEvery(),
+      this.customRepeatUnit()
+    );
+
+    const fromRepeating =
+      repeatInterval > 0 ? this.task.fromRepeating ?? 0 : null;
+
     await this.mutateTask(
-      { id: this.task.id, repeatInterval: interval, fromRepeating },
+      { id: this.task.id, repeatInterval, repeatUnit, fromRepeating },
       'Repeat cadence updated.',
       'Failed to update repeat.'
     );
@@ -843,15 +861,17 @@ export class TaskCardComponent implements OnChanges {
   }
 
   async applyCustomRepeat(): Promise<void> {
-    const interval = this.getRepeatInterval(
+    const { repeatInterval, repeatUnit } = repeatFieldsForMode(
       'custom',
       this.customRepeatEvery(),
       this.customRepeatUnit()
     );
 
-    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
+    const fromRepeating =
+      repeatInterval > 0 ? this.task.fromRepeating ?? 0 : null;
+
     await this.mutateTask(
-      { id: this.task.id, repeatInterval: interval, fromRepeating },
+      { id: this.task.id, repeatInterval, repeatUnit, fromRepeating },
       'Repeat cadence updated.',
       'Failed to update repeat.'
     );
@@ -908,6 +928,39 @@ export class TaskCardComponent implements OnChanges {
 
     [current[index], current[target]] = [current[target], current[index]];
     void this.persistSteps(current, 'Steps reordered.');
+  }
+
+  beginStepEdit(step: TaskStep): void {
+    this.stepDraft.set(step.content);
+    this.editingStepId.set(step.id);
+    afterNextRender(
+      () =>
+        this.host.nativeElement
+          .querySelector<HTMLInputElement>('[data-testid="step-edit-input"]')
+          ?.focus(),
+      { injector: this.injector }
+    );
+  }
+
+  cancelStepEdit(): void {
+    this.editingStepId.set(null);
+  }
+
+  /** Saves the edited text; an empty or unchanged value keeps the step. */
+  saveStepEdit(step: TaskStep): void {
+    if (this.editingStepId() !== step.id) return;
+
+    this.editingStepId.set(null);
+
+    const content = this.stepDraft().trim();
+
+    if (!content || content === step.content) return;
+
+    const next = this.task.steps.map((existing) =>
+      existing === step ? { ...existing, content } : existing
+    );
+
+    void this.persistSteps(next, 'Step updated.');
   }
 
   addStep(): void {
@@ -1006,18 +1059,6 @@ export class TaskCardComponent implements OnChanges {
     return Math.round(((this.task.spentMinutes ?? 0) / estimate) * 100);
   }
 
-  private formatDuration(minutes: number): string {
-    const rounded = Math.max(0, Math.round(minutes));
-    const hours = Math.floor(rounded / 60);
-    const rest = rounded % 60;
-
-    if (hours === 0) {
-      return `${rest}m`;
-    }
-
-    return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
-  }
-
   private formatReminderDate(value: string, timezone: string): string {
     const date = new Date(value);
 
@@ -1041,33 +1082,8 @@ export class TaskCardComponent implements OnChanges {
     }
   }
 
-  private getRepeatInterval(
-    mode: RepeatMode,
-    every = 1,
-    unit: RepeatUnit = 'day'
-  ): number {
-    switch (mode) {
-      case 'never':
-        return 0;
-      case 'daily':
-        return 1;
-      case 'daily_work':
-        return 1;
-      case 'weekly':
-        return 7;
-      case 'monthly':
-        return 30;
-      case 'yearly':
-        return 365;
-      case 'custom':
-        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
-      default:
-        return this.task.repeatInterval ?? 0;
-    }
-  }
-
   currentRepeatMode(): RepeatMode {
-    return this.deriveRepeatMode(this.task.repeatInterval).mode;
+    return this.repeatState().mode;
   }
 
   currentRepeatFromMode(): RepeatFromMode {
@@ -1078,63 +1094,12 @@ export class TaskCardComponent implements OnChanges {
     return !!this.task.finishDate;
   }
 
-  private deriveRepeatMode(interval: number | null | undefined): RepeatState {
-    if (!interval || interval <= 0) {
-      return { mode: 'never', every: 1, unit: 'day' };
-    }
-
-    switch (interval) {
-      case 1:
-        return { mode: 'daily', every: 1, unit: 'day' };
-      case 7:
-        return { mode: 'weekly', every: 1, unit: 'week' };
-      case 30:
-        return { mode: 'monthly', every: 1, unit: 'month' };
-      case 365:
-        return { mode: 'yearly', every: 1, unit: 'year' };
-    }
-
-    const unit = this.repeatUnitFromInterval(interval);
-
-    const every = Math.max(
-      1,
-      Math.round(interval / this.repeatUnitMultiplier(unit))
-    );
-
-    return { mode: 'custom', every, unit };
+  private repeatState(task: Task = this.task): RepeatState {
+    return repeatStateFromTask(task.repeatInterval, task.repeatUnit);
   }
 
-  private repeatUnitMultiplier(unit: RepeatUnit): number {
-    switch (unit) {
-      case 'week':
-        return 7;
-      case 'month':
-        return 30;
-      case 'year':
-        return 365;
-      default:
-        return 1;
-    }
-  }
-
-  private repeatUnitFromInterval(interval: number): RepeatUnit {
-    if (interval % 365 === 0) {
-      return 'year';
-    }
-
-    if (interval % 30 === 0) {
-      return 'month';
-    }
-
-    if (interval % 7 === 0) {
-      return 'week';
-    }
-
-    return 'day';
-  }
-
-  private syncCustomRepeatDraft(interval: number | null | undefined): void {
-    const { mode, every, unit } = this.deriveRepeatMode(interval);
+  private syncCustomRepeatDraft(task: Task): void {
+    const { mode, every, unit } = this.repeatState(task);
 
     if (mode === 'custom') {
       this.customRepeatEvery.set(every);
@@ -1196,6 +1161,7 @@ export class TaskCardComponent implements OnChanges {
     this.repeatOpen.set(false);
     this.repeatDraftMode.set(null);
     this.stepsOpen.set(false);
+    this.editingStepId.set(null);
   }
 
   private openTagMenu(): void {
@@ -1204,10 +1170,15 @@ export class TaskCardComponent implements OnChanges {
     }
 
     this.tagMenuOpen.set(true);
-    queueMicrotask(() => this.focusTagOption(0));
   }
 
-  private closeTagMenu(restoreFocus = false): void {
+  // The menu is a popover that is hidden until shown, so focus moves after it
+  // opens rather than when the open state changes.
+  onTagMenuShown(): void {
+    this.focusTagOption(0);
+  }
+
+  closeTagMenu(restoreFocus = false): void {
     if (!this.tagMenuOpen()) {
       return;
     }
@@ -1223,10 +1194,4 @@ export class TaskCardComponent implements OnChanges {
     const options = this.tagMenuOptions?.toArray() ?? [];
     options[index]?.nativeElement.focus();
   }
-}
-
-interface RepeatState {
-  mode: RepeatMode;
-  every: number;
-  unit: RepeatUnit;
 }

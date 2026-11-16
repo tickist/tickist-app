@@ -24,8 +24,12 @@
   @apply mt-2 text-sm md:text-base text-base-content opacity-70 max-w-3xl leading-relaxed;
 }
 
+.project-header__meta {
+  @apply mt-2 flex flex-wrap items-center gap-2;
+}
+
 .project-header__suspended {
-  @apply mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold;
+  @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold;
   cursor: pointer;
   color: rgb(var(--bc) / 0.74);
   background: rgb(var(--bc) / 0.08);
@@ -44,6 +48,32 @@
 .project-header__suspended:focus-visible {
   outline: 2px solid rgba(255, 234, 0, 0.6);
   outline-offset: 2px;
+}
+
+.project-header__time {
+  @apply relative inline-flex items-center gap-2 overflow-hidden rounded-full px-3 py-1 text-xs font-semibold;
+  color: rgb(var(--bc) / 0.74);
+  background: rgb(var(--bc) / 0.08);
+  border: 1px solid rgb(var(--bc) / 0.14);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Thin bar along the bottom edge: share of the estimate already spent. */
+.project-header__time-bar {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: 0;
+  height: 2px;
+  background: rgb(var(--p) / 0.8);
+}
+
+.project-header__time--over {
+  color: #fca5a5;
+  border-color: rgb(248 113 113 / 0.4);
+}
+
+.project-header__time--over .project-header__time-bar {
+  background: rgb(248 113 113 / 0.85);
 }
 
 .project-header__actions {

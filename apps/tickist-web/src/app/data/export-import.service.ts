@@ -93,6 +93,8 @@ export interface TickistExportTask {
   typeFinishDate: number | null;
   priority: string | null;
   repeatInterval: number | null;
+  /** Missing in backups made before recurrence units. */
+  repeatUnit?: string | null;
   repeatDelta: number | null;
   fromRepeating: number | null;
   estimateMinutes: number | null;
@@ -206,6 +208,7 @@ interface ExportTaskRow {
   type_finish_date: number | null;
   priority: string | null;
   repeat_interval: number | null;
+  repeat_unit: string | null;
   repeat_delta: number | null;
   from_repeating: number | null;
   estimate_minutes: number | null;
@@ -305,7 +308,7 @@ export class ExportImportService {
     let taskQuery = client
       .from('tasks')
       .select(
-        'id, stable_id, project_id, name, description, finish_date, finish_time, suspend_until, pinned, is_active, is_done, on_hold, type_finish_date, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes_legacy, task_type, when_complete, creation_date, modification_date'
+        'id, stable_id, project_id, name, description, finish_date, finish_time, suspend_until, pinned, is_active, is_done, on_hold, type_finish_date, priority, repeat_interval, repeat_unit, repeat_delta, from_repeating, estimate_minutes, spent_minutes_legacy, task_type, when_complete, creation_date, modification_date'
       )
       .eq('owner_id', userId);
 
@@ -331,9 +334,8 @@ export class ExportImportService {
       taskRows.map((task) => [task.id, task.stable_id])
     );
 
-    const { taskStepRows, taskTagRows, timeEntryRows } = await this.fetchTaskRelations(
-      taskIds
-    );
+    const { taskStepRows, taskTagRows, timeEntryRows } =
+      await this.fetchTaskRelations(taskIds);
 
     const usedTagIds = [...new Set(taskTagRows.map((link) => link.tag_id))];
 
@@ -437,6 +439,7 @@ export class ExportImportService {
         typeFinishDate: task.type_finish_date,
         priority: task.priority,
         repeatInterval: task.repeat_interval,
+        repeatUnit: task.repeat_unit,
         repeatDelta: task.repeat_delta,
         fromRepeating: task.from_repeating,
         estimateMinutes: task.estimate_minutes,
@@ -1224,6 +1227,8 @@ export class ExportImportService {
         type_finish_date: task.typeFinishDate,
         priority: task.priority,
         repeat_interval: task.repeatInterval,
+        // Older backups have no unit; the database infers it from the days.
+        repeat_unit: task.repeatUnit ?? null,
         repeat_delta: task.repeatDelta,
         from_repeating: task.fromRepeating,
         estimate_minutes: task.estimateMinutes,
@@ -1866,6 +1871,9 @@ const TickistExportTaskSchema = z.object({
   typeFinishDate: z.union([z.number(), z.null()]),
   priority: z.union([z.string(), z.null()]),
   repeatInterval: z.union([z.number(), z.null()]),
+  repeatUnit: z
+    .union([z.enum(['day', 'workday', 'week', 'month', 'year']), z.null()])
+    .optional(),
   repeatDelta: z.union([z.number(), z.null()]),
   fromRepeating: z.union([z.number(), z.null()]),
   estimateMinutes: z.union([z.number(), z.null()]),

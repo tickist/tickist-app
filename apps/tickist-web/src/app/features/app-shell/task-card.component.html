@@ -101,6 +101,7 @@
       </button>
       <div class="task-card__menu">
         <button
+          #moreActionsTrigger
           type="button"
           class="icon-btn"
           title="More actions"
@@ -108,10 +109,16 @@
           [attr.aria-expanded]="menuOpen()"
           (click)="menuOpen.set(!menuOpen())"
         >
-          ⋮
+          <span aria-hidden="true">⋮</span>
         </button>
         @if (menuOpen()) {
-        <div class="task-menu">
+        <div
+          class="task-menu"
+          role="group"
+          aria-label="Task actions"
+          [appAnchoredPopover]="moreActionsTrigger"
+          (popoverClosed)="menuOpen.set(false)"
+        >
           <div class="menu__section">
             <p>Priority</p>
             @for (level of ['A','B','C']; track level) {
@@ -174,8 +181,19 @@
 
   @if (finishDateLabel(); as finishDateLabel) {
   <div class="task-card__date">
-    <span class="task-card__date-icon">{{ finishDateModeIcon() }}</span>
+    <span
+      class="task-card__date-icon"
+      role="img"
+      [attr.aria-label]="finishDateModeLabel()"
+      [title]="finishDateModeLabel()"
+      >{{ finishDateModeIcon() }}</span
+    >
     <span>{{ finishDateLabel }}</span>
+    @if (dueHint) {
+    <span class="task-card__due-hint" data-testid="task-due-hint">{{
+      dueHint
+    }}</span>
+    }
   </div>
   } @if (viewMode === 'extended') {
   <div class="task-card__toolbar">
@@ -252,7 +270,7 @@
       <span class="panel-label">Project</span>
       <app-project-picker
         ariaLabel="Select project for task"
-        [projects]="projects()"
+        [projects]="pickerProjects()"
         [selectedProjectId]="task.projectId || ''"
         emptyOptionLabel="Inbox"
         emptyOptionIcon="inbox"
@@ -350,6 +368,11 @@
           [id]="tagMenuId"
           role="listbox"
           aria-label="Add existing tag"
+          [appAnchoredPopover]="tagMenuTrigger"
+          popoverAlign="start"
+          [popoverMatchWidth]="true"
+          (popoverOpened)="onTagMenuShown()"
+          (popoverClosed)="closeTagMenu()"
         >
           @for (option of filteredAvailableTags(); track option.id; let index =
           $index) {
@@ -488,12 +511,36 @@
             (change)="toggleStep(step, $any($event.target).checked)"
           />
         </label>
+        @if (editingStepId() === step.id) {
+        <input
+          type="text"
+          class="step-edit"
+          aria-label="Step"
+          data-testid="step-edit-input"
+          [value]="stepDraft()"
+          (input)="stepDraft.set($any($event.target).value)"
+          (keydown.enter)="$event.preventDefault(); saveStepEdit(step)"
+          (keydown.escape)="$event.preventDefault(); cancelStepEdit()"
+          (blur)="saveStepEdit(step)"
+        />
+        } @else {
         <span
           class="step-title linkified"
           [class.line-through]="step.isDone"
           [innerHTML]="step.content | linkify"
+          (dblclick)="beginStepEdit(step)"
         ></span>
+        }
         <div class="step-controls">
+          <button
+            type="button"
+            aria-label="Edit step"
+            title="Edit step"
+            data-testid="step-edit"
+            (click)="beginStepEdit(step)"
+          >
+            ✎
+          </button>
           <button
             type="button"
             (click)="moveStep(step, 'up')"
@@ -529,6 +576,7 @@
         placeholder="Add step"
         [value]="newStepDraft()"
         (input)="newStepDraft.set($any($event.target).value)"
+        (keydown.enter)="$event.preventDefault(); addStep()"
       />
       <button type="button" (click)="addStep()">Add</button>
     </div>

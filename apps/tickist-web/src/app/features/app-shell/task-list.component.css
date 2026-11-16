@@ -7,3 +7,93 @@
   flex-direction: column;
   gap: 6px;
 }
+
+.task-list--reorderable .task-list__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 2px;
+}
+
+/* Cards past the first screenful skip layout and paint until they scroll
+   near the viewport. The intrinsic size placeholder (remembered once a card
+   has rendered) keeps the scrollbar stable. Menus inside cards are top-layer
+   popovers, so the paint containment this implies never clips them. The
+   deferral is switched off while dragging so drop targets are measured. */
+.task-list__item--deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 100px;
+}
+
+/* A dedicated handle keeps card buttons, links and text selection working.
+   touch-action is limited to the handle so the page still scrolls. */
+.task-list__handle {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  min-height: 2.75rem;
+  margin-top: 0.6rem;
+  border-radius: 0.6rem;
+  color: rgb(var(--bc) / 0.45);
+  font-size: 1.1rem;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.task-list__handle:is(:hover, :focus-visible) {
+  color: rgb(var(--bc) / 0.9);
+  background: rgb(var(--bc) / 0.1);
+}
+
+.task-list__handle:focus-visible {
+  outline: 2px solid rgb(var(--p));
+  outline-offset: 1px;
+}
+
+.task-list__handle[aria-pressed='true'] {
+  color: rgb(var(--pc));
+  background: rgb(var(--p));
+}
+
+.task-list__item--grabbed app-task-card {
+  display: block;
+  border-radius: 1rem;
+  box-shadow: 0 0 0 2px rgb(var(--p) / 0.7), 0 16px 34px rgb(0 0 0 / 0.3);
+  scale: 1.01;
+}
+
+/* Angular CDK drag states. The preview is a copy of the item that follows
+   the pointer; the placeholder marks the drop slot. */
+.cdk-drag-preview {
+  border-radius: 1rem;
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.35);
+  opacity: 0.95;
+}
+
+.cdk-drag-preview .task-list__handle {
+  cursor: grabbing;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.cdk-drag-animating,
+.task-list.cdk-drop-list-dragging .task-list__item:not(.cdk-drag-placeholder) {
+  transition: transform 180ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cdk-drag-animating,
+  .task-list.cdk-drop-list-dragging
+    .task-list__item:not(.cdk-drag-placeholder) {
+    transition: none;
+  }
+
+  .task-list__item--grabbed app-task-card {
+    scale: none;
+  }
+}

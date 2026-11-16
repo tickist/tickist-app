@@ -232,7 +232,7 @@ async function inboxCount(page: Page): Promise<number> {
   return Number(match[1]);
 }
 
-function taskCardByName(page: Page, taskName: string) {
+function taskCardByName(page: Page | Locator, taskName: string) {
   return page
     .locator('article.task-card')
     .filter({ hasText: taskName })
@@ -298,7 +298,7 @@ test('uses muted placeholders and supports project icon search', async ({
 
   expect(placeholderColor).toBe('rgb(71, 85, 105)');
 
-  await composer.getByRole('button', { name: /Branding/ }).click();
+  await composer.getByRole('tab', { name: /Branding/ }).click();
 
   const iconSearch = composer.getByRole('searchbox', {
     name: 'Search project icons',
@@ -350,6 +350,33 @@ test('creates project and adds a task into that project', async ({
   await page.reload();
   await selectProjectByName(page, projectName);
   await expect(taskCardByName(page, taskName)).toBeVisible();
+});
+
+test('opens the project options menu with the keyboard', async ({
+  page,
+}, testInfo) => {
+  const projectName = `Keyboard project ${uniqueSuffix(testInfo)}`;
+
+  await ensureAuthenticated(page);
+  await createProject(page, projectName, 'Keyboard access');
+
+  const trigger = page.getByRole('button', {
+    name: `Options for ${projectName}`,
+  });
+
+  await trigger.focus();
+  await expect(trigger).toBeVisible();
+  await page.keyboard.press('Enter');
+
+  const menu = page.getByRole('group', { name: `Options for ${projectName}` });
+
+  await expect(menu).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(menu.getByRole('button', { name: 'Edit' })).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });
 
 test('filters parent and subproject tasks with independent checkboxes', async ({
@@ -433,6 +460,12 @@ test('shows completion date and sorts project tasks', async ({
     .poll(() => visibleTaskNames(page))
     .toEqual([secondTask, firstTask]);
 
+  // The chosen sort is remembered for this project after a reload.
+  await page.reload();
+  await expect
+    .poll(() => visibleTaskNames(page))
+    .toEqual([secondTask, firstTask]);
+
   const firstCard = taskCardByName(page, firstTask);
   await firstCard.locator('.task-card__check input[type="checkbox"]').click();
   await setProjectFilter(page, 'all tasks');
@@ -454,6 +487,161 @@ test('shows completion date and sorts project tasks', async ({
     .toEqual([firstTask, secondTask]);
 });
 
+test.describe('dashboard due and done groups', () => {
+  // "Do it today" stores the browser's midnight; the dashboard compares days
+  // in the account timezone (Europe/Warsaw for the E2E user). Align them so
+  // the test does not depend on the runner's clock near midnight.
+  test.use({ timezoneId: 'Europe/Warsaw' });
+
+  test('keeps a task due today out of Overdue and lists it under Done today once completed', async ({
+    page,
+  }, testInfo) => {
+    const taskName = `Due today ${uniqueSuffix(testInfo)}`;
+
+    const dashboardGroup = (title: string) =>
+      page.locator('app-dashboard article').filter({
+        has: page.getByRole('heading', { name: title, exact: true }),
+      });
+
+    await ensureAuthenticated(page);
+    await selectInbox(page);
+    await page.getByPlaceholder('What needs doing?').fill(taskName);
+    await page.getByRole('button', { name: 'Add task' }).click();
+
+    const card = taskCardByName(page, taskName);
+    await expect(card).toBeVisible();
+    const menu = await openTaskMenu(card);
+    await menu.getByRole('button', { name: 'Do it today' }).click();
+    await expect(page.getByText('Due today.')).toBeVisible();
+
+    await page.goto('/app');
+    await expect(dashboardGroup('Today').getByText(taskName)).toBeVisible();
+    await expect(dashboardGroup('Overdue').getByText(taskName)).toHaveCount(0);
+
+    await taskCardByName(dashboardGroup('Today'), taskName)
+      .locator('.task-card__check input[type="checkbox"]')
+      .click();
+
+    const doneToday = dashboardGroup('Done today');
+    await expect(doneToday.getByText(taskName)).toBeVisible();
+    await expect(page.locator('app-dashboard h2').last()).toHaveText(
+      'Done today'
+    );
+
+    await page.reload();
+    await expect(doneToday.getByText(taskName)).toBeVisible();
+  });
+});
+
+test.describe('weekday day plan', () => {
+  // Day keys are computed in the account timezone (Europe/Warsaw for the E2E
+  // user), so the browser uses it too and the runner's clock does not matter.
+  test.use({ timezoneId: 'Europe/Warsaw' });
+
+  function warsawDay(offset: number): string {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Warsaw',
+    }).format(new Date(Date.now() + offset * 86_400_000));
+  }
+
+  async function createDatedTask(
+    page: Page,
+    name: string,
+    type: 'Scheduled' | 'Deadline',
+    day: string
+  ): Promise<void> {
+    await openTaskComposer(page);
+    await page.getByLabel('Task name').fill(name);
+    await page.getByRole('radio', { name: type }).check();
+    await page.getByLabel('Task date').fill(day);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.locator('app-task-composer')).toHaveCount(0);
+  }
+
+  test('splits a day into scheduled tasks and upcoming deadlines and keeps a manual order', async ({
+    page,
+  }, testInfo) => {
+    const suffix = uniqueSuffix(testInfo);
+    const first = `Plan first ${suffix}`;
+    const second = `Plan second ${suffix}`;
+    const deadline = `Plan deadline ${suffix}`;
+
+    await ensureAuthenticated(page);
+    await createDatedTask(page, first, 'Scheduled', warsawDay(0));
+    await createDatedTask(page, second, 'Scheduled', warsawDay(0));
+    await createDatedTask(page, deadline, 'Deadline', warsawDay(2));
+
+    const scheduled = page.getByTestId('day-scheduled');
+    const deadlines = page.getByTestId('day-deadlines');
+
+    const names = (section: Locator) =>
+      section.locator('article.task-card .linkified').allTextContents();
+
+    const openDay = async (offset: number) => {
+      await page.goto(`/app/tasks?due=${warsawDay(offset)}`);
+      await page.getByPlaceholder(/Search tasks/).fill(suffix);
+      await expect(page.getByTestId('day-view-title')).toBeVisible();
+    };
+
+    await openDay(0);
+    await expect.poll(() => names(scheduled)).toHaveLength(2);
+    await expect(deadlines.getByText(deadline)).toBeVisible();
+    await expect(scheduled.getByText(deadline)).toHaveCount(0);
+
+    await openDay(1);
+    await expect(deadlines.getByText(deadline)).toBeVisible();
+    await expect(deadlines.getByTestId('task-due-hint')).toHaveText(
+      'due tomorrow'
+    );
+
+    await openDay(2);
+    await expect(deadlines.getByTestId('task-due-hint')).toHaveText(
+      'due today'
+    );
+
+    await openDay(3);
+    await expect(deadlines.getByText(deadline)).toHaveCount(0);
+
+    // Reorder with the keyboard: grab the first scheduled task, move it down.
+    await openDay(0);
+    await expect.poll(() => names(scheduled)).toHaveLength(2);
+
+    const before = await names(scheduled);
+
+    const handle = scheduled.getByRole('button', {
+      name: `Reorder ${before[0]}`,
+    });
+
+    await handle.focus();
+    await page.keyboard.press('Space');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Space');
+
+    const reordered = [before[1], before[0]];
+
+    await expect.poll(() => names(scheduled)).toEqual(reordered);
+    await expect(page.getByTestId('day-order-reset')).toBeVisible();
+
+    await page.reload();
+    await page.getByPlaceholder(/Search tasks/).fill(suffix);
+    await expect.poll(() => names(scheduled)).toEqual(reordered);
+
+    // The dashboard Today group follows the same day plan.
+    await page.goto('/app');
+    await page.getByPlaceholder(/Search tasks/).fill(suffix);
+
+    const today = page.locator('app-dashboard article').filter({
+      has: page.getByRole('heading', { name: 'Today', exact: true }),
+    });
+
+    await expect
+      .poll(() =>
+        today.locator('article.task-card .linkified').allTextContents()
+      )
+      .toEqual(reordered);
+  });
+});
+
 test('suspends a task with a resume time and separates it from active work', async ({
   page,
 }, testInfo) => {
@@ -470,7 +658,7 @@ test('suspends a task with a resume time and separates it from active work', asy
   let card = taskCardByName(page, taskName);
   await card.getByRole('button', { name: 'Edit task' }).click();
   const composer = page.locator('app-task-composer');
-  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByRole('tab', { name: 'Extra' }).click();
   await composer.getByLabel('Suspended').check();
   await composer.getByLabel('At a date and time').check();
   await composer.getByLabel('Resume date').fill(futureDateInput(1));
@@ -495,7 +683,7 @@ test('suspends a task with a resume time and separates it from active work', asy
   await expect(card.locator('.task-card__check')).toHaveCount(0);
 
   await card.getByRole('button', { name: 'Edit task' }).click();
-  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByRole('tab', { name: 'Extra' }).click();
   await composer.getByLabel('Active').check();
   await expect(composer.getByRole('status')).toHaveText('All changes saved.');
   await composer.getByRole('button', { name: 'Close task panel' }).click();
@@ -665,7 +853,7 @@ test('adds task reminder and shows reminder status icon on the task card', async
   await card.getByRole('button', { name: 'Edit task' }).click();
   const composer = page.locator('app-task-composer');
   await expect(composer).toBeVisible();
-  await composer.getByRole('button', { name: 'Reminders' }).click();
+  await composer.getByRole('tab', { name: 'Reminders' }).click();
   await composer.getByRole('button', { name: 'Add reminder' }).click();
   await composer.getByLabel('Reminder date').fill(futureDateInput(1));
   await composer.getByLabel('Reminder time').fill('09:30');
@@ -739,7 +927,7 @@ test('tracks focus time on a task and reports it by day', async ({
     .click();
   const composer = page.locator('app-task-composer');
   await expect(composer).toBeVisible();
-  await composer.getByRole('button', { name: 'Extra' }).click();
+  await composer.getByRole('tab', { name: 'Extra' }).click();
   await composer.getByTestId('task-time-add').click();
   const yesterday = futureDateInput(-1);
   await composer.getByLabel('Time entry date').fill(yesterday);
@@ -759,6 +947,25 @@ test('tracks focus time on a task and reports it by day', async ({
   await expect(page.getByTestId('time-report')).toContainText(taskName);
   await expect(page.getByTestId('time-report-total-me')).toHaveText('40 min');
 
+  // Entries can be added from the report; it starts on the shown day.
+  await page
+    .getByTestId('time-report-task')
+    .filter({ hasText: taskName })
+    .click();
+
+  const reportEditor = page
+    .getByTestId('time-report')
+    .locator('app-task-time-entries');
+
+  await reportEditor.getByTestId('task-time-add').click();
+  await expect(reportEditor.getByLabel('Time entry date')).toHaveValue(
+    yesterday
+  );
+  await reportEditor.getByLabel('Time entry start').fill('11:00');
+  await reportEditor.getByLabel('Time entry end').fill('11:20');
+  await reportEditor.getByTestId('task-time-save').click();
+  await expect(page.getByTestId('time-report-total-me')).toHaveText('1 h');
+
   // Week and month views contain the chosen day, so the entry stays listed.
   await page.getByTestId('time-report-period-week').click();
   await expect(page.getByTestId('time-report-range')).toBeVisible();
@@ -767,7 +974,7 @@ test('tracks focus time on a task and reports it by day', async ({
   const weekdayIndex = (new Date(`${yesterday}T12:00:00Z`).getUTCDay() + 6) % 7;
   await expect(
     page.getByTestId(`time-report-day-total-${weekdayIndex}`)
-  ).toHaveText(/40 min/);
+  ).toHaveText(/1 h/);
   await page.getByTestId('time-report-period-month').click();
   await expect(page.getByTestId('time-report-range')).toBeVisible();
   await expect(page.getByTestId('time-report')).toContainText(taskName);
@@ -847,7 +1054,11 @@ test('keeps the project sidebar vertically scrollable on mobile', async ({
   await ensureAuthenticated(page);
   await page.getByRole('button', { name: 'Open sidebar' }).click();
 
-  const sidebar = page.locator('#mobile-project-sidebar');
+  // The drawer is a modal <dialog>; its inner panel is the scroll container.
+  const sidebar = page.locator(
+    '#mobile-project-sidebar .app-layout__mobile-sidebar'
+  );
+
   await expect(sidebar).toBeVisible();
   await expect(sidebar).toHaveCSS('overflow-y', 'auto');
 

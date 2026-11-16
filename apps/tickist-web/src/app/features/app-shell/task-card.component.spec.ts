@@ -8,6 +8,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Task, TaskDataService, TaskStep } from '../../data/task-data.service';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { TaskCardComponent } from './task-card.component';
@@ -250,23 +251,19 @@ describe('TaskCardComponent toolbar status icons', () => {
     customEveryInput.value = '3';
     customEveryInput.dispatchEvent(new Event('input'));
 
-    const customUnitTrigger = requiredElement(
+    const customUnitSelect = requiredElement(
       fixtureHost(fixture),
-      '.repeat-custom__select .themed-select__trigger',
-      HTMLButtonElement
+      '.repeat-custom__select select',
+      HTMLSelectElement
     );
 
-    customUnitTrigger.click();
-    fixture.detectChanges();
+    const monthIndex = Array.from(customUnitSelect.options).findIndex(
+      (option) => option.textContent?.trim() === 'months'
+    );
 
-    const monthOption = Array.from(
-      fixtureHost(fixture).querySelectorAll<HTMLButtonElement>(
-        '.repeat-custom__select .themed-select__option'
-      )
-    ).find((option) => option.textContent?.trim() === 'months');
-
-    if (!monthOption) throw new Error('Missing months option');
-    monthOption.click();
+    if (monthIndex < 0) throw new Error('Missing months option');
+    customUnitSelect.selectedIndex = monthIndex;
+    customUnitSelect.dispatchEvent(new Event('change'));
 
     const applyButton = requiredElement(
       fixtureHost(fixture),
@@ -438,6 +435,75 @@ describe('TaskCardComponent toolbar status icons', () => {
       'Shared'
     );
     multipleMemberFixture.destroy();
+  });
+
+  function openStepEditor(): HTMLInputElement {
+    component.task = createTask({ steps: [createStep()] });
+    fixture.detectChanges();
+    getToolbarButton('steps').click();
+    fixture.detectChanges();
+    requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit"]',
+      HTMLButtonElement
+    ).click();
+    fixture.detectChanges();
+
+    return requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit-input"]',
+      HTMLInputElement
+    );
+  }
+
+  it('edits a step text in place and saves it on Enter', async () => {
+    const input = openStepEditor();
+
+    expect(input.value).toBe('First step');
+
+    input.value = 'Renamed step';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await fixture.whenStable();
+
+    expect(updateTaskMock).toHaveBeenCalledWith({
+      id: 'task-1',
+      steps: [{ content: 'Renamed step', isDone: false, position: 0 }],
+    });
+    expect(
+      fixtureHost(fixture).querySelector('[data-testid="step-edit-input"]')
+    ).toBeNull();
+  });
+
+  it('keeps the step unchanged when editing is cancelled or emptied', async () => {
+    const input = openStepEditor();
+
+    input.value = 'Discarded';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(fixtureHost(fixture).textContent).toContain('First step');
+
+    requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit"]',
+      HTMLButtonElement
+    ).click();
+    fixture.detectChanges();
+
+    const editor = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit-input"]',
+      HTMLInputElement
+    );
+
+    editor.value = '   ';
+    editor.dispatchEvent(new Event('input'));
+    editor.dispatchEvent(new Event('blur'));
+    await fixture.whenStable();
+
+    expect(updateTaskMock).not.toHaveBeenCalled();
   });
 
   function getToolbarButton(
@@ -797,3 +863,43 @@ function createProject(overrides: Partial<Project> = {}): Project {
     ...overrides,
   };
 }
+
+describe('TaskCardComponent move to project', () => {
+  it('offers the current workspace projects and the task project', async () => {
+    await TestBed.configureTestingModule({
+      imports: [TaskCardComponent],
+      providers: [
+        { provide: TaskDataService, useValue: { updateTask: vi.fn() } },
+        { provide: TagDataService, useValue: { list: () => [] } },
+        {
+          provide: ProjectDataService,
+          useValue: {
+            list: () => [
+              createProject({ id: 'work', workspaceId: 'work' }),
+              createProject({ id: 'private', workspaceId: 'private' }),
+              createProject({ id: 'private-2', workspaceId: 'private' }),
+            ],
+          },
+        },
+        {
+          provide: WorkspaceDataService,
+          useValue: {
+            includesProject: (project: Project) =>
+              project.workspaceId === 'work',
+          },
+        },
+        { provide: ComposerModalService, useValue: { openTaskModal: vi.fn() } },
+        { provide: ToastService, useValue: { success: vi.fn() } },
+      ],
+    }).compileComponents();
+
+    const card = TestBed.createComponent(TaskCardComponent).componentInstance;
+
+    card.task = createTask({ projectId: 'private' });
+
+    expect(card.pickerProjects().map((project) => project.id)).toEqual([
+      'work',
+      'private',
+    ]);
+  });
+});

@@ -48,6 +48,7 @@
         class="focus-btn focus-btn--main"
         [disabled]="timer.busy()"
         data-testid="focus-pause"
+        title="Stop the clock and stay here. Resume starts a new entry."
         (click)="pause()"
       >
         Pause
@@ -58,6 +59,7 @@
         class="focus-btn focus-btn--main"
         [disabled]="timer.busy() || current.isDone"
         data-testid="focus-resume"
+        title="Start the clock again on this task."
         (click)="resume()"
       >
         Resume
@@ -65,9 +67,20 @@
       }
       <button
         type="button"
+        class="focus-btn focus-btn--done"
+        [disabled]="timer.busy() || completing() || current.isDone"
+        data-testid="focus-complete"
+        title="Stop the clock, mark the task done and go back to your tasks."
+        (click)="completeTask()"
+      >
+        Complete task
+      </button>
+      <button
+        type="button"
         class="focus-btn focus-btn--quiet"
-        [disabled]="timer.busy()"
+        [disabled]="timer.busy() || completing()"
         data-testid="focus-stop"
+        title="Stop the clock, keep the task open and go back to your tasks."
         (click)="finish()"
       >
         Stop

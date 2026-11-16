@@ -1,10 +1,11 @@
 import {
   Component,
-  HostListener,
   ElementRef,
+  afterRenderEffect,
   computed,
   inject,
   signal,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -18,6 +19,9 @@ import { AppViewStateService } from './app-view-state.service';
 import { TaskDataService } from '../../data/task-data.service';
 import { TaskStatusService } from '../../data/task-status.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
+import { TimeTrackingService } from '../../data/time-tracking.service';
+import { taskDayKey } from '../../core/time/day-plan';
+import { shiftDateKey, zonedDateKey } from '../../core/time/zoned-time';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
@@ -68,10 +72,10 @@ export class AppSidebarComponent {
   private readonly router = inject(Router);
   private readonly tasksService = inject(TaskDataService);
   private readonly composer = inject(ComposerModalService);
-  private readonly host = inject(ElementRef<HTMLElement>);
   private readonly session = inject(SupabaseSessionService);
   private readonly taskStatus = inject(TaskStatusService);
   readonly workspaces = inject(WorkspaceDataService);
+  private readonly timeTracking = inject(TimeTrackingService);
 
   readonly projectList = computed(() =>
     this.projectsService
@@ -107,9 +111,13 @@ export class AppSidebarComponent {
     future: false,
     tags: false,
   });
-  readonly hoveredProjectId = signal<string | null>(null);
   readonly menuProjectId = signal<string | null>(null);
   readonly menuPosition = signal<{ top: number; left: number } | null>(null);
+  private readonly projectMenu =
+    viewChild<ElementRef<HTMLElement>>('projectMenu');
+  private menuTrigger: HTMLElement | null = null;
+  private menuOpenedByKeyboard = false;
+
   readonly menuProject = computed(() => {
     const projectId = this.menuProjectId();
 
@@ -121,6 +129,28 @@ export class AppSidebarComponent {
       this.projectList().find((project) => project.id === projectId) ?? null
     );
   });
+
+  // The menu is a popover="auto" in the top layer: the browser provides Esc,
+  // light dismiss and focus return. Positioning stays in script because CSS
+  // anchor positioning is not Baseline yet. Without popover support the menu
+  // still renders at the computed position and closes through its actions.
+  constructor() {
+    afterRenderEffect(() => {
+      const menu = this.projectMenu()?.nativeElement;
+
+      if (!menu || !('showPopover' in menu) || menu.matches(':popover-open')) {
+        return;
+      }
+
+      // `source` ties the popover to its trigger, so clicking the trigger again
+      // toggles it instead of light-dismissing and reopening it.
+      menu.showPopover(this.menuTrigger ? { source: this.menuTrigger } : {});
+
+      if (this.menuOpenedByKeyboard) {
+        menu.querySelector('button')?.focus();
+      }
+    });
+  }
 
   readonly inboxProjects = computed(() =>
     this.projectList().filter((project) => project.isInbox)
@@ -152,43 +182,32 @@ export class AppSidebarComponent {
       return [];
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const days = Array.from({ length: 7 }, (_value, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + index);
-
-      return date;
-    });
-
+    // Days and counts use the account timezone, like the day view and the
+    // dashboard. A count is the tasks dated that day (Scheduled or Deadline).
+    const timezone = this.timeTracking.timezone();
+    const todayKey = zonedDateKey(new Date(), timezone);
     const countByDate = new Map<string, number>();
 
     for (const task of this.taskList()) {
-      if (task.isDone || !task.finishDate) {
-        continue;
-      }
+      if (task.isDone) continue;
 
-      const finishDate = new Date(task.finishDate);
+      const key = taskDayKey(task, timezone);
 
-      if (Number.isNaN(finishDate.getTime())) {
-        continue;
-      }
-
-      finishDate.setHours(0, 0, 0, 0);
-      const key = this.dateKey(finishDate);
-      countByDate.set(key, (countByDate.get(key) ?? 0) + 1);
+      if (key) countByDate.set(key, (countByDate.get(key) ?? 0) + 1);
     }
 
-    return days.map((date, index) => {
-      const key = this.dateKey(date);
+    return Array.from({ length: 7 }, (_value, index) => {
+      const key = shiftDateKey(todayKey, index);
 
       const label =
         index === 0
           ? 'Today'
           : index === 1
           ? 'Tomorrow'
-          : date.toLocaleDateString('en-US', { weekday: 'long' });
+          : new Intl.DateTimeFormat('en-US', {
+              weekday: 'long',
+              timeZone: 'UTC',
+            }).format(new Date(`${key}T00:00:00Z`));
 
       return {
         label,
@@ -417,19 +436,7 @@ export class AppSidebarComponent {
     return isProjectSharedByMultipleMembers(project);
   }
 
-  onProjectEnter(projectId: string): void {
-    this.hoveredProjectId.set(projectId);
-  }
-
-  onProjectLeave(projectId: string): void {
-    if (this.menuProjectId() !== projectId) {
-      this.hoveredProjectId.set(null);
-    }
-  }
-
   toggleMenu(projectId: string, event: MouseEvent): void {
-    event.stopPropagation();
-
     if (this.menuProjectId() === projectId) {
       this.closeMenu();
 
@@ -455,15 +462,28 @@ export class AppSidebarComponent {
       top = Math.max(rect.top - height - gutter, gutter);
     }
 
+    this.menuTrigger = target;
+    // A click with detail 0 comes from Enter or Space, so focus enters the menu.
+    this.menuOpenedByKeyboard = event.detail === 0;
     this.menuPosition.set({ top, left });
     this.menuProjectId.set(projectId);
-    this.hoveredProjectId.set(projectId);
   }
 
   closeMenu(): void {
     this.menuProjectId.set(null);
     this.menuPosition.set(null);
-    this.hoveredProjectId.set(null);
+    this.menuTrigger = null;
+  }
+
+  onMenuToggle(event: Event): void {
+    // Esc and clicks outside close the popover natively; keep state in sync.
+    if (
+      'newState' in event &&
+      event.newState === 'closed' &&
+      this.menuProjectId()
+    ) {
+      this.closeMenu();
+    }
   }
 
   projectTypeKey(project: Project): 'active' | 'someday' | 'routine' {
@@ -575,24 +595,6 @@ export class AppSidebarComponent {
     this.openCreateProject(project.projectType ?? 'active', project.id);
   }
 
-  @HostListener('document:click', ['$event'])
-  closeMenus(event: MouseEvent): void {
-    if (
-      !this.host.nativeElement.contains(
-        event.target instanceof Node ? event.target : null
-      )
-    ) {
-      this.closeMenu();
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  closeMenuOnEscape(): void {
-    if (this.menuProjectId()) {
-      this.closeMenu();
-    }
-  }
-
   private buildTree(type: string): ProjectTreeNode[] {
     const all = this.projectList().filter(
       (project) =>
@@ -625,14 +627,6 @@ export class AppSidebarComponent {
     sortNodes(roots);
 
     return roots;
-  }
-
-  private dateKey(date: Date): string {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const day = `${date.getDate()}`.padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
   }
 
   private monthKey(date: Date): string {

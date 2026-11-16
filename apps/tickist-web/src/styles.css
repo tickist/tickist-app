@@ -578,3 +578,18 @@ textarea::placeholder {
 .linkified.line-through a {
   text-decoration: line-through;
 }
+
+/* Route changes use the View Transitions API (withViewTransitions). Keep the
+   default cross-fade short so navigation never feels sluggish, and drop it for
+   people who ask for reduced motion. */
+::view-transition-group(root) {
+  animation-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -14,6 +14,8 @@
           [sort]="sortOption()"
           [filter]="filterOption()"
           [suspendedCount]="suspendedTaskCount()"
+          [spentMinutes]="projectTime().spent"
+          [estimateMinutes]="projectTime().estimate"
           (toggleSimple)="
             setProjectTaskView(headerProject, $event ? 'simple' : 'extended')
           "
@@ -111,27 +113,75 @@
       <div
         class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20"
       >
-        <div class="mb-4 flex items-center justify-between">
-          <div>
-            <p class="text-xs uppercase tracking-wide text-base-content/50">
-              Due date
-            </p>
-            <p class="text-lg font-semibold">{{ label }}</p>
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h1 class="text-lg font-semibold" data-testid="day-view-title">
+            {{ label }}
+          </h1>
+          <div class="day-view__actions">
+            @if (dayHasCustomOrder()) {
+            <button
+              type="button"
+              class="day-view__action"
+              data-testid="day-order-reset"
+              title="Forget the manual order for this day"
+              (click)="resetDayOrder()"
+            >
+              Reset order
+            </button>
+            }
+            <button
+              type="button"
+              class="day-view__action"
+              (click)="clearDueDateFilter()"
+            >
+              Clear filter
+            </button>
           </div>
-          <button
-            type="button"
-            class="btn btn-ghost btn-sm"
-            (click)="clearDueDateFilter()"
-          >
-            Clear filter
-          </button>
         </div>
+        @if (selectedDayKey()) {
+        <section
+          class="day-section"
+          aria-labelledby="day-scheduled-title"
+          data-testid="day-scheduled"
+        >
+          <h2 id="day-scheduled-title" class="day-section__title">
+            Scheduled for this day
+          </h2>
+          <app-task-list
+            [tasks]="dayScheduledTasks()"
+            [projectResolver]="projectForTaskList"
+            [viewMode]="taskViewMode()"
+            [reorderable]="true"
+            (reordered)="reorderDay($event)"
+            emptyText="Nothing scheduled for this day."
+          ></app-task-list>
+        </section>
+        <section
+          class="day-section"
+          aria-labelledby="day-deadlines-title"
+          data-testid="day-deadlines"
+        >
+          <h2 id="day-deadlines-title" class="day-section__title">
+            Deadlines coming up
+          </h2>
+          <app-task-list
+            [tasks]="dayDeadlineTasks()"
+            [projectResolver]="projectForTaskList"
+            [viewMode]="taskViewMode()"
+            [reorderable]="true"
+            [dueHint]="dayDeadlineHint"
+            (reordered)="reorderDay($event)"
+            emptyText="No deadlines on or after this day."
+          ></app-task-list>
+        </section>
+        } @else {
         <app-task-list
           [tasks]="filteredTasks()"
           [projectResolver]="projectForTaskList"
           [viewMode]="taskViewMode()"
           emptyText="No tasks for this date yet."
         ></app-task-list>
+        }
       </div>
       } @else {
       <div

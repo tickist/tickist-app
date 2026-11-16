@@ -7,6 +7,7 @@ import {
   buildDuplicateTaskInput,
   type Task,
 } from './task-data.service';
+import { TimeTrackingService } from './time-tracking.service';
 import { TaskReminderDataService } from './task-reminder-data.service';
 
 type TaskRow = {
@@ -62,9 +63,8 @@ describe('TaskDataService recurring completion', () => {
 
     await service.updateTask({ id: 'task-1', isDone: true });
 
-    expect(formatLocalDate(updatePayloads[0]?.['finish_date'])).toBe(
-      '2026-05-15'
-    );
+    // Midnight of 15 May in the account timezone (Europe/Warsaw).
+    expect(updatePayloads[0]?.['finish_date']).toBe('2026-05-14T22:00:00.000Z');
     expect(updatePayloads[0]).toEqual(
       expect.objectContaining({
         is_done: false,
@@ -82,14 +82,70 @@ describe('TaskDataService recurring completion', () => {
 
     await service.updateTask({ id: 'task-1', isDone: true });
 
-    expect(formatLocalDate(updatePayloads[0]?.['finish_date'])).toBe(
-      '2026-05-10'
-    );
+    expect(updatePayloads[0]?.['finish_date']).toBe('2026-05-09T22:00:00.000Z');
     expect(updatePayloads[0]).toEqual(
       expect.objectContaining({
         is_done: false,
       })
     );
+  });
+});
+
+describe('TaskDataService completion time', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-05-10T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('records when a one-off task is completed', async () => {
+    const { service, updatePayloads } = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 })
+    );
+
+    await service.updateTask({ id: 'task-1', isDone: true });
+
+    expect(updatePayloads[0]).toEqual(
+      expect.objectContaining({
+        is_done: true,
+        when_complete: '2025-05-10T12:00:00.000Z',
+      })
+    );
+  });
+
+  it('clears the completion time when a task is reopened', async () => {
+    const { service, updatePayloads } = await setupRecurringTaskService(
+      createTaskRow({
+        repeat_interval: 0,
+        is_done: true,
+        when_complete: '2025-05-09T08:00:00Z',
+      })
+    );
+
+    await service.updateTask({ id: 'task-1', isDone: false });
+
+    expect(updatePayloads[0]).toEqual(
+      expect.objectContaining({ is_done: false, when_complete: null })
+    );
+  });
+
+  it('leaves the completion time alone for other edits and recurring completions', async () => {
+    const oneOff = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 })
+    );
+
+    await oneOff.service.updateTask({ id: 'task-1', name: 'Renamed' });
+    expect(oneOff.updatePayloads[0]).not.toHaveProperty('when_complete');
+
+    TestBed.resetTestingModule();
+
+    const recurring = await setupRecurringTaskService(createTaskRow());
+
+    await recurring.service.updateTask({ id: 'task-1', isDone: true });
+    expect(recurring.updatePayloads[0]).not.toHaveProperty('when_complete');
   });
 });
 
@@ -112,6 +168,10 @@ async function setupRecurringTaskService(row: TaskRow): Promise<{
         useValue: {
           markDirty: vi.fn(),
         },
+      },
+      {
+        provide: TimeTrackingService,
+        useValue: { timezone: () => 'Europe/Warsaw' },
       },
       {
         provide: TaskReminderDataService,
@@ -238,24 +298,6 @@ function createTaskRow(overrides: Partial<TaskRow> = {}): TaskRow {
   };
 }
 
-function formatLocalDate(value: string | null | undefined): string | null {
-  if (value == null) {
-    return null;
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-}
-
 describe('buildDuplicateTaskInput', () => {
   const source: Task = {
     id: 'task-1',
@@ -273,6 +315,7 @@ describe('buildDuplicateTaskInput', () => {
     onHold: true,
     priority: 'A',
     repeatInterval: 7,
+    repeatUnit: 'week',
     repeatDelta: 1,
     fromRepeating: 1,
     estimateMinutes: 90,
@@ -321,6 +364,7 @@ describe('buildDuplicateTaskInput', () => {
       typeFinishDate: 0,
       priority: 'A',
       repeatInterval: 7,
+      repeatUnit: 'week',
       fromRepeating: 1,
       estimateMinutes: 90,
       taskType: 'next_action',

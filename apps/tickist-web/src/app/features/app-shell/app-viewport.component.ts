@@ -7,9 +7,11 @@ import {
   signal,
   OnDestroy,
   ChangeDetectionStrategy,
-  HostListener,
   ElementRef,
   ViewChild,
+  DestroyRef,
+  afterNextRender,
+  viewChild,
 } from '@angular/core';
 import {
   RouterOutlet,
@@ -27,6 +29,8 @@ import { AppSidebarComponent } from './app-sidebar.component';
 import { TaskFabComponent } from '../task-fab/task-fab.component';
 import { filter, Subscription } from 'rxjs';
 import { ThemeService } from '../../core/ui/theme.service';
+import { ModalDialogDirective } from '../../core/ui/modal-dialog.directive';
+import { AnchoredPopoverDirective } from '../../core/ui/anchored-popover.directive';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
 import {
   WorkspaceDataService,
@@ -50,6 +54,8 @@ import { TaskDataService } from '../../data/task-data.service';
     AppSidebarComponent,
     TaskFabComponent,
     ProjectIconComponent,
+    ModalDialogDirective,
+    AnchoredPopoverDirective,
   ],
   templateUrl: './app-viewport.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -71,11 +77,10 @@ export class AppViewportComponent implements OnDestroy {
   readonly runningTaskName = computed(() => {
     const taskId = this.timer.running()?.taskId;
 
-    return (
-      this.taskData.list().find((task) => task.id === taskId)?.name ?? ''
-    );
+    return this.taskData.list().find((task) => task.id === taskId)?.name ?? '';
   });
   private readonly workspaces = inject(WorkspaceDataService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private routerSub: Subscription | null = null;
 
@@ -110,6 +115,7 @@ export class AppViewportComponent implements OnDestroy {
   readonly selectedWorkspaceId = this.workspaces.selectedWorkspaceId;
   @ViewChild('workspaceTrigger')
   private workspaceTrigger?: ElementRef<HTMLButtonElement>;
+  private focusWorkspaceSelection = false;
 
   readonly workspaceIcon = computed(() => {
     const selected = this.workspaceList().find(
@@ -125,6 +131,11 @@ export class AppViewportComponent implements OnDestroy {
       )?.name ?? 'All'
   );
   readonly aboutModalOpen = signal(false);
+  private readonly profileTrigger =
+    viewChild<ElementRef<HTMLButtonElement>>('profileTrigger');
+  private readonly notificationsTrigger = viewChild<
+    ElementRef<HTMLButtonElement>
+  >('notificationsTrigger');
   readonly searchTerm = this.viewState.searchTerm;
   readonly sidebarOpen = signal(false);
   readonly currentUrl = signal(this.router.url);
@@ -140,6 +151,23 @@ export class AppViewportComponent implements OnDestroy {
   readonly buildCommitShort = shortCommit(environment.buildCommit);
 
   constructor() {
+    // The mobile drawer is a modal dialog hidden at the lg breakpoint; close it
+    // when the layout widens so a hidden modal never leaves the page inert.
+    afterNextRender(() => {
+      if (typeof window.matchMedia === 'undefined') return;
+
+      const wide = window.matchMedia('(min-width: 1024px)');
+
+      const closeOnWide = (event: MediaQueryListEvent) => {
+        if (event.matches) this.sidebarOpen.set(false);
+      };
+
+      wide.addEventListener('change', closeOnWide);
+      this.destroyRef.onDestroy(() =>
+        wide.removeEventListener('change', closeOnWide)
+      );
+    });
+
     const initialUrl = this.router.url;
 
     if (isRememberedAppUrl(initialUrl)) {
@@ -214,16 +242,22 @@ export class AppViewportComponent implements OnDestroy {
 
   openWorkspaceMenu(event: Event): void {
     event.preventDefault();
+    this.focusWorkspaceSelection = true;
     this.workspaceMenuOpen.set(true);
     this.profileMenuOpen.set(false);
     this.notificationsOpen.set(false);
-    setTimeout(() =>
-      this.host.nativeElement
-        .querySelector<HTMLButtonElement>(
-          '.workspace-switcher__option[aria-pressed="true"]'
-        )
-        ?.focus()
-    );
+  }
+
+  // ArrowDown on the trigger moves into the list; the popover is hidden until
+  // shown, so focus moves once it is open.
+  onWorkspaceMenuShown(): void {
+    if (!this.focusWorkspaceSelection) return;
+    this.focusWorkspaceSelection = false;
+    this.host.nativeElement
+      .querySelector<HTMLButtonElement>(
+        '.workspace-switcher__option[aria-pressed="true"]'
+      )
+      ?.focus();
   }
 
   selectWorkspace(workspaceId: string | null): void {
@@ -236,27 +270,6 @@ export class AppViewportComponent implements OnDestroy {
       this.viewState.selectProject(null);
       void this.router.navigate(['/app']);
     }
-  }
-
-  @HostListener('document:click', ['$event'])
-  closeWorkspaceMenuOnOutsideClick(event: MouseEvent): void {
-    const switcher = this.host.nativeElement.querySelector(
-      '.workspace-switcher'
-    );
-
-    if (
-      switcher &&
-      !switcher.contains(event.target instanceof Node ? event.target : null)
-    ) {
-      this.workspaceMenuOpen.set(false);
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  closeWorkspaceMenuOnEscape(): void {
-    if (this.workspaceMenuOpen()) this.workspaceTrigger?.nativeElement.focus();
-
-    this.workspaceMenuOpen.set(false);
   }
 
   toggleNotifications(): void {
@@ -290,6 +303,15 @@ export class AppViewportComponent implements OnDestroy {
     this.profileMenuOpen.set(false);
   }
 
+  closeNotifications(): void {
+    this.notificationsOpen.set(false);
+  }
+
+  dismissNotifications(): void {
+    this.closeNotifications();
+    this.notificationsTrigger()?.nativeElement.focus();
+  }
+
   openAboutModal(): void {
     this.profileMenuOpen.set(false);
     this.notificationsOpen.set(false);
@@ -298,6 +320,13 @@ export class AppViewportComponent implements OnDestroy {
 
   closeAboutModal(): void {
     this.aboutModalOpen.set(false);
+  }
+
+  onAboutDialogClosed(): void {
+    this.aboutModalOpen.set(false);
+    // The About button lives in the profile menu, which closes when the dialog
+    // opens, so the browser cannot return focus to the invoker.
+    this.profileTrigger()?.nativeElement.focus();
   }
 
   async markNotificationAsRead(notificationId: string): Promise<void> {

@@ -4,7 +4,7 @@ import {
   elementsOfType,
 } from '../../../testing/dom';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ProjectPickerComponent,
@@ -99,6 +99,54 @@ describe('ProjectPickerComponent', () => {
     const options = getOptionButtons(fixture);
     expect(options[0]?.textContent).not.toContain('Shared');
     expect(options[1]?.textContent).toContain('Shared');
+  });
+
+  it('renders the menu as a popover and focuses the search field once open', () => {
+    // jsdom hides [popover] content without implementing showPopover(), so
+    // focus cannot land there; assert that focus was requested instead.
+    const focus = vi.spyOn(HTMLInputElement.prototype, 'focus');
+
+    try {
+      openPicker(fixture);
+
+      const menu = requiredElement(
+        fixtureHost(fixture),
+        '.project-picker__menu',
+        HTMLElement
+      );
+
+      const search = requiredElement(
+        fixtureHost(fixture),
+        '.project-picker__search-input',
+        HTMLInputElement
+      );
+
+      expect(menu.getAttribute('popover')).toBe('auto');
+      expect(focus.mock.contexts).toContain(search);
+    } finally {
+      focus.mockRestore();
+    }
+  });
+
+  it('closes when the popover is dismissed natively', () => {
+    openPicker(fixture);
+
+    const menu = requiredElement(
+      fixtureHost(fixture),
+      '.project-picker__menu',
+      HTMLElement
+    );
+
+    // jsdom has no ToggleEvent; the component only reads newState.
+    menu.dispatchEvent(
+      Object.assign(new Event('toggle'), { newState: 'closed' })
+    );
+    fixture.detectChanges();
+
+    expect(component.isOpen()).toBe(false);
+    expect(
+      fixtureHost(fixture).querySelector('.project-picker__menu')
+    ).toBeNull();
   });
 });
 

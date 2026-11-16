@@ -40,7 +40,10 @@
       </span>
       <input
         formControlName="email"
+        name="email"
         type="email"
+        autocomplete="username"
+        spellcheck="false"
         class="input input-bordered w-full auth-input"
         placeholder="team@tickist.app"
       />
@@ -51,7 +54,9 @@
       </span>
       <input
         formControlName="password"
+        name="new-password"
         type="password"
+        autocomplete="new-password"
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"
       />
@@ -62,7 +67,9 @@
       </span>
       <input
         formControlName="confirm"
+        name="confirm-password"
         type="password"
+        autocomplete="new-password"
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"
       />
@@ -98,12 +105,11 @@
     </p>
     } @if (legalLoading()) {
     <p role="status">Loading registration documents…</p>
-    }
-    @if (captcha.required) {
+    } @if (captcha.required) {
     <app-turnstile-widget (token)="captcha.token.set($event)" />
     }
     <button
-      class="btn btn-primary text-primary-content"
+      class="btn btn-primary text-primary-content auth-signup-submit"
       type="submit"
       [disabled]="isDisabled"
     >
@@ -117,17 +123,19 @@
     </button>
   </form>
 
-  @if (message(); as feedback) {
-  <p
-    class="text-sm text-base-content/70"
-    [ngClass]="{
-      'text-success': feedback.type === 'success',
-      'text-error': feedback.type === 'error'
-    }"
-  >
-    {{ feedback.text }}
-  </p>
-  }
+  <div aria-live="polite">
+    @if (message(); as feedback) {
+    <p
+      class="text-sm text-base-content/70"
+      [ngClass]="{
+        'text-success': feedback.type === 'success',
+        'text-error': feedback.type === 'error'
+      }"
+    >
+      {{ feedback.text }}
+    </p>
+    }
+  </div>
 
   <footer class="text-center text-xs text-base-content/60">
     Already have an account?

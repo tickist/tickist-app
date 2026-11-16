@@ -1,6 +1,13 @@
+import { advanceDateKey, type RepeatRule } from './recurrence';
+
+/**
+ * Next due date of a recurring task, as midnight in the account timezone.
+ * The anchor is the completion day, or the due day when the task repeats from
+ * its due date and that day is still ahead.
+ */
 export function nextRecurringFinishDate(
   finishDate: string | null,
-  repeatInterval: number,
+  rule: RepeatRule,
   fromRepeating: number | null,
   timezone: string,
   now = new Date()
@@ -14,25 +21,13 @@ export function nextRecurringFinishDate(
     if (due > today) base = due;
   }
 
-  return startOfZonedDayIso(
-    addCalendarDays(base, Math.max(1, Math.round(repeatInterval))),
-    timezone
-  );
+  return startOfZonedDayIso(advanceDateKey(base, rule), timezone);
 }
 
 function dateKeyInTimezone(date: Date, timezone: string): string {
   const parts = zonedParts(date, timezone);
 
   return `${parts.year}-${pad(parts.month)}-${pad(parts.day)}`;
-}
-
-export function addCalendarDays(dateKey: string, days: number): string {
-  const [year, month, day] = dateKey.split('-').map(Number);
-  const next = new Date(Date.UTC(year, month - 1, day + days));
-
-  return `${next.getUTCFullYear()}-${pad(next.getUTCMonth() + 1)}-${pad(
-    next.getUTCDate()
-  )}`;
 }
 
 export function startOfZonedDayIso(dateKey: string, timezone: string): string {

@@ -18,6 +18,7 @@ import {
   formatDuration,
 } from '../../data/time-tracking.service';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
+import { ToastService } from '../../core/ui/toast.service';
 
 @Component({
   selector: 'app-focus',
@@ -32,6 +33,7 @@ export class FocusComponent {
   private readonly projects = inject(ProjectDataService);
   private readonly router = inject(Router);
   private readonly viewState = inject(AppViewStateService);
+  private readonly toasts = inject(ToastService);
   readonly taskId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(
       map((params) => params.get('taskId') ?? '')
@@ -40,6 +42,7 @@ export class FocusComponent {
   );
 
   private readonly todaySecondsBefore = signal(0);
+  readonly completing = signal(false);
 
   readonly task = computed(() =>
     this.tasks.list().find((item) => item.id === this.taskId())
@@ -105,6 +108,39 @@ export class FocusComponent {
   async finish(): Promise<void> {
     if (this.isRunning() && !(await this.timer.stop())) return;
     await this.leave();
+  }
+
+  /** Stops the clock, marks the task done and returns to the task list. */
+  async completeTask(): Promise<void> {
+    const task = this.task();
+
+    if (!task || task.isDone || this.completing()) return;
+
+    this.completing.set(true);
+
+    try {
+      if (this.isRunning() && !(await this.timer.stop())) return;
+
+      const updated = await this.tasks.updateTask({
+        id: task.id,
+        isDone: true,
+      });
+
+      if (!updated) {
+        this.toasts.error('Failed to complete the task.');
+
+        return;
+      }
+
+      this.toasts.success(
+        task.repeatInterval > 0
+          ? 'Task completed and rescheduled.'
+          : 'Task marked done.'
+      );
+      await this.leave();
+    } finally {
+      this.completing.set(false);
+    }
   }
 
   async leave(): Promise<void> {

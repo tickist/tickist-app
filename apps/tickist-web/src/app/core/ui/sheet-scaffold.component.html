@@ -18,14 +18,18 @@
 
   <div class="sheet-shell__body" [class.sheet-shell__body--single]="!hasTabs()">
     @if (hasTabs()) {
-    <aside class="sheet-shell__tabs" aria-label="Panel sections">
+    <div class="sheet-shell__tabs" role="tablist" aria-label="Panel sections">
       @for (tab of tabs(); track tab.key) {
       <button
         type="button"
+        role="tab"
         class="sheet-shell__tab"
+        [id]="tabId(tab.key)"
         [class.active]="activeTab() === tab.key"
-        [attr.aria-pressed]="activeTab() === tab.key"
+        [attr.aria-selected]="activeTab() === tab.key"
+        [attr.tabindex]="activeTab() === tab.key ? 0 : -1"
         (click)="selectTab(tab.key)"
+        (keydown)="onTabKeydown($event)"
       >
         @if (tab.icon) {
         <span class="sheet-shell__tab-icon" aria-hidden="true">
@@ -35,10 +39,14 @@
         <span>{{ tab.label }}</span>
       </button>
       }
-    </aside>
+    </div>
     }
 
-    <section class="sheet-shell__panel">
+    <section
+      class="sheet-shell__panel"
+      [attr.role]="hasTabs() ? 'tabpanel' : null"
+      [attr.aria-labelledby]="hasTabs() ? tabId(activeTab() ?? '') : null"
+    >
       <div class="sheet-shell__panel-scroll">
         <ng-content select="[sheet-body]"></ng-content>
       </div>

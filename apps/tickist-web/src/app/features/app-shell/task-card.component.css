@@ -1,5 +1,6 @@
 .task-card {
   @apply rounded-2xl p-4 text-base-content transition;
+  container-type: inline-size;
   background: linear-gradient(
       180deg,
       rgb(var(--bc) / 0.065),
@@ -51,6 +52,10 @@
 
 .task-card__title .linkified {
   min-width: 0;
+  /* Break between words; split a word only when it is longer than the line.
+     The global "anywhere" lets the flex title shrink below one word. */
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .task-card__task-type {
@@ -120,6 +125,13 @@
 
 .task-card__date-icon {
   color: rgb(var(--bc) / 0.92);
+}
+
+.task-card__due-hint {
+  @apply ml-1 rounded-full px-2 py-0.5 text-xs font-semibold;
+  color: rgb(var(--bc) / 0.8);
+  background: rgb(var(--bc) / 0.08);
+  border: 1px solid rgb(var(--bc) / 0.14);
 }
 
 .icon-btn {
@@ -711,6 +723,22 @@
   outline: none;
 }
 
+/* On narrow cards the four action buttons left the title about 85px, so
+   tighten them to give the task name room. */
+@container (max-width: 24rem) {
+  .task-card__row {
+    gap: 0.5rem;
+  }
+
+  .task-card__actions {
+    gap: 0;
+  }
+
+  .task-card__actions .icon-btn {
+    padding-inline: 0.3rem;
+  }
+}
+
 @media (max-width: 640px) {
   .tag-add__create {
     grid-template-columns: 1fr;
@@ -764,7 +792,13 @@
 }
 
 .step-title {
-  @apply flex-1;
+  @apply min-w-0 flex-1;
+  cursor: text;
+}
+
+.step-edit {
+  @apply min-w-0 flex-1 rounded-lg border bg-base-100 px-2 py-1 text-sm text-base-content;
+  border-color: rgb(var(--p) / 0.6);
 }
 
 .step-title.line-through {

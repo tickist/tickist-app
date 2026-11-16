@@ -11,6 +11,7 @@ import { ProjectDataService } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
 import { TaskDataService } from '../../data/task-data.service';
 import { TimeReportGrouping, buildTimeReport } from '../../data/time-report';
+import { TaskTimeEntriesComponent } from '../task-fab/task-time-entries.component';
 import {
   TimeReportRow,
   TimeTrackingService,
@@ -34,6 +35,7 @@ const PERIOD_NOUN: Record<ReportPeriod, string> = {
 @Component({
   selector: 'app-time-report',
   standalone: true,
+  imports: [TaskTimeEntriesComponent],
   templateUrl: './time-report.component.html',
   styleUrl: './time-report.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +51,8 @@ export class TimeReportComponent {
   readonly period = signal<ReportPeriod>('day');
   readonly grouping = signal<TimeReportGrouping>('project');
   readonly loading = signal(false);
+  /** Group key and task id of the row whose entries are open for editing. */
+  readonly expanded = signal<string | null>(null);
   private readonly rows = signal<TimeReportRow[]>([]);
   private requestSequence = 0;
 
@@ -86,6 +90,20 @@ export class TimeReportComponent {
   readonly currentLabel = computed(() =>
     this.period() === 'day' ? 'Today' : `This ${this.periodNoun()}`
   );
+
+  /** Task, day columns and one or two total columns. */
+  readonly columnCount = computed(
+    () => 1 + this.days().length + (this.report().hasOthers ? 2 : 1)
+  );
+  /** New entries start on the shown day, or today when it is in the period. */
+  readonly entryDate = computed(() => {
+    const { from, to } = this.range();
+    const today = this.timer.todayKey();
+
+    if (this.period() === 'day') return this.day();
+
+    return today >= from && today <= to ? today : from;
+  });
 
   readonly format = formatDuration;
 
@@ -146,6 +164,21 @@ export class TimeReportComponent {
 
   setGrouping(grouping: TimeReportGrouping): void {
     this.grouping.set(grouping);
+  }
+
+  rowKey(groupKey: string, taskId: string): string {
+    return `${groupKey}|${taskId}`;
+  }
+
+  toggle(key: string): void {
+    this.expanded.update((current) => (current === key ? null : key));
+  }
+
+  /** Entries changed in the inline editor: reload the shown period. */
+  entriesChanged(): void {
+    const { from, to } = this.range();
+
+    void this.load(from, to);
   }
 
   private async load(from: string, to: string): Promise<void> {

@@ -56,7 +56,7 @@
   </section>
   } @else if (posts().length > 0) {
   <section class="blog-posts" aria-label="Blog posts">
-    @for (post of posts(); track trackPost($index, post)) {
+    @for (post of posts(); track trackPost($index, post); let first = $first) {
     <article class="blog-post-card">
       <a [routerLink]="post.url" class="blog-post-card__cover" tabindex="-1">
         <img
@@ -64,7 +64,8 @@
           [alt]="post.coverImageAlt"
           width="1200"
           height="630"
-          loading="lazy"
+          [attr.loading]="first ? 'eager' : 'lazy'"
+          [attr.fetchpriority]="first ? 'high' : null"
           decoding="async"
         />
       </a>

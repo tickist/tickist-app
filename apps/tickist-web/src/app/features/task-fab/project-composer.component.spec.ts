@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import {
   INVITE_PROCESSED_MESSAGE,
   ProjectComposerComponent,
@@ -66,6 +67,24 @@ describe('ProjectComposerComponent sheet header', () => {
 
     expect(fixtureHost(fixture).textContent).toContain('Edit project');
     expect(fixtureHost(fixture).textContent).toContain('Trip planning');
+  });
+
+  it('maps the default task date like the task editor (Scheduled = 0, Deadline = 1)', () => {
+    component.preset = {
+      mode: 'edit',
+      project: createProject({ defaultTypeFinishDate: 0 }),
+    };
+    fixture.detectChanges();
+
+    expect(component.form.controls.defaultDueMode.value).toBe('on');
+
+    component.preset = {
+      mode: 'edit',
+      project: createProject({ defaultTypeFinishDate: 1 }),
+    };
+    fixture.detectChanges();
+
+    expect(component.form.controls.defaultDueMode.value).toBe('by');
   });
 
   it('shows a neutral result that does not reveal whether an account exists', async () => {
@@ -171,3 +190,77 @@ function createProject(overrides: Partial<Project> = {}): Project {
     ...overrides,
   };
 }
+
+describe('ProjectComposerComponent parent projects', () => {
+  let component: ProjectComposerComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ProjectComposerComponent],
+      providers: [
+        {
+          provide: ProjectDataService,
+          useValue: {
+            list: () => [
+              createProject({
+                id: 'work-a',
+                name: 'Work A',
+                workspaceId: 'work',
+              }),
+              createProject({
+                id: 'private-a',
+                name: 'Private A',
+                workspaceId: 'private',
+              }),
+              createProject({
+                id: 'child',
+                name: 'Child',
+                workspaceId: 'private',
+                ancestorId: 'private-a',
+              }),
+            ],
+          },
+        },
+        {
+          provide: WorkspaceDataService,
+          useValue: {
+            list: () => [],
+            selectedWorkspaceId: () => 'work',
+            privateWorkspaceId: () => 'private',
+            includesProject: (item: Project) => item.workspaceId === 'work',
+            workspaceFor: (item: Project) => item.workspaceId ?? null,
+          },
+        },
+        {
+          provide: SupabaseSessionService,
+          useValue: { user: () => ({ id: 'owner-1' }) },
+        },
+      ],
+    }).compileComponents();
+
+    component = TestBed.createComponent(
+      ProjectComposerComponent
+    ).componentInstance;
+  });
+
+  it('offers only parents from the current workspace', () => {
+    expect(component.availableAncestorOptions().map((item) => item.id)).toEqual(
+      ['work-a']
+    );
+  });
+
+  it('keeps the current parent of a project from another workspace', () => {
+    component.preset = {
+      mode: 'edit',
+      project: createProject({
+        id: 'child',
+        workspaceId: 'private',
+        ancestorId: 'private-a',
+      }),
+    };
+
+    expect(component.availableAncestorOptions().map((item) => item.id)).toEqual(
+      ['private-a', 'work-a']
+    );
+  });
+});

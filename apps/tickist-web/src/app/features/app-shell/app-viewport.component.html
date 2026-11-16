@@ -103,10 +103,12 @@
         </span>
       </button>
       <button
+        #notificationsTrigger
         type="button"
         class="btn btn-circle btn-ghost border border-white/10"
         aria-label="Open notifications"
         title="Open notifications"
+        [attr.aria-expanded]="notificationsOpen()"
         (click)="toggleNotifications()"
       >
         <div class="indicator">
@@ -151,6 +153,9 @@
           class="workspace-switcher__menu"
           role="group"
           aria-label="Workspaces"
+          [appAnchoredPopover]="workspaceTrigger"
+          (popoverOpened)="onWorkspaceMenuShown()"
+          (popoverClosed)="workspaceMenuOpen.set(false)"
         >
           <p class="workspace-switcher__heading">Workspace</p>
           <button
@@ -188,9 +193,11 @@
         }
       </div>
       <button
+        #profileTrigger
         type="button"
         class="btn btn-circle border border-white/10 bg-base-100/70 p-0 shadow-inner"
         aria-label="Open profile menu"
+        [attr.aria-expanded]="profileMenuOpen()"
         (click)="toggleProfileMenu()"
       >
         @if (avatarUrl(); as avatar) {
@@ -209,7 +216,11 @@
 
     @if (profileMenuOpen()) {
     <div
-      class="app-menu absolute right-3 top-full z-40 mt-2 w-48 rounded-2xl border border-white/10 bg-base-200/95 p-2 shadow-xl shadow-black/40"
+      class="app-menu w-48 rounded-2xl border border-white/10 bg-base-200/95 p-2 text-base-content shadow-xl shadow-black/40"
+      role="group"
+      aria-label="Profile"
+      [appAnchoredPopover]="profileTrigger"
+      (popoverClosed)="closeProfileMenu()"
     >
       <button
         class="btn btn-ghost btn-sm w-full justify-start rounded-xl px-4 text-left"
@@ -254,7 +265,11 @@
     </div>
     } @if (notificationsOpen()) {
     <div
-      class="app-menu absolute right-20 top-full z-40 mt-2 w-80 rounded-2xl border border-white/10 bg-base-200/95 p-3 shadow-xl shadow-black/50"
+      class="app-menu w-80 max-w-[calc(100vw-1rem)] rounded-2xl border border-white/10 bg-base-200/95 p-3 text-base-content shadow-xl shadow-black/50"
+      role="group"
+      aria-label="Notifications"
+      [appAnchoredPopover]="notificationsTrigger"
+      (popoverClosed)="closeNotifications()"
     >
       <div class="mb-2 flex items-center justify-between gap-2">
         <p
@@ -276,7 +291,7 @@
             type="button"
             aria-label="Close notifications"
             title="Close notifications"
-            (click)="toggleNotifications()"
+            (click)="dismissNotifications()"
           >
             <span aria-hidden="true">×</span>
           </button>
@@ -325,71 +340,57 @@
     }
   </nav>
 
-  @if (aboutModalOpen()) {
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
-    tabindex="-1"
-    (keydown.escape)="closeAboutModal()"
+  <dialog
+    class="about-dialog w-[calc(100%-2rem)] max-w-md rounded-2xl border border-white/10 bg-base-200 p-6 text-base-content shadow-2xl shadow-black/50"
+    closedby="any"
+    aria-labelledby="about-dialog-title"
+    [appModalDialog]="aboutModalOpen()"
+    (dialogClosed)="onAboutDialogClosed()"
   >
-    <button
-      type="button"
-      class="absolute inset-0 bg-black/60"
-      aria-label="Close about dialog"
-      (click)="closeAboutModal()"
-    ></button>
-    <section
-      class="relative w-full max-w-md rounded-2xl border border-white/10 bg-base-200 p-6 shadow-2xl shadow-black/50"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="about-dialog-title"
-      tabindex="-1"
-    >
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <p
-            class="text-xs font-semibold uppercase tracking-[0.3em] text-base-content/50"
-          >
-            Tickist
-          </p>
-          <h2 id="about-dialog-title" class="mt-1 text-xl font-semibold">
-            About
-          </h2>
-        </div>
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm btn-circle"
-          aria-label="Close about dialog"
-          (click)="closeAboutModal()"
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p
+          class="text-xs font-semibold uppercase tracking-[0.3em] text-base-content/50"
         >
-          ✕
-        </button>
+          Tickist
+        </p>
+        <h2 id="about-dialog-title" class="mt-1 text-xl font-semibold">
+          About
+        </h2>
       </div>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-circle"
+        aria-label="Close about dialog"
+        (click)="closeAboutModal()"
+      >
+        ✕
+      </button>
+    </div>
 
-      <dl class="mt-6 space-y-4">
-        <div>
-          <dt
-            class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
-          >
-            Build commit
-          </dt>
-          <dd class="mt-2 font-mono text-sm text-base-content">
-            {{ buildCommitShort }}
-          </dd>
-        </div>
-        <div>
-          <dt
-            class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
-          >
-            Full commit
-          </dt>
-          <dd class="mt-2 break-all font-mono text-xs text-base-content/70">
-            {{ buildCommit }}
-          </dd>
-        </div>
-      </dl>
-    </section>
-  </div>
-  }
+    <dl class="mt-6 space-y-4">
+      <div>
+        <dt
+          class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
+        >
+          Build commit
+        </dt>
+        <dd class="mt-2 font-mono text-sm text-base-content">
+          {{ buildCommitShort }}
+        </dd>
+      </div>
+      <div>
+        <dt
+          class="text-xs font-semibold uppercase tracking-[0.25em] text-base-content/50"
+        >
+          Full commit
+        </dt>
+        <dd class="mt-2 break-all font-mono text-xs text-base-content/70">
+          {{ buildCommit }}
+        </dd>
+      </div>
+    </dl>
+  </dialog>
 
   <div class="app-layout relative">
     <aside
@@ -398,33 +399,34 @@
       <app-sidebar></app-sidebar>
     </aside>
 
-    @if (sidebarOpen()) {
-    <aside
+    <dialog
       id="mobile-project-sidebar"
-      class="app-layout__mobile-sidebar fixed inset-y-0 left-0 z-40 w-[min(24rem,calc(100vw-2rem))] bg-base-200 px-5 py-6 shadow-2xl shadow-black/40 transition lg:hidden"
+      class="mobile-drawer lg:hidden"
+      aria-label="Projects"
+      closedby="any"
+      [appModalDialog]="sidebarOpen()"
+      (dialogClosed)="closeSidebar()"
     >
-      <div class="flex justify-end">
-        <button
-          type="button"
-          class="btn btn-ghost btn-xs btn-circle"
-          aria-label="Close sidebar"
-          title="Close sidebar"
-          (click)="closeSidebar()"
-        >
-          <span aria-hidden="true">✕</span>
-        </button>
+      <div
+        class="app-layout__mobile-sidebar w-[min(24rem,calc(100vw-2rem))] bg-base-200 px-5 py-6 text-base-content shadow-2xl shadow-black/40"
+      >
+        <div class="flex justify-end">
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle"
+            aria-label="Close sidebar"
+            title="Close sidebar"
+            autofocus
+            (click)="closeSidebar()"
+          >
+            <span aria-hidden="true">✕</span>
+          </button>
+        </div>
+        @if (sidebarOpen()) {
+        <app-sidebar></app-sidebar>
+        }
       </div>
-      <app-sidebar></app-sidebar>
-    </aside>
-    } @if (sidebarOpen()) {
-    <div
-      class="fixed inset-0 z-30 bg-black/50 lg:hidden"
-      tabindex="0"
-      (click)="closeSidebar()"
-      (keydown.enter)="closeSidebar()"
-      (keydown.space)="closeSidebar(); $event.preventDefault()"
-    ></div>
-    }
+    </dialog>
 
     <main class="app-layout__main flex-1 px-4 py-8 lg:px-8">
       <div class="app-layout__main-inner w-full max-w-none min-w-0">

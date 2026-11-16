@@ -9,7 +9,8 @@
     "paths": {
       "@tickist/data-access-tickist": [
         "./libs/data-access/tickist/src/index.ts"
-      ]
+      ],
+      "@tickist/recurrence": ["./libs/data-access/tickist/src/recurrence.ts"]
     },
     "isolatedModules": true,
     "strict": false,

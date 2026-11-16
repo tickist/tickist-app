@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { draftToRange } from '../../features/task-fab/task-time-entries.component';
 import {
   dateKeysInRange,
+  dueDayStatus,
   periodLabel,
   periodRange,
   shiftDateKey,
@@ -118,5 +119,45 @@ describe('draftToRange', () => {
     expect(
       draftToRange({ date: '2026-11-04', from: '10:00', to: '' }, 'UTC')
     ).toBeNull();
+  });
+});
+
+describe('dueDayStatus', () => {
+  const timezone = 'Europe/Warsaw';
+  const now = new Date('2026-11-16T14:30:00Z');
+
+  const at = (date: string, time: string): string => {
+    const iso = zonedDateTimeToIso(date, time, timezone);
+
+    if (!iso) throw new Error(`invalid test date ${date} ${time}`);
+
+    return iso;
+  };
+
+  it('treats a task due at the start of today as due today, not overdue', () => {
+    const startOfToday = at('2026-11-16', '00:00');
+
+    expect(dueDayStatus(startOfToday, now, timezone)).toBe('today');
+  });
+
+  it('marks earlier days as overdue and later days as upcoming', () => {
+    const yesterday = at('2026-11-15', '23:30');
+    const tomorrow = at('2026-11-17', '00:00');
+
+    expect(dueDayStatus(yesterday, now, timezone)).toBe('overdue');
+    expect(dueDayStatus(tomorrow, now, timezone)).toBe('upcoming');
+  });
+
+  it('compares calendar days in the account timezone', () => {
+    // 23:30 UTC on 16 November is already 17 November in Warsaw.
+    const lateEvening = new Date('2026-11-16T23:30:00Z');
+    const dueSeventeenthUtc = '2026-11-17T00:00:00Z';
+
+    expect(dueDayStatus(dueSeventeenthUtc, lateEvening, timezone)).toBe(
+      'today'
+    );
+    expect(dueDayStatus(dueSeventeenthUtc, lateEvening, 'UTC')).toBe(
+      'upcoming'
+    );
   });
 });

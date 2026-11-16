@@ -1,3 +1,4 @@
+import { formatMinutesShort } from '../../core/time/duration';
 import {
   Component,
   EventEmitter,
@@ -9,18 +10,7 @@ import {
 
 import { Project } from '../../data/project-data.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
-
-type SortOption =
-  | 'priority-desc'
-  | 'priority-asc'
-  | 'due-asc'
-  | 'due-desc'
-  | 'created-asc'
-  | 'created-desc'
-  | 'modified-asc'
-  | 'modified-desc'
-  | 'alpha-asc'
-  | 'alpha-desc';
+import { type ProjectSortOption as SortOption } from './project-sort';
 
 type FilterOption = 'all' | 'done' | 'not-done' | 'suspended';
 
@@ -38,6 +28,10 @@ export class ProjectHeaderComponent {
   @Input() sort: SortOption = 'priority-desc';
   @Input() filter: FilterOption = 'not-done';
   @Input() suspendedCount = 0;
+  /** Total time logged on the project's tasks, in minutes. */
+  @Input() spentMinutes = 0;
+  /** Total estimate of the project's tasks, in minutes. */
+  @Input() estimateMinutes = 0;
 
   @Output() toggleSimple = new EventEmitter<boolean>();
   @Output() openEdit = new EventEmitter<void>();
@@ -45,6 +39,28 @@ export class ProjectHeaderComponent {
   @Output() changeFilter = new EventEmitter<FilterOption>();
 
   readonly sortOpen = signal(false);
+
+  hasTime(): boolean {
+    return this.spentMinutes > 0 || this.estimateMinutes > 0;
+  }
+
+  timeLabel(): string {
+    const spent = formatMinutesShort(this.spentMinutes);
+
+    if (this.estimateMinutes <= 0) return `${spent} spent`;
+
+    return `${spent} spent of ${formatMinutesShort(
+      this.estimateMinutes
+    )} estimated`;
+  }
+
+  /** Share of the estimate already spent; null when nothing is estimated. */
+  timePercent(): number | null {
+    if (this.estimateMinutes <= 0) return null;
+
+    return Math.round((this.spentMinutes / this.estimateMinutes) * 100);
+  }
+
   readonly filterOpen = signal(false);
 
   readonly sortOptions: { label: string; value: SortOption }[] = [

@@ -34,39 +34,62 @@
     [formGroup]="form"
     (ngSubmit)="handleSubmit()"
   >
-    <label class="form-control w-full">
-      <span class="label">
+    <div class="form-control w-full">
+      <label class="label" for="signin-email">
         <span class="label-text text-base-content/70">Email</span>
-      </span>
+      </label>
       <input
+        id="signin-email"
         formControlName="email"
+        name="email"
         type="email"
         class="input input-bordered w-full auth-input"
         placeholder="team@tickist.app"
-        autocomplete="email"
+        autocomplete="username"
+        spellcheck="false"
+        [attr.aria-invalid]="
+          form.controls.email.touched && form.controls.email.invalid
+        "
+        [attr.aria-describedby]="
+          form.controls.email.touched && form.controls.email.invalid
+            ? 'signin-email-error'
+            : null
+        "
       />
       @if (form.controls.email.touched && form.controls.email.invalid) {
-      <span class="label-text-alt text-error">
+      <span id="signin-email-error" class="label-text-alt text-error">
         Provide a valid email address
       </span>
       }
-    </label>
+    </div>
 
-    <label class="form-control w-full">
-      <span class="label">
+    <div class="form-control w-full">
+      <label class="label" for="signin-password">
         <span class="label-text text-base-content/70">Password</span>
-      </span>
+      </label>
       <input
+        id="signin-password"
         formControlName="password"
+        name="password"
         type="password"
         class="input input-bordered w-full auth-input"
         placeholder="••••••••"
         autocomplete="current-password"
+        [attr.aria-invalid]="
+          form.controls.password.touched && form.controls.password.invalid
+        "
+        [attr.aria-describedby]="
+          form.controls.password.touched && form.controls.password.invalid
+            ? 'signin-password-error'
+            : null
+        "
       />
       @if (form.controls.password.touched && form.controls.password.invalid) {
-      <span class="label-text-alt text-error"> Min. 6 characters </span>
+      <span id="signin-password-error" class="label-text-alt text-error">
+        Min. 6 characters
+      </span>
       }
-    </label>
+    </div>
 
     @if (captcha.required) {
     <app-turnstile-widget (token)="captcha.token.set($event)" />
@@ -86,17 +109,19 @@
     </button>
   </form>
 
-  @if (message(); as feedback) {
-  <p
-    class="text-sm text-base-content/70"
-    [ngClass]="{
-      'text-success': feedback.type === 'success',
-      'text-error': feedback.type === 'error'
-    }"
-  >
-    {{ feedback.text }}
-  </p>
-  }
+  <div aria-live="polite">
+    @if (message(); as feedback) {
+    <p
+      class="text-sm text-base-content/70"
+      [ngClass]="{
+        'text-success': feedback.type === 'success',
+        'text-error': feedback.type === 'error'
+      }"
+    >
+      {{ feedback.text }}
+    </p>
+    }
+  </div>
 
   <footer class="text-center text-xs text-base-content/60 space-y-1">
     <div>

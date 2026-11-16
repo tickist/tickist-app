@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   input,
+  output,
   signal,
   untracked,
 } from '@angular/core';
@@ -39,6 +40,10 @@ interface EntryDraft {
 })
 export class TaskTimeEntriesComponent {
   readonly taskId = input.required<string>();
+  /** Date a new entry starts on; today when not given. */
+  readonly defaultDate = input<string | null>(null);
+  /** Emits after an entry was added, edited or deleted. */
+  readonly changed = output<void>();
 
   private readonly timer = inject(TimeTrackingService);
   private readonly tasks = inject(TaskDataService);
@@ -140,6 +145,7 @@ export class TaskTimeEntriesComponent {
       if (saved) {
         this.cancel();
         await this.load(this.taskId());
+        this.changed.emit();
       }
     } finally {
       this.saving.set(false);
@@ -151,6 +157,7 @@ export class TaskTimeEntriesComponent {
 
     if (await this.timer.deleteEntry(entry.id)) {
       await this.load(this.taskId());
+      this.changed.emit();
     }
   }
 
@@ -163,7 +170,12 @@ export class TaskTimeEntriesComponent {
   }
 
   private emptyDraft(): EntryDraft {
-    return { date: this.timer.todayKey(), from: '', to: '', note: '' };
+    return {
+      date: this.defaultDate() ?? this.timer.todayKey(),
+      from: '',
+      to: '',
+      note: '',
+    };
   }
 }
 

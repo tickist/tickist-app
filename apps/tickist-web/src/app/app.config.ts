@@ -6,7 +6,11 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import {
+  provideRouter,
+  withInMemoryScrolling,
+  withViewTransitions,
+} from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
   provideClientHydration,
@@ -27,7 +31,10 @@ export const appConfig: ApplicationConfig = {
       appRoutes,
       withInMemoryScrolling({
         scrollPositionRestoration: 'top',
-      })
+      }),
+      // Cross-fade between routes where the browser supports view transitions;
+      // other browsers navigate without an animation.
+      withViewTransitions({ skipInitialTransition: true })
     ),
     provideSupabase(environment.supabase),
     provideAppInitializer(() =>

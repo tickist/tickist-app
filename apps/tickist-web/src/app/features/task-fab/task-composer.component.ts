@@ -22,7 +22,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import {
   Task,
@@ -42,6 +42,7 @@ import {
   isProjectSharedWithOthers,
 } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
+import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
@@ -51,19 +52,16 @@ import {
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
 import { TaskTimeEntriesComponent } from './task-time-entries.component';
+import {
+  repeatFieldsForMode,
+  repeatStateFromTask,
+  type CustomRepeatUnit,
+  type RepeatMode,
+} from '../../core/time/repeat-mode';
 
 type TabKey = 'general' | 'repeat' | 'reminders' | 'tags' | 'steps' | 'extra';
 
-type RepeatMode =
-  | 'never'
-  | 'daily'
-  | 'daily_work'
-  | 'weekly'
-  | 'monthly'
-  | 'yearly'
-  | 'custom';
-
-type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+type RepeatUnit = CustomRepeatUnit;
 
 type RepeatFromMode = 'completion_date' | 'due_date';
 
@@ -89,7 +87,8 @@ type TaskFormDefaults = {
   suspendUntil: string;
   suspendUntilTime: string;
   pinned: boolean;
-  estimateMinutes: number;
+  /** Empty means no estimate; the form never invents one. */
+  estimateMinutes: number | null;
 };
 
 @Component({
@@ -120,6 +119,7 @@ export class TaskComposerComponent {
   private readonly reminderService = inject(TaskReminderDataService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly session = inject(SupabaseSessionService);
+  private readonly workspaces = inject(WorkspaceDataService);
 
   readonly projects = computed(() => this.projectService.list());
   readonly tags = computed(() => this.tagService.list());
@@ -229,7 +229,7 @@ export class TaskComposerComponent {
     suspendUntil: '',
     suspendUntilTime: '00:00',
     pinned: false,
-    estimateMinutes: 15,
+    estimateMinutes: null,
   };
   @Input() set preset(value: TaskComposerPreset | null) {
     this.applyPreset(value);
@@ -257,10 +257,33 @@ export class TaskComposerComponent {
       suspendUntil: [''],
       suspendUntilTime: ['00:00'],
       pinned: [false],
-      estimateMinutes: [15],
+      estimateMinutes: this.fb.control<number | null>(null, [
+        Validators.min(0),
+      ]),
     },
     { validators: suspensionValidator }
   );
+
+  private readonly selectedProjectId = toSignal(
+    this.taskForm.controls.projectId.valueChanges,
+    { initialValue: this.taskForm.controls.projectId.value }
+  );
+
+  /**
+   * Projects offered in the picker: those in the current workspace (all of
+   * them when no workspace is selected), plus the task's current project so
+   * editing a task from another workspace still shows where it lives.
+   */
+  readonly pickerProjects = computed(() => {
+    const all = this.projects();
+    const selectedId = this.selectedProjectId();
+
+    return all.filter(
+      (project) =>
+        project.id === selectedId ||
+        this.workspaces.includesProject(project, all)
+    );
+  });
 
   readonly stepsArray = this.fb.array<FormGroup>([]);
   readonly remindersArray = this.fb.array<FormGroup>([]);
@@ -371,8 +394,9 @@ export class TaskComposerComponent {
       const task = preset.task;
       this.editingTask.set(task);
 
-      const { mode, every, unit } = this.repeatModeFromInterval(
-        task.repeatInterval
+      const { mode, every, unit } = repeatStateFromTask(
+        task.repeatInterval,
+        task.repeatUnit
       );
 
       this.resetForm({
@@ -395,7 +419,7 @@ export class TaskComposerComponent {
         suspendUntil: normalizeDateTimeDateValue(task.suspendUntil),
         suspendUntilTime: normalizeDateTimeTimeValue(task.suspendUntil),
         pinned: task.pinned,
-        estimateMinutes: task.estimateMinutes ?? 15,
+        estimateMinutes: task.estimateMinutes ?? null,
       });
       this.clearSteps();
       task.steps.forEach((step) => this.addStep(step.content, step.isDone));
@@ -790,7 +814,7 @@ export class TaskComposerComponent {
   private buildTaskUpdatePayload(id: string): TaskUpdateInput {
     const value = this.taskForm.getRawValue();
 
-    const repeatInterval = this.getRepeatInterval(
+    const { repeatInterval, repeatUnit } = repeatFieldsForMode(
       value.repeatMode,
       value.repeatEvery,
       value.repeatUnit
@@ -810,6 +834,7 @@ export class TaskComposerComponent {
       priority: value.priority,
       taskType: value.taskType?.toUpperCase(),
       repeatInterval,
+      repeatUnit,
       fromRepeating: this.getRepeatFromValue(
         repeatInterval,
         value.repeatFrom,
@@ -860,7 +885,7 @@ export class TaskComposerComponent {
         return;
       }
 
-      const repeatInterval = this.getRepeatInterval(
+      const { repeatInterval, repeatUnit } = repeatFieldsForMode(
         value.repeatMode,
         value.repeatEvery,
         value.repeatUnit
@@ -915,6 +940,7 @@ export class TaskComposerComponent {
           priority: value.priority,
           taskType: value.taskType?.toUpperCase(),
           repeatInterval,
+          repeatUnit,
           fromRepeating: repeatFrom,
           estimateMinutes: value.estimateMinutes ?? null,
           tags: value.tags,
@@ -951,6 +977,7 @@ export class TaskComposerComponent {
         priority: value.priority,
         taskType: value.taskType?.toUpperCase(),
         repeatInterval,
+        repeatUnit,
         fromRepeating: repeatFrom,
         estimateMinutes: value.estimateMinutes ?? null,
         tags: value.tags,
@@ -1051,29 +1078,6 @@ export class TaskComposerComponent {
     return new Date(localDateTime(date, time)).toISOString();
   }
 
-  private getRepeatInterval(
-    mode: RepeatMode,
-    every: number,
-    unit: RepeatUnit
-  ): number {
-    switch (mode) {
-      case 'daily':
-        return 1;
-      case 'daily_work':
-        return 1;
-      case 'weekly':
-        return 7;
-      case 'monthly':
-        return 30;
-      case 'yearly':
-        return 365;
-      case 'custom':
-        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
-      default:
-        return 0;
-    }
-  }
-
   private getRepeatFromValue(
     repeatInterval: number,
     mode: RepeatFromMode,
@@ -1088,63 +1092,6 @@ export class TaskComposerComponent {
     }
 
     return 0;
-  }
-
-  private repeatModeFromInterval(
-    interval: number | null | undefined
-  ): RepeatState {
-    if (!interval || interval <= 0) {
-      return { mode: 'never', every: 1, unit: 'day' };
-    }
-
-    switch (interval) {
-      case 1:
-        return { mode: 'daily', every: 1, unit: 'day' };
-      case 7:
-        return { mode: 'weekly', every: 1, unit: 'week' };
-      case 30:
-        return { mode: 'monthly', every: 1, unit: 'month' };
-      case 365:
-        return { mode: 'yearly', every: 1, unit: 'year' };
-    }
-
-    const unit = this.repeatUnitFromInterval(interval);
-
-    const every = Math.max(
-      1,
-      Math.round(interval / this.repeatUnitMultiplier(unit))
-    );
-
-    return { mode: 'custom', every, unit };
-  }
-
-  private repeatUnitMultiplier(unit: RepeatUnit): number {
-    switch (unit) {
-      case 'week':
-        return 7;
-      case 'month':
-        return 30;
-      case 'year':
-        return 365;
-      default:
-        return 1;
-    }
-  }
-
-  private repeatUnitFromInterval(interval: number): RepeatUnit {
-    if (interval % 365 === 0) {
-      return 'year';
-    }
-
-    if (interval % 30 === 0) {
-      return 'month';
-    }
-
-    if (interval % 7 === 0) {
-      return 'week';
-    }
-
-    return 'day';
   }
 
   private repeatFromModeFromValue(
@@ -1323,12 +1270,6 @@ function toReminderInputValue(value: string): ReminderInputValue {
     date: `${year}-${month}-${day}`,
     time: `${hours}:${minutes}`,
   };
-}
-
-interface RepeatState {
-  mode: RepeatMode;
-  every: number;
-  unit: RepeatUnit;
 }
 
 interface ReminderInputValue {
