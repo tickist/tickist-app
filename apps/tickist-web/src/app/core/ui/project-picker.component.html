@@ -38,6 +38,8 @@
     role="dialog"
     [attr.aria-label]="ariaLabel"
     [style.top.px]="menuLayout().top"
+    [style.bottom.px]="menuLayout().bottom"
+    [style.max-height.px]="menuLayout().maxHeight"
     [style.left.px]="menuLayout().left"
     [style.width.px]="menuLayout().width"
     (toggle)="onMenuToggle($event)"
@@ -59,7 +61,6 @@
       class="project-picker__options"
       role="listbox"
       [attr.aria-label]="ariaLabel"
-      [style.max-height.px]="menuLayout().maxHeight"
     >
       @for (group of groupedOptions(); track group.key) {
       <section class="project-picker__group" [attr.aria-label]="group.label">

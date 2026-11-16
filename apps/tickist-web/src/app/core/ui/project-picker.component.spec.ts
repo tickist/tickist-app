@@ -128,6 +128,47 @@ describe('ProjectPickerComponent', () => {
     }
   });
 
+  it('keeps the whole menu, search field included, inside the viewport', () => {
+    const restore = placeTrigger(fixture, { top: 503, bottom: 560 }, 892);
+
+    try {
+      openPicker(fixture);
+
+      const menu = requiredElement(
+        fixtureHost(fixture),
+        '.project-picker__menu',
+        HTMLElement
+      );
+
+      // 892 - (560 + 6) - 12 px gutter = 314 px left below the trigger.
+      expect(menu.style.top).toBe('566px');
+      expect(menu.style.bottom).toBe('');
+      expect(menu.style.maxHeight).toBe('314px');
+    } finally {
+      restore();
+    }
+  });
+
+  it('opens above the trigger when there is little room below', () => {
+    const restore = placeTrigger(fixture, { top: 700, bottom: 744 }, 892);
+
+    try {
+      openPicker(fixture);
+
+      const menu = requiredElement(
+        fixtureHost(fixture),
+        '.project-picker__menu',
+        HTMLElement
+      );
+
+      expect(menu.style.top).toBe('');
+      expect(menu.style.bottom).toBe('198px');
+      expect(menu.style.maxHeight).toBe('320px');
+    } finally {
+      restore();
+    }
+  });
+
   it('closes when the popover is dismissed natively', () => {
     openPicker(fixture);
 
@@ -218,4 +259,32 @@ function createProject(
     members: [],
     ...overrides,
   };
+}
+
+function placeTrigger(
+  fixture: ComponentFixture<ProjectPickerComponent>,
+  rect: { top: number; bottom: number },
+  viewportHeight: number
+): () => void {
+  const trigger = requiredElement(
+    fixtureHost(fixture),
+    '.project-picker__trigger',
+    HTMLButtonElement
+  );
+
+  const original = window.innerHeight;
+
+  vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue(
+    new DOMRect(100, rect.top, 600, rect.bottom - rect.top)
+  );
+  Object.defineProperty(window, 'innerHeight', {
+    configurable: true,
+    value: viewportHeight,
+  });
+
+  return () =>
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: original,
+    });
 }

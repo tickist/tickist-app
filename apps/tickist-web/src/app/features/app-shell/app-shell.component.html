@@ -162,16 +162,15 @@
           data-testid="day-deadlines"
         >
           <h2 id="day-deadlines-title" class="day-section__title">
-            Deadlines coming up
+            Deadlines on this day
           </h2>
           <app-task-list
             [tasks]="dayDeadlineTasks()"
             [projectResolver]="projectForTaskList"
             [viewMode]="taskViewMode()"
             [reorderable]="true"
-            [dueHint]="dayDeadlineHint"
             (reordered)="reorderDay($event)"
-            emptyText="No deadlines on or after this day."
+            emptyText="No deadlines on this day."
           ></app-task-list>
         </section>
         } @else {

@@ -558,7 +558,7 @@ test.describe('weekday day plan', () => {
     await expect(page.locator('app-task-composer')).toHaveCount(0);
   }
 
-  test('splits a day into scheduled tasks and upcoming deadlines and keeps a manual order', async ({
+  test('splits a day into scheduled tasks and deadlines due that day and keeps a manual order', async ({
     page,
   }, testInfo) => {
     const suffix = uniqueSuffix(testInfo);
@@ -585,19 +585,14 @@ test.describe('weekday day plan', () => {
 
     await openDay(0);
     await expect.poll(() => names(scheduled)).toHaveLength(2);
-    await expect(deadlines.getByText(deadline)).toBeVisible();
-    await expect(scheduled.getByText(deadline)).toHaveCount(0);
+    await expect(deadlines.getByText(deadline)).toHaveCount(0);
 
     await openDay(1);
-    await expect(deadlines.getByText(deadline)).toBeVisible();
-    await expect(deadlines.getByTestId('task-due-hint')).toHaveText(
-      'due tomorrow'
-    );
+    await expect(deadlines.getByText(deadline)).toHaveCount(0);
 
     await openDay(2);
-    await expect(deadlines.getByTestId('task-due-hint')).toHaveText(
-      'due today'
-    );
+    await expect(deadlines.getByText(deadline)).toBeVisible();
+    await expect(scheduled.getByText(deadline)).toHaveCount(0);
 
     await openDay(3);
     await expect(deadlines.getByText(deadline)).toHaveCount(0);

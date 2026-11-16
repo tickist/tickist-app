@@ -39,7 +39,6 @@
       [task]="task"
       [project]="projectFor(task)"
       [viewMode]="viewMode()"
-      [dueHint]="hintFor(task)"
       [menuOpen]="openMenuTaskId() === task.id"
       (menuOpenChange)="setTaskMenuOpen(task.id, $event)"
     ></app-task-card>

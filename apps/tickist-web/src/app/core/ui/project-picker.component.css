@@ -123,8 +123,14 @@
   box-shadow: 0 18px 40px rgb(0 0 0 / 0.42);
 }
 
+.project-picker__menu:popover-open {
+  display: flex;
+  flex-direction: column;
+}
+
 .project-picker__search {
   display: block;
+  flex: none;
   margin-bottom: 0.35rem;
 }
 
@@ -150,6 +156,8 @@
 }
 
 .project-picker__options {
+  min-height: 0;
+  flex: 1 1 auto;
   border-radius: 12px;
   background-color: var(--project-picker-surface);
   overflow-y: auto;

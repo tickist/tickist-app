@@ -189,11 +189,6 @@
       >{{ finishDateModeIcon() }}</span
     >
     <span>{{ finishDateLabel }}</span>
-    @if (dueHint) {
-    <span class="task-card__due-hint" data-testid="task-due-hint">{{
-      dueHint
-    }}</span>
-    }
   </div>
   } @if (viewMode === 'extended') {
   <div class="task-card__toolbar">

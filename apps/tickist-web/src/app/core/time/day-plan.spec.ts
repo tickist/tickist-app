@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import {
   compareDeadlines,
   compareScheduled,
-  deadlineHint,
   deadlinesForDay,
   scheduledForDay,
   taskDayKey,
@@ -27,8 +26,6 @@ function dated(
   };
 }
 
-const today = '2026-11-16';
-
 const tasks = [
   dated('scheduled-mon', '2026-11-16', 0),
   dated('deadline-wed', '2026-11-18', 1),
@@ -47,21 +44,18 @@ describe('day plan sections', () => {
     ).toEqual(['scheduled-tue']);
   });
 
-  it('shows a deadline on every day from today through its due day', () => {
-    for (const day of ['2026-11-16', '2026-11-17', '2026-11-18']) {
-      expect(
-        deadlinesForDay(tasks, day, today, timezone).map((t) => t.id)
-      ).toEqual(['deadline-wed']);
+  it('shows a deadline only on its due day', () => {
+    expect(
+      deadlinesForDay(tasks, '2026-11-18', timezone).map((t) => t.id)
+    ).toEqual(['deadline-wed']);
+
+    for (const day of ['2026-11-16', '2026-11-17', '2026-11-19']) {
+      expect(deadlinesForDay(tasks, day, timezone)).toEqual([]);
     }
 
-    expect(deadlinesForDay(tasks, '2026-11-19', today, timezone)).toEqual([]);
-  });
-
-  it('leaves overdue deadlines and past days to the Overdue group', () => {
     expect(
-      deadlinesForDay(tasks, today, today, timezone).map((t) => t.id)
-    ).not.toContain('deadline-sun');
-    expect(deadlinesForDay(tasks, '2026-11-15', today, timezone)).toEqual([]);
+      deadlinesForDay(tasks, '2026-11-15', timezone).map((t) => t.id)
+    ).toEqual(['deadline-sun']);
   });
 
   it('reads the calendar day in the account timezone', () => {
@@ -103,19 +97,5 @@ describe('day plan sections', () => {
       'fri-a',
       'fri-c',
     ]);
-  });
-
-  it('describes how far a deadline is from the day shown', () => {
-    const wed = dated('wed', '2026-11-18', 1);
-
-    expect(deadlineHint(wed, '2026-11-18', timezone)).toBe('due today');
-    expect(deadlineHint(wed, '2026-11-17', timezone)).toBe('due tomorrow');
-    expect(deadlineHint(wed, '2026-11-16', timezone)).toBe('due Wed');
-    expect(
-      deadlineHint(dated('far', '2026-12-01', 1), '2026-11-16', timezone)
-    ).toBe('due 1 Dec');
-    expect(
-      deadlineHint(dated('s', '2026-11-18', 0), '2026-11-16', timezone)
-    ).toBeNull();
   });
 });

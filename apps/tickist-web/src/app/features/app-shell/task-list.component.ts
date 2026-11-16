@@ -25,8 +25,6 @@ type TaskViewMode = 'extended' | 'simple';
 
 type TaskProjectResolver = (task: Task) => Project | null;
 
-type TaskHintResolver = (task: Task) => string | null;
-
 export interface TaskReorder {
   /** Task IDs in the order shown before the move. */
   ids: string[];
@@ -53,8 +51,6 @@ export class TaskListComponent {
   readonly emptyText = input('No tasks yet.');
   /** Shows a drag handle on each task and emits `reordered` on moves. */
   readonly reorderable = input(false);
-  /** Optional chip next to the date, such as "due Fri" in a day view. */
-  readonly dueHint = input<TaskHintResolver | null>(null);
   readonly reordered = output<TaskReorder>();
 
   /** Cards from this index on render lazily (likely below the first screen). */
@@ -70,10 +66,6 @@ export class TaskListComponent {
     const resolver = this.projectResolver();
 
     return resolver ? resolver(task) : this.project();
-  }
-
-  hintFor(task: Task): string | null {
-    return this.dueHint()?.(task) ?? null;
   }
 
   trackTask(_index: number, task: Task): string {
