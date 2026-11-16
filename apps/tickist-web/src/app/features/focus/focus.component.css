@@ -109,6 +109,16 @@
   background-color: color-mix(in oklab, var(--color-primary) 88%, white);
 }
 
+.focus-btn--done {
+  background-color: color-mix(in oklab, rgb(16 185 129) 18%, transparent);
+  border-color: color-mix(in oklab, rgb(16 185 129) 55%, transparent);
+  color: var(--color-base-content);
+}
+
+.focus-btn--done:hover:not(:disabled) {
+  background-color: color-mix(in oklab, rgb(16 185 129) 30%, transparent);
+}
+
 .focus-btn--quiet {
   background-color: transparent;
   border-color: color-mix(in oklab, var(--color-base-content) 25%, transparent);
