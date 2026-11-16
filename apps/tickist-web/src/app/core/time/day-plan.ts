@@ -1,7 +1,7 @@
 // Which tasks belong to a calendar day in the Weekdays view and the dashboard.
 // A task date is either Scheduled (typeFinishDate 0: do it on that day) or a
 // Deadline (any other value, the default: finish it by that day).
-import { shiftDateKey, zonedDateKey } from './zoned-time';
+import { zonedDateKey } from './zoned-time';
 
 export interface DatedTask {
   id: string;
@@ -38,25 +38,15 @@ export function scheduledForDay<T extends DatedTask>(
   );
 }
 
-/**
- * Deadlines that still apply on this day: due on it or later. They show from
- * today until their due day; overdue deadlines belong to the Overdue group.
- */
+/** Deadlines due on exactly this day. */
 export function deadlinesForDay<T extends DatedTask>(
   tasks: readonly T[],
   dayKey: string,
-  todayKey: string,
   timezone: string
 ): T[] {
-  if (dayKey < todayKey) return [];
-
-  return tasks.filter((task) => {
-    if (isScheduled(task)) return false;
-
-    const dueKey = taskDayKey(task, timezone);
-
-    return dueKey !== null && dueKey >= dayKey;
-  });
+  return tasks.filter(
+    (task) => !isScheduled(task) && taskDayKey(task, timezone) === dayKey
+  );
 }
 
 const PRIORITY_RANK = new Map([
@@ -83,29 +73,4 @@ export function compareDeadlines(a: DatedTask, b: DatedTask): number {
   const byDue = (a.finishDate ?? '').localeCompare(b.finishDate ?? '');
 
   return byDue || priorityRank(b) - priorityRank(a);
-}
-
-/** "due today", "due tomorrow" or "due Fri" for a deadline seen on a day. */
-export function deadlineHint(
-  task: DatedTask,
-  dayKey: string,
-  timezone: string
-): string | null {
-  const dueKey = taskDayKey(task, timezone);
-
-  if (!dueKey || isScheduled(task)) return null;
-
-  if (dueKey === dayKey) return 'due today';
-
-  if (dueKey === shiftDateKey(dayKey, 1)) return 'due tomorrow';
-
-  const due = new Date(`${dueKey}T00:00:00Z`);
-
-  // Within the coming week a weekday is clear; further out, show the date.
-  const options: Intl.DateTimeFormatOptions =
-    dueKey < shiftDateKey(dayKey, 7)
-      ? { weekday: 'short', timeZone: 'UTC' }
-      : { day: 'numeric', month: 'short', timeZone: 'UTC' };
-
-  return `due ${new Intl.DateTimeFormat('en-GB', options).format(due)}`;
 }

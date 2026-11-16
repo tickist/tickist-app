@@ -38,12 +38,10 @@ import { applyDayOrder } from '../../core/time/day-order';
 import {
   compareDeadlines,
   compareScheduled,
-  deadlineHint,
   deadlinesForDay,
   scheduledForDay,
   taskDayKey,
 } from '../../core/time/day-plan';
-import { zonedDateKey } from '../../core/time/zoned-time';
 import { type TaskReorder } from './task-list.component';
 import {
   DEFAULT_PROJECT_SORT,
@@ -233,20 +231,17 @@ export class AppShellComponent {
       compareScheduled
     );
   });
-  /** Deadlines on the selected day or later, from today on. */
+  /** Deadlines due on the selected day. */
   readonly dayDeadlineTasks = computed(() => {
     const dayKey = this.selectedDayKey();
 
     if (!dayKey) return [];
 
-    const timezone = this.timeTracking.timezone();
-
     return applyDayOrder(
       deadlinesForDay(
         this.searchedTasks(),
         dayKey,
-        zonedDateKey(new Date(), timezone),
-        timezone
+        this.timeTracking.timezone()
       ),
       this.dayPlan.orderFor(dayKey),
       compareDeadlines
@@ -257,13 +252,6 @@ export class AppShellComponent {
 
     return dayKey ? this.dayPlan.hasOrder(dayKey) : false;
   });
-  readonly dayDeadlineHint = (task: Task): string | null => {
-    const dayKey = this.selectedDayKey();
-
-    return dayKey
-      ? deadlineHint(task, dayKey, this.timeTracking.timezone())
-      : null;
-  };
   readonly filteredStats = computed(() => {
     const tasks = this.filteredTasks();
     const now = new Date();

@@ -78,8 +78,6 @@ export class TaskCardComponent implements OnChanges {
   @Input({ required: true }) task!: Task;
   @Input() project: Project | null = null;
   @Input() viewMode: TaskViewMode = 'extended';
-  /** Deadline context in a day view, such as "due Fri" or "due today". */
-  @Input() dueHint: string | null = null;
 
   private readonly instanceId = nextTaskCardId++;
   private readonly tasks = inject(TaskDataService);

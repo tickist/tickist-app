@@ -48,7 +48,10 @@ type PickerOption = {
 };
 
 type MenuLayout = {
-  top: number;
+  /** Distance from the viewport top, or null when anchored by `bottom`. */
+  top: number | null;
+  /** Distance from the viewport bottom when the menu opens above. */
+  bottom: number | null;
   left: number;
   width: number;
   maxHeight: number;
@@ -108,9 +111,10 @@ export class ProjectPickerComponent {
   readonly searchQuery = signal('');
   readonly menuLayout = signal<MenuLayout>({
     top: 0,
+    bottom: null,
     left: 0,
     width: 0,
-    maxHeight: 260,
+    maxHeight: 320,
   });
 
   constructor() {
@@ -464,19 +468,18 @@ export class ProjectPickerComponent {
     const belowTop = rect.bottom + 6;
     const belowSpace = viewportHeight - belowTop - gutter;
     const aboveSpace = rect.top - gutter;
-    const shouldOpenAbove = belowSpace < 220 && aboveSpace > belowSpace;
+    const shouldOpenAbove = belowSpace < 280 && aboveSpace > belowSpace;
 
+    // The whole menu (search field and list) stays inside the viewport; the
+    // list scrolls within it.
     const maxHeight = Math.min(
-      260,
-      Math.max(180, shouldOpenAbove ? aboveSpace : belowSpace)
+      320,
+      Math.max(0, shouldOpenAbove ? aboveSpace - 6 : belowSpace)
     );
 
-    const top = shouldOpenAbove
-      ? Math.max(gutter, rect.top - maxHeight - 6)
-      : belowTop;
-
     this.menuLayout.set({
-      top,
+      top: shouldOpenAbove ? null : belowTop,
+      bottom: shouldOpenAbove ? viewportHeight - rect.top + 6 : null,
       left,
       width,
       maxHeight,

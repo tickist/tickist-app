@@ -127,13 +127,6 @@
   color: rgb(var(--bc) / 0.92);
 }
 
-.task-card__due-hint {
-  @apply ml-1 rounded-full px-2 py-0.5 text-xs font-semibold;
-  color: rgb(var(--bc) / 0.8);
-  background: rgb(var(--bc) / 0.08);
-  border: 1px solid rgb(var(--bc) / 0.14);
-}
-
 .icon-btn {
   @apply rounded-full px-2 py-1 text-sm transition hover:bg-base-100 hover:bg-opacity-50;
   color: inherit;
