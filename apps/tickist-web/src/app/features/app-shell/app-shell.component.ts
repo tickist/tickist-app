@@ -144,6 +144,16 @@ export class AppShellComponent {
         (task) => !task.isDone && this.taskStatus.isSuspended(task)
       ).length
   );
+  /** Spent and estimated minutes of every task in the project scope. */
+  readonly projectTime = computed(() =>
+    this.projectScopedTasks().reduce(
+      (total, task) => ({
+        spent: total.spent + (task.spentMinutes ?? 0),
+        estimate: total.estimate + (task.estimateMinutes ?? 0),
+      }),
+      { spent: 0, estimate: 0 }
+    )
+  );
   readonly filteredTasks = computed(() => {
     const tasks = this.projectScopedTasks();
     const normalizedSearch = this.searchTerm().trim().toLowerCase();

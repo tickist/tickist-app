@@ -59,28 +59,93 @@ function clickButton(root: HTMLElement, name: string): void {
   button.click();
 }
 
-describe('Separate analytics choices', () => {
-  it('routes each permission to its own provider', async () => {
-    const { root, cloudflare, google } = await setup();
-    clickButton(root, 'Allow analytics');
-    expect(cloudflare.choose).toHaveBeenCalledWith(true);
-    expect(google.choose).not.toHaveBeenCalled();
-    clickButton(root, 'Refuse Google Analytics');
-    expect(google.choose).toHaveBeenCalledWith(false);
-    expect(cloudflare.choose).toHaveBeenCalledTimes(1);
-  });
-  it('shows the new Google choice to a user who previously accepted Cloudflare', async () => {
-    const { root } = await setup(true);
-    expect(root.querySelector('[data-testid="analytics-consent"]')).toBeNull();
+function textButton(root: HTMLElement, label: string): HTMLButtonElement {
+  const button = Array.from(root.querySelectorAll('button')).find(
+    (element) => element.textContent?.trim() === label
+  );
+
+  if (!button) throw new Error(`Missing button: ${label}`);
+
+  return button;
+}
+
+describe('Analytics consent banner', () => {
+  it('asks once for both services with a short notice and a privacy link', async () => {
+    const { root } = await setup();
+
+    const banner = root.querySelector(
+      '[data-testid="analytics-consent-banner"]'
+    );
+
+    expect(banner?.textContent).toContain(
+      'Cloudflare Web Analytics and Google Analytics'
+    );
+    expect(root.querySelector('a[href="/legal/privacy"]')).not.toBeNull();
     expect(
-      root.querySelector('[data-testid="google-analytics-consent"]')
-    ).not.toBeNull();
+      root.querySelector('button[aria-label="Close privacy settings"]')
+    ).toBeNull();
+  });
+
+  it('accepts both services with one button', async () => {
+    const { root, cloudflare, google } = await setup();
+
+    textButton(root, 'Accept all').click();
+
+    expect(cloudflare.choose).toHaveBeenCalledWith(true);
+    expect(google.choose).toHaveBeenCalledWith(true);
+  });
+
+  it('rejects both services with one button', async () => {
+    const { root, cloudflare, google } = await setup();
+
+    textButton(root, 'Reject all').click();
+
+    expect(cloudflare.choose).toHaveBeenCalledWith(false);
+    expect(google.choose).toHaveBeenCalledWith(false);
+  });
+
+  it('keeps the choices separate under Customize', async () => {
+    const { fixture, root, cloudflare, google } = await setup();
+
+    textButton(root, 'Customize').click();
+    fixture.detectChanges();
+
+    const cloudflareSwitch = root.querySelector<HTMLInputElement>(
+      '#consent-cloudflare'
+    );
+
+    expect(cloudflareSwitch?.checked).toBe(false);
     expect(
       root.querySelector(`a[href="/legal/privacy/${GA4_PRIVACY_VERSION}"]`)
     ).not.toBeNull();
+
+    cloudflareSwitch?.click();
+    textButton(root, 'Save choices').click();
+
+    expect(cloudflare.choose).toHaveBeenCalledWith(true);
+    expect(google.choose).toHaveBeenCalledWith(false);
   });
+
+  it('asks a user who accepted Cloudflare earlier about the new Google choice', async () => {
+    const { root } = await setup(true);
+
+    expect(
+      root.querySelector('[data-testid="analytics-consent-banner"]')
+    ).not.toBeNull();
+  });
+
   it('offers no Google consent before its disclosure is published', async () => {
-    const { root } = await setup(null, false);
+    const { fixture, root } = await setup(null, false);
+
+    const banner = root.querySelector(
+      '[data-testid="analytics-consent-banner"]'
+    );
+
+    expect(banner?.textContent).not.toContain('Google');
+
+    textButton(root, 'Customize').click();
+    fixture.detectChanges();
+
     expect(
       root.querySelector('[data-testid="google-analytics-consent"]')
     ).toBeNull();
@@ -88,39 +153,45 @@ describe('Separate analytics choices', () => {
       root.querySelector('[data-testid="analytics-consent"]')
     ).not.toBeNull();
   });
-  it('keeps settings reachable once both decisions are saved', async () => {
-    const { fixture, root, google, cloudflare } = await setup(false);
+
+  it('reopens saved choices from Privacy settings and closes them again', async () => {
+    const { fixture, root, google, cloudflare } = await setup(true);
+
     google.choice.set(false);
     fixture.detectChanges();
+
+    expect(
+      root.querySelector('[data-testid="analytics-consent-banner"]')
+    ).toBeNull();
+
     clickButton(root, 'Privacy settings');
     fixture.detectChanges();
-    expect(google.expanded()).toBe(true);
+
     expect(cloudflare.expanded()).toBe(true);
+    expect(google.expanded()).toBe(true);
     expect(
-      root.querySelector('[data-testid="google-analytics-consent"]')
-    ).not.toBeNull();
-  });
-  it('marks saved choices and closes both sections at once', async () => {
-    const { fixture, root, google, cloudflare } = await setup(true);
-    google.choice.set(false);
-    cloudflare.expanded.set(true);
-    google.expanded.set(true);
-    fixture.detectChanges();
+      root.querySelector<HTMLInputElement>('#consent-cloudflare')?.checked
+    ).toBe(true);
+    expect(
+      root.querySelector<HTMLInputElement>('#consent-google')?.checked
+    ).toBe(false);
 
-    const pressed = Array.from(
-      root.querySelectorAll('button[aria-pressed="true"]')
-    ).map((button) => button.getAttribute('aria-label'));
-
-    expect(pressed).toEqual(['Allow analytics', 'Refuse Google Analytics']);
     clickButton(root, 'Close privacy settings');
+
     expect(cloudflare.expanded()).toBe(false);
     expect(google.expanded()).toBe(false);
   });
-  it('keeps a first decision open without a close button', async () => {
-    const { root } = await setup();
 
-    expect(
-      root.querySelector('button[aria-label="Close privacy settings"]')
-    ).toBeNull();
+  it('warns before a withdrawal reloads the page', async () => {
+    const { fixture, root } = await setup(true);
+
+    clickButton(root, 'Customize');
+    fixture.detectChanges();
+    expect(root.textContent).not.toContain('reloads the page');
+
+    root.querySelector<HTMLInputElement>('#consent-cloudflare')?.click();
+    fixture.detectChanges();
+
+    expect(root.textContent).toContain('reloads the page');
   });
 });

@@ -1,3 +1,4 @@
+import { formatMinutesShort } from '../../core/time/duration';
 import {
   Component,
   ElementRef,
@@ -161,12 +162,12 @@ export class TaskCardComponent implements OnChanges {
     }
 
     return estimate > 0
-      ? `${this.formatDuration(spent)} / ${this.formatDuration(estimate)}`
-      : this.formatDuration(spent);
+      ? `${formatMinutesShort(spent)} / ${formatMinutesShort(estimate)}`
+      : formatMinutesShort(spent);
   }
 
   taskTimeTitle(): string {
-    const spent = this.formatDuration(this.task.spentMinutes ?? 0);
+    const spent = formatMinutesShort(this.task.spentMinutes ?? 0);
     const estimate = this.task.estimateMinutes ?? 0;
 
     if (estimate <= 0) {
@@ -175,7 +176,7 @@ export class TaskCardComponent implements OnChanges {
 
     const percent = this.progressPercentUncapped();
 
-    return `Time spent: ${spent} of ${this.formatDuration(
+    return `Time spent: ${spent} of ${formatMinutesShort(
       estimate
     )} estimated (${percent}%)`;
   }
@@ -985,18 +986,6 @@ export class TaskCardComponent implements OnChanges {
     }
 
     return Math.round(((this.task.spentMinutes ?? 0) / estimate) * 100);
-  }
-
-  private formatDuration(minutes: number): string {
-    const rounded = Math.max(0, Math.round(minutes));
-    const hours = Math.floor(rounded / 60);
-    const rest = rounded % 60;
-
-    if (hours === 0) {
-      return `${rest}m`;
-    }
-
-    return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
   }
 
   private formatReminderDate(value: string, timezone: string): string {

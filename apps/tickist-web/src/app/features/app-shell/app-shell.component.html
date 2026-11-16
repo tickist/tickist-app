@@ -14,6 +14,8 @@
           [sort]="sortOption()"
           [filter]="filterOption()"
           [suspendedCount]="suspendedTaskCount()"
+          [spentMinutes]="projectTime().spent"
+          [estimateMinutes]="projectTime().estimate"
           (toggleSimple)="
             setProjectTaskView(headerProject, $event ? 'simple' : 'extended')
           "

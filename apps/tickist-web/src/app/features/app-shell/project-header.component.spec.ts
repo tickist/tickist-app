@@ -42,6 +42,52 @@ describe('ProjectHeaderComponent', () => {
     expect(labels).toContain('suspended');
   });
 
+  it('hides the time summary when nothing is estimated or logged', () => {
+    expect(
+      fixtureHost(fixture).querySelector('[data-testid="project-time-summary"]')
+    ).toBeNull();
+  });
+
+  it('shows spent and estimated time with a progress bar', () => {
+    fixture.componentRef.setInput('spentMinutes', 200);
+    fixture.componentRef.setInput('estimateMinutes', 300);
+    fixture.detectChanges();
+
+    const summary = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="project-time-summary"]',
+      HTMLElement
+    );
+
+    expect(summary.textContent).toContain('3h 20m spent of 5h estimated');
+    expect(summary.title).toBe('67% of the estimate used');
+    expect(
+      summary.querySelector<HTMLElement>('.project-header__time-bar')?.style
+        .width
+    ).toBe('67%');
+  });
+
+  it('marks a project over its estimate and shows spent time alone without one', () => {
+    fixture.componentRef.setInput('spentMinutes', 90);
+    fixture.componentRef.setInput('estimateMinutes', 60);
+    fixture.detectChanges();
+
+    const summary = () =>
+      requiredElement(
+        fixtureHost(fixture),
+        '[data-testid="project-time-summary"]',
+        HTMLElement
+      );
+
+    expect(summary().classList).toContain('project-header__time--over');
+
+    fixture.componentRef.setInput('estimateMinutes', 0);
+    fixture.detectChanges();
+
+    expect(summary().textContent?.trim()).toContain('1h 30m spent');
+    expect(summary().textContent).not.toContain('estimated');
+  });
+
   it('selects the suspended filter when the count is clicked', () => {
     const changeFilter = vi.fn();
     fixture.componentInstance.changeFilter.subscribe(changeFilter);

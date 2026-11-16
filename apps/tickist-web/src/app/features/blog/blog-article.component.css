@@ -32,10 +32,11 @@
 
 .article-header h1 {
   margin: 0.8rem 0 0;
-  font-size: clamp(2.25rem, 8vw, 4.75rem);
-  font-weight: 900;
-  line-height: 1.03;
-  letter-spacing: -0.055em;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
 .lead {
@@ -85,7 +86,7 @@
 
 .article-body :is(h2, h3) {
   scroll-margin-top: 6rem;
-  font-weight: 850;
+  font-weight: 750;
   line-height: 1.2;
 }
 
