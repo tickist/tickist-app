@@ -437,6 +437,75 @@ describe('TaskCardComponent toolbar status icons', () => {
     multipleMemberFixture.destroy();
   });
 
+  function openStepEditor(): HTMLInputElement {
+    component.task = createTask({ steps: [createStep()] });
+    fixture.detectChanges();
+    getToolbarButton('steps').click();
+    fixture.detectChanges();
+    requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit"]',
+      HTMLButtonElement
+    ).click();
+    fixture.detectChanges();
+
+    return requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit-input"]',
+      HTMLInputElement
+    );
+  }
+
+  it('edits a step text in place and saves it on Enter', async () => {
+    const input = openStepEditor();
+
+    expect(input.value).toBe('First step');
+
+    input.value = 'Renamed step';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await fixture.whenStable();
+
+    expect(updateTaskMock).toHaveBeenCalledWith({
+      id: 'task-1',
+      steps: [{ content: 'Renamed step', isDone: false, position: 0 }],
+    });
+    expect(
+      fixtureHost(fixture).querySelector('[data-testid="step-edit-input"]')
+    ).toBeNull();
+  });
+
+  it('keeps the step unchanged when editing is cancelled or emptied', async () => {
+    const input = openStepEditor();
+
+    input.value = 'Discarded';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(fixtureHost(fixture).textContent).toContain('First step');
+
+    requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit"]',
+      HTMLButtonElement
+    ).click();
+    fixture.detectChanges();
+
+    const editor = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="step-edit-input"]',
+      HTMLInputElement
+    );
+
+    editor.value = '   ';
+    editor.dispatchEvent(new Event('input'));
+    editor.dispatchEvent(new Event('blur'));
+    await fixture.whenStable();
+
+    expect(updateTaskMock).not.toHaveBeenCalled();
+  });
+
   function getToolbarButton(
     key: 'description' | 'tags' | 'repeat' | 'reminders' | 'steps'
   ): HTMLButtonElement {

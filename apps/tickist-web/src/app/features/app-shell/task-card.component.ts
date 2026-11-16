@@ -2,7 +2,9 @@ import { formatMinutesShort } from '../../core/time/duration';
 import {
   Component,
   ElementRef,
+  Injector,
   Input,
+  afterNextRender,
   OnChanges,
   QueryList,
   SimpleChanges,
@@ -91,6 +93,8 @@ export class TaskCardComponent implements OnChanges {
   private readonly router = inject(Router);
   private readonly session = inject(SupabaseSessionService);
   private readonly workspaces = inject(WorkspaceDataService);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
   readonly timer = inject(TimeTrackingService);
 
   @ViewChild('tagMenuTrigger')
@@ -131,6 +135,9 @@ export class TaskCardComponent implements OnChanges {
   readonly descriptionDraft = signal('');
   readonly tagSearch = signal('');
   readonly newStepDraft = signal('');
+  /** Step whose text is being edited in place, and its draft text. */
+  readonly editingStepId = signal<string | null>(null);
+  readonly stepDraft = signal('');
   readonly customRepeatEvery = signal(1);
   readonly customRepeatUnit = signal<RepeatUnit>('day');
   readonly repeatDraftMode = signal<RepeatMode | null>(null);
@@ -155,6 +162,8 @@ export class TaskCardComponent implements OnChanges {
       this.descriptionEditing.set(false);
       this.newStepDraft.set('');
       this.repeatDraftMode.set(null);
+
+      if (previous?.id !== current?.id) this.editingStepId.set(null);
 
       if (current) {
         this.syncCustomRepeatDraft(current.repeatInterval);
@@ -913,6 +922,39 @@ export class TaskCardComponent implements OnChanges {
     void this.persistSteps(current, 'Steps reordered.');
   }
 
+  beginStepEdit(step: TaskStep): void {
+    this.stepDraft.set(step.content);
+    this.editingStepId.set(step.id);
+    afterNextRender(
+      () =>
+        this.host.nativeElement
+          .querySelector<HTMLInputElement>('[data-testid="step-edit-input"]')
+          ?.focus(),
+      { injector: this.injector }
+    );
+  }
+
+  cancelStepEdit(): void {
+    this.editingStepId.set(null);
+  }
+
+  /** Saves the edited text; an empty or unchanged value keeps the step. */
+  saveStepEdit(step: TaskStep): void {
+    if (this.editingStepId() !== step.id) return;
+
+    this.editingStepId.set(null);
+
+    const content = this.stepDraft().trim();
+
+    if (!content || content === step.content) return;
+
+    const next = this.task.steps.map((existing) =>
+      existing === step ? { ...existing, content } : existing
+    );
+
+    void this.persistSteps(next, 'Step updated.');
+  }
+
   addStep(): void {
     const content = this.newStepDraft().trim();
 
@@ -1187,6 +1229,7 @@ export class TaskCardComponent implements OnChanges {
     this.repeatOpen.set(false);
     this.repeatDraftMode.set(null);
     this.stepsOpen.set(false);
+    this.editingStepId.set(null);
   }
 
   private openTagMenu(): void {

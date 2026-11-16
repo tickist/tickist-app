@@ -511,12 +511,36 @@
             (change)="toggleStep(step, $any($event.target).checked)"
           />
         </label>
+        @if (editingStepId() === step.id) {
+        <input
+          type="text"
+          class="step-edit"
+          aria-label="Step"
+          data-testid="step-edit-input"
+          [value]="stepDraft()"
+          (input)="stepDraft.set($any($event.target).value)"
+          (keydown.enter)="$event.preventDefault(); saveStepEdit(step)"
+          (keydown.escape)="$event.preventDefault(); cancelStepEdit()"
+          (blur)="saveStepEdit(step)"
+        />
+        } @else {
         <span
           class="step-title linkified"
           [class.line-through]="step.isDone"
           [innerHTML]="step.content | linkify"
+          (dblclick)="beginStepEdit(step)"
         ></span>
+        }
         <div class="step-controls">
+          <button
+            type="button"
+            aria-label="Edit step"
+            title="Edit step"
+            data-testid="step-edit"
+            (click)="beginStepEdit(step)"
+          >
+            ✎
+          </button>
           <button
             type="button"
             (click)="moveStep(step, 'up')"
@@ -552,6 +576,7 @@
         placeholder="Add step"
         [value]="newStepDraft()"
         (input)="newStepDraft.set($any($event.target).value)"
+        (keydown.enter)="$event.preventDefault(); addStep()"
       />
       <button type="button" (click)="addStep()">Add</button>
     </div>

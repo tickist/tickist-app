@@ -792,7 +792,13 @@
 }
 
 .step-title {
-  @apply flex-1;
+  @apply min-w-0 flex-1;
+  cursor: text;
+}
+
+.step-edit {
+  @apply min-w-0 flex-1 rounded-lg border bg-base-100 px-2 py-1 text-sm text-base-content;
+  border-color: rgb(var(--p) / 0.6);
 }
 
 .step-title.line-through {
