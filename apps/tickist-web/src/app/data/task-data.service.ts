@@ -290,6 +290,20 @@ export class TaskDataService {
 
     const updatePayload = toTaskUpdatePayload(effectivePatchInput);
 
+    // Record when a task was completed so "Done today", statistics and
+    // digests can find it. A recurring completion moves the due date and
+    // keeps the task open, so it has no completion time.
+    if (
+      previous &&
+      !recurringCompletion &&
+      input.isDone !== undefined &&
+      input.isDone !== previous.isDone
+    ) {
+      updatePayload.when_complete = input.isDone
+        ? new Date().toISOString()
+        : null;
+    }
+
     if (Object.keys(updatePayload).length) {
       const { error } = await this.supabase
         .from('tasks')

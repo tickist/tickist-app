@@ -113,6 +113,26 @@ export function shiftDateKey(dateKey: string, days: number): string {
   return shifted.toISOString().slice(0, 10);
 }
 
+export type DueDayStatus = 'overdue' | 'today' | 'upcoming';
+
+/**
+ * Compares a task's due date with today by calendar day in the account
+ * timezone. A due date is stored as the start of that day, so comparing
+ * instants would make a task due today look overdue.
+ */
+export function dueDayStatus(
+  finishDate: string,
+  now: Date,
+  timezone: string
+): DueDayStatus {
+  const dueKey = zonedDateKey(new Date(finishDate), timezone);
+  const todayKey = zonedDateKey(now, timezone);
+
+  if (dueKey < todayKey) return 'overdue';
+
+  return dueKey === todayKey ? 'today' : 'upcoming';
+}
+
 function pad(value: number): string {
   return String(value).padStart(2, '0');
 }

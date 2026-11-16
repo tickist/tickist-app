@@ -64,7 +64,7 @@ Each account stores an IANA timezone. New registrations capture the browser time
 
 ## Focus views
 
-- **Dashboard:** today, overdue, pinned, next-action, and need-info work; project next-action coverage.
+- **Dashboard:** today, overdue, pinned, next-action, and need-info work; project next-action coverage. Today and Overdue compare calendar days in the account timezone, so a task due today is never overdue. A Done today group at the bottom lists tasks completed today and is hidden when there are none; completing a task records its completion time, and reopening clears it.
 - **Task tree:** project-oriented task grouping for scanning a wider workspace.
 - **Statistics:** completed work, late completions, overdue open work, and inactive projects over a time window.
 - **Tags:** cross-project filtering and ordering.

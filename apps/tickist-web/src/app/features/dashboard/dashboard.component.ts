@@ -13,6 +13,12 @@ import { TaskListComponent } from '../app-shell/task-list.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { TaskStatusService } from '../../data/task-status.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
+import { TimeTrackingService } from '../../data/time-tracking.service';
+import {
+  type DueDayStatus,
+  dueDayStatus,
+  zonedDateKey,
+} from '../../core/time/zoned-time';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,6 +35,7 @@ export class DashboardComponent {
   private readonly viewState = inject(AppViewStateService);
   private readonly taskStatus = inject(TaskStatusService);
   private readonly workspaces = inject(WorkspaceDataService);
+  private readonly timeTracking = inject(TimeTrackingService);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
@@ -81,31 +88,23 @@ export class DashboardComponent {
       );
     });
   });
-  readonly todayTasks = computed(() => {
-    const today = new Date();
+  readonly todayTasks = computed(() => this.tasksDue('today'));
+  readonly overdueTasks = computed(() => this.tasksDue('overdue'));
+  /** Tasks completed today in the account timezone, newest first. */
+  readonly doneTodayTasks = computed(() => {
+    const timezone = this.timeTracking.timezone();
+    const todayKey = zonedDateKey(new Date(), timezone);
 
-    return this.taskList().filter((task) => {
-      if (!task.finishDate) {
-        return false;
-      }
-
-      const finishDate = new Date(task.finishDate);
-
-      return finishDate.toDateString() === today.toDateString() && !task.isDone;
-    });
-  });
-  readonly overdueTasks = computed(() => {
-    const today = new Date();
-
-    return this.taskList().filter((task) => {
-      if (!task.finishDate) {
-        return false;
-      }
-
-      const finishDate = new Date(task.finishDate);
-
-      return finishDate < today && !task.isDone;
-    });
+    return this.taskList()
+      .filter(
+        (task) =>
+          task.isDone &&
+          !!task.whenComplete &&
+          zonedDateKey(new Date(task.whenComplete), timezone) === todayKey
+      )
+      .sort((a, b) =>
+        (b.whenComplete ?? '').localeCompare(a.whenComplete ?? '')
+      );
   });
   readonly pinnedTasks = computed(() =>
     this.taskList().filter((task) => task.pinned && !task.isDone)
@@ -162,6 +161,18 @@ export class DashboardComponent {
   );
   readonly projectForTaskList = (task: Task): Project | null =>
     this.projectOf(task.projectId);
+
+  private tasksDue(status: DueDayStatus): Task[] {
+    const now = new Date();
+    const timezone = this.timeTracking.timezone();
+
+    return this.taskList().filter(
+      (task) =>
+        !task.isDone &&
+        !!task.finishDate &&
+        dueDayStatus(task.finishDate, now, timezone) === status
+    );
+  }
 
   projectTaskCount(projectId: string): number {
     return this.projectTaskCounts().get(projectId) ?? 0;

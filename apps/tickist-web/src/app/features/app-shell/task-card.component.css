@@ -1,5 +1,6 @@
 .task-card {
   @apply rounded-2xl p-4 text-base-content transition;
+  container-type: inline-size;
   background: linear-gradient(
       180deg,
       rgb(var(--bc) / 0.065),
@@ -51,6 +52,10 @@
 
 .task-card__title .linkified {
   min-width: 0;
+  /* Break between words; split a word only when it is longer than the line.
+     The global "anywhere" lets the flex title shrink below one word. */
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .task-card__task-type {
@@ -709,6 +714,22 @@
   border-color: rgb(var(--bc) / 0.75);
   color: rgb(var(--bc));
   outline: none;
+}
+
+/* On narrow cards the four action buttons left the title about 85px, so
+   tighten them to give the task name room. */
+@container (max-width: 24rem) {
+  .task-card__row {
+    gap: 0.5rem;
+  }
+
+  .task-card__actions {
+    gap: 0;
+  }
+
+  .task-card__actions .icon-btn {
+    padding-inline: 0.3rem;
+  }
 }
 
 @media (max-width: 640px) {

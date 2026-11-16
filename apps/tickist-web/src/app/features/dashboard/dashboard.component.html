@@ -112,4 +112,22 @@
     </p>
     }
   </article>
+
+  @if (doneTodayTasks().length) {
+  <article
+    class="rounded-2xl border border-white/10 bg-base-200/60 p-5"
+    data-testid="dashboard-done-today"
+  >
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Done today</h2>
+      <span class="badge badge-success badge-outline">{{
+        doneTodayTasks().length
+      }}</span>
+    </header>
+    <app-task-list
+      [tasks]="doneTodayTasks()"
+      [projectResolver]="projectForTaskList"
+    ></app-task-list>
+  </article>
+  }
 </section>

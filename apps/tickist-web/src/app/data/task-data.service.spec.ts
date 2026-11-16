@@ -93,6 +93,64 @@ describe('TaskDataService recurring completion', () => {
   });
 });
 
+describe('TaskDataService completion time', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-05-10T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('records when a one-off task is completed', async () => {
+    const { service, updatePayloads } = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 })
+    );
+
+    await service.updateTask({ id: 'task-1', isDone: true });
+
+    expect(updatePayloads[0]).toEqual(
+      expect.objectContaining({
+        is_done: true,
+        when_complete: '2025-05-10T12:00:00.000Z',
+      })
+    );
+  });
+
+  it('clears the completion time when a task is reopened', async () => {
+    const { service, updatePayloads } = await setupRecurringTaskService(
+      createTaskRow({
+        repeat_interval: 0,
+        is_done: true,
+        when_complete: '2025-05-09T08:00:00Z',
+      })
+    );
+
+    await service.updateTask({ id: 'task-1', isDone: false });
+
+    expect(updatePayloads[0]).toEqual(
+      expect.objectContaining({ is_done: false, when_complete: null })
+    );
+  });
+
+  it('leaves the completion time alone for other edits and recurring completions', async () => {
+    const oneOff = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 })
+    );
+
+    await oneOff.service.updateTask({ id: 'task-1', name: 'Renamed' });
+    expect(oneOff.updatePayloads[0]).not.toHaveProperty('when_complete');
+
+    TestBed.resetTestingModule();
+
+    const recurring = await setupRecurringTaskService(createTaskRow());
+
+    await recurring.service.updateTask({ id: 'task-1', isDone: true });
+    expect(recurring.updatePayloads[0]).not.toHaveProperty('when_complete');
+  });
+});
+
 async function setupRecurringTaskService(row: TaskRow): Promise<{
   service: TaskDataService;
   updatePayloads: Partial<TaskRow>[];

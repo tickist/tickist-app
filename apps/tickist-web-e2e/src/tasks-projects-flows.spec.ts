@@ -232,7 +232,7 @@ async function inboxCount(page: Page): Promise<number> {
   return Number(match[1]);
 }
 
-function taskCardByName(page: Page, taskName: string) {
+function taskCardByName(page: Page | Locator, taskName: string) {
   return page
     .locator('article.task-card')
     .filter({ hasText: taskName })
@@ -479,6 +479,52 @@ test('shows completion date and sorts project tasks', async ({
   await expect
     .poll(() => visibleTaskNames(page))
     .toEqual([firstTask, secondTask]);
+});
+
+test.describe('dashboard due and done groups', () => {
+  // "Do it today" stores the browser's midnight; the dashboard compares days
+  // in the account timezone (Europe/Warsaw for the E2E user). Align them so
+  // the test does not depend on the runner's clock near midnight.
+  test.use({ timezoneId: 'Europe/Warsaw' });
+
+  test('keeps a task due today out of Overdue and lists it under Done today once completed', async ({
+    page,
+  }, testInfo) => {
+    const taskName = `Due today ${uniqueSuffix(testInfo)}`;
+
+    const dashboardGroup = (title: string) =>
+      page.locator('app-dashboard article').filter({
+        has: page.getByRole('heading', { name: title, exact: true }),
+      });
+
+    await ensureAuthenticated(page);
+    await selectInbox(page);
+    await page.getByPlaceholder('What needs doing?').fill(taskName);
+    await page.getByRole('button', { name: 'Add task' }).click();
+
+    const card = taskCardByName(page, taskName);
+    await expect(card).toBeVisible();
+    const menu = await openTaskMenu(card);
+    await menu.getByRole('button', { name: 'Do it today' }).click();
+    await expect(page.getByText('Due today.')).toBeVisible();
+
+    await page.goto('/app');
+    await expect(dashboardGroup('Today').getByText(taskName)).toBeVisible();
+    await expect(dashboardGroup('Overdue').getByText(taskName)).toHaveCount(0);
+
+    await taskCardByName(dashboardGroup('Today'), taskName)
+      .locator('.task-card__check input[type="checkbox"]')
+      .click();
+
+    const doneToday = dashboardGroup('Done today');
+    await expect(doneToday.getByText(taskName)).toBeVisible();
+    await expect(page.locator('app-dashboard h2').last()).toHaveText(
+      'Done today'
+    );
+
+    await page.reload();
+    await expect(doneToday.getByText(taskName)).toBeVisible();
+  });
 });
 
 test('suspends a task with a resume time and separates it from active work', async ({
