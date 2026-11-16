@@ -89,7 +89,8 @@ type TaskFormDefaults = {
   suspendUntil: string;
   suspendUntilTime: string;
   pinned: boolean;
-  estimateMinutes: number;
+  /** Empty means no estimate; the form never invents one. */
+  estimateMinutes: number | null;
 };
 
 @Component({
@@ -229,7 +230,7 @@ export class TaskComposerComponent {
     suspendUntil: '',
     suspendUntilTime: '00:00',
     pinned: false,
-    estimateMinutes: 15,
+    estimateMinutes: null,
   };
   @Input() set preset(value: TaskComposerPreset | null) {
     this.applyPreset(value);
@@ -257,7 +258,9 @@ export class TaskComposerComponent {
       suspendUntil: [''],
       suspendUntilTime: ['00:00'],
       pinned: [false],
-      estimateMinutes: [15],
+      estimateMinutes: this.fb.control<number | null>(null, [
+        Validators.min(0),
+      ]),
     },
     { validators: suspensionValidator }
   );
@@ -395,7 +398,7 @@ export class TaskComposerComponent {
         suspendUntil: normalizeDateTimeDateValue(task.suspendUntil),
         suspendUntilTime: normalizeDateTimeTimeValue(task.suspendUntil),
         pinned: task.pinned,
-        estimateMinutes: task.estimateMinutes ?? 15,
+        estimateMinutes: task.estimateMinutes ?? null,
       });
       this.clearSteps();
       task.steps.forEach((step) => this.addStep(step.content, step.isDone));

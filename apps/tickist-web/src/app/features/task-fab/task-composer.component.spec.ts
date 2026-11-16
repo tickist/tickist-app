@@ -274,6 +274,34 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     expect(component.taskForm.controls.finishTime.value).toBe('');
   });
 
+  it('creates a task without an estimate unless one is entered', async () => {
+    expect(component.taskForm.controls.estimateMinutes.value).toBeNull();
+
+    component.taskForm.patchValue({ name: 'No estimate yet' });
+    await component.submit();
+
+    expect(createTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({ estimateMinutes: null })
+    );
+  });
+
+  it('keeps a missing estimate empty when another field is edited', async () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ estimateMinutes: null }),
+    };
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.estimateMinutes.value).toBeNull();
+
+    component.taskForm.patchValue({ name: 'Renamed task' });
+    await component.submit();
+
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'task-1', estimateMinutes: null })
+    );
+  });
+
   it('saves edited completion fields in the update payload', async () => {
     component.preset = {
       mode: 'edit',

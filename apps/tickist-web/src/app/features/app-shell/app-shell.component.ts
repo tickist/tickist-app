@@ -215,7 +215,7 @@ export class AppShellComponent {
   });
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
-    estimateMinutes: [15, [Validators.min(0)]],
+    estimateMinutes: this.fb.control<number | null>(null, [Validators.min(0)]),
     projectId: [''],
   });
   readonly taskEditForm = this.fb.nonNullable.group({
@@ -319,7 +319,7 @@ export class AppShellComponent {
     };
 
     await this.tasksService.createTask(payload);
-    this.form.reset({ name: '', estimateMinutes: 15, projectId: '' });
+    this.form.reset({ name: '', estimateMinutes: null, projectId: '' });
   }
 
   async toggleTask(taskId: string, isDone: boolean) {
