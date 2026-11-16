@@ -39,19 +39,17 @@ import { TimeTrackingService } from '../../data/time-tracking.service';
 import { Router } from '@angular/router';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { AnchoredPopoverDirective } from '../../core/ui/anchored-popover.directive';
+import {
+  repeatFieldsForMode,
+  repeatStateFromTask,
+  type CustomRepeatUnit,
+  type RepeatMode,
+  type RepeatState,
+} from '../../core/time/repeat-mode';
 
 type TaskViewMode = 'extended' | 'simple';
 
-type RepeatMode =
-  | 'never'
-  | 'daily'
-  | 'daily_work'
-  | 'weekly'
-  | 'monthly'
-  | 'yearly'
-  | 'custom';
-
-type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+type RepeatUnit = CustomRepeatUnit;
 
 type RepeatFromMode = 'completion_date' | 'due_date';
 
@@ -166,7 +164,7 @@ export class TaskCardComponent implements OnChanges {
       if (previous?.id !== current?.id) this.editingStepId.set(null);
 
       if (current) {
-        this.syncCustomRepeatDraft(current.repeatInterval);
+        this.syncCustomRepeatDraft(current);
       }
 
       if (previous?.id && current?.id && previous.id !== current.id) {
@@ -787,7 +785,7 @@ export class TaskCardComponent implements OnChanges {
     this.repeatDraftMode.set(null);
 
     if (next) {
-      this.syncCustomRepeatDraft(this.task.repeatInterval);
+      this.syncCustomRepeatDraft(this.task);
     }
   }
 
@@ -799,10 +797,18 @@ export class TaskCardComponent implements OnChanges {
     }
 
     this.repeatDraftMode.set(null);
-    const interval = this.getRepeatInterval(mode);
-    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
+
+    const { repeatInterval, repeatUnit } = repeatFieldsForMode(
+      mode,
+      this.customRepeatEvery(),
+      this.customRepeatUnit()
+    );
+
+    const fromRepeating =
+      repeatInterval > 0 ? this.task.fromRepeating ?? 0 : null;
+
     await this.mutateTask(
-      { id: this.task.id, repeatInterval: interval, fromRepeating },
+      { id: this.task.id, repeatInterval, repeatUnit, fromRepeating },
       'Repeat cadence updated.',
       'Failed to update repeat.'
     );
@@ -855,15 +861,17 @@ export class TaskCardComponent implements OnChanges {
   }
 
   async applyCustomRepeat(): Promise<void> {
-    const interval = this.getRepeatInterval(
+    const { repeatInterval, repeatUnit } = repeatFieldsForMode(
       'custom',
       this.customRepeatEvery(),
       this.customRepeatUnit()
     );
 
-    const fromRepeating = interval > 0 ? this.task.fromRepeating ?? 0 : null;
+    const fromRepeating =
+      repeatInterval > 0 ? this.task.fromRepeating ?? 0 : null;
+
     await this.mutateTask(
-      { id: this.task.id, repeatInterval: interval, fromRepeating },
+      { id: this.task.id, repeatInterval, repeatUnit, fromRepeating },
       'Repeat cadence updated.',
       'Failed to update repeat.'
     );
@@ -1074,33 +1082,8 @@ export class TaskCardComponent implements OnChanges {
     }
   }
 
-  private getRepeatInterval(
-    mode: RepeatMode,
-    every = 1,
-    unit: RepeatUnit = 'day'
-  ): number {
-    switch (mode) {
-      case 'never':
-        return 0;
-      case 'daily':
-        return 1;
-      case 'daily_work':
-        return 1;
-      case 'weekly':
-        return 7;
-      case 'monthly':
-        return 30;
-      case 'yearly':
-        return 365;
-      case 'custom':
-        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
-      default:
-        return this.task.repeatInterval ?? 0;
-    }
-  }
-
   currentRepeatMode(): RepeatMode {
-    return this.deriveRepeatMode(this.task.repeatInterval).mode;
+    return this.repeatState().mode;
   }
 
   currentRepeatFromMode(): RepeatFromMode {
@@ -1111,63 +1094,12 @@ export class TaskCardComponent implements OnChanges {
     return !!this.task.finishDate;
   }
 
-  private deriveRepeatMode(interval: number | null | undefined): RepeatState {
-    if (!interval || interval <= 0) {
-      return { mode: 'never', every: 1, unit: 'day' };
-    }
-
-    switch (interval) {
-      case 1:
-        return { mode: 'daily', every: 1, unit: 'day' };
-      case 7:
-        return { mode: 'weekly', every: 1, unit: 'week' };
-      case 30:
-        return { mode: 'monthly', every: 1, unit: 'month' };
-      case 365:
-        return { mode: 'yearly', every: 1, unit: 'year' };
-    }
-
-    const unit = this.repeatUnitFromInterval(interval);
-
-    const every = Math.max(
-      1,
-      Math.round(interval / this.repeatUnitMultiplier(unit))
-    );
-
-    return { mode: 'custom', every, unit };
+  private repeatState(task: Task = this.task): RepeatState {
+    return repeatStateFromTask(task.repeatInterval, task.repeatUnit);
   }
 
-  private repeatUnitMultiplier(unit: RepeatUnit): number {
-    switch (unit) {
-      case 'week':
-        return 7;
-      case 'month':
-        return 30;
-      case 'year':
-        return 365;
-      default:
-        return 1;
-    }
-  }
-
-  private repeatUnitFromInterval(interval: number): RepeatUnit {
-    if (interval % 365 === 0) {
-      return 'year';
-    }
-
-    if (interval % 30 === 0) {
-      return 'month';
-    }
-
-    if (interval % 7 === 0) {
-      return 'week';
-    }
-
-    return 'day';
-  }
-
-  private syncCustomRepeatDraft(interval: number | null | undefined): void {
-    const { mode, every, unit } = this.deriveRepeatMode(interval);
+  private syncCustomRepeatDraft(task: Task): void {
+    const { mode, every, unit } = this.repeatState(task);
 
     if (mode === 'custom') {
       this.customRepeatEvery.set(every);
@@ -1262,10 +1194,4 @@ export class TaskCardComponent implements OnChanges {
     const options = this.tagMenuOptions?.toArray() ?? [];
     options[index]?.nativeElement.focus();
   }
-}
-
-interface RepeatState {
-  mode: RepeatMode;
-  every: number;
-  unit: RepeatUnit;
 }

@@ -133,8 +133,30 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     expect(createTaskMock).toHaveBeenCalledWith(
       expect.objectContaining({
         repeatInterval: 14,
+        repeatUnit: 'week',
       })
     );
+  });
+
+  it('stores "Daily (workweek)" as a working-day repeat and reopens it', async () => {
+    component.taskForm.patchValue({
+      name: 'Check the inbox',
+      repeatMode: 'daily_work',
+    });
+
+    await component.submit();
+
+    expect(createTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({ repeatInterval: 1, repeatUnit: 'workday' })
+    );
+
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ repeatInterval: 1, repeatUnit: 'workday' }),
+    };
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.repeatMode.value).toBe('daily_work');
   });
 
   it('stores custom 2 years as 730-day repeat interval', async () => {

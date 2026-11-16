@@ -7,6 +7,7 @@ import {
   buildDuplicateTaskInput,
   type Task,
 } from './task-data.service';
+import { TimeTrackingService } from './time-tracking.service';
 import { TaskReminderDataService } from './task-reminder-data.service';
 
 type TaskRow = {
@@ -62,9 +63,8 @@ describe('TaskDataService recurring completion', () => {
 
     await service.updateTask({ id: 'task-1', isDone: true });
 
-    expect(formatLocalDate(updatePayloads[0]?.['finish_date'])).toBe(
-      '2026-05-15'
-    );
+    // Midnight of 15 May in the account timezone (Europe/Warsaw).
+    expect(updatePayloads[0]?.['finish_date']).toBe('2026-05-14T22:00:00.000Z');
     expect(updatePayloads[0]).toEqual(
       expect.objectContaining({
         is_done: false,
@@ -82,9 +82,7 @@ describe('TaskDataService recurring completion', () => {
 
     await service.updateTask({ id: 'task-1', isDone: true });
 
-    expect(formatLocalDate(updatePayloads[0]?.['finish_date'])).toBe(
-      '2026-05-10'
-    );
+    expect(updatePayloads[0]?.['finish_date']).toBe('2026-05-09T22:00:00.000Z');
     expect(updatePayloads[0]).toEqual(
       expect.objectContaining({
         is_done: false,
@@ -170,6 +168,10 @@ async function setupRecurringTaskService(row: TaskRow): Promise<{
         useValue: {
           markDirty: vi.fn(),
         },
+      },
+      {
+        provide: TimeTrackingService,
+        useValue: { timezone: () => 'Europe/Warsaw' },
       },
       {
         provide: TaskReminderDataService,
@@ -296,24 +298,6 @@ function createTaskRow(overrides: Partial<TaskRow> = {}): TaskRow {
   };
 }
 
-function formatLocalDate(value: string | null | undefined): string | null {
-  if (value == null) {
-    return null;
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-}
-
 describe('buildDuplicateTaskInput', () => {
   const source: Task = {
     id: 'task-1',
@@ -331,6 +315,7 @@ describe('buildDuplicateTaskInput', () => {
     onHold: true,
     priority: 'A',
     repeatInterval: 7,
+    repeatUnit: 'week',
     repeatDelta: 1,
     fromRepeating: 1,
     estimateMinutes: 90,
@@ -379,6 +364,7 @@ describe('buildDuplicateTaskInput', () => {
       typeFinishDate: 0,
       priority: 'A',
       repeatInterval: 7,
+      repeatUnit: 'week',
       fromRepeating: 1,
       estimateMinutes: 90,
       taskType: 'next_action',

@@ -1,7 +1,14 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
+import {
+  isRepeatUnit,
+  nextRecurringFinishDate,
+  repeatRuleFromColumns,
+  type RepeatUnit,
+} from '@tickist/recurrence';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { StatisticsDataService } from './statistics-data.service';
 import { TaskReminderDataService } from './task-reminder-data.service';
+import { TimeTrackingService } from './time-tracking.service';
 
 export interface Task {
   id: string;
@@ -19,6 +26,8 @@ export interface Task {
   onHold: boolean;
   priority: string;
   repeatInterval: number;
+  /** How repeatInterval is read; null for tasks that do not repeat. */
+  repeatUnit?: RepeatUnit | null;
   repeatDelta?: number | null;
   fromRepeating?: number | null;
   estimateMinutes?: number | null;
@@ -59,6 +68,7 @@ export interface TaskCreateInput {
   typeFinishDate?: number | null;
   priority?: string;
   repeatInterval?: number;
+  repeatUnit?: RepeatUnit | null;
   fromRepeating?: number | null;
   estimateMinutes?: number | null;
   taskType?: string;
@@ -82,6 +92,7 @@ export interface TaskUpdateInput {
   typeFinishDate?: number | null;
   priority?: string;
   repeatInterval?: number | null;
+  repeatUnit?: RepeatUnit | null;
   fromRepeating?: number | null;
   estimateMinutes?: number | null;
   isDone?: boolean;
@@ -117,6 +128,7 @@ type TaskRow = {
   type_finish_date: number | null;
   priority: string | null;
   repeat_interval: number | null;
+  repeat_unit: string | null;
   repeat_delta: number | null;
   from_repeating: number | null;
   estimate_minutes: number | null;
@@ -171,7 +183,7 @@ export class TaskDataService {
     const query = this.supabase
       .from('tasks')
       .select(
-        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_assignees(user_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
+        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_unit, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_assignees(user_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
       );
 
     const { data, error } = await query;
@@ -285,7 +297,11 @@ export class TaskDataService {
       previous.repeatInterval > 0;
 
     const effectivePatchInput = recurringCompletion
-      ? buildRecurringCompletionPatch(previous, patchInput)
+      ? buildRecurringCompletionPatch(
+          previous,
+          patchInput,
+          this.injector.get(TimeTrackingService).timezone()
+        )
       : patchInput;
 
     const updatePayload = toTaskUpdatePayload(effectivePatchInput);
@@ -486,7 +502,7 @@ export class TaskDataService {
     const { data, error } = await this.supabase
       .from('tasks')
       .select(
-        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_assignees(user_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
+        'id, owner_id, project_id, name, description, finish_date, finish_time, type_finish_date, suspend_until, pinned, is_active, is_done, on_hold, priority, repeat_interval, repeat_unit, repeat_delta, from_repeating, estimate_minutes, spent_minutes, task_type, when_complete, creation_date, modification_date, task_tags(tag_id), task_assignees(user_id), task_steps(id, content, is_done, position), task_reminders(id, remind_at, timezone, status)'
       )
       .eq('id', id)
       .single();
@@ -592,39 +608,26 @@ export class TaskDataService {
 
 function buildRecurringCompletionPatch(
   previous: Task,
-  input: Omit<TaskUpdateInput, 'id' | 'tags' | 'assigneeIds' | 'steps'>
+  input: Omit<TaskUpdateInput, 'id' | 'tags' | 'assigneeIds' | 'steps'>,
+  timezone: string
 ): Omit<TaskUpdateInput, 'id' | 'tags' | 'assigneeIds' | 'steps'> {
-  const intervalDays = Math.max(1, Math.round(previous.repeatInterval));
-  const today = startOfLocalDay(new Date());
-  const anchorMode = input.fromRepeating ?? previous.fromRepeating ?? 0;
-  let base = today;
-
-  if (anchorMode === 1 && previous.finishDate) {
-    const dueDate = new Date(previous.finishDate);
-
-    if (!Number.isNaN(dueDate.getTime())) {
-      const dueDay = startOfLocalDay(dueDate);
-      base = dueDay < today ? today : dueDay;
-    }
-  }
-
-  const nextDay = new Date(base);
-  nextDay.setDate(nextDay.getDate() + intervalDays);
+  const rule = repeatRuleFromColumns(
+    previous.repeatInterval,
+    previous.repeatUnit
+  ) ?? { every: 1, unit: 'day' };
 
   return {
     ...input,
     isDone: false,
-    finishDate: nextDay.toISOString(),
+    finishDate: nextRecurringFinishDate(
+      previous.finishDate,
+      rule,
+      input.fromRepeating ?? previous.fromRepeating ?? 0,
+      timezone
+    ),
     // Keep existing finish_time for recurring tasks.
     finishTime: undefined,
   };
-}
-
-function startOfLocalDay(date: Date): Date {
-  const local = new Date(date);
-  local.setHours(0, 0, 0, 0);
-
-  return local;
 }
 
 function mapTaskRowToTask(row: TaskRow): Task {
@@ -657,6 +660,7 @@ function mapTaskRowToTask(row: TaskRow): Task {
     onHold: row.on_hold,
     priority: row.priority ?? 'normal',
     repeatInterval: row.repeat_interval ?? 0,
+    repeatUnit: isRepeatUnit(row.repeat_unit) ? row.repeat_unit : null,
     repeatDelta: row.repeat_delta,
     fromRepeating: row.from_repeating,
     estimateMinutes: row.estimate_minutes,
@@ -701,6 +705,7 @@ export function buildDuplicateTaskInput(
     typeFinishDate: task.typeFinishDate ?? null,
     priority: task.priority,
     repeatInterval: task.repeatInterval,
+    repeatUnit: task.repeatUnit ?? null,
     fromRepeating: task.fromRepeating ?? null,
     estimateMinutes: task.estimateMinutes ?? null,
     taskType: task.taskType,
@@ -727,6 +732,7 @@ function toTaskInsertPayload(input: TaskCreateInput) {
     type_finish_date: input.typeFinishDate ?? 1,
     priority: input.priority ?? 'normal',
     repeat_interval: input.repeatInterval ?? 0,
+    repeat_unit: input.repeatUnit ?? null,
     from_repeating: input.fromRepeating ?? null,
     estimate_minutes: input.estimateMinutes ?? null,
     spent_minutes: input.spentMinutes ?? null,
@@ -760,6 +766,8 @@ function toTaskUpdatePayload(
 
   if (input.repeatInterval !== undefined)
     payload.repeat_interval = input.repeatInterval;
+
+  if (input.repeatUnit !== undefined) payload.repeat_unit = input.repeatUnit;
 
   if (input.fromRepeating !== undefined)
     payload.from_repeating = input.fromRepeating;

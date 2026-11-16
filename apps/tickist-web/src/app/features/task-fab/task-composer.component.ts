@@ -52,19 +52,16 @@ import {
   SheetScaffoldTab,
 } from '../../core/ui/sheet-scaffold.component';
 import { TaskTimeEntriesComponent } from './task-time-entries.component';
+import {
+  repeatFieldsForMode,
+  repeatStateFromTask,
+  type CustomRepeatUnit,
+  type RepeatMode,
+} from '../../core/time/repeat-mode';
 
 type TabKey = 'general' | 'repeat' | 'reminders' | 'tags' | 'steps' | 'extra';
 
-type RepeatMode =
-  | 'never'
-  | 'daily'
-  | 'daily_work'
-  | 'weekly'
-  | 'monthly'
-  | 'yearly'
-  | 'custom';
-
-type RepeatUnit = 'day' | 'week' | 'month' | 'year';
+type RepeatUnit = CustomRepeatUnit;
 
 type RepeatFromMode = 'completion_date' | 'due_date';
 
@@ -397,8 +394,9 @@ export class TaskComposerComponent {
       const task = preset.task;
       this.editingTask.set(task);
 
-      const { mode, every, unit } = this.repeatModeFromInterval(
-        task.repeatInterval
+      const { mode, every, unit } = repeatStateFromTask(
+        task.repeatInterval,
+        task.repeatUnit
       );
 
       this.resetForm({
@@ -816,7 +814,7 @@ export class TaskComposerComponent {
   private buildTaskUpdatePayload(id: string): TaskUpdateInput {
     const value = this.taskForm.getRawValue();
 
-    const repeatInterval = this.getRepeatInterval(
+    const { repeatInterval, repeatUnit } = repeatFieldsForMode(
       value.repeatMode,
       value.repeatEvery,
       value.repeatUnit
@@ -836,6 +834,7 @@ export class TaskComposerComponent {
       priority: value.priority,
       taskType: value.taskType?.toUpperCase(),
       repeatInterval,
+      repeatUnit,
       fromRepeating: this.getRepeatFromValue(
         repeatInterval,
         value.repeatFrom,
@@ -886,7 +885,7 @@ export class TaskComposerComponent {
         return;
       }
 
-      const repeatInterval = this.getRepeatInterval(
+      const { repeatInterval, repeatUnit } = repeatFieldsForMode(
         value.repeatMode,
         value.repeatEvery,
         value.repeatUnit
@@ -941,6 +940,7 @@ export class TaskComposerComponent {
           priority: value.priority,
           taskType: value.taskType?.toUpperCase(),
           repeatInterval,
+          repeatUnit,
           fromRepeating: repeatFrom,
           estimateMinutes: value.estimateMinutes ?? null,
           tags: value.tags,
@@ -977,6 +977,7 @@ export class TaskComposerComponent {
         priority: value.priority,
         taskType: value.taskType?.toUpperCase(),
         repeatInterval,
+        repeatUnit,
         fromRepeating: repeatFrom,
         estimateMinutes: value.estimateMinutes ?? null,
         tags: value.tags,
@@ -1077,29 +1078,6 @@ export class TaskComposerComponent {
     return new Date(localDateTime(date, time)).toISOString();
   }
 
-  private getRepeatInterval(
-    mode: RepeatMode,
-    every: number,
-    unit: RepeatUnit
-  ): number {
-    switch (mode) {
-      case 'daily':
-        return 1;
-      case 'daily_work':
-        return 1;
-      case 'weekly':
-        return 7;
-      case 'monthly':
-        return 30;
-      case 'yearly':
-        return 365;
-      case 'custom':
-        return Math.max(1, Math.round(every)) * this.repeatUnitMultiplier(unit);
-      default:
-        return 0;
-    }
-  }
-
   private getRepeatFromValue(
     repeatInterval: number,
     mode: RepeatFromMode,
@@ -1114,63 +1092,6 @@ export class TaskComposerComponent {
     }
 
     return 0;
-  }
-
-  private repeatModeFromInterval(
-    interval: number | null | undefined
-  ): RepeatState {
-    if (!interval || interval <= 0) {
-      return { mode: 'never', every: 1, unit: 'day' };
-    }
-
-    switch (interval) {
-      case 1:
-        return { mode: 'daily', every: 1, unit: 'day' };
-      case 7:
-        return { mode: 'weekly', every: 1, unit: 'week' };
-      case 30:
-        return { mode: 'monthly', every: 1, unit: 'month' };
-      case 365:
-        return { mode: 'yearly', every: 1, unit: 'year' };
-    }
-
-    const unit = this.repeatUnitFromInterval(interval);
-
-    const every = Math.max(
-      1,
-      Math.round(interval / this.repeatUnitMultiplier(unit))
-    );
-
-    return { mode: 'custom', every, unit };
-  }
-
-  private repeatUnitMultiplier(unit: RepeatUnit): number {
-    switch (unit) {
-      case 'week':
-        return 7;
-      case 'month':
-        return 30;
-      case 'year':
-        return 365;
-      default:
-        return 1;
-    }
-  }
-
-  private repeatUnitFromInterval(interval: number): RepeatUnit {
-    if (interval % 365 === 0) {
-      return 'year';
-    }
-
-    if (interval % 30 === 0) {
-      return 'month';
-    }
-
-    if (interval % 7 === 0) {
-      return 'week';
-    }
-
-    return 'day';
   }
 
   private repeatFromModeFromValue(
@@ -1349,12 +1270,6 @@ function toReminderInputValue(value: string): ReminderInputValue {
     date: `${year}-${month}-${day}`,
     time: `${hours}:${minutes}`,
   };
-}
-
-interface RepeatState {
-  mode: RepeatMode;
-  every: number;
-  unit: RepeatUnit;
 }
 
 interface ReminderInputValue {

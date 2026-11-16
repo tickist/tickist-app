@@ -291,3 +291,106 @@ describe('TickistDataAccess time tracking', () => {
     ]);
   });
 });
+
+describe('TickistDataAccess recurrence', () => {
+  const taskId = '00000000-0000-4000-8000-000000000003';
+  const projectId = '00000000-0000-4000-8000-000000000004';
+
+  afterEach(() => vi.useRealTimers());
+
+  it('stores a unit-based repeat and reports it back', async () => {
+    const calls = mockSupabase((call) =>
+      call.path === 'tasks' && call.method === 'POST'
+        ? {
+            body: {
+              id: taskId,
+              repeat_interval: 1,
+              repeat_unit: 'workday',
+              from_repeating: 0,
+            },
+          }
+        : undefined
+    );
+
+    const created = await new TickistDataAccess(connection).createTask({
+      name: 'Stand-up notes',
+      project_id: projectId,
+      repeat: { unit: 'workday', from: 'completion_date' },
+    });
+
+    expect(calls.find((call) => call.path === 'tasks')?.body).toEqual(
+      expect.objectContaining({
+        repeat_interval: 1,
+        repeat_unit: 'workday',
+        from_repeating: 0,
+      })
+    );
+    expect(created).toEqual(
+      expect.objectContaining({
+        repeat: {
+          every: 1,
+          unit: 'workday',
+          interval_days: 1,
+          from: 'completion_date',
+        },
+      })
+    );
+  });
+
+  it('keeps the older interval_days form as plain days', async () => {
+    const calls = mockSupabase((call) =>
+      call.path === 'tasks' && call.method === 'POST'
+        ? { body: { id: taskId, repeat_interval: 30, repeat_unit: 'day' } }
+        : undefined
+    );
+
+    await new TickistDataAccess(connection).createTask({
+      name: 'Water the plants',
+      project_id: projectId,
+      repeat: { interval_days: 30, from: 'completion_date' },
+    });
+
+    expect(calls.find((call) => call.path === 'tasks')?.body).toEqual(
+      expect.objectContaining({ repeat_interval: 30, repeat_unit: 'day' })
+    );
+  });
+
+  it('advances a monthly task by a calendar month', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-01-31T10:00:00.000Z'));
+
+    const calls = mockSupabase((call): ReturnType<Route> => {
+      if (call.path === 'tasks' && call.method === 'GET')
+        return {
+          body: {
+            id: taskId,
+            is_done: false,
+            finish_date: '2026-01-30T23:00:00.000Z',
+            repeat_interval: 30,
+            repeat_unit: 'month',
+            from_repeating: 0,
+          },
+        };
+
+      if (call.path === 'tasks' && call.method === 'PATCH')
+        return { body: { id: taskId } };
+
+      if (call.path === 'task_steps') return { body: [] };
+
+      return undefined;
+    });
+
+    await new TickistDataAccess(connection).completeTask(taskId);
+
+    expect(
+      calls.find((call) => call.path === 'tasks' && call.method === 'PATCH')
+        ?.body
+    ).toEqual(
+      expect.objectContaining({
+        is_done: false,
+        // 28 February at midnight in Warsaw.
+        finish_date: '2026-02-27T23:00:00.000Z',
+      })
+    );
+  });
+});

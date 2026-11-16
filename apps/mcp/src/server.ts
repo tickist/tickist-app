@@ -2,6 +2,7 @@ import { McpServer, type CallToolResult } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
 import {
+  REPEAT_UNITS,
   TickistDataAccess,
   type TickistConnection,
 } from '@tickist/data-access-tickist';
@@ -37,10 +38,38 @@ const DESTRUCTIVE_TOOLS = new Set([
   'delete_time_entry',
 ]);
 
-const Repeat = z.object({
-  interval_days: z.number().int().positive(),
-  from: z.enum(['completion_date', 'due_date']),
-});
+const Repeat = z
+  .object({
+    every: z
+      .number()
+      .int()
+      .positive()
+      .max(1000)
+      .optional()
+      .describe('Units between repetitions; defaults to 1.'),
+    unit: z
+      .enum(REPEAT_UNITS)
+      .optional()
+      .describe(
+        'day; workday (Monday to Friday, every must be 1); week; month (same day of the month, or its last day); year.'
+      ),
+    interval_days: z
+      .number()
+      .int()
+      .positive()
+      .max(36500)
+      .optional()
+      .describe(
+        'Older form: a plain number of days, used when unit is omitted.'
+      ),
+    from: z.enum(['completion_date', 'due_date']),
+  })
+  .refine((value) => value.unit !== undefined || value.interval_days, {
+    message: 'Provide unit (with optional every) or interval_days.',
+  })
+  .refine((value) => value.unit !== 'workday' || (value.every ?? 1) === 1, {
+    message: 'A workday repeat happens every working day; every must be 1.',
+  });
 
 function operation<T extends ToolFields, Result>(
   server: McpServer,

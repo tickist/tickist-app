@@ -1,11 +1,14 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { JsonRecordSchema, type JsonRecord, type JsonValue } from './json';
+import { nextRecurringFinishDate, startOfZonedDayIso } from './task-lifecycle';
 import {
   addCalendarDays,
-  nextRecurringFinishDate,
-  startOfZonedDayIso,
-} from './task-lifecycle';
+  repeatRuleColumns,
+  repeatRuleFromColumns,
+  type RepeatRule,
+  type RepeatUnit,
+} from './recurrence';
 import {
   assertEntryInterval,
   assertTimeRange,
@@ -41,7 +44,11 @@ export interface ListProjectsInput {
 }
 
 export interface RepeatInput {
-  interval_days: number;
+  /** How many units between repetitions; defaults to 1. */
+  every?: number;
+  unit?: RepeatUnit;
+  /** Older form: a plain number of days. Used when `unit` is missing. */
+  interval_days?: number;
   from: 'completion_date' | 'due_date';
 }
 
@@ -133,7 +140,10 @@ function compact(values: Record<string, JsonValue | undefined>) {
 }
 
 function normalizedTask(row: JsonRecord) {
-  const interval = z.number().safeParse(row['repeat_interval']).data ?? 0;
+  const rule = repeatRuleFromColumns(
+    z.number().safeParse(row['repeat_interval']).data,
+    z.string().safeParse(row['repeat_unit']).data
+  );
 
   const isDone = row['is_done'] === true;
   const isActive = row['is_active'] !== false;
@@ -145,13 +155,14 @@ function normalizedTask(row: JsonRecord) {
 
   return {
     ...row,
-    repeat:
-      interval > 0
-        ? {
-            interval_days: interval,
-            from: row['from_repeating'] === 1 ? 'due_date' : 'completion_date',
-          }
-        : null,
+    repeat: rule
+      ? {
+          every: rule.every,
+          unit: rule.unit,
+          interval_days: repeatRuleColumns(rule).repeat_interval,
+          from: row['from_repeating'] === 1 ? 'due_date' : 'completion_date',
+        }
+      : null,
     suspension: {
       is_suspended: !isDone && !isActive && futureSuspension,
       until: suspendUntil,
@@ -159,14 +170,26 @@ function normalizedTask(row: JsonRecord) {
   };
 }
 
+export function repeatRuleFromInput(repeat: RepeatInput): RepeatRule {
+  if (repeat.unit) return { every: repeat.every ?? 1, unit: repeat.unit };
+
+  if (repeat.interval_days) return { every: repeat.interval_days, unit: 'day' };
+
+  throw new Error('repeat needs unit (with optional every) or interval_days.');
+}
+
 function repeatColumns(repeat: RepeatInput | null): JsonRecord {
   return repeat
     ? {
-        repeat_interval: repeat.interval_days,
+        ...repeatRuleColumns(repeatRuleFromInput(repeat)),
         repeat_delta: null,
         from_repeating: repeat.from === 'due_date' ? 1 : 0,
       }
-    : { repeat_interval: 0, repeat_delta: null, from_repeating: null };
+    : {
+        ...repeatRuleColumns(null),
+        repeat_delta: null,
+        from_repeating: null,
+      };
 }
 
 export class TickistDataAccess {
@@ -335,7 +358,7 @@ export class TickistDataAccess {
     let query = this.client
       .from('tasks')
       .select(
-        'id, name, description, project_id, priority, is_done, is_active, suspend_until, on_hold, pinned, finish_date, finish_time, repeat_interval, repeat_delta, from_repeating, creation_date, modification_date'
+        'id, name, description, project_id, priority, is_done, is_active, suspend_until, on_hold, pinned, finish_date, finish_time, repeat_interval, repeat_unit, repeat_delta, from_repeating, creation_date, modification_date'
       )
       .order('creation_date', { ascending: false })
       .limit(input.limit ?? 100);
@@ -500,18 +523,25 @@ export class TickistDataAccess {
     return this.mutate('complete_task', 'task', taskId, async () => {
       const { data: current, error: currentError } = await this.client
         .from('tasks')
-        .select('id, is_done, finish_date, repeat_interval, from_repeating')
+        .select(
+          'id, is_done, finish_date, repeat_interval, repeat_unit, from_repeating'
+        )
         .eq('id', taskId)
         .maybeSingle();
 
       if (currentError || !current) throw new Error('Task not found.');
 
-      if (isDone && (current.repeat_interval ?? 0) > 0) {
+      const rule = repeatRuleFromColumns(
+        current.repeat_interval,
+        current.repeat_unit
+      );
+
+      if (isDone && rule) {
         const timezone = await this.userTimezone();
 
         const nextFinishDate = nextRecurringFinishDate(
           current.finish_date,
-          current.repeat_interval,
+          rule,
           current.from_repeating,
           timezone
         );
