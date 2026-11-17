@@ -1,4 +1,5 @@
 import { EmailMonitoringService } from '../../data/email-monitoring.service';
+import { AppDatePipe } from '../../core/time/date-format';
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
   ChangeDetectionStrategy,
@@ -11,7 +12,6 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { startWith } from 'rxjs';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -77,7 +77,7 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
     ReactiveFormsModule,
     SheetScaffoldComponent,
     ThemedSelectComponent,
-    DatePipe,
+    AppDatePipe,
     RouterLink,
     TurnstileWidgetComponent,
   ],

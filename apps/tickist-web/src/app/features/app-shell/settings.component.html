@@ -1,4 +1,5 @@
 <section class="sheet-page settings-page">
+  <h1 class="sr-only">Settings</h1>
   <div class="settings-page__panel">
     <app-sheet-scaffold
       eyebrow="Settings"
@@ -757,15 +758,10 @@
                       >{{ token.tokenPrefix }}•••</span
                     >
                     <span class="token-card__sep">·</span>
-                    <span
-                      >Created {{ token.createdAt | date : 'mediumDate' }}</span
-                    >
+                    <span>Created {{ token.createdAt | appDate }}</span>
                     @if (token.lastUsedAt) {
                     <span class="token-card__sep">·</span>
-                    <span
-                      >Last used
-                      {{ token.lastUsedAt | date : 'mediumDate' }}</span
-                    >
+                    <span>Last used {{ token.lastUsedAt | appDate }}</span>
                     }
                   </p>
                 </div>

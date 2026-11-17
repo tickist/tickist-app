@@ -7,12 +7,8 @@
   gap: 0.75rem;
   padding: 1rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 170, 59, 0.32);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 170, 59, 0.1),
-    rgb(var(--b1) / 0.78)
-  );
+  border: 1px solid rgb(var(--p) / 0.32);
+  background: rgb(var(--b1) / 0.78);
   box-shadow: inset 0 0 0 1px rgb(var(--bc) / 0.04),
     0 8px 24px rgb(0 0 0 / 0.12);
 }
@@ -69,8 +65,8 @@
   border: none;
   border-radius: 12px;
   padding: 0.65rem 1.2rem;
-  background: linear-gradient(120deg, #ffaa3b, #ff7b1a);
-  color: #172039;
+  background: rgb(var(--p));
+  color: rgb(var(--pc));
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -78,7 +74,7 @@
 
 .new-task-form__button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(255, 122, 26, 0.25);
+  box-shadow: 0 10px 20px rgb(var(--p) / 0.25);
 }
 
 .new-task-form__button:active {

@@ -115,7 +115,6 @@
 }
 
 .icon-pill.active {
-  border-color: rgb(255 170 59 / 0.28);
-  background: linear-gradient(135deg, rgb(255 170 59 / 0.24), transparent 80%),
-    rgb(var(--b1) / 0.95);
+  border-color: rgb(var(--p));
+  background: rgb(var(--p) / 0.18);
 }

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AppDatePipe } from '../../core/time/date-format';
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
   ChangeDetectionStrategy,
@@ -12,7 +13,6 @@ import {
   Output,
   signal,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import {
   AbstractControl,
   FormArray,
@@ -95,7 +95,7 @@ type TaskFormDefaults = {
   selector: 'app-task-composer',
   imports: [
     TaskTimeEntriesComponent,
-    DatePipe,
+    AppDatePipe,
     ReactiveFormsModule,
     ProjectPickerComponent,
     ThemedSelectComponent,

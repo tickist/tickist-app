@@ -1,4 +1,5 @@
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
+import { AppDatePipe } from '../../core/time/date-format';
 import {
   Component,
   computed,
@@ -19,7 +20,7 @@ import {
   Router,
   NavigationEnd,
 } from '@angular/router';
-import { DatePipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { NotificationDataService } from '../../data/notification-data.service';
@@ -49,7 +50,7 @@ import { TaskDataService } from '../../data/task-data.service';
   imports: [
     RouterOutlet,
     RouterLink,
-    DatePipe,
+    AppDatePipe,
     NgOptimizedImage,
     AppSidebarComponent,
     TaskFabComponent,

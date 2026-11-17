@@ -4,7 +4,8 @@ import {
   elementsOfType,
 } from '../../../testing/dom';
 import assert from 'node:assert/strict';
-import { DatePipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
+import { AppDatePipe } from '../../core/time/date-format';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterLink, RouterOutlet } from '@angular/router';
@@ -123,7 +124,7 @@ describe('AppViewportComponent theme toggle', () => {
             RouterOutlet,
             RouterLink,
             NgOptimizedImage,
-            DatePipe,
+            AppDatePipe,
             MockSidebarComponent,
             MockTaskFabComponent,
             ProjectIconComponent,

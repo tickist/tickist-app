@@ -82,7 +82,7 @@
       }
       <button
         type="button"
-        class="icon-btn"
+        class="icon-btn icon-btn--wide"
         [class.active]="task.pinned"
         title="Pin task"
         aria-label="Pin task"
@@ -92,7 +92,7 @@
       </button>
       <button
         type="button"
-        class="icon-btn"
+        class="icon-btn icon-btn--wide"
         title="Edit task"
         aria-label="Edit task"
         (click)="editTask()"
@@ -119,6 +119,14 @@
           [appAnchoredPopover]="moreActionsTrigger"
           (popoverClosed)="menuOpen.set(false)"
         >
+          <div class="menu__section menu__narrow">
+            <button type="button" (click)="menuOpen.set(false); editTask()">
+              Edit
+            </button>
+            <button type="button" (click)="menuOpen.set(false); togglePin()">
+              {{ task.pinned ? 'Unpin from Today' : 'Pin to Today' }}
+            </button>
+          </div>
           <div class="menu__section">
             <p>Priority</p>
             @for (level of ['A','B','C']; track level) {
@@ -206,6 +214,7 @@
       data-testid="task-toolbar-description"
       [class.configured]="hasDescription()"
       [class.active]="descriptionOpen()"
+      [class.toolbar-btn--idle]="!hasDescription() && !descriptionOpen()"
       [attr.title]="descriptionStatusLabel()"
       [attr.aria-label]="descriptionStatusLabel()"
       (click)="toggleDescription()"
@@ -218,6 +227,7 @@
       data-testid="task-toolbar-tags"
       [class.configured]="hasTags()"
       [class.active]="tagsOpen()"
+      [class.toolbar-btn--idle]="!hasTags() && !tagsOpen()"
       [attr.title]="tagsStatusLabel()"
       [attr.aria-label]="tagsStatusLabel()"
       (click)="toggleTags()"
@@ -230,28 +240,31 @@
       data-testid="task-toolbar-repeat"
       [class.configured]="hasRepeat()"
       [class.active]="repeatOpen()"
+      [class.toolbar-btn--idle]="!hasRepeat() && !repeatOpen()"
       [attr.title]="repeatStatusLabel()"
       [attr.aria-label]="repeatStatusLabel()"
       (click)="toggleRepeat()"
     >
       <span class="toolbar-btn__icon" aria-hidden="true">🔁</span>
     </button>
-    <button
-      type="button"
-      class="toolbar-btn toolbar-btn--status"
+    @if (hasReminders()) {
+    <span
+      class="toolbar-btn toolbar-btn--status configured"
+      role="img"
       data-testid="task-toolbar-reminders"
-      [class.configured]="hasReminders()"
       [attr.title]="remindersStatusLabel()"
       [attr.aria-label]="remindersStatusLabel()"
     >
       <span class="toolbar-btn__icon" aria-hidden="true">⏰</span>
-    </button>
+    </span>
+    }
     <button
       type="button"
       class="toolbar-btn"
       data-testid="task-toolbar-steps"
       [class.configured]="hasSteps()"
       [class.active]="stepsOpen()"
+      [class.toolbar-btn--idle]="!hasSteps() && !stepsOpen()"
       [attr.title]="stepsStatusLabel()"
       [attr.aria-label]="stepsStatusLabel()"
       (click)="toggleSteps()"

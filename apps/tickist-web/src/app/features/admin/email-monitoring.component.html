@@ -4,7 +4,7 @@
 >
   <header class="flex flex-wrap items-center justify-between gap-4">
     <div>
-      <p class="text-sm text-base-content/60">Administrator</p>
+      <p class="text-sm text-muted">Administrator</p>
       <h1 id="email-monitor-title" class="text-2xl font-semibold">
         Email monitoring
       </h1>
@@ -74,7 +74,7 @@
   }
   <p class="text-sm text-base-content/70">
     Region: {{ sample.region }} · Last successful reading:
-    {{ health.checked_at | date : 'medium' }}
+    {{ health.checked_at | appDate : 'dateTime' }}
   </p>
   } @else {
   <p role="status">No successful SES reading yet.</p>
@@ -130,7 +130,7 @@
           {{ labels[alert.kind] || 'Email delivery warning' }}
         </p>
         <p class="text-sm">
-          {{ alert.observed_at | date : 'medium' }} ·
+          {{ alert.observed_at | appDate : 'dateTime' }} ·
           {{ statuses[alert.status] }}
         </p>
       </li>

@@ -808,6 +808,8 @@ test('creates task, edits it via task menu and marks done', async ({
   await menu.getByRole('button', { name: 'Do it today' }).click();
   await expectTaskMenuClosed(card);
 
+  // Shortcuts for details a task does not have yet appear on hover.
+  await card.hover();
   await card.getByTestId('task-toolbar-description').click();
   const descriptionPanel = card.locator('.task-card__panel--description');
   await descriptionPanel.getByRole('button', { name: 'Add' }).click();
@@ -878,10 +880,7 @@ test('adds task reminder and shows reminder status icon on the task card', async
 
   const card = taskCardByName(page, taskName);
   await expect(card).toBeVisible();
-  await expect(card.getByTestId('task-toolbar-reminders')).toHaveAttribute(
-    'aria-label',
-    'Reminders: none'
-  );
+  await expect(card.getByTestId('task-toolbar-reminders')).toHaveCount(0);
 
   await card.getByRole('button', { name: 'Edit task' }).click();
   const composer = page.locator('app-task-composer');

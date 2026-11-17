@@ -254,6 +254,8 @@
 .app-layout__main {
   min-width: 0;
   overflow-x: hidden;
+  /* Room for the floating "+" button so it never covers the last item. */
+  padding-bottom: calc(56px + 3rem);
 }
 
 .app-layout__main-inner {

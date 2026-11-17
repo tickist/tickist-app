@@ -7,13 +7,13 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { AppDatePipe } from '../../core/time/date-format';
 import { RouterLink } from '@angular/router';
 import { EmailMonitoringService } from '../../data/email-monitoring.service';
 
 @Component({
   selector: 'app-email-monitoring',
-  imports: [DatePipe, RouterLink],
+  imports: [AppDatePipe, RouterLink],
   templateUrl: './email-monitoring.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

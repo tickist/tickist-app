@@ -5,10 +5,10 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { AppDatePipe } from '../../core/time/date-format';
 import { TaskDataService } from '../../data/task-data.service';
 import { ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
-import { DatePipe } from '@angular/common';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
 import { TaskStatusService } from '../../data/task-status.service';
@@ -30,7 +30,7 @@ interface TreeGroup {
 @Component({
   selector: 'app-tree-view',
   standalone: true,
-  imports: [DatePipe, LinkifyPipe],
+  imports: [AppDatePipe, LinkifyPipe],
   templateUrl: './tree-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tree-view.component.css',

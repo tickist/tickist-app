@@ -22,7 +22,7 @@
             id="task-composer-name"
             class="sheet-input"
             formControlName="name"
-            placeholder="Task name, e.g. Podsumować wyjazd"
+            placeholder="Task name, e.g. Book train tickets"
             [attr.aria-invalid]="
               taskForm.controls.name.touched && taskForm.controls.name.invalid
             "
@@ -39,6 +39,18 @@
           >
           }
         </div>
+
+        <label class="sheet-field task-composer-field--placeholder">
+          <span class="sheet-field__label task-composer-sr-only"
+            >Description</span
+          >
+          <textarea
+            class="sheet-textarea"
+            rows="4"
+            formControlName="description"
+            placeholder="Description"
+          ></textarea>
+        </label>
 
         <div class="sheet-field">
           <span class="sheet-field__label">Priority</span>
@@ -136,18 +148,6 @@
             />
           </div>
         </div>
-
-        <label class="sheet-field task-composer-field--placeholder">
-          <span class="sheet-field__label task-composer-sr-only"
-            >Description</span
-          >
-          <textarea
-            class="sheet-textarea"
-            rows="4"
-            formControlName="description"
-            placeholder="Description"
-          ></textarea>
-        </label>
       </section>
     </form>
     } @case ('repeat') {
@@ -530,7 +530,7 @@
             <dd>
               @if (task.createdAt) {
               <time [attr.datetime]="task.createdAt">
-                {{ task.createdAt | date : 'medium' }}
+                {{ task.createdAt | appDate : 'dateTime' }}
               </time>
               } @else { Not available }
             </dd>
@@ -540,7 +540,7 @@
             <dd>
               @if (task.updatedAt) {
               <time [attr.datetime]="task.updatedAt">
-                {{ task.updatedAt | date : 'medium' }}
+                {{ task.updatedAt | appDate : 'dateTime' }}
               </time>
               } @else { Not available }
             </dd>

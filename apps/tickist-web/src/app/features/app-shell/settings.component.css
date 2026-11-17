@@ -505,7 +505,7 @@
 .token-card__meta {
   margin: 0.2rem 0 0;
   font-size: 0.8rem;
-  color: rgb(var(--bc) / 0.55);
+  color: var(--tickist-muted-color);
 }
 
 .token-card__prefix {

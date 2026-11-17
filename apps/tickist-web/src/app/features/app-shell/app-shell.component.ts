@@ -7,6 +7,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
+import { formatDayKeyLong, formatMonthKey } from '../../core/time/date-format';
 
 import {
   Task,
@@ -123,25 +124,10 @@ export class AppShellComponent {
     }
 
     if (filter.mode === 'day') {
-      const date = this.parseDateKey(filter.dateKey);
-
-      return date
-        ? date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-          })
-        : filter.dateKey;
+      return formatDayKeyLong(filter.dateKey) ?? filter.dateKey;
     }
 
-    const date = this.parseMonthKey(filter.monthKey);
-
-    return date
-      ? date.toLocaleDateString('en-US', {
-          month: 'long',
-          year: 'numeric',
-        })
-      : filter.monthKey;
+    return formatMonthKey(filter.monthKey) ?? filter.monthKey;
   });
   readonly taskViewMode = computed(() =>
     this.activeProject()?.taskView === 'simple' ? 'simple' : 'extended'
@@ -652,25 +638,5 @@ export class AppShellComponent {
   clearDueDateFilter(): void {
     this.viewState.clearDateFilter();
     void this.router.navigate(['/app/tasks'], { queryParams: {} });
-  }
-
-  private parseDateKey(key: string): Date | null {
-    const [year, month, day] = key.split('-').map(Number);
-
-    if (!year || !month || !day) {
-      return null;
-    }
-
-    return new Date(year, month - 1, day);
-  }
-
-  private parseMonthKey(key: string): Date | null {
-    const [year, month] = key.split('-').map(Number);
-
-    if (!year || !month) {
-      return null;
-    }
-
-    return new Date(year, month - 1, 1);
   }
 }

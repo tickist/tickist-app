@@ -8,7 +8,15 @@ import {
   viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import {
+  IsActiveMatchOptions,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   Project,
@@ -61,7 +69,12 @@ type ProjectTreeNode = {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, NgTemplateOutlet, ProjectIconComponent],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    NgTemplateOutlet,
+    ProjectIconComponent,
+  ],
   templateUrl: './app-sidebar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app-sidebar.component.css',
@@ -70,6 +83,19 @@ export class AppSidebarComponent {
   private readonly projectsService = inject(ProjectDataService);
   private readonly viewState = inject(AppViewStateService);
   private readonly router = inject(Router);
+  readonly dashboardMatch: IsActiveMatchOptions = {
+    paths: 'exact',
+    queryParams: 'ignored',
+    matrixParams: 'ignored',
+    fragment: 'ignored',
+  };
+  private readonly currentPath = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => pathOf(this.router.url))
+    ),
+    { initialValue: pathOf(this.router.url) }
+  );
   private readonly tasksService = inject(TaskDataService);
   private readonly composer = inject(ComposerModalService);
   private readonly session = inject(SupabaseSessionService);
@@ -396,9 +422,12 @@ export class AppSidebarComponent {
     return current?.mode === 'month' && current.monthKey === month.monthKey;
   }
 
-  goToDashboard(): void {
+  clearProjectSelection(): void {
     this.viewState.selectProject(null);
-    void this.router.navigate(['/app']);
+  }
+
+  isProjectCurrent(projectId: string): boolean {
+    return this.currentPath() === `/app/tasks/${projectId}`;
   }
 
   selectProject(projectId: string | null): void {
@@ -640,4 +669,8 @@ export class AppSidebarComponent {
 
     return `${year}-${month}`;
   }
+}
+
+function pathOf(url: string): string {
+  return url.split(/[?#]/, 1)[0];
 }

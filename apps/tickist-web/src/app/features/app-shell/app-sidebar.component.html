@@ -1,15 +1,23 @@
 <nav class="flex flex-col gap-2 text-base-content">
-  <button type="button" class="sidebar-link" (click)="goToDashboard()">
+  <a
+    class="sidebar-link"
+    routerLink="/app"
+    routerLinkActive="sidebar-link--active"
+    [routerLinkActiveOptions]="dashboardMatch"
+    ariaCurrentWhenActive="page"
+    (click)="clearProjectSelection()"
+  >
     <span class="emoji">🏠</span>
     <span>Dashboard</span>
-  </button>
+  </a>
 
   @for (inbox of inboxProjects(); track inbox) {
   <button
     type="button"
     class="sidebar-link"
     (click)="selectProject(inbox.id)"
-    [class.text-primary]="selectedProjectId() === inbox.id"
+    [class.sidebar-link--active]="isProjectCurrent(inbox.id)"
+    [attr.aria-current]="isProjectCurrent(inbox.id) ? 'page' : null"
   >
     <app-project-icon
       [icon]="inbox.icon"
@@ -122,6 +130,7 @@
         class="weekday-row"
         [class.today]="day.isToday"
         [class.selected]="isWeekdaySelected(day)"
+        [attr.aria-current]="isWeekdaySelected(day) ? 'page' : null"
         (click)="selectWeekday(day)"
       >
         <span class="weekday-name">{{ day.label }}</span>
@@ -161,6 +170,7 @@
         type="button"
         class="future-row"
         [class.selected]="isFutureSelected(month)"
+        [attr.aria-current]="isFutureSelected(month) ? 'page' : null"
         (click)="selectFutureMonth(month)"
       >
         <span class="future-name">{{ month.label }}</span>
@@ -171,19 +181,39 @@
   </ul>
   }
 
-  <a class="sidebar-link" routerLink="/app/tree">
+  <a
+    class="sidebar-link"
+    routerLink="/app/tree"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
     <span class="emoji">🌲</span>
     <span>Tasks tree view</span>
   </a>
-  <a class="sidebar-link" routerLink="/app/tags">
+  <a
+    class="sidebar-link"
+    routerLink="/app/tags"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
     <span class="emoji">🏷️</span>
     <span>Tags</span>
   </a>
-  <a class="sidebar-link" routerLink="/app/time">
+  <a
+    class="sidebar-link"
+    routerLink="/app/time"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
     <span class="emoji">⏱️</span>
     <span>Time</span>
   </a>
-  <a class="sidebar-link" routerLink="/app/stats">
+  <a
+    class="sidebar-link"
+    routerLink="/app/stats"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
     <span class="emoji">📊</span>
     <span>Statistics</span>
   </a>
@@ -212,7 +242,10 @@
         <button
           type="button"
           class="sidebar-subitem"
-          [class.text-primary]="selectedProjectId() === node.project.id"
+          [class.sidebar-subitem--active]="isProjectCurrent(node.project.id)"
+          [attr.aria-current]="
+            isProjectCurrent(node.project.id) ? 'page' : null
+          "
           (click)="selectProject(node.project.id)"
         >
           <span class="project-main">

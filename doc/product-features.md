@@ -34,13 +34,15 @@ Tasks hold a title, description, project, priority, type, a date with an optiona
 
 Task-card overflow actions are exclusive within a task list: opening the menu on another task closes the previously open menu.
 
+A task card shows only the details the task has: the project button always, and description, tags, repetition, reminder and subtask icons when they are set. Shortcuts for adding a missing description, tags, repetition or subtasks appear while the card is hovered or holds keyboard focus; touch screens use the task editor. On narrow cards (phones) Edit and Pin move into the More actions menu, and a pinned task keeps its pin visible. Card dates, completion badges, reminder times and other app dates share one format: `17 Nov`, `17 Nov 2027` outside the current year, and `Tuesday 17 November` for a Weekdays day heading. In the task editor the description sits directly below the task name, separate from the date fields.
+
 The task-card overflow menu also duplicates a task. The copy belongs to the user who made it and keeps the project, name, description, due date and time, repeat settings, priority, type, estimate, tags, assignees and subtasks. It starts open, active and unpinned, with all subtasks unchecked, no reminders and no recorded time.
 
 ### Status and completion
 
 Tasks can be active or suspended. A suspension can remain in place until the user resumes the task or end automatically at a chosen date and time. The resume time defaults to `00:00` when the user selects a date without changing the time. Suspended tasks show a pause indicator instead of a completion checkbox, are excluded from active-work summaries, and are counted in the selected project's header across the currently included project hierarchy. The header count is a shortcut that selects the suspended-task filter. A database scheduler resumes due tasks every minute, while an in-app status clock updates an open view without requiring a reload. Every incomplete-task transition from suspended to active creates an in-app notification for the task owner and immediately queues an owner email through the transactional outbox; this covers both scheduled and manual resumes.
 
-Open, suspended, completed, and all-task filters are available in project task lists. The open filter excludes suspended tasks. Completing a task records its completion timestamp; reopening it clears the timestamp. When completed tasks are visible, the card displays a `Completed DD-MM-YYYY` badge next to the task name.
+Open, suspended, completed, and all-task filters are available in project task lists. The open filter excludes suspended tasks. Completing a task records its completion timestamp; reopening it clears the timestamp. When completed tasks are visible, the card displays a `Completed 17 Nov` badge next to the task name (with the year outside the current one).
 
 ### Ordering and filtering
 
@@ -100,7 +102,7 @@ Settings cover profile data, avatar, password changes, email notification prefer
 
 Version 2 backups include workspace definitions and project assignments. Version 1 backups remain importable and place imported projects in Private.
 
-Form placeholders use one muted slate colour across light and dark application surfaces so hints remain visually secondary to entered values.
+Form placeholders and secondary text use one muted slate colour (`--tickist-muted-color`) that meets WCAG AA contrast on light and dark surfaces. Primary-coloured text uses `--tickist-primary-text`, a lighter indigo in the dark theme. The app has one accent colour, the theme's indigo, for primary buttons, the floating add button, selected options and tabs, and the active sidebar item; the sidebar marks the current page with `aria-current`.
 
 ## Installed app
 

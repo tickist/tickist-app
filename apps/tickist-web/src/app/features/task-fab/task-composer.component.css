@@ -70,7 +70,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background: rgb(255 170 59 / 0.18);
+  background: rgb(var(--p) / 0.18);
 }
 
 .step-row {
@@ -91,7 +91,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background: rgb(255 170 59 / 0.18);
+  background: rgb(var(--p) / 0.18);
   color: rgb(var(--bc));
   font-size: 0.85rem;
   font-weight: 700;
@@ -115,7 +115,7 @@
 }
 
 .task-history {
-  border-color: rgb(255 170 59 / 0.2);
+  border-color: rgb(var(--p) / 0.2);
 }
 
 .task-history__header {
@@ -132,7 +132,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background: rgb(255 170 59 / 0.18);
+  background: rgb(var(--p) / 0.18);
   color: rgb(var(--bc));
   font-size: 1rem;
 }
@@ -151,7 +151,7 @@
 
 .task-history__description {
   margin-top: 0.25rem;
-  color: rgb(var(--bc) / 0.58);
+  color: var(--tickist-muted-color);
   font-size: 0.8rem;
   line-height: 1.4;
 }
@@ -173,7 +173,7 @@
 }
 
 .task-history__entry dt {
-  color: rgb(var(--bc) / 0.58);
+  color: var(--tickist-muted-color);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;

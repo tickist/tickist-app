@@ -2,9 +2,7 @@
   <header
     class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow-lg shadow-black/20"
   >
-    <p class="text-xs uppercase tracking-[0.6em] text-base-content/50">
-      Tree view
-    </p>
+    <p class="text-xs uppercase tracking-[0.6em] text-muted">Tree view</p>
     <h1 class="text-3xl font-semibold">Projects & tasks hierarchy</h1>
     <p class="text-sm text-base-content/70">{{ groups().length }} groups</p>
   </header>
@@ -25,12 +23,10 @@
             ></span>
             <div>
               <p class="font-semibold">{{ group.name }}</p>
-              <p class="text-xs text-base-content/60">
-                {{ group.tasks.length }} tasks
-              </p>
+              <p class="text-xs text-muted">{{ group.tasks.length }} tasks</p>
             </div>
           </div>
-          <span class="text-xs text-base-content/60">
+          <span class="text-xs text-muted">
             {{ isExpanded(group.id) ? 'Hide' : 'Show' }}
           </span>
         </button>
@@ -46,9 +42,9 @@
                 [class.line-through]="task.isDone"
                 [innerHTML]="task.name | linkify"
               ></p>
-              <p class="text-xs text-base-content/60">
+              <p class="text-xs text-muted">
                 {{ task.priority || 'normal' }} · @if (task.finishDate) {
-                <span>{{ task.finishDate | date : 'mediumDate' }}</span>
+                <span>{{ task.finishDate | appDate }}</span>
                 } @else { no date }
               </p>
             </div>
@@ -61,7 +57,7 @@
             </span>
           </li>
           } @if (!group.tasks.length) {
-          <li class="text-xs text-base-content/60">No tasks yet.</li>
+          <li class="text-xs text-muted">No tasks yet.</li>
           }
         </ul>
         }

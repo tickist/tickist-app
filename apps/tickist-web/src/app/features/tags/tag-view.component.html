@@ -80,12 +80,12 @@
       <span class="count">{{ tagCount(tag.id) }}</span>
     </button>
     } @if (!tags().length) {
-    <p class="text-sm text-base-content/60">No tags yet.</p>
+    <p class="text-sm text-muted">No tags yet.</p>
     }
   </section>
 
   <section class="results">
-    <p class="text-sm text-base-content/60 mb-2">
+    <p class="text-sm text-muted mb-2">
       Showing {{ visibleTasks().length }} of {{ filteredTasks().length }} tasks
       @if (selectedTags().size) {
       <span>

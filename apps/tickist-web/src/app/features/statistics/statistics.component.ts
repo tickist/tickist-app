@@ -6,7 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { AppDatePipe } from '../../core/time/date-format';
 import { RouterLink } from '@angular/router';
 import {
   type InactiveProjectStat,
@@ -24,7 +24,7 @@ interface SummaryCard {
 @Component({
   selector: 'app-statistics',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, RouterLink, ProjectIconComponent],
+  imports: [AppDatePipe, RouterLink, ProjectIconComponent],
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.css',
 })
