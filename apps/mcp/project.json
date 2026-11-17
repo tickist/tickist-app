@@ -7,7 +7,9 @@
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
-      "options": { "command": "tsc -p apps/mcp/tsconfig.json --noEmit" }
+      "options": {
+        "command": "tsc -p apps/mcp/tsconfig.json --noEmit"
+      }
     },
     "build": {
       "executor": "nx:run-commands",
@@ -16,14 +18,21 @@
         "command": "esbuild apps/mcp/src/main.ts --bundle --platform=node --format=esm --target=node24 --outfile=dist/apps/mcp/main.mjs"
       }
     },
-    "test": {
-      "executor": "@nx/vitest:test",
-      "outputs": ["{workspaceRoot}/coverage/apps/mcp"],
-      "options": { "config": "apps/mcp/vitest.config.mts" }
-    },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": { "lintFilePatterns": ["apps/mcp/**/*.ts"] }
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/eslint.config.mjs",
+        "{workspaceRoot}/tools/eslint-rules/**/*",
+        {
+          "externalDependencies": ["eslint"]
+        }
+      ],
+      "options": {
+        "args": ["**/*.ts"]
+      }
     },
     "worker:dry-run": {
       "executor": "nx:run-commands",

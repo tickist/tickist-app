@@ -3,8 +3,8 @@ import { defineConfig, loadEnv } from 'vite';
 import { resolve } from 'path';
 import { execSync } from 'child_process';
 import angular from '@analogjs/vite-plugin-angular';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { VitePWA } from 'vite-plugin-pwa';
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 
 const resolveBuildCommit = (loaded: Record<string, string>): string => {
   const explicitCommit =
@@ -70,6 +70,9 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
+    resolve: {
+      tsconfigPaths: true,
+    },
     root: __dirname,
     cacheDir: '../../node_modules/.vite/tickist-web',
     // Public values are injected only through the explicit define entries below.
@@ -81,7 +84,6 @@ export default defineConfig(({ mode }) => {
           isTestMode ? 'tsconfig.spec.json' : 'tsconfig.app.json'
         ),
       }),
-      nxViteTsPaths(),
       VitePWA({
         disable: isTestMode,
         registerType: 'prompt',
@@ -219,6 +221,7 @@ export default defineConfig(({ mode }) => {
           navigateFallbackDenylist: [/^\/env\.js$/, /^\/mcp(?:\/|$)/],
         },
       }),
+      nxReadySignal(),
     ],
     build: {
       outDir: '../../dist/tickist-web',
@@ -230,10 +233,6 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    // Uncomment this if you are using workers.
-    // worker: {
-    //  plugins: [ nxViteTsPaths() ],
-    // },
     test: {
       name: 'tickist-web',
       watch: false,
