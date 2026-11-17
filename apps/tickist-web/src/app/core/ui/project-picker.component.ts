@@ -18,6 +18,7 @@ import {
   flattenHierarchy,
 } from '../projects/project-tree';
 import { ProjectIconComponent } from './project-icon.component';
+import { IconComponent } from './icon.component';
 import { isProjectSharedByMultipleMembers } from '../../data/project-data.service';
 
 export interface ProjectPickerItem {
@@ -74,7 +75,7 @@ const PICKER_GROUP_LABELS: Record<PickerGroupKey, string> = {
 
 @Component({
   selector: 'app-project-picker',
-  imports: [ProjectIconComponent],
+  imports: [ProjectIconComponent, IconComponent],
   templateUrl: './project-picker.component.html',
   styleUrl: './project-picker.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

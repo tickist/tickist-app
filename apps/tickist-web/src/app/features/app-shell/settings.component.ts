@@ -119,6 +119,10 @@ export class SettingsComponent {
     { key: 'backup', label: 'Backup & Restore', icon: 'backup' },
     { key: 'api-tokens', label: 'API Tokens', icon: 'api-tokens' },
   ];
+  /** Heading of the open settings section. */
+  readonly activeTabLabel = computed(
+    () => this.tabs.find((tab) => tab.key === this.activeTab())?.label ?? ''
+  );
   readonly updating = signal(false);
   readonly focusLimitMinMinutes = FOCUS_LIMIT_MIN_MINUTES;
   readonly focusLimitMaxMinutes = FOCUS_LIMIT_MAX_MINUTES;

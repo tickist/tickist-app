@@ -95,6 +95,12 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Avoid a single word on the last line; browsers without support wrap
+   normally. */
+p {
+  text-wrap: pretty;
+}
+
 input::placeholder,
 textarea::placeholder {
   color: var(--tickist-placeholder-color);
@@ -103,11 +109,16 @@ textarea::placeholder {
 
 /* Tailwind's preflight resets button colours outside any cascade layer, so
    it beats daisyUI's layered .btn rules and every daisyUI button rendered
-   transparent. Restore daisyUI's colours with the lowest specificity that
-   still wins over the reset; component classes keep overriding them. */
+   transparent and unpadded. Restore daisyUI's colours and side padding with
+   the lowest specificity that still wins over the reset; component classes
+   keep overriding them. Circle and square buttons have no side padding. */
 :where(.btn):is(button, a, input, label) {
   background-color: var(--btn-bg);
   color: var(--btn-fg);
+}
+
+:where(.btn:not(.btn-circle, .btn-square)):is(button, a, input, label) {
+  padding-inline: var(--btn-p);
 }
 
 /* The dark primary is tuned for white button text; as text on dark

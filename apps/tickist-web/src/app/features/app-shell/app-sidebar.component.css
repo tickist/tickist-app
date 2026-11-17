@@ -112,6 +112,7 @@
 }
 
 .chevron {
+  color: var(--tickist-muted-color);
   transition: transform 0.2s ease;
 }
 

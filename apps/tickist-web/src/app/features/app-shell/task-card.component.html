@@ -367,7 +367,7 @@
             class="tag-add__chevron"
             [class.tag-add__chevron--open]="tagMenuOpen()"
           >
-            ▾
+            <app-icon name="chevron-down" />
           </span>
         </button>
         @if (tagMenuOpen()) {
@@ -547,21 +547,25 @@
             data-testid="step-edit"
             (click)="beginStepEdit(step)"
           >
-            ✎
+            <app-icon name="edit" />
           </button>
           <button
             type="button"
+            aria-label="Move step up"
+            title="Move step up"
             (click)="moveStep(step, 'up')"
             [disabled]="i === 0"
           >
-            ↑
+            <app-icon name="move-up" />
           </button>
           <button
             type="button"
+            aria-label="Move step down"
+            title="Move step down"
             (click)="moveStep(step, 'down')"
             [disabled]="i === task.steps.length - 1"
           >
-            ↓
+            <app-icon name="move-down" />
           </button>
           <button
             type="button"
@@ -569,7 +573,7 @@
             aria-label="Remove step"
             (click)="removeStep(step)"
           >
-            ✕
+            <app-icon name="close" />
           </button>
         </div>
       </div>

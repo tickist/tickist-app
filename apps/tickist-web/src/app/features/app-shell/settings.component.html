@@ -2,8 +2,8 @@
   <h1 class="sr-only">Settings</h1>
   <div class="settings-page__panel">
     <app-sheet-scaffold
-      eyebrow="Settings"
-      title=""
+      eyebrow=""
+      [title]="activeTabLabel()"
       testId="settings-sheet"
       closeAriaLabel="Close settings panel"
       [tabs]="tabs"
@@ -608,6 +608,7 @@
                 <input
                   type="file"
                   class="file-input file-input-bordered w-full"
+                  aria-label="Backup file to import"
                   accept="application/json,.json"
                   (change)="onImportFileSelected($event)"
                 />

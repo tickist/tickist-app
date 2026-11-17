@@ -5,23 +5,15 @@
 }
 
 .tag-view__header {
-  @apply flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between;
-}
-
-.tag-view__intro {
-  @apply max-w-xl;
+  @apply flex flex-col gap-4;
 }
 
 .tag-view__header h1 {
   @apply text-2xl font-semibold;
 }
 
-.eyebrow {
-  @apply text-xs uppercase tracking-[0.4em] text-base-content opacity-60;
-}
-
 .controls {
-  @apply flex w-full flex-wrap items-center justify-start gap-3 xl:w-auto xl:justify-end;
+  @apply flex w-full flex-wrap items-end justify-start gap-3;
 }
 
 .controls__group {
@@ -33,13 +25,15 @@
 }
 
 .controls__checkbox {
-  @apply inline-flex min-h-10 shrink-0 items-center gap-3 rounded-xl border border-white/10 px-3 text-sm;
+  @apply inline-flex min-h-10 shrink-0 items-center gap-3 rounded-xl border px-3 text-sm;
+  border-color: rgb(var(--bc) / 0.14);
   background-color: rgb(var(--b1) / 45%);
 }
 
 .controls__sort {
-  @apply flex min-w-[13rem] flex-col gap-1 text-xs uppercase tracking-[0.24em];
-  color: rgb(var(--bc) / 60%);
+  @apply flex min-w-[13rem] flex-col gap-1 text-xs font-semibold;
+  margin-left: auto;
+  color: var(--tickist-muted-color);
 }
 
 .controls__sort app-themed-select {
@@ -47,7 +41,8 @@
 }
 
 .match-toggle {
-  @apply inline-flex min-h-10 items-center gap-1 rounded-xl border border-white/10 p-1;
+  @apply inline-flex min-h-10 items-center gap-1 rounded-xl border p-1;
+  border-color: rgb(var(--bc) / 0.14);
   background-color: rgb(var(--b1) / 55%);
 }
 
@@ -86,7 +81,8 @@
 }
 
 .controls .btn {
-  @apply min-h-10 border border-white/10;
+  @apply min-h-10 border;
+  border-color: rgb(var(--bc) / 0.14);
   background-color: rgb(var(--b1) / 45%);
   color: rgb(var(--bc) / 96%);
 }

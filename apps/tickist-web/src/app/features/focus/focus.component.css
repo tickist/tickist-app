@@ -37,6 +37,7 @@
 
 .focus-task {
   @apply max-w-full break-words text-2xl font-semibold sm:text-3xl;
+  text-wrap: balance;
 }
 
 .focus-clock {
@@ -101,8 +102,6 @@
 .focus-btn--main {
   background-color: var(--color-primary);
   color: var(--color-primary-content);
-  box-shadow: 0 8px 24px
-    color-mix(in oklab, var(--color-primary) 35%, transparent);
 }
 
 .focus-btn--main:hover:not(:disabled) {
@@ -135,8 +134,7 @@
 }
 
 .focus-shell--over .focus-btn--main {
-  background-color: rgb(234 88 12);
-  box-shadow: 0 8px 24px rgb(234 88 12 / 0.35);
+  background-color: rgb(194 65 12);
   color: #fff;
 }
 

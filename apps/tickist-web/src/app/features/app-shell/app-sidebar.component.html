@@ -41,7 +41,11 @@
     <span class="flex-1"
       >Active projects ({{ activeProjectsList().length }})</span
     >
-    <span class="chevron" [class.rotate-180]="navState().active">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().active"
+    />
   </button>
   @if (navState().active) {
   <ul class="sidebar-sublist">
@@ -68,7 +72,11 @@
     <span class="flex-1"
       >Someday / Maybe ({{ somedayProjectsList().length }})</span
     >
-    <span class="chevron" [class.rotate-180]="navState().someday">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().someday"
+    />
   </button>
   @if (navState().someday) {
   <ul class="sidebar-sublist">
@@ -95,7 +103,11 @@
     <span class="flex-1"
       >Routine reminder ({{ routineProjectsList().length }})</span
     >
-    <span class="chevron" [class.rotate-180]="navState().routine">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().routine"
+    />
   </button>
   @if (navState().routine) {
   <ul class="sidebar-sublist">
@@ -120,7 +132,11 @@
   <button type="button" class="sidebar-link" (click)="toggle('weekdays')">
     <app-icon class="nav-icon" name="weekdays" size="18" />
     <span class="flex-1">Weekdays</span>
-    <span class="chevron" [class.rotate-180]="navState().weekdays">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().weekdays"
+    />
   </button>
   @if (navState().weekdays) {
   <ul class="sidebar-weekdays">
@@ -161,7 +177,11 @@
   <button type="button" class="sidebar-link" (click)="toggle('future')">
     <app-icon class="nav-icon" name="future" size="18" />
     <span class="flex-1">Future</span>
-    <span class="chevron" [class.rotate-180]="navState().future">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().future"
+    />
   </button>
   @if (navState().future) {
   <ul class="sidebar-future">

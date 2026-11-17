@@ -3,7 +3,7 @@
     <div class="space-y-6">
       @if (activeProject(); as project) {
       <div
-        class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20"
+        class="rounded-2xl border border-white/10 bg-base-200/60 p-4 shadow shadow-black/20 sm:p-6"
       >
         @if (activeProject(); as headerProject) {
         <app-project-header
@@ -111,7 +111,7 @@
       </div>
       } @else { @if (dueDateLabel(); as label) {
       <div
-        class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20"
+        class="rounded-2xl border border-white/10 bg-base-200/60 p-4 shadow shadow-black/20 sm:p-6"
       >
         <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h1 class="text-lg font-semibold" data-testid="day-view-title">

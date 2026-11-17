@@ -1,5 +1,5 @@
 .project-header {
-  @apply mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b bg-transparent;
+  @apply mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b bg-transparent sm:mb-6 sm:gap-4 sm:pb-5;
   border-color: rgb(var(--bc) / 0.14);
 }
 
@@ -8,7 +8,7 @@
 }
 
 .project-header__text h1 {
-  @apply text-3xl md:text-4xl font-bold tracking-tight text-base-content;
+  @apply text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content;
 }
 
 .project-header__title-row {
@@ -122,7 +122,13 @@
 }
 
 .simple-toggle {
-  @apply relative inline-flex h-6 w-12 cursor-pointer items-center;
+  @apply relative inline-flex cursor-pointer items-center gap-2;
+}
+
+.simple-toggle__label {
+  font-size: 0.85rem;
+  color: var(--tickist-muted-color);
+  white-space: nowrap;
 }
 
 .simple-toggle input {
@@ -131,6 +137,7 @@
 
 .toggle-pill {
   display: block;
+  flex-shrink: 0;
   height: 1.5rem;
   width: 3rem;
   border-radius: 999px;

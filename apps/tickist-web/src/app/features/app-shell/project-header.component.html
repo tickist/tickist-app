@@ -135,13 +135,14 @@
       </ul>
     </div>
 
-    <label class="simple-toggle" title="Simple view">
+    <label class="simple-toggle" title="Hide task details on the cards">
       <input
         type="checkbox"
         [checked]="viewMode === 'simple'"
         (change)="toggleSimple.emit($any($event.target).checked)"
       />
       <span class="toggle-pill"></span>
+      <span class="simple-toggle__label">Simple view</span>
     </label>
   </div>
 </header>

@@ -146,7 +146,7 @@
             [size]="18"
           ></app-project-icon>
           <span class="workspace-switcher__label">{{ workspaceLabel() }}</span>
-          <span class="workspace-switcher__chevron" aria-hidden="true">⌄</span>
+          <app-icon class="workspace-switcher__chevron" name="chevron-down" />
         </button>
         @if (workspaceMenuOpen()) {
         <div
@@ -167,9 +167,11 @@
           >
             <app-project-icon icon="folder-open" [size]="18"></app-project-icon>
             <span class="workspace-switcher__option-label">All</span>
-            <span class="workspace-switcher__check" aria-hidden="true">{{
-              selectedWorkspaceId() === null ? '✓' : ''
-            }}</span>
+            <span class="workspace-switcher__check" aria-hidden="true">
+              @if (selectedWorkspaceId() === null) {
+              <app-icon name="check" />
+              }
+            </span>
           </button>
           @for (workspace of workspaceList(); track workspace.id) {
           <button
@@ -185,9 +187,11 @@
             <span class="workspace-switcher__option-label">{{
               workspace.name
             }}</span>
-            <span class="workspace-switcher__check" aria-hidden="true">{{
-              selectedWorkspaceId() === workspace.id ? '✓' : ''
-            }}</span>
+            <span class="workspace-switcher__check" aria-hidden="true">
+              @if (selectedWorkspaceId() === workspace.id) {
+              <app-icon name="check" />
+              }
+            </span>
           </button>
           }
         </div>
@@ -361,7 +365,7 @@
         aria-label="Close about dialog"
         (click)="closeAboutModal()"
       >
-        ✕
+        <app-icon name="close" />
       </button>
     </div>
 
@@ -416,7 +420,7 @@
             autofocus
             (click)="closeSidebar()"
           >
-            <span aria-hidden="true">✕</span>
+            <app-icon name="close" />
           </button>
         </div>
         @if (sidebarOpen()) {
@@ -425,7 +429,7 @@
       </div>
     </dialog>
 
-    <main class="app-layout__main flex-1 px-4 py-8 lg:px-8">
+    <main class="app-layout__main flex-1 px-3 py-4 sm:px-4 sm:py-8 lg:px-8">
       <div class="app-layout__main-inner w-full max-w-none min-w-0">
         <router-outlet></router-outlet>
       </div>

@@ -434,7 +434,7 @@ describe('AppViewportComponent theme toggle', () => {
     );
 
     expect(button).toBeTruthy();
-    expect(button?.textContent?.trim()).toBe('✕');
+    expect(button?.querySelector('app-icon')).toBeTruthy();
     expect(button?.textContent).not.toContain('Close');
   });
 });

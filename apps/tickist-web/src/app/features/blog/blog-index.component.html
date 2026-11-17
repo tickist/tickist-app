@@ -21,7 +21,6 @@
   </header>
 
   <section class="blog-hero" aria-labelledby="blog-title">
-    <p class="blog-eyebrow">{{ content().name }} · Tickist</p>
     <h1 id="blog-title">{{ category()?.name ?? content().title }}</h1>
     <p>{{ category()?.description ?? content().description }}</p>
   </section>
@@ -97,9 +96,6 @@
   </section>
   } @else {
   <section class="blog-empty-state" aria-labelledby="blog-empty-title">
-    <p class="blog-empty-state__eyebrow">
-      {{ content().emptyState.eyebrow }}
-    </p>
     <h2 id="blog-empty-title">{{ content().emptyState.title }}</h2>
     <p>{{ content().emptyState.description }}</p>
   </section>

@@ -103,7 +103,7 @@ Settings cover profile data, avatar, password changes, email notification prefer
 
 Version 2 backups include workspace definitions and project assignments. Version 1 backups remain importable and place imported projects in Private.
 
-Interface icons (navigation, task-card actions and details, sheet tabs, the theme switch and the header) are Lucide line icons drawn in the current text colour instead of emoji; project icons come from the same set. Form placeholders and secondary text use one muted slate colour (`--tickist-muted-color`) that meets WCAG AA contrast on light and dark surfaces. Primary-coloured text uses `--tickist-primary-text`, a lighter indigo in the dark theme. The app has one accent colour, the theme's indigo, for primary buttons, the floating add button, selected options and tabs, and the active sidebar item; the sidebar marks the current page with `aria-current`.
+Interface icons (navigation, task-card actions and details, step and reminder controls, menus, sheet tabs, the theme switch and the header) are Lucide line icons; icon-only buttons have accessible names. The project header's view switch is labelled Simple view, and each Settings section has its own heading drawn in the current text colour instead of emoji; project icons come from the same set. Form placeholders and secondary text use one muted slate colour (`--tickist-muted-color`) that meets WCAG AA contrast on light and dark surfaces. Primary-coloured text uses `--tickist-primary-text`, a lighter indigo in the dark theme. The app has one accent colour, the theme's indigo, for primary buttons, the floating add button, selected options and tabs, and the active sidebar item; the sidebar marks the current page with `aria-current`.
 
 ## Installed app
 
