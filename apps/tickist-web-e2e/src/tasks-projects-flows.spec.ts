@@ -472,7 +472,7 @@ test('shows completion date and sorts project tasks', async ({
   await expect(firstCard).toBeVisible();
   await expect(
     firstCard.locator('[data-testid="task-completed-date"]')
-  ).toHaveText(/Completed \d{2}-\d{2}-\d{4}/);
+  ).toHaveText(/Completed \d{1,2} [A-Z][a-z]{2}( \d{4})?/);
 
   await setProjectFilter(page, 'done');
   await expect(firstCard).toBeVisible();
@@ -1049,7 +1049,7 @@ test('creates project, edits it from project menu and persists changes', async (
       .first()
   ).toBeVisible();
 
-  await page.getByRole('button', { name: 'Dashboard' }).click();
+  await page.getByRole('link', { name: 'Dashboard' }).click();
   await selectProjectByName(page, updatedName);
   await expect(page.locator('.project-desc')).toContainText(updatedDescription);
 
