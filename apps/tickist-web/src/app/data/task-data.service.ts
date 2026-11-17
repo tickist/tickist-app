@@ -460,6 +460,11 @@ export class TaskDataService {
 
       // Fire workflow if status changed to done
       if (previous && !previous.isDone && (input.isDone ?? updated.isDone)) {
+        // Completing a task (a recurring one too) ends its running timer.
+        const timer = this.injector.get(TimeTrackingService);
+
+        if (timer.isRunningTask(updated.id)) await timer.stop();
+
         await this.taskReminders.cancelPendingForTask(updated.id);
         await this.callTaskReminderFunction(updated.id, 'completed');
       }

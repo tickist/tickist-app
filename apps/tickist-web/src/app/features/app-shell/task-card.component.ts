@@ -1,4 +1,5 @@
 import { formatMinutesShort } from '../../core/time/duration';
+import { formatDateTime, formatDay } from '../../core/time/date-format';
 import {
   Component,
   ElementRef,
@@ -28,6 +29,7 @@ import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
+import { IconComponent } from '../../core/ui/icon.component';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 import {
@@ -59,6 +61,7 @@ let nextTaskCardId = 0;
   selector: 'app-task-card',
   standalone: true,
   imports: [
+    IconComponent,
     LinkifyPipe,
     ProjectPickerComponent,
     ThemedSelectComponent,
@@ -241,27 +244,13 @@ export class TaskCardComponent implements OnChanges {
       return null;
     }
 
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-      return null;
-    }
-
-    const day = `${date.getDate()}`.padStart(2, '0');
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const year = date.getFullYear();
-
-    return `${day}-${month}-${year}`;
+    return formatDay(value, { timeZone: this.timer.timezone() });
   }
 
   finishDateModeLabel(): string {
     return this.task.typeFinishDate === 0
       ? 'Scheduled: do it on this day'
       : 'Deadline: finish by this day';
-  }
-
-  finishDateModeIcon(): string {
-    return this.task.typeFinishDate === 0 ? '➜' : '◷';
   }
 
   priorityColor(priority?: string | null): string {
@@ -396,7 +385,7 @@ export class TaskCardComponent implements OnChanges {
     const next = !this.task.pinned;
     await this.mutateTask(
       { id: this.task.id, pinned: next },
-      next ? 'Task pinned for quick access.' : 'Task unpinned.',
+      next ? 'Task pinned to Today.' : 'Task unpinned.',
       'Failed to update pin state.'
     );
   }
@@ -1058,26 +1047,7 @@ export class TaskCardComponent implements OnChanges {
   }
 
   private formatReminderDate(value: string, timezone: string): string {
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-
-    const normalizedTimezone = timezone.trim() || undefined;
-
-    try {
-      return new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-        timeZone: normalizedTimezone,
-      }).format(date);
-    } catch {
-      return new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }).format(date);
-    }
+    return formatDateTime(value, { timeZone: timezone }) ?? value;
   }
 
   currentRepeatMode(): RepeatMode {

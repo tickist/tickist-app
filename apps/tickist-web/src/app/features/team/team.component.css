@@ -15,7 +15,6 @@
   gap: 6px;
 }
 
-.team-eyebrow,
 .team-card__label {
   color: color-mix(in srgb, currentColor 60%, transparent);
   font-size: 0.72rem;

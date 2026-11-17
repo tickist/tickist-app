@@ -2,8 +2,10 @@ import {
   Component,
   computed,
   inject,
+  signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { ToastService } from '../../core/ui/toast.service';
 import { TaskDataService, type Task } from '../../data/task-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SlicePipe } from '@angular/common';
@@ -21,6 +23,7 @@ import { type TaskReorder } from '../app-shell/task-list.component';
 import {
   type DueDayStatus,
   dueDayStatus,
+  moveToDay,
   zonedDateKey,
 } from '../../core/time/zoned-time';
 
@@ -41,6 +44,9 @@ export class DashboardComponent {
   private readonly workspaces = inject(WorkspaceDataService);
   private readonly timeTracking = inject(TimeTrackingService);
   private readonly dayPlan = inject(DayPlanService);
+  private readonly toasts = inject(ToastService);
+
+  readonly movingOverdue = signal(false);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
@@ -93,8 +99,20 @@ export class DashboardComponent {
       );
     });
   });
-  readonly todayTasks = computed(() => this.tasksDue('today'));
-  readonly overdueTasks = computed(() => this.tasksDue('overdue'));
+  /** Tasks due today plus pinned tasks, which always belong to today. */
+  readonly todayTasks = computed(() => {
+    const due = this.tasksDue('today');
+    const dueIds = new Set(due.map((task) => task.id));
+
+    return [
+      ...due,
+      ...this.pinnedTasks().filter((task) => !dueIds.has(task.id)),
+    ];
+  });
+  /** Overdue tasks; pinned ones are already listed under Today. */
+  readonly overdueTasks = computed(() =>
+    this.tasksDue('overdue').filter((task) => !task.pinned)
+  );
   /** Tasks completed today in the account timezone, newest first. */
   readonly doneTodayTasks = computed(() => {
     const timezone = this.timeTracking.timezone();
@@ -111,9 +129,6 @@ export class DashboardComponent {
         (b.whenComplete ?? '').localeCompare(a.whenComplete ?? '')
       );
   });
-  readonly pinnedTasks = computed(() =>
-    this.taskList().filter((task) => task.pinned && !task.isDone)
-  );
   readonly nextActionTasks = computed(() =>
     this.taskList().filter(
       (task) => task.taskType === 'next_action' && !task.isDone
@@ -169,6 +184,10 @@ export class DashboardComponent {
   readonly projectForTaskList = (task: Task): Project | null =>
     this.projectOf(task.projectId);
 
+  private readonly pinnedTasks = computed(() =>
+    this.taskList().filter((task) => task.pinned && !task.isDone)
+  );
+
   private tasksDue(status: DueDayStatus): Task[] {
     const now = new Date();
     const timezone = this.timeTracking.timezone();
@@ -179,6 +198,47 @@ export class DashboardComponent {
         !!task.finishDate &&
         dueDayStatus(task.finishDate, now, timezone) === status
     );
+  }
+
+  /** Empty-Today next step: plan overdue work for today, keeping times. */
+  async moveOverdueToToday(): Promise<void> {
+    const timezone = this.timeTracking.timezone();
+    const todayKey = zonedDateKey(new Date(), timezone);
+
+    const updates = this.overdueTasks().flatMap((task) => {
+      const finishDate =
+        task.finishDate && moveToDay(task.finishDate, todayKey, timezone);
+
+      return finishDate ? [{ id: task.id, finishDate }] : [];
+    });
+
+    if (!updates.length || this.movingOverdue()) {
+      return;
+    }
+
+    this.movingOverdue.set(true);
+
+    try {
+      const results = await Promise.all(
+        updates.map((update) => this.tasks.updateTask(update))
+      );
+
+      const moved = results.filter(Boolean).length;
+
+      if (moved === updates.length) {
+        this.toasts.success(
+          moved === 1
+            ? 'Moved 1 task to today.'
+            : `Moved ${moved} tasks to today.`
+        );
+      } else {
+        this.toasts.error(
+          `Moved ${moved} of ${updates.length} tasks. Try again for the rest.`
+        );
+      }
+    } finally {
+      this.movingOverdue.set(false);
+    }
   }
 
   reorderToday(reorder: TaskReorder): void {

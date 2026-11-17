@@ -16,9 +16,10 @@ import { Project, ProjectDataService } from '../../data/project-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { ProjectComposerPreset } from './composer-modal.service';
 import {
-  PROJECT_ICON_OPTIONS,
+  PROJECT_ICON_CATEGORIES,
   ProjectIconKey,
   resolveProjectIconKey,
+  searchProjectIcons,
 } from '../../core/icons/project-icons';
 import {
   buildHierarchy,
@@ -78,10 +79,10 @@ export class ProjectComposerComponent {
   } | null>(null);
   readonly activeTab = signal<ProjectTab>('general');
   readonly tabs: readonly SheetScaffoldTab<ProjectTab>[] = [
-    { key: 'general', label: 'General', icon: '✏️' },
-    { key: 'extra', label: 'Extra', icon: '⚙️' },
-    { key: 'sharing', label: 'Sharing', icon: '🤝' },
-    { key: 'branding', label: 'Branding', icon: '🎨' },
+    { key: 'general', label: 'General', icon: 'edit' },
+    { key: 'extra', label: 'Extra', icon: 'settings' },
+    { key: 'sharing', label: 'Sharing', icon: 'sharing' },
+    { key: 'branding', label: 'Branding', icon: 'branding' },
   ];
   readonly sheetEyebrow = computed(() =>
     this.editingProject() ? 'Edit project' : 'Create project'
@@ -143,21 +144,19 @@ export class ProjectComposerComponent {
     { value: 'someday', label: 'Someday/maybe' },
     { value: 'routine', label: 'Routine' },
   ] as const;
-  readonly iconOptions = PROJECT_ICON_OPTIONS;
   readonly iconSearch = signal('');
-  readonly filteredIconOptions = computed(() => {
-    const query = this.iconSearch().trim().toLocaleLowerCase();
-
-    if (!query) {
-      return this.iconOptions;
-    }
-
-    return this.iconOptions.filter(
-      (option) =>
-        option.label.toLocaleLowerCase().includes(query) ||
-        option.key.includes(query)
-    );
-  });
+  /** Category sections while browsing; one "Results" section while searching. */
+  readonly iconSections = computed(() =>
+    this.iconSearch().trim()
+      ? [{ name: 'Results', icons: searchProjectIcons(this.iconSearch()) }]
+      : PROJECT_ICON_CATEGORIES
+  );
+  readonly iconCount = computed(() =>
+    this.iconSections().reduce(
+      (total, section) => total + section.icons.length,
+      0
+    )
+  );
 
   @Output() dismiss = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();

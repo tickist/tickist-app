@@ -23,7 +23,7 @@
 }
 
 .category {
-  color: var(--color-primary);
+  color: var(--tickist-primary-text);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -109,7 +109,7 @@
 }
 
 .article-body a {
-  color: var(--color-primary);
+  color: var(--tickist-primary-text);
   text-decoration: underline;
   text-underline-offset: 0.18em;
 }

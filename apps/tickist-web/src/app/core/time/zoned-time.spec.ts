@@ -3,6 +3,7 @@ import { draftToRange } from '../../features/task-fab/task-time-entries.componen
 import {
   dateKeysInRange,
   dueDayStatus,
+  moveToDay,
   periodLabel,
   periodRange,
   shiftDateKey,
@@ -159,5 +160,22 @@ describe('dueDayStatus', () => {
     expect(dueDayStatus(dueSeventeenthUtc, lateEvening, 'UTC')).toBe(
       'upcoming'
     );
+  });
+});
+
+describe('moveToDay', () => {
+  it('keeps the wall-clock time in the account timezone', () => {
+    // 09:30 in Warsaw on 14 Nov (UTC+1).
+    expect(
+      moveToDay('2026-11-14T08:30:00.000Z', '2026-11-17', 'Europe/Warsaw')
+    ).toBe('2026-11-17T08:30:00.000Z');
+    // Midnight in Warsaw stays midnight on the new day.
+    expect(
+      moveToDay('2026-11-13T23:00:00.000Z', '2026-11-17', 'Europe/Warsaw')
+    ).toBe('2026-11-16T23:00:00.000Z');
+  });
+
+  it('rejects an invalid date', () => {
+    expect(moveToDay('nope', '2026-11-17', 'Europe/Warsaw')).toBeNull();
   });
 });

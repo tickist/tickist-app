@@ -4,7 +4,9 @@ import {
   elementsOfType,
 } from '../../../testing/dom';
 import assert from 'node:assert/strict';
-import { DatePipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
+import { IconComponent } from '../../core/ui/icon.component';
+import { AppDatePipe } from '../../core/time/date-format';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterLink, RouterOutlet } from '@angular/router';
@@ -123,10 +125,11 @@ describe('AppViewportComponent theme toggle', () => {
             RouterOutlet,
             RouterLink,
             NgOptimizedImage,
-            DatePipe,
+            AppDatePipe,
             MockSidebarComponent,
             MockTaskFabComponent,
             ProjectIconComponent,
+            IconComponent,
             MockToastContainerComponent,
             ModalDialogDirective,
             AnchoredPopoverDirective,
@@ -431,7 +434,7 @@ describe('AppViewportComponent theme toggle', () => {
     );
 
     expect(button).toBeTruthy();
-    expect(button?.textContent?.trim()).toBe('✕');
+    expect(button?.querySelector('app-icon')).toBeTruthy();
     expect(button?.textContent).not.toContain('Close');
   });
 });

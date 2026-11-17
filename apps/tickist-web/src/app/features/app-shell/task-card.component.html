@@ -12,8 +12,8 @@
       aria-label="Suspended"
       [title]="suspensionStatusLabel()"
       data-testid="task-suspended-icon"
-      >⏸</span
-    >
+      ><app-icon name="pause"
+    /></span>
     } @else {
     <label class="task-card__check">
       <input
@@ -52,7 +52,7 @@
         [attr.aria-label]="taskTimeTitle()"
         data-testid="task-time-chip"
       >
-        <span aria-hidden="true">⏱️</span>
+        <app-icon name="time" />
         {{ summary }} @if (progressPercent(); as percent) {
         <span
           class="task-card__time-bar"
@@ -77,27 +77,27 @@
         data-testid="task-focus-start"
         (click)="startFocus()"
       >
-        {{ isTimerRunning() ? '⏱️' : '▶' }}
+        <app-icon [name]="isTimerRunning() ? 'time' : 'play'" />
       </button>
       }
       <button
         type="button"
-        class="icon-btn"
+        class="icon-btn icon-btn--wide"
         [class.active]="task.pinned"
         title="Pin task"
         aria-label="Pin task"
         (click)="togglePin()"
       >
-        📌
+        <app-icon name="pin" />
       </button>
       <button
         type="button"
-        class="icon-btn"
+        class="icon-btn icon-btn--wide"
         title="Edit task"
         aria-label="Edit task"
         (click)="editTask()"
       >
-        ✏️
+        <app-icon name="edit" />
       </button>
       <div class="task-card__menu">
         <button
@@ -119,6 +119,14 @@
           [appAnchoredPopover]="moreActionsTrigger"
           (popoverClosed)="menuOpen.set(false)"
         >
+          <div class="menu__section menu__narrow">
+            <button type="button" (click)="menuOpen.set(false); editTask()">
+              Edit
+            </button>
+            <button type="button" (click)="menuOpen.set(false); togglePin()">
+              {{ task.pinned ? 'Unpin from Today' : 'Pin to Today' }}
+            </button>
+          </div>
           <div class="menu__section">
             <p>Priority</p>
             @for (level of ['A','B','C']; track level) {
@@ -138,21 +146,21 @@
               [class.active]="task.taskType?.toLowerCase() === 'normal'"
               (click)="setTaskType('normal')"
             >
-              ▢ Normal
+              <app-icon name="task-normal" /> Normal
             </button>
             <button
               type="button"
               [class.active]="task.taskType?.toLowerCase() === 'next_action'"
               (click)="setTaskType('next_action')"
             >
-              ⚡ Next action
+              <app-icon name="next-action" /> Next action
             </button>
             <button
               type="button"
               [class.active]="task.taskType?.toLowerCase() === 'need_info'"
               (click)="setTaskType('need_info')"
             >
-              🛈 Need info
+              <app-icon name="need-info" /> Need info
             </button>
           </div>
           <div class="menu__section">
@@ -186,8 +194,8 @@
       role="img"
       [attr.aria-label]="finishDateModeLabel()"
       [title]="finishDateModeLabel()"
-      >{{ finishDateModeIcon() }}</span
-    >
+      ><app-icon [name]="task.typeFinishDate === 0 ? 'scheduled' : 'deadline'"
+    /></span>
     <span>{{ finishDateLabel }}</span>
   </div>
   } @if (viewMode === 'extended') {
@@ -198,7 +206,7 @@
       title="Change project"
       (click)="toggleProjectPicker()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">📁</span>
+      <app-icon class="toolbar-btn__icon" name="project" />
     </button>
     <button
       type="button"
@@ -206,11 +214,12 @@
       data-testid="task-toolbar-description"
       [class.configured]="hasDescription()"
       [class.active]="descriptionOpen()"
+      [class.toolbar-btn--idle]="!hasDescription() && !descriptionOpen()"
       [attr.title]="descriptionStatusLabel()"
       [attr.aria-label]="descriptionStatusLabel()"
       (click)="toggleDescription()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">💬</span>
+      <app-icon class="toolbar-btn__icon" name="description" />
     </button>
     <button
       type="button"
@@ -218,11 +227,12 @@
       data-testid="task-toolbar-tags"
       [class.configured]="hasTags()"
       [class.active]="tagsOpen()"
+      [class.toolbar-btn--idle]="!hasTags() && !tagsOpen()"
       [attr.title]="tagsStatusLabel()"
       [attr.aria-label]="tagsStatusLabel()"
       (click)="toggleTags()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">🏷️</span>
+      <app-icon class="toolbar-btn__icon" name="tag" />
     </button>
     <button
       type="button"
@@ -230,33 +240,36 @@
       data-testid="task-toolbar-repeat"
       [class.configured]="hasRepeat()"
       [class.active]="repeatOpen()"
+      [class.toolbar-btn--idle]="!hasRepeat() && !repeatOpen()"
       [attr.title]="repeatStatusLabel()"
       [attr.aria-label]="repeatStatusLabel()"
       (click)="toggleRepeat()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">🔁</span>
+      <app-icon class="toolbar-btn__icon" name="repeat" />
     </button>
-    <button
-      type="button"
-      class="toolbar-btn toolbar-btn--status"
+    @if (hasReminders()) {
+    <span
+      class="toolbar-btn toolbar-btn--status configured"
+      role="img"
       data-testid="task-toolbar-reminders"
-      [class.configured]="hasReminders()"
       [attr.title]="remindersStatusLabel()"
       [attr.aria-label]="remindersStatusLabel()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">⏰</span>
-    </button>
+      <app-icon class="toolbar-btn__icon" name="reminder" />
+    </span>
+    }
     <button
       type="button"
       class="toolbar-btn"
       data-testid="task-toolbar-steps"
       [class.configured]="hasSteps()"
       [class.active]="stepsOpen()"
+      [class.toolbar-btn--idle]="!hasSteps() && !stepsOpen()"
       [attr.title]="stepsStatusLabel()"
       [attr.aria-label]="stepsStatusLabel()"
       (click)="toggleSteps()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">☑️</span>
+      <app-icon class="toolbar-btn__icon" name="steps" />
     </button>
   </div>
   } @if (projectPickerOpen()) {
@@ -354,7 +367,7 @@
             class="tag-add__chevron"
             [class.tag-add__chevron--open]="tagMenuOpen()"
           >
-            ▾
+            <app-icon name="chevron-down" />
           </span>
         </button>
         @if (tagMenuOpen()) {
@@ -534,21 +547,25 @@
             data-testid="step-edit"
             (click)="beginStepEdit(step)"
           >
-            ✎
+            <app-icon name="edit" />
           </button>
           <button
             type="button"
+            aria-label="Move step up"
+            title="Move step up"
             (click)="moveStep(step, 'up')"
             [disabled]="i === 0"
           >
-            ↑
+            <app-icon name="move-up" />
           </button>
           <button
             type="button"
+            aria-label="Move step down"
+            title="Move step down"
             (click)="moveStep(step, 'down')"
             [disabled]="i === task.steps.length - 1"
           >
-            ↓
+            <app-icon name="move-down" />
           </button>
           <button
             type="button"
@@ -556,7 +573,7 @@
             aria-label="Remove step"
             (click)="removeStep(step)"
           >
-            ✕
+            <app-icon name="close" />
           </button>
         </div>
       </div>

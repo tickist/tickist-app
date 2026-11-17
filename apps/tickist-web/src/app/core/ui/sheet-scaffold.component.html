@@ -1,8 +1,9 @@
 <div class="sheet-shell" [attr.data-testid]="testId()">
   <header class="sheet-shell__header">
     <div class="sheet-shell__heading">
+      @if (eyebrow()) {
       <span class="sheet-shell__eyebrow">{{ eyebrow() }}</span>
-      @if (title()) {
+      } @if (title()) {
       <h2 class="sheet-shell__title">{{ title() }}</h2>
       }
     </div>
@@ -32,9 +33,7 @@
         (keydown)="onTabKeydown($event)"
       >
         @if (tab.icon) {
-        <span class="sheet-shell__tab-icon" aria-hidden="true">
-          {{ tab.icon }}
-        </span>
+        <app-icon class="sheet-shell__tab-icon" [name]="tab.icon" />
         }
         <span>{{ tab.label }}</span>
       </button>

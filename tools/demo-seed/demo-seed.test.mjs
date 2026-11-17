@@ -13,6 +13,7 @@ import {
   resolveDemoSeedEnvironment,
   resolveProjectTarget,
 } from './safety.mjs';
+import { registrationMetadata } from './supabase-runner.mjs';
 
 const OWNER = '10000000-0000-4000-8000-000000000001';
 
@@ -139,5 +140,16 @@ test('shared environment names are reused with explicit overrides first', () => 
       projectRef: 'override',
       password: 'password',
     }
+  );
+});
+
+test('the demo account accepts the current Terms of Service automatically', () => {
+  const metadata = registrationMetadata('2026-11-v1');
+  assert.equal(metadata.terms_accepted, true);
+  assert.equal(metadata.legal_version, '2026-11-v1');
+  assert.equal(metadata.language, 'en');
+  assert.throws(
+    () => registrationMetadata(null),
+    /Publish the legal documents/
   );
 });

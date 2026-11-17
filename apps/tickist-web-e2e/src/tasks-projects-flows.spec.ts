@@ -472,7 +472,7 @@ test('shows completion date and sorts project tasks', async ({
   await expect(firstCard).toBeVisible();
   await expect(
     firstCard.locator('[data-testid="task-completed-date"]')
-  ).toHaveText(/Completed \d{2}-\d{2}-\d{4}/);
+  ).toHaveText(/Completed \d{1,2} [A-Z][a-z]{2}( \d{4})?/);
 
   await setProjectFilter(page, 'done');
   await expect(firstCard).toBeVisible();
@@ -530,6 +530,44 @@ test.describe('dashboard due and done groups', () => {
 
     await page.reload();
     await expect(doneToday.getByText(taskName)).toBeVisible();
+  });
+
+  test('lists a pinned task under Today on the dashboard and in Weekdays', async ({
+    page,
+  }, testInfo) => {
+    const taskName = `Pinned ${uniqueSuffix(testInfo)}`;
+
+    await ensureAuthenticated(page);
+    await selectInbox(page);
+    await page.getByPlaceholder('What needs doing?').fill(taskName);
+    await page.getByRole('button', { name: 'Add task' }).click();
+
+    const card = taskCardByName(page, taskName);
+    await expect(card).toBeVisible();
+    await card.getByRole('button', { name: 'Pin task' }).click();
+    await expect(page.getByText('Task pinned to Today.')).toBeVisible();
+
+    await page.goto('/app');
+    await expect(
+      page
+        .locator('app-dashboard article')
+        .filter({
+          has: page.getByRole('heading', { name: 'Today', exact: true }),
+        })
+        .getByText(taskName)
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Pinned', exact: true })
+    ).toHaveCount(0);
+
+    const today = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Warsaw',
+    }).format(new Date());
+
+    await page.goto(`/app/tasks?due=${today}`);
+    await expect(
+      page.getByTestId('day-scheduled').getByText(taskName)
+    ).toBeVisible();
   });
 });
 
@@ -770,6 +808,8 @@ test('creates task, edits it via task menu and marks done', async ({
   await menu.getByRole('button', { name: 'Do it today' }).click();
   await expectTaskMenuClosed(card);
 
+  // Shortcuts for details a task does not have yet appear on hover.
+  await card.hover();
   await card.getByTestId('task-toolbar-description').click();
   const descriptionPanel = card.locator('.task-card__panel--description');
   await descriptionPanel.getByRole('button', { name: 'Add' }).click();
@@ -840,10 +880,7 @@ test('adds task reminder and shows reminder status icon on the task card', async
 
   const card = taskCardByName(page, taskName);
   await expect(card).toBeVisible();
-  await expect(card.getByTestId('task-toolbar-reminders')).toHaveAttribute(
-    'aria-label',
-    'Reminders: none'
-  );
+  await expect(card.getByTestId('task-toolbar-reminders')).toHaveCount(0);
 
   await card.getByRole('button', { name: 'Edit task' }).click();
   const composer = page.locator('app-task-composer');
@@ -1012,7 +1049,7 @@ test('creates project, edits it from project menu and persists changes', async (
       .first()
   ).toBeVisible();
 
-  await page.getByRole('button', { name: 'Dashboard' }).click();
+  await page.getByRole('link', { name: 'Dashboard' }).click();
   await selectProjectByName(page, updatedName);
   await expect(page.locator('.project-desc')).toContainText(updatedDescription);
 

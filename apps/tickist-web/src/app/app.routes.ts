@@ -4,8 +4,6 @@ import { LandingComponent } from './features/landing/landing.component';
 import { supabaseAuthGuard } from './features/auth/auth.guard';
 import { redirectIfAuthenticatedGuard } from './features/auth/redirect-if-authenticated.guard';
 import { NotFoundComponent } from './features/not-found/not-found.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { AppViewportComponent } from './features/app-shell/app-viewport.component';
 import { blogLocaleGuard } from './features/blog/blog-locale.guard';
 
 export const appRoutes: Route[] = [
@@ -24,11 +22,18 @@ export const appRoutes: Route[] = [
   {
     path: 'app',
     canActivate: [supabaseAuthGuard],
-    component: AppViewportComponent,
+    // Lazy, so the public landing page does not download the workspace.
+    loadComponent: () =>
+      import('./features/app-shell/app-viewport.component').then(
+        (m) => m.AppViewportComponent
+      ),
     children: [
       {
         path: '',
-        component: DashboardComponent,
+        loadComponent: () =>
+          import('./features/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent
+          ),
       },
       {
         path: 'tasks',

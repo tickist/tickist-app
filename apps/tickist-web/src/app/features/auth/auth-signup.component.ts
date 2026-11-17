@@ -6,6 +6,7 @@ import {
   viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { IconComponent } from '../../core/ui/icon.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   SupabaseAuthService,
@@ -27,7 +28,13 @@ import {
 @Component({
   selector: 'app-auth-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, RouterLink, TurnstileWidgetComponent],
+  imports: [
+    IconComponent,
+    ReactiveFormsModule,
+    NgClass,
+    RouterLink,
+    TurnstileWidgetComponent,
+  ],
   templateUrl: './auth-signup.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-signup.component.css',
@@ -61,9 +68,10 @@ export class AuthSignupComponent {
     this.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
   );
 
+  /** The submit button stays enabled for an incomplete form, which shows
+   * its field errors on submit instead. */
   get isDisabled(): boolean {
     return (
-      this.form.invalid ||
       this.isSubmitting() ||
       this.legalLoading() ||
       !this.legalRelease() ||
@@ -94,8 +102,31 @@ export class AuthSignupComponent {
     }
   }
 
+  /** The first problem that keeps an incomplete form from being sent. */
+  private invalidFormMessage(): string {
+    const { email, password, confirm, termsAccepted } = this.form.controls;
+
+    if (email.invalid) return 'Enter a valid email address.';
+
+    if (password.invalid) return 'Use a password of at least 6 characters.';
+
+    if (confirm.invalid) return 'Confirm your password.';
+
+    if (termsAccepted.invalid)
+      return 'Accept the Terms of Service to continue.';
+
+    return 'Check the form and try again.';
+  }
+
   async handleSubmit(): Promise<void> {
     if (this.isDisabled) {
+      return;
+    }
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.message.set({ type: 'error', text: this.invalidFormMessage() });
+
       return;
     }
 

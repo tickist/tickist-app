@@ -290,25 +290,39 @@
               (input)="iconSearch.set(iconSearchInput.value)"
             />
             <span class="icon-search__count" aria-live="polite">
-              {{ filteredIconOptions().length }} icons
+              {{ iconCount() }} icons
             </span>
           </label>
-          <div class="icon-grid">
-            @for (icon of filteredIconOptions(); track icon.key) {
-            <button
-              type="button"
-              class="icon-pill"
-              [class.active]="form.controls.icon.value === icon.key"
-              [attr.aria-label]="icon.label"
-              [title]="icon.label"
-              (click)="chooseIcon(icon.key)"
+          <div class="icon-catalogue">
+            @for (section of iconSections(); track section.name) { @if
+            (section.icons.length) {
+            <section
+              class="icon-catalogue__section"
+              [attr.aria-label]="section.name"
             >
-              <app-project-icon
-                [icon]="icon.key"
-                [size]="18"
-              ></app-project-icon>
-            </button>
-            } @empty {
+              @if (!iconSearch().trim()) {
+              <h3 class="icon-catalogue__title">{{ section.name }}</h3>
+              }
+              <div class="icon-grid">
+                @for (icon of section.icons; track icon.key) {
+                <button
+                  type="button"
+                  class="icon-pill"
+                  [class.active]="form.controls.icon.value === icon.key"
+                  [attr.aria-label]="icon.label"
+                  [attr.aria-pressed]="form.controls.icon.value === icon.key"
+                  [title]="icon.label"
+                  (click)="chooseIcon(icon.key)"
+                >
+                  <app-project-icon
+                    [icon]="icon.key"
+                    [size]="18"
+                  ></app-project-icon>
+                </button>
+                }
+              </div>
+            </section>
+            } } @if (!iconCount()) {
             <p class="icon-grid__empty">No icons match this search.</p>
             }
           </div>

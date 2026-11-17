@@ -1,19 +1,28 @@
 <nav class="flex flex-col gap-2 text-base-content">
-  <button type="button" class="sidebar-link" (click)="goToDashboard()">
-    <span class="emoji">🏠</span>
+  <a
+    class="sidebar-link"
+    routerLink="/app"
+    routerLinkActive="sidebar-link--active"
+    [routerLinkActiveOptions]="dashboardMatch"
+    ariaCurrentWhenActive="page"
+    (click)="clearProjectSelection()"
+  >
+    <app-icon class="nav-icon" name="dashboard" size="18" />
     <span>Dashboard</span>
-  </button>
+  </a>
 
   @for (inbox of inboxProjects(); track inbox) {
   <button
     type="button"
     class="sidebar-link"
     (click)="selectProject(inbox.id)"
-    [class.text-primary]="selectedProjectId() === inbox.id"
+    [class.sidebar-link--active]="isProjectCurrent(inbox.id)"
+    [attr.aria-current]="isProjectCurrent(inbox.id) ? 'page' : null"
   >
     <app-project-icon
+      class="nav-icon"
       [icon]="inbox.icon"
-      [size]="16"
+      [size]="18"
       [style.color]="inbox.color"
     ></app-project-icon>
     <span class="flex-1"
@@ -28,11 +37,15 @@
     [attr.aria-expanded]="navState().active"
     (click)="toggle('active')"
   >
-    <span class="emoji">📁</span>
+    <app-icon class="nav-icon" name="active-projects" size="18" />
     <span class="flex-1"
       >Active projects ({{ activeProjectsList().length }})</span
     >
-    <span class="chevron" [class.rotate-180]="navState().active">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().active"
+    />
   </button>
   @if (navState().active) {
   <ul class="sidebar-sublist">
@@ -55,11 +68,15 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('someday')">
-    <span class="emoji">💡</span>
+    <app-icon class="nav-icon" name="someday" size="18" />
     <span class="flex-1"
       >Someday / Maybe ({{ somedayProjectsList().length }})</span
     >
-    <span class="chevron" [class.rotate-180]="navState().someday">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().someday"
+    />
   </button>
   @if (navState().someday) {
   <ul class="sidebar-sublist">
@@ -82,11 +99,15 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('routine')">
-    <span class="emoji">♻️</span>
+    <app-icon class="nav-icon" name="routine" size="18" />
     <span class="flex-1"
       >Routine reminder ({{ routineProjectsList().length }})</span
     >
-    <span class="chevron" [class.rotate-180]="navState().routine">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().routine"
+    />
   </button>
   @if (navState().routine) {
   <ul class="sidebar-sublist">
@@ -109,9 +130,13 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('weekdays')">
-    <span class="emoji">📅</span>
+    <app-icon class="nav-icon" name="weekdays" size="18" />
     <span class="flex-1">Weekdays</span>
-    <span class="chevron" [class.rotate-180]="navState().weekdays">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().weekdays"
+    />
   </button>
   @if (navState().weekdays) {
   <ul class="sidebar-weekdays">
@@ -122,6 +147,7 @@
         class="weekday-row"
         [class.today]="day.isToday"
         [class.selected]="isWeekdaySelected(day)"
+        [attr.aria-current]="isWeekdaySelected(day) ? 'page' : null"
         (click)="selectWeekday(day)"
       >
         <span class="weekday-name">{{ day.label }}</span>
@@ -132,7 +158,7 @@
     <li>
       <label class="weekday-picker">
         <span>Select the specific date</span>
-        <span class="emoji">📅</span>
+        <app-icon class="nav-icon" name="weekdays" size="18" />
         <input
           class="weekday-date"
           type="date"
@@ -149,9 +175,13 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('future')">
-    <span class="emoji">🗓️</span>
+    <app-icon class="nav-icon" name="future" size="18" />
     <span class="flex-1">Future</span>
-    <span class="chevron" [class.rotate-180]="navState().future">⌃</span>
+    <app-icon
+      class="chevron"
+      name="chevron-down"
+      [class.rotate-180]="navState().future"
+    />
   </button>
   @if (navState().future) {
   <ul class="sidebar-future">
@@ -161,6 +191,7 @@
         type="button"
         class="future-row"
         [class.selected]="isFutureSelected(month)"
+        [attr.aria-current]="isFutureSelected(month) ? 'page' : null"
         (click)="selectFutureMonth(month)"
       >
         <span class="future-name">{{ month.label }}</span>
@@ -171,20 +202,40 @@
   </ul>
   }
 
-  <a class="sidebar-link" routerLink="/app/tree">
-    <span class="emoji">🌲</span>
+  <a
+    class="sidebar-link"
+    routerLink="/app/tree"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon class="nav-icon" name="tree" size="18" />
     <span>Tasks tree view</span>
   </a>
-  <a class="sidebar-link" routerLink="/app/tags">
-    <span class="emoji">🏷️</span>
+  <a
+    class="sidebar-link"
+    routerLink="/app/tags"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon class="nav-icon" name="tag" size="18" />
     <span>Tags</span>
   </a>
-  <a class="sidebar-link" routerLink="/app/time">
-    <span class="emoji">⏱️</span>
+  <a
+    class="sidebar-link"
+    routerLink="/app/time"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon class="nav-icon" name="time" size="18" />
     <span>Time</span>
   </a>
-  <a class="sidebar-link" routerLink="/app/stats">
-    <span class="emoji">📊</span>
+  <a
+    class="sidebar-link"
+    routerLink="/app/stats"
+    routerLinkActive="sidebar-link--active"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon class="nav-icon" name="statistics" size="18" />
     <span>Statistics</span>
   </a>
 </nav>
@@ -212,7 +263,10 @@
         <button
           type="button"
           class="sidebar-subitem"
-          [class.text-primary]="selectedProjectId() === node.project.id"
+          [class.sidebar-subitem--active]="isProjectCurrent(node.project.id)"
+          [attr.aria-current]="
+            isProjectCurrent(node.project.id) ? 'page' : null
+          "
           (click)="selectProject(node.project.id)"
         >
           <span class="project-main">

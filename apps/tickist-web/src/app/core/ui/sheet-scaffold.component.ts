@@ -5,18 +5,19 @@ import {
   input,
   output,
 } from '@angular/core';
+import { IconComponent, UiIconName } from './icon.component';
 
 let nextSheetId = 0;
 
 export interface SheetScaffoldTab<Key extends string = string> {
   key: Key;
   label: string;
-  icon?: string;
+  icon?: UiIconName;
 }
 
 @Component({
   selector: 'app-sheet-scaffold',
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './sheet-scaffold.component.html',
   styleUrl: './sheet-scaffold.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

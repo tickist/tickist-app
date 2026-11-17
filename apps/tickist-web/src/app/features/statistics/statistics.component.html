@@ -76,8 +76,7 @@
                 <span>{{ project.overdueOpenTasks }} overdue</span>
                 @if (project.lastActivityAt) {
                 <span
-                  >Last activity
-                  {{ project.lastActivityAt | date : 'mediumDate' }}</span
+                  >Last activity {{ project.lastActivityAt | appDate }}</span
                 >
                 }
               </p>

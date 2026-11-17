@@ -112,7 +112,13 @@ describe('TaskCardComponent toolbar status icons', () => {
     const description = getToolbarButton('description');
     const tags = getToolbarButton('tags');
     const repeat = getToolbarButton('repeat');
-    const reminders = getToolbarButton('reminders');
+
+    const reminders = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="task-toolbar-reminders"]',
+      HTMLElement
+    );
+
     const steps = getToolbarButton('steps');
 
     expect(description.classList.contains('configured')).toBe(true);
@@ -138,21 +144,28 @@ describe('TaskCardComponent toolbar status icons', () => {
     const description = getToolbarButton('description');
     const tags = getToolbarButton('tags');
     const repeat = getToolbarButton('repeat');
-    const reminders = getToolbarButton('reminders');
     const steps = getToolbarButton('steps');
+    const host = fixtureHost(fixture);
 
     expect(description.classList.contains('configured')).toBe(false);
     expect(tags.classList.contains('configured')).toBe(false);
     expect(repeat.classList.contains('configured')).toBe(false);
-    expect(reminders.classList.contains('configured')).toBe(false);
-    expect(reminders.getAttribute('aria-label')).toBe('Reminders: none');
     expect(steps.classList.contains('configured')).toBe(false);
+
+    // Unset details stay out of the way until the card is hovered or focused.
+    for (const button of [description, tags, repeat, steps]) {
+      expect(button.classList.contains('toolbar-btn--idle')).toBe(true);
+    }
+
+    expect(
+      host.querySelector('[data-testid="task-toolbar-reminders"]')
+    ).toBeNull();
   });
 
   it('shows the completion date next to a completed task name', () => {
     component.task = createTask({
       isDone: true,
-      whenComplete: '2026-07-20T12:30:00.000Z',
+      whenComplete: '2020-07-20T12:30:00.000Z',
     });
     fixture.detectChanges();
 
@@ -162,7 +175,7 @@ describe('TaskCardComponent toolbar status icons', () => {
       HTMLElement
     );
 
-    expect(badge?.textContent).toContain('Completed 20-07-2026');
+    expect(badge?.textContent).toContain('Completed 20 Jul 2020');
   });
 
   it('replaces the completion checkbox with a pause for a suspended task', () => {
@@ -507,7 +520,7 @@ describe('TaskCardComponent toolbar status icons', () => {
   });
 
   function getToolbarButton(
-    key: 'description' | 'tags' | 'repeat' | 'reminders' | 'steps'
+    key: 'description' | 'tags' | 'repeat' | 'steps'
   ): HTMLButtonElement {
     const button = requiredElement(
       fixtureHost(fixture),
@@ -687,9 +700,7 @@ describe('TaskCardComponent time chip', () => {
     const fixture = await render({ estimateMinutes: 15, spentMinutes: 5 });
     const element = chip(fixture);
 
-    expect(element?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-      '⏱️ 5m / 15m'
-    );
+    expect(element?.textContent?.replace(/\s+/g, ' ').trim()).toBe('5m / 15m');
     expect(element?.getAttribute('title')).toBe(
       'Time spent: 5m of 15m estimated (33%)'
     );

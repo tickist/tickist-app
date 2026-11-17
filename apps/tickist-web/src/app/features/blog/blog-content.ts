@@ -48,7 +48,6 @@ export interface BlogLocaleContent {
   readonly title: string;
   readonly description: string;
   readonly emptyState: {
-    readonly eyebrow: string;
     readonly title: string;
     readonly description: string;
     readonly readingTimeLabel: string;
@@ -83,7 +82,6 @@ const LOCALE_UI: Readonly<
     description:
       'Practical guides for calmer task management, focused projects, and sustainable productivity.',
     emptyState: {
-      eyebrow: 'Coming soon',
       title: 'The first articles are being prepared.',
       description:
         'Tickist articles are published from this open-source repository. This language edition has its own editorial catalogue.',
@@ -114,7 +112,6 @@ const LOCALE_UI: Readonly<
     description:
       'Praktyczne wskazówki o spokojniejszym zarządzaniu zadaniami, projektami i produktywności.',
     emptyState: {
-      eyebrow: 'Wkrótce',
       title: 'Pierwsze artykuły są w przygotowaniu.',
       description:
         'Artykuły Tickist są publikowane z tego otwartego repozytorium. Ta wersja językowa ma własny katalog redakcyjny.',

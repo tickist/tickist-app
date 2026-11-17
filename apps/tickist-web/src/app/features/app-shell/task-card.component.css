@@ -7,8 +7,7 @@
       rgb(var(--bc) / 0.024)
     ),
     rgb(var(--b2));
-  box-shadow: 0 16px 34px rgb(0 0 0 / 0.15), inset 3px 0 0 rgb(var(--p) / 0.26),
-    inset 0 1px 0 rgb(var(--bc) / 0.06);
+  box-shadow: 0 16px 34px rgb(0 0 0 / 0.15), inset 0 1px 0 rgb(var(--bc) / 0.06);
 }
 
 .task-card--overlay {
@@ -40,7 +39,7 @@
   flex: 0 0 1.5rem;
   align-items: center;
   justify-content: center;
-  color: #ffb347;
+  color: rgb(var(--wa));
   font-size: 1rem;
   line-height: 1;
 }
@@ -124,16 +123,20 @@
 }
 
 .task-card__date-icon {
-  color: rgb(var(--bc) / 0.92);
+  display: inline-flex;
+  color: var(--tickist-muted-color);
 }
 
 .icon-btn {
-  @apply rounded-full px-2 py-1 text-sm transition hover:bg-base-100 hover:bg-opacity-50;
+  @apply inline-flex items-center justify-center rounded-full text-sm transition hover:bg-base-100 hover:bg-opacity-50;
+  width: 2rem;
+  height: 2rem;
   color: inherit;
 }
 
 .icon-btn.active {
-  @apply bg-primary bg-opacity-20 text-primary;
+  background: rgb(var(--p) / 0.18);
+  color: var(--tickist-primary-text);
 }
 
 .task-card__menu {
@@ -164,10 +167,13 @@
   font-size: 0.65rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: rgb(var(--bc) / 0.64);
+  color: var(--tickist-muted-color);
 }
 
 .menu__section button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   width: 100%;
   border-radius: 12px;
   padding: 0.4rem 0.6rem;
@@ -181,8 +187,9 @@
 }
 
 .menu__section button.active {
-  background: rgba(255, 234, 0, 0.16);
-  color: #ffea00;
+  background: rgb(var(--p) / 0.18);
+  color: var(--tickist-primary-text);
+  font-weight: 600;
 }
 
 .menu__danger {
@@ -190,13 +197,12 @@
   border-radius: 12px;
   padding: 0.4rem 0.6rem;
   text-align: left;
-  color: #ff8585;
+  color: rgb(var(--er));
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .menu__danger:hover {
-  background: rgba(248, 113, 113, 0.15);
-  color: #ffb3b3;
+  background: rgb(var(--er) / 0.15);
 }
 
 :host-context([data-theme='tickist']) .task-card {
@@ -207,7 +213,7 @@
     ),
     #151f36;
   color: rgb(var(--bc));
-  box-shadow: 0 18px 36px rgb(0 0 0 / 0.2), inset 3px 0 0 rgb(99 102 241 / 0.35),
+  box-shadow: 0 18px 36px rgb(0 0 0 / 0.2),
     inset 0 1px 0 rgb(255 255 255 / 0.055);
 }
 
@@ -219,7 +225,7 @@
     ),
     #ffffff;
   box-shadow: 0 14px 30px rgb(15 23 42 / 0.1),
-    inset 3px 0 0 rgb(79 70 229 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.95);
+    inset 0 1px 0 rgb(255 255 255 / 0.95);
 }
 
 .task-card__toolbar {
@@ -285,6 +291,27 @@
 
 .toolbar-btn--status {
   cursor: default;
+}
+
+.task-menu .menu__narrow {
+  display: none;
+}
+
+/* Only what a task actually has stays on the card. Shortcuts for adding
+   the rest appear while the card is hovered or holds focus; touch screens
+   use the task editor instead. */
+.toolbar-btn--idle {
+  display: none;
+}
+
+.task-card:has(:focus-visible) .toolbar-btn--idle {
+  display: inline-flex;
+}
+
+@media (hover: hover) {
+  .task-card:hover .toolbar-btn--idle {
+    display: inline-flex;
+  }
 }
 
 .toolbar-btn--persistent.active {
@@ -728,7 +755,17 @@
   }
 
   .task-card__actions .icon-btn {
-    padding-inline: 0.3rem;
+    width: 1.75rem;
+  }
+
+  /* Pin and edit move into the "More actions" menu on narrow cards; a
+     pinned task keeps its pin visible as a status. */
+  .icon-btn--wide:not(.active) {
+    display: none;
+  }
+
+  .task-menu .menu__narrow {
+    display: block;
   }
 }
 
@@ -769,15 +806,15 @@
   content: '';
   width: 0.45rem;
   height: 0.25rem;
-  border-left: 2px solid rgb(var(--b2));
-  border-bottom: 2px solid rgb(var(--b2));
+  border-left: 2px solid rgb(var(--pc));
+  border-bottom: 2px solid rgb(var(--pc));
   transform: rotate(-45deg) scale(0);
   transition: transform 0.12s ease;
 }
 
 .step-check input:checked {
-  background: #ffea00;
-  border-color: #ffea00;
+  background: rgb(var(--p));
+  border-color: rgb(var(--p));
 }
 
 .step-check input:checked::after {

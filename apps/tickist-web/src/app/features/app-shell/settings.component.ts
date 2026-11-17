@@ -1,4 +1,6 @@
 import { EmailMonitoringService } from '../../data/email-monitoring.service';
+import { IconComponent } from '../../core/ui/icon.component';
+import { AppDatePipe } from '../../core/time/date-format';
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
   ChangeDetectionStrategy,
@@ -11,7 +13,6 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { startWith } from 'rxjs';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
@@ -74,10 +75,11 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
 @Component({
   selector: 'app-settings',
   imports: [
+    IconComponent,
     ReactiveFormsModule,
     SheetScaffoldComponent,
     ThemedSelectComponent,
-    DatePipe,
+    AppDatePipe,
     RouterLink,
     TurnstileWidgetComponent,
   ],
@@ -109,14 +111,18 @@ export class SettingsComponent {
   readonly user = computed(() => this.session.user());
   readonly activeTab = signal<SettingsTab>('account');
   readonly tabs: readonly SheetScaffoldTab<SettingsTab>[] = [
-    { key: 'account', label: 'Account', icon: '👤' },
-    { key: 'workspaces', label: 'Workspaces', icon: '🗂️' },
-    { key: 'password', label: 'Password', icon: '🔒' },
-    { key: 'notifications', label: 'Notifications', icon: '🔔' },
-    { key: 'focus', label: 'Focus', icon: '⏱️' },
-    { key: 'backup', label: 'Backup & Restore', icon: '🗂️' },
-    { key: 'api-tokens', label: 'API Tokens', icon: '🔑' },
+    { key: 'account', label: 'Account', icon: 'account' },
+    { key: 'workspaces', label: 'Workspaces', icon: 'workspaces' },
+    { key: 'password', label: 'Password', icon: 'password' },
+    { key: 'notifications', label: 'Notifications', icon: 'notifications' },
+    { key: 'focus', label: 'Focus', icon: 'time' },
+    { key: 'backup', label: 'Backup & Restore', icon: 'backup' },
+    { key: 'api-tokens', label: 'API Tokens', icon: 'api-tokens' },
   ];
+  /** Heading of the open settings section. */
+  readonly activeTabLabel = computed(
+    () => this.tabs.find((tab) => tab.key === this.activeTab())?.label ?? ''
+  );
   readonly updating = signal(false);
   readonly focusLimitMinMinutes = FOCUS_LIMIT_MIN_MINUTES;
   readonly focusLimitMaxMinutes = FOCUS_LIMIT_MAX_MINUTES;

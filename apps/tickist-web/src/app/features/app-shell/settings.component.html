@@ -1,8 +1,9 @@
 <section class="sheet-page settings-page">
+  <h1 class="sr-only">Settings</h1>
   <div class="settings-page__panel">
     <app-sheet-scaffold
-      eyebrow="Settings"
-      title=""
+      eyebrow=""
+      [title]="activeTabLabel()"
       testId="settings-sheet"
       closeAriaLabel="Close settings panel"
       [tabs]="tabs"
@@ -607,6 +608,7 @@
                 <input
                   type="file"
                   class="file-input file-input-bordered w-full"
+                  aria-label="Backup file to import"
                   accept="application/json,.json"
                   (change)="onImportFileSelected($event)"
                 />
@@ -717,7 +719,8 @@
             <section class="token-reveal-card" aria-label="New token value">
               <div class="token-reveal-card__header">
                 <p class="token-reveal-card__warning">
-                  ⚠️ Copy this token now — it will not be shown again.
+                  <app-icon name="warning" /> Copy this token now — it will not
+                  be shown again.
                 </p>
               </div>
               <div class="token-reveal-card__value">
@@ -728,9 +731,9 @@
                   (click)="copyToken()"
                 >
                   @if (tokenCopied()) {
-                  <span>✅ Copied</span>
+                  <app-icon name="check" /><span>Copied</span>
                   } @else {
-                  <span>📋 Copy</span>
+                  <app-icon name="copy" /><span>Copy</span>
                   }
                 </button>
               </div>
@@ -757,15 +760,10 @@
                       >{{ token.tokenPrefix }}•••</span
                     >
                     <span class="token-card__sep">·</span>
-                    <span
-                      >Created {{ token.createdAt | date : 'mediumDate' }}</span
-                    >
+                    <span>Created {{ token.createdAt | appDate }}</span>
                     @if (token.lastUsedAt) {
                     <span class="token-card__sep">·</span>
-                    <span
-                      >Last used
-                      {{ token.lastUsedAt | date : 'mediumDate' }}</span
-                    >
+                    <span>Last used {{ token.lastUsedAt | appDate }}</span>
                     }
                   </p>
                 </div>

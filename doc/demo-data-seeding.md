@@ -14,6 +14,8 @@ The dataset contains exactly 30 projects including Inbox, 200 tasks including 40
 
 The initial password comes from `DEMO_SEED_INITIAL_PASSWORD`. It is needed only when the account must be created or replaced. A normal synchronization does not reset a password changed later.
 
+Registration requires accepting the current Terms of Service. When the tool creates the account, it accepts the current published legal release on the account's behalf (`terms_accepted` and `legal_version` in Auth metadata), and the database records it in `legal_acceptances`. Publish the legal documents first; without a current release the tool stops before creating the account. Synchronizing an existing account does not change its recorded acceptance.
+
 ## Dry run
 
 Dry run is the default. It validates and summarizes the dataset without loading credentials or connecting to Supabase:

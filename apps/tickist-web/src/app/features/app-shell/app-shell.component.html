@@ -3,7 +3,7 @@
     <div class="space-y-6">
       @if (activeProject(); as project) {
       <div
-        class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20"
+        class="rounded-2xl border border-white/10 bg-base-200/60 p-4 shadow shadow-black/20 sm:p-6"
       >
         @if (activeProject(); as headerProject) {
         <app-project-header
@@ -111,7 +111,7 @@
       </div>
       } @else { @if (dueDateLabel(); as label) {
       <div
-        class="rounded-2xl border border-white/10 bg-base-200/60 p-6 shadow shadow-black/20"
+        class="rounded-2xl border border-white/10 bg-base-200/60 p-4 shadow shadow-black/20 sm:p-6"
       >
         <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h1 class="text-lg font-semibold" data-testid="day-view-title">
@@ -145,7 +145,11 @@
           data-testid="day-scheduled"
         >
           <h2 id="day-scheduled-title" class="day-section__title">
-            Scheduled for this day
+            {{
+              selectedDayIsToday()
+                ? 'Scheduled and pinned for today'
+                : 'Scheduled for this day'
+            }}
           </h2>
           <app-task-list
             [tasks]="dayScheduledTasks()"
@@ -187,8 +191,8 @@
         class="rounded-2xl border border-dashed border-white/20 bg-base-200/40 p-6 text-center text-base-content/70"
       >
         <p class="text-lg font-semibold">Select a project from the sidebar</p>
-        <p class="text-sm text-base-content/60">
-          The task list will appear here once you choose a GTD list.
+        <p class="text-sm text-muted">
+          Pick a project or a day to see its tasks.
         </p>
       </div>
       } }

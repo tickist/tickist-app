@@ -42,7 +42,13 @@ test('signup flow leads to app dashboard', async ({ page }, testInfo) => {
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByLabel('Confirm password', { exact: true }).fill(password);
   const createAccount = page.getByRole('button', { name: 'Create account' });
-  await expect(createAccount).toBeDisabled();
+  // The button stays enabled; sending without accepting the terms explains
+  // what is missing instead of creating an account.
+  await createAccount.click();
+  await expect(
+    page.getByText('Accept the Terms of Service to continue.')
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/auth\/signup$/);
   await expect(
     page.getByRole('link', { name: 'Terms of Service' })
   ).toHaveAttribute('href', `/legal/terms/${E2E_LEGAL_VERSION}`);

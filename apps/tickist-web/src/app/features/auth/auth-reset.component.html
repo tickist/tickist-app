@@ -8,16 +8,14 @@
   (click)="toggleTheme()"
 >
   <span class="theme-toggle-btn__icon" aria-hidden="true">
-    {{ isDarkTheme() ? '☀️' : '🌙' }}
+    <app-icon [name]="isDarkTheme() ? 'sun' : 'moon'" />
   </span>
 </button>
 <section
   class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl border border-white/10 bg-base-200/60 p-8 shadow-2xl shadow-black/30 backdrop-blur"
 >
   <header class="space-y-2 text-center">
-    <p
-      class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60"
-    >
+    <p class="text-xs font-semibold uppercase tracking-[0.4em] text-muted">
       Reset password
     </p>
     <h1 class="text-2xl font-semibold text-base-content">Send a reset link</h1>
@@ -40,7 +38,6 @@
         formControlName="email"
         type="email"
         class="input input-bordered w-full auth-input"
-        placeholder="team@tickist.app"
       />
     </label>
     @if (captcha.required) {
@@ -75,7 +72,7 @@
     }
   </div>
 
-  <footer class="text-center text-xs text-base-content/60">
+  <footer class="text-center text-xs text-muted">
     Remember your password?
     <a routerLink="/auth" class="link link-primary">Sign in</a>
   </footer>

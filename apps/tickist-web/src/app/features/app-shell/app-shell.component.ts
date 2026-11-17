@@ -7,6 +7,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
+import { formatDayKeyLong, formatMonthKey } from '../../core/time/date-format';
 
 import {
   Task,
@@ -39,9 +40,11 @@ import {
   compareDeadlines,
   compareScheduled,
   deadlinesForDay,
+  pinnedForToday,
   scheduledForDay,
   taskDayKey,
 } from '../../core/time/day-plan';
+import { zonedDateKey } from '../../core/time/zoned-time';
 import { type TaskReorder } from './task-list.component';
 import {
   DEFAULT_PROJECT_SORT,
@@ -121,25 +124,10 @@ export class AppShellComponent {
     }
 
     if (filter.mode === 'day') {
-      const date = this.parseDateKey(filter.dateKey);
-
-      return date
-        ? date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-          })
-        : filter.dateKey;
+      return formatDayKeyLong(filter.dateKey) ?? filter.dateKey;
     }
 
-    const date = this.parseMonthKey(filter.monthKey);
-
-    return date
-      ? date.toLocaleDateString('en-US', {
-          month: 'long',
-          year: 'numeric',
-        })
-      : filter.monthKey;
+    return formatMonthKey(filter.monthKey) ?? filter.monthKey;
   });
   readonly taskViewMode = computed(() =>
     this.activeProject()?.taskView === 'simple' ? 'simple' : 'extended'
@@ -215,18 +203,31 @@ export class AppShellComponent {
 
     return filter?.mode === 'day' ? filter.dateKey : null;
   });
-  /** Tasks scheduled on the selected day, in the day plan order. */
+  /** The selected day is today in the account timezone. */
+  readonly selectedDayIsToday = computed(
+    () =>
+      this.selectedDayKey() ===
+      zonedDateKey(new Date(), this.timeTracking.timezone())
+  );
+  /**
+   * Tasks scheduled on the selected day, plus pinned tasks when it is today,
+   * in the day plan order.
+   */
   readonly dayScheduledTasks = computed(() => {
     const dayKey = this.selectedDayKey();
 
     if (!dayKey) return [];
 
+    const timezone = this.timeTracking.timezone();
+    const tasks = this.searchedTasks();
+
     return applyDayOrder(
-      scheduledForDay(
-        this.searchedTasks(),
-        dayKey,
-        this.timeTracking.timezone()
-      ),
+      [
+        ...scheduledForDay(tasks, dayKey, timezone),
+        ...(this.selectedDayIsToday()
+          ? pinnedForToday(tasks, dayKey, timezone)
+          : []),
+      ],
       this.dayPlan.orderFor(dayKey),
       compareScheduled
     );
@@ -637,25 +638,5 @@ export class AppShellComponent {
   clearDueDateFilter(): void {
     this.viewState.clearDateFilter();
     void this.router.navigate(['/app/tasks'], { queryParams: {} });
-  }
-
-  private parseDateKey(key: string): Date | null {
-    const [year, month, day] = key.split('-').map(Number);
-
-    if (!year || !month || !day) {
-      return null;
-    }
-
-    return new Date(year, month - 1, day);
-  }
-
-  private parseMonthKey(key: string): Date | null {
-    const [year, month] = key.split('-').map(Number);
-
-    if (!year || !month) {
-      return null;
-    }
-
-    return new Date(year, month - 1, 1);
   }
 }

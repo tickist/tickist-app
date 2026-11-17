@@ -8,16 +8,14 @@
   (click)="toggleTheme()"
 >
   <span class="theme-toggle-btn__icon" aria-hidden="true">
-    {{ isDarkTheme() ? '☀️' : '🌙' }}
+    <app-icon [name]="isDarkTheme() ? 'sun' : 'moon'" />
   </span>
 </button>
 <section
   class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl border border-white/10 bg-base-200/60 p-8 shadow-2xl shadow-black/30 backdrop-blur"
 >
   <header class="space-y-2 text-center">
-    <p
-      class="text-xs font-semibold uppercase tracking-[0.4em] text-base-content/60"
-    >
+    <p class="text-xs font-semibold uppercase tracking-[0.4em] text-muted">
       Sign up
     </p>
     <h1 class="text-2xl font-semibold text-base-content">
@@ -45,7 +43,6 @@
         autocomplete="username"
         spellcheck="false"
         class="input input-bordered w-full auth-input"
-        placeholder="team@tickist.app"
       />
     </label>
     <label class="form-control w-full">
@@ -58,7 +55,6 @@
         type="password"
         autocomplete="new-password"
         class="input input-bordered w-full auth-input"
-        placeholder="••••••••"
       />
     </label>
     <label class="form-control w-full">
@@ -71,7 +67,6 @@
         type="password"
         autocomplete="new-password"
         class="input input-bordered w-full auth-input"
-        placeholder="••••••••"
       />
     </label>
     @if (legalRelease(); as legal) {
@@ -137,7 +132,7 @@
     }
   </div>
 
-  <footer class="text-center text-xs text-base-content/60">
+  <footer class="text-center text-xs text-muted">
     Already have an account?
     <a routerLink="/auth" class="link link-primary">Sign in</a>
   </footer>

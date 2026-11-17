@@ -1,5 +1,5 @@
 .project-header {
-  @apply mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b bg-transparent;
+  @apply mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b bg-transparent sm:mb-6 sm:gap-4 sm:pb-5;
   border-color: rgb(var(--bc) / 0.14);
 }
 
@@ -8,7 +8,7 @@
 }
 
 .project-header__text h1 {
-  @apply text-3xl md:text-4xl font-bold tracking-tight text-base-content;
+  @apply text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content;
 }
 
 .project-header__title-row {
@@ -40,13 +40,13 @@
 
 .project-header__suspended:hover,
 .project-header__suspended.active {
-  color: #ffea00;
-  background: rgba(255, 234, 0, 0.12);
-  border-color: rgba(255, 234, 0, 0.36);
+  color: rgb(var(--wa));
+  background: rgb(var(--wa) / 0.12);
+  border-color: rgb(var(--wa) / 0.5);
 }
 
 .project-header__suspended:focus-visible {
-  outline: 2px solid rgba(255, 234, 0, 0.6);
+  outline: 2px solid rgb(var(--wa) / 0.7);
   outline-offset: 2px;
 }
 
@@ -102,8 +102,8 @@
 
 .sort-option.active,
 .filter-option.active {
-  background: rgba(255, 234, 0, 0.16);
-  color: #ffea00;
+  background: rgb(var(--p) / 0.18);
+  color: var(--tickist-primary-text);
 }
 
 .sort-dot,
@@ -116,13 +116,19 @@
 
 .sort-dot.active,
 .filter-dot.active {
-  border-color: #ffea00;
-  background: #ffea00;
-  box-shadow: 0 0 0 2px rgba(255, 234, 0, 0.2);
+  border-color: rgb(var(--p));
+  background: rgb(var(--p));
+  box-shadow: 0 0 0 2px rgb(var(--p) / 0.2);
 }
 
 .simple-toggle {
-  @apply relative inline-flex h-6 w-12 cursor-pointer items-center;
+  @apply relative inline-flex cursor-pointer items-center gap-2;
+}
+
+.simple-toggle__label {
+  font-size: 0.85rem;
+  color: var(--tickist-muted-color);
+  white-space: nowrap;
 }
 
 .simple-toggle input {
@@ -131,6 +137,7 @@
 
 .toggle-pill {
   display: block;
+  flex-shrink: 0;
   height: 1.5rem;
   width: 3rem;
   border-radius: 999px;
@@ -142,8 +149,8 @@
 }
 
 .simple-toggle input:checked + .toggle-pill {
-  background: #ffea00;
-  border-color: rgba(255, 234, 0, 0.8);
+  background: rgb(var(--p));
+  border-color: rgb(var(--p));
   box-shadow: inset 0 0 0 1px rgb(var(--b3) / 0.5);
 }
 
@@ -167,6 +174,6 @@
 }
 
 .simple-toggle input:focus-visible + .toggle-pill {
-  outline: 2px solid rgba(255, 234, 0, 0.6);
+  outline: 2px solid rgb(var(--p) / 0.7);
   outline-offset: 2px;
 }

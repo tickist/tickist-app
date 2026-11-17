@@ -91,6 +91,52 @@ describe('TaskDataService recurring completion', () => {
   });
 });
 
+describe('TaskDataService running timer', () => {
+  it('stops the timer of a task when it is completed', async () => {
+    const { service, stopTimer } = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 }),
+      'task-1'
+    );
+
+    await service.updateTask({ id: 'task-1', isDone: true });
+
+    expect(stopTimer).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops the timer when a recurring task is completed and moves on', async () => {
+    const { service, stopTimer } = await setupRecurringTaskService(
+      createTaskRow({ finish_date: '2025-05-15T00:00:00+00:00' }),
+      'task-1'
+    );
+
+    await service.updateTask({ id: 'task-1', isDone: true });
+
+    expect(stopTimer).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a timer running on another task or for other edits', async () => {
+    const other = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 }),
+      'task-2'
+    );
+
+    await other.service.updateTask({ id: 'task-1', isDone: true });
+
+    expect(other.stopTimer).not.toHaveBeenCalled();
+
+    TestBed.resetTestingModule();
+
+    const same = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 }),
+      'task-1'
+    );
+
+    await same.service.updateTask({ id: 'task-1', name: 'Renamed' });
+
+    expect(same.stopTimer).not.toHaveBeenCalled();
+  });
+});
+
 describe('TaskDataService completion time', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -149,11 +195,16 @@ describe('TaskDataService completion time', () => {
   });
 });
 
-async function setupRecurringTaskService(row: TaskRow): Promise<{
+async function setupRecurringTaskService(
+  row: TaskRow,
+  runningTaskId: string | null = null
+): Promise<{
   service: TaskDataService;
   updatePayloads: Partial<TaskRow>[];
+  stopTimer: ReturnType<typeof vi.fn>;
 }> {
   const updatePayloads: Partial<TaskRow>[] = [];
+  const stopTimer = vi.fn(async () => true);
   const supabase = createSupabaseMock(row, updatePayloads);
 
   TestBed.configureTestingModule({
@@ -171,7 +222,11 @@ async function setupRecurringTaskService(row: TaskRow): Promise<{
       },
       {
         provide: TimeTrackingService,
-        useValue: { timezone: () => 'Europe/Warsaw' },
+        useValue: {
+          timezone: () => 'Europe/Warsaw',
+          isRunningTask: (taskId: string) => taskId === runningTaskId,
+          stop: stopTimer,
+        },
       },
       {
         provide: TaskReminderDataService,
@@ -185,7 +240,7 @@ async function setupRecurringTaskService(row: TaskRow): Promise<{
   const service = TestBed.inject(TaskDataService);
   await service.refresh();
 
-  return { service, updatePayloads };
+  return { service, updatePayloads, stopTimer };
 }
 
 function createSupabaseMock(row: TaskRow, updatePayloads: Partial<TaskRow>[]) {

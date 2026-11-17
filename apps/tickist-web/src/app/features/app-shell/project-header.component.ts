@@ -1,4 +1,5 @@
 import { formatMinutesShort } from '../../core/time/duration';
+import { IconComponent } from '../../core/ui/icon.component';
 import {
   Component,
   EventEmitter,
@@ -17,7 +18,7 @@ type FilterOption = 'all' | 'done' | 'not-done' | 'suspended';
 @Component({
   selector: 'app-project-header',
   standalone: true,
-  imports: [ProjectIconComponent],
+  imports: [IconComponent, ProjectIconComponent],
   templateUrl: './project-header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './project-header.component.css',
