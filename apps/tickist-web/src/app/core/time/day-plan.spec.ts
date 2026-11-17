@@ -4,6 +4,7 @@ import {
   compareDeadlines,
   compareScheduled,
   deadlinesForDay,
+  pinnedForToday,
   scheduledForDay,
   taskDayKey,
   type DatedTask,
@@ -56,6 +57,20 @@ describe('day plan sections', () => {
     expect(
       deadlinesForDay(tasks, '2026-11-15', timezone).map((t) => t.id)
     ).toEqual(['deadline-sun']);
+  });
+
+  it('adds pinned tasks to today unless they are already dated today', () => {
+    const pinned = [
+      { id: 'undated', finishDate: null, pinned: true },
+      dated('later', '2026-11-20', 1, { pinned: true }),
+      dated('overdue', '2026-11-10', 0, { pinned: true }),
+      dated('today', '2026-11-16', 1, { pinned: true }),
+      dated('unpinned', '2026-11-20', 1),
+    ];
+
+    expect(
+      pinnedForToday(pinned, '2026-11-16', timezone).map((t) => t.id)
+    ).toEqual(['undated', 'later', 'overdue']);
   });
 
   it('reads the calendar day in the account timezone', () => {

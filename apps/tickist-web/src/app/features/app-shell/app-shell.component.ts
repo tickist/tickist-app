@@ -39,9 +39,11 @@ import {
   compareDeadlines,
   compareScheduled,
   deadlinesForDay,
+  pinnedForToday,
   scheduledForDay,
   taskDayKey,
 } from '../../core/time/day-plan';
+import { zonedDateKey } from '../../core/time/zoned-time';
 import { type TaskReorder } from './task-list.component';
 import {
   DEFAULT_PROJECT_SORT,
@@ -215,18 +217,31 @@ export class AppShellComponent {
 
     return filter?.mode === 'day' ? filter.dateKey : null;
   });
-  /** Tasks scheduled on the selected day, in the day plan order. */
+  /** The selected day is today in the account timezone. */
+  readonly selectedDayIsToday = computed(
+    () =>
+      this.selectedDayKey() ===
+      zonedDateKey(new Date(), this.timeTracking.timezone())
+  );
+  /**
+   * Tasks scheduled on the selected day, plus pinned tasks when it is today,
+   * in the day plan order.
+   */
   readonly dayScheduledTasks = computed(() => {
     const dayKey = this.selectedDayKey();
 
     if (!dayKey) return [];
 
+    const timezone = this.timeTracking.timezone();
+    const tasks = this.searchedTasks();
+
     return applyDayOrder(
-      scheduledForDay(
-        this.searchedTasks(),
-        dayKey,
-        this.timeTracking.timezone()
-      ),
+      [
+        ...scheduledForDay(tasks, dayKey, timezone),
+        ...(this.selectedDayIsToday()
+          ? pinnedForToday(tasks, dayKey, timezone)
+          : []),
+      ],
       this.dayPlan.orderFor(dayKey),
       compareScheduled
     );

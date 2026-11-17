@@ -9,6 +9,7 @@ export interface DatedTask {
   finishTime?: string | null;
   typeFinishDate?: number | null;
   priority?: string | null;
+  pinned?: boolean | null;
 }
 
 /** typeFinishDate of a Scheduled task; anything else is a Deadline. */
@@ -35,6 +36,20 @@ export function scheduledForDay<T extends DatedTask>(
 ): T[] {
   return tasks.filter(
     (task) => isScheduled(task) && taskDayKey(task, timezone) === dayKey
+  );
+}
+
+/**
+ * Pinned tasks belong to today. Those not already dated today (undated,
+ * overdue or due later) join today's plan; the rest stay in their section.
+ */
+export function pinnedForToday<T extends DatedTask>(
+  tasks: readonly T[],
+  todayKey: string,
+  timezone: string
+): T[] {
+  return tasks.filter(
+    (task) => !!task.pinned && taskDayKey(task, timezone) !== todayKey
   );
 }
 

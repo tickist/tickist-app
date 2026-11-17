@@ -183,7 +183,8 @@ export class AppSidebarComponent {
     }
 
     // Days and counts use the account timezone, like the day view and the
-    // dashboard. A count is the tasks dated that day (Scheduled or Deadline).
+    // dashboard. A count is the tasks dated that day (Scheduled or Deadline);
+    // pinned tasks also count for today.
     const timezone = this.timeTracking.timezone();
     const todayKey = zonedDateKey(new Date(), timezone);
     const countByDate = new Map<string, number>();
@@ -192,8 +193,12 @@ export class AppSidebarComponent {
       if (task.isDone) continue;
 
       const key = taskDayKey(task, timezone);
+      const keys = new Set(key ? [key] : []);
 
-      if (key) countByDate.set(key, (countByDate.get(key) ?? 0) + 1);
+      if (task.pinned) keys.add(todayKey);
+
+      for (const day of keys)
+        countByDate.set(day, (countByDate.get(day) ?? 0) + 1);
     }
 
     return Array.from({ length: 7 }, (_value, index) => {

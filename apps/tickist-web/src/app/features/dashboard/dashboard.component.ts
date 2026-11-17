@@ -93,8 +93,20 @@ export class DashboardComponent {
       );
     });
   });
-  readonly todayTasks = computed(() => this.tasksDue('today'));
-  readonly overdueTasks = computed(() => this.tasksDue('overdue'));
+  /** Tasks due today plus pinned tasks, which always belong to today. */
+  readonly todayTasks = computed(() => {
+    const due = this.tasksDue('today');
+    const dueIds = new Set(due.map((task) => task.id));
+
+    return [
+      ...due,
+      ...this.pinnedTasks().filter((task) => !dueIds.has(task.id)),
+    ];
+  });
+  /** Overdue tasks; pinned ones are already listed under Today. */
+  readonly overdueTasks = computed(() =>
+    this.tasksDue('overdue').filter((task) => !task.pinned)
+  );
   /** Tasks completed today in the account timezone, newest first. */
   readonly doneTodayTasks = computed(() => {
     const timezone = this.timeTracking.timezone();
@@ -111,9 +123,6 @@ export class DashboardComponent {
         (b.whenComplete ?? '').localeCompare(a.whenComplete ?? '')
       );
   });
-  readonly pinnedTasks = computed(() =>
-    this.taskList().filter((task) => task.pinned && !task.isDone)
-  );
   readonly nextActionTasks = computed(() =>
     this.taskList().filter(
       (task) => task.taskType === 'next_action' && !task.isDone
@@ -168,6 +177,10 @@ export class DashboardComponent {
   );
   readonly projectForTaskList = (task: Task): Project | null =>
     this.projectOf(task.projectId);
+
+  private readonly pinnedTasks = computed(() =>
+    this.taskList().filter((task) => task.pinned && !task.isDone)
+  );
 
   private tasksDue(status: DueDayStatus): Task[] {
     const now = new Date();

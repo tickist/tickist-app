@@ -531,6 +531,44 @@ test.describe('dashboard due and done groups', () => {
     await page.reload();
     await expect(doneToday.getByText(taskName)).toBeVisible();
   });
+
+  test('lists a pinned task under Today on the dashboard and in Weekdays', async ({
+    page,
+  }, testInfo) => {
+    const taskName = `Pinned ${uniqueSuffix(testInfo)}`;
+
+    await ensureAuthenticated(page);
+    await selectInbox(page);
+    await page.getByPlaceholder('What needs doing?').fill(taskName);
+    await page.getByRole('button', { name: 'Add task' }).click();
+
+    const card = taskCardByName(page, taskName);
+    await expect(card).toBeVisible();
+    await card.getByRole('button', { name: 'Pin task' }).click();
+    await expect(page.getByText('Task pinned to Today.')).toBeVisible();
+
+    await page.goto('/app');
+    await expect(
+      page
+        .locator('app-dashboard article')
+        .filter({
+          has: page.getByRole('heading', { name: 'Today', exact: true }),
+        })
+        .getByText(taskName)
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Pinned', exact: true })
+    ).toHaveCount(0);
+
+    const today = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Warsaw',
+    }).format(new Date());
+
+    await page.goto(`/app/tasks?due=${today}`);
+    await expect(
+      page.getByTestId('day-scheduled').getByText(taskName)
+    ).toBeVisible();
+  });
 });
 
 test.describe('weekday day plan', () => {

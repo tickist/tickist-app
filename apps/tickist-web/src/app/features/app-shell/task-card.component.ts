@@ -396,7 +396,7 @@ export class TaskCardComponent implements OnChanges {
     const next = !this.task.pinned;
     await this.mutateTask(
       { id: this.task.id, pinned: next },
-      next ? 'Task pinned for quick access.' : 'Task unpinned.',
+      next ? 'Task pinned to Today.' : 'Task unpinned.',
       'Failed to update pin state.'
     );
   }

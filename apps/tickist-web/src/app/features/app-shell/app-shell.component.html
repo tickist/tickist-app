@@ -145,7 +145,11 @@
           data-testid="day-scheduled"
         >
           <h2 id="day-scheduled-title" class="day-section__title">
-            Scheduled for this day
+            {{
+              selectedDayIsToday()
+                ? 'Scheduled and pinned for today'
+                : 'Scheduled for this day'
+            }}
           </h2>
           <app-task-list
             [tasks]="dayScheduledTasks()"
