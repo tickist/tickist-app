@@ -20,6 +20,7 @@ Default local endpoints:
 ```bash
 npm exec nx run-many -t oxlint --all
 npm exec nx lint tickist-web
+npm exec nx typecheck tickist-web
 npm exec nx test tickist-web
 npm exec nx build tickist-web --configuration production
 npm exec nx lint tickist-web-e2e

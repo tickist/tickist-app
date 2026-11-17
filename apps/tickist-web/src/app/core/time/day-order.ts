@@ -67,7 +67,8 @@ export function writeDayOrders(
 export function applyDayOrder<T extends { id: string }>(
   tasks: readonly T[],
   ids: readonly string[] | undefined,
-  fallback: (a: T, b: T) => number
+  // The task list, not the comparator, decides T.
+  fallback: (a: NoInfer<T>, b: NoInfer<T>) => number
 ): T[] {
   const position = new Map((ids ?? []).map((id, index) => [id, index]));
 

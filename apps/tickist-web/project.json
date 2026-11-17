@@ -7,6 +7,26 @@
   "sourceRoot": "apps/tickist-web/src",
   "tags": [],
   "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/tsconfig.json",
+        {
+          "externalDependencies": ["typescript", "@angular/compiler-cli"]
+        }
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "ngc -p tsconfig.app.json --noEmit",
+          "tsc -p tsconfig.spec.json --noEmit"
+        ],
+        "parallel": false
+      }
+    },
     "build": {
       "dependsOn": ["blog-content"],
       "outputs": ["{workspaceRoot}/dist/tickist-web"],

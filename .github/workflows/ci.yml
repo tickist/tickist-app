@@ -37,6 +37,9 @@ jobs:
           npx nx lint mcp
           npx nx lint data-access-tickist
 
+      - name: Typecheck
+        run: npx nx run-many -t typecheck -p tickist-web,data-access-tickist
+
       - name: Unit tests
         run: |
           npx nx test tickist-web

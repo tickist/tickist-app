@@ -5,7 +5,8 @@
     "emitDecoratorMetadata": false,
     "target": "es2022",
     "module": "preserve",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2022", "dom"],
+    "skipLibCheck": true,
     "paths": {
       "@tickist/data-access-tickist": [
         "./libs/data-access/tickist/src/index.ts"

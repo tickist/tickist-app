@@ -162,11 +162,7 @@
         <input
           class="weekday-date"
           type="date"
-          [value]="
-            dueDateFilter()?.mode === 'day'
-              ? $safeNavigationMigration(dueDateFilter()?.dateKey)
-              : ''
-          "
+          [value]="specificDateValue()"
           (change)="selectSpecificDate($event)"
         />
       </label>
