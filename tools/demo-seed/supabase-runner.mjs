@@ -26,6 +26,24 @@ function userMetadata() {
   };
 }
 
+/**
+ * Metadata for creating the demo account. Registration requires accepting
+ * the current Terms of Service (migration 0026); the operator-provisioned
+ * demo account accepts them automatically.
+ */
+export function registrationMetadata(legalVersion) {
+  if (!legalVersion) {
+    throw new Error(
+      'Publish the legal documents before creating the demo account.'
+    );
+  }
+  return {
+    ...userMetadata(),
+    legal_version: legalVersion,
+    terms_accepted: true,
+  };
+}
+
 function failOnError(error, context) {
   if (error) throw new Error(`${context}: ${error.message}`);
 }
@@ -53,17 +71,29 @@ async function findUser(client) {
   );
 }
 
+async function currentLegalVersion(client) {
+  const { data, error } = await client
+    .from('legal_releases')
+    .select('version')
+    .eq('is_current', true)
+    .lte('published_at', new Date().toISOString())
+    .maybeSingle();
+  failOnError(error, 'Could not read the current legal documents');
+  return data?.version ?? null;
+}
+
 async function createDemoUser(client, password) {
   if (!password) {
     throw new Error(
       'DEMO_SEED_INITIAL_PASSWORD is required when creating the demo account.'
     );
   }
+  const metadata = registrationMetadata(await currentLegalVersion(client));
   const { data, error } = await client.auth.admin.createUser({
     email: DEMO_USER.email,
     password,
     email_confirm: true,
-    user_metadata: userMetadata(),
+    user_metadata: metadata,
     app_metadata: marker(),
   });
   failOnError(error, `Could not create ${DEMO_USER.email}`);
