@@ -102,6 +102,22 @@ export class AuthSignupComponent {
     }
   }
 
+  /** The first problem that keeps an incomplete form from being sent. */
+  private invalidFormMessage(): string {
+    const { email, password, confirm, termsAccepted } = this.form.controls;
+
+    if (email.invalid) return 'Enter a valid email address.';
+
+    if (password.invalid) return 'Use a password of at least 6 characters.';
+
+    if (confirm.invalid) return 'Confirm your password.';
+
+    if (termsAccepted.invalid)
+      return 'Accept the Terms of Service to continue.';
+
+    return 'Check the form and try again.';
+  }
+
   async handleSubmit(): Promise<void> {
     if (this.isDisabled) {
       return;
@@ -109,6 +125,7 @@ export class AuthSignupComponent {
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.message.set({ type: 'error', text: this.invalidFormMessage() });
 
       return;
     }

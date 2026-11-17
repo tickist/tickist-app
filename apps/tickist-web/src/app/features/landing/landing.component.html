@@ -12,13 +12,12 @@
 
     <nav class="landing-nav__links" aria-label="Main navigation">
       <a href="#features">Features</a>
-      <a href="#workflow">How it works</a>
       <a href="#open-source">Open source</a>
+      <a [routerLink]="blogLink()">Blog</a>
     </nav>
 
     <div class="landing-nav__actions">
-      <a [routerLink]="blogLink()" class="landing-blog">Blog</a>
-      <a routerLink="/auth" class="landing-login">Log in</a>
+      <a routerLink="/auth" class="landing-link">Log in</a>
       <a routerLink="/auth/signup" class="landing-button landing-button--small">
         Get started
       </a>
@@ -32,368 +31,194 @@
         (click)="toggleTheme()"
       >
         <ng-icon
-          [svg]="isDarkTheme() ? icons.Sun : icons.Moon"
-          class="h-4 w-4"
+          [svg]="isDarkTheme() ? icons.sun : icons.moon"
+          size="1rem"
         ></ng-icon>
       </button>
     </div>
   </header>
 
   <section id="top" class="landing-hero">
-    <div class="landing-hero__glow landing-hero__glow--one"></div>
-    <div class="landing-hero__glow landing-hero__glow--two"></div>
-
     <div class="landing-hero__copy">
-      <div class="landing-eyebrow">
-        <span class="landing-eyebrow__dot"></span>
-        Open-source productivity, without the noise
-      </div>
-      <h1 data-testid="landing-title">
-        Turn scattered work into a
-        <span>clear next action.</span>
-      </h1>
+      <h1 data-testid="landing-title">Know what to do next.</h1>
       <p class="landing-hero__lead">
-        Tickist gives projects, priorities and deadlines one calm home — so you
-        always know what deserves your attention now.
+        Tickist keeps your projects, deadlines and daily plan in one place, so
+        the next step is always in front of you.
       </p>
 
       <div class="landing-hero__actions">
         <a routerLink="/auth/signup" class="landing-button">
-          Start planning for free
-          <ng-icon [svg]="icons.ArrowRight"></ng-icon>
+          Create a free account
+          <ng-icon [svg]="icons.arrowRight" size="1.1rem"></ng-icon>
         </a>
         <a routerLink="/auth" class="landing-button landing-button--ghost">
-          Open your workspace
+          Log in
         </a>
       </div>
 
-      <ul class="landing-proof" aria-label="Product highlights">
-        <li>
-          <ng-icon [svg]="icons.CheckCircle2"></ng-icon>
-          Free to use
-        </li>
-        <li>
-          <ng-icon [svg]="icons.CheckCircle2"></ng-icon>
-          Works on every device
-        </li>
-        <li>
-          <ng-icon [svg]="icons.CheckCircle2"></ng-icon>
-          Your data stays yours
-        </li>
-      </ul>
+      <p class="landing-hero__note">
+        Free to use, open source, no subscriptions and no paid features.
+      </p>
     </div>
 
-    <div class="landing-preview" aria-label="Tickist product preview">
-      <div class="landing-preview__chrome">
-        <div class="landing-preview__dots" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="landing-preview__address">
-          <span class="landing-preview__lock">●</span>
-          app.tickist.com
-        </div>
-        <div class="landing-preview__avatar">TB</div>
-      </div>
-
-      <div class="landing-preview__body">
-        <aside class="preview-sidebar">
-          <div class="preview-sidebar__brand">My workspace</div>
-          <button
-            type="button"
-            class="preview-nav-item preview-nav-item--active"
-          >
-            <ng-icon [svg]="icons.LayoutDashboard"></ng-icon>
-            Today
-            <span>4</span>
-          </button>
-          <button type="button" class="preview-nav-item">
-            <ng-icon [svg]="icons.Inbox"></ng-icon>
-            Inbox
-            <span>7</span>
-          </button>
-          <p class="preview-sidebar__label">Projects</p>
-          <button type="button" class="preview-project">
-            <i class="preview-project__dot preview-project__dot--violet"></i>
-            Product launch
-          </button>
-          <button type="button" class="preview-project">
-            <i class="preview-project__dot preview-project__dot--blue"></i>
-            Personal
-          </button>
-          <button type="button" class="preview-project">
-            <i class="preview-project__dot preview-project__dot--green"></i>
-            Website
-          </button>
+    <figure
+      class="preview"
+      role="img"
+      aria-label="The Tickist dashboard: today's tasks with their projects, priorities and tracked time"
+    >
+      <div class="preview__frame" aria-hidden="true">
+        <aside class="preview__sidebar">
+          <span class="preview__nav preview__nav--active">
+            <ng-icon [svg]="icons.house"></ng-icon>Dashboard
+          </span>
+          <span class="preview__nav">
+            <ng-icon [svg]="icons.inbox"></ng-icon>Inbox <b>4</b>
+          </span>
+          <span class="preview__nav">
+            <ng-icon [svg]="icons.folderOpen"></ng-icon>Active projects
+          </span>
+          <span class="preview__project">
+            <i style="--dot: #3b82f6"></i>Home renovation <b>3</b>
+          </span>
+          <span class="preview__project">
+            <i style="--dot: #a855f7"></i>Website launch <b>5</b>
+          </span>
+          <span class="preview__project">
+            <i style="--dot: #22c55e"></i>Health <b>2</b>
+          </span>
+          <span class="preview__nav">
+            <ng-icon [svg]="icons.calendarDays"></ng-icon>Weekdays
+          </span>
+          <span class="preview__nav">
+            <ng-icon [svg]="icons.timer"></ng-icon>Time
+          </span>
         </aside>
 
-        <div class="preview-main">
-          <div class="preview-main__header">
-            <div>
-              <p>Friday, 17 July</p>
-              <h2>Good afternoon</h2>
-            </div>
-            <button type="button" aria-label="Search preview">
-              <ng-icon [svg]="icons.Search"></ng-icon>
-            </button>
-          </div>
-
-          <div class="preview-focus">
-            <div>
-              <p>Your focus</p>
-              <strong>4 next actions</strong>
-            </div>
-            <div class="preview-focus__meter">
-              <span></span>
-            </div>
-            <small>3 of 7 complete</small>
-          </div>
-
-          <div class="preview-section-title">
-            <span>Next actions</span>
-            <small>Sorted by priority</small>
-          </div>
-
-          <div class="preview-tasks">
-            <article class="preview-task">
-              <span class="preview-task__check preview-task__check--a">A</span>
-              <div>
-                <strong>Review launch checklist</strong>
-                <p>
-                  <span class="preview-tag">Product launch</span> Today · 30m
-                </p>
+        <div class="preview__main">
+          <section class="preview__group">
+            <header>
+              <strong>Today</strong>
+              <span class="preview__count">3</span>
+            </header>
+            @for (task of previewTasks; track task.name) {
+            <div class="preview__task">
+              <span
+                class="preview__check"
+                [style.border-color]="task.priority"
+              ></span>
+              <div class="preview__task-body">
+                <span class="preview__task-name">{{ task.name }}</span>
+                <span class="preview__task-meta">
+                  <span
+                    ><ng-icon [svg]="icons.folder"></ng-icon
+                    >{{ task.project }}</span
+                  >
+                  @if (task.time) {
+                  <span class="preview__chip"
+                    ><ng-icon [svg]="icons.timer"></ng-icon
+                    >{{ task.time }}</span
+                  >
+                  }
+                  <span
+                    ><ng-icon
+                      [svg]="task.scheduled ? icons.calendarCheck : icons.flag"
+                    ></ng-icon
+                    >{{ today }}</span
+                  >
+                </span>
               </div>
-              <span class="preview-task__flag">Pinned</span>
-            </article>
-            <article class="preview-task">
-              <span class="preview-task__check preview-task__check--b">B</span>
-              <div>
-                <strong>Prepare weekly priorities</strong>
-                <p>
-                  <span class="preview-tag preview-tag--blue">Personal</span>
-                  Today
-                </p>
-              </div>
-            </article>
-            <article class="preview-task preview-task--muted">
-              <span class="preview-task__check preview-task__check--c">C</span>
-              <div>
-                <strong>Update project notes</strong>
-                <p>
-                  <span class="preview-tag preview-tag--green">Website</span>
-                  Tomorrow
-                </p>
-              </div>
-            </article>
-          </div>
+              @if (task.pinned) {
+              <ng-icon class="preview__pin" [svg]="icons.pin"></ng-icon>
+              }
+            </div>
+            }
+          </section>
+          <section class="preview__group preview__group--quiet">
+            <header>
+              <strong>Done today</strong>
+              <span class="preview__count">2</span>
+            </header>
+          </section>
         </div>
       </div>
-
-      <div class="landing-preview__float">
-        <span><ng-icon [svg]="icons.Zap"></ng-icon></span>
-        <div>
-          <strong>Focus protected</strong>
-          <small>Only the next step, never the clutter.</small>
-        </div>
-      </div>
-    </div>
+    </figure>
   </section>
 
-  <section class="landing-stats" aria-label="Tickist at a glance">
-    <div><strong>A/B/C</strong><span>Simple priorities</span></div>
-    <div><strong>1 inbox</strong><span>Nothing gets lost</span></div>
-    <div><strong>∞ levels</strong><span>Nested projects</span></div>
-    <div><strong>100%</strong><span>Open source</span></div>
-  </section>
-
-  <section id="features" class="landing-section landing-features">
-    <div class="landing-section__heading">
-      <p class="landing-kicker">Built for real work</p>
-      <h2>Structure when you need it.<br />Simplicity when you don't.</h2>
-      <p>
-        A complete planning system that stays out of your way while keeping
-        every commitment visible.
-      </p>
-    </div>
-
-    <div class="feature-grid">
-      <article class="feature-card feature-card--wide feature-card--primary">
-        <div class="feature-card__icon">
-          <ng-icon [svg]="icons.ListTodo"></ng-icon>
-        </div>
-        <div>
-          <p class="feature-card__label">Daily clarity</p>
-          <h3>See the work that matters today.</h3>
-          <p>
-            Today, overdue and pinned actions come together in one focused
-            dashboard. No hunting across projects.
-          </p>
-        </div>
-        <div class="feature-mini-list" aria-hidden="true">
-          <span class="feature-mini-list__item feature-mini-list__item--done">
-            <i>✓</i> Morning review
-          </span>
-          <span class="feature-mini-list__item"
-            ><i>A</i> Ship the next step</span
-          >
-          <span class="feature-mini-list__item"><i>B</i> Plan tomorrow</span>
-        </div>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-card__icon feature-card__icon--blue">
-          <ng-icon [svg]="icons.FolderTree"></ng-icon>
-        </div>
-        <p class="feature-card__label">Project thinking</p>
-        <h3>From big outcomes to one doable action.</h3>
-        <p>Build nested project trees without losing sight of the next step.</p>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-card__icon feature-card__icon--green">
-          <ng-icon [svg]="icons.Repeat2"></ng-icon>
-        </div>
-        <p class="feature-card__label">Reliable routines</p>
-        <h3>Recurring work that resets itself.</h3>
-        <p>
-          Flexible schedules, reminders and reusable checklists keep habits
-          moving.
-        </p>
-      </article>
-
-      <article class="feature-card feature-card--wide feature-card--collab">
-        <div>
-          <div class="feature-card__icon feature-card__icon--rose">
-            <ng-icon [svg]="icons.Users"></ng-icon>
-          </div>
-          <p class="feature-card__label">Shared momentum</p>
-          <h3>Plan alone. Deliver together.</h3>
-          <p>
-            Invite collaborators to selected projects while personal work stays
-            private and focused.
-          </p>
-        </div>
-        <div class="collab-stack" aria-hidden="true">
-          <span>AM</span><span>JK</span><span>LS</span><i>+3</i>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section id="workflow" class="landing-section landing-workflow">
-    <div class="landing-section__heading landing-section__heading--left">
-      <p class="landing-kicker">A calmer workflow</p>
-      <h2>Capture. Decide. Do.</h2>
-      <p>Three small habits turn an endless task list into steady progress.</p>
-    </div>
-
-    <ol class="workflow-steps">
-      <li>
-        <span class="workflow-steps__number">01</span>
-        <div class="workflow-steps__icon">
-          <ng-icon [svg]="icons.Inbox"></ng-icon>
-        </div>
-        <h3>Capture everything</h3>
-        <p>
-          Drop ideas and commitments into Inbox before they steal your
-          attention.
-        </p>
+  <section id="features" class="landing-section">
+    <h2>What Tickist does</h2>
+    <ul class="feature-grid">
+      @for (feature of features; track feature.title) {
+      <li class="feature">
+        <span class="feature__icon">
+          <ng-icon [svg]="icons[feature.icon]" size="1.25rem"></ng-icon>
+        </span>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.text }}</p>
       </li>
-      <li>
-        <span class="workflow-steps__number">02</span>
-        <div class="workflow-steps__icon">
-          <ng-icon [svg]="icons.Tag"></ng-icon>
-        </div>
-        <h3>Make it actionable</h3>
-        <p>Add a project, priority and date only when they help you decide.</p>
-      </li>
-      <li>
-        <span class="workflow-steps__number">03</span>
-        <div class="workflow-steps__icon">
-          <ng-icon [svg]="icons.CalendarDays"></ng-icon>
-        </div>
-        <h3>Work from Today</h3>
-        <p>
-          Open one clear view and move the right actions across the finish line.
-        </p>
-      </li>
-    </ol>
+      }
+    </ul>
   </section>
 
-  <section id="open-source" class="landing-open-source">
-    <div class="landing-open-source__mark">
-      <ng-icon [svg]="icons.Github"></ng-icon>
-    </div>
+  <section id="open-source" class="landing-section landing-open">
     <div>
-      <p class="landing-kicker">Open by design</p>
-      <h2>Your productivity system shouldn't be a black box.</h2>
+      <h2>Free, open source and yours</h2>
       <p>
-        Tickist is open source. Inspect the code, report an issue or help shape
-        the next release.
+        Tickist is free to use, with no subscriptions and no paid features. The
+        code is public on GitHub, and you can export a backup of your data at
+        any time.
       </p>
     </div>
-    <a
-      href="https://github.com/tickist/tickist-app"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="landing-button landing-button--ghost"
-    >
-      View on GitHub
-      <ng-icon [svg]="icons.ArrowRight"></ng-icon>
-    </a>
-  </section>
-
-  <section class="landing-cta">
-    <div class="landing-cta__glow"></div>
-    <div class="landing-cta__icon">
-      <ng-icon [svg]="icons.Shield"></ng-icon>
-    </div>
-    <p class="landing-kicker">Your next action is clear</p>
-    <h2>Build a system you can trust.</h2>
-    <p>Start with one inbox. End every day knowing what comes next.</p>
-    <div class="landing-cta__actions">
+    <div class="landing-open__actions">
       <a routerLink="/auth/signup" class="landing-button">
-        Create your workspace
-        <ng-icon [svg]="icons.ArrowRight"></ng-icon>
+        Create a free account
+        <ng-icon [svg]="icons.arrowRight" size="1.1rem"></ng-icon>
       </a>
-      <a routerLink="/auth" class="landing-button landing-button--ghost"
-        >Log in</a
+      <a
+        href="https://github.com/tickist/tickist-app"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="landing-button landing-button--ghost"
       >
+        <ng-icon [svg]="githubIcon" size="1.1rem"></ng-icon>
+        View the code
+      </a>
     </div>
   </section>
 
-  <aside class="landing-companion" aria-labelledby="spendist-title">
+  <aside
+    class="landing-section landing-companion"
+    aria-labelledby="spendist-title"
+  >
     <div>
-      <p class="landing-kicker">Another open-source app</p>
-      <h2 id="spendist-title">Meet Spendist</h2>
+      <h2 id="spendist-title">Also from us: Spendist</h2>
       <p>
-        Track spending, recurring payments and everyday finances in one clear
-        workspace.
+        An open-source app for spending, recurring payments and everyday
+        finances.
       </p>
     </div>
     <a
       href="https://spendist.app/"
       target="_blank"
       rel="noopener noreferrer"
-      class="landing-companion__link"
+      class="landing-link landing-link--arrow"
       data-testid="spendist-link"
     >
       Visit Spendist
-      <ng-icon [svg]="icons.ArrowRight"></ng-icon>
+      <ng-icon [svg]="icons.arrowRight" size="1rem"></ng-icon>
     </a>
   </aside>
 
   <footer class="landing-footer">
     <img [ngSrc]="brandLogoSrc()" alt="Tickist" width="230" height="90" />
-    <p>Open-source task planning for focused people.</p>
-    <div>
-      <a href="#features">Features</a>
-      <a href="#workflow">Workflow</a>
+    <nav aria-label="Footer">
+      <a [routerLink]="blogLink()">Blog</a>
       <a
         href="https://github.com/tickist/tickist-app"
         target="_blank"
         rel="noopener noreferrer"
         >GitHub</a
       >
-    </div>
+      <a routerLink="/auth">Log in</a>
+    </nav>
   </footer>
 </main>

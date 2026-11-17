@@ -94,7 +94,7 @@ The product is not a public content site or a generic file store. It is an authe
 
 Routes under `/app/**` are private and must not be listed in the public sitemap. Authentication pages are transactional routes, not content intended for search indexing.
 
-The bottom of the public landing page introduces Spendist, a related open-source application for tracking spending, recurring payments, and everyday personal finances, and links visitors to `https://spendist.app/`.
+The public landing page shows a simplified preview of the dashboard and lists the main capabilities (dashboard for today, Weekdays day plan, nested projects, deadlines and repeats, focus timer and time reports, shared projects, MCP clients, installable app); it states that Tickist is free, open source and has no paid features, and it does not load the workspace code. The bottom of the public landing page introduces Spendist, a related open-source application for tracking spending, recurring payments, and everyday personal finances, and links visitors to `https://spendist.app/`.
 
 ### Public blog
 

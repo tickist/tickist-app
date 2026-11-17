@@ -64,6 +64,7 @@ export class AuthResetComponent {
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.message.set({ type: 'error', text: 'Enter a valid email address.' });
 
       return;
     }

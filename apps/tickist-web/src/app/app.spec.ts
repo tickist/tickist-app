@@ -21,7 +21,7 @@ describe('App', () => {
     const compiled = fixtureHost(fixture);
     expect(
       compiled.querySelector('[data-testid="landing-title"]')?.textContent
-    ).toContain('clear next action');
+    ).toContain('Know what to do next');
   });
 
   it('should link to Spendist from the landing page', async () => {

@@ -4,7 +4,7 @@
 
 Tickist gives projects, priorities, and deadlines one calm home. The intended user outcome is not merely storing tasks; it is knowing which next action deserves attention.
 
-The public landing page also introduces [Spendist](https://spendist.app/), a related open-source application for tracking spending, recurring payments, and everyday personal finances.
+The public landing page describes the product in plain terms: a simplified, faithful preview of the dashboard (only features that exist), the main capabilities, and the fact that Tickist is free, open source and has no paid features. It loads none of the workspace code; `/app` and its dashboard are lazy routes, so visitors download only the landing page, routing and the sign-in session check. It also introduces [Spendist](https://spendist.app/), a related open-source application for tracking spending, recurring payments, and everyday personal finances.
 
 ## Public blog
 
