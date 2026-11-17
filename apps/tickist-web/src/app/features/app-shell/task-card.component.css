@@ -39,7 +39,7 @@
   flex: 0 0 1.5rem;
   align-items: center;
   justify-content: center;
-  color: #ffb347;
+  color: rgb(var(--wa));
   font-size: 1rem;
   line-height: 1;
 }
@@ -123,11 +123,14 @@
 }
 
 .task-card__date-icon {
-  color: rgb(var(--bc) / 0.92);
+  display: inline-flex;
+  color: var(--tickist-muted-color);
 }
 
 .icon-btn {
-  @apply rounded-full px-2 py-1 text-sm transition hover:bg-base-100 hover:bg-opacity-50;
+  @apply inline-flex items-center justify-center rounded-full text-sm transition hover:bg-base-100 hover:bg-opacity-50;
+  width: 2rem;
+  height: 2rem;
   color: inherit;
 }
 
@@ -167,6 +170,9 @@
 }
 
 .menu__section button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   width: 100%;
   border-radius: 12px;
   padding: 0.4rem 0.6rem;
@@ -748,7 +754,7 @@
   }
 
   .task-card__actions .icon-btn {
-    padding-inline: 0.3rem;
+    width: 1.75rem;
   }
 
   /* Pin and edit move into the "More actions" menu on narrow cards; a

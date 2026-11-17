@@ -32,9 +32,7 @@
         (keydown)="onTabKeydown($event)"
       >
         @if (tab.icon) {
-        <span class="sheet-shell__tab-icon" aria-hidden="true">
-          {{ tab.icon }}
-        </span>
+        <app-icon class="sheet-shell__tab-icon" [name]="tab.icon" />
         }
         <span>{{ tab.label }}</span>
       </button>

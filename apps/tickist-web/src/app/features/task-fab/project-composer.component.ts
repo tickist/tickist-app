@@ -79,10 +79,10 @@ export class ProjectComposerComponent {
   } | null>(null);
   readonly activeTab = signal<ProjectTab>('general');
   readonly tabs: readonly SheetScaffoldTab<ProjectTab>[] = [
-    { key: 'general', label: 'General', icon: '✏️' },
-    { key: 'extra', label: 'Extra', icon: '⚙️' },
-    { key: 'sharing', label: 'Sharing', icon: '🤝' },
-    { key: 'branding', label: 'Branding', icon: '🎨' },
+    { key: 'general', label: 'General', icon: 'edit' },
+    { key: 'extra', label: 'Extra', icon: 'settings' },
+    { key: 'sharing', label: 'Sharing', icon: 'sharing' },
+    { key: 'branding', label: 'Branding', icon: 'branding' },
   ];
   readonly sheetEyebrow = computed(() =>
     this.editingProject() ? 'Edit project' : 'Create project'

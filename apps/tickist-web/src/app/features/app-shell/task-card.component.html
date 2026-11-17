@@ -12,8 +12,8 @@
       aria-label="Suspended"
       [title]="suspensionStatusLabel()"
       data-testid="task-suspended-icon"
-      >⏸</span
-    >
+      ><app-icon name="pause"
+    /></span>
     } @else {
     <label class="task-card__check">
       <input
@@ -52,7 +52,7 @@
         [attr.aria-label]="taskTimeTitle()"
         data-testid="task-time-chip"
       >
-        <span aria-hidden="true">⏱️</span>
+        <app-icon name="time" />
         {{ summary }} @if (progressPercent(); as percent) {
         <span
           class="task-card__time-bar"
@@ -77,7 +77,7 @@
         data-testid="task-focus-start"
         (click)="startFocus()"
       >
-        {{ isTimerRunning() ? '⏱️' : '▶' }}
+        <app-icon [name]="isTimerRunning() ? 'time' : 'play'" />
       </button>
       }
       <button
@@ -88,7 +88,7 @@
         aria-label="Pin task"
         (click)="togglePin()"
       >
-        📌
+        <app-icon name="pin" />
       </button>
       <button
         type="button"
@@ -97,7 +97,7 @@
         aria-label="Edit task"
         (click)="editTask()"
       >
-        ✏️
+        <app-icon name="edit" />
       </button>
       <div class="task-card__menu">
         <button
@@ -146,21 +146,21 @@
               [class.active]="task.taskType?.toLowerCase() === 'normal'"
               (click)="setTaskType('normal')"
             >
-              ▢ Normal
+              <app-icon name="task-normal" /> Normal
             </button>
             <button
               type="button"
               [class.active]="task.taskType?.toLowerCase() === 'next_action'"
               (click)="setTaskType('next_action')"
             >
-              ⚡ Next action
+              <app-icon name="next-action" /> Next action
             </button>
             <button
               type="button"
               [class.active]="task.taskType?.toLowerCase() === 'need_info'"
               (click)="setTaskType('need_info')"
             >
-              🛈 Need info
+              <app-icon name="need-info" /> Need info
             </button>
           </div>
           <div class="menu__section">
@@ -194,8 +194,8 @@
       role="img"
       [attr.aria-label]="finishDateModeLabel()"
       [title]="finishDateModeLabel()"
-      >{{ finishDateModeIcon() }}</span
-    >
+      ><app-icon [name]="task.typeFinishDate === 0 ? 'scheduled' : 'deadline'"
+    /></span>
     <span>{{ finishDateLabel }}</span>
   </div>
   } @if (viewMode === 'extended') {
@@ -206,7 +206,7 @@
       title="Change project"
       (click)="toggleProjectPicker()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">📁</span>
+      <app-icon class="toolbar-btn__icon" name="project" />
     </button>
     <button
       type="button"
@@ -219,7 +219,7 @@
       [attr.aria-label]="descriptionStatusLabel()"
       (click)="toggleDescription()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">💬</span>
+      <app-icon class="toolbar-btn__icon" name="description" />
     </button>
     <button
       type="button"
@@ -232,7 +232,7 @@
       [attr.aria-label]="tagsStatusLabel()"
       (click)="toggleTags()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">🏷️</span>
+      <app-icon class="toolbar-btn__icon" name="tag" />
     </button>
     <button
       type="button"
@@ -245,7 +245,7 @@
       [attr.aria-label]="repeatStatusLabel()"
       (click)="toggleRepeat()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">🔁</span>
+      <app-icon class="toolbar-btn__icon" name="repeat" />
     </button>
     @if (hasReminders()) {
     <span
@@ -255,7 +255,7 @@
       [attr.title]="remindersStatusLabel()"
       [attr.aria-label]="remindersStatusLabel()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">⏰</span>
+      <app-icon class="toolbar-btn__icon" name="reminder" />
     </span>
     }
     <button
@@ -269,7 +269,7 @@
       [attr.aria-label]="stepsStatusLabel()"
       (click)="toggleSteps()"
     >
-      <span class="toolbar-btn__icon" aria-hidden="true">☑️</span>
+      <app-icon class="toolbar-btn__icon" name="steps" />
     </button>
   </div>
   } @if (projectPickerOpen()) {

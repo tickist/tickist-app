@@ -99,13 +99,16 @@
   @apply flex min-w-0 flex-1 items-center gap-2;
 }
 
-.emoji {
-  /* Fixed box so text- and emoji-style glyphs line up the same. */
+.nav-icon {
   display: inline-flex;
   width: 1.25rem;
   flex-shrink: 0;
   justify-content: center;
-  font-size: 1rem;
+  color: var(--tickist-muted-color);
+}
+
+.sidebar-link--active .nav-icon {
+  color: var(--tickist-primary-text);
 }
 
 .chevron {

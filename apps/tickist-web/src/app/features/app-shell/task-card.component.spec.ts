@@ -700,9 +700,7 @@ describe('TaskCardComponent time chip', () => {
     const fixture = await render({ estimateMinutes: 15, spentMinutes: 5 });
     const element = chip(fixture);
 
-    expect(element?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-      '⏱️ 5m / 15m'
-    );
+    expect(element?.textContent?.replace(/\s+/g, ' ').trim()).toBe('5m / 15m');
     expect(element?.getAttribute('title')).toBe(
       'Time spent: 5m of 15m estimated (33%)'
     );

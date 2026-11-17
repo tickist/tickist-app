@@ -101,6 +101,15 @@ textarea::placeholder {
   opacity: 1;
 }
 
+/* Tailwind's preflight resets button colours outside any cascade layer, so
+   it beats daisyUI's layered .btn rules and every daisyUI button rendered
+   transparent. Restore daisyUI's colours with the lowest specificity that
+   still wins over the reset; component classes keep overriding them. */
+:where(.btn):is(button, a, input, label) {
+  background-color: var(--btn-bg);
+  color: var(--btn-fg);
+}
+
 /* The dark primary is tuned for white button text; as text on dark
    surfaces it needs a lighter shade to stay readable. */
 .text-primary,

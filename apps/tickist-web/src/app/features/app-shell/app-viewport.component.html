@@ -11,7 +11,7 @@
         [attr.aria-expanded]="sidebarOpen()"
         (click)="toggleSidebar()"
       >
-        <span aria-hidden="true">☰</span>
+        <app-icon name="menu" size="20" />
       </button>
       <a routerLink="/app" class="flex items-center gap-2">
         <img
@@ -86,7 +86,7 @@
         [attr.title]="runningTaskName()"
         data-testid="focus-chip"
       >
-        <span aria-hidden="true">⏱️</span>
+        <app-icon name="time" />
         <span class="focus-chip__clock">{{ runningClock() }}</span>
       </a>
       }
@@ -100,7 +100,7 @@
         (click)="toggleTheme()"
       >
         <span class="theme-toggle-btn__icon" aria-hidden="true">
-          {{ isDarkTheme() ? '☀️' : '🌙' }}
+          <app-icon [name]="isDarkTheme() ? 'sun' : 'moon'" />
         </span>
       </button>
       <button

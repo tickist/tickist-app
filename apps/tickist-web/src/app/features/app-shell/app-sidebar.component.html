@@ -7,7 +7,7 @@
     ariaCurrentWhenActive="page"
     (click)="clearProjectSelection()"
   >
-    <span class="emoji">🏠</span>
+    <app-icon class="nav-icon" name="dashboard" size="18" />
     <span>Dashboard</span>
   </a>
 
@@ -20,8 +20,9 @@
     [attr.aria-current]="isProjectCurrent(inbox.id) ? 'page' : null"
   >
     <app-project-icon
+      class="nav-icon"
       [icon]="inbox.icon"
-      [size]="16"
+      [size]="18"
       [style.color]="inbox.color"
     ></app-project-icon>
     <span class="flex-1"
@@ -36,7 +37,7 @@
     [attr.aria-expanded]="navState().active"
     (click)="toggle('active')"
   >
-    <span class="emoji">📁</span>
+    <app-icon class="nav-icon" name="active-projects" size="18" />
     <span class="flex-1"
       >Active projects ({{ activeProjectsList().length }})</span
     >
@@ -63,7 +64,7 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('someday')">
-    <span class="emoji">💡</span>
+    <app-icon class="nav-icon" name="someday" size="18" />
     <span class="flex-1"
       >Someday / Maybe ({{ somedayProjectsList().length }})</span
     >
@@ -90,7 +91,7 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('routine')">
-    <span class="emoji">♻️</span>
+    <app-icon class="nav-icon" name="routine" size="18" />
     <span class="flex-1"
       >Routine reminder ({{ routineProjectsList().length }})</span
     >
@@ -117,7 +118,7 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('weekdays')">
-    <span class="emoji">📅</span>
+    <app-icon class="nav-icon" name="weekdays" size="18" />
     <span class="flex-1">Weekdays</span>
     <span class="chevron" [class.rotate-180]="navState().weekdays">⌃</span>
   </button>
@@ -141,7 +142,7 @@
     <li>
       <label class="weekday-picker">
         <span>Select the specific date</span>
-        <span class="emoji">📅</span>
+        <app-icon class="nav-icon" name="weekdays" size="18" />
         <input
           class="weekday-date"
           type="date"
@@ -158,7 +159,7 @@
   }
 
   <button type="button" class="sidebar-link" (click)="toggle('future')">
-    <span class="emoji">🗓️</span>
+    <app-icon class="nav-icon" name="future" size="18" />
     <span class="flex-1">Future</span>
     <span class="chevron" [class.rotate-180]="navState().future">⌃</span>
   </button>
@@ -187,7 +188,7 @@
     routerLinkActive="sidebar-link--active"
     ariaCurrentWhenActive="page"
   >
-    <span class="emoji">🌲</span>
+    <app-icon class="nav-icon" name="tree" size="18" />
     <span>Tasks tree view</span>
   </a>
   <a
@@ -196,7 +197,7 @@
     routerLinkActive="sidebar-link--active"
     ariaCurrentWhenActive="page"
   >
-    <span class="emoji">🏷️</span>
+    <app-icon class="nav-icon" name="tag" size="18" />
     <span>Tags</span>
   </a>
   <a
@@ -205,7 +206,7 @@
     routerLinkActive="sidebar-link--active"
     ariaCurrentWhenActive="page"
   >
-    <span class="emoji">⏱️</span>
+    <app-icon class="nav-icon" name="time" size="18" />
     <span>Time</span>
   </a>
   <a
@@ -214,7 +215,7 @@
     routerLinkActive="sidebar-link--active"
     ariaCurrentWhenActive="page"
   >
-    <span class="emoji">📊</span>
+    <app-icon class="nav-icon" name="statistics" size="18" />
     <span>Statistics</span>
   </a>
 </nav>

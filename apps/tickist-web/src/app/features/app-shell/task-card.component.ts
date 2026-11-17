@@ -29,6 +29,7 @@ import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { Tag, TagDataService } from '../../data/tag-data.service';
 import { ComposerModalService } from '../task-fab/composer-modal.service';
 import { ToastService } from '../../core/ui/toast.service';
+import { IconComponent } from '../../core/ui/icon.component';
 import { LinkifyPipe } from '../../core/text/linkify.pipe';
 import { ProjectPickerComponent } from '../../core/ui/project-picker.component';
 import {
@@ -60,6 +61,7 @@ let nextTaskCardId = 0;
   selector: 'app-task-card',
   standalone: true,
   imports: [
+    IconComponent,
     LinkifyPipe,
     ProjectPickerComponent,
     ThemedSelectComponent,
@@ -249,10 +251,6 @@ export class TaskCardComponent implements OnChanges {
     return this.task.typeFinishDate === 0
       ? 'Scheduled: do it on this day'
       : 'Deadline: finish by this day';
-  }
-
-  finishDateModeIcon(): string {
-    return this.task.typeFinishDate === 0 ? '➜' : '◷';
   }
 
   priorityColor(priority?: string | null): string {

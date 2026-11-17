@@ -8,7 +8,7 @@
   (click)="toggleTheme()"
 >
   <span class="theme-toggle-btn__icon" aria-hidden="true">
-    {{ isDarkTheme() ? '☀️' : '🌙' }}
+    <app-icon [name]="isDarkTheme() ? 'sun' : 'moon'" />
   </span>
 </button>
 <section
@@ -43,7 +43,6 @@
         autocomplete="username"
         spellcheck="false"
         class="input input-bordered w-full auth-input"
-        placeholder="team@tickist.app"
       />
     </label>
     <label class="form-control w-full">
@@ -56,7 +55,6 @@
         type="password"
         autocomplete="new-password"
         class="input input-bordered w-full auth-input"
-        placeholder="••••••••"
       />
     </label>
     <label class="form-control w-full">
@@ -69,7 +67,6 @@
         type="password"
         autocomplete="new-password"
         class="input input-bordered w-full auth-input"
-        placeholder="••••••••"
       />
     </label>
     @if (legalRelease(); as legal) {

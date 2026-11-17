@@ -19,7 +19,7 @@
         [attr.aria-pressed]="filter === 'suspended'"
         (click)="selectFilter('suspended')"
       >
-        <span aria-hidden="true">⏸</span>
+        <app-icon name="pause" />
         Suspended: {{ suspendedCount }}
       </button>
       @if (hasTime()) {
@@ -33,7 +33,7 @@
             : timePercent() + '% of the estimate used'
         "
       >
-        <span aria-hidden="true">⏱️</span>
+        <app-icon name="time" />
         {{ timeLabel() }} @if (timePercent(); as percent) {
         <span
           class="project-header__time-bar"
@@ -51,9 +51,10 @@
       type="button"
       class="btn btn-ghost btn-sm btn-circle"
       title="Edit project"
+      aria-label="Edit project"
       (click)="openEdit.emit()"
     >
-      ✏️
+      <app-icon name="edit" size="18" />
     </button>
 
     <div class="dropdown dropdown-end" [class.dropdown-open]="sortOpen()">
@@ -61,10 +62,11 @@
         type="button"
         class="btn btn-ghost btn-sm btn-circle"
         title="Sort"
+        aria-label="Sort"
         (click)="sortOpen.set(!sortOpen())"
         tabindex="0"
       >
-        ⇅
+        <app-icon name="sort" size="18" />
       </button>
       <ul
         class="dropdown-content menu w-56 rounded-2xl border border-white/10 bg-base-200 text-base-content shadow-xl shadow-black/40"
@@ -99,10 +101,11 @@
         type="button"
         class="btn btn-ghost btn-sm btn-circle"
         title="Filter"
+        aria-label="Filter"
         (click)="filterOpen.set(!filterOpen())"
         tabindex="0"
       >
-        🔍
+        <app-icon name="filter" size="18" />
       </button>
       <ul
         class="dropdown-content menu w-56 rounded-2xl border border-white/10 bg-base-200 text-base-content shadow-xl shadow-black/40"

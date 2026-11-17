@@ -95,6 +95,24 @@ export function zonedDateKey(value: Date, timezone: string): string {
   return `${parts.year}-${pad(parts.month)}-${pad(parts.day)}`;
 }
 
+/**
+ * Moves an instant to another calendar day in the timezone, keeping its
+ * wall-clock time, so a 09:30 deadline stays at 09:30.
+ */
+export function moveToDay(
+  value: string,
+  dayKey: string,
+  timezone: string
+): string | null {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return zonedDateTimeToIso(dayKey, zonedTimeLabel(date, timezone), timezone);
+}
+
 /** Wall-clock time (HH:mm) of an instant in a timezone. */
 export function zonedTimeLabel(value: Date, timezone: string): string {
   const parts = getZonedDateParts(value, timezone);

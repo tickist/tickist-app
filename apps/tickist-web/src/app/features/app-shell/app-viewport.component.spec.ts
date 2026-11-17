@@ -5,6 +5,7 @@ import {
 } from '../../../testing/dom';
 import assert from 'node:assert/strict';
 import { NgOptimizedImage } from '@angular/common';
+import { IconComponent } from '../../core/ui/icon.component';
 import { AppDatePipe } from '../../core/time/date-format';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -128,6 +129,7 @@ describe('AppViewportComponent theme toggle', () => {
             MockSidebarComponent,
             MockTaskFabComponent,
             ProjectIconComponent,
+            IconComponent,
             MockToastContainerComponent,
             ModalDialogDirective,
             AnchoredPopoverDirective,

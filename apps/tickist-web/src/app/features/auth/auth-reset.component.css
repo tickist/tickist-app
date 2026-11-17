@@ -13,7 +13,7 @@
 }
 
 .auth-reset-submit {
-  color: rgb(var(--bc));
+  color: rgb(var(--pc));
   font-weight: 600;
 }
 

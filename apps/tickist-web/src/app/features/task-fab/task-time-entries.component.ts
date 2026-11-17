@@ -9,6 +9,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { IconComponent } from '../../core/ui/icon.component';
 import { TaskDataService } from '../../data/task-data.service';
 import {
   TimeEntry,
@@ -32,6 +33,7 @@ interface EntryDraft {
 
 /** The caller's time entries for one task, with add, edit and delete. */
 @Component({
+  imports: [IconComponent],
   selector: 'app-task-time-entries',
   standalone: true,
   templateUrl: './task-time-entries.component.html',

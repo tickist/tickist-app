@@ -2,8 +2,10 @@ import {
   Component,
   computed,
   inject,
+  signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { ToastService } from '../../core/ui/toast.service';
 import { TaskDataService, type Task } from '../../data/task-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SlicePipe } from '@angular/common';
@@ -21,6 +23,7 @@ import { type TaskReorder } from '../app-shell/task-list.component';
 import {
   type DueDayStatus,
   dueDayStatus,
+  moveToDay,
   zonedDateKey,
 } from '../../core/time/zoned-time';
 
@@ -41,6 +44,9 @@ export class DashboardComponent {
   private readonly workspaces = inject(WorkspaceDataService);
   private readonly timeTracking = inject(TimeTrackingService);
   private readonly dayPlan = inject(DayPlanService);
+  private readonly toasts = inject(ToastService);
+
+  readonly movingOverdue = signal(false);
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
@@ -192,6 +198,47 @@ export class DashboardComponent {
         !!task.finishDate &&
         dueDayStatus(task.finishDate, now, timezone) === status
     );
+  }
+
+  /** Empty-Today next step: plan overdue work for today, keeping times. */
+  async moveOverdueToToday(): Promise<void> {
+    const timezone = this.timeTracking.timezone();
+    const todayKey = zonedDateKey(new Date(), timezone);
+
+    const updates = this.overdueTasks().flatMap((task) => {
+      const finishDate =
+        task.finishDate && moveToDay(task.finishDate, todayKey, timezone);
+
+      return finishDate ? [{ id: task.id, finishDate }] : [];
+    });
+
+    if (!updates.length || this.movingOverdue()) {
+      return;
+    }
+
+    this.movingOverdue.set(true);
+
+    try {
+      const results = await Promise.all(
+        updates.map((update) => this.tasks.updateTask(update))
+      );
+
+      const moved = results.filter(Boolean).length;
+
+      if (moved === updates.length) {
+        this.toasts.success(
+          moved === 1
+            ? 'Moved 1 task to today.'
+            : `Moved ${moved} tasks to today.`
+        );
+      } else {
+        this.toasts.error(
+          `Moved ${moved} of ${updates.length} tasks. Try again for the rest.`
+        );
+      }
+    } finally {
+      this.movingOverdue.set(false);
+    }
   }
 
   reorderToday(reorder: TaskReorder): void {

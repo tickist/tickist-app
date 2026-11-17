@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { IconComponent } from '../../core/ui/icon.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseAuthService } from './supabase-auth.service';
@@ -14,7 +15,7 @@ import { SupabaseSessionService } from './supabase-session.service';
 @Component({
   selector: 'app-auth-update-password',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [IconComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './auth-update-password.component.html',
   styleUrl: './auth-update-password.component.css',
 })
@@ -65,10 +66,10 @@ export class AuthUpdatePasswordComponent {
     }
   }
 
+  /** The submit button stays enabled for an incomplete form, which shows
+   * its field errors on submit instead. */
   get isDisabled(): boolean {
-    return (
-      this.form.invalid || this.isSubmitting() || Boolean(this.recoveryIssue())
-    );
+    return this.isSubmitting() || Boolean(this.recoveryIssue());
   }
 
   get passwordsMismatch(): boolean {
@@ -79,6 +80,12 @@ export class AuthUpdatePasswordComponent {
 
   async handleSubmit(): Promise<void> {
     if (this.isDisabled) {
+      return;
+    }
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+
       return;
     }
 

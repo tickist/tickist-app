@@ -238,7 +238,7 @@
           @for (reminder of reminders.controls; track reminder; let i = $index)
           {
           <div class="reminder-row" [formGroup]="reminder">
-            <span class="reminder-row__icon" aria-hidden="true">⏰</span>
+            <app-icon class="reminder-row__icon" name="reminder" />
             <input type="hidden" formControlName="id" />
             <input type="hidden" formControlName="timezone" />
             <label class="sheet-field task-composer-field--placeholder">
@@ -513,7 +513,7 @@
         aria-labelledby="task-history-title"
       >
         <header class="task-history__header">
-          <span class="task-history__icon" aria-hidden="true">↺</span>
+          <app-icon class="task-history__icon" name="history" />
           <div>
             <h3 id="task-history-title" class="task-history__title">
               Task history

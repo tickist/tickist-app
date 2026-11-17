@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { IconComponent } from '../../core/ui/icon.component';
 import { AppDatePipe } from '../../core/time/date-format';
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
@@ -94,6 +95,7 @@ type TaskFormDefaults = {
 @Component({
   selector: 'app-task-composer',
   imports: [
+    IconComponent,
     TaskTimeEntriesComponent,
     AppDatePipe,
     ReactiveFormsModule,
@@ -136,12 +138,12 @@ export class TaskComposerComponent {
   readonly remindersLoading = signal(false);
   readonly tagSearch = signal('');
   readonly tabs: readonly SheetScaffoldTab<TabKey>[] = [
-    { key: 'general', label: 'General', icon: '✏️' },
-    { key: 'repeat', label: 'Repeat', icon: '🔁' },
-    { key: 'reminders', label: 'Reminders', icon: '⏰' },
-    { key: 'tags', label: 'Tags', icon: '🏷️' },
-    { key: 'steps', label: 'Steps', icon: '☑️' },
-    { key: 'extra', label: 'Extra', icon: '✨' },
+    { key: 'general', label: 'General', icon: 'edit' },
+    { key: 'repeat', label: 'Repeat', icon: 'repeat' },
+    { key: 'reminders', label: 'Reminders', icon: 'reminder' },
+    { key: 'tags', label: 'Tags', icon: 'tag' },
+    { key: 'steps', label: 'Steps', icon: 'steps' },
+    { key: 'extra', label: 'Extra', icon: 'extra' },
   ];
   readonly sheetEyebrow = computed(() =>
     this.editingTask() ? 'Edit task' : 'Create task'

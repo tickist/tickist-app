@@ -18,6 +18,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { NgTemplateOutlet } from '@angular/common';
+import { IconComponent } from '../../core/ui/icon.component';
 import {
   Project,
   ProjectDataService,
@@ -74,6 +75,7 @@ type ProjectTreeNode = {
     RouterLinkActive,
     NgTemplateOutlet,
     ProjectIconComponent,
+    IconComponent,
   ],
   templateUrl: './app-sidebar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

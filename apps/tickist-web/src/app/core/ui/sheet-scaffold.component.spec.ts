@@ -32,8 +32,8 @@ import { SheetScaffoldComponent } from './sheet-scaffold.component';
 })
 class TestHostComponent {
   readonly tabs = [
-    { key: 'general', label: 'General', icon: '✏️' },
-    { key: 'extra', label: 'Extra', icon: '✨' },
+    { key: 'general', label: 'General', icon: 'edit' },
+    { key: 'extra', label: 'Extra', icon: 'extra' },
   ];
   activeTab = 'general';
   readonly onTabChange = vi.fn();

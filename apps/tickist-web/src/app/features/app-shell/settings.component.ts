@@ -1,4 +1,5 @@
 import { EmailMonitoringService } from '../../data/email-monitoring.service';
+import { IconComponent } from '../../core/ui/icon.component';
 import { AppDatePipe } from '../../core/time/date-format';
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
 import {
@@ -74,6 +75,7 @@ const WEEKDAY_OPTIONS: WeekdayOption[] = [
 @Component({
   selector: 'app-settings',
   imports: [
+    IconComponent,
     ReactiveFormsModule,
     SheetScaffoldComponent,
     ThemedSelectComponent,
@@ -109,13 +111,13 @@ export class SettingsComponent {
   readonly user = computed(() => this.session.user());
   readonly activeTab = signal<SettingsTab>('account');
   readonly tabs: readonly SheetScaffoldTab<SettingsTab>[] = [
-    { key: 'account', label: 'Account', icon: '👤' },
-    { key: 'workspaces', label: 'Workspaces', icon: '🗂️' },
-    { key: 'password', label: 'Password', icon: '🔒' },
-    { key: 'notifications', label: 'Notifications', icon: '🔔' },
-    { key: 'focus', label: 'Focus', icon: '⏱️' },
-    { key: 'backup', label: 'Backup & Restore', icon: '🗂️' },
-    { key: 'api-tokens', label: 'API Tokens', icon: '🔑' },
+    { key: 'account', label: 'Account', icon: 'account' },
+    { key: 'workspaces', label: 'Workspaces', icon: 'workspaces' },
+    { key: 'password', label: 'Password', icon: 'password' },
+    { key: 'notifications', label: 'Notifications', icon: 'notifications' },
+    { key: 'focus', label: 'Focus', icon: 'time' },
+    { key: 'backup', label: 'Backup & Restore', icon: 'backup' },
+    { key: 'api-tokens', label: 'API Tokens', icon: 'api-tokens' },
   ];
   readonly updating = signal(false);
   readonly focusLimitMinMinutes = FOCUS_LIMIT_MIN_MINUTES;

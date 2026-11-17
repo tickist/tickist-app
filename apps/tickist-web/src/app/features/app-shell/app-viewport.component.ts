@@ -1,4 +1,5 @@
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
+import { IconComponent } from '../../core/ui/icon.component';
 import { AppDatePipe } from '../../core/time/date-format';
 import {
   Component,
@@ -48,6 +49,7 @@ import { TaskDataService } from '../../data/task-data.service';
   selector: 'app-viewport',
   standalone: true,
   imports: [
+    IconComponent,
     RouterOutlet,
     RouterLink,
     AppDatePipe,

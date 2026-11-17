@@ -111,14 +111,14 @@
 }
 
 .controls .btn.btn-primary {
-  border-color: rgba(255, 234, 0, 0.75);
-  background: #ffea00;
-  color: #1b2236;
+  border-color: rgb(var(--p));
+  background: rgb(var(--p));
+  color: rgb(var(--pc));
 }
 
 .controls .btn.btn-primary:hover {
-  border-color: rgba(255, 234, 0, 0.9);
-  background: #fff06a;
+  border-color: rgb(var(--p));
+  background: rgb(var(--p) / 0.88);
 }
 
 .controls input[type='checkbox'] {
@@ -128,6 +128,6 @@
 }
 
 .controls input[type='checkbox']:checked {
-  border-color: #ffea00;
-  background-color: #ffea00;
+  border-color: rgb(var(--p));
+  background-color: rgb(var(--p));
 }

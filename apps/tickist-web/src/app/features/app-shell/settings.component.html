@@ -718,7 +718,8 @@
             <section class="token-reveal-card" aria-label="New token value">
               <div class="token-reveal-card__header">
                 <p class="token-reveal-card__warning">
-                  ⚠️ Copy this token now — it will not be shown again.
+                  <app-icon name="warning" /> Copy this token now — it will not
+                  be shown again.
                 </p>
               </div>
               <div class="token-reveal-card__value">
@@ -729,9 +730,9 @@
                   (click)="copyToken()"
                 >
                   @if (tokenCopied()) {
-                  <span>✅ Copied</span>
+                  <app-icon name="check" /><span>Copied</span>
                   } @else {
-                  <span>📋 Copy</span>
+                  <app-icon name="copy" /><span>Copy</span>
                   }
                 </button>
               </div>

@@ -8,7 +8,7 @@
   (click)="toggleTheme()"
 >
   <span class="theme-toggle-btn__icon" aria-hidden="true">
-    {{ isDarkTheme() ? '☀️' : '🌙' }}
+    <app-icon [name]="isDarkTheme() ? 'sun' : 'moon'" />
   </span>
 </button>
 <section
@@ -38,7 +38,6 @@
         formControlName="email"
         type="email"
         class="input input-bordered w-full auth-input"
-        placeholder="team@tickist.app"
       />
     </label>
     @if (captcha.required) {
