@@ -152,15 +152,34 @@ describe('ProjectComposerComponent sheet header', () => {
     expect(component.form.controls.projectType.value).toBe('someday');
   });
 
-  it('searches the expanded project icon catalogue by label or key', () => {
+  it('shows icon categories and searches them by keyword', () => {
     component.selectTab('branding');
+    fixture.detectChanges();
+
+    const titles = Array.from(
+      fixtureHost(fixture).querySelectorAll('.icon-catalogue__title'),
+      (title) => title.textContent?.trim()
+    );
+
+    expect(titles).toContain('Home & DIY');
+    expect(component.iconCount()).toBeGreaterThan(400);
+
+    component.iconSearch.set('renovation');
+    fixture.detectChanges();
+
+    expect(
+      component.iconSections()[0]?.icons.map((option) => option.key)
+    ).toContain('paint-roller');
+    expect(
+      fixtureHost(fixture).querySelector('.icon-catalogue__title')
+    ).toBeNull();
+
     component.iconSearch.set('pizza');
     fixture.detectChanges();
 
-    expect(component.iconOptions.length).toBeGreaterThan(140);
-    expect(component.filteredIconOptions().map((option) => option.key)).toEqual(
-      ['pizza']
-    );
+    expect(
+      component.iconSections()[0]?.icons.map((option) => option.key)
+    ).toEqual(['pizza']);
     expect(
       fixtureHost(fixture).querySelector('button.icon-pill[aria-label="Pizza"]')
     ).not.toBeNull();
