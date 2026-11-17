@@ -104,7 +104,7 @@
     "@nx/workspace": "23.2.1",
     "@oxc-project/runtime": "^0.111.0",
     "@oxlint/plugins": "1.85.0",
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.65.1",
     "@schematics/angular": "22.0.8",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",
