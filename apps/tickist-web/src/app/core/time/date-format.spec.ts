@@ -13,6 +13,8 @@ describe('date format', () => {
   test('shows day and month, adding the year only outside the current one', () => {
     expect(formatDay('2026-11-20T09:00:00.000Z', { now })).toBe('20 Nov');
     expect(formatDay('2027-01-05T09:00:00.000Z', { now })).toBe('5 Jan 2027');
+    // Three-letter months everywhere, including September.
+    expect(formatDay('2026-09-10T09:00:00.000Z', { now })).toBe('10 Sep');
   });
 
   test('uses the account timezone to pick the calendar day', () => {

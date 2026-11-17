@@ -135,7 +135,8 @@
 }
 
 .icon-btn.active {
-  @apply bg-primary bg-opacity-20 text-primary;
+  background: rgb(var(--p) / 0.18);
+  color: var(--tickist-primary-text);
 }
 
 .task-card__menu {

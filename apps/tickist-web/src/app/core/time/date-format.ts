@@ -31,12 +31,9 @@ export function formatDay(
   const sameYear =
     yearIn(date, timeZone) === yearIn(options.now ?? new Date(), timeZone);
 
-  return format(date, {
-    day: 'numeric',
-    month: 'short',
-    year: sameYear ? undefined : 'numeric',
-    timeZone,
-  });
+  const { day, month, year } = shortDateParts(date, timeZone);
+
+  return sameYear ? `${day} ${month}` : `${day} ${month} ${year}`;
 }
 
 /** "17 Nov 2026, 14:05". */
@@ -50,14 +47,17 @@ export function formatDateTime(
     return null;
   }
 
-  return format(date, {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
+  const timeZone = zoneOrUndefined(options.timeZone);
+  const { day, month, year } = shortDateParts(date, timeZone);
+
+  const time = format(date, {
     hour: '2-digit',
     minute: '2-digit',
-    timeZone: zoneOrUndefined(options.timeZone),
+    hourCycle: 'h23',
+    timeZone,
   });
+
+  return `${day} ${month} ${year}, ${time}`;
 }
 
 /** "Tuesday 17 November" for a YYYY-MM-DD key. */
@@ -90,6 +90,41 @@ export class AppDatePipe implements PipeTransform {
     return (
       (style === 'dateTime' ? formatDateTime(value) : formatDay(value)) ?? ''
     );
+  }
+}
+
+/**
+ * Day, three-letter month and year. en-GB abbreviates September as "Sept",
+ * so the month comes from en-US ("Sep") to keep every month three letters.
+ */
+function shortDateParts(date: Date, timeZone: string | undefined) {
+  const parts = new Map(
+    formatParts(date, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      timeZone,
+    }).map((part) => [part.type, part.value])
+  );
+
+  return {
+    day: parts.get('day') ?? '',
+    month: parts.get('month') ?? '',
+    year: parts.get('year') ?? '',
+  };
+}
+
+function formatParts(
+  date: Date,
+  options: Intl.DateTimeFormatOptions
+): Intl.DateTimeFormatPart[] {
+  try {
+    return new Intl.DateTimeFormat('en-US', options).formatToParts(date);
+  } catch {
+    return new Intl.DateTimeFormat('en-US', {
+      ...options,
+      timeZone: undefined,
+    }).formatToParts(date);
   }
 }
 
