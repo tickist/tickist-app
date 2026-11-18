@@ -13,7 +13,13 @@ import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { FocusComponent } from './focus.component';
 
 function setup(
-  options: { running?: boolean; repeatInterval?: number; ok?: boolean } = {}
+  options: {
+    running?: boolean;
+    repeatInterval?: number;
+    ok?: boolean;
+    spentMinutes?: number | null;
+    estimateMinutes?: number | null;
+  } = {}
 ) {
   const running = signal(options.running ?? true);
 
@@ -23,6 +29,8 @@ function setup(
     projectId: null,
     isDone: false,
     repeatInterval: options.repeatInterval ?? 0,
+    spentMinutes: options.spentMinutes ?? null,
+    estimateMinutes: options.estimateMinutes ?? null,
   };
 
   const timer = {
@@ -92,6 +100,31 @@ describe('FocusComponent', () => {
         requiredElement(host, `[data-testid="${id}"]`, HTMLButtonElement).title
       ).not.toBe('');
     }
+  });
+
+  it('shows the total time on the task, including the running clock', () => {
+    const { fixture } = setup({ spentMinutes: 58, estimateMinutes: 120 });
+
+    // 58 recorded minutes plus 2 running minutes.
+    expect(
+      requiredElement(
+        fixtureHost(fixture),
+        '[data-testid="focus-total"]',
+        HTMLElement
+      ).textContent
+    ).toContain('Total on this task: 1 h of 2 h estimated');
+  });
+
+  it('shows the recorded total without an estimate while paused', () => {
+    const { fixture } = setup({ running: false, spentMinutes: 75 });
+
+    expect(
+      requiredElement(
+        fixtureHost(fixture),
+        '[data-testid="focus-total"]',
+        HTMLElement
+      ).textContent?.trim()
+    ).toBe('Total on this task: 1 h 15 min');
   });
 
   it('stops the clock, marks the task done and goes back', async () => {
