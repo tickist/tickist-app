@@ -857,12 +857,16 @@ test('duplicates a task into the same project and keeps the copy after reload', 
   await menu.getByTestId('task-duplicate').click();
   await expectTaskMenuClosed(card);
 
+  const copies = cards.filter({ hasText: `[Duplicate] ${taskName}` });
+
   await expect(cards).toHaveCount(2);
+  await expect(copies).toHaveCount(1);
   await expect(cards.locator('.task-card__task-type')).toHaveCount(2);
 
   await page.reload();
   await selectProjectByName(page, projectName);
   await expect(cards).toHaveCount(2);
+  await expect(copies).toHaveCount(1);
 });
 
 test('adds task reminder and shows reminder status icon on the task card', async ({

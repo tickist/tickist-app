@@ -691,10 +691,28 @@ function mapTaskRowToTask(row: TaskRow): Task {
   };
 }
 
+export const DUPLICATE_TASK_PREFIX = '[Duplicate] ';
+
+/** Database limit on task names (tasks_name_length), in code points. */
+const TASK_NAME_MAX_LENGTH = 2000;
+
+/**
+ * Marks a copy so it can be told apart from the original. A copy of a copy
+ * keeps one prefix, and the result stays within the database name limit.
+ */
+export function duplicateTaskName(name: string): string {
+  const prefixed = name.startsWith(DUPLICATE_TASK_PREFIX)
+    ? name
+    : `${DUPLICATE_TASK_PREFIX}${name}`;
+
+  return Array.from(prefixed).slice(0, TASK_NAME_MAX_LENGTH).join('');
+}
+
 /**
  * The copy keeps what describes the work (project, text, schedule, repeat,
  * priority, estimate, type, tags, assignees and steps) and starts fresh:
  * open, active, not pinned, unchecked steps, no reminders and no time spent.
+ * Its name is marked with the [Duplicate] prefix.
  */
 export function buildDuplicateTaskInput(
   task: Task,
@@ -702,7 +720,7 @@ export function buildDuplicateTaskInput(
 ): TaskCreateInput {
   return {
     ownerId,
-    name: task.name,
+    name: duplicateTaskName(task.name),
     projectId: task.projectId,
     description: task.description,
     finishDate: task.finishDate ?? null,

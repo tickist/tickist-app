@@ -36,7 +36,7 @@ Task-card overflow actions are exclusive within a task list: opening the menu on
 
 A task card shows only the details the task has: the project button always, and description, tags, repetition, reminder and subtask icons when they are set. Shortcuts for adding a missing description, tags, repetition or subtasks appear while the card is hovered or holds keyboard focus; touch screens use the task editor. On narrow cards (phones) Edit and Pin move into the More actions menu, and a pinned task keeps its pin visible. Card dates, completion badges, reminder times and other app dates share one format: `17 Nov`, `17 Nov 2027` outside the current year, and `Tuesday 17 November` for a Weekdays day heading. In the task editor the description sits directly below the task name, separate from the date fields.
 
-The task-card overflow menu also duplicates a task. The copy belongs to the user who made it and keeps the project, name, description, due date and time, repeat settings, priority, type, estimate, tags, assignees and subtasks. It starts open, active and unpinned, with all subtasks unchecked, no reminders and no recorded time.
+The task-card overflow menu also duplicates a task. The copy belongs to the user who made it and keeps the project, description, due date and time, repeat settings, priority, type, estimate, tags, assignees and subtasks, and its name gets a `[Duplicate]` prefix (added once, also when copying a copy). It starts open, active and unpinned, with all subtasks unchecked, no reminders and no recorded time.
 
 ### Status and completion
 

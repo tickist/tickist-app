@@ -5,6 +5,7 @@ import { StatisticsDataService } from './statistics-data.service';
 import {
   TaskDataService,
   buildDuplicateTaskInput,
+  duplicateTaskName,
   type Task,
 } from './task-data.service';
 import { TimeTrackingService } from './time-tracking.service';
@@ -411,7 +412,7 @@ describe('buildDuplicateTaskInput', () => {
 
     expect(input).toEqual({
       ownerId: 'me',
-      name: 'Write report',
+      name: '[Duplicate] Write report',
       projectId: 'project-1',
       description: 'Quarterly numbers',
       finishDate: '2026-11-10',
@@ -430,6 +431,17 @@ describe('buildDuplicateTaskInput', () => {
         { content: 'Send', position: 1, isDone: false },
       ],
     });
+  });
+
+  it('adds one prefix and keeps the name within the database limit', () => {
+    expect(duplicateTaskName('[Duplicate] Write report')).toBe(
+      '[Duplicate] Write report'
+    );
+
+    const long = duplicateTaskName('ż'.repeat(2000));
+
+    expect(Array.from(long)).toHaveLength(2000);
+    expect(long.startsWith('[Duplicate] ż')).toBe(true);
   });
 
   it('does not share arrays with the source task', () => {
