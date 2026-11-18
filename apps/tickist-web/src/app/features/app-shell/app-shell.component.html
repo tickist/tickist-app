@@ -114,9 +114,15 @@
         class="rounded-2xl border border-white/10 bg-base-200/60 p-4 shadow shadow-black/20 sm:p-6"
       >
         <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <h1 class="text-lg font-semibold" data-testid="day-view-title">
-            {{ label }}
-          </h1>
+          <div class="flex flex-col gap-0.5">
+            <h1 class="text-lg font-semibold" data-testid="day-view-title">
+              {{ label }}
+            </h1>
+            <app-task-group-summary
+              [tasks]="dayViewTasks()"
+              data-testid="day-view-summary"
+            />
+          </div>
           <div class="day-view__actions">
             @if (dayHasCustomOrder()) {
             <button
@@ -144,13 +150,16 @@
           aria-labelledby="day-scheduled-title"
           data-testid="day-scheduled"
         >
-          <h2 id="day-scheduled-title" class="day-section__title">
-            {{
-              selectedDayIsToday()
-                ? 'Scheduled and pinned for today'
-                : 'Scheduled for this day'
-            }}
-          </h2>
+          <header class="day-section__header">
+            <h2 id="day-scheduled-title" class="day-section__title">
+              {{
+                selectedDayIsToday()
+                  ? 'Scheduled and pinned for today'
+                  : 'Scheduled for this day'
+              }}
+            </h2>
+            <app-task-group-summary [tasks]="dayScheduledTasks()" />
+          </header>
           <app-task-list
             [tasks]="dayScheduledTasks()"
             [projectResolver]="projectForTaskList"
@@ -165,9 +174,12 @@
           aria-labelledby="day-deadlines-title"
           data-testid="day-deadlines"
         >
-          <h2 id="day-deadlines-title" class="day-section__title">
-            Deadlines on this day
-          </h2>
+          <header class="day-section__header">
+            <h2 id="day-deadlines-title" class="day-section__title">
+              Deadlines on this day
+            </h2>
+            <app-task-group-summary [tasks]="dayDeadlineTasks()" />
+          </header>
           <app-task-list
             [tasks]="dayDeadlineTasks()"
             [projectResolver]="projectForTaskList"

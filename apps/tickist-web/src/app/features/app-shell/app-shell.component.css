@@ -95,8 +95,17 @@
   margin-top: 1.5rem;
 }
 
-.day-section__title {
+.day-section__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
   margin: 0 0 0.6rem;
+}
+
+.day-section__title {
+  margin: 0;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;

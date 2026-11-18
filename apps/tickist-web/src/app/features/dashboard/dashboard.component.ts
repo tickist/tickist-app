@@ -12,6 +12,7 @@ import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TaskListComponent } from '../app-shell/task-list.component';
+import { TaskGroupSummaryComponent } from '../../core/ui/task-group-summary.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { TaskStatusService } from '../../data/task-status.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
@@ -33,7 +34,12 @@ import {
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SlicePipe, RouterLink, TaskListComponent],
+  imports: [
+    SlicePipe,
+    RouterLink,
+    TaskListComponent,
+    TaskGroupSummaryComponent,
+  ],
 })
 export class DashboardComponent {
   private readonly tasks = inject(TaskDataService);
