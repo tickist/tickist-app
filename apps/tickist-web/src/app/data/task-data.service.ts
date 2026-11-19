@@ -7,6 +7,7 @@ import {
 } from '@tickist/recurrence';
 import { SUPABASE_CLIENT, SUPABASE_CONFIG } from '../config/supabase.provider';
 import { StatisticsDataService } from './statistics-data.service';
+import { TaskOccurrenceDataService } from './task-occurrence-data.service';
 import { TaskReminderDataService } from './task-reminder-data.service';
 import { TimeTrackingService } from './time-tracking.service';
 
@@ -331,6 +332,15 @@ export class TaskDataService {
 
         return null;
       }
+    }
+
+    // The task stays open with its next date, so the completed occurrence is
+    // recorded separately (Done today, statistics, email summaries). Recording
+    // it before reading the task back returns the restarted spent time.
+    if (previous && recurringCompletion) {
+      await this.injector
+        .get(TaskOccurrenceDataService)
+        .record(previous.id, previous.finishDate ?? null);
     }
 
     if (tags) {

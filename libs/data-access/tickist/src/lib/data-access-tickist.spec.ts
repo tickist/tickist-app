@@ -377,10 +377,18 @@ describe('TickistDataAccess recurrence', () => {
 
       if (call.path === 'task_steps') return { body: [] };
 
+      if (call.path === 'task_occurrence_completions')
+        return { status: 201, body: null };
+
       return undefined;
     });
 
     await new TickistDataAccess(connection).completeTask(taskId);
+
+    // The completed occurrence keeps its own due date.
+    expect(
+      calls.find((call) => call.path === 'task_occurrence_completions')?.body
+    ).toEqual({ task_id: taskId, due_date: '2026-01-30T23:00:00.000Z' });
 
     expect(
       calls.find((call) => call.path === 'tasks' && call.method === 'PATCH')

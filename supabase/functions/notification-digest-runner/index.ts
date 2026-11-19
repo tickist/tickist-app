@@ -18,6 +18,11 @@ import {
   type TimeReportRow,
   type TimeTaskRow,
 } from './time-summary.ts';
+import {
+  type CompletedTaskRow,
+  type OccurrenceCompletionRow,
+  mergeCompletedRows,
+} from './completed-tasks.ts';
 
 type NotificationKey = 'weekly_summary' | 'daily_summary';
 type ScheduleType = 'daily' | 'weekly';
@@ -35,13 +40,7 @@ interface NotificationPreferenceRow {
   last_sent_at: string | null;
 }
 
-interface DigestTaskRow {
-  id: string;
-  name: string;
-  finish_date: string | null;
-  when_complete: string | null;
-  project: { name: string | null } | { name: string | null }[] | null;
-}
+type DigestTaskRow = CompletedTaskRow;
 
 interface DigestTaskItem {
   id: string;
@@ -122,10 +121,13 @@ serve(async (req) => {
       .range(from, from + PREFERENCE_PAGE_SIZE - 1);
 
     if (error || !rows) {
-      console.error('[notification-digest-runner] Failed to fetch preferences', {
-        requestId,
-        error,
-      });
+      console.error(
+        '[notification-digest-runner] Failed to fetch preferences',
+        {
+          requestId,
+          error,
+        }
+      );
       return jsonResponse(500, {
         error: 'Internal server error',
         request_id: requestId,
@@ -430,7 +432,27 @@ async function fetchRecentCompletedTasks(
     return [];
   }
 
-  return data as DigestTaskRow[];
+  // Recurring tasks stay open when completed; their completed occurrences
+  // are stored separately and count as completed work too.
+  const { data: occurrences, error: occurrenceError } = await supabase
+    .from('task_occurrence_completions')
+    .select('id, completed_at, task:tasks(name, project:projects(name))')
+    .eq('owner_id', userId)
+    .gte('completed_at', lowerBound)
+    .order('completed_at', { ascending: false })
+    .limit(500);
+
+  if (occurrenceError) {
+    console.error(
+      '[notification-digest-runner] Failed to fetch completed occurrences',
+      { userId, error: occurrenceError }
+    );
+  }
+
+  return mergeCompletedRows(
+    data as DigestTaskRow[],
+    (occurrences ?? []) as OccurrenceCompletionRow[]
+  );
 }
 
 async function fetchUpcomingTasks(

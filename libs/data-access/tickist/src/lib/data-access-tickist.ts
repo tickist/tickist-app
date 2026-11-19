@@ -562,6 +562,15 @@ export class TickistDataAccess {
         if (taskError || !data)
           throw new Error('Failed to advance recurring task.');
 
+        // The task stays open, so the completed occurrence is stored on its
+        // own for Done today, statistics and email summaries.
+        const { error: completionError } = await this.client
+          .from('task_occurrence_completions')
+          .insert({ task_id: taskId, due_date: current.finish_date });
+
+        if (completionError)
+          throw new Error('Failed to record the completed occurrence.');
+
         const { error: stepsError } = await this.client
           .from('task_steps')
           .update({ is_done: false })
