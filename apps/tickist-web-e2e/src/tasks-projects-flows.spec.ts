@@ -946,12 +946,20 @@ test('tracks focus time on a task and reports it by day', async ({
     /^\s*\d{2}:\d{2}\s*$/
   );
 
+  // Pause keeps the session: the clock waits and Resume continues from it.
+  await expect(page.getByTestId('focus-clock')).not.toHaveText(/00:00/);
   await page.getByTestId('focus-pause').click();
   await expect(page.getByTestId('focus-status')).toHaveText('Paused');
+  await expect(page.getByTestId('focus-clock')).not.toHaveText(/00:00/);
+  await page.reload();
+  await expect(page.getByTestId('focus-status')).toHaveText('Paused');
+  await expect(page.getByTestId('focus-clock')).not.toHaveText(/00:00/);
   await page.getByTestId('focus-resume').click();
   await expect(page.getByTestId('focus-pause')).toBeVisible();
+  await expect(page.getByTestId('focus-clock')).not.toHaveText(/00:00/);
   await page.reload();
   await expect(page.getByTestId('focus-pause')).toBeVisible();
+  await expect(page.getByTestId('focus-clock')).not.toHaveText(/00:00/);
 
   // Leaving focus mode keeps the timer; the navbar chip leads back.
   await page.getByTestId('focus-back').click();

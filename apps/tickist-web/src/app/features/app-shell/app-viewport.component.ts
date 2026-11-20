@@ -75,7 +75,7 @@ export class AppViewportComponent implements OnDestroy {
   private readonly taskData = inject(TaskDataService);
   readonly timer = inject(TimeTrackingService);
   readonly runningClock = computed(() =>
-    formatClock(this.timer.elapsedSeconds())
+    formatClock(this.timer.sessionSeconds())
   );
   readonly runningTaskName = computed(() => {
     const taskId = this.timer.running()?.taskId;

@@ -474,6 +474,7 @@ export class TaskDataService {
         const timer = this.injector.get(TimeTrackingService);
 
         if (timer.isRunningTask(updated.id)) await timer.stop();
+        else timer.clearPausedSession(updated.id);
 
         await this.taskReminders.cancelPendingForTask(updated.id);
         await this.callTaskReminderFunction(updated.id, 'completed');

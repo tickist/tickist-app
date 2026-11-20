@@ -28,6 +28,20 @@ const MAX_ENTRY_SECONDS = 24 * 3600;
 
 const TICK_MS = 1000;
 
+const FOCUS_SESSION_KEY = 'tickist.focus-session.v1';
+
+const FocusSessionSchema = z.object({
+  userId: z.string(),
+  taskId: z.string(),
+  carriedSeconds: z.number().int().min(0).max(MAX_ENTRY_SECONDS),
+});
+
+/**
+ * A focus session on one task can span several entries: Pause closes the
+ * entry and keeps the session, so the clock resumes from the same time.
+ */
+type FocusSession = z.infer<typeof FocusSessionSchema>;
+
 const ENTRY_COLUMNS =
   'id, task_id, started_at, ended_at, limit_minutes, source, note, updated_at';
 
@@ -94,6 +108,7 @@ export class TimeTrackingService {
   );
   private readonly timezoneState = signal(DEFAULT_ACCOUNT_TIMEZONE);
   private readonly busyState = signal(false);
+  private readonly sessionState = signal<FocusSession | null>(null);
   private readonly nowMs = signal(Date.now());
   /** Server clock minus browser clock, learned from write responses. */
   private serverOffsetMs = 0;
@@ -114,12 +129,20 @@ export class TimeTrackingService {
       : 0;
   });
 
+  /** The running focus session: earlier paused parts plus the running entry. */
+  readonly sessionSeconds = computed(() => {
+    const entry = this.runningState();
+
+    return entry ? this.carriedFor(entry.taskId) + this.elapsedSeconds() : 0;
+  });
+
+  /** The limit counts the whole focus session, not only the running entry. */
   readonly limitReached = computed(() => {
     const entry = this.runningState();
 
     return (
       entry?.limitMinutes != null &&
-      this.elapsedSeconds() >= entry.limitMinutes * 60
+      this.sessionSeconds() >= entry.limitMinutes * 60
     );
   });
 
@@ -169,6 +192,11 @@ export class TimeTrackingService {
     return this.runningState()?.taskId === taskId;
   }
 
+  /** Time of a paused focus session on the task, or 0. */
+  pausedSecondsFor(taskId: string): number {
+    return this.isRunningTask(taskId) ? 0 : this.carriedFor(taskId);
+  }
+
   todayKey(): string {
     return zonedDateKey(
       new Date(this.nowMs() + this.serverOffsetMs),
@@ -178,6 +206,18 @@ export class TimeTrackingService {
 
   async load(): Promise<void> {
     await Promise.all([this.loadRunning(), this.loadAccount()]);
+
+    // Restore a paused session from before a reload, unless another account
+    // left it or a timer on another task replaced it.
+    const stored = this.readStoredSession();
+    const running = this.runningState();
+
+    const valid =
+      stored !== null &&
+      stored.userId === this.session.user()?.id &&
+      (!running || running.taskId === stored.taskId);
+
+    this.setSession(valid ? stored : null);
   }
 
   /** Starts the timer on a task; a timer on another task stops first. */
@@ -187,13 +227,22 @@ export class TimeTrackingService {
     if (previous?.taskId === taskId) return true;
     this.prepareAlerts();
 
+    if (this.sessionState()?.taskId !== taskId) this.setSession(null);
+
     const { ok, entry } = await this.callTimerRpc('time_entry_start', {
       p_task_id: taskId,
     });
 
     if (!ok || !entry) return false;
     this.runningState.set(entry);
-    this.alertedEntryId = null;
+
+    // A session resumed past its limit has already chimed.
+    const carried = this.carriedFor(taskId);
+
+    this.alertedEntryId =
+      entry.limitMinutes != null && carried >= entry.limitMinutes * 60
+        ? entry.id
+        : null;
 
     if (previous) {
       this.toast.info('The previous timer was stopped.');
@@ -203,11 +252,54 @@ export class TimeTrackingService {
     return true;
   }
 
+  /** Ends the focus session; the next start counts from zero. */
   async stop(): Promise<boolean> {
-    if (!this.runningState()) return true;
+    if (!this.runningState()) {
+      this.setSession(null);
+
+      return true;
+    }
+
+    return this.stopEntry(() => null);
+  }
+
+  /**
+   * Closes the running entry but keeps the focus session, so starting the
+   * same task again continues the clock from the paused time.
+   */
+  async pause(): Promise<boolean> {
+    const entry = this.runningState();
+    const userId = this.session.user()?.id;
+
+    if (!entry) return true;
+
+    if (!userId) return this.stop();
+
+    return this.stopEntry(() => ({
+      userId,
+      taskId: entry.taskId,
+      carriedSeconds: Math.min(this.sessionSeconds(), MAX_ENTRY_SECONDS),
+    }));
+  }
+
+  /** Forgets a paused session on the task, e.g. once it is done. */
+  clearPausedSession(taskId: string): void {
+    if (this.sessionState()?.taskId === taskId && !this.isRunningTask(taskId)) {
+      this.setSession(null);
+    }
+  }
+
+  /**
+   * Stops the running entry and sets the session in the same step, so the
+   * clock never shows zero in between.
+   */
+  private async stopEntry(
+    nextSession: () => FocusSession | null
+  ): Promise<boolean> {
     const { ok } = await this.callTimerRpc('time_entry_stop', {});
 
     if (!ok) return false;
+    this.setSession(nextSession());
     this.runningState.set(null);
     this.alertedEntryId = null;
     await this.tasks.refresh();
@@ -487,9 +579,49 @@ export class TimeTrackingService {
       .catch(() => undefined);
   }
 
+  private carriedFor(taskId: string): number {
+    const session = this.sessionState();
+
+    return session?.taskId === taskId ? session.carriedSeconds : 0;
+  }
+
+  private setSession(session: FocusSession | null): void {
+    this.sessionState.set(session);
+
+    if (!this.isBrowser) return;
+
+    try {
+      if (session) {
+        sessionStorage.setItem(FOCUS_SESSION_KEY, JSON.stringify(session));
+      } else {
+        sessionStorage.removeItem(FOCUS_SESSION_KEY);
+      }
+    } catch {
+      // Storage can be unavailable; the session then lasts until reload.
+    }
+  }
+
+  private readStoredSession(): FocusSession | null {
+    if (!this.isBrowser) return null;
+
+    try {
+      const raw = sessionStorage.getItem(FOCUS_SESSION_KEY);
+      const parsed = raw ? FocusSessionSchema.safeParse(JSON.parse(raw)) : null;
+
+      return parsed?.success ? parsed.data : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Clears memory only: the user is briefly unknown on reload, so load()
+   * checks the stored session against the account instead.
+   */
   private reset(): void {
     this.loadedUserId = null;
     this.runningState.set(null);
+    this.sessionState.set(null);
     this.limitState.set(FOCUS_LIMIT_DEFAULT_MINUTES);
     this.timezoneState.set(DEFAULT_ACCOUNT_TIMEZONE);
     this.alertedEntryId = null;

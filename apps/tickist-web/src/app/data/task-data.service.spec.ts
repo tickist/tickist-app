@@ -145,6 +145,16 @@ describe('TaskDataService running timer', () => {
     expect(stopTimer).toHaveBeenCalledTimes(1);
   });
 
+  it('forgets a paused focus session when its task is completed', async () => {
+    const { service, stopTimer, clearPausedSession } =
+      await setupRecurringTaskService(createTaskRow({ repeat_interval: 0 }));
+
+    await service.updateTask({ id: 'task-1', isDone: true });
+
+    expect(stopTimer).not.toHaveBeenCalled();
+    expect(clearPausedSession).toHaveBeenCalledWith('task-1');
+  });
+
   it('keeps a timer running on another task or for other edits', async () => {
     const other = await setupRecurringTaskService(
       createTaskRow({ repeat_interval: 0 }),
@@ -233,10 +243,12 @@ async function setupRecurringTaskService(
   service: TaskDataService;
   updatePayloads: Partial<TaskRow>[];
   stopTimer: ReturnType<typeof vi.fn>;
+  clearPausedSession: ReturnType<typeof vi.fn>;
   recordOccurrence: ReturnType<typeof vi.fn>;
 }> {
   const updatePayloads: Partial<TaskRow>[] = [];
   const stopTimer = vi.fn(async () => true);
+  const clearPausedSession = vi.fn();
   const recordOccurrence = vi.fn(async () => true);
   const supabase = createSupabaseMock(row, updatePayloads);
 
@@ -259,6 +271,7 @@ async function setupRecurringTaskService(
           timezone: () => 'Europe/Warsaw',
           isRunningTask: (taskId: string) => taskId === runningTaskId,
           stop: stopTimer,
+          clearPausedSession,
         },
       },
       {
@@ -277,7 +290,13 @@ async function setupRecurringTaskService(
   const service = TestBed.inject(TaskDataService);
   await service.refresh();
 
-  return { service, updatePayloads, stopTimer, recordOccurrence };
+  return {
+    service,
+    updatePayloads,
+    stopTimer,
+    clearPausedSession,
+    recordOccurrence,
+  };
 }
 
 function createSupabaseMock(row: TaskRow, updatePayloads: Partial<TaskRow>[]) {

@@ -56,9 +56,13 @@ export class FocusComponent {
       : '';
   });
   readonly isRunning = computed(() => this.timer.isRunningTask(this.taskId()));
-  readonly clock = computed(() =>
-    formatClock(this.isRunning() ? this.timer.elapsedSeconds() : 0)
+  /** The focus session so far; a paused session keeps its time. */
+  readonly sessionSeconds = computed(() =>
+    this.isRunning()
+      ? this.timer.sessionSeconds()
+      : this.timer.pausedSecondsFor(this.taskId())
   );
+  readonly clock = computed(() => formatClock(this.sessionSeconds()));
   readonly overLimit = computed(
     () => this.isRunning() && this.timer.limitReached()
   );
@@ -76,7 +80,7 @@ export class FocusComponent {
 
     return Math.min(
       100,
-      Math.round((this.timer.elapsedSeconds() / (limit * 60)) * 100)
+      Math.round((this.timer.sessionSeconds() / (limit * 60)) * 100)
     );
   });
   readonly todayLabel = computed(() =>
@@ -117,15 +121,21 @@ export class FocusComponent {
   }
 
   async pause(): Promise<void> {
-    await this.timer.stop();
+    await this.timer.pause();
   }
 
   async resume(): Promise<void> {
     await this.timer.start(this.taskId());
   }
 
+  /** Ends the session (running or paused) and returns to the task list. */
   async finish(): Promise<void> {
-    if (this.isRunning() && !(await this.timer.stop())) return;
+    if (this.isRunning()) {
+      if (!(await this.timer.stop())) return;
+    } else {
+      this.timer.clearPausedSession(this.taskId());
+    }
+
     await this.leave();
   }
 

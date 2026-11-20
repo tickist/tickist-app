@@ -48,7 +48,7 @@
         class="focus-btn focus-btn--main"
         [disabled]="timer.busy()"
         data-testid="focus-pause"
-        title="Stop the clock and stay here. Resume starts a new entry."
+        title="Take a break. The clock waits here and Resume continues from the same time."
         (click)="pause()"
       >
         Pause
@@ -59,7 +59,7 @@
         class="focus-btn focus-btn--main"
         [disabled]="timer.busy() || current.isDone"
         data-testid="focus-resume"
-        title="Start the clock again on this task."
+        title="Continue the clock from where you paused."
         (click)="resume()"
       >
         Resume
@@ -80,10 +80,10 @@
         class="focus-btn focus-btn--quiet"
         [disabled]="timer.busy() || completing()"
         data-testid="focus-stop"
-        title="Stop the clock, keep the task open and go back to your tasks."
+        title="End this session, keep the task open and go back to your tasks. The next start counts from zero."
         (click)="finish()"
       >
-        Stop
+        Stop and leave
       </button>
     </div>
 

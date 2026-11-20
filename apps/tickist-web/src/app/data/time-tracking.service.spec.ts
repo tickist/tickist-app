@@ -125,6 +125,7 @@ describe('TimeTrackingService', () => {
     refreshTasks.mockReset().mockResolvedValue(undefined);
     Object.values(toast).forEach((mock) => mock.mockReset());
     userState.set(null);
+    sessionStorage.clear();
   });
 
   afterEach(() => {
@@ -209,5 +210,118 @@ describe('TimeTrackingService', () => {
 
     expect(service.isRunningTask('task-2')).toBe(true);
     expect(toast.info).toHaveBeenCalledWith('The previous timer was stopped.');
+  });
+
+  function rowNow(overrides: Partial<EntryRowFixture> = {}): EntryRowFixture {
+    const now = new Date(Date.now()).toISOString();
+
+    return entryRow({ started_at: now, updated_at: now, ...overrides });
+  }
+
+  async function pauseNow(service: TimeTrackingService): Promise<void> {
+    rpcMock.mockResolvedValueOnce({
+      data: rowNow({ ended_at: new Date(Date.now()).toISOString() }),
+      error: null,
+    });
+    await expect(service.pause()).resolves.toBe(true);
+  }
+
+  it('resumes a paused session from the paused time', async () => {
+    rpcMock.mockResolvedValueOnce({ data: rowNow(), error: null });
+    const service = await setup();
+
+    await service.start('task-1');
+    TestBed.flushEffects();
+    vi.advanceTimersByTime(30 * 60_000);
+    await pauseNow(service);
+
+    expect(service.running()).toBeNull();
+    expect(service.pausedSecondsFor('task-1')).toBe(30 * 60);
+
+    vi.advanceTimersByTime(10 * 60_000);
+    expect(service.pausedSecondsFor('task-1')).toBe(30 * 60);
+
+    rpcMock.mockResolvedValueOnce({
+      data: rowNow({ id: 'entry-2' }),
+      error: null,
+    });
+    await service.start('task-1');
+    TestBed.flushEffects();
+    vi.advanceTimersByTime(20 * 60_000);
+
+    expect(service.elapsedSeconds()).toBe(20 * 60);
+    expect(service.sessionSeconds()).toBe(50 * 60);
+    // The 45-minute limit counts the whole session.
+    expect(service.limitReached()).toBe(true);
+  });
+
+  it('starts from zero after Stop or on another task', async () => {
+    rpcMock.mockResolvedValueOnce({ data: rowNow(), error: null });
+    const service = await setup();
+
+    await service.start('task-1');
+    TestBed.flushEffects();
+    vi.advanceTimersByTime(5 * 60_000);
+    await pauseNow(service);
+
+    rpcMock.mockResolvedValueOnce({
+      data: rowNow({ id: 'entry-2', task_id: 'task-2' }),
+      error: null,
+    });
+    await service.start('task-2');
+    expect(service.pausedSecondsFor('task-1')).toBe(0);
+    expect(service.sessionSeconds()).toBe(0);
+
+    TestBed.flushEffects();
+    vi.advanceTimersByTime(5 * 60_000);
+    await pauseNow(service);
+    expect(service.pausedSecondsFor('task-2')).toBe(5 * 60);
+
+    await expect(service.stop()).resolves.toBe(true);
+    expect(service.pausedSecondsFor('task-2')).toBe(0);
+  });
+
+  it('forgets a paused session when its task is completed', async () => {
+    rpcMock.mockResolvedValueOnce({ data: rowNow(), error: null });
+    const service = await setup();
+
+    await service.start('task-1');
+    TestBed.flushEffects();
+    vi.advanceTimersByTime(5 * 60_000);
+    await pauseNow(service);
+
+    service.clearPausedSession('task-2');
+    expect(service.pausedSecondsFor('task-1')).toBe(5 * 60);
+
+    service.clearPausedSession('task-1');
+    expect(service.pausedSecondsFor('task-1')).toBe(0);
+  });
+
+  it('restores a paused session after a reload for the same account only', async () => {
+    sessionStorage.setItem(
+      'tickist.focus-session.v1',
+      JSON.stringify({
+        userId: 'user-1',
+        taskId: 'task-1',
+        carriedSeconds: 600,
+      })
+    );
+    const service = await setup();
+
+    expect(service.pausedSecondsFor('task-1')).toBe(600);
+
+    TestBed.resetTestingModule();
+    sessionStorage.setItem(
+      'tickist.focus-session.v1',
+      JSON.stringify({
+        userId: 'user-2',
+        taskId: 'task-1',
+        carriedSeconds: 600,
+      })
+    );
+    const other = await setup();
+
+    expect(other.pausedSecondsFor('task-1')).toBe(0);
+    expect(sessionStorage.getItem('tickist.focus-session.v1')).toBeNull();
   });
 });

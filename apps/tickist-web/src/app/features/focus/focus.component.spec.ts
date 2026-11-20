@@ -19,6 +19,7 @@ function setup(
     ok?: boolean;
     spentMinutes?: number | null;
     estimateMinutes?: number | null;
+    pausedSeconds?: number;
   } = {}
 ) {
   const running = signal(options.running ?? true);
@@ -37,10 +38,19 @@ function setup(
     busy: signal(false),
     running: signal(null),
     elapsedSeconds: signal(120),
+    // The running entry (2 min) plus 3 min from before a pause.
+    sessionSeconds: signal(300),
+    pausedSecondsFor: () => options.pausedSeconds ?? 0,
+    clearPausedSession: vi.fn(),
     limitReached: signal(false),
     focusLimitMinutes: signal(50),
     isRunningTask: () => running(),
     stop: vi.fn(async () => {
+      running.set(false);
+
+      return true;
+    }),
+    pause: vi.fn(async () => {
       running.set(false);
 
       return true;
@@ -100,6 +110,57 @@ describe('FocusComponent', () => {
         requiredElement(host, `[data-testid="${id}"]`, HTMLButtonElement).title
       ).not.toBe('');
     }
+  });
+
+  function text(
+    fixture: ReturnType<typeof setup>['fixture'],
+    id: string
+  ): string {
+    return (
+      requiredElement(
+        fixtureHost(fixture),
+        `[data-testid="${id}"]`,
+        HTMLElement
+      ).textContent?.trim() ?? ''
+    );
+  }
+
+  it('counts the whole session on the clock', () => {
+    const { fixture } = setup();
+
+    expect(text(fixture, 'focus-clock')).toBe('05:00');
+  });
+
+  it('pauses without ending the session and keeps the clock', async () => {
+    const { fixture, timer } = setup({ pausedSeconds: 300 });
+
+    requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="focus-pause"]',
+      HTMLButtonElement
+    ).click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(timer.pause).toHaveBeenCalled();
+    expect(timer.stop).not.toHaveBeenCalled();
+    expect(text(fixture, 'focus-status')).toBe('Paused');
+    expect(text(fixture, 'focus-clock')).toBe('05:00');
+  });
+
+  it('ends a paused session with Stop and leave', async () => {
+    const { fixture, timer, router } = setup({
+      running: false,
+      pausedSeconds: 300,
+    });
+
+    expect(text(fixture, 'focus-stop')).toBe('Stop and leave');
+
+    await fixture.componentInstance.finish();
+
+    expect(timer.stop).not.toHaveBeenCalled();
+    expect(timer.clearPausedSession).toHaveBeenCalledWith('task-1');
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/app/tasks');
   });
 
   it('shows the total time on the task, including the running clock', () => {
