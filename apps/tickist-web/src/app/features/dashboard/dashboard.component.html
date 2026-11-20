@@ -2,7 +2,10 @@
   <h1 class="sr-only">Dashboard</h1>
   <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
     <header class="mb-4 flex items-center justify-between">
-      <h2 class="text-lg font-semibold">Today</h2>
+      <div>
+        <h2 class="text-lg font-semibold">Today</h2>
+        <app-task-group-summary [tasks]="todayTasks()" [showCount]="false" />
+      </div>
       <span class="badge badge-primary badge-outline">{{
         todayTasks().length
       }}</span>
@@ -33,7 +36,10 @@
 
   <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
     <header class="mb-4 flex items-center justify-between">
-      <h2 class="text-lg font-semibold">Overdue</h2>
+      <div>
+        <h2 class="text-lg font-semibold">Overdue</h2>
+        <app-task-group-summary [tasks]="overdueTasks()" [showCount]="false" />
+      </div>
       <span class="badge badge-error badge-outline">{{
         overdueTasks().length
       }}</span>
@@ -50,6 +56,10 @@
       <div>
         <h2 class="text-lg font-semibold">Next actions</h2>
         <p class="text-xs text-muted">Tasks marked as next action</p>
+        <app-task-group-summary
+          [tasks]="nextActionTasks()"
+          [showCount]="false"
+        />
       </div>
       <span class="badge badge-info badge-outline">{{
         nextActionTasks().length
@@ -67,6 +77,7 @@
       <div>
         <h2 class="text-lg font-semibold">Need info</h2>
         <p class="text-xs text-muted">Tasks waiting on information</p>
+        <app-task-group-summary [tasks]="needInfoTasks()" [showCount]="false" />
       </div>
       <span class="badge badge-warning badge-outline">{{
         needInfoTasks().length
@@ -115,21 +126,57 @@
     }
   </article>
 
-  @if (doneTodayTasks().length) {
+  @if (doneTodaySummary().length) {
   <article
     class="rounded-2xl border border-white/10 bg-base-200/60 p-5"
     data-testid="dashboard-done-today"
   >
     <header class="mb-4 flex items-center justify-between">
-      <h2 class="text-lg font-semibold">Done today</h2>
+      <div>
+        <h2 class="text-lg font-semibold">Done today</h2>
+        <app-task-group-summary
+          [tasks]="doneTodaySummary()"
+          [showCount]="false"
+        />
+      </div>
       <span class="badge badge-success badge-outline">{{
-        doneTodayTasks().length
+        doneTodaySummary().length
       }}</span>
     </header>
+    @if (doneTodayTasks().length) {
     <app-task-list
       [tasks]="doneTodayTasks()"
       [projectResolver]="projectForTaskList"
     ></app-task-list>
+    } @if (doneTodayOccurrences().length) {
+    <ul
+      class="done-occurrences"
+      [class.mt-3]="doneTodayTasks().length"
+      aria-label="Recurring tasks done today"
+    >
+      @for (occurrence of doneTodayOccurrences(); track occurrence.id) {
+      <li class="done-occurrence" data-testid="dashboard-done-occurrence">
+        <app-icon name="check" class="done-occurrence__check" />
+        <div class="done-occurrence__text">
+          <p class="done-occurrence__name">{{ occurrence.name }}</p>
+          <p class="done-occurrence__meta">
+            @if (occurrence.projectName) {
+            <span>{{ occurrence.projectName }}</span>
+            }
+            <span class="inline-flex items-center gap-1">
+              <app-icon name="repeat" />
+              @if (occurrence.nextDate) { Next {{ occurrence.nextDate }} } @else
+              { Repeats }
+            </span>
+            @if (occurrence.spent) {
+            <span>{{ occurrence.spent }} spent</span>
+            }
+          </p>
+        </div>
+      </li>
+      }
+    </ul>
+    }
   </article>
   }
 </section>

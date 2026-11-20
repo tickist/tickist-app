@@ -29,7 +29,7 @@ Supabase owns authentication and the relational data model. Core tables include:
 
 `app_users.timezone` stores the account's validated IANA timezone. An Auth trigger creates the application profile from signup metadata, while existing profiles default to `Europe/Warsaw`.
 
-Task activity is managed at the database level. A trigger updates `modification_date` on every task update and sets or clears `when_complete` when the completion state changes.
+Task activity is managed at the database level. A trigger updates `modification_date` on every task update and sets or clears `when_complete` when the completion state changes. A recurring task stays open when completed, so each completed occurrence is a row in `task_occurrence_completions`; inserting one dates it with the database clock, stores the time spent on that occurrence and restarts the task's cached `spent_minutes`.
 
 ## Authorization
 

@@ -86,6 +86,25 @@ export class FocusComponent {
     )
   );
 
+  /**
+   * All time recorded on the task (every person's closed entries, as on the
+   * task card) plus the running entry, with the estimate when one is set.
+   */
+  readonly totalLabel = computed(() => {
+    const task = this.task();
+
+    const spentSeconds =
+      (task?.spentMinutes ?? 0) * 60 +
+      (this.isRunning() ? this.timer.elapsedSeconds() : 0);
+
+    const spent = formatDuration(spentSeconds);
+    const estimate = task?.estimateMinutes ?? 0;
+
+    return estimate > 0
+      ? `${spent} of ${formatDuration(estimate * 60)} estimated`
+      : spent;
+  });
+
   constructor() {
     effect(() => {
       // Reload today's closed time whenever the task or timer state changes.

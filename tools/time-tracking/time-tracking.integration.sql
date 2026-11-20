@@ -1,6 +1,7 @@
 -- LOCAL ONLY. Run after migrations with ON_ERROR_STOP. All fixtures roll back.
 -- Covers migration 0040: task time entries, timer RPCs, cached task totals,
--- the day report, shared-project access and value limits.
+-- the day report, shared-project access and value limits, and migration 0042:
+-- completed occurrences of recurring tasks.
 begin;
 create function pg_temp.check(ok boolean, label text) returns void language plpgsql as $$
 begin if ok is distinct from true then raise exception 'Time tracking assertion failed: %', label; end if; end; $$;
@@ -188,6 +189,75 @@ select pg_temp.check(
   and not has_table_privilege('anon', 'public.task_time_entries', 'SELECT')
   and not has_function_privilege('authenticated', 'public.time_report_for_user(uuid, date, date)', 'EXECUTE'),
   'privileges stay narrow');
+
+-- Completed occurrences of recurring tasks (migration 0042).
+insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data,raw_app_meta_data) values
+ ('a7000000-0000-4000-8000-000000000004','time-repeat@example.invalid',now(),'{}','{}');
+insert into public.projects(id,owner_id,name,is_inbox) values
+ ('a7100000-0000-4000-8000-000000000004','a7000000-0000-4000-8000-000000000004','Routines',false);
+insert into public.tasks(id,owner_id,project_id,name,repeat_interval,finish_date) values
+ ('a7200000-0000-4000-8000-000000000004','a7000000-0000-4000-8000-000000000004','a7100000-0000-4000-8000-000000000004','Daily review',1,'2026-10-10 08:00+00'),
+ ('a7200000-0000-4000-8000-000000000005','a7000000-0000-4000-8000-000000000004','a7100000-0000-4000-8000-000000000004','One-off',0,null);
+
+set local role authenticated;
+select pg_temp.act_as('a7000000-0000-4000-8000-000000000004');
+insert into public.task_time_entries(task_id, started_at, ended_at)
+values ('a7200000-0000-4000-8000-000000000004', now() - interval '3 hours', now() - interval '2 hours');
+insert into public.task_occurrence_completions(task_id, due_date)
+values ('a7200000-0000-4000-8000-000000000004', '2026-10-10 08:00+00');
+select pg_temp.check(
+  (select owner_id = 'a7000000-0000-4000-8000-000000000004' and completed_at = now() and spent_minutes = 60
+   from public.task_occurrence_completions where task_id = 'a7200000-0000-4000-8000-000000000004'),
+  'completion records owner, server time and the occurrence time');
+select pg_temp.check(
+  (select spent_minutes is null from public.tasks where id = 'a7200000-0000-4000-8000-000000000004'),
+  'task spent time restarts after a completed occurrence');
+insert into public.task_time_entries(task_id, started_at, ended_at)
+values ('a7200000-0000-4000-8000-000000000004', now(), now() + interval '1 minute');
+select pg_temp.check(
+  (select spent_minutes = 1 from public.tasks where id = 'a7200000-0000-4000-8000-000000000004'),
+  'task spent time counts the current occurrence');
+select pg_temp.check(
+  (select (s->'summary'->>'completedCount')::int = 1 and (s->'summary'->>'completedLateCount')::int = 1
+   from public.get_statistics_overview_v2(30, null) s),
+  'statistics count a late completed occurrence');
+do $$ begin
+  insert into public.task_occurrence_completions(task_id) values ('a7200000-0000-4000-8000-000000000005');
+  raise exception 'completion of a non-recurring task accepted';
+exception when insufficient_privilege then null; end $$;
+do $$ begin
+  insert into public.task_occurrence_completions(task_id, completed_at)
+  values ('a7200000-0000-4000-8000-000000000004', '2020-01-01');
+  raise exception 'completed_at write accepted';
+exception when insufficient_privilege then null; end $$;
+do $$ begin
+  insert into public.task_occurrence_completions(task_id, due_date)
+  values ('a7200000-0000-4000-8000-000000000004', 'infinity');
+  raise exception 'infinite due date accepted';
+exception when check_violation then null; end $$;
+
+select pg_temp.act_as('a7000000-0000-4000-8000-000000000003');
+select pg_temp.check(
+  (select count(*) = 0 from public.task_occurrence_completions),
+  'stranger cannot see completions');
+do $$ begin
+  insert into public.task_occurrence_completions(task_id) values ('a7200000-0000-4000-8000-000000000004');
+  raise exception 'stranger completion accepted';
+exception when insufficient_privilege then null; end $$;
+
+reset role;
+select pg_temp.check(
+  not has_table_privilege('authenticated', 'public.task_occurrence_completions', 'UPDATE')
+  and not has_table_privilege('authenticated', 'public.task_occurrence_completions', 'DELETE')
+  and not has_table_privilege('authenticated', 'public.task_occurrence_completions', 'TRIGGER')
+  and not has_table_privilege('authenticated', 'public.task_occurrence_completions', 'TRUNCATE')
+  and not has_table_privilege('authenticated', 'public.task_occurrence_completions', 'REFERENCES')
+  and not has_table_privilege('anon', 'public.task_occurrence_completions', 'SELECT'),
+  'completion privileges stay narrow');
+delete from public.tasks where id = 'a7200000-0000-4000-8000-000000000004';
+select pg_temp.check(
+  (select count(*) = 0 from public.task_occurrence_completions),
+  'task deletion removes completions');
 
 rollback;
 select 'Time tracking integration passed' as result;

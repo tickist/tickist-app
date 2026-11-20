@@ -5,7 +5,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client"],
-    "rootDir": "."
+    "rootDir": "../.."
   },
   "files": ["src/test-setup.ts", "vite.config.mts"],
   "include": ["src/**/*.spec.ts", "src/**/*.test.ts", "src/**/*.d.ts"]

@@ -21,17 +21,6 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "@nx/eslint:lint": {
-      "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/.eslintrc.json",
-        "{workspaceRoot}/.eslintignore",
-        "{workspaceRoot}/eslint.config.mjs",
-        "{workspaceRoot}/tools/eslint-rules/**/*"
-      ]
-    },
     "oxlint": {
       "cache": true,
       "inputs": [
@@ -39,12 +28,10 @@
         "^default",
         "{workspaceRoot}/.oxlintrc.json",
         "{workspaceRoot}/tools/oxlint/anti-slop/**/*",
-        { "externalDependencies": ["oxlint", "@oxlint/plugins"] }
+        {
+          "externalDependencies": ["oxlint", "@oxlint/plugins"]
+        }
       ]
-    },
-    "@nx/vitest:test": {
-      "cache": true,
-      "inputs": ["default", "^production"]
     }
   },
   "plugins": [
@@ -73,6 +60,24 @@
       "options": {
         "targetName": "oxlint"
       }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testMode": "run",
+        "testTargetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "devTargetName": "dev",
+        "typecheckTargetName": "typecheck",
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static"
+      }
     }
   ],
   "generators": {
@@ -87,5 +92,8 @@
   "analytics": true,
   "migrate": {
     "agentic": true
+  },
+  "affected": {
+    "legacy": true
   }
 }

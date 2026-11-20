@@ -7,16 +7,30 @@
   "sourceRoot": "apps/tickist-web/src",
   "tags": [],
   "targets": {
-    "build": {
-      "executor": "@nx/vite:build",
-      "dependsOn": ["blog-content"],
-      "outputs": ["{options.outputPath}"],
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/tsconfig.json",
+        {
+          "externalDependencies": ["typescript", "@angular/compiler-cli"]
+        }
+      ],
       "options": {
-        "outputPath": "dist/tickist-web",
-        "configFile": "apps/tickist-web/vite.config.mts",
-        "skipTypeCheck": true,
-        "tsConfig": "apps/tickist-web/tsconfig.app.json"
-      },
+        "cwd": "{projectRoot}",
+        "commands": [
+          "ngc -p tsconfig.app.json --noEmit",
+          "tsc -p tsconfig.spec.json --noEmit"
+        ],
+        "parallel": false
+      }
+    },
+    "build": {
+      "dependsOn": ["blog-content"],
+      "outputs": ["{workspaceRoot}/dist/tickist-web"],
+      "defaultConfiguration": "development",
       "configurations": {
         "production": {
           "mode": "production"
@@ -24,8 +38,7 @@
         "development": {
           "mode": "development"
         }
-      },
-      "defaultConfiguration": "development"
+      }
     },
     "blog-content": {
       "executor": "nx:run-commands",
@@ -34,10 +47,7 @@
       }
     },
     "serve": {
-      "continuous": true,
-      "executor": "@nx/vite:dev-server",
       "options": {
-        "buildTarget": "tickist-web:build",
         "host": "0.0.0.0",
         "port": 4200
       }
@@ -49,17 +59,26 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/eslint.config.mjs",
+        "{workspaceRoot}/tools/eslint-rules/**/*",
+        {
+          "externalDependencies": ["eslint"]
+        }
+      ],
       "options": {
-        "lintFilePatterns": ["apps/tickist-web/src"]
+        "args": ["src"]
       }
     },
     "test": {
-      "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": ["{workspaceRoot}/coverage/tickist-web"],
       "options": {
         "maxWorkers": 1,
-        "reportsDirectory": "coverage/tickist-web"
+        "coverage.reportsDirectory": "../../coverage/tickist-web"
       }
     },
     "serve-static": {
@@ -70,7 +89,11 @@
         "port": 4200,
         "staticFilePath": "dist/tickist-web",
         "spa": true
-      }
+      },
+      "readyWhen": {
+        "signal": true
+      },
+      "dependsOn": ["build"]
     }
   }
 }

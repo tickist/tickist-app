@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { formatDayKeyLong, formatMonthKey } from '../../core/time/date-format';
+import { TaskGroupSummaryComponent } from '../../core/ui/task-group-summary.component';
 
 import {
   Task,
@@ -57,7 +58,12 @@ import {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [ReactiveFormsModule, TaskListComponent, ProjectHeaderComponent],
+  imports: [
+    ReactiveFormsModule,
+    TaskListComponent,
+    ProjectHeaderComponent,
+    TaskGroupSummaryComponent,
+  ],
   templateUrl: './app-shell.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app-shell.component.css',
@@ -248,6 +254,12 @@ export class AppShellComponent {
       compareDeadlines
     );
   });
+  /** Every task shown in the day or month view, for the header summary. */
+  readonly dayViewTasks = computed(() =>
+    this.selectedDayKey()
+      ? [...this.dayScheduledTasks(), ...this.dayDeadlineTasks()]
+      : this.filteredTasks()
+  );
   readonly dayHasCustomOrder = computed(() => {
     const dayKey = this.selectedDayKey();
 

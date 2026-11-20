@@ -12,8 +12,13 @@ import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Project, ProjectDataService } from '../../data/project-data.service';
 import { TaskListComponent } from '../app-shell/task-list.component';
+import { TaskGroupSummaryComponent } from '../../core/ui/task-group-summary.component';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { TaskStatusService } from '../../data/task-status.service';
+import { TaskOccurrenceDataService } from '../../data/task-occurrence-data.service';
+import { formatDay } from '../../core/time/date-format';
+import { formatMinutesShort } from '../../core/time/duration';
+import { IconComponent } from '../../core/ui/icon.component';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { TimeTrackingService } from '../../data/time-tracking.service';
 import { DayPlanService } from '../../data/day-plan.service';
@@ -33,7 +38,13 @@ import {
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SlicePipe, RouterLink, TaskListComponent],
+  imports: [
+    SlicePipe,
+    RouterLink,
+    TaskListComponent,
+    TaskGroupSummaryComponent,
+    IconComponent,
+  ],
 })
 export class DashboardComponent {
   private readonly tasks = inject(TaskDataService);
@@ -45,6 +56,7 @@ export class DashboardComponent {
   private readonly timeTracking = inject(TimeTrackingService);
   private readonly dayPlan = inject(DayPlanService);
   private readonly toasts = inject(ToastService);
+  private readonly occurrences = inject(TaskOccurrenceDataService);
 
   readonly movingOverdue = signal(false);
 
@@ -129,6 +141,48 @@ export class DashboardComponent {
         (b.whenComplete ?? '').localeCompare(a.whenComplete ?? '')
       );
   });
+  /**
+   * Recurring tasks completed today. The task itself is open again with its
+   * next date, so each completed occurrence is listed separately.
+   */
+  readonly doneTodayOccurrences = computed(() => {
+    const timezone = this.timeTracking.timezone();
+    const todayKey = zonedDateKey(new Date(), timezone);
+    const tasksById = new Map(this.taskList().map((task) => [task.id, task]));
+
+    return this.occurrences.recent().flatMap((completion) => {
+      const task = tasksById.get(completion.taskId);
+
+      if (
+        !task ||
+        zonedDateKey(new Date(completion.completedAt), timezone) !== todayKey
+      )
+        return [];
+
+      const project = this.projectOf(task.projectId);
+
+      return [
+        {
+          id: completion.id,
+          name: task.name,
+          projectName: project?.name ?? '',
+          nextDate: formatDay(task.finishDate, { timeZone: timezone }),
+          spent:
+            completion.spentMinutes && completion.spentMinutes > 0
+              ? formatMinutesShort(completion.spentMinutes)
+              : null,
+          // Summary input: the task's estimate and this occurrence's time.
+          estimateMinutes: task.estimateMinutes ?? null,
+          spentMinutes: completion.spentMinutes,
+        },
+      ];
+    });
+  });
+  /** Everything completed today, for the group heading summary. */
+  readonly doneTodaySummary = computed(() => [
+    ...this.doneTodayTasks(),
+    ...this.doneTodayOccurrences(),
+  ]);
   readonly nextActionTasks = computed(() =>
     this.taskList().filter(
       (task) => task.taskType === 'next_action' && !task.isDone

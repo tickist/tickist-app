@@ -33,7 +33,7 @@ The `tickist-app` Cloudflare Worker serves the production SPA and runtime config
 | Area                  | Technology                                                  |
 | --------------------- | ----------------------------------------------------------- |
 | Frontend              | Angular 22, standalone components, signals, Vite            |
-| Workspace and testing | Nx 23, Vitest, Playwright                                   |
+| Workspace and testing | Nx 24, Vitest, Playwright                                   |
 | UI                    | Tailwind CSS, DaisyUI, Lucide                               |
 | Backend               | Supabase: Postgres, Auth, Storage, Realtime, Edge Functions |
 | Delivery              | Cloudflare Worker, GitHub Actions, AWS SES                  |
@@ -135,6 +135,7 @@ npm run start
 # Static checks, unit tests, and production build
 npm exec nx run-many -t oxlint --all
 npm exec nx lint tickist-web
+npm exec nx typecheck tickist-web
 npm exec nx test tickist-web
 npm exec nx build tickist-web --configuration production
 

@@ -2,12 +2,16 @@ import type { Config } from 'tailwindcss';
 import daisyui from 'daisyui';
 
 const config: Config = {
-  content: [
-    './apps/tickist-web/src/**/*.{html,ts}',
-    './libs/**/*.{html,ts}',
-    './apps/**/*.{html,ts}',
-    './index.html',
-  ],
+  // Paths are relative to this file, not to the folder Vite runs from.
+  content: {
+    relative: true,
+    files: [
+      './apps/tickist-web/src/**/*.{html,ts}',
+      './libs/**/*.{html,ts}',
+      './apps/**/*.{html,ts}',
+      './index.html',
+    ],
+  },
   theme: {
     extend: {
       fontFamily: {

@@ -35,11 +35,11 @@ export class ToastService {
     error: 5000,
   } as const;
 
-  success(message: string, duration = this.durations.success): void {
+  success(message: string, duration: number = this.durations.success): void {
     this.show(message, 'success', duration);
   }
 
-  info(message: string, duration = this.durations.info): void {
+  info(message: string, duration: number = this.durations.info): void {
     this.show(message, 'info', duration);
   }
 
@@ -51,7 +51,7 @@ export class ToastService {
     this.show(message, 'info', 0, actionLabel, action);
   }
 
-  error(message: string, duration = this.durations.error): void {
+  error(message: string, duration: number = this.durations.error): void {
     this.show(message, 'error', duration);
   }
 

@@ -37,6 +37,9 @@ jobs:
           npx nx lint mcp
           npx nx lint data-access-tickist
 
+      - name: Typecheck
+        run: npx nx run-many -t typecheck -p tickist-web,data-access-tickist
+
       - name: Unit tests
         run: |
           npx nx test tickist-web
@@ -62,9 +65,7 @@ jobs:
 
   e2e:
     if: github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'develop')
-    # Playwright 1.59 cannot install browsers on Ubuntu 26.04, which
-    # ubuntu-latest now resolves to. Move back after upgrading Playwright.
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     env:
       E2E_ENV_FILE: .local_env.e2e
       E2E_DB_RESET_ATTEMPTS: '5'
@@ -81,7 +82,7 @@ jobs:
 
       - run: npm ci
 
-      - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
         with:
           version: 2.120.0
 

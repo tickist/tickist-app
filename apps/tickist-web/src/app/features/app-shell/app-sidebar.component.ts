@@ -130,6 +130,12 @@ export class AppSidebarComponent {
   );
   readonly user = computed(() => this.session.user());
   readonly dueDateFilter = this.viewState.dueDateFilter;
+  /** The date shown in the "specific date" picker. */
+  readonly specificDateValue = computed(() => {
+    const filter = this.dueDateFilter();
+
+    return filter?.mode === 'day' ? filter.dateKey : '';
+  });
   readonly navState = signal<NavSectionState>({
     inbox: true,
     active: true,

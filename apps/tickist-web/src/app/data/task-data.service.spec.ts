@@ -5,10 +5,12 @@ import { StatisticsDataService } from './statistics-data.service';
 import {
   TaskDataService,
   buildDuplicateTaskInput,
+  duplicateTaskName,
   type Task,
 } from './task-data.service';
 import { TimeTrackingService } from './time-tracking.service';
 import { TaskReminderDataService } from './task-reminder-data.service';
+import { TaskOccurrenceDataService } from './task-occurrence-data.service';
 
 type TaskRow = {
   id: string;
@@ -88,6 +90,35 @@ describe('TaskDataService recurring completion', () => {
         is_done: false,
       })
     );
+  });
+
+  it('records the completed occurrence with its due date', async () => {
+    const { service, recordOccurrence } = await setupRecurringTaskService(
+      createTaskRow({ finish_date: '2025-05-15T00:00:00+00:00' })
+    );
+
+    await service.updateTask({ id: 'task-1', isDone: true });
+
+    expect(recordOccurrence).toHaveBeenCalledExactlyOnceWith(
+      'task-1',
+      '2025-05-15T00:00:00+00:00'
+    );
+  });
+
+  it('does not record an occurrence for one-off tasks or other edits', async () => {
+    const oneOff = await setupRecurringTaskService(
+      createTaskRow({ repeat_interval: 0 })
+    );
+
+    await oneOff.service.updateTask({ id: 'task-1', isDone: true });
+    expect(oneOff.recordOccurrence).not.toHaveBeenCalled();
+
+    TestBed.resetTestingModule();
+
+    const recurring = await setupRecurringTaskService(createTaskRow());
+
+    await recurring.service.updateTask({ id: 'task-1', name: 'Renamed' });
+    expect(recurring.recordOccurrence).not.toHaveBeenCalled();
   });
 });
 
@@ -202,9 +233,11 @@ async function setupRecurringTaskService(
   service: TaskDataService;
   updatePayloads: Partial<TaskRow>[];
   stopTimer: ReturnType<typeof vi.fn>;
+  recordOccurrence: ReturnType<typeof vi.fn>;
 }> {
   const updatePayloads: Partial<TaskRow>[] = [];
   const stopTimer = vi.fn(async () => true);
+  const recordOccurrence = vi.fn(async () => true);
   const supabase = createSupabaseMock(row, updatePayloads);
 
   TestBed.configureTestingModule({
@@ -234,13 +267,17 @@ async function setupRecurringTaskService(
           cancelPendingForTask: vi.fn(async () => undefined),
         },
       },
+      {
+        provide: TaskOccurrenceDataService,
+        useValue: { record: recordOccurrence },
+      },
     ],
   });
 
   const service = TestBed.inject(TaskDataService);
   await service.refresh();
 
-  return { service, updatePayloads, stopTimer };
+  return { service, updatePayloads, stopTimer, recordOccurrence };
 }
 
 function createSupabaseMock(row: TaskRow, updatePayloads: Partial<TaskRow>[]) {
@@ -411,7 +448,7 @@ describe('buildDuplicateTaskInput', () => {
 
     expect(input).toEqual({
       ownerId: 'me',
-      name: 'Write report',
+      name: '[Duplicate] Write report',
       projectId: 'project-1',
       description: 'Quarterly numbers',
       finishDate: '2026-11-10',
@@ -430,6 +467,17 @@ describe('buildDuplicateTaskInput', () => {
         { content: 'Send', position: 1, isDone: false },
       ],
     });
+  });
+
+  it('adds one prefix and keeps the name within the database limit', () => {
+    expect(duplicateTaskName('[Duplicate] Write report')).toBe(
+      '[Duplicate] Write report'
+    );
+
+    const long = duplicateTaskName('ż'.repeat(2000));
+
+    expect(Array.from(long)).toHaveLength(2000);
+    expect(long.startsWith('[Duplicate] ż')).toBe(true);
   });
 
   it('does not share arrays with the source task', () => {

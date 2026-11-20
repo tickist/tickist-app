@@ -624,12 +624,18 @@ test.describe('weekday day plan', () => {
     await openDay(0);
     await expect.poll(() => names(scheduled)).toHaveLength(2);
     await expect(deadlines.getByText(deadline)).toHaveCount(0);
+    await expect(scheduled.getByTestId('task-group-count')).toHaveText(
+      '2 tasks'
+    );
 
     await openDay(1);
     await expect(deadlines.getByText(deadline)).toHaveCount(0);
 
     await openDay(2);
     await expect(deadlines.getByText(deadline)).toBeVisible();
+    await expect(deadlines.getByTestId('task-group-count')).toHaveText(
+      '1 task'
+    );
     await expect(scheduled.getByText(deadline)).toHaveCount(0);
 
     await openDay(3);
@@ -857,12 +863,16 @@ test('duplicates a task into the same project and keeps the copy after reload', 
   await menu.getByTestId('task-duplicate').click();
   await expectTaskMenuClosed(card);
 
+  const copies = cards.filter({ hasText: `[Duplicate] ${taskName}` });
+
   await expect(cards).toHaveCount(2);
+  await expect(copies).toHaveCount(1);
   await expect(cards.locator('.task-card__task-type')).toHaveCount(2);
 
   await page.reload();
   await selectProjectByName(page, projectName);
   await expect(cards).toHaveCount(2);
+  await expect(copies).toHaveCount(1);
 });
 
 test('adds task reminder and shows reminder status icon on the task card', async ({

@@ -343,6 +343,17 @@ export const completeTask = async (
       .select()
       .single();
     if (error) return errorResult('Failed to advance recurring task');
+    // The task stays open, so the completed occurrence is stored on its own.
+    // The service-role client names the person completing it.
+    const { error: completionError } = await supabase
+      .from('task_occurrence_completions')
+      .insert({
+        task_id: taskId,
+        owner_id: userId,
+        due_date: current.finish_date,
+      });
+    if (completionError)
+      return errorResult('Failed to record the completed occurrence');
     const { error: stepsError } = await supabase
       .from('task_steps')
       .update({ is_done: false })
