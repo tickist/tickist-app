@@ -1,5 +1,11 @@
 <section class="flex flex-col gap-6">
-  <h1 class="sr-only">Dashboard</h1>
+  <div class="dashboard-toolbar">
+    <h1 class="sr-only">Dashboard</h1>
+    <app-simple-view-toggle
+      [checked]="viewMode() === 'simple'"
+      (changed)="setSimpleView($event)"
+    />
+  </div>
   <article class="rounded-2xl border border-white/10 bg-base-200/60 p-5">
     <header class="mb-4 flex items-center justify-between">
       <div>
@@ -11,6 +17,7 @@
       }}</span>
     </header>
     <app-task-list
+      [viewMode]="viewMode()"
       [tasks]="sortedTodayTasks()"
       [projectResolver]="projectForTaskList"
       [reorderable]="true"
@@ -45,6 +52,7 @@
       }}</span>
     </header>
     <app-task-list
+      [viewMode]="viewMode()"
       [tasks]="sortedOverdueTasks()"
       [projectResolver]="projectForTaskList"
       emptyText="You're all caught up."
@@ -66,6 +74,7 @@
       }}</span>
     </header>
     <app-task-list
+      [viewMode]="viewMode()"
       [tasks]="nextActionTasks()"
       [projectResolver]="projectForTaskList"
       emptyText="No next actions yet. Mark a task as Next action from its ⋮ menu."
@@ -84,6 +93,7 @@
       }}</span>
     </header>
     <app-task-list
+      [viewMode]="viewMode()"
       [tasks]="needInfoTasks()"
       [projectResolver]="projectForTaskList"
       emptyText="Nothing is blocked right now."
@@ -145,6 +155,7 @@
     </header>
     @if (doneTodayTasks().length) {
     <app-task-list
+      [viewMode]="viewMode()"
       [tasks]="doneTodayTasks()"
       [projectResolver]="projectForTaskList"
     ></app-task-list>

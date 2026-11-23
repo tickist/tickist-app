@@ -256,6 +256,10 @@ export class AppSidebarComponent {
       };
     });
   });
+  /** Open tasks for today, pinned ones included, as on the dashboard. */
+  readonly todayTaskCount = computed(
+    () => this.weekdayItems().find((day) => day.isToday)?.count ?? 0
+  );
   readonly futureItems = computed<FutureItem[]>(() => {
     const userId = this.user()?.id;
 

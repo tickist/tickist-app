@@ -22,6 +22,7 @@ import {
   NavigationEnd,
 } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { SupabaseAuthService } from '../auth/supabase-auth.service';
 import { NotificationDataService } from '../../data/notification-data.service';
@@ -49,6 +50,7 @@ import { TaskDataService } from '../../data/task-data.service';
   selector: 'app-viewport',
   standalone: true,
   imports: [
+    CdkScrollable,
     IconComponent,
     RouterOutlet,
     RouterLink,

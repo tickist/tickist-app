@@ -8,7 +8,7 @@
     (click)="clearProjectSelection()"
   >
     <app-icon class="nav-icon" name="dashboard" size="18" />
-    <span>Dashboard</span>
+    <span class="flex-1">Dashboard ({{ todayTaskCount() }})</span>
   </a>
 
   @for (inbox of inboxProjects(); track inbox) {

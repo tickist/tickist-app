@@ -55,6 +55,8 @@ import {
   writeProjectSorts,
 } from './project-sort';
 
+import { SimpleViewToggleComponent } from '../../core/ui/simple-view-toggle.component';
+import { TaskViewPreferenceService } from './task-view-preference.service';
 @Component({
   selector: 'app-shell',
   standalone: true,
@@ -63,6 +65,7 @@ import {
     TaskListComponent,
     ProjectHeaderComponent,
     TaskGroupSummaryComponent,
+    SimpleViewToggleComponent,
   ],
   templateUrl: './app-shell.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,6 +82,7 @@ export class AppShellComponent {
   private readonly viewState = inject(AppViewStateService);
   private readonly toasts = inject(ToastService);
   private readonly composer = inject(ComposerModalService);
+  private readonly taskViews = inject(TaskViewPreferenceService);
   private readonly taskStatus = inject(TaskStatusService);
   private readonly workspaces = inject(WorkspaceDataService);
   private readonly timeTracking = inject(TimeTrackingService);
@@ -135,9 +139,8 @@ export class AppShellComponent {
 
     return formatMonthKey(filter.monthKey) ?? filter.monthKey;
   });
-  readonly taskViewMode = computed(() =>
-    this.activeProject()?.taskView === 'simple' ? 'simple' : 'extended'
-  );
+  /** Card layout of the day views, which have no project to store it on. */
+  readonly taskViewMode = this.taskViews.day;
   readonly projectTaskForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
   });
@@ -403,6 +406,10 @@ export class AppShellComponent {
     } else {
       void this.router.navigate(['/app/tasks']);
     }
+  }
+
+  setDayTaskView(simple: boolean): void {
+    this.taskViews.setSimple('day', simple);
   }
 
   async setProjectTaskView(

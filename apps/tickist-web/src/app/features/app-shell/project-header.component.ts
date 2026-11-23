@@ -11,6 +11,7 @@ import {
 
 import { Project } from '../../data/project-data.service';
 import { ProjectIconComponent } from '../../core/ui/project-icon.component';
+import { SimpleViewToggleComponent } from '../../core/ui/simple-view-toggle.component';
 import { type ProjectSortOption as SortOption } from './project-sort';
 
 type FilterOption = 'all' | 'done' | 'not-done' | 'suspended';
@@ -18,7 +19,7 @@ type FilterOption = 'all' | 'done' | 'not-done' | 'suspended';
 @Component({
   selector: 'app-project-header',
   standalone: true,
-  imports: [IconComponent, ProjectIconComponent],
+  imports: [IconComponent, ProjectIconComponent, SimpleViewToggleComponent],
   templateUrl: './project-header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './project-header.component.css',

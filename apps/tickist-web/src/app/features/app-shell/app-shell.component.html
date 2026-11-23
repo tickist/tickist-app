@@ -124,6 +124,10 @@
             />
           </div>
           <div class="day-view__actions">
+            <app-simple-view-toggle
+              [checked]="taskViewMode() === 'simple'"
+              (changed)="setDayTaskView($event)"
+            />
             @if (dayHasCustomOrder()) {
             <button
               type="button"
