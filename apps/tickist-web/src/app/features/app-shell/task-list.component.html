@@ -3,6 +3,7 @@
   class="task-list"
   cdkDropList
   cdkDropListLockAxis="y"
+  [cdkDropListAutoScrollStep]="8"
   [cdkDropListDisabled]="!reorderable()"
   [cdkDropListData]="tasks()"
   [class.task-list--reorderable]="reorderable()"

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { finishDateKey, startOfZonedDayIso } from '@tickist/recurrence';
 import { IconComponent } from '../../core/ui/icon.component';
 import { AppDatePipe } from '../../core/time/date-format';
 import { ProfileMetadataSchema } from '../../config/profile-metadata';
@@ -43,6 +44,7 @@ import {
   isProjectSharedWithOthers,
 } from '../../data/project-data.service';
 import { TagDataService } from '../../data/tag-data.service';
+import { TimeTrackingService } from '../../data/time-tracking.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { SupabaseSessionService } from '../auth/supabase-session.service';
 import { TaskComposerPreset } from './composer-modal.service';
@@ -122,6 +124,7 @@ export class TaskComposerComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly session = inject(SupabaseSessionService);
   private readonly workspaces = inject(WorkspaceDataService);
+  private readonly timeTracking = inject(TimeTrackingService);
 
   readonly projects = computed(() => this.projectService.list());
   readonly tags = computed(() => this.tagService.list());
@@ -407,7 +410,10 @@ export class TaskComposerComponent {
         projectId: task.projectId ?? '',
         taskType: task.taskType?.toLowerCase() ?? 'normal',
         completeMode: this.completeModeFromType(task.typeFinishDate),
-        finishDate: normalizeDateInputValue(task.finishDate),
+        finishDate: finishDateKey(
+          task.finishDate,
+          this.timeTracking.timezone()
+        ),
         finishTime: normalizeTimeInputValue(task.finishTime),
         description: task.description ?? '',
         repeatMode: mode,
@@ -830,7 +836,7 @@ export class TaskComposerComponent {
       name: value.name,
       projectId: value.projectId || null,
       description: value.description ?? '',
-      finishDate: value.finishDate || null,
+      finishDate: this.storedFinishDate(value.finishDate),
       finishTime: value.finishTime || null,
       typeFinishDate: this.typeFinishDateFromMode(value.completeMode),
       priority: value.priority,
@@ -936,7 +942,7 @@ export class TaskComposerComponent {
           name: value.name,
           projectId: value.projectId || null,
           description: value.description ?? '',
-          finishDate: value.finishDate || null,
+          finishDate: this.storedFinishDate(value.finishDate),
           finishTime: value.finishTime || null,
           typeFinishDate: this.typeFinishDateFromMode(value.completeMode),
           priority: value.priority,
@@ -973,7 +979,7 @@ export class TaskComposerComponent {
         name: value.name,
         projectId: value.projectId || this.inboxProjectId() || null,
         description: value.description ?? '',
-        finishDate: value.finishDate || null,
+        finishDate: this.storedFinishDate(value.finishDate),
         finishTime: value.finishTime || null,
         typeFinishDate: this.typeFinishDateFromMode(value.completeMode),
         priority: value.priority,
@@ -1096,6 +1102,13 @@ export class TaskComposerComponent {
     return 0;
   }
 
+  /** Stores a picked day as midnight in the account timezone. */
+  private storedFinishDate(dateKey: string): string | null {
+    return dateKey
+      ? startOfZonedDayIso(dateKey, this.timeTracking.timezone())
+      : null;
+  }
+
   private repeatFromModeFromValue(
     fromRepeating: number | null | undefined
   ): RepeatFromMode {
@@ -1146,31 +1159,6 @@ export class TaskComposerComponent {
       ? isProjectSharedWithOthers(project, currentUserId)
       : false;
   }
-}
-
-function normalizeDateInputValue(value: string | null | undefined): string {
-  if (!value) {
-    return '';
-  }
-
-  const trimmed = value.trim();
-  const dateOnlyMatch = /^(\d{4}-\d{2}-\d{2})/.exec(trimmed);
-
-  if (dateOnlyMatch) {
-    return dateOnlyMatch[1];
-  }
-
-  const parsed = new Date(trimmed);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return '';
-  }
-
-  const year = parsed.getFullYear();
-  const month = `${parsed.getMonth() + 1}`.padStart(2, '0');
-  const day = `${parsed.getDate()}`.padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
 }
 
 function normalizeTimeInputValue(value: string | null | undefined): string {

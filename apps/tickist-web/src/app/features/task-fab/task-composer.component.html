@@ -191,13 +191,13 @@
                 value="due_date"
                 formControlName="repeatFrom"
               />
-              <span>due date</span>
+              <span>task date</span>
             </label>
           </div>
           @if (taskForm.controls.repeatFrom.value === 'due_date' &&
           !taskForm.controls.finishDate.value) {
           <p class="sheet-field__hint">
-            No due date set. Repeat will use completion date by default.
+            No task date set. Repeat will use completion date by default.
           </p>
           }
         </div>

@@ -1,9 +1,13 @@
 import { advanceDateKey, type RepeatRule } from './recurrence';
 
+/** Upper bound on catch-up steps for a long-overdue task. */
+const MAX_CATCH_UP_STEPS = 10_000;
+
 /**
  * Next due date of a recurring task, as midnight in the account timezone.
- * The anchor is the completion day, or the due day when the task repeats from
- * its due date and that day is still ahead.
+ * A task that repeats from its completion date counts from the completion
+ * day. A task that repeats from its task date keeps its cadence: the next date
+ * is the first occurrence after today, counted from the task date.
  */
 export function nextRecurringFinishDate(
   finishDate: string | null,
@@ -13,15 +17,76 @@ export function nextRecurringFinishDate(
   now = new Date()
 ): string {
   const today = dateKeyInTimezone(now, timezone);
-  let base = today;
 
-  if (fromRepeating === 1 && finishDate) {
-    const due = dateKeyInTimezone(new Date(finishDate), timezone);
-
-    if (due > today) base = due;
+  if (fromRepeating !== 1 || !finishDate) {
+    return startOfZonedDayIso(advanceDateKey(today, rule), timezone);
   }
 
-  return startOfZonedDayIso(advanceDateKey(base, rule), timezone);
+  const anchor = finishDateKey(finishDate, timezone);
+
+  if (!anchor) {
+    return startOfZonedDayIso(advanceDateKey(today, rule), timezone);
+  }
+
+  return startOfZonedDayIso(
+    firstOccurrenceAfter(anchor, rule, today),
+    timezone
+  );
+}
+
+/**
+ * Steps from the anchor until the date is after today. Calendar steps are
+ * counted from the anchor itself, so month-end dates do not drift
+ * (31 January → 28 February → 31 March).
+ */
+function firstOccurrenceAfter(
+  anchor: string,
+  rule: RepeatRule,
+  today: string
+): string {
+  const every = Math.max(1, Math.round(rule.every));
+  let next = advanceDateKey(anchor, rule);
+
+  for (let step = 2; next <= today && step <= MAX_CATCH_UP_STEPS; step += 1) {
+    next =
+      rule.unit === 'workday'
+        ? advanceDateKey(next, rule)
+        : advanceDateKey(anchor, { ...rule, every: every * step });
+  }
+
+  return next > today ? next : advanceDateKey(today, rule);
+}
+
+/**
+ * Calendar day of a stored task date in the account timezone. A date-only
+ * value is returned unchanged. An exact UTC midnight is an older date-only
+ * write that Postgres stored as UTC, so its UTC day is used. Returns an empty
+ * string for a missing or invalid value.
+ */
+export function finishDateKey(
+  value: string | null | undefined,
+  timezone: string
+): string {
+  const trimmed = value?.trim();
+
+  if (!trimmed) return '';
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+
+  const parsed = new Date(trimmed);
+
+  if (Number.isNaN(parsed.getTime())) return '';
+
+  if (
+    parsed.getUTCHours() === 0 &&
+    parsed.getUTCMinutes() === 0 &&
+    parsed.getUTCSeconds() === 0 &&
+    parsed.getUTCMilliseconds() === 0
+  ) {
+    return parsed.toISOString().slice(0, 10);
+  }
+
+  return dateKeyInTimezone(parsed, timezone);
 }
 
 function dateKeyInTimezone(date: Date, timezone: string): string {

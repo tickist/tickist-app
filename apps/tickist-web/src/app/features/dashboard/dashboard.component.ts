@@ -19,6 +19,8 @@ import { TaskOccurrenceDataService } from '../../data/task-occurrence-data.servi
 import { formatDay } from '../../core/time/date-format';
 import { formatMinutesShort } from '../../core/time/duration';
 import { IconComponent } from '../../core/ui/icon.component';
+import { SimpleViewToggleComponent } from '../../core/ui/simple-view-toggle.component';
+import { TaskViewPreferenceService } from '../app-shell/task-view-preference.service';
 import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { TimeTrackingService } from '../../data/time-tracking.service';
 import { DayPlanService } from '../../data/day-plan.service';
@@ -44,6 +46,7 @@ import {
     TaskListComponent,
     TaskGroupSummaryComponent,
     IconComponent,
+    SimpleViewToggleComponent,
   ],
 })
 export class DashboardComponent {
@@ -57,6 +60,10 @@ export class DashboardComponent {
   private readonly dayPlan = inject(DayPlanService);
   private readonly toasts = inject(ToastService);
   private readonly occurrences = inject(TaskOccurrenceDataService);
+  private readonly taskViews = inject(TaskViewPreferenceService);
+
+  /** Simple or extended cards, remembered in this browser. */
+  readonly viewMode = this.taskViews.dashboard;
 
   readonly movingOverdue = signal(false);
 
@@ -293,6 +300,10 @@ export class DashboardComponent {
     } finally {
       this.movingOverdue.set(false);
     }
+  }
+
+  setSimpleView(simple: boolean): void {
+    this.taskViews.setSimple('dashboard', simple);
   }
 
   reorderToday(reorder: TaskReorder): void {
