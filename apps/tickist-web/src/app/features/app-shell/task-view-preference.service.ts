@@ -1,4 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
+import { z } from 'zod';
 
 export type TaskViewMode = 'extended' | 'simple';
 
@@ -41,19 +42,22 @@ function storage(): Storage | undefined {
   }
 }
 
+const ViewModeSchema = z.enum(['extended', 'simple']).catch('extended');
+
+const StoredPreferencesSchema = z.object({
+  dashboard: ViewModeSchema.default('extended'),
+  day: ViewModeSchema.default('extended'),
+});
+
 function readPreferences(): TaskViewPreferences {
   try {
     const raw = storage()?.getItem(TASK_VIEW_STORAGE_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
 
-    if (!parsed || typeof parsed !== 'object') return { ...DEFAULTS };
+    if (!raw) return { ...DEFAULTS };
 
-    const record = parsed as Partial<Record<TaskViewScope, unknown>>;
+    const parsed = StoredPreferencesSchema.safeParse(JSON.parse(raw));
 
-    return {
-      dashboard: record.dashboard === 'simple' ? 'simple' : 'extended',
-      day: record.day === 'simple' ? 'simple' : 'extended',
-    };
+    return parsed.success ? parsed.data : { ...DEFAULTS };
   } catch {
     return { ...DEFAULTS };
   }

@@ -54,9 +54,9 @@ import {
   readProjectSorts,
   writeProjectSorts,
 } from './project-sort';
-
 import { SimpleViewToggleComponent } from '../../core/ui/simple-view-toggle.component';
 import { TaskViewPreferenceService } from './task-view-preference.service';
+
 @Component({
   selector: 'app-shell',
   standalone: true,
