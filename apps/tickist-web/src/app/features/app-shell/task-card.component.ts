@@ -875,7 +875,7 @@ export class TaskCardComponent implements OnChanges {
 
     const successMessage =
       mode === 'due_date' && !hasDueDate
-        ? 'No due date set. Repeat will use completion date.'
+        ? 'No task date set. Repeat will use completion date.'
         : 'Repeat anchor updated.';
 
     await this.mutateTask(

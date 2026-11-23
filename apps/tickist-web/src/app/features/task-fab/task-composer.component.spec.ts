@@ -283,6 +283,32 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     expect(component.taskForm.controls.finishTime.value).toBe('09:05');
   });
 
+  it('reads a task date stored as midnight in the account timezone', () => {
+    // 30 November in Warsaw, as written when a recurring task advances.
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ finishDate: '2026-11-29T23:00:00.000Z' }),
+    };
+    fixture.detectChanges();
+
+    expect(component.taskForm.controls.finishDate.value).toBe('2026-11-30');
+  });
+
+  it('keeps the task date when another field is edited', async () => {
+    component.preset = {
+      mode: 'edit',
+      task: createTask({ finishDate: '2026-11-29T23:00:00.000Z' }),
+    };
+    fixture.detectChanges();
+
+    component.taskForm.patchValue({ name: 'Renamed task' });
+    await component.submit();
+
+    expect(updateTaskMock).toHaveBeenCalledWith(
+      expect.objectContaining({ finishDate: '2026-11-29T23:00:00.000Z' })
+    );
+  });
+
   it('keeps completion controls empty for invalid stored date and time values', () => {
     component.preset = {
       mode: 'edit',
@@ -345,7 +371,7 @@ describe('TaskComposerComponent repeat custom cadence', () => {
     expect(updateTaskMock).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'task-1',
-        finishDate: '2026-05-11',
+        finishDate: '2026-05-10T22:00:00.000Z',
         finishTime: '14:30',
         typeFinishDate: 0,
       })

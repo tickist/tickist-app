@@ -495,12 +495,12 @@
           [class.active]="currentRepeatFromMode() === 'due_date'"
           (click)="setRepeatFrom('due_date')"
         >
-          due date
+          task date
         </button>
       </div>
       @if (!canRepeatFromDueDate()) {
       <p class="panel-hint">
-        No due date set. Repeat uses completion date by default.
+        No task date set. Repeat uses completion date by default.
       </p>
       }
     </div>

@@ -539,15 +539,39 @@ const nextRecurringFinishDate = (
   timezone: string
 ): string => {
   const today = dateKeyInTimezone(new Date(), timezone);
-  let base = today;
-  if (fromRepeating === 1 && finishDate) {
-    const due = dateKeyInTimezone(new Date(finishDate), timezone);
-    if (due > today) base = due;
+  const days = Math.max(1, Math.round(repeatInterval));
+  const anchor =
+    fromRepeating === 1 && finishDate
+      ? finishDateKey(finishDate, timezone)
+      : '';
+  if (!anchor) {
+    return startOfZonedDayIso(addCalendarDays(today, days), timezone);
   }
-  return startOfZonedDayIso(
-    addCalendarDays(base, Math.max(1, Math.round(repeatInterval))),
-    timezone
-  );
+  // Repeating from the task date keeps the cadence: the next date is the
+  // first occurrence after today, counted from the task date.
+  let next = addCalendarDays(anchor, days);
+  if (next <= today) {
+    const elapsed =
+      (Date.parse(`${today}T00:00:00Z`) - Date.parse(`${anchor}T00:00:00Z`)) /
+      86_400_000;
+    next = addCalendarDays(anchor, (Math.floor(elapsed / days) + 1) * days);
+  }
+  return startOfZonedDayIso(next, timezone);
+};
+
+/**
+ * Calendar day of a stored task date in the account timezone. An exact UTC
+ * midnight is an older date-only write stored as UTC, so its UTC day is used.
+ */
+const finishDateKey = (value: string, timezone: string): string => {
+  const trimmed = value.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return '';
+  if (parsed.getTime() % 86_400_000 === 0) {
+    return parsed.toISOString().slice(0, 10);
+  }
+  return dateKeyInTimezone(parsed, timezone);
 };
 
 const dateKeyInTimezone = (date: Date, timezone: string): string => {
