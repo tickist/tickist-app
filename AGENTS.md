@@ -60,6 +60,7 @@ These rules come from a security review. Keep them when changing the related cod
 - **Values:** user-writable timestamps reject `infinity`; user text columns have database length limits; text from another user is stripped of control and bidirectional characters before it reaches notifications or email, and never forms an email subject on its own.
 - **Privileges:** `anon` and `authenticated` hold no TRIGGER, TRUNCATE, or REFERENCES on application tables, and the platform-owned `net` and `supabase_functions` schemas stay outside the Data API. Storage object names reject `.` and `..` segments.
 - **Dependencies:** a dependency with a published advisory affecting Tickist is upgraded before the next release, including pinned `npm:` imports in Edge Functions.
+- **GitHub scanning:** CodeQL code scanning runs in GitHub's default setup (no workflow file) on `master`, pull requests to it, and weekly; secret scanning blocks pushes containing secrets. Check open alerts with `gh api repos/tickist/tickist-app/code-scanning/alerts` and `.../dependabot/alerts` before a release.
 
 ## Code and verification
 
