@@ -20,6 +20,7 @@ function setup(
     spentMinutes?: number | null;
     estimateMinutes?: number | null;
     pausedSeconds?: number;
+    description?: string;
   } = {}
 ) {
   const running = signal(options.running ?? true);
@@ -27,6 +28,7 @@ function setup(
   const task = {
     id: 'task-1',
     name: 'Write the report',
+    description: options.description ?? '',
     projectId: null,
     isDone: false,
     repeatInterval: options.repeatInterval ?? 0,
@@ -124,6 +126,33 @@ describe('FocusComponent', () => {
       ).textContent?.trim() ?? ''
     );
   }
+
+  it('shows the description quietly, with links, only when there is one', () => {
+    const empty = setup();
+
+    expect(
+      fixtureHost(empty.fixture).querySelector(
+        '[data-testid="focus-description"]'
+      )
+    ).toBeNull();
+
+    TestBed.resetTestingModule();
+
+    const { fixture } = setup({
+      description: 'Agenda in https://example.com/notes',
+    });
+
+    const description = requiredElement(
+      fixtureHost(fixture),
+      '[data-testid="focus-description"]',
+      HTMLElement
+    );
+
+    expect(description.textContent).toContain('Agenda in');
+    expect(description.querySelector('a')?.href).toBe(
+      'https://example.com/notes'
+    );
+  });
 
   it('counts the whole session on the clock', () => {
     const { fixture } = setup();

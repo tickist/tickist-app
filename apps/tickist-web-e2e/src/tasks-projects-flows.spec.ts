@@ -665,13 +665,19 @@ test.describe('weekday day plan', () => {
     await page.getByPlaceholder(/Search tasks/).fill(suffix);
     await expect.poll(() => names(scheduled)).toEqual(reordered);
 
-    // The dashboard Today group follows the same day plan.
+    // The dashboard Today group sorts by time by default; My order follows
+    // the same day plan.
     await page.goto('/app');
     await page.getByPlaceholder(/Search tasks/).fill(suffix);
 
     const today = page.locator('app-dashboard article').filter({
       has: page.getByRole('heading', { name: 'Today', exact: true }),
     });
+
+    const todaySort = page.getByTestId('dashboard-today-sort');
+
+    await expect(todaySort).toHaveValue('time');
+    await todaySort.selectOption('manual');
 
     await expect
       .poll(() =>

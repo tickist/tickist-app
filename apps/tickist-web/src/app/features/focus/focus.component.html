@@ -93,7 +93,16 @@
     <p class="focus-total" data-testid="focus-total">
       Total on this task: {{ totalLabel() }}
     </p>
-    } @else {
+    @if (current.description.trim()) {
+    <div
+      class="focus-description linkified"
+      tabindex="0"
+      role="region"
+      aria-label="Task description"
+      data-testid="focus-description"
+      [innerHTML]="current.description | linkify"
+    ></div>
+    } } @else {
     <p class="focus-task">Task unavailable</p>
     <div class="focus-actions">
       <button type="button" class="focus-btn focus-btn--main" (click)="leave()">

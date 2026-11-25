@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   compareDeadlines,
+  comparePriority,
   compareScheduled,
   deadlinesForDay,
   pinnedForToday,
@@ -97,6 +98,22 @@ describe('day plan sections', () => {
       'late',
       'untimed-a',
       'untimed-b',
+    ]);
+  });
+
+  it('orders by priority, then time', () => {
+    const list = [
+      { id: 'c-early', finishTime: '08:00', priority: 'C' },
+      { id: 'a-untimed', finishTime: null, priority: 'A' },
+      { id: 'a-late', finishTime: '16:00', priority: 'A' },
+      { id: 'b', finishTime: '10:00', priority: 'B' },
+    ];
+
+    expect([...list].sort(comparePriority).map((t) => t.id)).toEqual([
+      'a-late',
+      'a-untimed',
+      'b',
+      'c-early',
     ]);
   });
 

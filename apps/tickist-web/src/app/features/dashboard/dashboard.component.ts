@@ -25,7 +25,15 @@ import { WorkspaceDataService } from '../../data/workspace-data.service';
 import { TimeTrackingService } from '../../data/time-tracking.service';
 import { DayPlanService } from '../../data/day-plan.service';
 import { applyDayOrder } from '../../core/time/day-order';
-import { compareScheduled, isScheduled } from '../../core/time/day-plan';
+import { comparePriority, compareScheduled } from '../../core/time/day-plan';
+import {
+  TODAY_SORT_LABELS,
+  TODAY_SORT_OPTIONS,
+  type TodaySort,
+  isTodaySort,
+  readTodaySort,
+  writeTodaySort,
+} from './today-sort';
 import { type TaskReorder } from '../app-shell/task-list.component';
 import {
   type DueDayStatus,
@@ -66,6 +74,13 @@ export class DashboardComponent {
   readonly viewMode = this.taskViews.dashboard;
 
   readonly movingOverdue = signal(false);
+
+  /** Order of the Today group, remembered in this browser. */
+  readonly todaySort = signal<TodaySort>(readTodaySort(browserStorage()));
+  readonly todaySortOptions = TODAY_SORT_OPTIONS.map((value) => ({
+    value,
+    label: TODAY_SORT_LABELS[value],
+  }));
 
   readonly user = computed(() => this.session.user());
   readonly searchTerm = this.viewState.searchTerm;
@@ -224,16 +239,26 @@ export class DashboardComponent {
       .filter((project) => !nextActionProjects.has(project.id))
       .sort((a, b) => a.name.localeCompare(b.name));
   });
-  /** Today in the day plan order shared with Weekdays → Today. */
-  readonly sortedTodayTasks = computed(() =>
-    applyDayOrder(
-      this.todayTasks(),
-      this.dayPlan.orderFor(this.dayPlan.todayKey()),
-      (a, b) =>
-        Number(isScheduled(b)) - Number(isScheduled(a)) ||
-        compareScheduled(a, b)
-    )
-  );
+  /**
+   * Today by the chosen order. My order follows the day plan shared with
+   * Weekdays → Today; tasks outside the plan follow by time and priority.
+   */
+  readonly sortedTodayTasks = computed(() => {
+    const tasks = this.todayTasks();
+
+    switch (this.todaySort()) {
+      case 'priority':
+        return [...tasks].sort(comparePriority);
+      case 'manual':
+        return applyDayOrder(
+          tasks,
+          this.dayPlan.orderFor(this.dayPlan.todayKey()),
+          compareScheduled
+        );
+      default:
+        return [...tasks].sort(compareScheduled);
+    }
+  });
   readonly sortedOverdueTasks = computed(() =>
     [...this.overdueTasks()].sort((a, b) => {
       const dateA = a.finishDate ?? '';
@@ -306,7 +331,16 @@ export class DashboardComponent {
     this.taskViews.setSimple('dashboard', simple);
   }
 
+  setTodaySort(value: string): void {
+    if (!isTodaySort(value)) return;
+
+    this.todaySort.set(value);
+    writeTodaySort(browserStorage(), value);
+  }
+
+  /** Dragging a card keeps the list as shown and switches to My order. */
   reorderToday(reorder: TaskReorder): void {
+    this.setTodaySort('manual');
     this.dayPlan.move(
       this.dayPlan.todayKey(),
       reorder.ids,
@@ -333,5 +367,13 @@ export class DashboardComponent {
 
   trackTask(_index: number, task: Task): string {
     return task.id;
+  }
+}
+
+function browserStorage(): Storage | undefined {
+  try {
+    return typeof localStorage === 'undefined' ? undefined : localStorage;
+  } catch {
+    return undefined;
   }
 }

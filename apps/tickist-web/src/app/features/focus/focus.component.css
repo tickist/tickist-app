@@ -143,3 +143,15 @@
   @apply mt-2 text-sm;
   color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }
+
+/* Quiet reference below the stats; long notes scroll instead of pushing. */
+.focus-description {
+  @apply mt-4 max-h-40 w-full max-w-md overflow-y-auto whitespace-pre-wrap break-words border-t pt-4 text-left text-sm;
+  border-color: color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+}
+
+.focus-description:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
