@@ -83,6 +83,14 @@ export function compareScheduled(a: DatedTask, b: DatedTask): number {
   return byTime || priorityRank(b) - priorityRank(a);
 }
 
+/** Highest priority first, then time of day. */
+export function comparePriority(a: DatedTask, b: DatedTask): number {
+  return (
+    priorityRank(b) - priorityRank(a) ||
+    (a.finishTime || '99:99').localeCompare(b.finishTime || '99:99')
+  );
+}
+
 /** Default order for deadlines: soonest due first, then priority. */
 export function compareDeadlines(a: DatedTask, b: DatedTask): number {
   const byDue = (a.finishDate ?? '').localeCompare(b.finishDate ?? '');

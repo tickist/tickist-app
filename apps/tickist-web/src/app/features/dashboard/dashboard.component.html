@@ -12,9 +12,25 @@
         <h2 class="text-lg font-semibold">Today</h2>
         <app-task-group-summary [tasks]="todayTasks()" [showCount]="false" />
       </div>
-      <span class="badge badge-primary badge-outline">{{
-        todayTasks().length
-      }}</span>
+      <div class="flex items-center gap-2">
+        <label class="today-sort">
+          <span class="sr-only">Sort Today by</span>
+          <app-icon name="sort" size="16" />
+          <select
+            class="today-sort__select"
+            data-testid="dashboard-today-sort"
+            [value]="todaySort()"
+            (change)="setTodaySort($any($event.target).value)"
+          >
+            @for (option of todaySortOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </label>
+        <span class="badge badge-primary badge-outline">{{
+          todayTasks().length
+        }}</span>
+      </div>
     </header>
     <app-task-list
       [viewMode]="viewMode()"

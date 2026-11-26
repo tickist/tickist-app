@@ -19,12 +19,14 @@ import {
 } from '../../data/time-tracking.service';
 import { AppViewStateService } from '../app-shell/app-view-state.service';
 import { ToastService } from '../../core/ui/toast.service';
+import { LinkifyPipe } from '../../core/text/linkify.pipe';
 
 @Component({
   selector: 'app-focus',
   standalone: true,
   templateUrl: './focus.component.html',
   styleUrl: './focus.component.css',
+  imports: [LinkifyPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FocusComponent {
